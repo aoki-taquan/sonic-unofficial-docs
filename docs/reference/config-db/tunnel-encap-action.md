@@ -439,7 +439,7 @@ SET 成功時に `gCrmOrch->incCrmResUsedCounter()` が呼ばれる（`next_hop_
 | プラットフォーム | 状況 |
 |----------------|------|
 | Broadcom (BRCM SAI) | 対応（neighbor 事前生成が必須要件） |
-| VS / VPP (libsaivs / libsaivpp) | `create_next_hops` は `SAI_STATUS_SUCCESS` を返すがハードウェア転送なし。CI / テスト専用 |
+| [VS](../../reference/glossary.md#term-vs) / VPP (libsaivs / libsaivpp) | `create_next_hops` は `SAI_STATUS_SUCCESS` を返すがハードウェア転送なし。CI / テスト専用 |
 | その他 [ASIC](../../reference/glossary.md#term-asic) | SAI 実装次第。`SAI_STATUS_NOT_SUPPORTED` 返却時は `SWSS_LOG_ERROR` のみ |
 
 ### SAI Bulk モード固定
@@ -470,4 +470,4 @@ SET 成功時に `gCrmOrch->incCrmResUsedCounter()` が呼ばれる（`next_hop_
 [^2]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L63>
 [^3]: SAI 属性設定: `next_hop_manager.cpp` `prepareSaiAttrs()`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/next_hop_manager.cpp#L201-L261>
 
-<!-- glossary-links-injected: 99d58f855326 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

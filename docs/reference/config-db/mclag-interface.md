@@ -598,7 +598,7 @@ else if (temps == (Selectable *)mclag.getMclagIntfCfgTable()) {
 | `"clounix"` | Clounix | APPL_DB `ISOLATION_GROUP_TABLE` |
 | `"marvell-prestera"` | Marvell Prestera (98DX 等) | APPL_DB `ISOLATION_GROUP_TABLE` |
 | `"marvell-teralynx"` | Marvell Teralynx | APPL_DB `ISOLATION_GROUP_TABLE` |
-| それ以外（`"mellanox"` / `nullptr` 等） | Mellanox/NVIDIA, VS 等 | APPL_DB [ACL](../../reference/glossary.md#term-acl) (`mclag` テーブル) |
+| それ以外（`"mellanox"` / `nullptr` 等） | Mellanox/NVIDIA, [VS](../../reference/glossary.md#term-vs) 等 | APPL_DB [ACL](../../reference/glossary.md#term-acl) (`mclag` テーブル) |
 
 プラットフォーム文字列定数は `mclaglink.h:54-59` に直接定義される（`orchagent/orch.h` のコピー）。
 
@@ -620,7 +620,7 @@ APPL_DB:ISOLATION_GROUP_TABLE:MCLAG_ISO_GRP
 
 ### ACL ベース隔離パス（Mellanox / その他・未設定）
 
-ホワイトリスト非対応（Mellanox/NVIDIA、VS、VPP、`platform` 未設定等）では `APPL_DB:ACL_TABLE_TABLE:mclag` と `APPL_DB:ACL_RULE_TABLE:mclag:mclag` を書き込む（`mclaglink.cpp:288-375`）。
+ホワイトリスト非対応（Mellanox/NVIDIA、[VS](../../reference/glossary.md#term-vs)、VPP、`platform` 未設定等）では `APPL_DB:ACL_TABLE_TABLE:mclag` と `APPL_DB:ACL_RULE_TABLE:mclag:mclag` を書き込む（`mclaglink.cpp:288-375`）。
 
 ```text
 APPL_DB:ACL_TABLE_TABLE:mclag
@@ -647,4 +647,4 @@ APPL_DB:ACL_RULE_TABLE:mclag:mclag
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: 21deefad295c -->
+<!-- glossary-links-injected: 0af8863862be -->

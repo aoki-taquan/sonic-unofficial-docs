@@ -101,7 +101,7 @@ SNMP の設定は CONFIG_DB に集約されつつありますが、過去資産�
 
 ## 将来計画 / ロードマップ
 
-- DTel の report format 標準化 (IFA / INT-MD) と SONiC 対応の追従。
+- DTel の report format 標準化 ([IFA](../../reference/glossary.md#term-ifa) / INT-MD) と SONiC 対応の追従。
 - Telemetry agent からの structured logging export と OTel 連携。
 - SNMP からの段階的退役は community 課題で、レガシー監視ツールとの併走期間設計が論点。
 
@@ -138,5 +138,4 @@ SNMP の設定は CONFIG_DB に集約されつつありますが、過去資産�
 - SNMP scale 検証は `snmpwalk -t 30 -r 3` で entity MIB / transceiver MIB を large port count (256 ports〜) で取得する。target は 60 秒以内の完走。
 - DTel / sFlow の sampling 精度検証は、`pktgen` で既知レートのトラフィックを流し、collector 側で sample 数 × sampling rate ≒ 実トラフィックになることを確認する。
 
-
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: fad4d220bc71 -->

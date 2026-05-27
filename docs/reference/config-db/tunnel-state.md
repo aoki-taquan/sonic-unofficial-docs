@@ -567,7 +567,7 @@ SAI 仕様上の create-only 属性であるため [ASIC](../../reference/glossa
 
 ### VXLAN_TABLE — Linux カーネル VXLAN モジュール依存
 
-`createVxlan()` は Linux カーネルの VXLAN デバイス作成に依存する。カーネルモジュール (`vxlan.ko`) が未ロードの環境では `ip link add ... type vxlan` が失敗し、`m_stateVxlanTable.set()` が呼ばれず `state=ok` が書き込まれない。VS (virtual switch) 環境ではカーネル VXLAN が利用可能なためテスト動作する。
+`createVxlan()` は Linux カーネルの VXLAN デバイス作成に依存する。カーネルモジュール (`vxlan.ko`) が未ロードの環境では `ip link add ... type vxlan` が失敗し、`m_stateVxlanTable.set()` が呼ばれず `state=ok` が書き込まれない。[VS](../../reference/glossary.md#term-vs) (virtual switch) 環境ではカーネル VXLAN が利用可能なためテスト動作する。
 
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-platform.md`
 
@@ -610,4 +610,4 @@ SAI 仕様上の create-only 属性であるため [ASIC](../../reference/glossa
 
 [^18]: `gTraditionalFlexCounter` による VIDTORID 使用分岐: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1297-L1318>
 
-<!-- glossary-links-injected: c26ee589106a -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

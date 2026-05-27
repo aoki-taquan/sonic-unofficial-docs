@@ -55,7 +55,7 @@ key は JSON 形式でエンコードされる。`<id>` は [P4RT](../../referen
 | `param/src_mac` | mac-address | yes | - | ERSPAN 外側イーサネットの送信元 MAC |
 | `param/dst_mac` | mac-address | yes | - | ERSPAN 外側イーサネットの宛先 MAC |
 | `param/ttl` | hex uint8 | yes | - | ERSPAN 外側 IP の TTL (16 進数文字列) |
-| `param/tos` | hex uint8 | yes | - | ERSPAN 外側 IP の TOS ([DSCP](../../reference/glossary.md#term-dscp)+ECN, 16 進数文字列) |
+| `param/tos` | hex uint8 | yes | - | ERSPAN 外側 IP の TOS ([DSCP](../../reference/glossary.md#term-dscp)+[ECN](../../reference/glossary.md#term-ecn), 16 進数文字列) |
 
 全フィールドが必須。1 つでも欠けると `processAddRequest()` が `SWSS_RC_INVALID_PARAM` を返しセッションは作成されない[^2]。
 
@@ -140,7 +140,7 @@ CONFIG_DB 経路は `MIRROR_SESSION_POLICER = "policer"` (`mirrororch.cpp:29`) �
 | 経路 | [DSCP](../../reference/glossary.md#term-dscp) デフォルト | 入力フィールド | 備考 |
 |------|---------------|--------------|------|
 | CONFIG_DB `MIRROR_SESSION` (`MirrorOrch`) | **`8`** (CS1、`MirrorEntry::dscp(8)`, `mirrororch.cpp:59`) | `dscp` (省略可) | 範囲は `MIRROR_SESSION_DSCP_MIN..MAX = 0..63` (`mirrororch.cpp:40-42`)。`SAI_MIRROR_SESSION_ATTR_TOS = dscp << MIRROR_SESSION_DSCP_SHIFT` (`mirrororch.cpp:1016`) |
-| APPL_DB `FIXED_MIRROR_SESSION_TABLE` (P4RT) | (struct 初期値 `tos=0` だが**必須**) | `param/tos` (16 進文字列、TOS バイト全体 = [DSCP](../../reference/glossary.md#term-dscp)+ECN) | `has_tos=false` のまま ADD すると `SWSS_RC_INVALID_PARAM`。デフォルトは実質適用されない |
+| APPL_DB `FIXED_MIRROR_SESSION_TABLE` (P4RT) | (struct 初期値 `tos=0` だが**必須**) | `param/tos` (16 進文字列、TOS バイト全体 = [DSCP](../../reference/glossary.md#term-dscp)+[ECN](../../reference/glossary.md#term-ecn)) | `has_tos=false` のまま ADD すると `SWSS_RC_INVALID_PARAM`。デフォルトは実質適用されない |
 
 → P4RT 経路では DSCP の概念が表に出ず、TOS バイト全体を P4RT controller が組み立てて hex 文字列で渡す責務を負う。
 
@@ -601,4 +601,4 @@ sonic-db-cli APPL_DB hgetall 'FIXED_MIRROR_SESSION_TABLE|{"match/mirror_session_
 [^5]: `MirrorEntry::MirrorEntry()` での GRE type platform 分岐: `orchagent/mirrororch.cpp` L57-77. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/mirrororch.cpp#L57-L77>
 [^6]: `MirrorSessionManager::drain()` と `prepareSaiAttrs()` の書込み順依存: `orchagent/p4orch/mirror_session_manager.cpp` L62-188. CONFIG_DB 経路の `MirrorOrch::doTask()` (`orchagent/mirrororch.cpp` L1567-1611) と動的解決機構 (L160-198, L760-808) との対比は `meta/_intermediate/cdb-flow/appl-mirror-ordering.md` を参照。 <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L62-L188>
 
-<!-- glossary-links-injected: de5c60afbfa6 -->
+<!-- glossary-links-injected: 27618ff2c697 -->

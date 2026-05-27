@@ -555,7 +555,7 @@ APPL_DB への書き込みはない。
 | Broadcom DNX/Jericho | SAI 実装依存 | SDK バージョンによる | 全 severity 対応が一般的 |
 | Mellanox Spectrum | SAI 実装依存 | Spectrum-2 以降で全 severity | 旧世代では `fatal` のみサポートの場合あり |
 | Cisco Silicon One | SAI 実装依存 | 一部 severity のみサポートの可能性 | SWITCH_CAPABILITY で確認必須 |
-| VS (Virtual Switch) | **false**（非実装） | なし | 全処理スキップ。`STATE_DB SWITCH_CAPABILITY` に `ASIC_SDK_HEALTH_EVENT=false` が記録される |
+| [VS](../../reference/glossary.md#term-vs) (Virtual Switch) | **false**（非実装） | なし | 全処理スキップ。`STATE_DB SWITCH_CAPABILITY` に `ASIC_SDK_HEALTH_EVENT=false` が記録される |
 | その他 | SAI 実装依存 | 不明 | `STATE_DB SWITCH_CAPABILITY` の値で確認 |
 
 !!! note "platform 文字列比較は一切行わない"
@@ -671,4 +671,4 @@ db_migrator.py での SUPPRESS_ASIC_SDK_HEALTH_EVENT マイグレーションな
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: b4f3d42f08a1 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

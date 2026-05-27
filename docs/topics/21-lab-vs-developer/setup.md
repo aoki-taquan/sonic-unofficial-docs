@@ -35,7 +35,7 @@ related:
 
 # 設定
 
-仮想 lab / 開発環境の bring-up は、[SONiC](../../reference/glossary.md#term-sonic) NOS そのものの設定ではなく「環境を組む → image を取る → topology を配線する → [CONFIG_DB](../../reference/glossary.md#term-config_db) を流し込む」の前段に集中します。本ページでは代表的な 3 シナリオ (単一 SONiC-VS、containerlab マルチノード、[DASH](../../reference/glossary.md#term-dash)/[DPU](../../reference/glossary.md#term-dpu) 評価) で、ファイル例 + コマンド列 + 確認手順を示し、よくある詰まりどころと対処をまとめます。
+仮想 lab / 開発環境の bring-up は、[SONiC](../../reference/glossary.md#term-sonic) NOS そのものの設定ではなく「環境を組む → image を取る → topology を配線する → [CONFIG_DB](../../reference/glossary.md#term-config_db) を流し込む」の前段に集中します。本ページでは代表的な 3 シナリオ (単一 SONiC-[VS](../../reference/glossary.md#term-vs)、containerlab マルチノード、[DASH](../../reference/glossary.md#term-dash)/[DPU](../../reference/glossary.md#term-dpu) 評価) で、ファイル例 + コマンド列 + 確認手順を示し、よくある詰まりどころと対処をまとめます。
 
 実機運用時の CLI / CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) の使い方は本章の他のページや機能章本文 ([BGP の運用](../02-bgp/operations.md) など) と同一なので、bring-up 後はそちらに合流してください。
 
@@ -308,4 +308,4 @@ CI / test plan に出てくる configuration ([VRF](../../reference/glossary.md#
 - [Lab vs Developer の概要](concept.md)
 - [Lab vs Developer の運用](operations.md)
 
-<!-- glossary-links-injected: ee79766d4c7b -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

@@ -103,7 +103,7 @@ dynamic add / delete を多用する運用 ([ZTP](../../reference/glossary.md#te
 
 ## 検証パスとラボ要件
 
-- 1.6T サポートは現状 vendor SDK + 対応 SKU が前提で、community VS lab では速度シミュレーションのみ。SAI profile の `port-config.ini` を実機準拠で用意して機能テストする流れになる。
+- 1.6T サポートは現状 vendor SDK + 対応 SKU が前提で、community [VS](../../reference/glossary.md#term-vs) lab では速度シミュレーションのみ。SAI profile の `port-config.ini` を実機準拠で用意して機能テストする流れになる。
 - dynamic breakout の検証は `sonic-mgmt` の `platform/test_port_toggle.py` 系で再現可能。breakout 時の ACL/QoS reprovision が抜けると次の機能テストで露見する。
 
 ## 関連ページ (追補)
@@ -123,4 +123,4 @@ dynamic add / delete を多用する運用 ([ZTP](../../reference/glossary.md#te
 - [07 ACL / CoPP / Mirror: port lifecycle と ACL bind の付け替え](../07-acl-copp-mirror/index.md)
 - [12 Multi-ASIC / VOQ: chassis 内 module hot-swap](../12-multi-asic-voq/index.md)
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

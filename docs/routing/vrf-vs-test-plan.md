@@ -46,7 +46,7 @@ related:
 
 ## 概要
 
-[VRF](../reference/glossary.md#term-vrf)（Virtual Routing and Forwarding）の SwSS パスを **VS テストフレームワーク**で機械的に検証する。観点は[^1]:
+[VRF](../reference/glossary.md#term-vrf)（Virtual Routing and Forwarding）の SwSS パスを **[VS](../reference/glossary.md#term-vs) テストフレームワーク**で機械的に検証する。観点は[^1]:
 
 - `vrfmgrd` が [CONFIG_DB](../reference/glossary.md#term-config_db) の VRF 設定を APP_DB と Linux kernel に正しく反映するか
 - Orchagent が APP_DB を読んで [ASIC_DB](../reference/glossary.md#term-asic_db) に VIRTUAL_ROUTER オブジェクトを作るか
@@ -138,4 +138,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: b804bcd55f6a -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

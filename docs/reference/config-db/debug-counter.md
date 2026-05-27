@@ -537,7 +537,7 @@ PortsOrch.attach(DebugCounterOrch):
 | SAI `sai_query_attribute_enum_values_capability` 未実装 [ASIC](../../reference/glossary.md#term-asic) | `getSupportedCounterTypes()` が空集合を返し、すべての `installDebugCounter()` が `task_failed`。`DEBUG_COUNTER_CAPABILITIES` には type エントリが書き込まれない | `drop_counter.cpp:380-384` |
 | ハードウェアリソース共有 | 一部の [ASIC](../../reference/glossary.md#term-asic) では debug counter が [ACL](../../reference/glossary.md#term-acl) entry 等と hardware resource を共有するため、`sai_object_type_get_availability` の返り値がシステム負荷で動的に変動する。SAI create 失敗時は `task_failed` | `drop_counter.cpp:425-428` |
 | PORT_DEBUG 型 — PHY ポートのみ | `PORT_INGRESS_DROPS` / `PORT_EGRESS_DROPS` の FlexCounter エントリは `Port::Type::PHY` のポートのみ対象。[LAG](../../reference/glossary.md#term-lag)・[VLAN](../../reference/glossary.md#term-vlan)・CPU ポートは silent skip（コード固定、プラットフォーム非依存） | `debugcounterorch.cpp:629-648` |
-| VS (Virtual Switch) 環境 | SAI stub が capability クエリを実装していない場合は全 counter 作成不可。ただし swss テスト (`test_virtual_chassis.py`) では SAI stub に debug counter サポートが注入される | `drop_counter.cpp:380-384`; `tests/test_virtual_chassis.py:1306` |
+| [VS](../../reference/glossary.md#term-vs) (Virtual Switch) 環境 | SAI stub が capability クエリを実装していない場合は全 counter 作成不可。ただし swss テスト (`test_virtual_chassis.py`) では SAI stub に debug counter サポートが注入される | `drop_counter.cpp:380-384`; `tests/test_virtual_chassis.py:1306` |
 
 ### STATE_DB DEBUG_COUNTER_CAPABILITIES によるプラットフォーム差の公開
 
@@ -553,4 +553,4 @@ PortsOrch.attach(DebugCounterOrch):
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 488a0e9deabd -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

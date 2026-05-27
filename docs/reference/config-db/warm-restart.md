@@ -555,7 +555,7 @@ Redis チャネルへの明示的 `PUBLISH` を発行しない。
 | ASIC 種別 (Broadcom / Mellanox / Marvell / Cisco 等) | 影響なし | `WarmStart::initialize()` / `getWarmStartTimer()` / `setWarmStartState()` は SAI を呼ばず CONFIG_DB / STATE_DB への `hget()` / `hset()` のみ。`warm_restart.cpp` に `platform` / ASIC 型チェックなし |
 | multi-asic (`NUM_ASIC > 1`) | 各 asic-namespace で独立動作 | `WarmStart::initialize()` が `DBConnector("CONFIG_DB", ...)` を namespace 指定なしで接続 (`warm_restart.cpp:51`)。各 `swss@asicN` コンテナ内で実行されるため、そのコンテナの namespace CONFIG_DB を参照する。`WARM_RESTART` テーブルは asic-namespace ごとに独立し chassis-wide 同期なし |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | `WARM_RESTART` は host / container scope。chassis 集中管理機構なし（`CHASSIS_APP_DB` に `WARM_RESTART` 系テーブルなし） |
-| VS / VPP プラットフォーム | テーブル読み書きは正常 | `hget()` / `hset()` は VS でも動作する。ただしデータプレーンが存在しないため warm restart による「再収束」に実動作上の意味はない |
+| [VS](../../reference/glossary.md#term-vs) / VPP プラットフォーム | テーブル読み書きは正常 | `hget()` / `hset()` は [VS](../../reference/glossary.md#term-vs) でも動作する。ただしデータプレーンが存在しないため warm restart による「再収束」に実動作上の意味はない |
 
 ### finalize-warmboot.sh の ASIC 別差異
 
@@ -588,4 +588,4 @@ done
 <!-- evidence: sonic-buildimage/files/image_config/warmboot-finalizer/finalize-warmboot.sh L194-202 (finalize_global — mellanox CPU governor) -->
 <!-- /platform -->
 
-<!-- glossary-links-injected: 7e45a6259cc1 -->
+<!-- glossary-links-injected: 0af8863862be -->

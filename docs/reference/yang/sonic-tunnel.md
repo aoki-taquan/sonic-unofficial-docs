@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-peer-switch`
 - top container: `sonic-tunnel`
 
-DualToR 構成における MuxTunnel ([IPinIP](../../reference/glossary.md#term-ipinip) encap/decap) のパラメータを保持する。[DSCP](../../reference/glossary.md#term-dscp) / ECN / TTL の handling mode、 encap/decap [QoS](../../reference/glossary.md#term-qos) map などを定義する[^1]。
+DualToR 構成における MuxTunnel ([IPinIP](../../reference/glossary.md#term-ipinip) encap/decap) のパラメータを保持する。[DSCP](../../reference/glossary.md#term-dscp) / [ECN](../../reference/glossary.md#term-ecn) / TTL の handling mode、 encap/decap [QoS](../../reference/glossary.md#term-qos) map などを定義する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -87,8 +87,8 @@ module: sonic-tunnel
 | `dscp_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/dscp_mode` | `string` |  |  | uniform, pipe | [DSCP](../../reference/glossary.md#term-dscp) handling mode (uniform copies outer, pipe preserves inner) |
 | `src_ip` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/src_ip` | `leafref` |  |  | /ps:sonic-peer-switch/PEER_SWITCH/PEER_SWITCH_LIST/address_ipv4 | Tunnel source IPv4 (= peer ToR address) |
 | `dst_ip` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/dst_ip` | `inet:ipv4-address` |  |  |  | Tunnel destination IPv4 (= this switch address) |
-| `ecn_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/ecn_mode` | `string` |  |  | standard, copy_from_outer | ECN handling mode on decapsulation |
-| `encap_ecn_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/encap_ecn_mode` | `string` |  |  | standard, copy_from_inner | ECN marking mode on encapsulation |
+| `ecn_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/ecn_mode` | `string` |  |  | standard, copy_from_outer | [ECN](../../reference/glossary.md#term-ecn) handling mode on decapsulation |
+| `encap_ecn_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/encap_ecn_mode` | `string` |  |  | standard, copy_from_inner | [ECN](../../reference/glossary.md#term-ecn) marking mode on encapsulation |
 | `ttl_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/ttl_mode` | `string` |  |  | uniform, pipe | TTL handling mode |
 | `tunnel_type` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/tunnel_type` | `string` |  |  | IPINIP | Encapsulation type |
 | `decap_dscp_to_tc_map` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/decap_dscp_to_tc_map` | `string` |  |  |  | [DSCP](../../reference/glossary.md#term-dscp)-to-TC map applied on decapsulation |
@@ -133,4 +133,4 @@ module: sonic-tunnel
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-tunnel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 36ca10160326 -->
+<!-- glossary-links-injected: 7071347b3cf9 -->

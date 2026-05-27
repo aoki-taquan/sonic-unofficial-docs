@@ -169,7 +169,7 @@ show buffer pool
 | 条件 | 挙動 | ソース |
 |------|------|--------|
 | `xoff` フィールドが `ingress_lossless_pool` 以外のプールに設定 | `Field xoff is supported for %s only` を LOG_ERROR → xoff は ignored、他フィールドは処理 | `buffermgrdyn.cpp` L2625 |
-| `xoff` 値が MMU サイズを超過 | `Invalid xoff %s, exceeding the mmu size` を LOG_ERROR → xoff 無視、pool size は更新 | `buffermgrdyn.cpp` L757 |
+| `xoff` 値が [MMU](../../reference/glossary.md#term-mmu) サイズを超過 | `Invalid xoff %s, exceeding the mmu size` を LOG_ERROR → xoff 無視、pool size は更新 | `buffermgrdyn.cpp` L757 |
 | SHP 設定が変化なし | `updated without change, skipped` → [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みをスキップ | `buffermgrdyn.cpp` L2614 |
 | 同一 pool に複数の zero profile 登録 | `Multiple zero profiles detected for pool %s, takes the former and ignores the latter` を LOG_ERROR | `buffermgrdyn.cpp` L338 |
 | Buffer pools が未準備の状態でプロファイル設定 | `pending` → プロファイル適用を遅延 | `buffermgrdyn.cpp` L894 |
@@ -345,8 +345,8 @@ APPL_STATE_DB:BUFFER_POOL_TABLE   ← ResponsePublisher (xoff/DEL 時のみ)
 
 | 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
 |---|---|---|---|---|
-| Lua plugin が返した `xoff` 値が MMU サイズ超過 | `updateBufferPoolFromLuaPlugin()` L755 | xoff 更新をスキップ・pool size は更新継続 | `LOG_ERROR("Buffer pool %s: Invalid xoff %s, exceeding the mmu size %s, ignored xoff but the pool size will be updated")` | `buffermgrdyn.cpp:757` |
-| Lua plugin が返した pool `size` 値が MMU サイズ超過 | `updateBufferPoolFromLuaPlugin()` L786 | pool サイズ更新をスキップ → APPL_DB は前値のまま | `LOG_ERROR("Buffer pool %s: Invalid size %s, exceeding the mmu size %s")` | `buffermgrdyn.cpp:788` |
+| Lua plugin が返した `xoff` 値が [MMU](../../reference/glossary.md#term-mmu) サイズ超過 | `updateBufferPoolFromLuaPlugin()` L755 | xoff 更新をスキップ・pool size は更新継続 | `LOG_ERROR("Buffer pool %s: Invalid xoff %s, exceeding the mmu size %s, ignored xoff but the pool size will be updated")` | `buffermgrdyn.cpp:757` |
+| Lua plugin が返した pool `size` 値が [MMU](../../reference/glossary.md#term-mmu) サイズ超過 | `updateBufferPoolFromLuaPlugin()` L786 | pool サイズ更新をスキップ → APPL_DB は前値のまま | `LOG_ERROR("Buffer pool %s: Invalid size %s, exceeding the mmu size %s")` | `buffermgrdyn.cpp:788` |
 | 共有バッファプール未設定で headroom 計算を要求 | `updateBufferPoolFromLuaPlugin()` L684 | headroom 計算をスキップ (silent) | `SWSS_LOG_NOTICE("No shared buffer pool configured")` | `buffermgrdyn.cpp:684` |
 
 ### bufferorch — processBufferPool() 失敗経路
@@ -748,4 +748,4 @@ FlexCounterOrch から `FLEX_COUNTER_STATUS=enable` を受信した際に全プ�
 - **ポーリング間隔非設定**: `BUFFER_POOL_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS = "60000"` はコードハードコード。CONFIG_DB からの変更手段なし。
 <!-- /constants -->
 
-<!-- glossary-links-injected: 2d5bea2d97e4 -->
+<!-- glossary-links-injected: 6df020b9096a -->

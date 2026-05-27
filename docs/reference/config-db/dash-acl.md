@@ -653,7 +653,7 @@ ACL グループ・ルールの作成削除ごとに CRM カウンタが更新�
 | `create_dash_acl_rule()` | 同上 |
 | `set_eni_attribute()` (bind) | `SAI_STATUS_NOT_SUPPORTED` → `handleSaiSetStatus()` abort/throw |
 
-`sai_dash_acl_api` ポインタ自体が NULL の場合（`sai_dash_acl_api_t` 未実装）はセグメンテーション違反が起きる。VS (仮想スイッチ) プラットフォームではスタブが `SAI_STATUS_SUCCESS` を返す。
+`sai_dash_acl_api` ポインタ自体が NULL の場合（`sai_dash_acl_api_t` 未実装）はセグメンテーション違反が起きる。[VS](../../reference/glossary.md#term-vs) (仮想スイッチ) プラットフォームではスタブが `SAI_STATUS_SUCCESS` を返す。
 
 ### ACL ルール優先度の SAI 照会省略
 
@@ -662,4 +662,4 @@ ACL グループ・ルールの作成削除ごとに CRM カウンタが更新�
 > **Evidence**: `main.cpp:990-994`（`gMySwitchType` 分岐）、`orchdaemon.cpp:1378`（`DashAclOrch` 生成）、`dashaclgroupmgr.cpp:94-128`（`getSaiStage` 静的マップ）、`dashaclgroupmgr.cpp:174-176, 213-216, 374-376`（CRM カウンタ）、`dashaclorch.cpp:43-70`（ステージ文字列変換）、`crmorch.h:49-52`（CRM リソース型定義）；詳細分析 `meta/_intermediate/cdb-flow/dash-acl-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: e2b97ff9fa4d -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

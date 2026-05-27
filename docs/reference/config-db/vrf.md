@@ -751,7 +751,7 @@ YANG に定義された `fallback` フィールドは `vrfmgrd` が APPL_DB へ 
 
 ### VS / VPP SAI — Linux + VPP の二重 VRF 管理
 
-VPP（Vector Packet Processing）SAI バックエンドを使う VS プラットフォームでは、SAI VR create が VPP API `ip_vrf_add()` を呼び出し、[ECMP](../../reference/glossary.md#term-ecmp) フローハッシュも設定する（`SwitchVppRif.cpp:1403-1414`）。標準 VS（`SwitchStateBase`）では SAI OID 割り当てのみ。実 ASIC（Broadcom / Mellanox / Marvell 等）では SAI VR create はハードウェアへの [ASIC_DB](../../reference/glossary.md#term-asic_db) 操作のみであり、Linux VRF デバイス管理は別プロセス（vrfmgrd）が担う。
+VPP（Vector Packet Processing）SAI バックエンドを使う [VS](../../reference/glossary.md#term-vs) プラットフォームでは、SAI VR create が VPP API `ip_vrf_add()` を呼び出し、[ECMP](../../reference/glossary.md#term-ecmp) フローハッシュも設定する（`SwitchVppRif.cpp:1403-1414`）。標準 [VS](../../reference/glossary.md#term-vs)（`SwitchStateBase`）では SAI OID 割り当てのみ。実 ASIC（Broadcom / Mellanox / Marvell 等）では SAI VR create はハードウェアへの [ASIC_DB](../../reference/glossary.md#term-asic_db) 操作のみであり、Linux VRF デバイス管理は別プロセス（vrfmgrd）が担う。
 
 ### EVPN L3 VNI (`vni` フィールド) — VTEP 設定必須
 
@@ -759,4 +759,4 @@ VPP（Vector Packet Processing）SAI バックエンドを使う VS プラット
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: d2191ccfe0bd -->
+<!-- glossary-links-injected: 0af8863862be -->

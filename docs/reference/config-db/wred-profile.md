@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-Weighted Random Early Detection ([WRED](../../reference/glossary.md#term-wred)) と ECN マーキングの設定プロファイルを定義する。`QUEUE` テーブルの `wred_profile` から名前で参照される[^1]。[orchagent](../../reference/glossary.md#term-orchagent) の `QosOrch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、[SAI](../../reference/glossary.md#term-sai) [WRED](../../reference/glossary.md#term-wred) オブジェクトに変換する。
+Weighted Random Early Detection ([WRED](../../reference/glossary.md#term-wred)) と [ECN](../../reference/glossary.md#term-ecn) マーキングの設定プロファイルを定義する。`QUEUE` テーブルの `wred_profile` から名前で参照される[^1]。[orchagent](../../reference/glossary.md#term-orchagent) の `QosOrch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、[SAI](../../reference/glossary.md#term-sai) [WRED](../../reference/glossary.md#term-wred) オブジェクトに変換する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -57,7 +57,7 @@ WRED_PROFILE|<name>
 | `green_max_threshold` / `yellow_max_threshold` / `red_max_threshold` | uint64 (bytes) | - | カラー別の最大閾値 (この値で全 drop) |
 | `green_drop_probability` / `yellow_drop_probability` / `red_drop_probability` | uint64 (0..100) | 100 | 最大 drop 確率 [%] |
 | `wred_green_enable` / `wred_yellow_enable` / `wred_red_enable` | boolean | false | カラー別 WRED 有効化 |
-| `ecn` | enum | `ecn_none` | ECN マーキング対象色: `ecn_none`/`ecn_green`/`ecn_yellow`/`ecn_red`/`ecn_green_yellow`/`ecn_green_red`/`ecn_yellow_red`/`ecn_all` |
+| `ecn` | enum | `ecn_none` | [ECN](../../reference/glossary.md#term-ecn) マーキング対象色: `ecn_none`/`ecn_green`/`ecn_yellow`/`ecn_red`/`ecn_green_yellow`/`ecn_green_red`/`ecn_yellow_red`/`ecn_all` |
 
 ## 制約
 
@@ -79,7 +79,7 @@ WRED_PROFILE|<name>
 
 | フィールド | 値 | 実挙動 |
 |-----------|-----|--------|
-| `ecn` | `ecn_none` | `SAI_ECN_MARK_MODE_NONE`。ECN マーキングなし（デフォルト）|
+| `ecn` | `ecn_none` | `SAI_ECN_MARK_MODE_NONE`。[ECN](../../reference/glossary.md#term-ecn) マーキングなし（デフォルト）|
 | `ecn` | `ecn_green` | `SAI_ECN_MARK_MODE_GREEN`。緑パケットのみ ECN マーク |
 | `ecn` | `ecn_yellow` | `SAI_ECN_MARK_MODE_YELLOW`。黄パケットのみ ECN マーク |
 | `ecn` | `ecn_red` | `SAI_ECN_MARK_MODE_RED`。赤パケットのみ ECN マーク |
@@ -691,4 +691,4 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 
 <!-- /ordering -->
 
-<!-- glossary-links-injected: 86c3f6ce4283 -->
+<!-- glossary-links-injected: 7071347b3cf9 -->

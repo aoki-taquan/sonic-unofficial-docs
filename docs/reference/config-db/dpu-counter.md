@@ -643,8 +643,8 @@ multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成では運
 ### VS (Virtual Switch)
 
 `platform/vs/docker-sonic-vs/platform-dpu-2p.json` が提供されており、
-VS 上で `switch_type=dpu` を設定した場合も `DpuOrchDaemon` → `DashOrch` → `DashCounter` の
-経路が成立する。VS の SAI 実装 (`libsaivs`) が ENI SAI オブジェクトをサポートしている範囲で
+[VS](../../reference/glossary.md#term-vs) 上で `switch_type=dpu` を設定した場合も `DpuOrchDaemon` → `DashOrch` → `DashCounter` の
+経路が成立する。[VS](../../reference/glossary.md#term-vs) の SAI 実装 (`libsaivs`) が ENI SAI オブジェクトをサポートしている範囲で
 カウンタが動作し、CI テストに使用される。
 
 ### プラットフォーム差まとめ
@@ -655,7 +655,7 @@ VS 上で `switch_type=dpu` を設定した場合も `DpuOrchDaemon` → `DashOr
 | ASIC ベンダー種別差 | orchagent コード側なし。SAI 統計 ID 種類のみベンダー依存 |
 | VOQ chassis / multi-asic | ENI/DASH_METER は非適用 |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) NPU 側 | ENI カウンタ非動作 |
-| VS (switch_type=dpu) | 動作確認環境として機能 |
+| [VS](../../reference/glossary.md#term-vs) (switch_type=dpu) | 動作確認環境として機能 |
 
 <!-- /platform -->
 
@@ -811,4 +811,4 @@ show dash counters eni
 
 <!-- glossary-links-injected: dpu-counter-a1b2c3 -->
 
-<!-- glossary-links-injected: f23fc7b77e08 -->
+<!-- glossary-links-injected: ca6bc30b1f0e -->

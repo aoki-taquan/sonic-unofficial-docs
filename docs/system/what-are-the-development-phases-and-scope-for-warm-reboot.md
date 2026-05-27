@@ -104,7 +104,7 @@ flowchart LR
 
 - 設計: [sai_redis_api_idempotence.md](https://github.com/sonic-net/SONiC/blob/master/doc/warm-reboot/sai_redis_api_idempotence.md)
 - 実装ドラフト: [sonic-sairedis idempotent ブランチ](https://github.com/sonic-net/sonic-sairedis/compare/master...jipanyang:idempotent)
-- 状況: VS テストが実装済、swss docker warm restart/upgrade の E2E まで通過。コードレビュー前で再構成余地あり。**1 コマンドで feature on/off 可能化** が望ましい
+- 状況: [VS](../reference/glossary.md#term-vs) テストが実装済、swss docker warm restart/upgrade の E2E まで通過。コードレビュー前で再構成余地あり。**1 コマンドで feature on/off 可能化** が望ましい
 
 #### B. syncd view comparison[^1]
 
@@ -142,4 +142,4 @@ warm restart は 2 段階:
 
 [^1]: [sonic-net/SONiC doc/warm-reboot/open_issues.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/warm-reboot/open_issues.md)
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

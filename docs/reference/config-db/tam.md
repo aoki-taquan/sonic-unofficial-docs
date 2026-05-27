@@ -29,12 +29,12 @@ related:
 
 ## 概要
 
-Telemetry and Monitoring ([TAM](../../reference/glossary.md#term-tam)) および In-band Flow Analyzer (IFA) に関する CONFIG_DB エントリ群。4 つのテーブルで構成される。
+Telemetry and Monitoring ([TAM](../../reference/glossary.md#term-tam)) および In-band Flow Analyzer ([IFA](../../reference/glossary.md#term-ifa)) に関する CONFIG_DB エントリ群。4 つのテーブルで構成される。
 
 - **TAM_DEVICE_TABLE**: デバイス固有の [TAM](../../reference/glossary.md#term-tam) ID（`deviceid`）を保持する。
 - **TAM_COLLECTOR_TABLE**: telemetry データの送信先コレクタ（IP アドレス・ポート）を定義する。
-- **TAM_INT_IFA_FEATURE_TABLE**: IFA 機能の有効/無効フラグを保持する。
-- **TAM_INT_IFA_FLOW_TABLE**: [ACL](../../reference/glossary.md#term-acl) ルールに紐付いた IFA フローを定義する。
+- **TAM_INT_IFA_FEATURE_TABLE**: [IFA](../../reference/glossary.md#term-ifa) 機能の有効/無効フラグを保持する。
+- **TAM_INT_IFA_FLOW_TABLE**: [ACL](../../reference/glossary.md#term-acl) ルールに紐付いた [IFA](../../reference/glossary.md#term-ifa) フローを定義する。
 
 <!-- defaults -->
 ### コード由来デフォルト
@@ -520,4 +520,4 @@ CVL（sonic-mgmt-common / Management Framework）によるバリデーション�
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 17df5ff46307 -->
+<!-- glossary-links-injected: 14dfe6cfeb3d -->

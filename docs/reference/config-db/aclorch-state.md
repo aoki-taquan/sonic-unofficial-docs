@@ -227,7 +227,7 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 |------|----|----------|-----------------|
 | `AclActionCapabilities::isActionListMandatoryOnTableCreation` | `false` (メンバ初期化子) | `aclorch.h:143` 付近 | `is_action_list_mandatory` |
 | `m_L3V4V6Capability[stage]`（汎用プラットフォーム） | `false` | `aclorch.cpp:3489-3510` | `supported_L3V4V6` |
-| `m_L3V4V6Capability[stage]`（MRVL_PRST / MRVL_TL / VS 等） | `true` | 同上 | `supported_L3V4V6` |
+| `m_L3V4V6Capability[stage]`（MRVL_PRST / MRVL_TL / [VS](../../reference/glossary.md#term-vs) 等） | `true` | 同上 | `supported_L3V4V6` |
 | `defaultAclActionsSupported[INGRESS]` | `{PACKET_ACTION, MIRROR_INGRESS, NO_NAT}` + mandatory=`false` | `aclorch.cpp:168-184` | `action_list` (SAI クエリ失敗時のフォールバック) |
 | `defaultAclActionsSupported[EGRESS]` | `{PACKET_ACTION}` + mandatory=`false` | `aclorch.cpp:185-196` | `action_list` (フォールバック) |
 
@@ -266,7 +266,7 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 | `ACL_TABLE_TYPE` (CONFIG_DB) / `ACL_TABLE_TYPE_TABLE` (APPL_DB) | カスタム型解決 | `ACL_TABLE` の `type` がカスタム型のとき。未定義なら `status="Inactive"` | `aclorch.cpp` L4291 |
 | `PORT` (PortsOrch `allPortsReady()`) | 起動順序ガード | 常時。false の間は `doAclRuleTask()` に到達せず STATE_DB `ACL_RULE_TABLE` に新規エントリが書かれない | `aclorch.cpp` L4276 |
 | SAI Switch capability (`SAI_SWITCH_ATTR_ACL_STAGE_*`) | SAI クエリ → STATE_DB 書込み | 起動時 1 回。`ACL_STAGE_CAPABILITY_TABLE` の動的値ソース。失敗時は `defaultAclActionsSupported` でフォールバック | `aclorch.cpp` L4025–4036, L4056–4101 (`putAclActionCapabilityInDB`), L4104–4118 |
-| `DEVICE_METADATA\|localhost.platform`（platform 文字列） | プラットフォーム分岐 | `supported_L3V4V6` フィールド決定時 (MRVL_PRST / MRVL_TL / VS で `true`、他で `false`) | `aclorch.cpp` L3489–3510 (`queryMirrorTableCapability`), L4093–4099 |
+| `DEVICE_METADATA\|localhost.platform`（platform 文字列） | プラットフォーム分岐 | `supported_L3V4V6` フィールド決定時 (MRVL_PRST / MRVL_TL / [VS](../../reference/glossary.md#term-vs) で `true`、他で `false`) | `aclorch.cpp` L3489–3510 (`queryMirrorTableCapability`), L4093–4099 |
 | SAI ACL API 戻り値 (`create/remove_acl_table/entry`) | 戻り値判定 → `status` 値 | 常時。`Active` / `Inactive` / `Pending creation` / `Pending removal` を決定。リソース枯渇は retry cache にパーク | `aclorch.cpp` L5462–5508 (table), L5670–5726 (rule), `isSaiStatusResourceFull()` L5683–5692 |
 
 !!! note "STATE_DB エントリは「書き出し専用」のステータスレジスタ"
@@ -408,7 +408,7 @@ STATE_DB に書き出される 3 テーブル（`ACL_TABLE_TABLE` / `ACL_RULE_TA
 `aclorch.cpp:4276` — `doTask()` 冒頭で `gPortsOrch->allPortsReady()` が false の間は `doAclRuleTask()` に到達せず、`ACL_RULE_TABLE` への新規エントリ書込みが発生しない。
 
 - port 数が多い ASIC (broadcom-dnx 高密度シャーシ / cisco-8000 大規模ボード / mellanox 高 radix) では port enumeration に時間がかかり、`ACL_TABLE_TABLE` が `"Active"` を出した後も `ACL_RULE_TABLE` が空のままの中間状態が秒〜分続く。
-- VS / 小規模 broadcom では即座に解消されるため、観測される平均待ち時間が ASIC 規模に比例する。
+- [VS](../../reference/glossary.md#term-vs) / 小規模 broadcom では即座に解消されるため、観測される平均待ち時間が ASIC 規模に比例する。
 
 ### platform 別 STATE_DB サマリ
 
@@ -522,4 +522,4 @@ consumer 側 (on-demand polling)
 
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) `orchagent/aclorch.cpp` — `setAclTableStatus()` L6088, `setAclRuleStatus()` L6102, `putAclActionCapabilityInDB()` L4056, `init()` L3475
 
-<!-- glossary-links-injected: dc1ac8aceff4 -->
+<!-- glossary-links-injected: ca6bc30b1f0e -->

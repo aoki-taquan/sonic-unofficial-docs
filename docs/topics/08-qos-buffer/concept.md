@@ -66,7 +66,7 @@ related:
 
 - [RoCE](../../reference/glossary.md#term-roce) のような lossless が必要なトラフィックが詰まったとき、上流に PAUSE を送って物理的に止めたい
 - 動画やストリーミング telemetry のように遅延に敏感なトラフィックを strict priority で先に出したい
-- best effort トラフィックは公平に分け合いつつ、急に増えたフローだけ早めに ECN マークして TCP に減速を促したい
+- best effort トラフィックは公平に分け合いつつ、急に増えたフローだけ早めに [ECN](../../reference/glossary.md#term-ecn) マークして TCP に減速を促したい
 - バッファのピーク占有を可視化し、設計時の見積もりと実運用のギャップに早期に気付きたい
 
 これらが全て同じ ASIC リソースを取り合っているので、設定テーブルが多層に分かれているわけです。
@@ -225,4 +225,4 @@ QoS / Buffer は他のサブシステムと領域が重なって見えがちで�
 - [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: d17c6a828148 -->

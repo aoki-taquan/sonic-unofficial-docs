@@ -369,7 +369,7 @@ evidence: `bufferorch.cpp:1990`
 
 | DB | 書込 | 根拠 |
 |----|------|------|
-| [STATE_DB](../../reference/glossary.md#term-state_db) | **なし** | egress handler 経路に書込コードなし。[STATE_DB](../../reference/glossary.md#term-state_db) は MMU サイズ・最大 PG/Queue 数の **読み取り** にのみ使用（`buffermgrdyn.cpp:133,261,1277`） |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | **なし** | egress handler 経路に書込コードなし。[STATE_DB](../../reference/glossary.md#term-state_db) は [MMU](../../reference/glossary.md#term-mmu) サイズ・最大 PG/Queue 数の **読み取り** にのみ使用（`buffermgrdyn.cpp:133,261,1277`） |
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | **なし** | `bufferorch.cpp:56` で接続を保持するが、egress profile list handler では未使用。buffer pool watermark 用 Lua スクリプト（`bufferorch.cpp:240`）専用 |
 | APPL_STATE_DB | **なし** | 両ファイルの egress profile list 処理経路に該当コードなし |
 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | **なし** | `bufferorch.cpp:1135` は [VOQ](../../reference/glossary.md#term-voq) スイッチの Port Queue counter 更新用であり、本テーブルの処理とは無関係 |
@@ -552,4 +552,4 @@ ASIC (sairedis → ASIC_DB)
 ```
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 7653adf60fe0 -->
+<!-- glossary-links-injected: b9eaf3c9bfb9 -->

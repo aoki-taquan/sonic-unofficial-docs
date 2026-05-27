@@ -35,7 +35,7 @@ related:
 
 | 環境 | 何を再現するか | 主な用途 | 入口 |
 | --- | --- | --- | --- |
-| SONiC-VS (libvirt / KVM) | 単体 SONiC NOS（[SAI](../../reference/glossary.md#term-sai) VS + 全 docker） | [HLD](../../reference/glossary.md#term-hld) 検証、PR 自動テスト、CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) 動作確認 | [SONiC-VS のビルドと libvirt 起動手順](../../architecture/steps-to-bring-up-sonic-vs.md) |
+| SONiC-[VS](../../reference/glossary.md#term-vs) (libvirt / KVM) | 単体 SONiC NOS（[SAI](../../reference/glossary.md#term-sai) VS + 全 docker） | [HLD](../../reference/glossary.md#term-hld) 検証、PR 自動テスト、CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) 動作確認 | [SONiC-VS のビルドと libvirt 起動手順](../../architecture/steps-to-bring-up-sonic-vs.md) |
 | GNS3 + sonic-vs.img | SONiC-VS を GNS3 トポロジ内で配線 | 評価者・初学者の手元学習、ネットワーク図と組み合わせた構成検証 | [GNS3 VM 上での SONiC 動作](../../architecture/sonic-on-gns3-vm.md) |
 | ALViS / KNE (Alpine 仮想 SONiC) | Kubernetes ネイティブな軽量 SONiC | CI で多数ノードを並べる、KNE トポロジ統合 | [Alpine 仮想 SONiC](../../architecture/alpine-high-level-design.md) |
 | [DASH](../../reference/glossary.md#term-dash) SONiC KVM | [DPU](../../reference/glossary.md#term-dpu) / DASH appliance を BMv2 で代替 | DASH HLD・[ENI](../../reference/glossary.md#term-eni) ルール検証 | [DASH SONiC KVM](../../overlay/dash-sonic-kvm.md) |
@@ -64,4 +64,4 @@ bring-up 手順、libvirt 定義、image の作成方法は [SONiC-VS のビル�
 
 これらは仮想 lab では出てこないため、実機投入や DC への持ち込みフェーズでだけ読み返します。
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

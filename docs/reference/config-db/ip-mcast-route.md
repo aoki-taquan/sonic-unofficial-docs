@@ -531,7 +531,7 @@ gP4Orch = new P4Orch(m_applDb, p4rt_tables, m_p4OrchZmqServer, vrf_orch, gCoppOr
 
 ### SAI 実装要件
 
-`SAI_OBJECT_TYPE_IPMC_GROUP` / `SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER` / `SAI_OBJECT_TYPE_IPMC_ENTRY` / `SAI_OBJECT_TYPE_RPF_GROUP` を実装した SAI アダプタが必要。Virtual Switch (VS) SAI はこれらをスタブ実装する。スキーマ・書込パス自体に platform 条件分岐はなく、SAI 実装の可否のみが差異となる。
+`SAI_OBJECT_TYPE_IPMC_GROUP` / `SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER` / `SAI_OBJECT_TYPE_IPMC_ENTRY` / `SAI_OBJECT_TYPE_RPF_GROUP` を実装した SAI アダプタが必要。Virtual Switch ([VS](../../reference/glossary.md#term-vs)) SAI はこれらをスタブ実装する。スキーマ・書込パス自体に platform 条件分岐はなく、SAI 実装の可否のみが差異となる。
 <!-- /platform -->
 
 ## 購読者
@@ -555,4 +555,4 @@ gP4Orch = new P4Orch(m_applDb, p4rt_tables, m_p4OrchZmqServer, vrf_orch, gCoppOr
 [^2]: SAI 固定属性: `ip_multicast_manager.cpp:L54-79` `prepareIpmcSaiAttrs()` および `L699-721` `prepareSaiIpmcEntry()`
 [^3]: RPF group ライフサイクル: `ip_multicast_manager.cpp:L647-697` `createDefaultRpfGroup()` / `L687-697` `deleteDefaultRpfGroup()`
 
-<!-- glossary-links-injected: 9f7d57d168bb -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

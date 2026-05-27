@@ -385,7 +385,7 @@ ALARM 行が立つ「条件」は機種依存だが、立った瞬間の書込�
 
 ### System LED 連動はドライバ依存
 
-`system-health/manager.py:75-79` の `chassis.set_status_led(color)` は `sonic-platform-common/sonic_platform_base/chassis_base.py` の抽象 API。ALARM_STATS severity 別カウンタ → LED 色のマッピング自体は機種共通だが、**最終的な LED ハードウェア書込は platform plugin (`device/<vendor>/<sku>/plugins/`) 実装依存**。`NotImplementedError` を握り潰すため、対応ドライバが無い VS や一部機種では LED 色付けが no-op となる。
+`system-health/manager.py:75-79` の `chassis.set_status_led(color)` は `sonic-platform-common/sonic_platform_base/chassis_base.py` の抽象 API。ALARM_STATS severity 別カウンタ → LED 色のマッピング自体は機種共通だが、**最終的な LED ハードウェア書込は platform plugin (`device/<vendor>/<sku>/plugins/`) 実装依存**。`NotImplementedError` を握り潰すため、対応ドライバが無い [VS](../../reference/glossary.md#term-vs) や一部機種では LED 色付けが no-op となる。
 
 ### スキーマ固定要素 (機種非依存)
 
@@ -497,4 +497,4 @@ sonic-db-cli EVENT_DB hgetall 'ALARM_STATS|state'
 - `show alarm summary` で severity 別カウントを確認できる
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 4916c06d5d38 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

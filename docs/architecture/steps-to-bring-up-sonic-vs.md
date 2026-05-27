@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-[SONiC](../reference/glossary.md#term-sonic)-VS（Virtual Switch）は [ASIC](../reference/glossary.md#term-asic) を [SAI](../reference/glossary.md#term-sai) VS バックエンドで模した仮想イメージで、KVM/libvirt 上で起動して機能テストやトポロジ実験に使う。本ドキュメントは [`doc/test/Bring-up_Sonic-VS_on_Cloud_top.md`](https://github.com/sonic-net/SONiC/blob/master/doc/test/Bring-up_Sonic-VS_on_Cloud_top.md) を基にした手順サマリである[^1]。
+[SONiC](../reference/glossary.md#term-sonic)-[VS](../reference/glossary.md#term-vs)（Virtual Switch）は [ASIC](../reference/glossary.md#term-asic) を [SAI](../reference/glossary.md#term-sai) VS バックエンドで模した仮想イメージで、KVM/libvirt 上で起動して機能テストやトポロジ実験に使う。本ドキュメントは [`doc/test/Bring-up_Sonic-VS_on_Cloud_top.md`](https://github.com/sonic-net/SONiC/blob/master/doc/test/Bring-up_Sonic-VS_on_Cloud_top.md) を基にした手順サマリである[^1]。
 
 [GNS3 経路](sonic-on-gns3-vm.md) は GUI 中心、本ページは **CLI で libvirt を直接叩く** 経路。
 
@@ -201,4 +201,4 @@ show interfaces status
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

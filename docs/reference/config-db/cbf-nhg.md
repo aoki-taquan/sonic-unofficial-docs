@@ -382,7 +382,7 @@ orchdaemon select() ループ
 
 ### SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED サポート
 
-CBF NHG は `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` を SAI に渡す (`cbfnhgorch.cpp:302`)。このグループ型のサポートはプラットフォーム依存であり、[ASIC](../../reference/glossary.md#term-asic) ベンダーごとに異なる。VS プラットフォームはスタブ実装として `SAI_STATUS_SUCCESS` を返すが実転送はない。
+CBF NHG は `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` を SAI に渡す (`cbfnhgorch.cpp:302`)。このグループ型のサポートはプラットフォーム依存であり、[ASIC](../../reference/glossary.md#term-asic) ベンダーごとに異なる。[VS](../../reference/glossary.md#term-vs) プラットフォームはスタブ実装として `SAI_STATUS_SUCCESS` を返すが実転送はない。
 
 ### NHG 総数上限: Mellanox のみ補正
 
@@ -481,4 +481,4 @@ sonic-db-cli APPL_DB hgetall 'CLASS_BASED_NEXT_HOP_GROUP_TABLE:CbfNhg1'
 - `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX` は `CREATE_ONLY` 属性のため、member 順序変更時は全 member を remove → 再 sync する仕様 (`cbfnhgorch.cpp:509-516`)。
 <!-- /defaults -->
 
-<!-- glossary-links-injected: 7cd294aa7227 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

@@ -503,7 +503,7 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 | Broadcom XGS (modern Broadcom SAI) | true 想定 | 一般的に対応 |
 | Mellanox / NVIDIA SDK (mlnx-sai) | true | community master で動作実績 |
 | Broadcom DNX / Marvell / Cisco silicon-one | SDK バージョン依存 | `show flowcnt-route capabilities` で要確認 |
-| **VS (libsaivs) / VPP (libsaivpp)** | **false** | SAI スタブが未実装応答 |
+| **[VS](../../reference/glossary.md#term-vs) (libsaivs) / VPP (libsaivpp)** | **false** | SAI スタブが未実装応答 |
 
 ユーザ側からは `show flowcnt-route capabilities`（STATE_DB の `FLOW_COUNTER_CAPABILITY_TABLE` を読む）で `support: false` を確認できる。
 
@@ -519,7 +519,7 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 
 ### VS / VPP プラットフォーム
 
-VS / VPP では `queryRouteFlowCounterCapability()` が `false` を返すため route flow counter は完全に no-op になる。trap flow counter は受理されカウンタオブジェクトが生え `COUNTERS_DB` にも値が出るが、SAI 側の dummy 実装で実トラフィックを反映しない。[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt) の `test_flow_counter_*` は VS では route 系を原則スキップする。
+[VS](../../reference/glossary.md#term-vs) / VPP では `queryRouteFlowCounterCapability()` が `false` を返すため route flow counter は完全に no-op になる。trap flow counter は受理されカウンタオブジェクトが生え `COUNTERS_DB` にも値が出るが、SAI 側の dummy 実装で実トラフィックを反映しない。[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt) の `test_flow_counter_*` は [VS](../../reference/glossary.md#term-vs) では route 系を原則スキップする。
 
 ### プラットフォーム共通の定数
 
@@ -702,4 +702,4 @@ VS / VPP では `queryRouteFlowCounterCapability()` が `false` を返すため 
 [^3]: SAI route counter 能力チェック: `sonic-swss/orchagent/flex_counter/flow_counter_handler.cpp:51-62`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/flex_counter/flow_counter_handler.cpp#L51>
 [^4]: Generic counter stat リスト: `sonic-swss/orchagent/flex_counter/flow_counter_handler.cpp:10-13`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/flex_counter/flow_counter_handler.cpp#L10>
 
-<!-- glossary-links-injected: 9bcb85368516 -->
+<!-- glossary-links-injected: ca6bc30b1f0e -->

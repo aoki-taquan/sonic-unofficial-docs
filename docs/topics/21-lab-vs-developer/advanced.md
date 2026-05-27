@@ -44,7 +44,7 @@ DASH 章本文の機能仕様と組で読むのが前提で、DPU の HW 機能�
 
 ALViS / KNE は、多数ノードを軽量にデプロイしたい場合の選択肢です。CI で `n` 台の SONiC を立てる、KNE で他 NOS と混在 topology を組む、Pod 単位で個別 reload するなどの運用が想定されています。設計と制約は [Alpine 仮想 SONiC](../../architecture/alpine-high-level-design.md) を読みます。
 
-実装は本家 SONiC-VS と一致しない部分があるため、機能完全性が必要なテストは SONiC-VS で、ノード数が必要なテストは ALViS で、と棲み分けます。
+実装は本家 SONiC-[VS](../../reference/glossary.md#term-vs) と一致しない部分があるため、機能完全性が必要なテストは SONiC-VS で、ノード数が必要なテストは ALViS で、と棲み分けます。
 
 ## 仮想で再現しづらい依存
 
@@ -143,4 +143,4 @@ virtual / 物理間で動作が乖離する代表領域は次のとおり。
 - KNE / ALViS 系の community 連携で SONiC-VS イメージ整備と config template 提供が議題化。
 - CI の Azure Pipelines / GitHub Actions 共通化議論が継続している。
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

@@ -532,7 +532,7 @@ YANG の `tc_type` は `uint8 0..15` を許容するが、実用上 TC 8..15 を
 | プラットフォーム | TC 8..15 の扱い |
 |-----------------|----------------|
 | Broadcom 等物理 ASIC | SAI が TC 0..7 のみ有効化し TC 8..15 エントリを無視するか、マップ全体を拒否する（SAI 実装依存） |
-| VS (仮想スイッチ) | `create_qos_map()` は成功するが ASIC 反映なし |
+| [VS](../../reference/glossary.md#term-vs) (仮想スイッチ) | `create_qos_map()` は成功するが ASIC 反映なし |
 
 ### プラットフォーム差異サマリ
 
@@ -581,4 +581,4 @@ YANG の `tc_type` は `uint8 0..15` を許容するが、実用上 TC 8..15 を
 
 <!-- glossary-links-injected: tc-to-priority-group-map -->
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

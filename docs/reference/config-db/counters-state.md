@@ -485,7 +485,7 @@ STATE_DB
 | プラットフォーム状況 | 挙動 |
 |---------------------|------|
 | WRED をハードウェア実装した [ASIC](../../reference/glossary.md#term-asic) (Broadcom Tomahawk 系・Mellanox Spectrum 系等) | 対応する WRED 統計 enum が返却 → 該当フィールドが `isSupported="true"` に更新 |
-| WRED サポートなし ASIC / VS (virtual switch) | `SAI_STATUS_SUCCESS` でも対象 enum が含まれない → 全フィールドが `"false"` のまま残る |
+| WRED サポートなし ASIC / [VS](../../reference/glossary.md#term-vs) (virtual switch) | `SAI_STATUS_SUCCESS` でも対象 enum が含まれない → 全フィールドが `"false"` のまま残る |
 | SAI query 自体が失敗 (`SAI_STATUS_NOT_IMPLEMENTED` 等) | `SWSS_LOG_NOTICE` を出力して続行。全フィールドが初期値 `"false"` のまま |
 
 `sai_query_stats_capability()` は 2 段階クエリを採用する: 最初に `count=0 / list=nullptr` で呼び出し、`SAI_STATUS_BUFFER_OVERFLOW` が返った場合に返却 count 分のバッファを確保して再クエリ (portsorch.cpp:1883-1895, 1930-1942)。`BUFFER_OVERFLOW` でも `SUCCESS` でもない戻り値 (`NOT_IMPLEMENTED` 等) の場合は再クエリせず全フィールドが `"false"` のまま。
@@ -512,7 +512,7 @@ getSupportedCounterTypes() の失敗パス:
 |---------------------|---------------------------|
 | SAI debug counter サポートあり ASIC | counter_type ごとにエントリが書き込まれる (count, reasons フィールド) |
 | SAI debug counter 未サポート ASIC | テーブルが空のまま。`show debug-counter capabilities` の出力も空 |
-| VS (virtual switch) | SAI stub 実装により通常 debug counter サポートなし → テーブル空 |
+| [VS](../../reference/glossary.md#term-vs) (virtual switch) | SAI stub 実装により通常 debug counter サポートなし → テーブル空 |
 
 ### portstat.py の列数とプラットフォームの関係
 
@@ -545,4 +545,4 @@ getSupportedCounterTypes() の失敗パス:
 [^9]: portsorch.cpp:9102-9129 (`generatePortCounterMap`)。FLEX_COUNTER_DB への登録のみで STATE_DB への読み書きなし
 [^10]: portstat.py:295-331。`wred_green_pkt_stat_capable` 等のグローバル変数に `STATE_DB HGET` 結果を格納し、`!= "true"` の場合に `counter_bucket_dict` から該当 SAI カウンタを削除する
 
-<!-- glossary-links-injected: d4406e835d7e -->
+<!-- glossary-links-injected: 0af8863862be -->

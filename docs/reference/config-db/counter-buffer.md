@@ -126,8 +126,8 @@ VoQ (Virtual Output Queue) 環境では追加で:
 
 | SAI フィールド | 意味 |
 |---------------|------|
-| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` | [WRED](../../reference/glossary.md#term-wred) ECN マークパケット数 |
-| `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` | [WRED](../../reference/glossary.md#term-wred) ECN マークバイト数 |
+| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` | [WRED](../../reference/glossary.md#term-wred) [ECN](../../reference/glossary.md#term-ecn) マークパケット数 |
+| `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` | [WRED](../../reference/glossary.md#term-wred) [ECN](../../reference/glossary.md#term-ecn) マークバイト数 |
 | `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` | WRED ドロップパケット数 |
 | `SAI_QUEUE_STAT_WRED_DROPPED_BYTES` | WRED ドロップバイト数 |
 
@@ -813,4 +813,4 @@ WRED 統計 (`SAI_QUEUE_STAT_WRED_*`) は `sai_query_stats_capability()` (portso
 [^20]: APPL_STATE_DB ResponsePublisher: `sonic-swss/orchagent/bufferorch.cpp:555,589,832,880`, `orchagent/orch.h:382`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.cpp#L555>
 [^21]: FLEX_COUNTER_TABLE Buffer Pool WM 登録: `sonic-swss/orchagent/bufferorch.cpp:247,333-358`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.cpp#L247>
 
-<!-- glossary-links-injected: c94aa78f10ad -->
+<!-- glossary-links-injected: 27618ff2c697 -->

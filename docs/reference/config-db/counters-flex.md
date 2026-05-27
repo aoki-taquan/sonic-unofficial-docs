@@ -164,8 +164,8 @@ VoQ 対応時は `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が追加される�
 
 | SAI stat | 意味 |
 |---------|------|
-| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` | ECN マーキングパケット数 |
-| `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` | ECN マーキングバイト数 |
+| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` | [ECN](../../reference/glossary.md#term-ecn) マーキングパケット数 |
+| `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` | [ECN](../../reference/glossary.md#term-ecn) マーキングバイト数 |
 | `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` | WRED ドロップパケット数 |
 | `SAI_QUEUE_STAT_WRED_DROPPED_BYTES` | WRED ドロップバイト数 |
 
@@ -644,4 +644,4 @@ Mellanox Spectrum では `SAI_PORT_STAT_DROPPED_TRIM_PACKETS` をネイティブ
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: db36ca77bbc1 -->
+<!-- glossary-links-injected: 27618ff2c697 -->

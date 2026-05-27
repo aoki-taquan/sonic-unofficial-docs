@@ -805,7 +805,7 @@ orchdaemon の select timeout: `SELECT_TIMEOUT = 1000` ms (orchdaemon.cpp:23,959
 | [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | PVST インスタンス上限のみ影響 | `getStpMaxInstances()` が `STATE_STP_TABLE\|GLOBAL.max_stp_inst` を読み取り、[ASIC](../../reference/glossary.md#term-asic) 能力 (`sai_switch_attr_max_stp_instance`) が実効上限になる。stpmgrd の処理ロジック自体は [ASIC](../../reference/glossary.md#term-asic) 非依存 (`stpmgr.cpp:1381-1413`) |
 | multi-asic (`is_multi_npu() == True`) | 非対応 | `stpmgrd.cpp:35-37` は `DBConnector` をすべて `DEFAULT_UNIXSOCKET`（ホスト namespace）で生成。`is_multi_npu()` / CHASSIS_APP_DB 参照なし。asicN namespace の STP は管理されない |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | stpmgrd はホスト単体スコープ。他カードとの PVST 状態同期機構は存在しない |
-| VS（仮想スイッチ） | `max_stp_instances` がフォールバック 255 | VS では `StpOrch` が `STATE_STP_TABLE\|GLOBAL.max_stp_inst` を書き込まない場合が多く、`STP_DEFAULT_MAX_INSTANCES = 255` が使われる |
+| [VS](../../reference/glossary.md#term-vs)（仮想スイッチ） | `max_stp_instances` がフォールバック 255 | [VS](../../reference/glossary.md#term-vs) では `StpOrch` が `STATE_STP_TABLE\|GLOBAL.max_stp_inst` を書き込まない場合が多く、`STP_DEFAULT_MAX_INSTANCES = 255` が使われる |
 | warm-reboot | 全プラットフォーム共通スタブ | `WarmStart::initialize/checkWarmStart` を呼ぶが `setWarmStartState()` および reconcile ロジックは未実装。cold reboot と同一フロー |
 | PVST BPDU ebtables ルール | ASIC 非依存（カーネル依存のみ） | `ebtables -A FORWARD -d 01:00:0c:cc:cc:cd -j DROP` はカーネルの ebtables モジュール使用。ASIC ベンダー固有処理なし (`stpmgr.cpp:113`) |
 
@@ -822,4 +822,4 @@ orchdaemon の select timeout: `SELECT_TIMEOUT = 1000` ms (orchdaemon.cpp:23,959
 - [CONFIG_DB: PORT](port.md)
 - [CONFIG_DB: PORTCHANNEL](portchannel.md)
 
-<!-- glossary-links-injected: 07d24e4e47ef -->
+<!-- glossary-links-injected: 0af8863862be -->

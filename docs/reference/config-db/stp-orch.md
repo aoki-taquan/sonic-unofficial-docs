@@ -730,7 +730,7 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 | 観点 | 結果 | 根拠 |
 |------|------|------|
 | ASIC 種別 (Broadcom / Mellanox 等) | SAI 取得成否で `max_stp_instances` が変わるのみ。処理ロジックは同一 | `stporch.cpp:34-42` |
-| VS（仮想スイッチ） | SAI 取得失敗時は `m_defaultStpId` / `m_maxStpInstance` 未初期化のまま動作継続 | `stporch.cpp:42` (`ret = false` ログのみ) |
+| [VS](../../reference/glossary.md#term-vs)（仮想スイッチ） | SAI 取得失敗時は `m_defaultStpId` / `m_maxStpInstance` 未初期化のまま動作継続 | `stporch.cpp:42` (`ret = false` ログのみ) |
 | multi-asic (`is_multi_npu() == True`) | 非対応（分岐なし） | `stporch.cpp` 全体に `is_multi_npu` 出現なし |
 | [VOQ](../../reference/glossary.md#term-voq) chassis | 各 host で独立適用 | CHASSIS_APP_DB / asicN 参照なし |
 | warm-reboot | 対応コードなし（全プラットフォーム共通） | `stporch.cpp` に `WarmStart` 参照なし |
@@ -767,4 +767,4 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 - [CONFIG_DB: STP_PORT テーブル](stp-port.md)
 - [CONFIG_DB: VLAN](vlan.md)
 
-<!-- glossary-links-injected: 5035a8ce363b -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

@@ -109,7 +109,7 @@ VOQ chassis 固有のテーマは、機能としては既存の章（BGP、LAG�
 - **VOQ scheduling と credit loop**: ingress VOQ が egress credit を受けて送出する仕組みで、credit return が遅延すると HOL blocking が出る。[SAI](../../reference/glossary.md#term-sai) 側 `SAI_QUEUE_ATTR_PFC_DLR_INIT_TYPE` などで dead-lock 検出と復旧を行う。
 - **Chassis DB の scale**: line card / port / nexthop が増えると Chassis DB の [Redis](../../reference/glossary.md#term-redis) サイズが伸びる。memory pressure と replication 遅延が運用課題になる。
 - **packet trim (truncate)**: drop されるパケットの header だけ collector に送って visibility を確保する手法。chassis 級 drop 解析で有効。
-- **Multi-ASIC host のテスト**: VS テストで multi-ASIC を再現する場合 ([21 Lab](../21-lab-vs-developer/index.md))、namespace ごとの sonic-vs を立ち上げる手順がある。
+- **Multi-ASIC host のテスト**: [VS](../../reference/glossary.md#term-vs) テストで multi-ASIC を再現する場合 ([21 Lab](../21-lab-vs-developer/index.md))、namespace ごとの sonic-vs を立ち上げる手順がある。
 
 ## 既知の制約と回避方法
 
@@ -127,7 +127,7 @@ VOQ chassis 固有のテーマは、機能としては既存の章（BGP、LAG�
 ## 関連 RFC / 仕様書
 
 - [IEEE 802.1Qcz](https://1.ieee802.org/dcb/) — Congestion Isolation (fabric 内 [PFC](../../reference/glossary.md#term-pfc) のヒント)
-- [RFC 7567](https://datatracker.ietf.org/doc/html/rfc7567) — AQM (VOQ credit と組合せ参考)
+- [RFC 7567](https://datatracker.ietf.org/doc/html/rfc7567) — [AQM](../../reference/glossary.md#term-aqm) (VOQ credit と組合せ参考)
 - VOQ アーキテクチャは商用 ASIC ベンダー仕様書に依存し、IETF/IEEE 標準は限定的。
 
 ## upstream 開発の最新動向
@@ -136,4 +136,4 @@ VOQ chassis 固有のテーマは、機能としては既存の章（BGP、LAG�
 - `sonic-swss` の `vrforch` / `routeorch` / `lagorch` で system port / system LAG 周りの race fix が散発的に入る。
 - VOQ chassis のテスト基盤 ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)) で multi-DUT scenario の coverage 拡張 PR が定期的にある。
 
-<!-- glossary-links-injected: 5c9b3765d470 -->
+<!-- glossary-links-injected: 43545be63186 -->

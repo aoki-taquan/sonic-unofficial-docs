@@ -311,7 +311,7 @@ Dynamic Port Breakout ([DPB](../reference/glossary.md#term-dpb)) 機能が最新
 
 ### VS (Virtual Switch) イメージで config reload が失敗する問題（sonic-buildimage#5959）
 
-VS (Virtual Switch) イメージで config reload が失敗する問題。VS 環境では一部のプラットフォーム固有サービスが利用できないため、VS 用の設定を使用すること
+[VS](../reference/glossary.md#term-vs) (Virtual Switch) イメージで config reload が失敗する問題。VS 環境では一部のプラットフォーム固有サービスが利用できないため、VS 用の設定を使用すること
 
 - 参照: [sonic-net/sonic-buildimage#5959](https://github.com/sonic-net/sonic-buildimage/issues/5959)
 
@@ -408,4 +408,4 @@ docker images | grep sonic
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 52137ef90356 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

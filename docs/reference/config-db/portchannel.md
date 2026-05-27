@@ -772,7 +772,7 @@ LAG メンバの enabled/disabled 状態を切り替えるとき、orchagent は
 
 ### `SAI_LAG_ATTR_TPID` — ASIC 対応依存
 
-`setLagTpid()` は capability チェックなしに `SAI_LAG_ATTR_TPID` を直接 SET する (portsorch.cpp:8273-8277)。Q-in-Q TPID (0x9100/0x9200/0x88a8/0x88A8) をサポートしない ASIC では `SAI_STATUS_NOT_SUPPORTED` が返り SWSS_LOG_ERROR が出力される。VS (Virtual Switch) SAI は `SAI_LAG_ATTR_TPID` の SET をサポートしないため、VS 環境での TPID 設定は常にエラーになる[^plat1]。
+`setLagTpid()` は capability チェックなしに `SAI_LAG_ATTR_TPID` を直接 SET する (portsorch.cpp:8273-8277)。Q-in-Q TPID (0x9100/0x9200/0x88a8/0x88A8) をサポートしない ASIC では `SAI_STATUS_NOT_SUPPORTED` が返り SWSS_LOG_ERROR が出力される。[VS](../../reference/glossary.md#term-vs) (Virtual Switch) SAI は `SAI_LAG_ATTR_TPID` の SET をサポートしないため、[VS](../../reference/glossary.md#term-vs) 環境での TPID 設定は常にエラーになる[^plat1]。
 
 ### プラットフォーム識別子 (orch.h)
 
@@ -787,4 +787,4 @@ orchagent は `platform` 環境変数の部分文字列でベンダーを識別�
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 7c180e687fe7 -->
+<!-- glossary-links-injected: 0af8863862be -->

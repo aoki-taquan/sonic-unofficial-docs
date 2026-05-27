@@ -522,7 +522,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 {%- set pfc_to_pg_map_supported_asics = ['mellanox', 'barefoot'] -%}
 ```
 
-`config qos reload` 実行時、`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` テーブルが CONFIG_DB に投入されるのは **Mellanox (NVIDIA) と Barefoot (Intel Tofino) プラットフォームのみ** (`qos_config.j2:395-410`)。Broadcom / Marvell / Cisco-8000 / VS では本テーブルが生成されない。
+`config qos reload` 実行時、`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` テーブルが CONFIG_DB に投入されるのは **Mellanox (NVIDIA) と Barefoot (Intel Tofino) プラットフォームのみ** (`qos_config.j2:395-410`)。Broadcom / Marvell / Cisco-8000 / [VS](../../reference/glossary.md#term-vs) では本テーブルが生成されない。
 
 | [ASIC](../../reference/glossary.md#term-asic) / プラットフォーム | テーブル生成 | デフォルトマップ名 |
 |------------------------|------------|-----------------|
@@ -531,7 +531,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 | Broadcom | なし | — |
 | Marvell (Prestera) | なし | — |
 | Cisco-8000 | なし | — |
-| VS (virtual switch) | なし | — |
+| [VS](../../reference/glossary.md#term-vs) (virtual switch) | なし | — |
 
 ### PORT_QOS_MAP の `pfc_to_pg_map` も同様に制限
 
@@ -557,4 +557,4 @@ Mellanox DualToR 構成 (`port_names_list_extra_queues` が非空) では `AZURE
 <!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-platform.md -->
 <!-- /platform -->
 
-<!-- glossary-links-injected: c8fc2a4df2a1 -->
+<!-- glossary-links-injected: 0af8863862be -->

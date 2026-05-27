@@ -50,7 +50,7 @@ related:
 
 | 観点 | Alpha | Beta | GA |
 |------|-------|------|----|
-| Unit / VS テスト（カバレッジ整合） | 必須 | 必須 | 必須 |
+| Unit / [VS](../reference/glossary.md#term-vs) テスト（カバレッジ整合） | 必須 | 必須 | 必須 |
 | `enabled/disabled` を [CONFIG_DB](../reference/glossary.md#term-config_db) で制御 | **disabled** 既定 | **disabled** 既定 | [HLD](../reference/glossary.md#term-hld) で求める場合のみ enabled 既定 |
 | 投入先 | master のみ | master のみ | master + 必要なら backport 可 |
 | SAI vendor 実装 | 不要 | **1 vendor 以上で利用可** | **1 vendor 以上で利用可** |
@@ -98,4 +98,4 @@ related:
 
 [^1]: [sonic-net/SONiC doc/guidelines/SONiC feature quality definition.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/guidelines/SONiC%20feature%20quality%20definition.md)
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

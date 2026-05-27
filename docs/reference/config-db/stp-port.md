@@ -650,7 +650,7 @@ if (max_stp_instances == 0)
 |-------------------|-------------|---------------------------|
 | 多くの Broadcom [ASIC](../../reference/glossary.md#term-asic) | 成功 (255 以上) | SAI 値 - 1 |
 | 一部 Marvell / 低グレード ASIC | 成功 (少ない値) | SAI 値 - 1 |
-| VS (仮想スイッチ) | 失敗 または 0 | `STP_DEFAULT_MAX_INSTANCES` = 255 (フォールバック) |
+| [VS](../../reference/glossary.md#term-vs) (仮想スイッチ) | 失敗 または 0 | `STP_DEFAULT_MAX_INSTANCES` = 255 (フォールバック) |
 
 この制限は `STP_PORT` を直接は参照しないが、`doStpVlanTask()` の `IS_INST_ID_AVAILABLE()` マクロが
 インスタンス割り当て上限をチェックすることで間接的に有効化可能な VLAN 数（= STP_PORT が関連付けられる VLAN 数）を制限する。
@@ -668,7 +668,7 @@ PVST が有効な環境でのみ `STP_PORT` が stpd に到達するため間接
 | 環境 | 挙動 |
 |------|------|
 | 標準 [SONiC](../../reference/glossary.md#term-sonic) (物理 ASIC) | ebtables 有効。PVST+ マルチキャストが遮断され STP_PORT 設定が stpd に反映される |
-| VS (仮想スイッチ) | ebtables 呼び出しは成功するが、仮想環境ではハードウェアフラッディングが発生しないため実効影響なし |
+| [VS](../../reference/glossary.md#term-vs) (仮想スイッチ) | ebtables 呼び出しは成功するが、仮想環境ではハードウェアフラッディングが発生しないため実効影響なし |
 | ebtables 非存在環境 (コンテナ) | `system()` 失敗。`SWSS_LOG_DEBUG` のみ出力され stpmgrd は継続動作する |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) | stpmgrd 通常非起動のため対象外 |
 
@@ -682,7 +682,7 @@ PVST が有効な環境でのみ `STP_PORT` が stpd に到達するため間接
 |----------------|--------------|------------------|----------|
 | 物理 ASIC (PVST) | PVST フィールドセット | SAI 照会値 - 1 | 有効 |
 | 物理 ASIC (MSTP) | MST フィールドセット | SAI 照会値 - 1 | 無効 |
-| VS (仮想スイッチ) | 動作 | 255 (フォールバック) | no-op の場合あり |
+| [VS](../../reference/glossary.md#term-vs) (仮想スイッチ) | 動作 | 255 (フォールバック) | no-op の場合あり |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) | 非起動 | N/A | N/A |
 
 <!-- /platform -->
@@ -711,4 +711,4 @@ PVST が有効な環境でのみ `STP_PORT` が stpd に到達するため間接
 - [CONFIG_DB: PORT](port.md)
 - [CONFIG_DB: PORTCHANNEL](portchannel.md)
 
-<!-- glossary-links-injected: 59b64402d6ab -->
+<!-- glossary-links-injected: ca6bc30b1f0e -->

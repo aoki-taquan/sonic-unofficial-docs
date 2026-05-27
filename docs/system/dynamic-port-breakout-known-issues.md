@@ -149,7 +149,7 @@ breakout CLI doesn't work when None is included in platform.json
 
 ### 3-1. PORT HOST IF 削除失敗 (#7403)
 
-VS（Virtual Switch）環境での DPB 中に `sai_remove_hostif` が失敗する。
+[VS](../reference/glossary.md#term-vs)（Virtual Switch）環境での DPB 中に `sai_remove_hostif` が失敗する。
 
 ```
 swss#orchagent: Failed to remove host interface for port
@@ -295,4 +295,4 @@ flowchart TD
 - [動的ポートブレイクアウト HLD](sonic-dynamic-port-breakout-feature-high-level-design.md)
 - [YANG モデルリファレンス](../reference/yang/index.md)
 
-<!-- glossary-links-injected: 1a4fdb39de53 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

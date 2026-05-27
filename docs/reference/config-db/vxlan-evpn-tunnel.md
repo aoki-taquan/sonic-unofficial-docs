@@ -481,7 +481,7 @@ EVPN DIP トンネルは `VxlanTunnel` コンストラクタの `ttl_mode` 引�
 |--------------------|----------------------|
 | Broadcom XGS / Trident / Tomahawk | `PIPE` (実装依存) |
 | Mellanox / NVIDIA Spectrum | `PIPE` (実装依存) |
-| VS (仮想スイッチ) | SAI stub — 実際の TTL 書換なし |
+| [VS](../../reference/glossary.md#term-vs) (仮想スイッチ) | SAI stub — 実際の TTL 書換なし |
 | その他 [ASIC](../../reference/glossary.md#term-asic) | ベンダー定義。変更手段なし |
 
 `DEFAULT_TUNNEL_ENCAP_TTL = 255` (`vxlanorch.h:49`) は CLI 生成トンネル専用であり、EVPN DIP トンネルには**適用されない**。
@@ -575,4 +575,4 @@ show vxlan remotevtep
   ベンダーのドキュメントを参照。
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: b85d96c09662 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

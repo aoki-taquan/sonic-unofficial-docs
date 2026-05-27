@@ -38,7 +38,7 @@ related:
 2. **buffer profile / pool sizing 不足**: `BUFFER_POOL|ingress_lossless_pool` の `size` がトラフィック量に対して過小
 3. **対向側で [PFC](../../reference/glossary.md#term-pfc) pause を生成し続け、[PFC](../../reference/glossary.md#term-pfc) storm に陥っている**: PFC WD が queue を強制 disable
 4. **headroom 計算が cable length と一致していない** (`CABLE_LENGTH` テーブル誤設定)
-5. **MMU 共有プールの先頭飽和**: 他 priority のトラフィックが共有プールを食い潰し、lossless 用 reserved が確保できない
+5. **[MMU](../../reference/glossary.md#term-mmu) 共有プールの先頭飽和**: 他 priority のトラフィックが共有プールを食い潰し、lossless 用 reserved が確保できない
 
 ## 切り分け手順
 
@@ -114,7 +114,7 @@ sonic-db-cli CONFIG_DB hgetall "CABLE_LENGTH|AZURE"
 - PFC storm を起こした queue の復旧: `pfcwd start_default` の再有効化、または特定ポートで `pfcwd start <action> <detect> <restore> <ports>` を実行
 - buffer pool / profile を `buffers.json.j2` / `buffers_defaults_*.j2` を見直して再生成
 - CABLE_LENGTH を実値に: `config interface cable-length Ethernet0 5m`
-- 根本対策: 対向 NIC 側 PFC 設定を点検（送信し過ぎていないか、CNP / ECN との連携が壊れていないか）
+- 根本対策: 対向 NIC 側 PFC 設定を点検（送信し過ぎていないか、CNP / [ECN](../../reference/glossary.md#term-ecn) との連携が壊れていないか）
 
 ## 確認
 
@@ -142,4 +142,4 @@ sonic-db-cli CONFIG_DB hgetall "CABLE_LENGTH|AZURE"
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — bufferorch / pfcwdorch
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — pfcwd CLI
 
-<!-- glossary-links-injected: eebb97ac8e67 -->
+<!-- glossary-links-injected: cc44fd62defe -->

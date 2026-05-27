@@ -553,7 +553,7 @@ CONFIG_DB  INTERFACE|<port>  {nat_zone=N}
 | NAT サポートプラットフォーム (`gIsNatSupported=true`) | 設定される (Loopback 除く) | 設定される |
 | NAT 非サポートプラットフォーム (`gIsNatSupported=false`) | 設定される (Loopback 除く) | スキップ (NOTICE ログのみ) |
 | Loopback インタフェース (`Loopback*`) | スキップ | 設定される (`gIsNatSupported=true` の場合) |
-| VS / テスト環境 | 試みるが失敗する場合あり | スキップ |
+| [VS](../../reference/glossary.md#term-vs) / テスト環境 | 試みるが失敗する場合あり | スキップ |
 
 ### `gIsNatSupported` の決定経路
 
@@ -573,7 +573,7 @@ main.cpp:936-948
 
 ### iptables mangle 経路はプラットフォーム非依存
 
-`natmgrd` (`NatMgr::doNatZoneIntfTask`) は `gIsNatSupported` を参照しない。NAT 非サポートプラットフォームでも CONFIG_DB に `nat_zone` が書かれていれば iptables mangle MARK ルールの設定を試みる。VS 環境ではカーネルの iptables が使用できない場合があり、その場合は natmgr がエラーログを出力して続行する。
+`natmgrd` (`NatMgr::doNatZoneIntfTask`) は `gIsNatSupported` を参照しない。NAT 非サポートプラットフォームでも CONFIG_DB に `nat_zone` が書かれていれば iptables mangle MARK ルールの設定を試みる。[VS](../../reference/glossary.md#term-vs) 環境ではカーネルの iptables が使用できない場合があり、その場合は natmgr がエラーログを出力して続行する。
 
 ### Loopback インタフェースの特殊扱い
 
@@ -583,4 +583,4 @@ Loopback (`Loopback*`) インタフェースは iptables MARK ルールの設定
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 876f1b587d85 -->
+<!-- glossary-links-injected: 0af8863862be -->

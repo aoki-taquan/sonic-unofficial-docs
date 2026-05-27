@@ -510,7 +510,7 @@ STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドの書込み�
 | Broadcom 旧世代 (Trident2 等) | `false`（get 未実装） | プラットフォーム次第 | `"N/A"` 固定 | フィールド不在 (NOT_IMPLEMENTED 多) | ✗ |
 | Mellanox/NVIDIA Spectrum | `true` | `true` | SAI oper 値 | SAI 対応モード CSV | ◎ |
 | [DPU](../../reference/glossary.md#term-dpu) | `false`（クエリスキップ） | `false`（クエリスキップ） | `"N/A"` 固定 | SAI 次第（多くは不在） | ✗ |
-| VS (仮想スイッチ) | `false`（SAI stub が unimplemented） | `false` | `"N/A"` 固定 | フィールド不在 | ✗ |
+| [VS](../../reference/glossary.md#term-vs) (仮想スイッチ) | `false`（SAI stub が unimplemented） | `false` | `"N/A"` 固定 | フィールド不在 | ✗ |
 
 ### `fec=auto` 設定とプラットフォーム制約
 
@@ -538,4 +538,4 @@ SAI capability クエリ結果（`oper_fec_sup` / `fec_override_sup`）のみで
 - アーキテクチャ: [`Port Auto FEC 設計`](../../architecture/sonic-port-auto-fec-design.md) — `fec=auto` モードと `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` の詳細
 - CLI: `show interfaces fec status` — oper / admin FEC をまとめて表示
 
-<!-- glossary-links-injected: 07d24e4e47ef -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

@@ -63,7 +63,7 @@ related:
 
 # Lab / Virtual SONiC / Developer Entry
 
-この章は、[SONiC](../../reference/glossary.md#term-sonic) を「実機を触らずに、あるいは小さな lab で」評価・開発・検証するための入口を整理する章です。SONiC-VS、GNS3 VM、ALViS / KNE、[DASH](../../reference/glossary.md#term-dash) SONiC KVM、PTF ベースのテスト計画は、それぞれ別の [HLD](../../reference/glossary.md#term-hld) として書かれているため、ここでは目的別にどれを使うかを並べ直します。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) を「実機を触らずに、あるいは小さな lab で」評価・開発・検証するための入口を整理する章です。SONiC-[VS](../../reference/glossary.md#term-vs)、GNS3 VM、ALViS / KNE、[DASH](../../reference/glossary.md#term-dash) SONiC KVM、PTF ベースのテスト計画は、それぞれ別の [HLD](../../reference/glossary.md#term-hld) として書かれているため、ここでは目的別にどれを使うかを並べ直します。
 
 仮想環境は実機の代替ではなく、設計と CI を回すための再現可能な箱です。[ASIC](../../reference/glossary.md#term-asic)・optics・PHY・thermal・PSU といった物理依存は仮想化されないため、virtual lab で何が確認でき、何が確認できないのかをはじめに区別しておきます。
 
@@ -154,4 +154,4 @@ related:
 - [P4 / PINS / Programmable Pipeline](../18-p4-pins/index.md)
 - [リファレンス横断索引](../22-reference-index/index.md)
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

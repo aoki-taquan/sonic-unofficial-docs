@@ -418,7 +418,7 @@ LAG メンバーの enabled/disabled 状態を切り替えるとき、orchagent 
 
 ### `SAI_LAG_ATTR_TPID` — ASIC 対応依存
 
-`setLagTpid()` (`portsorch.cpp:8267-8291`) は SAI capability チェックなしに `SAI_LAG_ATTR_TPID` を直接 SET する。`SAI_LAG_ATTR_TPID` に非対応の [ASIC](../../reference/glossary.md#term-asic) では `SAI_STATUS_NOT_SUPPORTED` が返り `SWSS_LOG_ERROR` が出力される。VS (Virtual Switch) SAI は `SAI_LAG_ATTR_TPID` の SET をサポートしないため、VS 環境での TPID 設定は常にエラーになる。APPL_DB の `tpid` フィールドへの書き込み (teammgrd 側) はプラットフォームに依らず行われる。
+`setLagTpid()` (`portsorch.cpp:8267-8291`) は SAI capability チェックなしに `SAI_LAG_ATTR_TPID` を直接 SET する。`SAI_LAG_ATTR_TPID` に非対応の [ASIC](../../reference/glossary.md#term-asic) では `SAI_STATUS_NOT_SUPPORTED` が返り `SWSS_LOG_ERROR` が出力される。[VS](../../reference/glossary.md#term-vs) (Virtual Switch) SAI は `SAI_LAG_ATTR_TPID` の SET をサポートしないため、[VS](../../reference/glossary.md#term-vs) 環境での TPID 設定は常にエラーになる。APPL_DB の `tpid` フィールドへの書き込み (teammgrd 側) はプラットフォームに依らず行われる。
 
 ### プラットフォーム識別定数
 
@@ -470,4 +470,4 @@ teamdctl PortChannel0001 state
 [^1]: teamsyncd teamsync.cpp: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/teamsyncd/teamsync.cpp>
 [^2]: teammgrd teammgr.cpp, portmgr.h: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/teammgr.cpp>
 
-<!-- glossary-links-injected: 5e563383a425 -->
+<!-- glossary-links-injected: 0af8863862be -->

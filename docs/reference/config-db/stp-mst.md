@@ -673,7 +673,7 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / [APPL_DB](../../reference/
 |---|---|---|
 | STATE_STP_TABLE 書込み済み | プラットフォームドライバが書いた値 | [ASIC](../../reference/glossary.md#term-asic) 依存（例: Broadcom は一般的に最大 64） |
 | 60 秒タイムアウト or 値 0 | `STP_DEFAULT_MAX_INSTANCES = 255` | ハードコードフォールバック (`stpmgr.h:38`) |
-| VS (virtual switch) | 多くの場合 255（STATE_DB 未書込のため） | テスト用フォールバック動作 |
+| [VS](../../reference/glossary.md#term-vs) (virtual switch) | 多くの場合 255（STATE_DB 未書込のため） | テスト用フォールバック動作 |
 
 `IS_INST_ID_AVAILABLE()` マクロ (`stpmgr.h:47`) が `l2InstPool.count() < max_stp_instances` でチェックするため、`max_stp_instances` の値がプラットフォームごとに異なると MST インスタンスの新規作成可能数が変わる。CLI バリデーション (`config/stp.py`) は `MST_MAX_INSTANCES = 63` で上限を固定しているため、stpd 側の制限が 63 以上であれば実用上の差は生じない。
 
@@ -701,7 +701,7 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / [APPL_DB](../../reference/
 
 ### プラットフォーム差まとめ
 
-| 差異項目 | 通常 ASIC | VS/テスト環境 | multi-asic / VoQ |
+| 差異項目 | 通常 ASIC | [VS](../../reference/glossary.md#term-vs)/テスト環境 | multi-asic / VoQ |
 |---|---|---|---|
 | `max_stp_instances` 上限 | STATE_DB 値（ASIC 依存） | 255（フォールバック） | 255（STATE_DB 未書込の場合が多い） |
 | multi-asic namespace 対応 | N/A（シングルのみ） | N/A | **非対応**（ホスト namespace のみ） |
@@ -733,4 +733,4 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / [APPL_DB](../../reference/
 - [CONFIG_DB: STP_VLAN / STP_VLAN_PORT](stp-vlan.md)
 - [CONFIG_DB: PORT](port.md)
 
-<!-- glossary-links-injected: e06ab6d23239 -->
+<!-- glossary-links-injected: 0af8863862be -->

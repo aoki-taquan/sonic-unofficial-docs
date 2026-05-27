@@ -78,7 +78,7 @@ VoQ Chassis では Supervisor と Line Card の TSA 状態同期が課題にな�
 | EVPN / [VNET](../../reference/glossary.md#term-vnet) / Overlay [ECMP](../../reference/glossary.md#term-ecmp) | VXLAN / EVPN / VNET |
 | [SRv6](../../reference/glossary.md#term-srv6) / [MPLS](../../reference/glossary.md#term-mpls) | Segment Routing / MPLS |
 | counter や telemetry の全体 | Observability / Telemetry 系の章 |
-| test plan や VS test | テスト計画の章 |
+| test plan や [VS](../../reference/glossary.md#term-vs) test | テスト計画の章 |
 
 ## 関連ページ
 
@@ -134,4 +134,4 @@ VRF / NHG / route の基本動作を超えた領域では、scale 改善と障�
 - VRF leaking の検証は `sonic-mgmt` の `vrf` test suite で network namespace を分けたシナリオを再現できる。leak 経路の `next-hop-vrf <other>` 設定と FIB 上の経路存在を `show ip route vrf <name>` で確認する。
 - WCMP の動作は `wcmp_manager` の weight 反映遅延を計測することで実機差を見える化できる。SAI vendor によっては bucket resize が atomic でなく数 ms の transient loss を伴う。
 
-<!-- glossary-links-injected: f08c435ee15d -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

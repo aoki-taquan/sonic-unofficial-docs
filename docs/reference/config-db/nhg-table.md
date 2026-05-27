@@ -574,7 +574,7 @@ if (nhg_key.is_srv6_nexthop()) {
 | Mellanox | **SAI生値 / 32** (補正あり) | SAI 既定値 | SAI capability 次第 | SAI capability 次第 |
 | Broadcom (XGS / DNX) | SAI 生値をそのまま採用 | SAI 既定値 | SAI capability 次第 | 一部 SKU 対応 |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (`switch_type=voq`) | SAI 生値をそのまま採用 | **128 に強制** | SAI capability 次第 | SAI capability 次第 |
-| VS (virtual) | SAI 生値をそのまま採用 | SAI 既定値 | SAI が 0 以外を返せば有効 | スタブ動作 |
+| [VS](../../reference/glossary.md#term-vs) (virtual) | SAI 生値をそのまま採用 | SAI 既定値 | SAI が 0 以外を返せば有効 | スタブ動作 |
 | SAI が NHG map 未対応 | — | — | **全件 reject** (CBF 無効) | — |
 
 !!! warning "Mellanox での ECMP グループ上限"
@@ -668,4 +668,4 @@ redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP*'
 
 [^1]: テーブル名定数: `sonic-swss-common/common/schema.h:55-56`. `APP_NEXTHOP_GROUP_TABLE_NAME = "NEXTHOP_GROUP_TABLE"`, `APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME = "CLASS_BASED_NEXT_HOP_GROUP_TABLE"`. NhgOrch 実装: `sonic-swss/orchagent/nhgorch.cpp`. CbfNhgOrch 実装: `sonic-swss/orchagent/cbf/cbfnhgorch.cpp`. fpmsyncd 書き込み: `sonic-swss/fpmsyncd/routesync.cpp:1138-1158`.
 
-<!-- glossary-links-injected: 85fdb7f3e7fa -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

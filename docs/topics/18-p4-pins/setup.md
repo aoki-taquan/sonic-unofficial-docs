@@ -284,7 +284,7 @@ show interfaces counters
 | `docker ps` に p4rt がいない | `FEATURE\|p4rt` が `disabled` または image に同梱されていない | `config feature state p4rt enabled` + `config save -y` + image が `INCLUDE_P4RT=y` でビルドされているか確認 |
 | controller から `Unavailable: Connection refused` | gRPC port が listen していない / container 内で bind 失敗 | `docker logs p4rt`、`grpc_port` の重複、ACL で 9559 が落ちていないか確認 |
 | controller から `Unauthenticated` | TLS 不一致、CA chain の検証失敗 | `server_cert` / `ca_cert` パスが container に mount されているか、`docker exec p4rt openssl x509 -in /etc/sonic/credentials/server.crt -noout -dates` で期限確認 |
-| `send_to_ingress` netdev が現れない | APPL_DB エントリが反映されていない / VS で SAI 対応外 | `redis-cli -n 0 KEYS 'SEND_TO_INGRESS*'`、`PortsOrch` ログ、ASIC が SAI_HOSTIF_TYPE_NETDEV + send_to_ingress を実装しているか確認 |
+| `send_to_ingress` netdev が現れない | APPL_DB エントリが反映されていない / [VS](../../reference/glossary.md#term-vs) で SAI 対応外 | `redis-cli -n 0 KEYS 'SEND_TO_INGRESS*'`、`PortsOrch` ログ、ASIC が SAI_HOSTIF_TYPE_NETDEV + send_to_ingress を実装しているか確認 |
 | PacketIn が来ない | CoPP trap が install されていない、policer drop | `redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF_TRAP:*'`、`show platform copp` (実装あれば)、`tcpdump -i psample` でカーネル側 genl の到達確認 |
 | `swssconfig` が COPP_GROUP の `genetlink_*` を無視する | キー名 typo / hostif table channel 未対応 | `genetlink_name` `genetlink_mcgrp_name` のスペルと、ASIC ベンダの SAI capability `SAI_HOSTIF_TABLE_ENTRY_CHANNEL_TYPE_GENETLINK` 対応有無を確認 |
 | ForwardingPipelineConfig push で `INVALID_ARGUMENT` | P4Info と SAI capability の不整合 | controller 側で対象 SKU 向け P4Info を使用、p4rt-app の `--p4info` ログを確認 |
@@ -318,4 +318,4 @@ PINS 系は `reference/cli/*`、`reference/config-db/p4rt.md`、`reference/yang/
 - [PacketIO HLD](../../management/packetio.md)
 - [Send to Ingress HLD](../../management/send-to-ingress-hld.md)
 
-<!-- glossary-links-injected: 4b7e3e133212 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

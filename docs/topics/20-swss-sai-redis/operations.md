@@ -244,7 +244,7 @@ ERR syncd#saidump: :- dumpFromRedisRdbJson: JSON parsing error: unexpected end o
 
 ## VS（virtual switch）環境の既知動作差異
 
-- **oper status 更新遅延**: admin down しても VS では port の oper status がしばらく `up` のまま残る場合がある。これは VS の tap device 経由でのリンク状態反映が実機の netlink と異なるためである（issue #555、PR #603 で修正済）。現行 master では解消しているが、古い image では発生する。
+- **oper status 更新遅延**: admin down しても [VS](../../reference/glossary.md#term-vs) では port の oper status がしばらく `up` のまま残る場合がある。これは VS の tap device 経由でのリンク状態反映が実機の netlink と異なるためである（issue #555、PR #603 で修正済）。現行 master では解消しているが、古い image では発生する。
 - **netlink message 受信の問題**: syncd-vs は起動直後の netlink dump は受け取れるが、その後の incremental link event を見失うことがある（issue #1357）。VS でのデータプレーン検証は制限付きと理解した上で使う。
 
 ## 関連ページ
@@ -259,4 +259,4 @@ ERR syncd#saidump: :- dumpFromRedisRdbJson: JSON parsing error: unexpected end o
 - [Build / Packaging 章](../19-build-packaging/index.md)（FEATURE / [hostcfgd](../../reference/glossary.md#term-hostcfgd) との関係）
 - [SRv6 / MPLS 章](../17-srv6-mpls/operations.md)（SAI 失敗の実例）
 
-<!-- glossary-links-injected: 841e6cdca746 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

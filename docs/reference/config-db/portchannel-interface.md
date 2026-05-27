@@ -781,7 +781,7 @@ RIF 削除時は上記エントリを `hdel` / `stopFlexCounterPolling` でク�
 | 環境 | 挙動 |
 |------|------|
 | MPLS カーネルモジュールあり | `sysctl` 成功 → MPLS 入力が有効化される |
-| MPLS カーネルモジュールなし / VS 軽量カーネル | `sysctl` が `ENOENT` / `EINVAL` → `intfmgrd` がエラーログを出力するが処理は継続 |
+| MPLS カーネルモジュールなし / [VS](../../reference/glossary.md#term-vs) 軽量カーネル | `sysctl` が `ENOENT` / `EINVAL` → `intfmgrd` がエラーログを出力するが処理は継続 |
 
 `mpls` フィールドが空文字の場合は `sysctl input=0` を実行してもエラーを無視する (`intfmgr.cpp:188-190`)。明示的に `mpls=enable` を設定した場合のみエラーが問題になる。
 
@@ -804,7 +804,7 @@ if (rc == 0) {
 | カーネルバージョン | 挙動 |
 |------------------|------|
 | 5.11+ (`accept_untracked_na` 導入済み) | sysctl ファイルが存在 → [NDP](../../reference/glossary.md#term-ndp) untracked NA 受け入れが設定される |
-| 5.10 以前 / VS 軽量カーネル | sysctl ファイルが存在しないため書込みをスキップ (エラーなし) |
+| 5.10 以前 / [VS](../../reference/glossary.md#term-vs) 軽量カーネル | sysctl ファイルが存在しないため書込みをスキップ (エラーなし) |
 
 この差異は `PORTCHANNEL_INTERFACE` テーブルの書込みや RIF 生成には影響せず、[NDP](../../reference/glossary.md#term-ndp) 近隣探索の細かい挙動差に留まる。
 
@@ -834,4 +834,4 @@ if (rc == 0) {
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp:169-190,601-611 (platform/getenv grep = 0 hits); sonic-swss/orchagent/intfsorch.cpp:1146-1164,1180-1243 (platform/getenv grep = 0 hits) -->
 <!-- /platform -->
 
-<!-- glossary-links-injected: e41770dcd7bc -->
+<!-- glossary-links-injected: 0af8863862be -->

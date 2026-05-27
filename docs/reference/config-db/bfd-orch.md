@@ -456,7 +456,7 @@ APPL_DB `BFD_SESSION_TABLE` に対応する [YANG](../../reference/glossary.md#t
 | `tx_interval` | `1000` ms | `#define BFD_SESSION_DEFAULT_TX_INTERVAL 1000` — `bfdorch.cpp:15` | SAI 投入時は ×1000 μs |
 | `rx_interval` | `1000` ms | `#define BFD_SESSION_DEFAULT_RX_INTERVAL 1000` — `bfdorch.cpp:16` | SAI 投入時は ×1000 μs |
 | `multiplier` | `10` (hardware) / `3` (software) | `#define BFD_SESSION_DEFAULT_DETECT_MULTIPLIER 10` — `bfdorch.cpp:17`; `MULTIPLIER = 3` — `managers_bfd.py:13` | `use_software_bfd` 経路で値が異なる |
-| `tos` | `192` ([DSCP](../../reference/glossary.md#term-dscp) 48 = CS6) | `#define BFD_SESSION_DEFAULT_TOS 192` — `bfdorch.cpp:18-19` | DSCP 48 (CS6) << 2 \| ECN 0 = 0xC0 |
+| `tos` | `192` ([DSCP](../../reference/glossary.md#term-dscp) 48 = CS6) | `#define BFD_SESSION_DEFAULT_TOS 192` — `bfdorch.cpp:18-19` | DSCP 48 (CS6) << 2 \| [ECN](../../reference/glossary.md#term-ecn) 0 = 0xC0 |
 | `multihop` | `false` | `bool multihop = false` — `bfdorch.cpp:347` | |
 | `local_addr` | **必須 (省略不可)** | `src_ip_provided == false` → エラーログ + スキップ — `bfdorch.cpp:409-413` | [YANG](../../reference/glossary.md#term-yang) mandatory なし、コードレベル強制 |
 | `dst_mac` | 条件付き必須 | `alias != "default"` のとき必須 — `bfdorch.cpp:491-495` | |
@@ -531,7 +531,7 @@ APPL_DB `BFD_SESSION_TABLE` に対応する [YANG](../../reference/glossary.md#t
 | `BFD_SESSION_DEFAULT_TX_INTERVAL` | `1000` ms | `tx_interval` 未指定時のデフォルト送信間隔。SAI 投入時に ×1000 μs 変換 | `bfdorch.cpp:15` |
 | `BFD_SESSION_DEFAULT_RX_INTERVAL` | `1000` ms | `rx_interval` 未指定時のデフォルト最小受信間隔。SAI 投入時に ×1000 μs 変換 | `bfdorch.cpp:16` |
 | `BFD_SESSION_DEFAULT_DETECT_MULTIPLIER` | `10` | `multiplier` 未指定時のデフォルト検知乗数 (hardware BFD 経路) | `bfdorch.cpp:17` |
-| `BFD_SESSION_DEFAULT_TOS` | `192` (0xC0) | `tos` 未指定時のデフォルト IP TOS。DSCP 48 << 2 \| ECN 0 = 192 | `bfdorch.cpp:18-19` |
+| `BFD_SESSION_DEFAULT_TOS` | `192` (0xC0) | `tos` 未指定時のデフォルト IP TOS。DSCP 48 << 2 \| [ECN](../../reference/glossary.md#term-ecn) 0 = 192 | `bfdorch.cpp:18-19` |
 | `BFD_SESSION_MILLISECOND_TO_MICROSECOND` | `1000` | ms → μs 変換係数 (SAI `MIN_TX` / `MIN_RX` 属性投入用) | `bfdorch.cpp:20` |
 | `BFD_SRCPORTINIT` | `49152` | UDP src port ローテーション開始値 (IANA ephemeral 範囲開始 = RFC 5881 §4 要求) | `bfdorch.cpp:21` |
 | `BFD_SRCPORTMAX` | `65536` | UDP src port ローテーション上限値 (exclusive)。実値域は `49152–65535` | `bfdorch.cpp:22` |
@@ -607,4 +607,4 @@ STATE_DB 書込み時の `state` 文字列 (`session_state_lookup`):
 > **中間ファイル**: `meta/_intermediate/cdb-flow/bfd-orch-cross-refs.md`
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 19dd22e2a95a -->
+<!-- glossary-links-injected: 27618ff2c697 -->

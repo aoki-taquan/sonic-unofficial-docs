@@ -86,7 +86,7 @@ FLEX_COUNTER_TABLE|<group>
 | `FLOW_CNT_TRAP` | host-IF trap flow |
 | `FLOW_CNT_ROUTE` | route flow（`FLOW_COUNTER_ROUTE_PATTERN` と連携） |
 | `TUNNEL` | tunnel 系 |
-| `WRED_ECN_QUEUE` / `WRED_ECN_PORT` | [WRED](../../reference/glossary.md#term-wred)/ECN マーキング |
+| `WRED_ECN_QUEUE` / `WRED_ECN_PORT` | [WRED](../../reference/glossary.md#term-wred)/[ECN](../../reference/glossary.md#term-ecn) マーキング |
 | `SRV6` | [SRv6](../../reference/glossary.md#term-srv6) |
 | `SWITCH` | スイッチレベルグローバル |
 
@@ -618,4 +618,4 @@ flow_counter_handler.cpp:queryRouteFlowCounterCapability()
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: d8d75455adfd -->
+<!-- glossary-links-injected: d17c6a828148 -->

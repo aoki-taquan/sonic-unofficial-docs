@@ -331,8 +331,8 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
 |---|---|---|---|
 | Lua ヘッドルーム計算失敗 | 個別プロファイルの計算スキップ（更新なし） | `SWSS_LOG_WARN "Failed to calculate headroom for %s"` | `buffermgrdyn.cpp:622-648` |
 | バッファプール再計算 Lua スクリプト失敗 | プール更新スキップ | `SWSS_LOG_WARN "Lua scripts for buffer calculation were not executed successfully"` | `buffermgrdyn.cpp:815` |
-| プール xoff 値が MMU サイズ超過 | xoff を無視してプールサイズのみ更新継続 | `SWSS_LOG_ERROR "Buffer pool %s: Invalid xoff %s, exceeding the mmu size %s, ignored xoff"` | `buffermgrdyn.cpp:757-758` |
-| プールサイズが MMU サイズ超過 | エラーログのみ（配列更新は継続） | `SWSS_LOG_ERROR "Buffer pool %s: Invalid size %s, exceeding the mmu size %s"` | `buffermgrdyn.cpp:788` |
+| プール xoff 値が [MMU](../../reference/glossary.md#term-mmu) サイズ超過 | xoff を無視してプールサイズのみ更新継続 | `SWSS_LOG_ERROR "Buffer pool %s: Invalid xoff %s, exceeding the mmu size %s, ignored xoff"` | `buffermgrdyn.cpp:757-758` |
+| プールサイズが [MMU](../../reference/glossary.md#term-mmu) サイズ超過 | エラーログのみ（配列更新は継続） | `SWSS_LOG_ERROR "Buffer pool %s: Invalid size %s, exceeding the mmu size %s"` | `buffermgrdyn.cpp:788` |
 
 ### 失敗パターンサマリ
 
@@ -531,7 +531,7 @@ m_overSubscribeRatio 更新 → refreshSharedHeadroomPool()
 
 ### capability 差異一覧
 
-| 観点 | Mellanox | Barefoot | VS | 根拠 |
+| 観点 | Mellanox | Barefoot | [VS](../../reference/glossary.md#term-vs) | 根拠 |
 |------|----------|----------|----|------|
 | **`over_subscribe_ratio` を Lua ヘッドルーム計算に反映** | yes (SHP 有効時 `headroom_size = xon_value` に縮小) | **no** (Lua で参照しない。`headroom_size = xon_value` 常時) | yes | `buffer_headroom_mellanox.lua:104-116`; `buffer_headroom_barefoot.lua` で `over_subscribe_ratio` 参照なし |
 | **8-lane プロファイル命名 (`_8lane` サフィックス)** | SPC3 (4xxx系) / SPC4/5 (5xxx系) のみ適用 | **なし** | **なし** | `buffermgrdyn.cpp:504-523` |
@@ -559,4 +559,4 @@ m_overSubscribeRatio 更新 → refreshSharedHeadroomPool()
 詳細根拠は `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-platform.md` を参照。
 <!-- /platform -->
 
-<!-- glossary-links-injected: c94ca2588daa -->
+<!-- glossary-links-injected: e2578b3813db -->

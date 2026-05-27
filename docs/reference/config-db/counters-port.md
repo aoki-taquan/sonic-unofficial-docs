@@ -651,9 +651,9 @@ Gearbox 有効時は `port_rates.lua` も `GB_COUNTERS_DB` に別途ロードさ
 
 ### VS (virtual switch) での挙動
 
-`sai_query_stats_capability()` がスタブ応答を返すため、WRED drop カウンタはすべて `{isSupported: "false"}` のまま。SAI カウンタ値は 0 の dummy 値。Gearbox は VS では無効。
+`sai_query_stats_capability()` がスタブ応答を返すため、WRED drop カウンタはすべて `{isSupported: "false"}` のまま。SAI カウンタ値は 0 の dummy 値。Gearbox は [VS](../../reference/glossary.md#term-vs) では無効。
 
-| 差異 | Broadcom | Mellanox/NVIDIA | VS/VPP | DPU | VoQ chassis |
+| 差異 | Broadcom | Mellanox/NVIDIA | [VS](../../reference/glossary.md#term-vs)/VPP | DPU | VoQ chassis |
 |------|----------|-----------------|--------|-----|-------------|
 | WRED drop counter | ASIC 依存 | 典型的に true | false | ASIC 依存 | ASIC 依存 |
 | nvda_port_trim_drop.lua | 無効 | 条件次第で有効 | 無効 | 無効 | 無効 |
@@ -680,4 +680,4 @@ Gearbox 有効時は `port_rates.lua` も `GB_COUNTERS_DB` に別途ロードさ
 [^4]: warm-start 遅延タイマー: `sonic-swss/orchagent/flexcounterorch.cpp:127-137`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L127>
 [^5]: プラットフォーム統計 capability 初期化: `sonic-swss/orchagent/portsorch.cpp:1842-1969`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L1842>
 
-<!-- glossary-links-injected: a2da8a248001 -->
+<!-- glossary-links-injected: 0af8863862be -->

@@ -575,7 +575,7 @@ BUFFER_POOL が APPL_DB に書き込まれ `m_bufferPoolReady = true` がセッ�
 `buffer_pool_<vendor>.lua` が `BUFFER_POOL` のサイズを計算して APPL_DB に書き込むのが先。
 その後 `buffer_headroom_<vendor>.lua` が `BUFFER_PROFILE` のポート速度・ケーブル長から headroom を計算する。
 どちらも `m_bufferPoolReady == true` となってから実行される。
-MMU サイズ（`STATE_DB.BUFFER_MAX_PARAM_TABLE.global.mmu_size`）が未到着の場合、pool lua plugin は暫定値 0 を返し、到着後に再計算する。
+[MMU](../../reference/glossary.md#term-mmu) サイズ（`STATE_DB.BUFFER_MAX_PARAM_TABLE.global.mmu_size`）が未到着の場合、pool lua plugin は暫定値 0 を返し、到着後に再計算する。
 
 | 順序 | 処理 | evidence |
 |---|---|---|
@@ -711,4 +711,4 @@ BUFFER_PROFILE
 詳細スキャンノートは `meta/_intermediate/cdb-flow/buffer-profile-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 29292302b31d -->
+<!-- glossary-links-injected: b9eaf3c9bfb9 -->

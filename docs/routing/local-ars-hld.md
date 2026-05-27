@@ -89,7 +89,7 @@ flowchart LR
 - **inner packet hashing in ECMP**: ECMP ハッシュキー設定との組み合わせ
 - **policy-based hashing**: フィールド指定ハッシュと ARS の動的選択の競合
 - **fine-grained ECMP / weighted ECMP**: 重みづけ next-hop と ARS の relative priority
-- **congestion control（[PFC](../reference/glossary.md#term-pfc) / ECN）**: ARS の判断材料となる出力 queue 観測
+- **congestion control（[PFC](../reference/glossary.md#term-pfc) / [ECN](../reference/glossary.md#term-ecn)）**: ARS の判断材料となる出力 queue 観測
 
 ## トラブルシューティング
 
@@ -185,4 +185,4 @@ redis-cli -n 4 keys 'ARS*'
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: d17c6a828148 -->

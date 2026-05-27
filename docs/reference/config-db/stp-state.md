@@ -394,7 +394,7 @@ STP 設定変更の受信は `stpmgrd.cpp:43-65` の `TableConnector` 群 → `O
 | ASIC 種別 (Broadcom / Mellanox / Marvell 等) | `max_stp_inst` の**値**は ASIC 依存、コードパスは共通 | `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` は HW 能力値; `stporch.cpp:30-41` に vendor 分岐なし |
 | multi-asic (`is_multi_npu() == True`) | 各 asic の orchagent が独立して STATE_DB に書き込む。stpmgrd は host namespace のみ読み取り | `stporch.cpp` / `stpmgr.cpp` に `is_multi_npu` コールなし |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 line card stack が独立処理。cross-card 集約なし | `stporch.cpp` に chassis 分岐なし |
-| VS (Virtual Switch) | SAI が `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を未サポートの場合 STATE_DB 未書き込み → stpmgrd フォールバック `255` | `stpmgr.cpp:1407-1410`; VS SAI の実装依存 |
+| [VS](../../reference/glossary.md#term-vs) (Virtual Switch) | SAI が `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を未サポートの場合 STATE_DB 未書き込み → stpmgrd フォールバック `255` | `stpmgr.cpp:1407-1410`; [VS](../../reference/glossary.md#term-vs) SAI の実装依存 |
 
 <!-- /platform -->
 
@@ -427,4 +427,4 @@ sonic-db-cli STATE_DB hgetall 'STP_TABLE|GLOBAL'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8508f6316dc4 -->
+<!-- glossary-links-injected: 0af8863862be -->

@@ -80,7 +80,7 @@ related:
 | Egress queue 割当 | [`BUFFER_QUEUE`](../../reference/config-db/buffer-queue.md) | [sonic-buffer-queue](../../reference/yang/sonic-buffer-queue.md) |
 | Queue × scheduler/WRED | [`QUEUE`](../../reference/config-db/queue.md) | [sonic-queue](../../reference/yang/sonic-queue.md) |
 | [Scheduler](../../reference/glossary.md#term-scheduler) / shaping | [`SCHEDULER`](../../reference/config-db/scheduler.md) | [sonic-scheduler](../../reference/yang/sonic-scheduler.md) |
-| WRED / ECN | [`WRED_PROFILE`](../../reference/config-db/wred-profile.md) | [sonic-wred-profile](../../reference/yang/sonic-wred-profile.md) |
+| WRED / [ECN](../../reference/glossary.md#term-ecn) | [`WRED_PROFILE`](../../reference/config-db/wred-profile.md) | [sonic-wred-profile](../../reference/yang/sonic-wred-profile.md) |
 | [DSCP](../../reference/glossary.md#term-dscp)→TC | [`DSCP_TO_TC_MAP`](../../reference/config-db/dscp-to-tc-map.md) | [sonic-dscp-tc-map](../../reference/yang/sonic-dscp-tc-map.md) |
 | TC→queue | [`TC_TO_QUEUE_MAP`](../../reference/config-db/tc-to-queue-map.md) | [sonic-tc-queue-map](../../reference/yang/sonic-tc-queue-map.md) |
 | ポート単位の map 適用 | [`PORT_QOS_MAP`](../../reference/config-db/port-qos-map.md) | [sonic-port-qos-map](../../reference/yang/sonic-port-qos-map.md) |
@@ -275,4 +275,4 @@ gnmi_set --replace='/sonic-buffer-profile:sonic-buffer-profile/BUFFER_PROFILE/BU
 - YANG: [sonic-buffer-pool](../../reference/yang/sonic-buffer-pool.md) / [sonic-buffer-profile](../../reference/yang/sonic-buffer-profile.md) / [sonic-pfcwd](../../reference/yang/sonic-pfcwd.md)
 - 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md)
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: d17c6a828148 -->
