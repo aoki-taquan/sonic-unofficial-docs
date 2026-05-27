@@ -295,7 +295,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: Egress Queue
 - **日本語訳**: 送信キュー
 - **説明**: 各物理ポートの送信側に存在する優先度別キュー (通常 8 本)。SAI Queue オブジェクトとしてモデル化され、`QUEUE` テーブルでスケジューラ / WRED プロファイルが結び付けられる。COUNTERS_DB に PG / queue 単位の統計が定期収集される。
-- **関連**: [Per-port Queue](#term-per-port-queue)、[QoS](#term-qos)、[Buffer Pool](#term-buffer-pool)
+- **関連**: [QoS](#term-qos)、[Buffer Pool](#term-buffer-pool)
 
 ### ENI {#term-eni}
 
@@ -371,7 +371,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: FPGA (Field Programmable Gate Array)
 - **日本語訳**: フィールドプログラマブルゲートアレイ
 - **説明**: 再構成可能な論理回路デバイス。一部 SONiC 対応プラットフォームでは光モジュール制御 / Retimer / リファレンス NIC のデータパスに FPGA が搭載され、`pmon` 配下のプラットフォームドライバが SysFS / I2C 経由で制御する。
-- **関連**: [NPU](#term-npu)、[NIC ASIC](#term-nic-asic)
+- **関連**: [NPU](#term-npu)
 
 ### FPM {#term-fpm}
 
@@ -573,7 +573,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: MMU (Memory Management Unit)
 - **日本語訳**: ASIC メモリ管理ユニット
 - **説明**: スイッチ ASIC 内のパケットバッファ管理ブロック。Ingress / Egress バッファプール、PG / Queue 単位の閾値、admission control を担当する。SONiC では `bufferorch` が SAI Buffer Pool / Profile API を通じて MMU を構成する。
-- **関連**: [Buffer Pool](#term-buffer-pool)、[Buffer Model](#term-buffer-model)、[BFM](#term-bfm)
+- **関連**: [Buffer Pool](#term-buffer-pool)、[Buffer Model](#term-buffer-model)
 
 ### MUX {#term-mux}
 
@@ -844,7 +844,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: SerDes (Serializer/Deserializer)
 - **日本語訳**: SerDes
 - **説明**: 高速シリアルレーンと並列バスを変換する ASIC 内ブロック。レーン速度 (例: 56G PAM4 / 112G PAM4) によりフロントパネルポート速度が決まる。SONiC では `port_config.ini` / `platform.json` の lanes 設定と、ベンダー固有 `media_settings.json` / Tx FIR チューニングが SerDes パラメータを供給する。
-- **関連**: [port_config.ini](#term-port-config-ini)、[QSGMII](#term-qsgmii)
+- **関連**: [port_config.ini](#term-port-config-ini)
 
 ### sFlow Agent {#term-sflow-agent}
 
@@ -915,7 +915,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: Shaper
 - **日本語訳**: シェイパー
 - **説明**: 送信レートに上限を設けて超過分をキューイングし、均された速度で送出する QoS 機構。SONiC では `SCHEDULER` テーブルの `pir` / `meter_type` で表現し、SAI Scheduler の `max_bandwidth_*` 属性として実装される。
-- **関連**: [Shaping](#term-shaping)、[Scheduler](#term-scheduler)、[Leaky Bucket](#term-leaky-bucket)
+- **関連**: [Shaping](#term-shaping)、[Scheduler](#term-scheduler)
 
 ### Shaping {#term-shaping}
 
@@ -936,7 +936,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: SmartNIC
 - **日本語訳**: SmartNIC
 - **説明**: プログラマブルなデータパス／オフロード機能を持つ高機能 NIC の総称。Dual-ToR の MUX 機構や DASH の DPU 側など、SONiC の周辺アーキテクチャで参照される。
-- **関連**: [DPU](#term-dpu)、[NIC ASIC](#term-nic-asic)、[MUX](#term-mux)
+- **関連**: [DPU](#term-dpu)、[MUX](#term-mux)
 
 ### SmartSwitch {#term-smartswitch}
 
@@ -1010,7 +1010,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: TCAM (Ternary Content Addressable Memory)
 - **日本語訳**: 三値連想メモリ
 - **説明**: ワイルドカード付きパケット分類を 1 サイクルで実行できる特殊メモリ。ACL ルール / LPM ルート / PBR / Mirror セッションのマッチ部に使われ、容量が ASIC の上限要因となりやすい。SONiC では CRM が ACL TCAM 使用量を `acl_table` / `acl_group` / `acl_entry` などとして監視する。
-- **関連**: [ACL](#term-acl)、[CRM](#term-crm)、[SRAM](#term-sram)
+- **関連**: [ACL](#term-acl)、[CRM](#term-crm)
 
 ### Tech Support {#term-tech-support}
 
@@ -1030,7 +1030,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: Token Bucket
 - **日本語訳**: トークンバケット
 - **説明**: 一定速度でトークンを生成し、パケット送信時にバケットからトークンを消費するレート制御アルゴリズム。バケット容量分のバーストを許容しつつ平均レートを保証する。SONiC の Policer / Shaper の CIR / CBS / PIR / PBS は Token Bucket パラメータに対応し、RFC 2697 srTCM / RFC 2698 trTCM のメータリングを表現する。
-- **関連**: [Leaky Bucket](#term-leaky-bucket)、[Policer](#term-policer)、[Shaper](#term-shaper)
+- **関連**: [Policer](#term-policer)、[Shaper](#term-shaper)
 
 ### ToS {#term-tos}
 
@@ -1066,7 +1066,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: VS (Virtual Switch)
 - **日本語訳**: 仮想スイッチ
 - **説明**: SAI VS バックエンドを用いた SONiC のソフトウェアスイッチ実装 (`docker-sonic-vs`)。CI 上の機能試験・KVM ベースの開発環境 (`sonic-mgmt-vs`) で利用される。
-- **関連**: [saiserver](#term-saiserver)、[sonic-mgmt](#term-sonic-mgmt)
+- **関連**: [sonic-mgmt](#term-sonic-mgmt)
 
 ### VLAN {#term-vlan}
 
