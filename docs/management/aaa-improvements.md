@@ -1,6 +1,6 @@
 ---
 title: AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）
-description: 'AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール） — SONiC の AAA（Authentication / Authorization / Accounting）を Linux PAM / NSS / D-Bus 層から見直し、以下の既知の問題を解く設計提案:'
+description: 'AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール） — SONiC の AAA を Linux PAM / NSS / D-Bus 層から見直し、RBAC 多重ロール・SSH 公開鍵管理・監査ログ強化などの既知課題を解消するための設計改善提案をまとめる。'
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-13

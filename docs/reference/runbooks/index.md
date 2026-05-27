@@ -1,6 +1,6 @@
 ---
 title: Runbooks (症状逆引き)
-description: "Runbooks (症状逆引き) — このセクションは「現場で観測される症状から逆引きで切り分け手順に辿り着く」ことを目的とした実務向けハンドブック集。各 runbook は次の構造に従う:"
+description: 'Runbooks (症状逆引き) — 現場で観測される症状から逆引きで切り分け手順に辿り着くことを目的とした実務向けハンドブック集。症状・原因・確認コマンド・対処の 4 要素で統一された構造で記述する。'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
