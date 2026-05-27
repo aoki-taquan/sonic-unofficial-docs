@@ -1,6 +1,6 @@
 ---
 title: config mirror_session サブコマンド
-description: "config mirror_session サブコマンド — config mirror_session はポートミラー / ERSPAN セッションを CONFIG_DB の MIRROR_SESSION テーブルに登録・削除する。タイプは 2 種類:"
+description: 'config mirror_session サブコマンド — config mirror_session はポートミラー（SPAN）および ERSPAN セッションを CONFIG_DB の MIRROR_SESSION テーブルに登録・削除するコマンドで、ローカルとリモートの 2 タイプを扱う。'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

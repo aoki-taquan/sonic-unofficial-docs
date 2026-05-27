@@ -1,7 +1,6 @@
 ---
 title: show runningconfiguration / startupconfiguration サブコマンド
-description: show runningconfiguration / startupconfiguration サブコマンド — SONiC で「現在の
-  running config」を見るには CLI が show runningconfiguration（show running-config のエイリアスではない、空白なしの…
+description: 'show runningconfiguration / startupconfiguration サブコマンド — SONiC で現在の running config を出力する show runningconfiguration と、起動時設定を出力する show startupconfiguration の使い方・出力形式・実装を解説する。'
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
