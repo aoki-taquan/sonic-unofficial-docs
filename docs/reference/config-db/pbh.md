@@ -81,34 +81,6 @@ PBH_HASH_FIELD|<hash_field_name>
 | `packet_action` | enum | `SET_ECMP_HASH` | rule action |
 | `flow_counter` | enum | `DISABLED` | packet / byte counter の有効化 |
 
-<!-- defaults -->
-## フィールドデフォルト (Phase A)
-
-### PBH_HASH
-
-| フィールド | デフォルト | 由来 |
-|-----------|-----------|------|
-| `hash_field_list` | なし (mandatory) | YANG `min-elements 1` + `validatePbhHash()` — 未設定時 validation エラー |
-
-### PBH_HASH_FIELD
-
-| フィールド | デフォルト | 由来 |
-|-----------|-----------|------|
-| `hash_field` | なし (mandatory) | YANG `mandatory true` + `validatePbhHashField()` — 未設定時 validation エラー |
-| `ip_mask` | なし (条件付き必須) | YANG `when`/`must` 条件 — `hash_field` が `INNER_DST_IPV4`/`INNER_SRC_IPV4`/`INNER_DST_IPV6`/`INNER_SRC_IPV6` のとき必須、それ以外は設定禁止 |
-| `sequence_id` | なし (mandatory) | YANG `mandatory true` + `validatePbhHashField()` — 未設定時 validation エラー |
-
-### PBH_RULE (参考: 既存 default 動作の確認)
-
-| フィールド | デフォルト | 由来 |
-|-----------|-----------|------|
-| `packet_action` | `SET_ECMP_HASH` | YANG `default "SET_ECMP_HASH"` + `validatePbhRule()` が `SAI_ACL_ENTRY_ATTR_ACTION_SET_ECMP_HASH_ID` を自動注入 (`pbhmgr.cpp:998-1010`) |
-| `flow_counter` | `DISABLED` | YANG `default "DISABLED"` + `validatePbhRule()` が `false` を自動注入 (`pbhmgr.cpp:1012-1024`) |
-
-> **注**: `PBH_HASH_FIELD` は作成後の更新が禁止されている (`updatePbhHashField()` は常に `return false`)。
-
-<!-- /defaults -->
-
 ## 制約
 
 - `PBH_TABLE.interface_list` は 1 要素以上で、`PORT` または `PORTCHANNEL` への leafref。
