@@ -721,6 +721,20 @@ static const unordered_set<string> supported {
 
 ## 引用元
 
+本ページの記述は以下の一次ソースに基づく。
+
+- iccpd CSM / STP ロール決定: `sonic-buildimage` `src/iccpd/src/iccp_csm.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c>
+- ICCP ロール通知 / MAC 書き換え: `sonic-buildimage` `src/iccpd/src/mlacp_link_handler.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/mlacp_link_handler.c>
+- STP TLV 受信 (未サポート): `sonic-buildimage` `src/iccpd/src/mlacp_fsm.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/mlacp_fsm.c>
+- STP ロール型 / CSM 定義: `sonic-buildimage` `src/iccpd/include/iccp_csm.h`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/iccp_csm.h>
+- ICCP TLV 型定義 (`TLV_T_MLACP_STP_INFO`): `sonic-buildimage` `src/iccpd/include/msg_format.h`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/msg_format.h>
+- STP YANG デフォルト値: `sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-spanning-tree.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-spanning-tree.yang>
+- MCLAG_DOMAIN YANG デフォルト値: `sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mclag.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mclag.yang>
+- ICCP セッション確立 / TCP 役割決定: `sonic-buildimage` `src/iccpd/src/scheduler.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/scheduler.c>
+- Standby ブリッジ MAC netlink 書き換え: `sonic-buildimage` `src/iccpd/src/iccp_netlink.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_netlink.c>
+- mclagsyncd 起動 / CONFIG_DB 購読: `sonic-swss` `mclagsyncd/mclagsyncd.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclagsyncd.cpp>
+- mclagsyncd STATE_DB 書込 / ポート隔離プラットフォーム分岐: `sonic-swss` `mclagsyncd/mclaglink.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp>
+
 ## 関連ページ
 
 - [CONFIG_DB: STP](stp.md)

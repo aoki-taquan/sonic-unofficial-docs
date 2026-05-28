@@ -120,6 +120,14 @@ ycabled が gRPC 経由でハードウェア (Y-Cable / SoC) から取得した 
 
 ## 引用元
 
+本ページの記述は以下の一次ソースに基づく。
+
+- MuxOrch / MuxStateOrch / MuxCable 実装 (STATE_DB 書込 / 状態遷移 / 定数): `sonic-swss` `orchagent/muxorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/muxorch.cpp>
+- linkmgrd DB インタフェース (MUX_CABLE_TABLE 購読 / Loopback3 read_side 判定): `sonic-linkmgrd` `src/DbInterface.cpp`. <https://github.com/sonic-net/sonic-linkmgrd/blob/master/src/DbInterface.cpp>
+- ycabled HW_MUX_CABLE_TABLE 書込 (gRPC forwarding state / VS 分岐): `sonic-platform-daemons` `sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py`. <https://github.com/sonic-net/sonic-platform-daemons/blob/master/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py>
+
+!!! note "行番号について"
+    本文中の `muxorch.cpp:NNNN` / `y_cable_helper.py:NNN` / `DbInterface.cpp:NNN` 等の行番号は `last_verified` 時点の `master` ブランチに基づく。`master` の更新により行番号が前後する場合がある。
 
 <!-- topics-back-ref -->
 ## 関連 Topics
