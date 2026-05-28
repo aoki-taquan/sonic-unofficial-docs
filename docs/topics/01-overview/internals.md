@@ -12,12 +12,10 @@ sources:
 related:
   cli:
   - config vnet
-  config_db:
-  - VNET
-  - VNET_ROUTE_TUNNEL
-  - VNET_ROUTE
-  yang:
-  - sonic-vnet
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 内部実装

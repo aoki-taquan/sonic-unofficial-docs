@@ -17,22 +17,10 @@ related:
   - config vrf
   - show pfc
   - config vxlan
-  config_db:
-  - VRF
-  - PFC_WD
-  - VXLAN_TUNNEL
-  - VXLAN_EVPN_NVO
-  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
-  - VXLAN_TUNNEL_MAP
-  - DASH_ENI_TABLE
-  yang:
-  - sonic-vxlan
-  - sonic-vrf
-  - sonic-pfc-priority-queue-map
-  - sonic-pfc-priority-priority-group-map
-  - sonic-bgp-global
-  - sonic-pfcwd
-  - sonic-buffer-pool
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 概念

@@ -20,22 +20,10 @@ related:
   - show version
   - show acl
   - config acl
-  config_db:
-  - CRM
-  - BGP_NEIGHBOR
-  - BGP_NEIGHBOR_AF
-  - BGP_GLOBALS
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  yang:
-  - sonic-crm
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-bgp-bbr
-  - sonic-bgp-device-global
-  - sonic-bgp-sentinel
-  - sonic-bgp-aggregate-address
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # リファレンス設計の考え方

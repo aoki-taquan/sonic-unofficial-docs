@@ -13,17 +13,10 @@ related:
   - show version
   - show acl
   - config acl
-  config_db:
-  - CRM
-  - TELEMETRY
-  - GNMI
-  - ACL_RULE
-  - ACL_TABLE
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  yang:
-  - sonic-crm
-  - sonic-system-defaults
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # アーキテクチャ

@@ -13,17 +13,10 @@ related:
   - show acl
   - config acl
   - config vnet
-  config_db:
-  - CRM
-  - VNET
-  - ACL_RULE
-  - ACL_TABLE
-  - DASH_ENI_TABLE
-  - DASH_VNET
-  - DASH_APPLIANCE
-  yang:
-  - sonic-crm
-  - sonic-vnet
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 内部実装

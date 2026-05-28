@@ -1,7 +1,7 @@
 ---
 title: 発展トピック
-description: 発展トピック — リファレンス索引 (CLI / CONFIG_DB / YANG / cross-reference) を回し続けるための index 再生成スクリプト群、新 mapping
-  の追加手順、CI drift の対応をまとめます。22 章は索引そのものを扱うメタ章なので、ここでは「索引を生成する側」の運用を扱います。
+description: 発展トピック — リファレンス索引 (CLI / CONFIG_DB / YANG / cross-reference) を回し続けるための
+  index 再生成スクリプト群、新 mapping の追加手順、CI drift の対応をまとめます。22 章は索引そのものを扱うメタ章なので、ここでは「索引を生成する側」の運用を扱います。
 area: topics
 verification: meta
 last_verified: 2026-05-12
@@ -10,11 +10,10 @@ related:
   cli:
   - show version
   - sonic-cfggen
-  config_db:
-  - DEVICE_METADATA
-  - FEATURE
-  yang:
-  - sonic-device-metadata
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 発展トピック

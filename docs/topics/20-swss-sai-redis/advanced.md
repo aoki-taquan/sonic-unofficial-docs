@@ -11,12 +11,10 @@ related:
   - show feature status
   - show system-health
   - show warm_restart
-  config_db:
-  - FEATURE
-  - WARM_RESTART
-  yang:
-  - sonic-feature
-  - sonic-warm-restart
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 発展トピック

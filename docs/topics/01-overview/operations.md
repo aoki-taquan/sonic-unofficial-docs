@@ -17,22 +17,10 @@ related:
   - config bgp
   - show bgp
   - config vxlan
-  config_db:
-  - SYSTEM_DEFAULTS
-  - FEATURE
-  - VNET
-  - DEVICE_METADATA
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  yang:
-  - sonic-vnet
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 運用入口

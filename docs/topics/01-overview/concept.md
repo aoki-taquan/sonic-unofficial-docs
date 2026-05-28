@@ -32,22 +32,10 @@ related:
   - config acl
   - show bgp
   - config qos
-  config_db:
-  - LLDP
-  - PFC_WD
-  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
-  - LLDP_PORT
-  - ACL_RULE
-  - ACL_TABLE
-  - BGP_PEER_GROUP_AF
-  yang:
-  - sonic-pfc-priority-queue-map
-  - sonic-pfc-priority-priority-group-map
-  - sonic-lldp
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 概念と読み始め方
