@@ -145,50 +145,6 @@ DB を YANG バリデーション外で書いた場合、`servers` が空のと�
 
 <!-- /defaults -->
 
-<!-- ordering -->
-## 書込み順依存 (Phase B) (補足)
-
-> **調査根拠**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay_mgr.cpp` 全行精読 (2026-05-18)
-
-### 他テーブル先行必須
-
-| 先行テーブル | 理由 | 違反時の挙動 |
-|---|---|---|
-| `VLAN` / `VLAN_INTERFACE\|<vlan>` | `process_relay_notification()` が `VLAN_INTERFACE` を同期読みして `server_vrf` 未設定時の VRF fallback を決定（`dhcp4relay_mgr.cpp:422-431`）。VLAN_INTERFACE が未登録だと `vrf = "default"` ソケットが作られる | 誤 VRF の UDP ソケットが生成される。後続の `VLAN_INTERFACE_UPDATE` イベントで修正されるが起動順序次第で一時的に誤 VRF relay が動作する |
-| `VLAN_MEMBER\|<vlan>\|<port>` | DHCPv4 パケット受信時にポートが `VLAN_MEMBER` として登録されていないと、ポートが relay 対象外と判定される | relay 設定は適用されるがポートからのパケットが無視される |
-| `DEVICE_METADATA\|localhost` (`subtype`, `mac`, `hostname`) | `process_device_metadata_notification()` が `is_dualTor` フラグと `host_mac_addr` を設定。これらは relay パケット生成時に参照される（`dhcp4relay_mgr.cpp:195-283`）。起動時に初回スナップショット読みはするが SET 通知より遅延する可能性がある | `is_dualTor=false` のまま relay が動作。DualToR 環境では Link Selection が強制 enable されず、`source_interface` も `Loopback0` に設定されない |
-| `FEATURE\|dhcp_server` (`state`) | `process_feature_notification()` が `feature_dhcp_server_enabled` フラグを更新。`enabled` になると `DHCPV4_RELAY` watch が停止し `DHCP_SERVER_IPV4` watch に切替わる（`dhcp4relay_mgr.cpp:495-539`） | FEATURE SET の前に DHCPV4_RELAY を書いた場合、dhcp_server=enabled が来た瞬間に `vlans_copy` がクリアされ、既存 relay 設定が全削除される |
-
-**推奨書込み順序**:
-
-```
-# 1. VLAN / インタフェース / メンバー先行
-SET VLAN|<vlan>
-SET VLAN_INTERFACE|<vlan>           # VRF 設定がある場合は vrf_name も含める
-SET VLAN_MEMBER|<vlan>|<port>       # relay 対象ポートを登録
-
-# 2. DHCP メインエントリ
-SET DHCPV4_RELAY|<vlan>  dhcpv4_servers=<ip,...>  [server_vrf=<vrf>]  [source_interface=<intf>]
-
-# dhcp_server feature と併用する場合
-# FEATURE|dhcp_server state=enabled を SET すると DHCPV4_RELAY watch が停止するため
-# DHCPV4_RELAY テーブルへの書込みは FEATURE SET の前に完了させること
-```
-
-### SET 後 DEL の順序依存
-
-| シナリオ | 問題 | 安全な手順 |
-|---|---|---|
-| DHCPV4_RELAY エントリを DEL する前に VLAN を DEL | `process_vlan_notification()` が DEL 通知を受け `vlans_copy` から relay 設定を除去してしまう。後続 DHCPV4_RELAY DEL は `vlans_copy` が空のまま処理される | DHCPV4_RELAY を先に DEL してから VLAN を DEL |
-| VLAN_INTERFACE の VRF を変更後に DHCPV4_RELAY を再設定 | `server_vrf` 未設定時の VRF fallback は DHCPV4_RELAY SET 時点の VLAN_INTERFACE の値をスナップショットする。後から VLAN_INTERFACE の VRF を変えても `VLAN_INTERFACE_UPDATE` イベントが来るまで relay は旧 VRF ソケットを保持 | VRF 変更時は `DHCPV4_RELAY` を DEL → 再 SET して反映する |
-
-### FEATURE 排他制御と書込みタイミング
-
-`FEATURE|dhcp_server` の `state=enabled` / `state=disabled` 切替えはアトミックではなく、切替え瞬間に `vlans_copy` がクリアされる（`dhcp4relay_mgr.cpp:504,523`）。dhcp_server enabled 状態では `DHCPV4_RELAY` を書いても無視されるため、dhcp_server を使用する場合は `DHCPV4_RELAY` テーブルへの書込みを行わないこと。
-
-> **Evidence**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay_mgr.cpp:57-86,135-157,195-283,371-459,479-541,619-714,822-861`
-<!-- /ordering -->
-
 <!-- cross-refs -->
 ## 暗黙参照 — `sonic-dhcpv4-relay` が読み出す関連 CONFIG_DB テーブル (Phase C)
 
