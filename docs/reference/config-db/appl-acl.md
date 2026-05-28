@@ -318,7 +318,6 @@ if (bHasTCPFlag && !bHasIPProtocol)
 **ACL_TABLE_TYPE_TABLE の分割 SET 非サポート (#8)**: `doAclTableTypeTask()` L5742–5772 では 1 回の SET で MATCHES / ACTIONS / BIND_POINTS の 3 フィールドが揃っている前提で処理する。部分フィールドで SET した場合は type オブジェクトが不完全となり廃棄される（関連 ACL_TABLE は #2 の無制限待機に入る）。
 
 > **証跡**: `doTask()` L4276–4279、`doAclTableTask()` L5432–5436, L5484, L5795–5799、`doAclRuleTask()` L5548–5564, L5681–5697, L5714–5721、`doAclTableTypeTask()` L5742–5772、`processAclTablePorts()` L5786–5799、`AclOrch::update()` L4243–4266、`AclTable::onUpdate()` L2860–2912、`createRetryCache()` L4221–4222。
-<!-- /ordering -->
 
 ---
 
@@ -418,7 +417,6 @@ APPL_DB DEL 受信
 
 ---
 
-<!-- ordering -->
 ## 書込み順依存・タイミング依存 (Phase B)
 
 APPL_DB の `ACL_TABLE_TABLE` / `ACL_TABLE_TYPE_TABLE` / `ACL_RULE_TABLE` は CONFIG_DB 版と**同一の `AclOrch::doTask()` ハンドラ**で処理される (`aclorch.cpp:4283-4293`)。テーブル名で分岐せず CONFIG_DB / APPL_DB 双方を扱うため、書込み順依存も大部分が共通だが、APPL_DB 経路特有の挙動（独立 retry cache など）を含めて整理する。

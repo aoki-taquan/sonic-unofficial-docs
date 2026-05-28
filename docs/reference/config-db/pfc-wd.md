@@ -303,8 +303,6 @@ PFC_WD|GLOBAL (POLL_INTERVAL) 投入 → flex counter ポーリング間隔設�
 PFC_WD|<port> 投入 → SAI queue/port 属性設定 + flex counter 登録
 ```
 
-<!-- /ordering -->
-
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
@@ -390,7 +388,6 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 
 <!-- /handler-branching -->
 
-<!-- ordering -->
 ## 書込み順依存 (Phase B) (補足)
 
 <!-- evidence: meta/_intermediate/cdb-flow/pfc-wd-ordering.md -->
