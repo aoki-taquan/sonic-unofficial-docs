@@ -13,18 +13,10 @@ related:
   - show version
   - show acl
   - config acl
-  config_db:
-  - DPU
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - DASH_ENI_TABLE
-  - DASH_VNET
-  - DASH_APPLIANCE
-  - CRM
-  yang:
-  - sonic-crm
-  - sonic-vnet
-  - sonic-system-defaults
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # アーキテクチャ

@@ -13,22 +13,10 @@ related:
   - config acl
   - config bgp
   - show bgp
-  config_db:
-  - CRM
-  - VRF
-  - ACL_RULE
-  - ACL_TABLE
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - BGP_PEER_GROUP_AF
-  yang:
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-crm
-  - sonic-vrf
-  - sonic-bgp-bbr
-  - sonic-bgp-peerrange
-  - sonic-bgp-device-global
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 運用

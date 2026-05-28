@@ -15,22 +15,10 @@ related:
   - config bgp
   - show bgp
   - show nat
-  config_db:
-  - VLAN
-  - VRF
-  - NAT
-  - QUEUE
-  - ACL_RULE
-  - ACL_TABLE
-  - BGP_NEIGHBOR
-  yang:
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-nat
-  - sonic-vlan
-  - sonic-srv6
-  - sonic-wred-profile
-  - sonic-vrf
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 内部実装

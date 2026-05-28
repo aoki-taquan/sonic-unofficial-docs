@@ -12,22 +12,10 @@ related:
   - config acl
   - show pfc
   - config vxlan
-  config_db:
-  - ACL_RULE
-  - ACL_TABLE
-  - PFC_WD
-  - VXLAN_TUNNEL
-  - VXLAN_EVPN_NVO
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  yang:
-  - sonic-vxlan
-  - sonic-pfc-priority-queue-map
-  - sonic-pfc-priority-priority-group-map
-  - sonic-srv6
-  - sonic-pfcwd
-  - sonic-buffer-pool
-  - sonic-buffer-profile
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 発展トピック

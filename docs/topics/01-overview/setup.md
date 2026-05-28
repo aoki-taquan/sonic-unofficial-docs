@@ -19,13 +19,10 @@ related:
   - config load
   - sonic-cfggen
   - config apply-patch
-  config_db:
-  - DEVICE_METADATA
-  - FEATURE
-  - VERSIONS
-  yang:
-  - sonic-device-metadata
-  - sonic-feature
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 設定

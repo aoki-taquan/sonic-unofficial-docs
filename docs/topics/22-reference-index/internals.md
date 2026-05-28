@@ -15,22 +15,10 @@ related:
   - show interfaces
   - show ip
   - show platform
-  config_db:
-  - VLAN
-  - PORT
-  - ACL_TABLE
-  - NAT
-  - VLAN_MEMBER
-  - VLAN_INTERFACE
-  - PORTCHANNEL
-  yang:
-  - sonic-port
-  - sonic-vlan
-  - sonic-portchannel
-  - sonic-bgp-neighbor
-  - sonic-vrf
-  - sonic-vxlan
-  - sonic-nat
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 内部実装

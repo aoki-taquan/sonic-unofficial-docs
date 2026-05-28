@@ -15,22 +15,10 @@ related:
   - show ip
   - show vlan
   - config vlan
-  config_db:
-  - VLAN
-  - VRF
-  - VLAN_MEMBER
-  - PFC_WD
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - VLAN_SUB_INTERFACE
-  yang:
-  - sonic-vlan
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-vrf
-  - sonic-vlan-sub-interface
-  - sonic-pfc-priority-queue-map
-  - sonic-pfc-priority-priority-group-map
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 運用

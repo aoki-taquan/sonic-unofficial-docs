@@ -15,22 +15,10 @@ related:
   - show bgp
   - config bgp
   - show mclag
-  config_db:
-  - VRF
-  - CONSOLE_PORT
-  - ACL_RULE
-  - ACL_TABLE
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - VXLAN_TUNNEL
-  yang:
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-vxlan
-  - sonic-mclag
-  - sonic-vrf
-  - sonic-bgp-bbr
-  - sonic-bgp-peerrange
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 設定

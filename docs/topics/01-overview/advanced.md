@@ -1,7 +1,7 @@
 ---
 title: 発展トピック
-description: 発展トピック — SONiC を全体像として見たときに、初学者の足場が固まったあとで触れたい横断テーマを並べる。GCU
-  による差分適用、warm/fast/cold reboot の選び分け、multi-ASIC、SmartSwitch、Application Extension といった現代的な拡張軸が中心。
+description: 発展トピック — SONiC を全体像として見たときに、初学者の足場が固まったあとで触れたい横断テーマを並べる。GCU による差分適用、warm/fast/cold
+  reboot の選び分け、multi-ASIC、SmartSwitch、Application Extension といった現代的な拡張軸が中心。
 area: topics
 verification: meta
 last_verified: 2026-05-12
@@ -17,13 +17,10 @@ related:
   - warm-reboot
   - fast-reboot
   - show version
-  config_db:
-  - DEVICE_METADATA
-  - FEATURE
-  - VERSIONS
-  yang:
-  - sonic-device-metadata
-  - sonic-feature
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 発展トピック

@@ -22,22 +22,10 @@ related:
   - config vrf
   - config bgp
   - show bgp
-  config_db:
-  - VRF
-  - ACL_RULE
-  - ACL_TABLE
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - VXLAN_TUNNEL
-  - VXLAN_TUNNEL_MAP
-  yang:
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-vxlan
-  - sonic-vrf
-  - sonic-bgp-bbr
-  - sonic-bgp-peerrange
-  - sonic-bgp-device-global
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 概要

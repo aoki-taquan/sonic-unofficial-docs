@@ -7,13 +7,10 @@ last_verified: 2026-05-10
 related:
   cli:
   - show techsupport
-  config_db:
-  - DPU
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  yang:
-  - sonic-chassis-module
-  - sonic-smart-switch
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 品質と gap

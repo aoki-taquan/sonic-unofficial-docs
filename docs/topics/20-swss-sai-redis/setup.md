@@ -14,22 +14,10 @@ related:
   - show ip
   - show interfaces
   - show bgp
-  config_db:
-  - FEATURE
-  - VOQ_INBAND_INTERFACE
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  yang:
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-bgp-bbr
-  - sonic-bgp-peerrange
-  - sonic-bgp-device-global
-  - sonic-bgp-sentinel
-  - sonic-bgp-monitor
+  config_db: []
+  yang: []
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # 設定
