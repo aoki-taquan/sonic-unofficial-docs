@@ -39688,7 +39688,7 @@ POLICER を ACL に組み合わせる場合は P4 orch (<code>p4orch/acl_util.cp
 </div>
 <!-- /cross-refs -->
 
-<!-- constants -->
+<!-- constants-supplement -->
 <h2 id="phase-e_1">ハードコード定数 (Phase E) (補足)<a class="headerlink" href="#phase-e_1" title="Permanent link">&para;</a></h2>
 <p>YANG 未定義テーブルのため、全定数はソースコードが正本。以下は <code>aclorch.h</code> / <code>aclorch.cpp</code> / <code>acl_loader/main.py</code> / <code>acl_app.go</code> から抽出した硬直定数一覧。</p>
 <h3 id="mask">数値・mask 定数<a class="headerlink" href="#mask" title="Permanent link">&para;</a></h3>
@@ -39859,9 +39859,9 @@ POLICER を ACL に組み合わせる場合は P4 orch (<code>p4orch/acl_util.cp
 <p class="admonition-title">ACL カウンタは初期無効</p>
 <p><code>ACL_COUNTER_DEFAULT_ENABLED_STATE = false</code> のため、<code>AclOrch</code> 起動直後は ACL stat counter の flex counter が無効。<code>counterpoll acl enable</code> または <code>aclshow</code> 経由で有効化するまでカウンタ値は収集されない。</p>
 </div>
-<!-- /constants -->
+<!-- /constants-supplement -->
 
-<!-- ordering -->
+<!-- ordering-supplement -->
 <h2 id="phase-b_1">書込み順依存 (Phase B) (補足)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
 <p>ACL_RULE を CONFIG_DB に書き込む際に守るべき順序制約を実装から導出した。</p>
 <h3 id="set">先行必須テーブル (SET 時)<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
@@ -39995,7 +39995,7 @@ POLICER を ACL に組み合わせる場合は P4 orch (<code>p4orch/acl_util.cp
 <p class="admonition-title">MIRROR ルール変更</p>
 <p><code>MIRROR_INGRESS_ACTION</code> / <code>MIRROR_EGRESS_ACTION</code> を含む ACL_RULE の変更は <code>SET</code> のみでは適用されない。必ず <code>DEL</code> → <code>SET</code> の順で操作すること (<code>aclorch.cpp:2415-2420</code>)。</p>
 </div>
-<!-- /ordering -->
+<!-- /ordering-supplement -->
 <!-- failure -->
 <h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
 <h3 id="set_1">SET 処理における失敗経路<a class="headerlink" href="#set_1" title="Permanent link">&para;</a></h3>

@@ -24350,6 +24350,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#mplssrv6-mpls_nhi-na" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド不在で MPLS/SRv6 は無効。mpls_nh[i] == "na" で対応インデックスのラベルを明示無効化できる。
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#class_based_next_hop_group_table" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36516,6 +36527,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#mplssrv6-mpls_nhi-na" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド不在で MPLS/SRv6 は無効。mpls_nh[i] == "na" で対応インデックスのラベルを明示無効化できる。
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#class_based_next_hop_group_table" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -37224,10 +37246,7 @@
 <p><strong><code>nexthop_group</code> のデフォルト: なし → <code>is_recursive = false</code></strong></p>
 <p>フィールドが存在するとき <code>is_recursive = true</code> となり再帰 NHG モードへ移行。<code>nexthop</code>/<code>ifname</code> との共存は <code>SWSS_LOG_ERROR</code> + エントリ破棄。</p>
 <p><strong><code>mpls_nh</code> / <code>seg_src</code> のデフォルト: なし</strong></p>
-<p>フィールド不在で <a href="../../glossary/#term-mpls">MPLS</a>/<a href="../../glossary/#term-srv6">SRv6</a> は無効。<code>mpls_nh[i] == "na"</code> で対応インデックスのラベルを明示無効化できる。</p>
-<!-- /defaults -->
-
-<hr />
+<h2 id="mplssrv6-mpls_nhi-na">フィールド不在で <a href="../../glossary/#term-mpls">MPLS</a>/<a href="../../glossary/#term-srv6">SRv6</a> は無効。<code>mpls_nh[i] == "na"</code> で対応インデックスのラベルを明示無効化できる。<a class="headerlink" href="#mplssrv6-mpls_nhi-na" title="Permanent link">&para;</a></h2>
 <h2 id="class_based_next_hop_group_table">CLASS_BASED_NEXT_HOP_GROUP_TABLE フィールド<a class="headerlink" href="#class_based_next_hop_group_table" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -37256,7 +37275,6 @@
 </tr>
 </tbody>
 </table>
-<!-- defaults -->
 <h3 id="_4">フィールドデフォルト詳細<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p><strong><code>members</code> のデフォルト: なし (必須)</strong></p>
 <p><code>getMembers()</code> バリデーション (cbfnhgorch.cpp:212-238):

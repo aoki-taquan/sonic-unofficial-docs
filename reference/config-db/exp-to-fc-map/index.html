@@ -37780,8 +37780,6 @@
 <code>QosMapHandler::processWorkItem</code> の DEL パスで <code>gQosOrch-&gt;isObjectBeingReferenced(QosOrch::getTypeMap(), CFG_EXP_TO_FC_MAP_TABLE_NAME, qos_object_name)</code> を評価し、真なら <code>m_pendingRemove=true</code> にセットして <code>task_need_retry</code> を返す。<code>PORT_QOS_MAP</code> で <code>exp_to_fc_map</code> を参照している限りマップは削除されない。PORT_QOS_MAP から参照が外れた後の次イテレーションで削除が実行される（evidence: <code>qosorch.cpp:181-186</code>）。</p>
 <p><strong>pendingRemove 中の SET defer (依存 #3)</strong>:
 SET コマンド処理の冒頭で <code>m_pendingRemove</code> フラグを確認し、真であれば <code>task_need_retry</code> を返す。これにより「DEL → 即 SET（rename 相当）」は DEL 完了まで SET が defer され、中間状態で旧名と新名が SAI 上で共存しない（evidence: <code>qosorch.cpp:136-139</code>）。</p>
-<!-- /ordering -->
-
 <h2 id="_9">購読者<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>qosorch</code> (<code>ExpToFcMapHandler</code>): <a href="../../glossary/#term-sai">SAI</a> QoS map 生成 (<code>sai_create_qos_map</code> / <code>sai_remove_qos_map</code>)</li>
@@ -37935,7 +37933,6 @@ SET コマンド処理の冒頭で <code>m_pendingRemove</code> フラグを確�
 </ul>
 <!-- /entry-points -->
 
-<!-- ordering -->
 <h2 id="phase-b_1">書込み順依存 (Phase B) (補足)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>調査証跡: <code>meta/_intermediate/cdb-flow/exp-to-fc-map-ordering.md</code></p>

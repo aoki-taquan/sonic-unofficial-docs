@@ -29262,45 +29262,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-b_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        書込み順依存 (Phase B) (補足)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="書込み順依存 (Phase B) (補足)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        検出された順序依存
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制約詳細
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#phase-d" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29507,7 +29468,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         サービス再起動トリガー
@@ -37172,45 +37133,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-b_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        書込み順依存 (Phase B) (補足)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="書込み順依存 (Phase B) (補足)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        検出された順序依存
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制約詳細
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#phase-d" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -37417,7 +37339,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         サービス再起動トリガー
@@ -37938,47 +37860,6 @@ NTP_KEY の SET 操作だけでは <code>trusted_str</code> は変わらず、NT
 <p>詳細調査メモ: <code>meta/_intermediate/cdb-flow/ntp-key-defaults.md</code>。</p>
 <!-- /defaults -->
 
-<!-- ordering -->
-<h2 id="phase-b_1">書込み順依存 (Phase B) (補足)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
-<p><code>NTP_KEY</code> は <code>NTP_SERVER.key</code> フィールドから leafref で参照される<strong>被参照側</strong>テーブルである。SET / DEL の両方向に順序制約があり、<code>hostcfgd</code> の合算再読み込みと組み合わさって下記の依存関係が生じる。</p>
-<h3 id="_19">検出された順序依存<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>#</th>
-<th>依存関係</th>
-<th>強制度</th>
-<th>違反時の挙動</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td><code>NTP_SERVER\|&lt;server&gt;.key</code> クリア（または <code>NTP_SERVER</code> DEL）先行 → <code>NTP_KEY\|&lt;id&gt;</code> DEL</td>
-<td><strong>必須先行</strong></td>
-<td>YANG leafref 整合性チェックで拒否（DEL 失敗）</td>
-</tr>
-<tr>
-<td>2</td>
-<td><code>NTP_KEY\|&lt;id&gt;</code> SET 先行 → <code>NTP_SERVER\|&lt;server&gt;.key=&lt;id&gt;</code> SET</td>
-<td><strong>必須先行</strong>（NTP_SERVER 側制約）</td>
-<td>YANG leafref 解決失敗で <code>NTP_SERVER</code> の SET が拒否される</td>
-</tr>
-<tr>
-<td>3</td>
-<td><code>NTP_KEY\|&lt;id&gt;</code> SET 先行 → <code>NTP\|global.authentication=enabled</code> SET</td>
-<td>推奨先行</td>
-<td>chrony が空 keyfile で再起動し認証失敗</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_20">制約詳細<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
-<p><strong>DEL 順序依存（依存 #1）</strong>: <code>sonic-ntp.yang</code> の <code>NTP_SERVER_LIST.key</code> は <code>NTP_KEY_LIST/id</code> への leafref として定義されている。<code>NTP_SERVER</code> エントリが <code>key=&lt;id&gt;</code> フィールドを保持したまま <code>NTP_KEY|&lt;id&gt;</code> を DEL しようとすると、YANG 整合性チェックが dangling leafref として拒否する。正しい手順は先に <code>NTP_SERVER|&lt;server&gt;</code> の <code>key</code> フィールドをクリア（または <code>NTP_SERVER|&lt;server&gt;</code> エントリを DEL）してから <code>NTP_KEY|&lt;id&gt;</code> を DEL すること（<code>sonic-ntp.yang</code> L201-203）。</p>
-<p><strong>SET 順序依存（依存 #2）</strong>: <code>NTP_KEY</code> 自体の SET は他テーブルへの依存を持たず自律的に書き込み可能である。しかし <code>NTP_SERVER|&lt;server&gt;.key=&lt;id&gt;</code> の SET は <code>NTP_KEY|&lt;id&gt;</code> が CONFIG_DB に先行して存在することを YANG leafref が要求する。未登録の key ID を参照すると SET が拒否される（<code>sonic-ntp.yang</code> L201-203）。この制約が事実上 <code>NTP_KEY</code> 先行を強制するため、hostcfgd ハンドラのレースは YANG 層で防がれる（<code>hostcfgd:1383-1384</code>）。</p>
-<p><strong>認証有効化の推奨順序（依存 #3）</strong>: <code>NTP|global.authentication</code> と <code>NTP_KEY</code> の変更は独立ハンドラ（<code>ntp_global_update</code> / <code>ntp_srv_key_handler</code>）によって個別に chrony 再起動をトリガーする。<code>authentication=enabled</code> が先に適用された場合、鍵登録前の状態で chrony が再起動され、chrony.keys が空のまま認証付きサーバとの同期を試みて失敗する。<code>NTP_KEY</code> を先に SET してから <code>authentication=enabled</code> を SET することで中途状態を回避できる（<code>hostcfgd:1331-1364</code>, <code>hostcfgd:1366-1406</code>）。</p>
-<p>詳細調査メモ: <code>meta/_intermediate/cdb-flow/ntp-key-ordering.md</code>。</p>
-<!-- /ordering -->
-
 <!-- failure -->
 <h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-host-services/scripts/hostcfgd NtpCfg.ntp_srv_key_update() / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang -->
@@ -38289,7 +38170,7 @@ NTP_KEY の SET 操作だけでは <code>trusted_str</code> は変わらず、NT
 <li><code>op</code> は <code>data is None ? "DEL" : "SET"</code> の 2 値判定。<code>HDEL</code> / <code>HSET</code> の <a href="../../glossary/#term-redis">Redis</a> 操作種別自体は区別しない (<code>hostcfgd:2458-2465</code>)。</li>
 <li>起動時は <code>config_db.listen(init_data_handler=self.load)</code> (<code>hostcfgd:2528</code>) により、Subscribe ループ開始前に <code>NtpCfg.load()</code> が <code>NTP_GLOBAL</code> / <code>NTP_SERVER</code> / <code>NTP_KEY</code> を一括スナップショットでキャッシュに適用する。chrony の起動時設定は <code>ntp-config.service</code> テンプレートが担うため、<code>load()</code> は chrony 再起動をトリガーしない。</li>
 </ul>
-<h3 id="_21">サービス再起動トリガー<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<h3 id="_19">サービス再起動トリガー<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>

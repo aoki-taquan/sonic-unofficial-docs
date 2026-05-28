@@ -28315,56 +28315,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗黙参照テーブル (Phase C)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#lldpmgrd-subscriberstatetable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        lldpmgrd — ランタイム購読 (SubscriberStateTable)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lldpmgrd-tableget-getkeys" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        lldpmgrd — ランタイム読み出し (Table.get / getKeys)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lldpdconfj2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        lldpd.conf.j2 — コンテナ起動時テンプレート参照
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#phase-d" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28460,7 +28410,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#lldpdconfj2_1" class="md-nav__link">
+  <a href="#lldpdconfj2" class="md-nav__link">
     <span class="md-ellipsis">
       
         起動時テンプレート参照 (lldpd.conf.j2)
@@ -28909,7 +28859,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#lldpdconfj2_2" class="md-nav__link">
+  <a href="#lldpdconfj2_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         lldpd.conf.j2 ハードコード設定
@@ -36768,56 +36718,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗黙参照テーブル (Phase C)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#lldpmgrd-subscriberstatetable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        lldpmgrd — ランタイム購読 (SubscriberStateTable)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lldpmgrd-tableget-getkeys" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        lldpmgrd — ランタイム読み出し (Table.get / getKeys)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lldpdconfj2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        lldpd.conf.j2 — コンテナ起動時テンプレート参照
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#phase-d" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36913,7 +36813,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#lldpdconfj2_1" class="md-nav__link">
+  <a href="#lldpdconfj2" class="md-nav__link">
     <span class="md-ellipsis">
       
         起動時テンプレート参照 (lldpd.conf.j2)
@@ -37362,7 +37262,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#lldpdconfj2_2" class="md-nav__link">
+  <a href="#lldpdconfj2_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         lldpd.conf.j2 ハードコード設定
@@ -37718,121 +37618,6 @@
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-lldp</code>、<code>sonic-port</code></li>
 <li>関連 CLI: <code>config lldp</code>、<code>show lldp</code></li>
 </ul>
-<!-- cross-refs -->
-<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>根拠: <code>dockers/docker-lldp/lldpmgrd</code> (L74-78, L301-310, L148-164, L122-134, L206-226), <code>dockers/docker-lldp/lldpd.conf.j2</code>
-詳細: <code>meta/_intermediate/cdb-flow/lldp-cross-refs.md</code></p>
-</blockquote>
-<p><code>LLDP</code> / <code>LLDP_PORT</code> テーブル自体は <code>lldpmgrd</code> に<strong>購読されない</strong>（構造的 no-op）。実際の LLDP 動作は以下の暗黙参照テーブルによって制御される。</p>
-<h3 id="lldpmgrd-subscriberstatetable">lldpmgrd — ランタイム購読 (SubscriberStateTable)<a class="headerlink" href="#lldpmgrd-subscriberstatetable" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>参照先テーブル</th>
-<th>DB</th>
-<th>handler</th>
-<th>用途</th>
-<th>evidence</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>PORT_TABLE</code></td>
-<td><a href="../../glossary/#term-appl_db">APPL_DB</a></td>
-<td><code>lldp_process_port_table_event()</code></td>
-<td><code>oper_status=up</code> 検知で <code>lldpcli configure ports &lt;ifname&gt;</code> 発行。<code>PortInitDone</code> / <code>PortConfigDone</code> キーで <code>lldpcli resume</code> を制御</td>
-<td><code>lldpmgrd:301, 323-325</code></td>
-</tr>
-<tr>
-<td><code>MGMT_INTERFACE</code></td>
-<td><a href="../../glossary/#term-config_db">CONFIG_DB</a></td>
-<td><code>lldp_process_mgmt_info_change()</code></td>
-<td>管理 IP (IPv4 優先、次点 IPv6) 変化を検知して <code>lldpcli configure system ip management pattern &lt;ip&gt;</code> を更新</td>
-<td><code>lldpmgrd:305, 317-319</code></td>
-</tr>
-<tr>
-<td><code>DEVICE_METADATA</code></td>
-<td>CONFIG_DB</td>
-<td><code>lldp_process_device_table_event()</code></td>
-<td><code>localhost</code> キーの <code>chassis_hostname</code> / <code>hostname</code> を読み <code>lldpcli configure system hostname &lt;name&gt;</code> を更新</td>
-<td><code>lldpmgrd:308, 320-322</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="lldpmgrd-tableget-getkeys">lldpmgrd — ランタイム読み出し (Table.get / getKeys)<a class="headerlink" href="#lldpmgrd-tableget-getkeys" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>参照先テーブル</th>
-<th>DB</th>
-<th>フィールド</th>
-<th>用途</th>
-<th>evidence</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>PORT</code></td>
-<td>CONFIG_DB</td>
-<td><code>alias</code>, <code>description</code></td>
-<td>ポート ID (<code>portidsubtype local &lt;alias&gt;</code>) とポート説明を <code>lldpcli configure ports</code> コマンドに埋め込む</td>
-<td><code>lldpmgrd:75, 148-164</code></td>
-</tr>
-<tr>
-<td><code>PORT_TABLE</code></td>
-<td><a href="../../glossary/#term-state_db">STATE_DB</a></td>
-<td><code>netdev_oper_status</code></td>
-<td><code>up</code> になるまで <code>lldpcli configure ports</code> をキューイング。<code>is_port_up()</code> が参照</td>
-<td><code>lldpmgrd:78, 122-134</code></td>
-</tr>
-<tr>
-<td><code>MGMT_INTERFACE</code></td>
-<td>CONFIG_DB</td>
-<td>key (<code>&lt;ifname&gt;\|&lt;prefix&gt;</code>)</td>
-<td>DEL イベント時に残存する管理 IP を再スキャンして最優先 IP を選択</td>
-<td><code>lldpmgrd:76, 206-226</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="lldpdconfj2">lldpd.conf.j2 — コンテナ起動時テンプレート参照<a class="headerlink" href="#lldpdconfj2" title="Permanent link">&para;</a></h3>
-<p><code>sonic-cfggen</code> が Docker 起動前に展開する Jinja2 テンプレートが読み取る CONFIG_DB テーブル。</p>
-<table>
-<thead>
-<tr>
-<th>参照先テーブル</th>
-<th>フィールド</th>
-<th>生成される lldpd 設定</th>
-<th>evidence</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>MGMT_INTERFACE</code></td>
-<td><code>&lt;ifname&gt;\|&lt;prefix&gt;</code> (key)</td>
-<td><code>configure system ip management pattern &lt;ip&gt;</code></td>
-<td><code>lldpd.conf.j2:2-13</code></td>
-</tr>
-<tr>
-<td><code>MGMT_PORT</code></td>
-<td><code>alias</code></td>
-<td>eth0 の <code>configure ports eth0 lldp portidsubtype local &lt;alias\|port_name&gt;</code></td>
-<td><code>lldpd.conf.j2:17-21</code></td>
-</tr>
-<tr>
-<td><code>DEVICE_METADATA</code></td>
-<td><code>localhost.hostname</code></td>
-<td><code>configure system hostname &lt;name&gt;</code> (起動時 1 回)</td>
-<td><code>lldpd.conf.j2:29</code></td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="admonition-title">LLDP / LLDP_PORT テーブルは暗黙参照の<strong>終点ではなく起点にもならない</strong></p>
-<p><code>lldpmgrd</code> は <code>LLDP</code> / <code>LLDP_PORT</code> を一切購読しない。LLDP 動作に影響を与えたい場合は <code>DEVICE_METADATA</code> / <code>MGMT_INTERFACE</code> / <code>PORT</code> を変更するか、<code>lldpcli</code> を直接操作する必要がある。</p>
-</div>
-<!-- /cross-refs -->
-
 <!-- failure -->
 <h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
 <blockquote>
@@ -38060,7 +37845,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="lldpdconfj2_1">起動時テンプレート参照 (<code>lldpd.conf.j2</code>)<a class="headerlink" href="#lldpdconfj2_1" title="Permanent link">&para;</a></h3>
+<h3 id="lldpdconfj2">起動時テンプレート参照 (<code>lldpd.conf.j2</code>)<a class="headerlink" href="#lldpdconfj2" title="Permanent link">&para;</a></h3>
 <p>コンテナ起動時に <code>sonic-cfggen</code> が展開する Jinja2 テンプレートが読み取るテーブル。</p>
 <table>
 <thead>
@@ -38515,7 +38300,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="lldpdconfj2_2">lldpd.conf.j2 ハードコード設定<a class="headerlink" href="#lldpdconfj2_2" title="Permanent link">&para;</a></h3>
+<h3 id="lldpdconfj2_1">lldpd.conf.j2 ハードコード設定<a class="headerlink" href="#lldpdconfj2_1" title="Permanent link">&para;</a></h3>
 <p>コンテナ起動時に <code>sonic-cfggen</code> が展開する Jinja2 テンプレートの固定値。</p>
 <table>
 <thead>

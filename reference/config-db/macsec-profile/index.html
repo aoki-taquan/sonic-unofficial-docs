@@ -28438,56 +28438,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗黙参照 (Phase C)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="暗黙参照 (Phase C)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#port" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PORT テーブルからの参照
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#macsec_sc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MACSEC_SC への間接参照
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#wpa_supplicant" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        wpa_supplicant 連携
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28727,7 +28677,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#wpa_supplicant_1" class="md-nav__link">
+  <a href="#wpa_supplicant" class="md-nav__link">
     <span class="md-ellipsis">
       
         wpa_supplicant 起動失敗の詳細
@@ -28920,7 +28870,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c_1" class="md-nav__link">
+  <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙参照（Phase C）
@@ -29032,7 +28982,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#wpa_supplicant_2" class="md-nav__link">
+  <a href="#wpa_supplicant_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         wpa_supplicant 設定書込
@@ -36751,56 +36701,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗黙参照 (Phase C)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="暗黙参照 (Phase C)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#port" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PORT テーブルからの参照
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#macsec_sc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MACSEC_SC への間接参照
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#wpa_supplicant" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        wpa_supplicant 連携
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -37040,7 +36940,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#wpa_supplicant_1" class="md-nav__link">
+  <a href="#wpa_supplicant" class="md-nav__link">
     <span class="md-ellipsis">
       
         wpa_supplicant 起動失敗の詳細
@@ -37233,7 +37133,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c_1" class="md-nav__link">
+  <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙参照（Phase C）
@@ -37345,7 +37245,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#wpa_supplicant_2" class="md-nav__link">
+  <a href="#wpa_supplicant_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         wpa_supplicant 設定書込
@@ -37719,68 +37619,6 @@
 </ul>
 <!-- ref-triangle:end -->
 
-<!-- cross-refs -->
-<h2 id="phase-c">暗黙参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
-<!-- source: sonic-swss/cfgmgr/macsecmgr.cpp -->
-
-<h3 id="port">PORT テーブルからの参照<a class="headerlink" href="#port" title="Permanent link">&para;</a></h3>
-<p><code>PORT</code> テーブルの <code>macsec</code> フィールドに記載されたプロファイル名を <code>macsecmgrd</code> (<code>MACsecMgr::enableMACsec</code>) が読み取り、<code>MACSEC_PROFILE</code> エントリを検索する。プロファイルが未ロードの場合は <code>task_need_retry</code> が返却され、ポートの MACsec は有効化されない。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>CONFIG_DB:PORT.macsec  ──名前参照──▶  CONFIG_DB:MACSEC_PROFILE
-</span></code></pre></div>
-<p>プロファイル削除時、当該プロファイルを参照中のポートが存在する場合は削除が拒否される (<code>task_need_retry</code> — 全ポート MACsec 無効化まで待機、<code>macsecmgr.cpp:452-466</code>)。</p>
-<h3 id="macsec_sc">MACSEC_SC への間接参照<a class="headerlink" href="#macsec_sc" title="Permanent link">&para;</a></h3>
-<p><code>configureMACsec()</code> が <code>wpa_supplicant</code> を通じて MKA セッションを確立後、<code>macsecorch</code> が <a href="../../glossary/#term-appl_db">APPL_DB</a> 経由で <a href="../../glossary/#term-sai">SAI</a> MACsec SC (Secure Channel) オブジェクトを生成する。<code>send_sci</code> / <code>policy</code> / <code>cipher_suite</code> の各フィールドが SC の動作モードに直接影響する。</p>
-<h3 id="wpa_supplicant">wpa_supplicant 連携<a class="headerlink" href="#wpa_supplicant" title="Permanent link">&para;</a></h3>
-<p><code>macsecmgrd</code> は MACsec コントロールプレーンとして <code>/sbin/wpa_supplicant</code> を子プロセスで起動し、<code>/sbin/wpa_cli</code> を介して以下のパラメータを注入する。</p>
-<table>
-<thead>
-<tr>
-<th>MACSEC_PROFILE フィールド</th>
-<th>wpa_cli パラメータ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>primary_cak</code></td>
-<td><code>mka_cak</code></td>
-</tr>
-<tr>
-<td><code>primary_ckn</code></td>
-<td><code>mka_ckn</code></td>
-</tr>
-<tr>
-<td><code>priority</code></td>
-<td><code>mka_priority</code></td>
-</tr>
-<tr>
-<td><code>rekey_period</code></td>
-<td><code>mka_rekey_period</code>（0 の場合は設定しない）</td>
-</tr>
-<tr>
-<td><code>cipher_suite</code></td>
-<td><code>macsec_ciphersuite</code></td>
-</tr>
-<tr>
-<td><code>send_sci</code></td>
-<td><code>macsec_include_sci</code></td>
-</tr>
-<tr>
-<td><code>enable_replay_protect</code></td>
-<td><code>macsec_replay_protect</code></td>
-</tr>
-<tr>
-<td><code>replay_window</code></td>
-<td><code>macsec_replay_window</code>（<code>enable_replay_protect=true</code> 時のみ）</td>
-</tr>
-<tr>
-<td><code>policy</code></td>
-<td><code>macsec_integ_only</code>（<code>integrity_only</code> → 1）</td>
-</tr>
-</tbody>
-</table>
-<p>詳細分析: <code>meta/_intermediate/cdb-flow/macsec-profile-cross-refs.md</code></p>
-<!-- /cross-refs -->
-
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
@@ -37798,8 +37636,8 @@
 <li>鍵 (<code>primary_cak</code>/<code>fallback_cak</code>) を 16/32B 以外で入れると MKA セッションが上がらない。</li>
 </ul>
 <h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;MACSEC_PROFILE|*&#39;</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>macsec
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;MACSEC_PROFILE|*&#39;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>macsec
 </span></code></pre></div>
 <!-- /ops-hint -->
 
@@ -37939,33 +37777,33 @@
 <li><strong>MACSEC_PROFILE が先に存在すること</strong> — <code>m_profiles.find(profile_name)</code> が見つからない場合は <code>task_need_retry</code> を返し、プロファイルが登録されるまで再試行し続ける。</li>
 <li><strong>PORT が <a href="../../glossary/#term-state_db">STATE_DB</a> で ready 状態であること</strong> — <code>isPortStateOk(port_name)</code> が <code>STATE_PORT_TABLE_NAME</code> を参照し、<code>state == "ok"</code> かつ <code>netdev_oper_status == "up"</code> でなければ同様に <code>task_need_retry</code>。</li>
 </ol>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>CONFIG_DB に MACSEC_PROFILE|&lt;name&gt; が存在
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  ↓ (先行必須)
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>STATE_DB PORT|&lt;port&gt; state=ok, netdev_oper_status=up
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  ↓ (先行必須)
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>enableMACsec() → wpa_supplicant 起動 → MKA セッション確立
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>CONFIG_DB に MACSEC_PROFILE|&lt;name&gt; が存在
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  ↓ (先行必須)
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>STATE_DB PORT|&lt;port&gt; state=ok, netdev_oper_status=up
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  ↓ (先行必須)
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>enableMACsec() → wpa_supplicant 起動 → MKA セッション確立
 </span></code></pre></div>
 <p>ソース: <code>cfgmgr/macsecmgr.cpp</code> L487–504</p>
 <h3 id="wpa_supplicant-macsecmgr">wpa_supplicant 起動順 (macsecmgr)<a class="headerlink" href="#wpa_supplicant-macsecmgr" title="Permanent link">&para;</a></h3>
 <p><code>startWPASupplicant()</code> は <code>fork()</code> + <code>execl()</code> で <code>/sbin/wpa_supplicant -s -D macsec_sonic -g &lt;sock&gt;</code> を起動し、その後 <strong>ソケット (<code>/var/run/wpa_supplicant/&lt;port&gt;</code>) が応答を返すまで最大 <code>RETRY_TIME</code> 回ポーリング</strong>（<code>wpa_cli_exec(..., "status")</code>）してから次処理（<code>configureMACsec</code>）に進む。ソケット応答前に <code>configureMACsec</code> を呼ぶと接続失敗になるため、ここで暗黙的なブロッキング待機が発生する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>fork() + execl(wpa_supplicant)
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ↓ (ポーリング待機: RETRY_TIME 回)
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>wpa_supplicant ソケット応答
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  ↓
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>configureMACsec() — wpa_cli 経由でインターフェース追加・MKA 設定
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>fork() + execl(wpa_supplicant)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  ↓ (ポーリング待機: RETRY_TIME 回)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>wpa_supplicant ソケット応答
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  ↓
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>configureMACsec() — wpa_cli 経由でインターフェース追加・MKA 設定
 </span></code></pre></div>
 <p>ソース: <code>cfgmgr/macsecmgr.cpp</code> L635–678</p>
 <h3 id="sai-macsec_sa-macsecorch">SAI macsec_sa 作成順 (macsecorch)<a class="headerlink" href="#sai-macsec_sa-macsecorch" title="Permanent link">&para;</a></h3>
 <p><code>MACsecOrch</code> では <a href="../../glossary/#term-sai">SAI</a> オブジェクトを以下の厳密な順序で作成する。前段オブジェクトが未作成の場合は <code>task_need_retry</code> を返し待機する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>1. MACsec Switch Object (initMACsecObject)  ← スイッチ単位で 1 回のみ
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>     ↓
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>2. MACsec Port Object (createMACsecPort)    ← PORT ごと
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>     ↓
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>3. MACsec SC (Security Channel) Object (createMACsecSC)
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>     ↓
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>4. MACsec SA (Security Association) Object (createMACsecSA)
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>     ↓ (最初の SA 作成時のみ)
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>5. ACL エントリアクションを &quot;packet action&quot; から &quot;MACsec flow&quot; に切り替え
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>1. MACsec Switch Object (initMACsecObject)  ← スイッチ単位で 1 回のみ
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>     ↓
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>2. MACsec Port Object (createMACsecPort)    ← PORT ごと
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>     ↓
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>3. MACsec SC (Security Channel) Object (createMACsecSC)
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>     ↓
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>4. MACsec SA (Security Association) Object (createMACsecSA)
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>     ↓ (最初の SA 作成時のみ)
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>5. ACL エントリアクションを &quot;packet action&quot; から &quot;MACsec flow&quot; に切り替え
 </span></code></pre></div>
 <ul>
 <li>SC が存在しない状態で <code>taskUpdateEgressSA</code> / <code>taskUpdateIngressSA</code> を呼ぶと <code>task_need_retry</code> → SC 作成まで待機。</li>
@@ -38117,7 +37955,7 @@
 </table>
 <h3 id="task_failed">task_failed 後の挙動<a class="headerlink" href="#task_failed" title="Permanent link">&para;</a></h3>
 <p><code>macsecmgr</code> が <code>task_failed</code> を返すと Consumer はエントリを破棄し、ポートは MACsec 無効のまま継続動作する。<code>macsecorch</code> も同様。SAI 一時エラー（<code>SAI_STATUS_NOT_READY</code> 等）は <code>task_need_retry</code> で無制限再試行される。</p>
-<h3 id="wpa_supplicant_1">wpa_supplicant 起動失敗の詳細<a class="headerlink" href="#wpa_supplicant_1" title="Permanent link">&para;</a></h3>
+<h3 id="wpa_supplicant">wpa_supplicant 起動失敗の詳細<a class="headerlink" href="#wpa_supplicant" title="Permanent link">&para;</a></h3>
 <p><code>fork()</code> 後に子プロセスが <code>execv("/sbin/wpa_supplicant", ...)</code> を実行。Unix socket 接続を一定回数試みて失敗した場合、<code>stopWPASupplicant()</code> を呼び出して <code>wpa_supplicant_pid = 0</code> にクリアし <code>task_failed</code> を返す。ポートの MACsec は有効化されない。<!-- evidence: macsecmgr.cpp L544-558, L676 --></p>
 <h3 id="sai-post">SAI POST 失敗の詳細<a class="headerlink" href="#sai-post" title="Permanent link">&para;</a></h3>
 <p><code>macsecorch</code> 初期化時に <code>SAI_SWITCH_ATTR_MACSEC_POST_STATUS</code> を照会。<code>SAI_SWITCH_MACSEC_POST_STATUS_FAIL</code> が返ると STATE_DB に <code>status: fail</code> を書き込む。その後の通知（<code>switch_macsec_post_status</code> / <code>macsec_post_status</code>）でも失敗を検出した場合は同様に記録される。<!-- evidence: macsecorch.cpp L710-711, L791-792, L856-857 --></p>
@@ -38127,10 +37965,10 @@
 <li>その他の失敗は <code>syslog</code>（<code>SWSS_LOG_WARN</code> / <code>SWSS_LOG_ERROR</code>）への出力のみ</li>
 <li><a href="../../glossary/#term-config_db">CONFIG_DB</a> のエントリは失敗後も残る</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># syslog 確認</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>macsecmgrd<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;fail|warn|error&quot;</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># STATE_DB POST ステータス確認</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;MACSEC_POST|switch&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># syslog 確認</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>macsecmgrd<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;fail|warn|error&quot;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># STATE_DB POST ステータス確認</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;MACSEC_POST|switch&#39;</span>
 </span></code></pre></div>
 <blockquote>
 <p>中間調査ファイル: <code>meta/_intermediate/cdb-flow/macsec-profile-failure.md</code></p>
@@ -38186,7 +38024,7 @@
 <!-- /entry-points -->
 
 <!-- cross-refs -->
-<h2 id="phase-c_1">暗黙参照（Phase C）<a class="headerlink" href="#phase-c_1" title="Permanent link">&para;</a></h2>
+<h2 id="phase-c">暗黙参照（Phase C）<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
 <p><code>MACsecMgr</code> / <code>MACsecOrch</code> が <code>MACSEC_PROFILE</code> テーブルを処理する際、以下の外部テーブル・DB を明示的な設定フィールドとしてではなく、<strong>実行時のトリガー条件・ゲート・書き込み先</strong>として暗黙的に参照する。</p>
 <table>
 <thead>
@@ -38225,17 +38063,17 @@
 </tbody>
 </table>
 <h3 id="_20">依存関係サマリ<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>PORT|&lt;ifname&gt;.macsec = &quot;&lt;profile-name&gt;&quot; (CONFIG_DB)
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  → MACsecMgr が MACSEC_PROFILE を参照し wpa_supplicant 起動
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>STATE_DB PORT_TABLE.&lt;ifname&gt;.state == &quot;ok&quot; &amp;&amp; netdev_oper_status == &quot;up&quot;
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>  → 両条件が満たされるまで enableMACsec() は task_need_retry
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>wpa_supplicant (MKA) が APPL_DB へ書き込み
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>  → APP_MACSEC_EGRESS_SC / APP_MACSEC_INGRESS_SC
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>MACsecOrch が SAI sai_macsec_api でセキュリティチャネル確立
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>  → APPL_DB PORT_TABLE.pfc_encryption_mode も暗黙参照（PFC ACL 生成時）
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>PORT|&lt;ifname&gt;.macsec = &quot;&lt;profile-name&gt;&quot; (CONFIG_DB)
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  → MACsecMgr が MACSEC_PROFILE を参照し wpa_supplicant 起動
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>STATE_DB PORT_TABLE.&lt;ifname&gt;.state == &quot;ok&quot; &amp;&amp; netdev_oper_status == &quot;up&quot;
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>  → 両条件が満たされるまで enableMACsec() は task_need_retry
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>wpa_supplicant (MKA) が APPL_DB へ書き込み
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>  → APP_MACSEC_EGRESS_SC / APP_MACSEC_INGRESS_SC
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>MACsecOrch が SAI sai_macsec_api でセキュリティチャネル確立
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>  → APPL_DB PORT_TABLE.pfc_encryption_mode も暗黙参照（PFC ACL 生成時）
 </span></code></pre></div>
 <!-- /cross-refs -->
 
@@ -38310,23 +38148,23 @@
 </tr>
 </tbody>
 </table>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>CONFIG_DB:MACSEC_PROFILE (SET)
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  │ SubscriberStateTable
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>  ▼
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>macsecmgrd::loadProfile()  ─── プロファイルをメモリにキャッシュ
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>CONFIG_DB:PORT.macsec (SET)
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>  │ SubscriberStateTable
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>  ▼
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>macsecmgrd::enableMACsec()
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>  ├─ fork/execl: wpa_supplicant -D macsec_sonic -g /var/run/&lt;port&gt;
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>  └─ wpa_cli: mka_cak / mka_ckn / priority / cipher_suite 等を注入
-</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>        │ MKA セッション確立・SAK 配布
-</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>        ▼
-</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>       APPL_DB: APP_MACSEC_{PORT,EGRESS_SC,INGRESS_SC,EGRESS_SA,INGRESS_SA}
-</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>        │ SubscriberStateTable (MACsecOrch)
-</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>        ▼
-</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>       sai_macsec_api → ASIC/HW
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>CONFIG_DB:MACSEC_PROFILE (SET)
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  │ SubscriberStateTable
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  ▼
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>macsecmgrd::loadProfile()  ─── プロファイルをメモリにキャッシュ
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>CONFIG_DB:PORT.macsec (SET)
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>  │ SubscriberStateTable
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>  ▼
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>macsecmgrd::enableMACsec()
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>  ├─ fork/execl: wpa_supplicant -D macsec_sonic -g /var/run/&lt;port&gt;
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>  └─ wpa_cli: mka_cak / mka_ckn / priority / cipher_suite 等を注入
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>        │ MKA セッション確立・SAK 配布
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>        ▼
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>       APPL_DB: APP_MACSEC_{PORT,EGRESS_SC,INGRESS_SC,EGRESS_SA,INGRESS_SA}
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>        │ SubscriberStateTable (MACsecOrch)
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>        ▼
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>       sai_macsec_api → ASIC/HW
 </span></code></pre></div>
 <p>詳細分析: <code>meta/_intermediate/cdb-flow/macsec-profile-pubsub.md</code></p>
 <!-- /pubsub -->
@@ -38424,7 +38262,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="wpa_supplicant_2">wpa_supplicant 設定書込<a class="headerlink" href="#wpa_supplicant_2" title="Permanent link">&para;</a></h3>
+<h3 id="wpa_supplicant_1">wpa_supplicant 設定書込<a class="headerlink" href="#wpa_supplicant_1" title="Permanent link">&para;</a></h3>
 <p><code>macsecmgrd</code> が <code>wpa_cli set_network</code> コマンドで wpa_supplicant プロセスに MKA パラメータを渡す。書込先はプロセス内ランタイム状態（ファイルではなくソケット経由）。</p>
 <table>
 <thead>
@@ -38712,11 +38550,11 @@
 </table>
 <p>PHY が接続されていても <code>macsec_supported</code> が <code>false</code> の場合、<code>MACsecOrch</code> は <a href="../../glossary/#term-npu">NPU</a> 側へフォールバックし、ログに <code>"backend=NPU (phy marked unsupported)"</code> を出力する。</p>
 <p><strong>コード証跡</strong> (<code>macsecorch.cpp:363, 409, 2539, 2547, 2555, 2563</code>):
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">force_npu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">phy</span><span class="o">-&gt;</span><span class="n">macsec_supported</span><span class="p">;</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">force_npu</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">port</span><span class="o">-&gt;</span><span class="n">m_line_side_id</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SAI_NULL_OBJECT_ID</span><span class="p">)</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="n">m_port_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="o">-&gt;</span><span class="n">m_line_side_id</span><span class="p">;</span><span class="w">  </span><span class="c1">// PHY 側を使用</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="k">else</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="n">m_port_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="o">-&gt;</span><span class="n">m_port_id</span><span class="p">;</span><span class="w">       </span><span class="c1">// NPU 側へフォールバック</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">force_npu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">phy</span><span class="o">-&gt;</span><span class="n">macsec_supported</span><span class="p">;</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">force_npu</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">port</span><span class="o">-&gt;</span><span class="n">m_line_side_id</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SAI_NULL_OBJECT_ID</span><span class="p">)</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="n">m_port_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="o">-&gt;</span><span class="n">m_line_side_id</span><span class="p">;</span><span class="w">  </span><span class="c1">// PHY 側を使用</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="k">else</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="n">m_port_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="o">-&gt;</span><span class="n">m_port_id</span><span class="p">;</span><span class="w">       </span><span class="c1">// NPU 側へフォールバック</span>
 </span></code></pre></div></p>
 <h3 id="sai-macsec-capability">SAI MACsec capability クエリ<a class="headerlink" href="#sai-macsec-capability" title="Permanent link">&para;</a></h3>
 <p>初期化時に以下の SAI ケーパビリティを実行時にクエリし、<a href="../../glossary/#term-asic">ASIC</a> ベンダーの実装状態に応じて動作を変える。</p>
@@ -38747,16 +38585,16 @@
 </tbody>
 </table>
 <p><strong>コード証跡</strong> (<code>macsecorch.cpp:672–681, 1302–1345</code>):
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">// ACL SCI フィールドサポート確認</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">sai_query_attribute_capability</span><span class="p">(...,</span><span class="w"> </span><span class="n">SAI_ACL_TABLE_ATTR_FIELD_MACSEC_SCI</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">capability</span><span class="p">);</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">capability</span><span class="p">.</span><span class="n">create_implemented</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="n">saiAclFieldSciMatchSupported</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="c1">// SA per SC 数のクエリ (非対応時デフォルト 4)</span>
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_MACSEC_ATTR_MAX_SECURE_ASSOCIATIONS_PER_SC</span><span class="p">;</span>
-</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sai_macsec_api</span><span class="o">-&gt;</span><span class="n">get_macsec_attribute</span><span class="p">(...);</span>
-</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span>
-</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">    </span><span class="n">m_max_sa_per_sc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w">  </span><span class="c1">// デフォルトにフォールバック</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// ACL SCI フィールドサポート確認</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">sai_query_attribute_capability</span><span class="p">(...,</span><span class="w"> </span><span class="n">SAI_ACL_TABLE_ATTR_FIELD_MACSEC_SCI</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">capability</span><span class="p">);</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">capability</span><span class="p">.</span><span class="n">create_implemented</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="n">saiAclFieldSciMatchSupported</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="c1">// SA per SC 数のクエリ (非対応時デフォルト 4)</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_MACSEC_ATTR_MAX_SECURE_ASSOCIATIONS_PER_SC</span><span class="p">;</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sai_macsec_api</span><span class="o">-&gt;</span><span class="n">get_macsec_attribute</span><span class="p">(...);</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">    </span><span class="n">m_max_sa_per_sc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w">  </span><span class="c1">// デフォルトにフォールバック</span>
 </span></code></pre></div></p>
 <h3 id="post-power-on-self-test">POST (Power-On Self-Test) 対応差異<a class="headerlink" href="#post-power-on-self-test" title="Permanent link">&para;</a></h3>
 <p><code>SAI_MACSEC_ATTR_ENABLE_POST</code> / <code>SAI_SWITCH_ATTR_MACSEC_POST_STATUS</code> は <a href="../../glossary/#term-asic">ASIC</a> ベンダー依存の POST 機能。</p>
@@ -38788,17 +38626,17 @@
 </table>
 <p>POST 未対応 ASIC (SAI が本属性を実装しない環境) では <code>m_enable_post = false</code> のままとなり、MACsec オブジェクト初期化時の <code>SAI_MACSEC_ATTR_ENABLE_POST</code> 設定がスキップされる。</p>
 <p><strong>コード証跡</strong> (<code>macsecorch.cpp:695–728, 1246–1251, 1278–1283</code>):
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_enable_post</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_MACSEC_ATTR_ENABLE_POST</span><span class="p">;</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">booldata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="p">}</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_enable_post</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_MACSEC_ATTR_ENABLE_POST</span><span class="p">;</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">booldata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="p">}</span>
 </span></code></pre></div></p>
 <h3 id="physical-bypass">Physical Bypass モード<a class="headerlink" href="#physical-bypass" title="Permanent link">&para;</a></h3>
 <p>egress / ingress 両方の MACsec オブジェクト作成時に <code>SAI_MACSEC_ATTR_PHYSICAL_BYPASS_ENABLE = true</code> を設定する。これは ASIC が MACsec をバイパスする初期状態を確保するためであり、MKA ネゴシエーション完了後に SA が確立されてから暗号化が有効になる流れを保証する。</p>
 <p><strong>コード証跡</strong> (<code>macsecorch.cpp:1242–1244, 1274–1276</code>):
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_MACSEC_ATTR_PHYSICAL_BYPASS_ENABLE</span><span class="p">;</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">booldata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_MACSEC_ATTR_PHYSICAL_BYPASS_ENABLE</span><span class="p">;</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">booldata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
 </span></code></pre></div></p>
 <h3 id="_22">非対応 / スコープ外<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
 <ul>

@@ -38184,7 +38184,6 @@ CONFIG_DB に書き込む際も <code>SYSLOG_CONFIG_FEATURE|swss</code> 形式�
 <p>なし</p>
 <!-- /entry-points -->
 
-<!-- ordering -->
 <h2 id="phase-b_1">書込み順依存 (Phase B) (補足)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
 <p><code>SYSLOG_CONFIG_FEATURE</code> は per-container の syslog rate-limit 設定テーブルで、
 <code>containercfgd</code> (<code>sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py</code>) が購読する。
@@ -38247,8 +38246,6 @@ CONFIG_DB に接続し、<code>listen(init_data_handler=self.init_data_handler)<
 複数コンテナへの <code>SYSLOG_CONFIG_FEATURE</code> 同時書込みは相互に干渉しない。</p>
 <!-- evidence: sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py L44-61,112-135 -->
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-syslog.yang (leaf service leafref) -->
-
-<!-- /ordering -->
 
 <!-- glossary-links-injected: 3d010c83e5f1 -->
 

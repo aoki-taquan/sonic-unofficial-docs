@@ -38261,8 +38261,6 @@
 2. <code>CoppOrch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>) が APPL_DB <code>COPP_TABLE</code> を購読 → SAI <code>sai_hostif_api-&gt;create_hostif_trap_group()</code> / <code>set_hostif_trap_group_attribute()</code> を呼出
 3. <code>CoppOrch</code> 起動時に SAI ケーパビリティを問い合わせ → STATE_DB <code>COPP_TRAP_CAPABILITY_TABLE</code> に対応 trap_ids を一括記録
 4. トラップにカウンタをバインド → <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> <code>COUNTERS_TRAP_NAME_MAP</code> を更新</p>
-<!-- /side-effects -->
-
 <!-- defaults -->
 <h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <h3 id="default-trap_action"><code>default</code> グループ — <code>trap_action</code> 省略<a class="headerlink" href="#default-trap_action" title="Permanent link">&para;</a></h3>
@@ -38648,7 +38646,6 @@
 </ul>
 <!-- /cross-refs -->
 
-<!-- side-effects -->
 <h2 id="db-phase-f_1">副次 DB 書き込み (Phase F)<a class="headerlink" href="#db-phase-f_1" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>証跡: <code>meta/_intermediate/cdb-flow/copp-group-side.md</code></p>

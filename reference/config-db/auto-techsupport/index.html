@@ -37886,7 +37886,6 @@
 </table>
 <!-- evidence: sonic-net/sonic-utilities/scripts/memory_threshold_check.py:153L -->
 
-<!-- failure -->
 <h3 id="coredump_gen_handlerpy">coredump_gen_handler.py 経由の失敗挙動<a class="headerlink" href="#coredump_gen_handlerpy" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -37951,7 +37950,6 @@
 <blockquote>
 <p><strong>Evidence</strong>: <code>sonic-net/sonic-utilities/scripts/coredump_gen_handler.py:14-78</code>, <code>utilities_common/auto_techsupport_helper.py:232-254</code></p>
 </blockquote>
-<!-- /failure -->
 <!-- /cdb-exceptions -->
 
 <!-- value-behavior -->
@@ -38953,7 +38951,6 @@ masic suffix を除去してから (<code>swss0</code> → <code>swss</code>) <c
 </blockquote>
 <!-- /pubsub -->
 
-<!-- ordering -->
 <h2 id="techsupport">コア生成から techsupport 起動までの順序依存関係<a class="headerlink" href="#techsupport" title="Permanent link">&para;</a></h2>
 <h3 id="1-coredump">1. カーネル coredump パイプ起動<a class="headerlink" href="#1-coredump" title="Permanent link">&para;</a></h3>
 <p>カーネルが <code>kernel.core_pattern</code> に従いプロセスクラッシュを検知し、<code>coredump-compress</code> スクリプトへ標準入力でコアデータをパイプする。</p>
@@ -39022,8 +39019,6 @@ masic suffix を除去してから (<code>swss0</code> → <code>swss</code>) <c
 </span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>                 ├─ show techsupport 起動 → /var/dump/sonic_dump_*.tar.gz
 </span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>                 └─ handle_coredump_cleanup (max_core_limit に基づき /var/core 整理)
 </span></code></pre></div>
-<!-- /ordering -->
-
 <!-- glossary-links-injected: 48d5f456ebb6 -->
 
 <div class="footnote">

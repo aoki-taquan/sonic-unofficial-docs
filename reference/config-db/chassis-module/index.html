@@ -38260,7 +38260,7 @@
 </blockquote>
 <!-- /constants -->
 
-<!-- ordering -->
+<!-- ordering-startup -->
 <h2 id="chassis_app_db_1">起動順序依存・CHASSIS_APP_DB 連携<a class="headerlink" href="#chassis_app_db_1" title="Permanent link">&para;</a></h2>
 <h3 id="1-smartswitch-chassis_module-chassisd">1. SmartSwitch: CHASSIS_MODULE エントリは chassisd 起動前に存在必須<a class="headerlink" href="#1-smartswitch-chassis_module-chassisd" title="Permanent link">&para;</a></h3>
 <p><code>ChassisdDaemon.run()</code> は <code>is_smartswitch()</code> 判定後、<code>SmartSwitchConfigManagerTask</code> を起動する<strong>前</strong>に <code>set_initial_dpu_admin_state()</code> (chassisd:1432) を呼び出す。この関数は CONFIG_DB の <code>CHASSIS_MODULE</code> テーブルをポーリングして各 DPU の初期 admin_status を決定する。</p>
@@ -38344,7 +38344,7 @@
 </tr>
 </tbody>
 </table>
-<!-- /ordering -->
+<!-- /ordering-startup -->
 
 <!-- side-effects -->
 <h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>

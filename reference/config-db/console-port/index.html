@@ -38336,7 +38336,7 @@
 </blockquote>
 <!-- /handler-branching -->
 
-<!-- ordering -->
+<!-- ordering-detail -->
 <h2 id="phase-b_1">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
 <p><code>consutil</code> は CONFIG_DB の <code>CONSOLE_SWITCH</code> を読み取ってから <code>CONSOLE_PORT</code> を参照する。この読み取り順は実行のたびにバッチで行われるが、DB 書き込み側から見ると以下の順序依存が存在する。</p>
 <h3 id="_21">検出された順序依存<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
@@ -38380,7 +38380,7 @@
 <p><strong>CONSOLE_SWITCH → CONSOLE_PORT 読み取り順 (依存 #1, #2)</strong>: <code>ConsolePortList._init_all()</code> (consutil/lib.py L86–130) は <code>config_db.get_entry(CONSOLE_SWITCH_TABLE, FEATURE_KEY)</code> を先に呼んで <code>enabled</code> を確認し、<code>_default_escape_char</code> を決定する。この後に <code>config_db.get_keys(CONSOLE_PORT_TABLE)</code> を呼ぶ。<code>enabled == "yes"</code> でなければ <code>_default_escape_char = None</code> のまま PORT 一覧を読む。consutil main.py L26 の <code>data = config_db.get_entry(CONSOLE_SWITCH_TABLE, FEATURE_KEY)</code> でも同様の確認が行われ、<code>enabled != "yes"</code> の場合はコマンドによって "Console management is disabled" のエラーで終了する（evidence: <code>consutil/lib.py:91–106</code>, <code>consutil/main.py:26–34</code>）。</p>
 <p><strong>minigraph 生成の独立性 (依存 #3)</strong>: <code>minigraph.py</code> は <code>CONSOLE_PORT</code> を L2516 で <code>console_ports</code> 変数から代入し、<code>CONSOLE_SWITCH</code> を L2728 でデバイスタイプ (<code>MgmtTsToR</code>) の確認結果から独立して生成する。<code>sonic-cfggen</code> がこれら 2 テーブルを同一 JSON 出力としてまとめて DB に書き込むため、minigraph フロー内では順序問題は発生しない。ただし、デバイスタイプが <code>MgmtTsToR</code> <strong>以外</strong> の場合でも <code>CONSOLE_PORT</code> エントリが XML に存在すれば生成されるが、<code>CONSOLE_SWITCH.enabled</code> は <code>"no"</code> になるため、consutil からの接続は不可能になる（evidence: <code>minigraph.py:52</code>, <code>minigraph.py:2516</code>, <code>minigraph.py:2728–2731</code>）。</p>
 <p><strong>db_migrator の前提条件 (依存 #4)</strong>: <code>migrate_console_switch()</code> は <code>self.configDB.get_entry('CONSOLE_SWITCH', 'console_mgmt')</code> で現在の DB 値を取得し、空の場合（<code>if not console_mgmt</code>）のみ <code>set_entry</code> を実行する。このため、マイグレーション前に <code>config console enable</code> / <code>disable</code> コマンドを手動実行してキーが存在する場合、移行元 <code>config_src_data</code> の値は書き込まれない（evidence: <code>db_migrator.py:659–666</code>）。</p>
-<!-- /ordering -->
+<!-- /ordering-detail -->
 
 <!-- glossary-links-injected: 8ba32e5aa69d -->
 

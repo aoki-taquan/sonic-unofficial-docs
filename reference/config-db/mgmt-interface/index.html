@@ -37871,8 +37871,6 @@
 <p><strong><code>MGMT_VRF_CONFIG</code> 先行推奨 (依存 #1)</strong>: <code>interfaces.j2</code> は <code>MGMT_VRF_CONFIG['vrf_global']['mgmtVrfEnabled']</code> を参照して forced routes のルーティングテーブルを <code>default</code> または <code>mgmt (6000)</code> に切り替える（<code>interfaces.j2:9,88</code>）。<code>MGMT_VRF_CONFIG</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> に存在しない状態で <code>MGMT_INTERFACE</code> を書き込むと、<code>interfaces.j2</code> は VRF なしとして <code>/etc/network/interfaces</code> を生成する。後から <code>MGMT_VRF_CONFIG</code> を追加すると <code>mgmt_vrf_handler</code> → <code>systemctl restart interfaces-config</code> が呼ばれて再生成される（evidence: <code>hostcfgd:2352-2358</code>）。</p>
 <p><strong><code>SYSLOG_SERVER</code> 暗黙依存 (依存 #2)</strong>: <code>interfaces.j2:101-113</code> は <code>SYSLOG_SERVER</code> の有無でルート注入先を切り替える。<code>SYSLOG_SERVER</code> が CONFIG_DB にない場合に <code>10.20.6.16/32</code> がハードコードで注入されるため、<code>SYSLOG_SERVER</code> を後から追加しても <code>interfaces-config</code> が再起動されるまでハードコードルートが残留する（evidence: <code>interfaces.j2:101-130</code>）。</p>
 <p><strong><a href="../../glossary/#term-radius">RADIUS</a> 送信元 IP 解決 (依存 #3)</strong>: <code>mgmt_intf_handler()</code> は <code>MGMT_INTERFACE</code> の変更を受け取ると <code>aaacfg.handle_radius_source_intf_ip_chg(mgmt_intf_name)</code> を呼び RADIUS の送信元 IP を再解決する（<code>hostcfgd:2348-2350</code>）。RADIUS 設定が先に存在し <code>src_intf=eth0</code> が設定されている場合、<code>MGMT_INTERFACE</code> の IP 変更後に RADIUS 送信元 IP が自動更新される。この依存は <code>RADIUS_SERVER.src_intf</code> を使用する構成でのみ顕在化する。</p>
-<!-- /ordering -->
-
 <!-- defaults -->
 <h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-buildimage/files/image_config/interfaces/interfaces.j2 / sonic-host-services/scripts/hostcfgd / sonic-utilities/config/main.py / sonic-buildimage/src/sonic-config-engine/minigraph.py -->
@@ -38380,7 +38378,6 @@
 <p><strong>インターフェース未 ready の場合のみ自動リトライあり</strong>。その他の netlink 失敗（カーネルエラー・権限不足等）はエラーログを出してエントリを破棄する。</p>
 <!-- /failure -->
 
-<!-- ordering -->
 <h2 id="phase-b_1">書込み順依存 (Phase B) (補足)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>調査対象: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>
