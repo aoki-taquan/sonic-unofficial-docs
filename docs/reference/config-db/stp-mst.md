@@ -727,6 +727,11 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / [APPL_DB](../../reference/
 
 ## 引用元
 
+- [`config/stp.py`](https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py) — MST 定数定義 (L68-110)・`spanning_tree_enable()` (L533-539)・`enable_mst_instance0()` (L433-438)・`enable_mst_for_interfaces()` (L441-470)・per-instance per-port `mod_entry` (L1697-1824)。暗黙デフォルト §1–§5 の全証跡
+- [`cfgmgr/stpmgr.cpp`](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp) — `doStpMstGlobalTask()` (L344)・`doStpMstInstTask()` (L1027-)・`doStpMstInstPortTask()` (L1160-)・起動ガード・キープレフィックス長マジックナンバー (L1044/L1174)・`stoi` 例外・`updateVlanInstanceMap()` (L1454)・`getStpMaxInstances()` (L1381-1414)。Phase B–H の全証跡
+- [`cfgmgr/stpmgr.h`](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h) — `MAX_VLANS` / `STP_DEFAULT_MAX_INSTANCES` / `STPMGRD_SOCK_NAME` 等のデーモン内部定数 (L28-108)、`name[32]` フィールド長 (L205)
+- [`cfgmgr/stpmgrd.cpp`](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgrd.cpp) — `SELECT_TIMEOUT` (L17)・`DBConnector` 初期化 (L35-37)・`isPortInitDone()` 待機 (L72)・`WarmStart` 宣言 (L39-40)。multi-asic / VoQ 非対応・PortInitDone 依存の証跡
+
 ## 関連ページ
 
 - [CONFIG_DB: STP](stp.md)
