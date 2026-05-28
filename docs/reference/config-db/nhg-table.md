@@ -113,8 +113,6 @@ if (weight != 0) {
 **`mpls_nh` / `seg_src` のデフォルト: なし**
 
 フィールド不在で [MPLS](../../reference/glossary.md#term-mpls)/[SRv6](../../reference/glossary.md#term-srv6) は無効。`mpls_nh[i] == "na"` で対応インデックスのラベルを明示無効化できる。
-<!-- /defaults -->
-
 ---
 
 ## CLASS_BASED_NEXT_HOP_GROUP_TABLE フィールド
@@ -124,7 +122,7 @@ if (weight != 0) {
 | `members` | comma-separated NEXTHOP_GROUP_TABLE key list | yes | なし | 子 NHG キーのリスト。空・重複は SWSS_LOG_ERROR + 即破棄 |
 | `selection_map` | FC_TO_NHG_INDEX_MAP_TABLE key | yes | なし | FC→子NHGインデックスのマップキー。未存在は return false + 再試行 |
 
-<!-- defaults -->
+
 ### フィールドデフォルト詳細
 
 **`members` のデフォルト: なし (必須)**
