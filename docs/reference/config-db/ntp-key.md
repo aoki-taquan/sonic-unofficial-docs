@@ -332,30 +332,6 @@ YANG default `md5` により、CONFIG_DB に正規化された値は常に non-e
 
 <!-- /defaults -->
 
-<!-- ordering -->
-## 書込み順依存 (Phase B) (補足)
-
-`NTP_KEY` は `NTP_SERVER.key` フィールドから leafref で参照される**被参照側**テーブルである。SET / DEL の両方向に順序制約があり、`hostcfgd` の合算再読み込みと組み合わさって下記の依存関係が生じる。
-
-### 検出された順序依存
-
-| # | 依存関係 | 強制度 | 違反時の挙動 |
-|---|----------|--------|------------|
-| 1 | `NTP_SERVER\|<server>.key` クリア（または `NTP_SERVER` DEL）先行 → `NTP_KEY\|<id>` DEL | **必須先行** | YANG leafref 整合性チェックで拒否（DEL 失敗） |
-| 2 | `NTP_KEY\|<id>` SET 先行 → `NTP_SERVER\|<server>.key=<id>` SET | **必須先行**（NTP_SERVER 側制約） | YANG leafref 解決失敗で `NTP_SERVER` の SET が拒否される |
-| 3 | `NTP_KEY\|<id>` SET 先行 → `NTP\|global.authentication=enabled` SET | 推奨先行 | chrony が空 keyfile で再起動し認証失敗 |
-
-### 制約詳細
-
-**DEL 順序依存（依存 #1）**: `sonic-ntp.yang` の `NTP_SERVER_LIST.key` は `NTP_KEY_LIST/id` への leafref として定義されている。`NTP_SERVER` エントリが `key=<id>` フィールドを保持したまま `NTP_KEY|<id>` を DEL しようとすると、YANG 整合性チェックが dangling leafref として拒否する。正しい手順は先に `NTP_SERVER|<server>` の `key` フィールドをクリア（または `NTP_SERVER|<server>` エントリを DEL）してから `NTP_KEY|<id>` を DEL すること（`sonic-ntp.yang` L201-203）。
-
-**SET 順序依存（依存 #2）**: `NTP_KEY` 自体の SET は他テーブルへの依存を持たず自律的に書き込み可能である。しかし `NTP_SERVER|<server>.key=<id>` の SET は `NTP_KEY|<id>` が CONFIG_DB に先行して存在することを YANG leafref が要求する。未登録の key ID を参照すると SET が拒否される（`sonic-ntp.yang` L201-203）。この制約が事実上 `NTP_KEY` 先行を強制するため、hostcfgd ハンドラのレースは YANG 層で防がれる（`hostcfgd:1383-1384`）。
-
-**認証有効化の推奨順序（依存 #3）**: `NTP|global.authentication` と `NTP_KEY` の変更は独立ハンドラ（`ntp_global_update` / `ntp_srv_key_handler`）によって個別に chrony 再起動をトリガーする。`authentication=enabled` が先に適用された場合、鍵登録前の状態で chrony が再起動され、chrony.keys が空のまま認証付きサーバとの同期を試みて失敗する。`NTP_KEY` を先に SET してから `authentication=enabled` を SET することで中途状態を回避できる（`hostcfgd:1331-1364`, `hostcfgd:1366-1406`）。
-
-詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-ordering.md`。
-<!-- /ordering -->
-
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
