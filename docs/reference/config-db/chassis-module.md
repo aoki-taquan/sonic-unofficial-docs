@@ -453,7 +453,7 @@ chassisd 内部では整数定数に変換して platform API へ渡す:
 > **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:81-104`; `sonic-platform-common` `sonic_platform_base/module_base.py:34-57`
 <!-- /constants -->
 
-<!-- ordering -->
+<!-- ordering-startup -->
 ## 起動順序依存・CHASSIS_APP_DB 連携
 
 ### 1. SmartSwitch: CHASSIS_MODULE エントリは chassisd 起動前に存在必須
@@ -501,7 +501,7 @@ SmartSwitch の `SmartSwitchConfigManagerTask` は `module_config_update()` 内�
 | 3 | ConfigManagerTask は supervisor スロットのみ | 非 SmartSwitch | ラインカード上 chassisd は subscribe なし |
 | 4 | admin_status 書き込み → DPU 電源変化 | SmartSwitch | 360 秒タイムアウト; STATE_DB 最大 10 秒遅延 |
 | 5 | DEL イベント解釈 | プラットフォーム依存 | 非 SS: up / SS: down |
-<!-- /ordering -->
+<!-- /ordering-startup -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
