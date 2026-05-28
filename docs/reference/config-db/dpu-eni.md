@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-[SmartSwitch](../../reference/glossary.md#term-smartswitch) において [NPU](../../reference/glossary.md#term-npu) から [DPU](../../reference/glossary.md#term-dpu) (Data Processing Unit) へのパケット転送を実現する 5 テーブル群。[ENI](../../reference/glossary.md#term-eni) (Elastic Network Interface) Based Forwarding アーキテクチャの構成情報を保持し、`DashEniFwdOrch` が読み出して [ACL](../../reference/glossary.md#term-acl) ルール (`ENI:*`) へ変換する。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) において [NPU](../../reference/glossary.md#term-npu) から [DPU](../../reference/glossary.md#term-dpu) (Data Processing Unit) へのパケット転送を実現する 5 テーブル群。[ENI](../../reference/glossary.md#term-eni) (Elastic Network Interface) Based Forwarding アーキテクチャの構成情報を保持し、`DashEniFwdOrch` が読み出して [ACL](../../reference/glossary.md#term-acl) ルール (`ENI:*`) へ変換する[^dashenifwdorch-h][^dashenifwdorch-cpp][^dashenifwdorch-ut][^smartswitch-config][^eni-fwd-hld]。
 
 - **`DPU`**: ローカル [DPU](../../reference/glossary.md#term-dpu) (同一 [SmartSwitch](../../reference/glossary.md#term-smartswitch) 内) のエンドポイント情報
 - **`REMOTE_DPU`**: リモート [DPU](../../reference/glossary.md#term-dpu) (クラスタ内他 [SmartSwitch](../../reference/glossary.md#term-smartswitch)) のエンドポイント情報
@@ -208,6 +208,11 @@ DPUS|<dpu_name>
 
 ## 引用元
 
+[^dashenifwdorch-h]: `sonic-swss/orchagent/dash/dashenifwdorch.h` — `DashEniFwdOrch` / `DpuRegistry` のクラス定義・テーブル名 / フィールド名 / ACL テーブルタイプ等のハードコード定数 (スキーマの正本)。 <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.h>
+[^dashenifwdorch-cpp]: `sonic-swss/orchagent/dash/dashenifwdorch.cpp` — `DpuRegistry::populate()` の DPU / REMOTE_DPU / VDPU parse ロジック・ENI から ACL ルールへの変換・暗黙参照 / 失敗挙動。 <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.cpp>
+[^dashenifwdorch-ut]: `sonic-swss/tests/mock_tests/dashenifwdorch_ut.cpp` — DashEniFwdOrch のユニットテスト。テーブル投入順序・必須フィールド・ACL 生成の期待値を裏付ける。 <https://github.com/sonic-net/sonic-swss/blob/master/tests/mock_tests/dashenifwdorch_ut.cpp>
+[^smartswitch-config]: `sonic-buildimage/src/sonic-config-engine/smartswitch_config.py` — `platform.json` から `DPUS` テーブルを CONFIG_DB へ投入する config-engine ロジック。 <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-config-engine/smartswitch_config.py>
+[^eni-fwd-hld]: SONiC HLD: `doc/smart-switch/high-availability/eni-based-forwarding.md` — ENI Based Forwarding のアーキテクチャ設計文書。 <https://github.com/sonic-net/SONiC/blob/master/doc/smart-switch/high-availability/eni-based-forwarding.md>
 
 <!-- ops-hint -->
 ## 運用ヒント

@@ -40,7 +40,7 @@ related:
 
 ## 概要
 
-`StpOrch` (`orchagent/stporch.cpp`) は [APPL_DB](../../reference/glossary.md#term-appl_db) の 4 テーブルを購読し、`stpd` → `stpmgrd` 経由で書き込まれた状態・指示を [SAI](../../reference/glossary.md#term-sai) API に変換してデータプレーンへ反映する（[APPL_DB](../../reference/glossary.md#term-appl_db) への書き込み主体は `cfgmgr/stpmgrd.cpp`）。
+`StpOrch` (`orchagent/stporch.cpp`) は [APPL_DB](../../reference/glossary.md#term-appl_db) の 4 テーブルを購読し、`stpd` → `stpmgrd` 経由で書き込まれた状態・指示を [SAI](../../reference/glossary.md#term-sai) API に変換してデータプレーンへ反映する（[APPL_DB](../../reference/glossary.md#term-appl_db) への書き込み主体は `cfgmgr/stpmgrd.cpp`）[^stporch][^stporch-h][^orchdaemon][^schema-h]。
 
 ```
 stpd (STP デーモン)
@@ -758,6 +758,10 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 
 ## 引用元
 
+[^stporch]: `sonic-swss/orchagent/stporch.cpp` — `StpOrch` の APPL_DB 4 テーブル処理 (`doStpTask()` / `doStpPortStateTask()` / `doStpFastageTask()` / `doMstInstPortFlushTask()`)・SAI STP インスタンス / ポート操作・STATE_DB `STP_TABLE` 書き込み。 <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp>
+[^stporch-h]: `sonic-swss/orchagent/stporch.h` — `StpOrch` クラス定義・`STP_INVALID_INSTANCE` / `stp_state` enum 等のハードコード定数。 <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.h>
+[^orchdaemon]: `sonic-swss/orchagent/orchdaemon.cpp` — `gStpOrch` 登録と購読テーブルリスト・select タイムアウト定義。 <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
+[^schema-h]: `sonic-swss-common/common/schema.h` — `APP_STP_*_TABLE_NAME` / `STATE_STP_TABLE_NAME` 等の APPL_DB / STATE_DB テーブル名定数定義。 <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>
 
 ## 関連ページ
 

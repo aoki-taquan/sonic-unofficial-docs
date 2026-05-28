@@ -36,8 +36,8 @@ related:
 
 ## 概要
 
-STP 設定は `stpmgrd` ([sonic-swss](../../reference/glossary.md#term-sonic-swss)/cfgmgr/stpmgrd.cpp) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、Unix Domain Socket (`/var/run/stpipc.sock`) 経由で STP デーモンに IPC メッセージを送信する。
-CLI の `config spanning-tree` コマンド ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/stp.py) が [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込みを行う。
+STP 設定は `stpmgrd` ([sonic-swss](../../reference/glossary.md#term-sonic-swss)/cfgmgr/stpmgrd.cpp) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、Unix Domain Socket (`/var/run/stpipc.sock`) 経由で STP デーモンに IPC メッセージを送信する[^stpmgrd][^stpmgr-h][^stpmgrd-cpp]。
+CLI の `config spanning-tree` コマンド ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/stp.py) が [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込みを行う[^stp-py]。
 
 テーブル構成:
 
@@ -311,6 +311,10 @@ stpmgrd 側の `STP_DEFAULT_MAX_INSTANCES = 255` (`stpmgr.h:38`) と整合して
 
 ## 引用元
 
+[^stp-py]: `sonic-utilities/config/stp.py` — `config spanning-tree` コマンド群、PVST/MST 有効化時のデフォルト書き込み・タイマー検証・`PVST_MAX_INSTANCES` 制限。 <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py>
+[^stpmgrd]: `sonic-swss/cfgmgr/stpmgr.cpp` — `StpMgr` の CONFIG_DB 購読・タスクガード・stpd への IPC メッセージ送信 (`sendMsgStpd()`)・ebtables 操作。 <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp>
+[^stpmgr-h]: `sonic-swss/cfgmgr/stpmgr.h` — `StpMgr` クラス定義・ソケット名 / `STP_DEFAULT_MAX_INSTANCES` / opcode 等のハードコード定数。 <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h>
+[^stpmgrd-cpp]: `sonic-swss/cfgmgr/stpmgrd.cpp` — stpmgrd エントリポイント・TableConnector 登録・select ループ・warm start 初期化。 <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgrd.cpp>
 
 <!-- ordering -->
 ## 処理順序・依存関係・warm-reboot 挙動

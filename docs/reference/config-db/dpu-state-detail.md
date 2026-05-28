@@ -658,5 +658,12 @@ DPU reboot タイムアウトはベンダーが `platform_env.conf` で調整可
 
 ## 引用元
 
+本ページの記述は以下の一次ソースに基づく。
+
+- `chassisd` フィールドデフォルト / 書込ロジック (`update_dpu_state` / `DpuStateUpdater` / `DpuStateManagerTask` 等): `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd`. <https://github.com/sonic-net/sonic-platform-daemons/blob/master/sonic-chassisd/scripts/chassisd>
+- `show dpu` oper-status 算出: `sonic-utilities` `show/system_health.py`. <https://github.com/sonic-net/sonic-utilities/blob/master/show/system_health.py>
+
+!!! note "行番号について"
+    本文中の `chassisd:NNNN` / `system_health.py:NNN` 等の行番号は `last_verified` 時点の `master` ブランチに基づく。`master` の更新により行番号が前後する場合がある。
 
 <!-- glossary-links-injected: fb5ecb984b69 -->
