@@ -639,7 +639,7 @@ SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY  → 最大優先度
 
 <!-- /cross-refs -->
 
-<!-- constants -->
+<!-- constants-supplement -->
 ## ハードコード定数 (Phase E) (補足)
 
 YANG 未定義テーブルのため、全定数はソースコードが正本。以下は `aclorch.h` / `aclorch.cpp` / `acl_loader/main.py` / `acl_app.go` から抽出した硬直定数一覧。
@@ -691,9 +691,9 @@ SAI match field に投入される mask は CONFIG_DB には書かれず、C++ �
 !!! warning "ACL カウンタは初期無効"
     `ACL_COUNTER_DEFAULT_ENABLED_STATE = false` のため、`AclOrch` 起動直後は ACL stat counter の flex counter が無効。`counterpoll acl enable` または `aclshow` 経由で有効化するまでカウンタ値は収集されない。
 
-<!-- /constants -->
+<!-- /constants-supplement -->
 
-<!-- ordering -->
+<!-- ordering-supplement -->
 ## 書込み順依存 (Phase B) (補足)
 
 ACL_RULE を CONFIG_DB に書き込む際に守るべき順序制約を実装から導出した。
@@ -763,7 +763,7 @@ ACL_TABLE の `stage` フィールド（`INGRESS` / `EGRESS`）が ACL_RULE で�
 !!! warning "MIRROR ルール変更"
     `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` を含む ACL_RULE の変更は `SET` のみでは適用されない。必ず `DEL` → `SET` の順で操作すること (`aclorch.cpp:2415-2420`)。
 
-<!-- /ordering -->
+<!-- /ordering-supplement -->
 <!-- failure -->
 ## 失敗挙動マトリクス (Phase D)
 

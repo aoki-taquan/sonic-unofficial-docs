@@ -482,7 +482,7 @@ CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。`
 > **スキャン証跡**: ソース横断 grep で CONSOLE_PORT の subscribe/doTask 呼び出しなし。分岐: 0 件。
 <!-- /handler-branching -->
 
-<!-- ordering -->
+<!-- ordering-detail -->
 ## 書込み順依存 (Phase B)
 
 `consutil` は CONFIG_DB の `CONSOLE_SWITCH` を読み取ってから `CONSOLE_PORT` を参照する。この読み取り順は実行のたびにバッチで行われるが、DB 書き込み側から見ると以下の順序依存が存在する。
@@ -503,6 +503,6 @@ CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。`
 **minigraph 生成の独立性 (依存 #3)**: `minigraph.py` は `CONSOLE_PORT` を L2516 で `console_ports` 変数から代入し、`CONSOLE_SWITCH` を L2728 でデバイスタイプ (`MgmtTsToR`) の確認結果から独立して生成する。`sonic-cfggen` がこれら 2 テーブルを同一 JSON 出力としてまとめて DB に書き込むため、minigraph フロー内では順序問題は発生しない。ただし、デバイスタイプが `MgmtTsToR` **以外** の場合でも `CONSOLE_PORT` エントリが XML に存在すれば生成されるが、`CONSOLE_SWITCH.enabled` は `"no"` になるため、consutil からの接続は不可能になる（evidence: `minigraph.py:52`, `minigraph.py:2516`, `minigraph.py:2728–2731`）。
 
 **db_migrator の前提条件 (依存 #4)**: `migrate_console_switch()` は `self.configDB.get_entry('CONSOLE_SWITCH', 'console_mgmt')` で現在の DB 値を取得し、空の場合（`if not console_mgmt`）のみ `set_entry` を実行する。このため、マイグレーション前に `config console enable` / `disable` コマンドを手動実行してキーが存在する場合、移行元 `config_src_data` の値は書き込まれない（evidence: `db_migrator.py:659–666`）。
-<!-- /ordering -->
+<!-- /ordering-detail -->
 
 <!-- glossary-links-injected: 8ba32e5aa69d -->
