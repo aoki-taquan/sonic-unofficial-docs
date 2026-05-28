@@ -134,6 +134,12 @@ VNET スコープの VXLAN トンネル encapsulation 経路。
 
 ## 引用元
 
+本ページの記述は以下の一次ソースに基づく（本文中の `[^yang]` / `[^schema]` / `[^vnetorch]` 脚注も参照）。
+
+- VNET YANG 定義: `sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-vnet.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vnet.yang>
+- VNetCfgRouteOrch / VNetRouteOrch 実装 (passthrough / handleRoutes / handleTunnel / BFD 連携): `sonic-swss` `orchagent/vnetorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vnetorch.cpp>
+- VNETOrch ヘッダ (定数 / フィールド登録): `sonic-swss` `orchagent/vnetorch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vnetorch.h>
+- テーブル名定数 (`CFG_VNET_RT_TABLE_NAME` 等): `sonic-swss-common` `common/schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
 
 <!-- ops-hint -->
 ## 運用ヒント

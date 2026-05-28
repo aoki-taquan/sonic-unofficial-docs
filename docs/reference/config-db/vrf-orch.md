@@ -533,4 +533,11 @@ vrfmgrd コンストラクタは `WarmStart::isWarmStart()` で以下のよう�
 
 ## 引用元
 
+本ページの記述は以下の一次ソースに基づく。
+
+- VRFOrch 実装 (SAI Virtual Router 生成 / addOperation / delOperation): `sonic-swss` `orchagent/vrforch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vrforch.cpp>
+- VRFOrch ヘッダ (`request_description` フィールド宣言): `sonic-swss` `orchagent/vrforch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vrforch.h>
+- vrfmgrd 実装 (Linux VRF デバイス作成 / テーブル ID プール / APPL_DB 転写): `sonic-swss` `cfgmgr/vrfmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/vrfmgr.cpp>
+- テーブル名定数 (`APP_VRF_TABLE_NAME` 等): `sonic-swss-common` `common/schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
+
 <!-- glossary-links-injected: 0af8863862be -->
