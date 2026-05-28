@@ -15,7 +15,6 @@ related:
     - crm config
   yang:
     - sonic-crm
-hard: 0
 ---
 
 # CRM テーブル

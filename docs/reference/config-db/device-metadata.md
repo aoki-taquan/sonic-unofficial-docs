@@ -2,7 +2,6 @@
 title: DEVICE_METADATA テーブル
 description: "DEVICE_METADATA テーブル — 装置全体のメタ情報を保持する CONFIG_DB テーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

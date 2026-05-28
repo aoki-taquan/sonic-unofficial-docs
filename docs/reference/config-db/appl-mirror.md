@@ -2,7 +2,6 @@
 title: APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)
 description: "APPL_DB FIXED_MIRROR_SESSION_TABLE — P4RT ランタイムが書き込む ERSPAN ミラーセッション定義テーブル。MirrorSessionManager が APPL_DB を購読し SAI MIRROR_SESSION オブジェクトに変換する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

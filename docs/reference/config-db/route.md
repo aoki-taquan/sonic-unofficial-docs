@@ -2,7 +2,6 @@
 title: ROUTE_TABLE (APPL_DB)
 description: "ROUTE_TABLE — fpmsyncd が FRR (zebra/FPM) からの netlink メッセージを受信して APPL_DB に書き込む経路テーブル。orchagent が読み取り SAI route へ変換する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

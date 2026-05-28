@@ -21,7 +21,6 @@ related:
     - VRF
   yang:
     - sonic-srv6
-hard: 0
 ---
 
 # SRV6_MY_SIDS テーブル

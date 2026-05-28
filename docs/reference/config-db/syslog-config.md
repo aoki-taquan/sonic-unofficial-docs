@@ -2,7 +2,6 @@
 title: SYSLOG_CONFIG テーブル
 description: "SYSLOG_CONFIG テーブル — ホスト全体の rsyslog グローバル設定を CONFIG_DB に保持するシングルトンテーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:

@@ -24,7 +24,6 @@ related:
     - config bgp
   yang:
     - sonic-bgp-global
-hard: 0
 ---
 
 # ROUTE_REDISTRIBUTE テーブル

@@ -2,7 +2,6 @@
 title: STP_PORT テーブル — 暗黙デフォルト詳細
 description: "CONFIG_DB の STP_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST/MST モード別差異を詳細解説。Phase A 分析。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

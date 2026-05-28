@@ -2,7 +2,6 @@
 title: TELEMETRY_CLIENT Subscription / DestinationGroup フィールド詳細
 description: "TELEMETRY_CLIENT テーブルの Subscription・DestinationGroup エントリにおけるフィールド仕様・コード由来デフォルト・実装乖離の詳細リファレンス。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:
@@ -19,7 +18,6 @@ related:
   yang:
     - sonic-telemetry_client
   _no_related_cli: true
-hard: 0
 ---
 
 # TELEMETRY_CLIENT Subscription / DestinationGroup フィールド詳細

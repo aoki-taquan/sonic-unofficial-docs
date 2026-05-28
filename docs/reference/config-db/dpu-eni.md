@@ -2,7 +2,6 @@
 title: DPU / ENI / VDPU / REMOTE_DPU テーブル
 description: "CONFIG_DB の DPU・ENI・VDPU・REMOTE_DPU テーブル — SmartSwitch の DPU (Data Processing Unit) と ENI (Elastic Network Interface) の転送情報を定義し、DashEniFwdOrch が ACL ルールへ変換する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

@@ -16,7 +16,6 @@ related:
   cli: []
   yang:
     - sonic-routing-policy-sets
-hard: 0
 ---
 
 # COMMUNITY_SET テーブル

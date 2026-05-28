@@ -2,7 +2,6 @@
 title: NVGRE_TUNNEL / NVGRE_TUNNEL_MAP テーブル
 description: "NVGRE_TUNNEL / NVGRE_TUNNEL_MAP テーブル — NVGRE (Network Virtualization using GRE, RFC 7637) のトンネル端点と VLAN ↔ VSID マップを CONFIG_DB に保持する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:

@@ -2,7 +2,6 @@
 title: WRED_PROFILE テーブル
 description: "WRED_PROFILE テーブル — Weighted Random Early Detection (WRED) と ECN マーキングの設定プロファイルを定義する。QUEUE テーブルの wred_profile から名前で参照される。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

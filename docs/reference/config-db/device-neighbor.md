@@ -2,7 +2,6 @@
 title: DEVICE_NEIGHBOR テーブル
 description: "DEVICE_NEIGHBOR テーブル — 直接接続される隣接機器（cable 配線レベル）と自スイッチの port を紐付けるテーブル。LLDP の正解値 (expected neighbor) として lldp / lldpmgrd が利用するほか、minigraph 取り込み時にも生成される。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

@@ -2,7 +2,6 @@
 title: APPL_DB VRF_TABLE (VRFOrch)
 description: "APPL_DB VRF_TABLE — vrfmgrd が CONFIG_DB VRF テーブルを転写し VRFOrch が SAI Virtual Router を生成するパイプライン。フィールドのコード由来デフォルトと orchagent 内部挙動を記述する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

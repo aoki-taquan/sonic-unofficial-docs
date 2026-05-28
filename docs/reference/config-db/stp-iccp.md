@@ -2,7 +2,6 @@
 title: STP / ICCP 連携 — コード由来デフォルト詳細
 description: "MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F + Phase G + Phase H 分析。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

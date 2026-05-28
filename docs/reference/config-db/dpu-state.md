@@ -2,7 +2,6 @@
 title: DPU_STATE テーブル (CHASSIS_STATE_DB)
 description: "CHASSIS_STATE_DB の DPU_STATE テーブル — SmartSwitch プラットフォームにおける DPU の midplane・コントロールプレーン・データプレーン状態を chassisd が push 型で書き込む状態専用テーブルの構造・デフォルト・更新タイミング。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

@@ -2,7 +2,6 @@
 title: DOT1X / PAC テーブル
 description: "PAC_PORT_CONFIG_TABLE と HOSTAPD_GLOBAL_CONFIG_TABLE — 802.1x / MAC Authentication Bypass (MAB) によるポートアクセス制御の設定を保持する。pacmgrd / hostapdmgrd が購読し認証マネージャへ反映する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

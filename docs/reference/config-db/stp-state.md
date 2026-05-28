@@ -2,7 +2,6 @@
 title: STATE_DB STP_TABLE（STP 状態テーブル）
 description: "STATE_DB STP_TABLE — orchagent の StpOrch が SAI から取得したスイッチのハードウェア STP インスタンス上限値を書き込む。stpmgrd がこの値を読み取り STP インスタンス数を制御する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

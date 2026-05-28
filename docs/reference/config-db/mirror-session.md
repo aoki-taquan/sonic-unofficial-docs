@@ -2,7 +2,6 @@
 title: MIRROR_SESSION テーブル
 description: "MIRROR_SESSION テーブル — ポートミラーリング (SPAN / ERSPAN) セッションを CONFIG_DB で定義するテーブル。MirrorOrch が CONFIG_DB を購読し、SAI MIRROR_SESSION オブジェクトに変換する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

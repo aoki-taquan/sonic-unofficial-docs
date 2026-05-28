@@ -2,7 +2,6 @@
 title: cluster フィールド (DEVICE_METADATA / DEVICE_NEIGHBOR_METADATA)
 description: "SONiC CONFIG_DB における cluster フィールド — DEVICE_METADATA|localhost と DEVICE_NEIGHBOR_METADATA|<device> に共通する所属クラスタ名フィールドのリファレンス。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

@@ -2,7 +2,6 @@
 title: STP_VLAN / STP_VLAN_PORT テーブル
 description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズム・プラットフォーム差異を詳細解説。Phase A+B+C+D+E+F+G+H 分析。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

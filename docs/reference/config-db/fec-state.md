@@ -2,7 +2,6 @@
 title: FEC ステート（STATE_DB PORT_TABLE FEC フィールド）
 description: "STATE_DB PORT_TABLE の FEC 関連フィールド（fec / supported_fecs）— PortsOrch が SAI 経由で書き込む oper FEC 値とサポートモード一覧。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-19
 sources:

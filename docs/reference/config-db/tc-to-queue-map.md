@@ -2,7 +2,6 @@
 title: TC_TO_QUEUE_MAP テーブル
 description: "TC_TO_QUEUE_MAP テーブル — Traffic Class (TC) を egress queue インデックスへマップする。DSCP_TO_TC_MAP で TC 化された値が、このマップで物理キューに振り分けられる。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

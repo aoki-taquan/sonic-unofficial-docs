@@ -2,7 +2,6 @@
 title: ACL orchagent STATE_DB テーブル
 description: "STATE_DB の ACL 関連テーブル — AclOrch が SAI ACL 操作後に書き込む ACL_TABLE_TABLE / ACL_RULE_TABLE / ACL_STAGE_CAPABILITY_TABLE の構造とフィールド詳細。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

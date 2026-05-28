@@ -4,7 +4,6 @@ description: "STATE_DB に格納されるカウンタ能力情報テーブル群
 area: reference
 verification: code-verified
 last_verified: 2026-05-15
-hard: 0
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/portsorch.cpp

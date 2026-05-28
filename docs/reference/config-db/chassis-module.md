@@ -2,7 +2,6 @@
 title: CHASSIS_MODULE テーブル
 description: "CHASSIS_MODULE テーブル — モジュラーチャシスおよび SmartSwitch における各モジュール（ラインカード・ファブリックカード・DPU）の管理状態を CONFIG_DB に保持するテーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

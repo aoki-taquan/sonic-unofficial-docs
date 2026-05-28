@@ -2,7 +2,6 @@
 title: APPL_DB FDB_TABLE
 description: "APPL_DB FDB_TABLE — 動的学習および静的プロビジョニング MAC アドレスエントリを保持する APPL_DB テーブル。Vlan<id>:<MAC> をキーに port・type・discard フィールドを持ち、FdbOrch が SAI FDB エントリへ変換する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

@@ -2,7 +2,6 @@
 title: PREFIX_SET テーブル
 description: "PREFIX_SET テーブル — sonic-routing-policy-sets モジュールが定義する 汎用 prefix set の宣言テーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

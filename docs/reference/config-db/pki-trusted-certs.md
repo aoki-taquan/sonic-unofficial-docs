@@ -2,7 +2,6 @@
 title: SECURITY_PROFILES / PKI テーブル
 description: "SECURITY_PROFILES テーブル — gNSI Certz の SSL プロファイルと証明書ファイル名のマッピングを CONFIG_DB に保持するテーブル。sonic-pki.yang で定義されるが、コミュニティ master の主要 YANG モデルには未マージ (2026-05 時点)。Phase A–H 分析。"
 area: reference
-hard: 0
 verification: discrepancy-found
 monitor: not_implemented
 last_verified: 2026-05-14

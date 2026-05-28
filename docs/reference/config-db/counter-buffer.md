@@ -4,7 +4,6 @@ description: "COUNTERS_DB における QUEUE / PG / BUFFER_POOL ウォーター�
 area: reference
 verification: code-verified
 last_verified: 2026-05-17
-hard: 0
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/portsorch.cpp

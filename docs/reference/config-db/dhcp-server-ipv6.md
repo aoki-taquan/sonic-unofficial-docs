@@ -2,7 +2,6 @@
 title: DHCP_SERVER_IPV6 テーブル
 description: "DHCP_SERVER_IPV6 テーブル — 組み込み DHCPv6 サーバ機能の設定テーブル（2026-05 時点で未実装。SONiC master は DHCPv6 リレーのみ対応）。"
 area: reference
-hard: 0
 verification: stub
 last_verified: 2026-05-16
 sources:

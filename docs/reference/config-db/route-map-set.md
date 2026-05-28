@@ -2,7 +2,6 @@
 title: ROUTE_MAP_SET テーブル
 description: "ROUTE_MAP_SET テーブル — route-map 名の YANG レジストリ。frrcfgd / bgpcfgd は非購読。ROUTE_MAP テーブルの call_route_map leafref 整合性のために存在する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

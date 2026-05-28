@@ -2,7 +2,6 @@
 title: RADIUS_SERVER テーブル
 description: "RADIUS_SERVER テーブル — サーバごとの RADIUS クライアント設定を保持するリストテーブル。hostcfgd の AAA ハンドラが読み、/etc/pam_radius_auth.d/<ip>_<port>.conf を生成する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

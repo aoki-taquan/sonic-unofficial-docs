@@ -2,7 +2,6 @@
 title: SNMP_AGENT_ADDRESS_CONFIG テーブル
 description: "SNMP_AGENT_ADDRESS_CONFIG テーブル — snmpd のリッスンアドレスと UDP ポートを CONFIG_DB に登録するテーブル。docker-snmp 起動スクリプトが CONFIG_DB を読み、snmpd.conf の agentaddress 行を生成する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:

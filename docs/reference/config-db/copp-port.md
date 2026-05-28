@@ -22,7 +22,6 @@ related:
     - config copp
   yang:
     - sonic-copp
-hard: 0
 ---
 
 # COPP port-binding (genetlink フィールド)

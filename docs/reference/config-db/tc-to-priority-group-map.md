@@ -2,7 +2,6 @@
 title: TC_TO_PRIORITY_GROUP_MAP テーブル
 description: "TC_TO_PRIORITY_GROUP_MAP テーブル — Traffic Class (TC) を ingress Priority Group (PG) へマップし、バッファ admission control と PFC の対象 PG を決定する。Phase A〜H 分析。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

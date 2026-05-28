@@ -2,7 +2,6 @@
 title: SRV6_MY_LOCATORS テーブル
 description: SRV6_MY_LOCATORS テーブル — SRv6 ロケータを定義し SID アドレス空間を分割するための CONFIG_DB テーブル。bgpcfgd が FRR (zebra) へ locator prefix を通知する。
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

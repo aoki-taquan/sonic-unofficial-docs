@@ -16,7 +16,6 @@ related:
     - config interface breakout
   yang:
     - sonic-breakout_cfg
-hard: 0
 ---
 
 # BREAKOUT_CFG テーブル

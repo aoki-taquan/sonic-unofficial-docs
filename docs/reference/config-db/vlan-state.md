@@ -2,7 +2,6 @@
 title: STATE_DB VLAN_TABLE（VLAN 状態テーブル）
 description: "STATE_DB VLAN_TABLE — vlanmgrd が書き込む VLAN 作成完了シグナルテーブル。state フィールド 1 本のみを持ち、複数の cfgmgr デーモンが VLAN readiness ガードとして読み取る。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

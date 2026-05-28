@@ -2,7 +2,6 @@
 title: DSCP_TO_FC_MAP テーブル
 description: "DSCP_TO_FC_MAP テーブル — DSCP 値 (0..63) を Forwarding Class へマップする Class-Based Forwarding (CBF) 分類定義。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

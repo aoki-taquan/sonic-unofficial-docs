@@ -2,7 +2,6 @@
 title: SFLOW テーブル
 description: "SFLOW テーブル — sFlow サンプリングのグローバル設定 / per-port セッション設定 / コレクタ宛先を定義する 3 つの container を含む。hsflowd (sflowd container) と sflowmgrd が CONFIG_DB を購読する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

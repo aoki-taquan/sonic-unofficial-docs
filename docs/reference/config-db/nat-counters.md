@@ -2,7 +2,6 @@
 title: COUNTERS_DB NAT カウンタテーブル群
 description: "COUNTERS_DB:COUNTERS_NAT / COUNTERS_NAPT / COUNTERS_TWICE_NAT / COUNTERS_TWICE_NAPT / COUNTERS_GLOBAL_NAT — orchagent/NatOrch が SAI から定期取得するパケット・バイト数カウンタおよびグローバル統計テーブルの定義。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

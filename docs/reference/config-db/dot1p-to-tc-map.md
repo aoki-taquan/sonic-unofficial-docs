@@ -2,7 +2,6 @@
 title: DOT1P_TO_TC_MAP テーブル
 description: "DOT1P_TO_TC_MAP テーブル — DOT1P_TO_TC_MAP テーブルは IEEE 802.1p Priority Code Point (PCP, 0-7) を SONiC の Traffic Class へマップするテーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:

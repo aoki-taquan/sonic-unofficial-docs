@@ -2,7 +2,6 @@
 title: COUNTERS_DB PortChannel/LAG カウンタ
 description: "COUNTERS_DB に格納される PortChannel/LAG カウンタフィールドのリファレンス。orchagent (portsorch/intfsorch) が COUNTERS_LAG_NAME_MAP と COUNTERS_RIF_NAME_MAP を管理し、FlexCounter が SAI から定期収集する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

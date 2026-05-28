@@ -2,7 +2,6 @@
 title: SRv6 カウンタ状態（COUNTERS_DB SRv6 MySID）
 description: "SRv6 MySID エントリのパケット・バイトカウンタ — COUNTERS_DB の COUNTERS_SRV6_NAME_MAP / COUNTERS テーブル。Srv6Orch が FlexCounter 経由で SAI から収集する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

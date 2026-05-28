@@ -2,7 +2,6 @@
 title: MGMT_INTERFACE テーブル
 description: "MGMT_INTERFACE テーブル — 帯域外管理 IF (eth0) に対する IP / gateway / forced routes を保持する。hostcfgd がこのテーブルから /etc/network/interfaces の mgmt- セクションを再生成する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

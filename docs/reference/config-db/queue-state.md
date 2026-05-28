@@ -2,7 +2,6 @@
 title: QUEUE_COUNTER_CAPABILITIES (STATE_DB)
 description: "STATE_DB QUEUE_COUNTER_CAPABILITIES テーブル — portsorch が起動時に SAI ケイパビリティクエリの結果を書き込む WRED/ECN キューカウンタのサポートフラグ。wredstat / counterpoll が参照する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

@@ -21,7 +21,6 @@ related:
   yang:
     - sonic-bgp-neighbor
     - sonic-bgp-common
-hard: 0
 ---
 
 # BGP_NEIGHBOR_AF テーブル

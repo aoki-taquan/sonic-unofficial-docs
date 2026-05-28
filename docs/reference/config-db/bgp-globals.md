@@ -18,7 +18,6 @@ related:
     - config bgp
   yang:
     - sonic-bgp-global
-hard: 0
 ---
 
 # BGP_GLOBALS テーブル

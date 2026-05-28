@@ -2,7 +2,6 @@
 title: ROUTE_TABLE (STATE_DB / APPL_STATE_DB)
 description: "STATE_DB ROUTE_TABLE と APPL_STATE_DB ROUTE_TABLE — RouteOrch がデフォルト経路の存在状態と経路処理結果を書き込む読み取り専用テーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

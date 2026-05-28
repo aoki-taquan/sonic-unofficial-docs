@@ -2,7 +2,6 @@
 title: MGMT_PORT テーブル
 description: "MGMT_PORT テーブル — 帯域外管理 (out-of-band) ポート (eth0, eth1, ...) の物理プロパティを保持する。hostcfgd が読み出して Linux 側の /etc/network/interfaces を更新する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

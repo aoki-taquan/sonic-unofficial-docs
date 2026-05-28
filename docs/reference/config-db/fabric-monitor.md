@@ -2,7 +2,6 @@
 title: FABRIC_MONITOR テーブル
 description: "FABRIC_MONITOR テーブル — FABRIC_MONITOR テーブルは VOQ chassis のファブリックリンク監視 (FABRIC_PORT の自動 isolate/include) 用パラメータを CONFIG_DB に保持する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-19
 sources:

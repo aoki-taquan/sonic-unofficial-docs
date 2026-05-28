@@ -18,7 +18,6 @@ related:
     - config buffer
   yang:
     - sonic-buffer-port-ingress-profile-list
-hard: 0
 ---
 
 # BUFFER_PORT_INGRESS_PROFILE_LIST テーブル

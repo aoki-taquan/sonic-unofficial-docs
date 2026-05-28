@@ -2,7 +2,6 @@
 title: WATERMARK_TABLE テーブル
 description: "WATERMARK_TABLE テーブル — periodic watermark のテレメトリ周期を設定するテーブル。WatermarkOrch が購読し、PERIODIC_WATERMARKS の自動クリア間隔を制御する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

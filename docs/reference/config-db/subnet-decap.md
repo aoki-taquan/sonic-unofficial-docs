@@ -2,7 +2,6 @@
 title: SUBNET_DECAP テーブル
 description: "SUBNET_DECAP テーブル — IPinIP トンネルの サブネット単位の decapsulation ルール を定義する CONFIG_DB テーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:

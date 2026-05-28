@@ -2,7 +2,6 @@
 title: PORTCHANNEL_MEMBER テーブル
 description: "PORTCHANNEL_MEMBER テーブル — PORTCHANNEL とその物理メンバ PORT の対応を保持する。teammgrd がこの関係を読み、teamd の enslave 操作を実行する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

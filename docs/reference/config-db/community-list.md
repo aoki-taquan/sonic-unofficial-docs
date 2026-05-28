@@ -23,7 +23,6 @@ related:
     - config snmp community
   yang:
     - sonic-snmp
-hard: 0
 ---
 
 # SNMP_COMMUNITY テーブル

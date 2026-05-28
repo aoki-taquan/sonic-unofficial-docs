@@ -2,7 +2,6 @@
 title: APPL_STATE_DB ROUTE_TABLE (route offload cache)
 description: "APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズム・Mellanox ECMP グループ数補正・VOQ ECMP メンバー数制限を含む Phase A+B+C+D+E+F+G+H 分析。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-18
 sources:

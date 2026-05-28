@@ -2,7 +2,6 @@
 title: TAM テーブル
 description: "TAM / IFA (In-band Flow Analyzer) テーブル — デバイス ID 設定・コレクタ宛先・IFA 機能フラグ・フロー定義の 4 コンテナを含む。sonic-mgmt-common の CVL と sonic-swss orchagent が参照する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

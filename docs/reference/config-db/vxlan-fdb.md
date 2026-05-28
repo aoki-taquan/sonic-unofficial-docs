@@ -2,7 +2,6 @@
 title: VXLAN_FDB_TABLE テーブル
 description: "VXLAN_FDB_TABLE テーブル — EVPN MAC sync によりリモート VTEP から学習された MAC アドレスを APP_DB に保持するテーブル。fdbsyncd が netlink イベントから書き込み、orchagent の FdbOrch が SAI FDB エントリを生成する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

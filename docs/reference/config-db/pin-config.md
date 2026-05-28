@@ -2,7 +2,6 @@
 title: P4RT テーブル (PINS p4rt 設定)
 description: "P4RT テーブル — PINS (P4 Integrated Network Stack) の P4Runtime gRPC サーバ設定。ポート・TLS 証明書・認可ポリシー・genetlink オプションを保持し、p4rt コンテナ起動時に読み込まれる。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

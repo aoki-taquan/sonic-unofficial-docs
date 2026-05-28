@@ -2,7 +2,6 @@
 title: MAP_PFC_PRIORITY_TO_QUEUE テーブル
 description: "MAP_PFC_PRIORITY_TO_QUEUE テーブル — PFC frame の Priority 値から、どの egress queue を一時停止対象とするかを決めるためのマップ。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:

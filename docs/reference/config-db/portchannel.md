@@ -2,7 +2,6 @@
 title: PORTCHANNEL テーブル
 description: "PORTCHANNEL テーブル — LACP ベースの Link Aggregation Group (LAG) を定義する。teamd がこのテーブルから設定を読み、Linux teamd 経由で物理ポートを bond する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

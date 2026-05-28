@@ -2,7 +2,6 @@
 title: BGP_INTERNAL_NEIGHBOR テーブル
 description: "BGP_INTERNAL_NEIGHBOR テーブル — マルチ ASIC プラットフォームにおける ASIC 間内部 iBGP セッションを CONFIG_DB で定義するテーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

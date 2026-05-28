@@ -2,7 +2,6 @@
 title: AS_PATH_SET テーブル
 description: "AS_PATH_SET テーブル — BGP の AS path access-list を CONFIG_DB に持たせるテーブル。sonic-routing-policy-sets.yang の AS_PATH_SET コンテナで定義され、ROUTE_MAP の match as-path 等から参照される。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

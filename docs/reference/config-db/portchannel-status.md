@@ -2,7 +2,6 @@
 title: APPL_DB LAG_TABLE (portchannel ステータス)
 description: "APPL_DB LAG_TABLE — teamsyncd と teammgrd が書き込む LAG の実効設定・運用状態テーブル。admin_status / oper_status / mtu の 3 フィールドがコード由来のデフォルトを持つ。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

@@ -2,7 +2,6 @@
 title: イベント/アラーム拡張監視設定 (extended-monitor)
 description: "eventd が読み込む EVENT テーブル保持上限 (eventd.json) とイベントプロファイル (/etc/evprofile/default.json) を中心とした、event/alarm framework の拡張監視設定ガイド。CONFIG_DB テーブルではなくファイルベース設定として管理される。"
 area: reference
-hard: 0
 verification: discrepancy-found
 monitor: partially_implemented
 last_verified: 2026-05-26

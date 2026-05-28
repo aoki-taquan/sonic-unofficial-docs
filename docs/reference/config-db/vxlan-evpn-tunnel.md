@@ -2,7 +2,6 @@
 title: EVPN DIP トンネル (動的生成)
 description: "EVPN DIP トンネル — BGP EVPN でリモート VTEP を学習した際に orchagent が動的生成する per-remote-VTEP P2P トンネルのコード由来デフォルトと暗黙挙動を解説する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

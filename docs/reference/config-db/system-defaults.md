@@ -2,7 +2,6 @@
 title: SYSTEM_DEFAULTS テーブル
 description: "SYSTEM_DEFAULTS テーブル — システム共通の機能既定値 (デフォルトの enable / disable 状態) を定義する。init_cfg.json 由来の値を保持し、db_migrator が初期化時にエントリの有無を確認する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

@@ -2,7 +2,6 @@
 title: VLAN_MEMBER テーブル
 description: "VLAN_MEMBER テーブル — VLAN とポート (PORT または PORTCHANNEL) のメンバ関係、および各メンバが tagged / untagged のいずれで参加するかを保持する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

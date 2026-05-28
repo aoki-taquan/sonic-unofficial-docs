@@ -2,7 +2,6 @@
 title: SCHEDULER — QosOrch SchedulerOrch コード由来デフォルト詳解
 description: "orchagent QosOrch::handleSchedulerTable() が CONFIG_DB SCHEDULER テーブルを処理する際のフィールドデフォルト・YANG-実装乖離・dead field・クラッシュリスクを全行精読で解説する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

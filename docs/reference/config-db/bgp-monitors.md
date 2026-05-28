@@ -20,7 +20,6 @@ related:
   yang:
     - sonic-bgp-monitor
     - sonic-bgp-common
-hard: 0
 ---
 
 # BGP_MONITORS テーブル

@@ -2,7 +2,6 @@
 title: EXP_TO_FC_MAP テーブル
 description: "EXP_TO_FC_MAP テーブル — MPLS EXP ビット (0..7) を Forwarding Class へマップする CBF 用 ingress QoS 分類定義。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

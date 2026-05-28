@@ -2,7 +2,6 @@
 title: APPL_DB VRF_TABLE テーブル
 description: "APPL_DB VRF_TABLE テーブル — vrfmgrd が CONFIG_DB VRF を変換して書き込む。VRFOrch が購読し SAI Virtual Router を生成する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

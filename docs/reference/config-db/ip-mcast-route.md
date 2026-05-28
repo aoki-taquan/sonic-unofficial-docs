@@ -2,7 +2,6 @@
 title: IP マルチキャストルート (P4RT)
 description: "P4RT 経由で APP_DB に書き込まれる IP マルチキャストグループ・ルートエントリ (REPLICATION_IP_MULTICAST_TABLE / FIXED_IPV4_MULTICAST_TABLE / FIXED_IPV6_MULTICAST_TABLE) の構造とデフォルト挙動を解説する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

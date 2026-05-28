@@ -2,7 +2,6 @@
 title: PORT_TABLE ステータスフィールド（STATE_DB）
 description: "STATE_DB PORT_TABLE の oper ステータスフィールド — portsyncd/linksync と PortsOrch が書き込む読み取り専用の動作状態値。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

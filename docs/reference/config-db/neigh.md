@@ -2,7 +2,6 @@
 title: NEIGH テーブル
 description: "NEIGH テーブル — スタティック隣接（Permanent neighbor）エントリを管理するテーブル。nbrmgrd がカーネルへ RTM_NEWNEIGH を発行する経路の起点。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-19
 sources:

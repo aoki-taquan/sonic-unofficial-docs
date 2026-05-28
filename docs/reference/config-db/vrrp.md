@@ -2,7 +2,6 @@
 title: VRRP テーブル
 description: "VRRP / VRRP6 / VRRP_TRACK / VRRP6_TRACK テーブル — FRR vrrpd を利用した仮想ルータ冗長プロトコル (VRRPv2/v3) の CONFIG_DB スキーマ。インターフェース単位に VRID を割り当て、Linux macvlan デバイス経由で仮想 MAC・VIP を実装する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-16
 sources:

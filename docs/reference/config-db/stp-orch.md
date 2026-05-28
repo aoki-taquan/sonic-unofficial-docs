@@ -2,7 +2,6 @@
 title: APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
 description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数・副作用・Redis 通知メカニズム・プラットフォーム差分を詳解。Phase A+B+C+D+E+F+G+H 分析。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

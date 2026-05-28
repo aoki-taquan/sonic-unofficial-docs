@@ -2,7 +2,6 @@
 title: CHASSIS_STATE_DB テーブル群
 description: "CHASSIS_STATE_DB — chassisd が書き込むモジュラーチャシス / SmartSwitch 向け状態テーブル群の構造・フィールドデフォルト・更新タイミングを解説する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

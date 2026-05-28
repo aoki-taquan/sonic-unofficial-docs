@@ -2,7 +2,6 @@
 title: VXLAN トンネルポート (Port::TUNNEL)
 description: "VXLAN トンネルポート — orchagent が VXLAN_TUNNEL_MAP / EVPN_REMOTE_VNI 処理時に動的生成する Port::TUNNEL 型ポートオブジェクトのコード由来デフォルトと暗黙挙動を解説する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-17
 sources:

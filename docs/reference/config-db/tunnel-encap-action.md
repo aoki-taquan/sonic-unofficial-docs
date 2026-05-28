@@ -2,7 +2,6 @@
 title: FIXED_NEXTHOP_TABLE — set_p2p_tunnel_encap_nexthop アクション
 description: P4RT FIXED_NEXTHOP_TABLE の set_p2p_tunnel_encap_nexthop アクション詳細。GRE IP-in-IP encap nexthop の NextHopManager による SAI 変換とコード由来デフォルトを解説する。
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

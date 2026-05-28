@@ -2,7 +2,6 @@
 title: DEVICE_NEIGHBOR_METADATA テーブル
 description: "DEVICE_NEIGHBOR_METADATA テーブル — 隣接機器（DEVICE_NEIGHBOR で参照されるホスト）のメタデータ（hwsku、loopback、管理 IP、deployment_id など）を保持するテーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

@@ -2,7 +2,6 @@
 title: STATE_DB orchagent 共通テーブル
 description: "orchagent (sonic-swss) が STATE_DB へ書き込む共通テーブル群の概要。WARM_RESTART_TABLE / PORT_TABLE / FDB_TABLE / VRF_OBJECT_TABLE / FIPS_MACSEC_POST_TABLE のキー・フィールド・コード由来デフォルトを網羅する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

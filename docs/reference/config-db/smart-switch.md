@@ -2,7 +2,6 @@
 title: SmartSwitch 関連テーブル (MID_PLANE_BRIDGE / DHCP_SERVER_IPV4_PORT)
 description: "SmartSwitch NPU-DPU 間ミッドプレーンブリッジおよびポートベース DHCP 割り当てを管理する CONFIG_DB テーブル群。MID_PLANE_BRIDGE、DHCP_SERVER_IPV4_PORT の構造・デフォルト・ハードコード挙動を詳述。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

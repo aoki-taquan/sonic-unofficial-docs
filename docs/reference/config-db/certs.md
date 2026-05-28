@@ -2,7 +2,6 @@
 title: CREDENTIALS|CERT テーブル (STATE_DB)
 description: "CREDENTIALS|CERT テーブル — gNSI Certz が証明書バンドルのフレッシュネス情報を書き込む STATE_DB テーブル。certificate / ca_trust_bundle / certificate_revocation_list_bundle / authentication_policy の version と created_on フィールドを保持する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

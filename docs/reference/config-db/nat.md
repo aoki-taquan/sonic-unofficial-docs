@@ -2,7 +2,6 @@
 title: NAT_GLOBAL / NAT_POOL テーブル
 description: "NAT_GLOBAL / NAT_POOL テーブル — NAT_GLOBAL は NAT feature の admin mode と timeout を保持するグローバル設定、NAT_POOL は dynamic NAT で利用する変換アドレス / port 範囲の named pool を定義する CONFIG…"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-10
 sources:

@@ -2,7 +2,6 @@
 title: DOT1P_TO_PG_MAP テーブル（非実在）
 description: "DOT1P_TO_PG_MAP — このテーブルは SONiC CONFIG_DB に存在しない。dot1p から Priority Group へのマッピングは DOT1P_TO_TC_MAP と TC_TO_PRIORITY_GROUP_MAP の 2 段構成で実現される。"
 area: reference
-hard: 0
 verification: discrepancy-found
 last_verified: 2026-05-14
 sources:

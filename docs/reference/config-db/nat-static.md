@@ -2,7 +2,6 @@
 title: STATIC_NAT テーブル
 description: "STATIC_NAT テーブル — global IP と local IP を 1:1 静的にマッピングする CONFIG_DB テーブル。nat_type デフォルトは dnat で、NAT_BINDINGS の snat デフォルトと逆方向。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

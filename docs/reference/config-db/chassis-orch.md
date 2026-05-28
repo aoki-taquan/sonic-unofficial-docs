@@ -2,7 +2,6 @@
 title: PASS_THROUGH_ROUTE_TABLE テーブル（ChassisOrch）
 description: "PASS_THROUGH_ROUTE_TABLE テーブル — VoQ チャシスのフロントエンドルータにおける VNet パススルールートを CONFIG_DB に保持し、ChassisOrch が APP_DB へ転送するテーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-17
 sources:

@@ -17,7 +17,6 @@ related:
     - COPP_TRAP
   cli:
     - show copp
-hard: 0
 ---
 
 # STATE_DB COPP 状態テーブル

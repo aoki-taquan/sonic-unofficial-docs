@@ -2,7 +2,6 @@
 title: ACL_TABLE テーブル
 description: "ACL_TABLE テーブル — ACL コンテナ（適用ポイント / 種別 / 段 (ingress/egress)）を定義する CONFIG_DB テーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

@@ -2,7 +2,6 @@
 title: FEATURE (STATE_DB)
 description: "STATE_DB FEATURE テーブル — featured が docker コンテナの起動・停止結果を state フィールドに書き込み、sonic-ctrmgrd がコンテナ ID・バージョン・オーナー情報を書き込む読み取り専用のランタイム状態テーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

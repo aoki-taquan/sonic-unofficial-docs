@@ -2,7 +2,6 @@
 title: RouteOrch event / notification (ResponsePublisher + NextHopObserver)
 description: "orchagent RouteOrch が送出する 2 種類の通知機構—APPL_STATE_DB 書き込み + RESPONSE_CHANNEL（ResponsePublisher 経由）と内部 NextHopObserver—のフィールドとコード由来デフォルトを詳解する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

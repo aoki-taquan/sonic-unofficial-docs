@@ -17,7 +17,6 @@ related:
   cli: []
   yang:
     - sonic-buffer-profile
-hard: 0
 ---
 
 # BUFFER_PROFILE テーブル

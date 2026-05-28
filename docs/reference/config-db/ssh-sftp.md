@@ -2,7 +2,6 @@
 title: SSH SFTP サブシステム
 description: "SONiC における SFTP サブシステムの構成と挙動。SSH_SERVER テーブルが管理する sshd_config には SFTP 関連フィールドがなく、Subsystem sftp 行は OS デフォルトとして常時有効となる。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

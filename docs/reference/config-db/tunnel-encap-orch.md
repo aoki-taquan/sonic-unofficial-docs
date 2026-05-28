@@ -2,7 +2,6 @@
 title: VxlanTunnelOrch — encap 処理詳細
 description: "VxlanTunnelOrch が VXLAN_TUNNEL / VXLAN_TUNNEL_MAP / VXLAN_EVPN_NVO エントリを SAI encap トンネルオブジェクトに変換する実装詳細。encap TTL・mapper モード・ピアモードのコード由来デフォルトを解説する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-17
 sources:

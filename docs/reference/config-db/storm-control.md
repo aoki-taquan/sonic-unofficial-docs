@@ -2,7 +2,6 @@
 title: PORT_STORM_CONTROL テーブル — 暗黙デフォルト詳細
 description: "PORT_STORM_CONTROL テーブルの暗黙デフォルト・ハードコード挙動・YANG と実装の乖離を詳細解説。BUM (broadcast / unknown-unicast / unknown-multicast) storm control の Phase A 分析。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

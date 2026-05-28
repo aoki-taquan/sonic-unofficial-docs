@@ -2,7 +2,6 @@
 title: MIRROR_SESSION (ERSPAN 種別)
 description: "MIRROR_SESSION テーブルの ERSPAN 種別詳細 — 外側 GRE/IP ヘッダ各フィールドのコード由来の暗黙デフォルト、プラットフォーム依存挙動、YANG との乖離を記述する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

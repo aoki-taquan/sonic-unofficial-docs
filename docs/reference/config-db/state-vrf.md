@@ -2,7 +2,6 @@
 title: VRF ステートテーブル（STATE_DB）
 description: "STATE_DB の VRF_TABLE / VRF_OBJECT_TABLE — vrfmgrd と VRFOrch が書き込む VRF 存在確認フラグ。削除同期の sentinel として機能する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

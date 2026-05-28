@@ -2,7 +2,6 @@
 title: VOQ_INBAND_INTERFACE テーブル
 description: "VOQ_INBAND_INTERFACE テーブル — VOQ_INBAND_INTERFACE テーブルは VOQ chassis におけるラインカード間のインバンド通信用論理インターフェース (Ethernet-IB) を CONFIG_DB に定義する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
