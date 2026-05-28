@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="thermalctld が speed_tolerance を Redis DB に書き込まなくなった変更と、is_under_speed / is_over_speed API への移行方法。">
+        <meta name="description" content="thermalctld が speed_tolerance を STATE_DB に書き込まなくなった変更と、Fan クラスの is_under_speed / is_over_speed API への移行方法。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="thermalctld の speed_tolerance API 廃止と移行 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="thermalctld が speed_tolerance を Redis DB に書き込まなくなった変更と、is_under_speed / is_over_speed API への移行方法。" />
+<meta property="og:description" content="thermalctld が speed_tolerance を STATE_DB に書き込まなくなった変更と、Fan クラスの is_under_speed / is_over_speed API への移行方法。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/platform/thermalctld-speed-tolerance-api-change.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/thermalctld-speed-tolerance-api-change/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="thermalctld の speed_tolerance API 廃止と移行 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="thermalctld が speed_tolerance を Redis DB に書き込まなくなった変更と、is_under_speed / is_over_speed API への移行方法。" />
+<meta property="twitter:description" content="thermalctld が speed_tolerance を STATE_DB に書き込まなくなった変更と、Fan クラスの is_under_speed / is_over_speed API への移行方法。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/platform/thermalctld-speed-tolerance-api-change.png" />
 </head>
   
@@ -18686,10 +18686,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#api" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        旧 API（廃止）
+        旧来の挙動（廃止）
       
     </span>
   </a>
@@ -18697,10 +18697,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#api_1" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        新 API（現行）
+        新しい挙動（現行）
       
     </span>
   </a>
@@ -18713,19 +18713,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#health_checkerpy" class="md-nav__link">
+  <a href="#fan_info" class="md-nav__link">
     <span class="md-ellipsis">
       
-        health_checker.py への影響
+        FAN_INFO を参照する実装への影響
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="health_checker.py への影響">
+    <nav class="md-nav" aria-label="FAN_INFO を参照する実装への影響">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         移行例
@@ -18741,7 +18741,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォームプラグイン実装者への対応
@@ -18752,10 +18752,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#redis-db" class="md-nav__link">
+  <a href="#state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Redis DB への影響
+        STATE_DB への影響
       
     </span>
   </a>
@@ -18763,10 +18763,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連
+        引用元
       
     </span>
   </a>
@@ -35945,10 +35945,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#api" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        旧 API（廃止）
+        旧来の挙動（廃止）
       
     </span>
   </a>
@@ -35956,10 +35956,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#api_1" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        新 API（現行）
+        新しい挙動（現行）
       
     </span>
   </a>
@@ -35972,19 +35972,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#health_checkerpy" class="md-nav__link">
+  <a href="#fan_info" class="md-nav__link">
     <span class="md-ellipsis">
       
-        health_checker.py への影響
+        FAN_INFO を参照する実装への影響
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="health_checker.py への影響">
+    <nav class="md-nav" aria-label="FAN_INFO を参照する実装への影響">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         移行例
@@ -36000,7 +36000,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォームプラグイン実装者への対応
@@ -36011,10 +36011,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#redis-db" class="md-nav__link">
+  <a href="#state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Redis DB への影響
+        STATE_DB への影響
       
     </span>
   </a>
@@ -36022,10 +36022,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連
+        引用元
       
     </span>
   </a>
@@ -36047,45 +36047,6 @@
                 
                   
 
-  <nav class="md-tags" >
-    
-      
-      
-      
-      
-        <span class="md-tag">api-change</span>
-      
-    
-      
-      
-      
-      
-        <span class="md-tag">fan</span>
-      
-    
-      
-      
-      
-      
-        <span class="md-tag">platform-daemons</span>
-      
-    
-      
-      
-      
-      
-        <span class="md-tag">thermal</span>
-      
-    
-      
-      
-      
-      
-        <span class="md-tag">thermalctld</span>
-      
-    
-  </nav>
-
 
   
     <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/thermalctld-speed-tolerance-api-change.md" title="編集" class="md-content__button md-icon" rel="edit">
@@ -36098,61 +36059,59 @@
 
 <h1 id="thermalctld-speed_tolerance-api">thermalctld の speed_tolerance API 廃止と移行<a class="headerlink" href="#thermalctld-speed_tolerance-api" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>thermalctld</code>（温度・ファン制御デーモン）において、<code>speed_tolerance</code> フィールドが <a href="../../reference/glossary/#term-redis">Redis</a> データベースへの書き込み対象から除外された。これはプラットフォーム API の変更を反映したものであり、既存のカスタムプラットフォームプラグインや <code>health_checker.py</code> に影響する。</p>
+<p><code>thermalctld</code>（温度・ファン制御デーモン）において、<code>speed_tolerance</code> フィールドが <a href="../../reference/glossary/#term-redis">Redis</a> の <code>STATE_DB</code>（<code>FAN_INFO</code> テーブル）への書き込み対象から除外された。代わりに <code>Fan</code> クラスの <code>is_under_speed()</code> / <code>is_over_speed()</code> メソッドの戻り値が <code>is_under_speed</code> / <code>is_over_speed</code> フィールドとして書き込まれるようになった。この変更は既存のカスタムプラットフォームプラグインや、<code>FAN_INFO</code> を参照するヘルスチェック実装に影響する。</p>
 <h2 id="_2">変更内容<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="api">旧 API（廃止）<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># プラットフォームプラグインに speed_tolerance プロパティが必要だった</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">FanDrawer</span><span class="p">:</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_speed_tolerance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="k">return</span> <span class="mi">10</span>  <span class="c1"># 許容速度誤差 (%)</span>
+<h3 id="_3">旧来の挙動（廃止）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>かつて <code>thermalctld</code> はプラットフォームプラグインの <code>get_speed_tolerance()</code> の戻り値を <code>FAN_INFO</code> テーブルに <code>speed_tolerance</code> フィールドとして書き込んでおり、<code>FAN_INFO</code> を読む側がこの許容誤差と実速度・目標速度を突き合わせて速度異常を判定していた。</p>
+<h3 id="_4">新しい挙動（現行）<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>速度異常の判定は <code>Fan</code> クラス側に移り、<code>thermalctld</code> は判定結果のみを <code>FAN_INFO</code> に書き込む。<code>Fan</code> クラスには判定用の 2 メソッドが用意されている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># sonic_platform_base/fan_base.py の FanBase</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">FanBase</span><span class="p">(</span><span class="n">DeviceBase</span><span class="p">):</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_under_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ファン速度が許容下限を下回っているか判定する。</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="sd">        既定実装は get_speed() / get_target_speed() / get_speed_tolerance() を使い、</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="sd">        speed * 100 &lt; target_speed * (100 - tolerance) を返す。&quot;&quot;&quot;</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="o">...</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_over_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ファン速度が許容上限を超えているか判定する。</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="sd">        既定実装は speed * 100 &gt; target_speed * (100 + tolerance) を返す。&quot;&quot;&quot;</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="o">...</span>
 </span></code></pre></div>
-<p><code>thermalctld</code> はこの値を Redis の <code>FAN_INFO</code> テーブルに <code>speed_tolerance</code> フィールドとして書き込んでいた。</p>
-<h3 id="api_1">新 API（現行）<a class="headerlink" href="#api_1" title="Permanent link">&para;</a></h3>
-<p><code>speed_tolerance</code> プロパティは廃止され、2 つのメソッドで置き換えられた。</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">FanDrawer</span><span class="p">:</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_under_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ファン速度が許容下限を下回っているか判定する&quot;&quot;&quot;</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>        <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># 正常時は False</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_over_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ファン速度が許容上限を超えているか判定する&quot;&quot;&quot;</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># 正常時は False</span>
+<p><code>get_speed_tolerance()</code> 自体は廃止されていない。既定の <code>is_under_speed()</code> / <code>is_over_speed()</code> が内部で利用する。廃止されたのは、許容誤差を <code>FAN_INFO</code> テーブルに <code>speed_tolerance</code> フィールドとして公開する挙動である。</p>
+<p><code>thermalctld</code> 本体は <code>fan.is_under_speed</code> / <code>fan.is_over_speed</code> を呼び、その結果を <code>FAN_INFO</code> の <code>is_under_speed</code> / <code>is_over_speed</code> フィールドとして書き込む<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<h2 id="fan_info">FAN_INFO を参照する実装への影響<a class="headerlink" href="#fan_info" title="Permanent link">&para;</a></h2>
+<p><code>FAN_INFO</code> テーブルから <code>speed_tolerance</code> フィールドを読んで独自に速度異常を計算しているヘルスチェック実装やスクリプトは、値が存在しなくなるため更新が必要である。</p>
+<h3 id="_5">移行例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 旧: speed_tolerance を読んで独自に判定</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">speed_tolerance</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fan_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;speed_tolerance&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">actual_speed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fan_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;speed&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">target_speed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fan_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;speed_target&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">actual_speed</span> <span class="o">-</span> <span class="n">target_speed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">speed_tolerance</span><span class="p">:</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">raise_alarm</span><span class="p">()</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># 新: thermalctld が書き込む判定済みフラグを参照</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="k">if</span> <span class="n">fan_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;is_under_speed&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span> <span class="ow">or</span> <span class="n">fan_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;is_over_speed&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span><span class="p">:</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">raise_alarm</span><span class="p">()</span>
 </span></code></pre></div>
-<h2 id="health_checkerpy">health_checker.py への影響<a class="headerlink" href="#health_checkerpy" title="Permanent link">&para;</a></h2>
-<p><code>health_checker.py</code>（および類似のカスタムヘルスチェック実装）で <code>speed_tolerance</code> フィールドを Redis から読み取っている場合、値が存在しなくなるため更新が必要である。</p>
-<h3 id="_3">移行例<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 旧: speed_tolerance を使った判定</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">speed_tolerance</span> <span class="o">=</span> <span class="n">fan_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;speed_tolerance&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">actual_speed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fan_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;speed&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">target_speed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fan_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target_speed&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">actual_speed</span> <span class="o">-</span> <span class="n">target_speed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">speed_tolerance</span><span class="p">:</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">raise_alarm</span><span class="p">()</span>
+<h2 id="_6">プラットフォームプラグイン実装者への対応<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>カスタムプラットフォームプラグインを実装している場合、<code>Fan</code> クラスで <code>get_speed_tolerance()</code>（既定実装が利用）か、あるいは <code>is_under_speed()</code> / <code>is_over_speed()</code> 自体をオーバーライドする。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyFan</span><span class="p">(</span><span class="n">FanBase</span><span class="p">):</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_under_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_target_speed</span><span class="p">()</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>        <span class="n">actual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_speed</span><span class="p">()</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        <span class="n">tolerance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_speed_tolerance</span><span class="p">()</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="k">return</span> <span class="n">actual</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">&lt;</span> <span class="n">target</span> <span class="o">*</span> <span class="p">(</span><span class="mi">100</span> <span class="o">-</span> <span class="n">tolerance</span><span class="p">)</span>
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># 新: is_under_speed / is_over_speed を使った判定</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1"># これらはプラットフォームプラグインが直接判定を行い、</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># health_checker は FAN_INFO テーブルの is_under_speed / is_over_speed</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="c1"># フィールドを参照する</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="k">if</span> <span class="n">fan_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;is_under_speed&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span> <span class="ow">or</span> <span class="n">fan_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;is_over_speed&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span><span class="p">:</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="n">raise_alarm</span><span class="p">()</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_over_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_target_speed</span><span class="p">()</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        <span class="n">actual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_speed</span><span class="p">()</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>        <span class="n">tolerance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_speed_tolerance</span><span class="p">()</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>        <span class="k">return</span> <span class="n">actual</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">&gt;</span> <span class="n">target</span> <span class="o">*</span> <span class="p">(</span><span class="mi">100</span> <span class="o">+</span> <span class="n">tolerance</span><span class="p">)</span>
 </span></code></pre></div>
-<h2 id="_4">プラットフォームプラグイン実装者への対応<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>カスタムプラットフォームプラグインを実装している場合、<code>Fan</code> クラスに <code>is_under_speed()</code> と <code>is_over_speed()</code> を実装する必要がある。</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyFan</span><span class="p">(</span><span class="n">Fan</span><span class="p">):</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_under_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_target_speed</span><span class="p">()</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>        <span class="n">actual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_speed</span><span class="p">()</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>        <span class="n">tolerance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_speed_tolerance</span><span class="p">()</span>  <span class="c1"># 内部メソッド</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>        <span class="k">return</span> <span class="n">actual</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">target</span> <span class="o">-</span> <span class="n">tolerance</span><span class="p">)</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_over_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_target_speed</span><span class="p">()</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>        <span class="n">actual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_speed</span><span class="p">()</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>        <span class="n">tolerance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_speed_tolerance</span><span class="p">()</span>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>        <span class="k">return</span> <span class="n">actual</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">target</span> <span class="o">+</span> <span class="n">tolerance</span><span class="p">)</span>
-</span></code></pre></div>
-<p><code>is_under_speed()</code> / <code>is_over_speed()</code> を実装しない場合、デフォルト実装（常に <code>False</code> を返す）が使われ、ファン速度異常が検出されなくなる。</p>
-<h2 id="redis-db">Redis DB への影響<a class="headerlink" href="#redis-db" title="Permanent link">&para;</a></h2>
-<p>変更後の <code>FAN_INFO</code> テーブル構造（<code>STATE_DB</code>）：</p>
+<p>既定実装は <code>get_speed_tolerance()</code> の実装を前提とする。これらを実装せず <code>get_speed_tolerance()</code> も <code>NotImplementedError</code> のままだと、<code>thermalctld</code> は <code>try_get</code> により値を取得できず判定が <code>False</code> 相当として扱われ、ファン速度異常が検出されなくなる。</p>
+<h2 id="state_db">STATE_DB への影響<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h2>
+<p>変更後の <code>FAN_INFO</code> テーブル構造（<code>STATE_DB</code>）の主なフィールド<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>：</p>
 <table>
 <thead>
 <tr>
@@ -36166,7 +36125,7 @@
 <td>現在の回転速度 (%)</td>
 </tr>
 <tr>
-<td><code>target_speed</code></td>
+<td><code>speed_target</code></td>
 <td>目標回転速度 (%)</td>
 </tr>
 <tr>
@@ -36179,15 +36138,57 @@
 </tr>
 <tr>
 <td><del><code>speed_tolerance</code></del></td>
-<td><strong>廃止</strong></td>
+<td><strong>廃止</strong>（書き込まれなくなった）</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_5">関連<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>なお <code>Fan</code> クラスのメソッドは <code>FanDrawer</code>（ファンドロワー）ではなく、個々のファンを表す <code>Fan</code>（<code>FanBase</code>）に定義されている点に注意。</p>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>GitHub Issue: <a href="https://github.com/sonic-net/sonic-platform-daemons/issues/395">sonic-net/sonic-platform-daemons#395</a></li>
+<li><code>is_under_speed</code> / <code>is_over_speed</code> / <code>get_speed_tolerance</code> の定義: <a href="https://github.com/sonic-net/sonic-platform-common/blob/64beade8cddecdbc154531bc84bed2fa86581ea8/sonic_platform_base/fan_base.py"><code>sonic_platform_base/fan_base.py</code></a></li>
+<li><code>FAN_INFO</code> への書き込み: <a href="https://github.com/sonic-net/sonic-platform-daemons/blob/4ba9612cb7756651062d37f977e3df17d57f740d/sonic-thermalctld/scripts/thermalctld"><code>sonic-thermalctld/scripts/thermalctld</code></a></li>
+<li>関連 Issue: <a href="https://github.com/sonic-net/sonic-platform-daemons/issues/395">sonic-net/sonic-platform-daemons#395</a></li>
 </ul>
+<!-- evidence:
+source: sonic-platform-common/sonic_platform_base/fan_base.py#L69-L113 (sha: 64beade8cddecdbc154531bc84bed2fa86581ea8)
+excerpt: |
+  def is_under_speed(self):
+      speed = self.get_speed()
+      target_speed = self.get_target_speed()
+      tolerance = self.get_speed_tolerance()
+      return speed * 100 < target_speed * (100 - tolerance)
+  def is_over_speed(self):
+      ...
+      return speed * 100 > target_speed * (100 + tolerance)
+reasoning: is_under_speed / is_over_speed は Fan(FanBase) のメソッド。FanDrawer ではない。get_speed_tolerance は既定実装が内部利用するため残存。
+-->
+<!-- evidence:
+source: sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld#L399-L463 (sha: 4ba9612cb7756651062d37f977e3df17d57f740d)
+excerpt: |
+  is_under_speed = try_get(fan.is_under_speed)
+  is_over_speed = try_get(fan.is_over_speed)
+  ...
+  fvs = swsscommon.FieldValuePairs(
+      [('speed', str(speed)),
+       ('speed_target', str(speed_target)),
+       ('is_under_speed', str(is_under_speed)),
+       ('is_over_speed', str(is_over_speed)), ...])
+reasoning: thermalctld は fan.is_under_speed/is_over_speed を呼び FAN_INFO に書き込む。DB のフィールド名は speed_target (target_speed ではない)。speed_tolerance は書き込み対象外。
+-->
+
 <!-- glossary-links-injected: 0f594312e2b7 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><a href="https://github.com/sonic-net/sonic-platform-common/blob/64beade8cddecdbc154531bc84bed2fa86581ea8/sonic_platform_base/fan_base.py#L69-L113"><code>sonic_platform_base/fan_base.py</code> L69-L113</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://github.com/sonic-net/sonic-platform-daemons/blob/4ba9612cb7756651062d37f977e3df17d57f740d/sonic-thermalctld/scripts/thermalctld#L399-L463"><code>sonic-thermalctld/scripts/thermalctld</code> L399-L463</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
