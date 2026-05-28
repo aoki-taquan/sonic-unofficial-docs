@@ -37298,7 +37298,7 @@
 
 <h1 id="dpu-eni-vdpu-remote_dpu">DPU / ENI / VDPU / REMOTE_DPU テーブル<a class="headerlink" href="#dpu-eni-vdpu-remote_dpu" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-smartswitch">SmartSwitch</a> において <a href="../../glossary/#term-npu">NPU</a> から <a href="../../glossary/#term-dpu">DPU</a> (Data Processing Unit) へのパケット転送を実現する 5 テーブル群。<a href="../../glossary/#term-eni">ENI</a> (Elastic Network Interface) Based Forwarding アーキテクチャの構成情報を保持し、<code>DashEniFwdOrch</code> が読み出して <a href="../../glossary/#term-acl">ACL</a> ルール (<code>ENI:*</code>) へ変換する。</p>
+<p><a href="../../glossary/#term-smartswitch">SmartSwitch</a> において <a href="../../glossary/#term-npu">NPU</a> から <a href="../../glossary/#term-dpu">DPU</a> (Data Processing Unit) へのパケット転送を実現する 5 テーブル群。<a href="../../glossary/#term-eni">ENI</a> (Elastic Network Interface) Based Forwarding アーキテクチャの構成情報を保持し、<code>DashEniFwdOrch</code> が読み出して <a href="../../glossary/#term-acl">ACL</a> ルール (<code>ENI:*</code>) へ変換する<sup id="fnref:dashenifwdorch-h"><a class="footnote-ref" href="#fn:dashenifwdorch-h">1</a></sup><sup id="fnref:dashenifwdorch-cpp"><a class="footnote-ref" href="#fn:dashenifwdorch-cpp">2</a></sup><sup id="fnref:dashenifwdorch-ut"><a class="footnote-ref" href="#fn:dashenifwdorch-ut">3</a></sup><sup id="fnref:smartswitch-config"><a class="footnote-ref" href="#fn:smartswitch-config">4</a></sup><sup id="fnref:eni-fwd-hld"><a class="footnote-ref" href="#fn:eni-fwd-hld">5</a></sup>。</p>
 <ul>
 <li><strong><code>DPU</code></strong>: ローカル <a href="../../glossary/#term-dpu">DPU</a> (同一 <a href="../../glossary/#term-smartswitch">SmartSwitch</a> 内) のエンドポイント情報</li>
 <li><strong><code>REMOTE_DPU</code></strong>: リモート <a href="../../glossary/#term-dpu">DPU</a> (クラスタ内他 <a href="../../glossary/#term-smartswitch">SmartSwitch</a>) のエンドポイント情報</li>
@@ -38667,6 +38667,27 @@ APPL_DB の <code>ACL_RULE_TABLE</code> に未インストール状態のルー�
 <!-- /platform -->
 
 <!-- glossary-links-injected: d1159e193828 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:dashenifwdorch-h">
+<p><code>sonic-swss/orchagent/dash/dashenifwdorch.h</code> — <code>DashEniFwdOrch</code> / <code>DpuRegistry</code> のクラス定義・テーブル名 / フィールド名 / ACL テーブルタイプ等のハードコード定数 (スキーマの正本)。 <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.h">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.h</a>&#160;<a class="footnote-backref" href="#fnref:dashenifwdorch-h" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:dashenifwdorch-cpp">
+<p><code>sonic-swss/orchagent/dash/dashenifwdorch.cpp</code> — <code>DpuRegistry::populate()</code> の DPU / REMOTE_DPU / VDPU parse ロジック・ENI から ACL ルールへの変換・暗黙参照 / 失敗挙動。 <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:dashenifwdorch-cpp" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:dashenifwdorch-ut">
+<p><code>sonic-swss/tests/mock_tests/dashenifwdorch_ut.cpp</code> — DashEniFwdOrch のユニットテスト。テーブル投入順序・必須フィールド・ACL 生成の期待値を裏付ける。 <a href="https://github.com/sonic-net/sonic-swss/blob/master/tests/mock_tests/dashenifwdorch_ut.cpp">https://github.com/sonic-net/sonic-swss/blob/master/tests/mock_tests/dashenifwdorch_ut.cpp</a>&#160;<a class="footnote-backref" href="#fnref:dashenifwdorch-ut" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:smartswitch-config">
+<p><code>sonic-buildimage/src/sonic-config-engine/smartswitch_config.py</code> — <code>platform.json</code> から <code>DPUS</code> テーブルを CONFIG_DB へ投入する config-engine ロジック。 <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-config-engine/smartswitch_config.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-config-engine/smartswitch_config.py</a>&#160;<a class="footnote-backref" href="#fnref:smartswitch-config" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:eni-fwd-hld">
+<p>SONiC HLD: <code>doc/smart-switch/high-availability/eni-based-forwarding.md</code> — ENI Based Forwarding のアーキテクチャ設計文書。 <a href="https://github.com/sonic-net/SONiC/blob/master/doc/smart-switch/high-availability/eni-based-forwarding.md">https://github.com/sonic-net/SONiC/blob/master/doc/smart-switch/high-availability/eni-based-forwarding.md</a>&#160;<a class="footnote-backref" href="#fnref:eni-fwd-hld" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

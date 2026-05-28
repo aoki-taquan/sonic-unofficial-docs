@@ -38255,6 +38255,14 @@ orchagent 再起動時も <code>coppmgrd</code> は同一キーへの上書き s
 <!-- ref-triangle:end -->
 
 <h2 id="_21">引用元<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/coppmgr.cpp"><code>cfgmgr/coppmgr.cpp</code></a> — <code>setCoppGroupStateOk()</code> / <code>setCoppTrapStateOk()</code> (L424-451) が <code>state=ok</code> を書き込む。<code>doCoppTrapTask()</code> / <code>doCoppGroupTask()</code> / <code>setFeatureTrapIdsStatus()</code> (L531-985)・<code>trap_group</code>/<code>trap_ids</code> 欠落時のサイレントスキップ (L609-613)。<code>COPP_GROUP_TABLE</code> / <code>COPP_TRAP_TABLE.state</code> 書き込みの全証跡</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/copporch.cpp"><code>orchagent/copporch.cpp</code></a> — <code>publishTrapIdsCapability()</code> (L208-300)・<code>default_supported_trap_ids</code> フォールバックリスト (L106-151, <code>neighbor_miss</code> 除外)・<code>updateTrapOperStatus()</code> で <code>hw_status=installed</code>/<code>not-installed</code> (L526/L1413)・<code>allPortsReady()</code> ガード (L885-888)・platform 分岐 (L353-354/L1188-1189)・FlexCounter 副次書込 (L1389-1496)。<code>COPP_TRAP_CAPABILITY_TABLE</code> / <code>hw_status</code> の全証跡</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/copporch.h"><code>orchagent/copporch.h</code></a> — <code>HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP</code> 等の FlexCounter 定数 (L23-46)</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/coppmgrd.cpp"><code>cfgmgr/coppmgrd.cpp</code></a> — <code>CoppMgr</code> の <code>SubscriberStateTable</code> 生成 (L21-65)。CONFIG_DB 3 テーブル購読の証跡 (Phase G)</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp"><code>orchagent/orchdaemon.cpp</code></a> — <code>CoppOrch</code> の APPL_DB <code>APP_COPP_TABLE</code> Consumer 生成 (L341)</li>
+<li><a href="https://github.com/sonic-net/sonic-utilities/blob/master/show/copp.py"><code>show/copp.py</code></a> / <a href="https://github.com/sonic-net/sonic-utilities/blob/master/dump/plugins/copp.py"><code>dump/plugins/copp.py</code></a> — STATE_DB COPP テーブルの読み出し側 (<code>show copp policer</code> / <code>dump copp</code>)</li>
+</ul>
 <!-- glossary-links-injected: 4a79e2a68815 -->
 
 

@@ -37069,8 +37069,8 @@
 SONiC は PVST (Per-VLAN Spanning Tree) と MSTP (Multiple Spanning Tree Protocol) の 2 モードをサポートする。</p>
 </div>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>STP 設定は <code>stpmgrd</code> (<a href="../../glossary/#term-sonic-swss">sonic-swss</a>/cfgmgr/stpmgrd.cpp) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し、Unix Domain Socket (<code>/var/run/stpipc.sock</code>) 経由で STP デーモンに IPC メッセージを送信する。
-CLI の <code>config spanning-tree</code> コマンド (<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a>/config/stp.py) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書き込みを行う。</p>
+<p>STP 設定は <code>stpmgrd</code> (<a href="../../glossary/#term-sonic-swss">sonic-swss</a>/cfgmgr/stpmgrd.cpp) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し、Unix Domain Socket (<code>/var/run/stpipc.sock</code>) 経由で STP デーモンに IPC メッセージを送信する<sup id="fnref:stpmgrd"><a class="footnote-ref" href="#fn:stpmgrd">2</a></sup><sup id="fnref:stpmgr-h"><a class="footnote-ref" href="#fn:stpmgr-h">3</a></sup><sup id="fnref:stpmgrd-cpp"><a class="footnote-ref" href="#fn:stpmgrd-cpp">4</a></sup>。
+CLI の <code>config spanning-tree</code> コマンド (<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a>/config/stp.py) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書き込みを行う<sup id="fnref:stp-py"><a class="footnote-ref" href="#fn:stp-py">1</a></sup>。</p>
 <p>テーブル構成:</p>
 <table>
 <thead>
@@ -38479,6 +38479,24 @@ IPC 送信失敗後もエントリは <code>consumer.m_toSync.erase(it)</code> �
 <li><a href="../portchannel/">CONFIG_DB: PORTCHANNEL</a></li>
 </ul>
 <!-- glossary-links-injected: 0af8863862be -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:stp-py">
+<p><code>sonic-utilities/config/stp.py</code> — <code>config spanning-tree</code> コマンド群、PVST/MST 有効化時のデフォルト書き込み・タイマー検証・<code>PVST_MAX_INSTANCES</code> 制限。 <a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py</a>&#160;<a class="footnote-backref" href="#fnref:stp-py" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:stpmgrd">
+<p><code>sonic-swss/cfgmgr/stpmgr.cpp</code> — <code>StpMgr</code> の CONFIG_DB 購読・タスクガード・stpd への IPC メッセージ送信 (<code>sendMsgStpd()</code>)・ebtables 操作。 <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp</a>&#160;<a class="footnote-backref" href="#fnref:stpmgrd" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:stpmgr-h">
+<p><code>sonic-swss/cfgmgr/stpmgr.h</code> — <code>StpMgr</code> クラス定義・ソケット名 / <code>STP_DEFAULT_MAX_INSTANCES</code> / opcode 等のハードコード定数。 <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h</a>&#160;<a class="footnote-backref" href="#fnref:stpmgr-h" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:stpmgrd-cpp">
+<p><code>sonic-swss/cfgmgr/stpmgrd.cpp</code> — stpmgrd エントリポイント・TableConnector 登録・select ループ・warm start 初期化。 <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgrd.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgrd.cpp</a>&#160;<a class="footnote-backref" href="#fnref:stpmgrd-cpp" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

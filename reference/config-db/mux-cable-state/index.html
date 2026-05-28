@@ -37353,6 +37353,16 @@
 <!-- ref-triangle:end -->
 
 <h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>本ページの記述は以下の一次ソースに基づく。</p>
+<ul>
+<li>MuxOrch / MuxStateOrch / MuxCable 実装 (STATE_DB 書込 / 状態遷移 / 定数): <code>sonic-swss</code> <code>orchagent/muxorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/muxorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/muxorch.cpp</a></li>
+<li>linkmgrd DB インタフェース (MUX_CABLE_TABLE 購読 / Loopback3 read_side 判定): <code>sonic-linkmgrd</code> <code>src/DbInterface.cpp</code>. <a href="https://github.com/sonic-net/sonic-linkmgrd/blob/master/src/DbInterface.cpp">https://github.com/sonic-net/sonic-linkmgrd/blob/master/src/DbInterface.cpp</a></li>
+<li>ycabled HW_MUX_CABLE_TABLE 書込 (gRPC forwarding state / VS 分岐): <code>sonic-platform-daemons</code> <code>sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py</code>. <a href="https://github.com/sonic-net/sonic-platform-daemons/blob/master/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py">https://github.com/sonic-net/sonic-platform-daemons/blob/master/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py</a></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">行番号について</p>
+<p>本文中の <code>muxorch.cpp:NNNN</code> / <code>y_cable_helper.py:NNN</code> / <code>DbInterface.cpp:NNN</code> 等の行番号は <code>last_verified</code> 時点の <code>master</code> ブランチに基づく。<code>master</code> の更新により行番号が前後する場合がある。</p>
+</div>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>

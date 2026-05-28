@@ -38238,6 +38238,12 @@ CONFIG_DB に蓄積され再起動後に一括再処理される。</p>
 </tbody>
 </table>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py"><code>config/stp.py</code></a> — MST 定数定義 (L68-110)・<code>spanning_tree_enable()</code> (L533-539)・<code>enable_mst_instance0()</code> (L433-438)・<code>enable_mst_for_interfaces()</code> (L441-470)・per-instance per-port <code>mod_entry</code> (L1697-1824)。暗黙デフォルト §1–§5 の全証跡</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp"><code>cfgmgr/stpmgr.cpp</code></a> — <code>doStpMstGlobalTask()</code> (L344)・<code>doStpMstInstTask()</code> (L1027-)・<code>doStpMstInstPortTask()</code> (L1160-)・起動ガード・キープレフィックス長マジックナンバー (L1044/L1174)・<code>stoi</code> 例外・<code>updateVlanInstanceMap()</code> (L1454)・<code>getStpMaxInstances()</code> (L1381-1414)。Phase B–H の全証跡</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h"><code>cfgmgr/stpmgr.h</code></a> — <code>MAX_VLANS</code> / <code>STP_DEFAULT_MAX_INSTANCES</code> / <code>STPMGRD_SOCK_NAME</code> 等のデーモン内部定数 (L28-108)、<code>name[32]</code> フィールド長 (L205)</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgrd.cpp"><code>cfgmgr/stpmgrd.cpp</code></a> — <code>SELECT_TIMEOUT</code> (L17)・<code>DBConnector</code> 初期化 (L35-37)・<code>isPortInitDone()</code> 待機 (L72)・<code>WarmStart</code> 宣言 (L39-40)。multi-asic / VoQ 非対応・PortInitDone 依存の証跡</li>
+</ul>
 <h2 id="_12">関連ページ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../stp/">CONFIG_DB: STP</a></li>

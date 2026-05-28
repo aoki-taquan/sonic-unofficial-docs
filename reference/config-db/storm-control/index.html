@@ -38071,6 +38071,14 @@ BUM トラフィックが急増するタイミングでの変更は注意が必�
 </tbody>
 </table>
 <h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/policerorch.cpp"><code>orchagent/policerorch.cpp</code></a> — <code>PolicerOrch::handlePortStormControlTable()</code> / <code>doTask()</code>。kbps mandatory チェック・SAI policer ハードコード属性・kbps→CIR 変換・remove-then-reapply・allPortsReady ガード・silent drop・リソースリーク TODO の全証跡 (本文 §1–§9 / Phase B–H)</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp"><code>orchagent/orchdaemon.cpp</code></a> — orchlist 起動順序 (<code>gPortsOrch</code> → <code>gPolicerOrch</code>)、<code>BUM_STORM_CAPABILITY</code> TableConnector の dead code 化 (Phase B / H)</li>
+<li><a href="https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py"><code>config/main.py</code></a> — <code>is_storm_control_supported()</code>。CLI 側の <code>STATE_DB:BUM_STORM_CAPABILITY</code> capability チェック (本文 §7 / Phase H)</li>
+<li><a href="https://github.com/sonic-net/sonic-utilities/blob/master/scripts/storm_control.py"><code>scripts/storm_control.py</code></a> — <code>validate_kbps()</code> dead validation・<code>validate_interface()</code> NameError (本文 §10)</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/blob/master/tests/test_storm_control.py"><code>tests/test_storm_control.py</code></a> — kbps↔CIR 逆変換の丸め検証 (本文 §3)</li>
+<li><a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-storm-control.yang"><code>yang-models/sonic-storm-control.yang</code></a> — <code>kbps</code> leaf が optional (実装は mandatory)・<code>storm_type</code> enum・<code>ifname</code> leafref (本文 §1)</li>
+</ul>
 <h2 id="_15">関連ページ<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../port-storm-control/">PORT_STORM_CONTROL テーブル (概要)</a></li>

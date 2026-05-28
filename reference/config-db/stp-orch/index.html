@@ -37261,7 +37261,7 @@
 CONFIG_DB 側のデフォルト (STP/STP_VLAN/STP_PORT テーブル) は <a href="../stp/">STP/STP_VLAN/STP_PORT テーブル</a> を参照。</p>
 </div>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>StpOrch</code> (<code>orchagent/stporch.cpp</code>) は <a href="../../glossary/#term-appl_db">APPL_DB</a> の 4 テーブルを購読し、<code>stpd</code> → <code>stpmgrd</code> 経由で書き込まれた状態・指示を <a href="../../glossary/#term-sai">SAI</a> API に変換してデータプレーンへ反映する（<a href="../../glossary/#term-appl_db">APPL_DB</a> への書き込み主体は <code>cfgmgr/stpmgrd.cpp</code>）。</p>
+<p><code>StpOrch</code> (<code>orchagent/stporch.cpp</code>) は <a href="../../glossary/#term-appl_db">APPL_DB</a> の 4 テーブルを購読し、<code>stpd</code> → <code>stpmgrd</code> 経由で書き込まれた状態・指示を <a href="../../glossary/#term-sai">SAI</a> API に変換してデータプレーンへ反映する（<a href="../../glossary/#term-appl_db">APPL_DB</a> への書き込み主体は <code>cfgmgr/stpmgrd.cpp</code>）<sup id="fnref:stporch"><a class="footnote-ref" href="#fn:stporch">1</a></sup><sup id="fnref:stporch-h"><a class="footnote-ref" href="#fn:stporch-h">2</a></sup><sup id="fnref:orchdaemon"><a class="footnote-ref" href="#fn:orchdaemon">3</a></sup><sup id="fnref:schema-h"><a class="footnote-ref" href="#fn:schema-h">4</a></sup>。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>stpd (STP デーモン)
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  ↓ IPC (Unix Domain Socket)
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>stpmgrd (cfgmgr/stpmgrd.cpp)
@@ -38335,6 +38335,24 @@ SAI 側の定数は <code>SAI_STP_PORT_STATE_BLOCKING</code> / <code>SAI_STP_POR
 <li><a href="../vlan/">CONFIG_DB: VLAN</a></li>
 </ul>
 <!-- glossary-links-injected: 9fb3fca99a59 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:stporch">
+<p><code>sonic-swss/orchagent/stporch.cpp</code> — <code>StpOrch</code> の APPL_DB 4 テーブル処理 (<code>doStpTask()</code> / <code>doStpPortStateTask()</code> / <code>doStpFastageTask()</code> / <code>doMstInstPortFlushTask()</code>)・SAI STP インスタンス / ポート操作・STATE_DB <code>STP_TABLE</code> 書き込み。 <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:stporch" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:stporch-h">
+<p><code>sonic-swss/orchagent/stporch.h</code> — <code>StpOrch</code> クラス定義・<code>STP_INVALID_INSTANCE</code> / <code>stp_state</code> enum 等のハードコード定数。 <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.h</a>&#160;<a class="footnote-backref" href="#fnref:stporch-h" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:orchdaemon">
+<p><code>sonic-swss/orchagent/orchdaemon.cpp</code> — <code>gStpOrch</code> 登録と購読テーブルリスト・select タイムアウト定義。 <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp</a>&#160;<a class="footnote-backref" href="#fnref:orchdaemon" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:schema-h">
+<p><code>sonic-swss-common/common/schema.h</code> — <code>APP_STP_*_TABLE_NAME</code> / <code>STATE_STP_TABLE_NAME</code> 等の APPL_DB / STATE_DB テーブル名定数定義。 <a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:schema-h" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
