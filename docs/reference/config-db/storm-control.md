@@ -655,6 +655,13 @@ storm control の CONFIG_DB 参照は `namespace` 単位で独立している。
 
 ## 引用元
 
+- [`orchagent/policerorch.cpp`](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/policerorch.cpp) — `PolicerOrch::handlePortStormControlTable()` / `doTask()`。kbps mandatory チェック・SAI policer ハードコード属性・kbps→CIR 変換・remove-then-reapply・allPortsReady ガード・silent drop・リソースリーク TODO の全証跡 (本文 §1–§9 / Phase B–H)
+- [`orchagent/orchdaemon.cpp`](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp) — orchlist 起動順序 (`gPortsOrch` → `gPolicerOrch`)、`BUM_STORM_CAPABILITY` TableConnector の dead code 化 (Phase B / H)
+- [`config/main.py`](https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py) — `is_storm_control_supported()`。CLI 側の `STATE_DB:BUM_STORM_CAPABILITY` capability チェック (本文 §7 / Phase H)
+- [`scripts/storm_control.py`](https://github.com/sonic-net/sonic-utilities/blob/master/scripts/storm_control.py) — `validate_kbps()` dead validation・`validate_interface()` NameError (本文 §10)
+- [`tests/test_storm_control.py`](https://github.com/sonic-net/sonic-swss/blob/master/tests/test_storm_control.py) — kbps↔CIR 逆変換の丸め検証 (本文 §3)
+- [`yang-models/sonic-storm-control.yang`](https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-storm-control.yang) — `kbps` leaf が optional (実装は mandatory)・`storm_type` enum・`ifname` leafref (本文 §1)
+
 ## 関連ページ
 
 - [PORT_STORM_CONTROL テーブル (概要)](port-storm-control.md)

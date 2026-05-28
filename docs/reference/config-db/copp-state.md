@@ -556,4 +556,11 @@ sonic-db-cli STATE_DB keys 'COPP_*TABLE|*'
 
 ## 引用元
 
+- [`cfgmgr/coppmgr.cpp`](https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/coppmgr.cpp) — `setCoppGroupStateOk()` / `setCoppTrapStateOk()` (L424-451) が `state=ok` を書き込む。`doCoppTrapTask()` / `doCoppGroupTask()` / `setFeatureTrapIdsStatus()` (L531-985)・`trap_group`/`trap_ids` 欠落時のサイレントスキップ (L609-613)。`COPP_GROUP_TABLE` / `COPP_TRAP_TABLE.state` 書き込みの全証跡
+- [`orchagent/copporch.cpp`](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/copporch.cpp) — `publishTrapIdsCapability()` (L208-300)・`default_supported_trap_ids` フォールバックリスト (L106-151, `neighbor_miss` 除外)・`updateTrapOperStatus()` で `hw_status=installed`/`not-installed` (L526/L1413)・`allPortsReady()` ガード (L885-888)・platform 分岐 (L353-354/L1188-1189)・FlexCounter 副次書込 (L1389-1496)。`COPP_TRAP_CAPABILITY_TABLE` / `hw_status` の全証跡
+- [`orchagent/copporch.h`](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/copporch.h) — `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` 等の FlexCounter 定数 (L23-46)
+- [`cfgmgr/coppmgrd.cpp`](https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/coppmgrd.cpp) — `CoppMgr` の `SubscriberStateTable` 生成 (L21-65)。CONFIG_DB 3 テーブル購読の証跡 (Phase G)
+- [`orchagent/orchdaemon.cpp`](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp) — `CoppOrch` の APPL_DB `APP_COPP_TABLE` Consumer 生成 (L341)
+- [`show/copp.py`](https://github.com/sonic-net/sonic-utilities/blob/master/show/copp.py) / [`dump/plugins/copp.py`](https://github.com/sonic-net/sonic-utilities/blob/master/dump/plugins/copp.py) — STATE_DB COPP テーブルの読み出し側 (`show copp policer` / `dump copp`)
+
 <!-- glossary-links-injected: 4a79e2a68815 -->
