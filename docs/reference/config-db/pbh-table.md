@@ -2,7 +2,6 @@
 title: PBH_TABLE テーブル
 description: "PBH_TABLE テーブル — Policy Based Hashing の適用 interface 集合を定義する CONFIG_DB テーブル。PBH_RULE / PBH_HASH / PBH_HASH_FIELD と組み合わせ ECMP / LAG hash profile を切り替える。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-16
 sources:

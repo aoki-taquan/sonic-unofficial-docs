@@ -2,7 +2,6 @@
 title: ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)
 description: "SONiC orchagent northbound ZMQ チャネルの CONFIG_DB 制御フィールド。DEVICE_METADATA|localhost の orch_northbond_dash_zmq_enabled / orch_northbond_route_zmq_enabled と DPU テーブルの orchagent_zmq_port を詳述。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

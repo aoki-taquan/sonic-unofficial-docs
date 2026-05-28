@@ -2,7 +2,6 @@
 title: DEVICE_RUNTIME_METADATA テーブル
 description: "DEVICE_RUNTIME_METADATA テーブル — CONFIG_DB に永続化されない、起動時に計算で組み立てられる 仮想テーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:

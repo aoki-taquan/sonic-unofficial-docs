@@ -2,7 +2,6 @@
 title: NTP テーブル (global)
 description: "NTP テーブル (global) — NTP クライアントのグローバル設定を保持するシングルトン的テーブル。YANG 上は sonic-ntp.yang の container NTP 配下 container global として定義され、CONFIG_DB 上は NTP|global の単一エントリで現れる。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

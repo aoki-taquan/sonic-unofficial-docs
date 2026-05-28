@@ -2,7 +2,6 @@
 title: SWITCH_TRIMMING テーブル
 description: "SWITCH_TRIMMING テーブル — 輻輳テレメトリ向けの パケットトリミング (packet trimming) を全スイッチに対して設定するテーブル。 ドロップ予定のパケットを「短縮コピー」して別の DSCP / TC / queue で送り出すことで、輻輳発生を末端まで伝える。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:

@@ -2,7 +2,6 @@
 title: ACL_TABLE_TYPE テーブル
 description: "ACL_TABLE_TYPE テーブル — ユーザ定義 ACL テーブルタイプ（カスタム match フィールド / action / バインドポイント）を定義する CONFIG_DB テーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-17
 sources:

@@ -4,7 +4,6 @@ description: "APPL_DB の BUFFER_POOL_TABLE / BUFFER_PROFILE_TABLE / BUFFER_PG_T
 area: reference
 verification: code-verified
 last_verified: 2026-05-15
-hard: 0
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/bufferorch.h

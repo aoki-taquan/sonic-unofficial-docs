@@ -2,7 +2,6 @@
 title: PORT_QOS_MAP テーブル
 description: "PORT_QOS_MAP テーブル — PORT_QOS_MAP は QoS map、PFC enable bitmap、PFC watchdog software enable bitmap、scheduler profile を port または global default に bind する CONFIG_D…"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-10
 sources:

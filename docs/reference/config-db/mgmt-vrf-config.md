@@ -2,7 +2,6 @@
 title: MGMT_VRF_CONFIG テーブル
 description: "MGMT_VRF_CONFIG テーブル — 管理 VRF（OOB 管理トラフィックをデータプレーンから分離する）のグローバル ON/OFF を保持するシングルトンテーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

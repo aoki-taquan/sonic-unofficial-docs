@@ -2,7 +2,6 @@
 title: VRF テーブル
 description: "VRF テーブル — L3 トラフィック分離のための Virtual Routing and Forwarding インスタンスを定義する。vrfmgrd がこのテーブルを購読し、Linux VRF (ip vrf / cgroup) を作成する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

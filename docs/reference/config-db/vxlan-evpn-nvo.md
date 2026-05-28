@@ -2,7 +2,6 @@
 title: VXLAN_EVPN_NVO テーブル
 description: "VXLAN_EVPN_NVO テーブル — VXLAN_EVPN_NVO テーブルは EVPN ベースの Network Virtualization Overlay (NVO) インスタンスを CONFIG_DB に定義する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:

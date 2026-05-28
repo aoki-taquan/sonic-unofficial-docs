@@ -23,7 +23,6 @@ related:
     - config buffer
   yang:
     - sonic-buffer-pool
-hard: 0
 ---
 
 # BUFFER_POOL テーブル

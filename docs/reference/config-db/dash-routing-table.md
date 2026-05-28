@@ -2,7 +2,6 @@
 title: DASH_ROUTE_* テーブル
 description: "DASH_ROUTE_TABLE / DASH_ROUTE_RULE_TABLE / DASH_ROUTE_GROUP_TABLE — DASH データプレーンのアウトバウンド / インバウンドルーティングポリシーを定義する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-17
 sources:

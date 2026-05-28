@@ -4,7 +4,6 @@ description: "FLEX_COUNTER_DB（DB 5）のランタイム状態フィールド �
 area: reference
 verification: code-verified
 last_verified: 2026-05-18
-hard: 0
 sources:
   - repo: sonic-net/sonic-sairedis
     path: syncd/FlexCounter.cpp

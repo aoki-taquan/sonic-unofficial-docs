@@ -2,7 +2,6 @@
 title: APPL_DB PORT_TABLE
 description: "APPL_DB PORT_TABLE — 物理ポートの実効設定と運用状態を保持する APPL_DB テーブル。portsyncd が CONFIG_DB PORT テーブルをそのまま転写し、portmgrd がデフォルト値を補完し、orchagent が SAI 状態変化を書き戻す。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

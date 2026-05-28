@@ -2,7 +2,6 @@
 title: STP / STP_VLAN / STP_PORT テーブル — 暗黙デフォルト詳細
 description: "CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説。PVST / MSTP Phase A–C 分析（暗黙参照テーブル含む）。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

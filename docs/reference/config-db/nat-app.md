@@ -2,7 +2,6 @@
 title: APPL_DB NAT テーブル群
 description: "APPL_DB NAT テーブル群 — NAT_TABLE / NAPT_TABLE / NAT_TWICE_TABLE / NAPT_TWICE_TABLE / NAT_GLOBAL_TABLE / NAT_DNAT_POOL_TABLE。natmgrd と natsyncd が CONFIG_DB / conntrack から変換して orchagent が消費する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

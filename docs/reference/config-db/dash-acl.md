@@ -2,7 +2,6 @@
 title: DASH_ACL_* テーブル
 description: "DASH_ACL_IN_TABLE / DASH_ACL_OUT_TABLE / DASH_ACL_GROUP_TABLE / DASH_ACL_RULE_TABLE — DASH データプレーンの ACL ポリシーを定義する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-17
 sources:

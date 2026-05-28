@@ -2,7 +2,6 @@
 title: CABLE_LENGTH テーブル
 description: "CABLE_LENGTH テーブル — ポートごとのケーブル長を保持し、lossless バッファ (PG headroom) の動的計算に使用する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

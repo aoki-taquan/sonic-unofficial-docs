@@ -2,7 +2,6 @@
 title: MUX_CABLE_TABLE / HW_MUX_CABLE_TABLE (STATE_DB)
 description: "STATE_DB の MUX_CABLE_TABLE と HW_MUX_CABLE_TABLE — linkmgrd / orchagent / ycabled が書き込む Dual-ToR mux cable 実行時状態テーブル。コード由来のデフォルト値と乖離を整理する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

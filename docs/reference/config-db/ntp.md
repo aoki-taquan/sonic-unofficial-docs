@@ -2,7 +2,6 @@
 title: NTP テーブル群
 description: "NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop、書込み順依存、hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動、ハードコード定数、/etc/chrony への副次ファイル書込と systemd 経路、CONFIG_DB Subscribe 通信メカニズム、および SmartSwitch / MGMT_VRF / multi-asic プラットフォーム差を網羅した調査ページ。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-16
 sources:

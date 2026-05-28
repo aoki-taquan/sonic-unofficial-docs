@@ -2,7 +2,6 @@
 title: SNMP テーブル
 description: "SNMP テーブル — SNMP エージェント (snmpd in docker-snmp) のシステム情報 (Contact / Location) を保持するテーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:

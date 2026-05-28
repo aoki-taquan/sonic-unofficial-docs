@@ -18,7 +18,6 @@ related:
     - show debug counter
   yang:
     - sonic-debug-counter
-hard: 0
 ---
 
 # DEBUG_COUNTER テーブル

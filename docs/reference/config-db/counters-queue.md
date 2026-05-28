@@ -4,7 +4,6 @@ description: "COUNTERS_DB の Queue / Priority Group カウンタ関連テーブ
 area: reference
 verification: code-verified
 last_verified: 2026-05-14
-hard: 0
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/portsorch.cpp

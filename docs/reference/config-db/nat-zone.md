@@ -2,7 +2,6 @@
 title: NAT ゾーン設定 (nat_zone フィールド)
 description: "INTERFACE / VLAN_INTERFACE / PORTCHANNEL_INTERFACE / LOOPBACK_INTERFACE テーブルの nat_zone フィールド — L3 インタフェースに NAT ゾーン ID を割り当て、NAT 境界を定義する CONFIG_DB フィールド。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

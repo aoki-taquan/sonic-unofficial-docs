@@ -2,7 +2,6 @@
 title: VLAN_SUB_INTERFACE テーブル
 description: "VLAN_SUB_INTERFACE テーブル — VLAN_SUB_INTERFACE は物理 port または PortChannel 上の 802.1Q sub-interface を定義する CONFIG_DB テーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-10
 sources:

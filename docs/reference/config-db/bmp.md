@@ -14,7 +14,6 @@ related:
     - BGP_MONITORS
   yang:
     - sonic-bmp
-hard: 0
 ---
 
 # BMP テーブル

@@ -2,7 +2,6 @@
 title: PREFIX_LIST テーブル (BGP)
 description: "PREFIX_LIST テーブル (BGP) — BGP のルートフィルタ用 prefix リストを CONFIG_DB に持たせるための簡易テーブル。bgpcfgd テンプレートで FRR の ip prefix-list / ipv6 prefix-list に展開される。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

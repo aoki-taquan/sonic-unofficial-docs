@@ -2,7 +2,6 @@
 title: IPv6 Link-local モード
 description: "INTERFACE / PORTCHANNEL_INTERFACE / VLAN_INTERFACE テーブルに付随する ipv6_use_link_local_only フィールドの設定、動作経路、暗黙デフォルトを解説する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

@@ -2,7 +2,6 @@
 title: BGP_NEIGHBOR テーブル
 description: "BGP_NEIGHBOR テーブル — BGP 隣接 (peer) を CONFIG_DB で定義するテーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

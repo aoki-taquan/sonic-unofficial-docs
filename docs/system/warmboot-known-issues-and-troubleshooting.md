@@ -22,7 +22,6 @@ related:
     - fast-reboot
   yang:
     - sonic-warm-restart
-hard: 0
 ---
 
 !!! success "裏取りステータス: code-verified"

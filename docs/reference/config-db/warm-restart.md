@@ -2,7 +2,6 @@
 title: WARM_RESTART テーブル
 description: "WARM_RESTART テーブル — ホットフィックスやソフトウェアアップグレード時にデータプレーンを落とさずコントロールプレーンを再起動するためのモジュール別 warm-restart 設定を持つテーブル。モジュール (bgp/teamd/swss/system) ごとに enable 状態と各種タイマを保持する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:

@@ -4,7 +4,6 @@ description: "CONFIG_DB の FLEX_COUNTER_TABLE|PG_WATERMARK エントリ — Pri
 area: reference
 verification: code-verified
 last_verified: 2026-05-15
-hard: 0
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/portsorch.cpp

@@ -2,7 +2,6 @@
 title: DASH_VNET テーブル
 description: "DASH_VNET テーブル — DPU 上の DASH 仮想ネットワーク (VNET) を CONFIG_DB に定義するテーブル。VNI・GUID・アドレス空間を保持する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

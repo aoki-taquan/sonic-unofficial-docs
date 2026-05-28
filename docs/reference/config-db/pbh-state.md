@@ -2,7 +2,6 @@
 title: STATE_DB PBH_CAPABILITIES テーブル
 description: "STATE_DB PBH_CAPABILITIES テーブル — PBH (Policy Based Hashing) の ASIC ベンダー別フィールド更新可否能力を orchagent 起動時に書き込む読み取り専用テーブル。CLI が config pbh コマンドの操作可否判断に利用する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-16
 sources:

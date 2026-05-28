@@ -2,7 +2,6 @@
 title: DHCP_RELAY テーブル
 description: "DHCP_RELAY テーブル — dhcpv6_servers は ordered-by user で 設定順を維持 する。dhcp6relay は順序通りに upstream をスキャンする。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:

@@ -2,7 +2,6 @@
 title: APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル
 description: "APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル — vlanmgrd が CONFIG_DB VLAN/VLAN_MEMBER を変換して書き込む中間テーブル。orchagent (portsorch) が購読して SAI VLAN/VLAN_MEMBER を生成する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

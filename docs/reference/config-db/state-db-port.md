@@ -2,7 +2,6 @@
 title: STATE_DB PORT_TABLE（ポート状態テーブル）
 description: "STATE_DB PORT_TABLE — portsyncd / PortsOrch が書き込む物理ポートの oper 状態フィールド一覧。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

@@ -2,7 +2,6 @@
 title: MCLAG_UNIQUE_IP テーブル
 description: "MCLAG_UNIQUE_IP テーブル — MC-LAG (Multi-Chassis Link Aggregation) ピア間で VLAN インターフェースに異なる IP を持たせる対象 VLAN を CONFIG_DB に保持するテーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-19
 sources:

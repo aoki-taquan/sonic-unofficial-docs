@@ -23,7 +23,6 @@ related:
   yang:
     - sonic-port
     - sonic-buffer-port-egress-profile-list
-hard: 0
 ---
 
 !!! success "裏取りステータス: code-verified"

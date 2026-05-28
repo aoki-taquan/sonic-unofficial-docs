@@ -2,7 +2,6 @@
 title: FLOW_COUNTER_ROUTE_PATTERN (RouteOrch / FlowCounterRouteOrch)
 description: "orchagent の RouteOrch および FlowCounterRouteOrch が参照する CONFIG_DB テーブル FLOW_COUNTER_ROUTE_PATTERN の構造・フィールドとコード由来デフォルトを詳解する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

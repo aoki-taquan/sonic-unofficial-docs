@@ -2,7 +2,6 @@
 title: LOGGER テーブル
 description: "LOGGER テーブル — SONiC プロセス・SAI コンポーネントごとのログ verbosity と出力先を CONFIG_DB に保持するテーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

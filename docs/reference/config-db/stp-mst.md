@@ -2,7 +2,6 @@
 title: STP_MST_INST / STP_MST_PORT テーブル
 description: "CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・ハードコード定数・副次 DB 書込・discrepancy を詳細解説。Phase A+B+C+D+E+F 分析。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-18
 sources:

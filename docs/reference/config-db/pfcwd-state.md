@@ -2,7 +2,6 @@
 title: PFC_WD 状態フィールド (COUNTERS_DB)
 description: "PFC Watchdog の runtime 状態・カウンタフィールド。COUNTERS_DB の COUNTERS:<queue_oid> ハッシュに書き込まれ、storm 検知カウント・パケット統計・queue ステータスを保持する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

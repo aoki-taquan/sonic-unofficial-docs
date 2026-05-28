@@ -2,7 +2,6 @@
 title: PORT テーブル
 description: "PORT テーブル — 物理スイッチポートの設定を保持するテーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

@@ -2,7 +2,6 @@
 title: SSH_SERVER テーブル — base フィールドデフォルト
 description: "SSH_SERVER|POLICIES テーブルの base フィールド一覧と YANG / コード由来暗黙デフォルト（Phase A）。hostcfgd の SshServer クラスおよび PamLimitsCfg クラスによる実効値を整理する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

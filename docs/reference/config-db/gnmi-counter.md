@@ -4,7 +4,6 @@ description: "gNMI 内部リクエストカウンタ — telemetryd (sonic-gnmi)
 area: reference
 verification: code-verified
 last_verified: 2026-05-14
-hard: 0
 sources:
   - repo: sonic-net/sonic-gnmi
     path: common_utils/context.go

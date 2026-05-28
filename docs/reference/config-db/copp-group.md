@@ -16,7 +16,6 @@ related:
     - config copp
   yang:
     - sonic-copp
-hard: 0
 ---
 
 # COPP_GROUP テーブル

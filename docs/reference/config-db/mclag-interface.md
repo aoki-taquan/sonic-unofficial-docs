@@ -2,7 +2,6 @@
 title: MCLAG_INTERFACE テーブル
 description: "MCLAG_INTERFACE テーブル — MC-LAG (Multi-Chassis Link Aggregation) のドメインに紐づくメンバー PortChannel を CONFIG_DB に保持するテーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-19
 sources:

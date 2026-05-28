@@ -2,7 +2,6 @@
 title: PBH_RULE テーブル
 description: "PBH_RULE テーブル — PBH_TABLE 内の match 条件・priority・適用 hash を定義する個別ルールエントリ。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-16
 sources:

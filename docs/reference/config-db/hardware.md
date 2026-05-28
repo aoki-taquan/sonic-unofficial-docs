@@ -2,7 +2,6 @@
 title: HARDWARE テーブル
 description: "HARDWARE テーブル — ACL ハードウェア動作モード（カウンタ粒度 / ルックアップモード / TCAM 共有）を宣言する CONFIG_DB テーブル。community sonic-swss は未消費。"
 area: reference
-hard: 0
 verification: discrepancy-found
 monitor: not_implemented
 last_verified: 2026-05-14

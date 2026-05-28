@@ -2,7 +2,6 @@
 title: FG_NHG テーブル
 description: "FG_NHG テーブル — Fine-Grained ECMP (FG ECMP) の next-hop group 定義。プレフィックスやネクストホップ単位で、固定サイズのハッシュバケットを使ったフロー安定化 ECMP を提供する。orchagent の FgNhgOrch が CONFIG_DB を購読する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

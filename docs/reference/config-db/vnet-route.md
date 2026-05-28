@@ -2,7 +2,6 @@
 title: VNET_ROUTE / VNET_ROUTE_TUNNEL テーブル
 description: "VNET_ROUTE / VNET_ROUTE_TUNNEL テーブル — VXLAN overlay 上の仮想ネットワーク内静的経路を CONFIG_DB に定義するテーブル群。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

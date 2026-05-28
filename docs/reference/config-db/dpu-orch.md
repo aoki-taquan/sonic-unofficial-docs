@@ -4,7 +4,6 @@ description: "DPU orchagent (DpuOrchDaemon) が CONFIG_DB DEVICE_METADATA から
 area: reference
 verification: code-verified
 last_verified: 2026-05-15
-hard: 0
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/main.cpp

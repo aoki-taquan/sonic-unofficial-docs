@@ -2,7 +2,6 @@
 title: POLICER テーブル
 description: POLICER テーブル — SAI policer (sai_policer) を CONFIG_DB から作成・更新するためのテーブル。
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

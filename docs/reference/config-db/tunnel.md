@@ -2,7 +2,6 @@
 title: TUNNEL テーブル
 description: "TUNNEL テーブル — SONiC Dual-ToR (Active-Standby) 構成で、ToR スイッチ間に張る IPinIP トンネルを定義するテーブル。tunnelmgrd が CONFIG_DB の本テーブルを購読し、APPL_DB TUNNEL_DECAP_TABLE を生成。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

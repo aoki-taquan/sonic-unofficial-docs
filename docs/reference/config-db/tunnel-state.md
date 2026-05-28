@@ -2,7 +2,6 @@
 title: TUNNEL STATE_DB テーブル群
 description: "STATE_DB TUNNEL 関連テーブル — tunneldecaporch / VxlanTunnelOrch / VxlanMgr が書き込む TUNNEL_DECAP_TABLE・TUNNEL_DECAP_TERM_TABLE・VXLAN_TUNNEL_TABLE のフィールド・デフォルト・書き込み条件の参照。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

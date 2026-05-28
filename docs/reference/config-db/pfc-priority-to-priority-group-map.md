@@ -2,7 +2,6 @@
 title: PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル
 description: "PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル — PFC_PRIORITY_TO_PRIORITY_GROUP_MAP は PFC priority 0..7 を ingress priority group 0..7 に対応付ける named QoS map テーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-10
 sources:

@@ -2,7 +2,6 @@
 title: VXLAN_TUNNEL_MAP テーブル
 description: "VXLAN_TUNNEL_MAP テーブル — VXLAN tunnel に対し、ローカル VLAN と VNI (VXLAN Network Identifier) のマッピングを与える。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

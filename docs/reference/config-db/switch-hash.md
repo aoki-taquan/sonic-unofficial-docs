@@ -2,7 +2,6 @@
 title: SWITCH_HASH テーブル
 description: "SWITCH_HASH テーブル — ECMP / LAG ハッシュに使うフィールド集合とハッシュアルゴリズムをスイッチ全体で設定する Generic Hash 設定テーブル。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:

@@ -2,7 +2,6 @@
 title: ROUTE_MAP テーブル
 description: "ROUTE_MAP テーブル — ルーティングポリシー (route-map) の statement 単位の定義テーブル。BGP neighbor / peer-group や redistribute から名前で参照される。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

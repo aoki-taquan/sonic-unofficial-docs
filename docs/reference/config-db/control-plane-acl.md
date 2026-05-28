@@ -2,7 +2,6 @@
 title: ACL_TABLE (CTRLPLANE) テーブル
 description: "ACL_TABLE テーブルで type=CTRLPLANE を指定した場合のコントロールプレーン ACL。SAI テーブルは生成されず、CoPP (COPP_GROUP/COPP_TRAP) 経路で制御される。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

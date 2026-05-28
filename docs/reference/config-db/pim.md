@@ -2,7 +2,6 @@
 title: PIM_GLOBALS / PIM_INTERFACE テーブル
 description: "PIM_GLOBALS / PIM_INTERFACE テーブル — PIM-SM (Protocol Independent Multicast Sparse Mode) のグローバルパラメータとインタフェース設定を CONFIG_DB に保持するテーブル。frrcfgd が購読して FRR pimd (vtysh) へ設定を注入する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

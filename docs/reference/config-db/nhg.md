@@ -2,7 +2,6 @@
 title: NEXTHOP_GROUP_TABLE (APPL_DB)
 description: "NEXTHOP_GROUP_TABLE — APPL_DB に置かれる ECMP nexthop group テーブル。fpmsyncd が FRR/Zebra から受信した netlink ECMP ルートを変換して書き込み、NhgOrch が SAI next hop group を生成する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

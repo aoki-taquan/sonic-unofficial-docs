@@ -2,7 +2,6 @@
 title: SFLOW_SESSION テーブル
 description: "SFLOW_SESSION テーブル — sFlow の per-port サンプリング設定。key が 'all' のときは全ポートへのグローバル既定として機能する。sflowmgrd が CONFIG_DB を購読して APP_DB 経由で SflowOrch へ伝達する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-17
 sources:

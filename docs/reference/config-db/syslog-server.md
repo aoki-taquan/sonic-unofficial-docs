@@ -2,7 +2,6 @@
 title: SYSLOG_SERVER テーブル
 description: "SYSLOG_SERVER テーブル — リモート syslog 送信先を保持する。hostcfgd の SyslogHandler がこのテーブルを購読し、/etc/rsyslog.d/-remote.conf を生成して rsyslogd を再ロードする。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

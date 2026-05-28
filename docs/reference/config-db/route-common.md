@@ -2,7 +2,6 @@
 title: ROUTE_REDISTRIBUTE テーブル
 description: "ROUTE_REDISTRIBUTE テーブル — sonic-route-common モジュールが定義するルート再配布ポリシーテーブル。VRF・送信元プロトコル・宛先プロトコル・アドレスファミリの組み合わせで経路再配布を制御する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

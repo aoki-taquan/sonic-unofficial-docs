@@ -2,7 +2,6 @@
 title: VLAN_INTERFACE テーブル
 description: "VLAN_INTERFACE テーブル — VLAN を L3 IF (SVI) として扱う設定を保持する。VRF / VNET binding、IP アサイン、NAT zone、MPLS、IPv6 link-local、grat ARP / proxy ARP、loopback action、MAC を持つ。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

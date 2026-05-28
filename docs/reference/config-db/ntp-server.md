@@ -2,7 +2,6 @@
 title: NTP_SERVER テーブル
 description: "NTP_SERVER テーブル — 上流 NTP サーバまたは pool を保持する。hostcfgd の NtpCfg が /etc/chrony/chrony.conf（または ntp.conf）を再生成し、サービスを再起動する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

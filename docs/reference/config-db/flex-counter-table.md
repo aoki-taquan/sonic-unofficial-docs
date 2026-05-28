@@ -4,7 +4,6 @@ description: "FLEX_COUNTER_TABLE テーブル — orchagent / syncd に対し、
 area: reference
 verification: code-verified
 last_verified: 2026-05-14
-hard: 0
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-flex_counter.yang

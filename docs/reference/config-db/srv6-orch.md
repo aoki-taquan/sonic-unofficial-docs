@@ -21,7 +21,6 @@ related:
     - VRF
   yang:
     - sonic-srv6
-hard: 0
 ---
 
 # Srv6Orch — APP_DB SRV6 テーブル

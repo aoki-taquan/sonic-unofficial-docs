@@ -2,7 +2,6 @@
 title: DPU_STATE フィールド詳細 (CHASSIS_STATE_DB) — デフォルト・更新条件
 description: "CHASSIS_STATE_DB の DPU_STATE テーブル各フィールドのコード由来デフォルト・fallback・更新タイミングを chassisd ソースから精査した詳細リファレンス。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

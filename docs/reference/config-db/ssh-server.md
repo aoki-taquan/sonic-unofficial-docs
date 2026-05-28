@@ -2,7 +2,6 @@
 title: SSH_SERVER テーブル
 description: "SSH_SERVER テーブル — SSH デーモン (sshd) のセキュリティ・セッションポリシーを保持するシングルトンテーブル。hostcfgd の SshServer クラスが購読し /etc/ssh/sshd_config を更新して sshd を再起動する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

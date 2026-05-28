@@ -2,7 +2,6 @@
 title: BREAKOUT_CFG テーブル (DPB)
 description: "BREAKOUT_CFG テーブル — Dynamic Port Breakout (DPB) 機能が導入した CONFIG_DB テーブル。親ポートごとの現在の breakout モードを保持し、CLI と orchagent が PORT テーブル再構成時に参照する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

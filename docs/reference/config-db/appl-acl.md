@@ -2,7 +2,6 @@
 title: APPL_DB ACL テーブル群
 description: "APPL_DB の ACL_TABLE_TABLE / ACL_TABLE_TYPE_TABLE / ACL_RULE_TABLE — vnetorch・mclagsyncd・dashenifwdorch が直接書き込む APPL_DB 側 ACL エントリの構造・フィールドデフォルト・コード挙動。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

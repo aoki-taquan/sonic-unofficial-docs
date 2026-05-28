@@ -2,7 +2,6 @@
 title: SERIAL_CONSOLE / SSH_SERVER テーブル
 description: "SERIAL_CONSOLE / SSH_SERVER テーブル — シリアルコンソールと SSH セッションのセキュリティポリシーを保持する CONFIG_DB テーブル群。不活動タイムアウト・SysRq 有効化・認証パラメータ等を制御する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

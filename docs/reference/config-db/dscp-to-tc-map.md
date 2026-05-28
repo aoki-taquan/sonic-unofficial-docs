@@ -2,7 +2,6 @@
 title: DSCP_TO_TC_MAP テーブル
 description: "DSCP_TO_TC_MAP テーブル — DSCP 値 (0..63) を Traffic Class へマップする ingress QoS 分類定義。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

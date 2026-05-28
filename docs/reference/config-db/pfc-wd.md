@@ -2,7 +2,6 @@
 title: PFC_WD テーブル
 description: "PFC_WD テーブル — PFC Watchdog の設定テーブル。port ごとに detection_time / restoration_time / action を持ち、PFC pause storm を検出して指定アクションを取る。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:

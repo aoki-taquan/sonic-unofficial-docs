@@ -2,7 +2,6 @@
 title: SFLOW_COLLECTOR テーブル
 description: "SFLOW_COLLECTOR テーブル — sFlow コレクタ宛先 (IP / UDP ポート / VRF) を定義する。最大 2 コレクタ。hsflowd が /etc/hsflowd.conf を介して参照する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-17
 sources:

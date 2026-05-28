@@ -2,7 +2,6 @@
 title: NAT_RESTORE_TABLE / COUNTERS_NAT テーブル
 description: "NAT_RESTORE_TABLE / COUNTERS_NAT テーブル — NAT warm reboot 復元フラグを保持する STATE_DB テーブルと、NAT エントリのパケット・バイト数カウンタを管理する COUNTERS_DB テーブル群の定義。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

@@ -4,7 +4,6 @@ description: "FLEX_COUNTER_TABLE の SRV6 グループ — SRv6 MySID エント�
 area: reference
 verification: code-verified
 last_verified: 2026-05-15
-hard: 0
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/srv6orch.cpp

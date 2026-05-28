@@ -2,7 +2,6 @@
 title: NAT_POOL テーブル
 description: "NAT_POOL テーブル — dynamic NAT で利用する変換アドレス / port 範囲の named pool を定義する CONFIG_DB テーブル。natmgrd が pool を検証してキャッシュし、NAT_BINDINGS と連携して iptables / ASIC に dynamic SNAT ルールを適用する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-16
 sources:

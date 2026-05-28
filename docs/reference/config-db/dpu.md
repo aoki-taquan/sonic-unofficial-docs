@@ -26,7 +26,6 @@ related:
     - DASH_HA_GLOBAL_CONFIG
   yang:
     - sonic-smart-switch
-hard: 0
 ---
 
 # DPU テーブル

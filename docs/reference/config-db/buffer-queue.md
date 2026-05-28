@@ -16,7 +16,6 @@ related:
   cli: []
   yang:
     - sonic-buffer-queue
-hard: 0
 ---
 
 # BUFFER_QUEUE テーブル

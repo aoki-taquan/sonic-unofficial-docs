@@ -22,7 +22,6 @@ related:
   appl_db:
     - SRV6_MY_SID_TABLE
     - SRV6_SID_LIST_TABLE
-hard: 0
 ---
 
 # APPL_DB SRV6 テーブル

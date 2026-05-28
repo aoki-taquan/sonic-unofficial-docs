@@ -2,7 +2,6 @@
 title: SNMP_AGENT_ADDRESS_CONFIG / SNMP_USER テーブル (デフォルト詳細)
 description: "SNMP_AGENT_ADDRESS_CONFIG と SNMP_USER テーブルのフィールド暗黙デフォルト — YANG default 文・CLI フォールバック・minigraph 注入・snmpd.conf.j2 テンプレート挙動をコード証拠付きで解説。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-17
 sources:

@@ -2,7 +2,6 @@
 title: MUX_CABLE テーブル（per-port フィールド詳細）
 description: "DualToR MUX_CABLE テーブルの per-port エントリ — ycabled と linkmgrd が読み取る各フィールドのコード由来デフォルトおよび暗黙 fallback を整理する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

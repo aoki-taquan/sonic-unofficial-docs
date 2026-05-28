@@ -16,7 +16,6 @@ related:
   cli: []
   yang:
     - sonic-buffer-pg
-hard: 0
 ---
 
 # BUFFER_PG テーブル

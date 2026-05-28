@@ -2,7 +2,6 @@
 title: TUNNEL_ENCAP_TABLE (P4RT FIXED_TUNNEL_TABLE)
 description: FIXED_TUNNEL_TABLE — P4RT controller が書き込む GRE IP-in-IP encap トンネルテーブル。GreTunnelManager が SAI GRE トンネルオブジェクトを作成する。
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

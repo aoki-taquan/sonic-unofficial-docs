@@ -24,7 +24,6 @@ related:
     - BUFFER_POOL
   yang:
     - sonic-default-lossless-buffer-parameter
-hard: 0
 ---
 
 # DEFAULT_LOSSLESS_BUFFER_PARAMETER テーブル

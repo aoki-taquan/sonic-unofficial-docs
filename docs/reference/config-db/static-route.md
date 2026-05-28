@@ -2,7 +2,6 @@
 title: STATIC_ROUTE テーブル
 description: "STATIC_ROUTE テーブル — STATIC_ROUTE は静的経路を CONFIG_DB に保持するテーブル。YANG では template 形式 (STATIC_ROUTE|) と VRF-aware 形式 (STATIC_ROUTE||) の 2 つの list が定義されている。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-10
 sources:

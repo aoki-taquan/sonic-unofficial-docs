@@ -2,7 +2,6 @@
 title: SmartSwitch DPU テーブル群
 description: "SmartSwitch DPU 関連 CONFIG_DB テーブル — MID_PLANE_BRIDGE / DPUS / DPU / REMOTE_DPU / VDPU / DASH_HA_GLOBAL_CONFIG の構造・デフォルト・挙動を解説する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

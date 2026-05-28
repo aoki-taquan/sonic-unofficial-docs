@@ -21,7 +21,6 @@ related:
   yang:
     - sonic-bgp-peergroup
     - sonic-bgp-common
-hard: 0
 ---
 
 # BGP_PEER_GROUP_AF テーブル

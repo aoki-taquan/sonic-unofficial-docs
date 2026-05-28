@@ -4,7 +4,6 @@ description: "CONFIG_DB FLOW_COUNTER_ROUTE_PATTERN / FLEX_COUNTER_TABLE FLOW_CNT
 area: reference
 verification: code-verified
 last_verified: 2026-05-15
-hard: 0
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/flex_counter/flowcounterrouteorch.cpp

@@ -2,7 +2,6 @@
 title: ROUTE_TABLE handler 分岐 (fpmsyncd / RouteSync)
 description: "fpmsyncd の RouteSync が FPM/netlink メッセージを受信し APPL_DB の ROUTE_TABLE へ書き込む際のハンドラ分岐ロジックとフィールドのコード由来デフォルトを詳解する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

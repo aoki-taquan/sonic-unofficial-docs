@@ -22,7 +22,6 @@ related:
   cli: []
   yang:
     - sonic-dash
-hard: 0
 ---
 
 # DASH_ROUTING_TYPE テーブル

@@ -2,7 +2,6 @@
 title: TUNNEL_DECAP_TERM_TABLE (APPL_DB)
 description: TUNNEL_DECAP_TERM_TABLE — tunneldecaporch が消費する アプリケーション層テーブル。CONFIG_DB TUNNEL の dst_ip を tunnelmgrd が APPL_DB に投影する形で生成され、SAI tunnel term table entry に反映される。
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

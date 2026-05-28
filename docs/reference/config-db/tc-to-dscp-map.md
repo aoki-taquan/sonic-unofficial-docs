@@ -2,7 +2,6 @@
 title: TC_TO_DSCP_MAP テーブル
 description: "TC_TO_DSCP_MAP テーブル — Traffic Class を DSCP 値へマップする egress QoS リマーキング定義。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

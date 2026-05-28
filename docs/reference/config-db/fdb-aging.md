@@ -2,7 +2,6 @@
 title: FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
 description: "SWITCH_TABLE の fdb_aging_time フィールド — FDB (Forwarding Database) エントリのエージングタイムアウト時間を秒単位で設定する。SwitchOrch が SAI_SWITCH_ATTR_FDB_AGING_TIME として SAI に設定する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-19
 sources:

@@ -2,7 +2,6 @@
 title: STATE_DB LAG_TABLE (PortChannel 状態)
 description: "STATE_DB LAG_TABLE — PortChannel (LAG) のランタイム状態を STATE_DB に保持するテーブル。teamsyncd が Linux netlink NEWLINK イベントを受信したときに書き込み、tlm_teamd が teamdctl JSON dump を解析して追記する。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:

@@ -2,7 +2,6 @@
 title: VNET テーブル
 description: "VNET テーブル — VNET は VXLAN overlay 上の仮想ネットワークを CONFIG_DB に定義するテーブル。VNET_ROUTE / VNET_ROUTE_TUNNEL は別ページ参照。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-10
 sources:

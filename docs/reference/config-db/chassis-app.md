@@ -2,7 +2,6 @@
 title: CHASSIS_APP_DB テーブル群
 description: "CHASSIS_APP_DB テーブル群 — VoQ チャシスシステムにおける SYSTEM_INTERFACE / SYSTEM_NEIGH / SYSTEM_LAG_TABLE / SYSTEM_LAG_MEMBER_TABLE / BGP_DEVICE_GLOBAL テーブルのリファレンス。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:

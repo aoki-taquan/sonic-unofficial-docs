@@ -2,7 +2,6 @@
 title: TELEMETRY テーブル
 description: "TELEMETRY テーブル — gRPC ストリーミングテレメトリ / gNMI サーバの設定。TLS 証明書パスと gNMI ランタイムオプションを保持する。telemetry コンテナ (docker-telemetry、docker-gnmi) が起動時に CONFIG_DB を読み込む。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
