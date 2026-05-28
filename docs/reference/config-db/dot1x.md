@@ -42,7 +42,7 @@ Port Access Control (PAC) „ÅØ [802.1x](../../reference/glossary.md#term-dot1x) „
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>PAC_PORT_CONFIG_TABLE")]
-  DM["pacd"]
+  DM["pacmgrd"]
   CDB --> DM
 ```
 
