@@ -246,9 +246,9 @@ CONFIG_DB → APPL_DB → orchagent と同じ構造を **[DPU](../reference/glos
 
 | CONFIG_DB | subscribe 主体 | APPL_DB 中継 | SAI 経路 |
 |---|---|---|---|
-| `PAC_PORT_CONFIG_TABLE` | `pacd` / `hostapd-mgr` | — | (kernel + hostapd) |
-| `PAC_GLOBAL_CONFIG_TABLE` | `pacd` | — | — |
-| `HOSTAPD_GLOBAL_CONFIG_TABLE` | `hostapd-mgr` | — | — |
+| `PAC_PORT_CONFIG_TABLE` | `pacmgrd` / `hostapdmgrd` | — | (kernel + hostapd) |
+| `PAC_GLOBAL_CONFIG_TABLE` | `pacmgrd` | — | — |
+| `HOSTAPD_GLOBAL_CONFIG_TABLE` | `hostapdmgrd` | — | — |
 
 ## VRRP / SAG / NTP / その他
 
