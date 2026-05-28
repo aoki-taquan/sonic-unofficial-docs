@@ -151,8 +151,6 @@ HSET "EXP_TO_FC_MAP|AZURE" "0" "0" "1" "1" "2" "2" "3" "3" "4" "4" "5" "5" "6" "
 **pendingRemove 中の SET defer (依存 #3)**:
 SET コマンド処理の冒頭で `m_pendingRemove` フラグを確認し、真であれば `task_need_retry` を返す。これにより「DEL → 即 SET（rename 相当）」は DEL 完了まで SET が defer され、中間状態で旧名と新名が SAI 上で共存しない（evidence: `qosorch.cpp:136-139`）。
 
-<!-- /ordering -->
-
 ## 購読者
 
 - `qosorch` (`ExpToFcMapHandler`): [SAI](../../reference/glossary.md#term-sai) QoS map 生成 (`sai_create_qos_map` / `sai_remove_qos_map`)
@@ -290,7 +288,6 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 - なし
 <!-- /entry-points -->
 
-<!-- ordering -->
 ## 書込み順依存 (Phase B) (補足)
 
 > 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-ordering.md`

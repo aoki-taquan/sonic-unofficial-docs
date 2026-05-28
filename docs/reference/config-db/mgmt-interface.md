@@ -106,8 +106,6 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 
 **[RADIUS](../../reference/glossary.md#term-radius) 送信元 IP 解決 (依存 #3)**: `mgmt_intf_handler()` は `MGMT_INTERFACE` の変更を受け取ると `aaacfg.handle_radius_source_intf_ip_chg(mgmt_intf_name)` を呼び RADIUS の送信元 IP を再解決する（`hostcfgd:2348-2350`）。RADIUS 設定が先に存在し `src_intf=eth0` が設定されている場合、`MGMT_INTERFACE` の IP 変更後に RADIUS 送信元 IP が自動更新される。この依存は `RADIUS_SERVER.src_intf` を使用する構成でのみ顕在化する。
 
-<!-- /ordering -->
-
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
@@ -444,7 +442,6 @@ CONFIG_DB MGMT_INTERFACE|eth0|<ip_prefix> (SET/DEL)
 
 <!-- /failure -->
 
-<!-- ordering -->
 ## 書込み順依存 (Phase B) (補足)
 
 > 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`

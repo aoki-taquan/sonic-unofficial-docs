@@ -341,8 +341,6 @@ CONFIG_DB `COPP_GROUP` への変更が連鎖して書き込まれる副次テー
 2. `CoppOrch` ([orchagent](../../reference/glossary.md#term-orchagent)) が APPL_DB `COPP_TABLE` を購読 → SAI `sai_hostif_api->create_hostif_trap_group()` / `set_hostif_trap_group_attribute()` を呼出
 3. `CoppOrch` 起動時に SAI ケーパビリティを問い合わせ → STATE_DB `COPP_TRAP_CAPABILITY_TABLE` に対応 trap_ids を一括記録
 4. トラップにカウンタをバインド → [COUNTERS_DB](../../reference/glossary.md#term-counters_db) `COUNTERS_TRAP_NAME_MAP` を更新
-<!-- /side-effects -->
-
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
@@ -534,7 +532,6 @@ journalctl -u swss | grep -i copp
 - `default` グループは `CoppOrch` 側でも削除を `task_ignore` で拒否する二重防護
 <!-- /cross-refs -->
 
-<!-- side-effects -->
 ## 副次 DB 書き込み (Phase F)
 
 > 証跡: `meta/_intermediate/cdb-flow/copp-group-side.md`
