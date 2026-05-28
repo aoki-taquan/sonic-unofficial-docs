@@ -35,8 +35,6 @@ related:
 
 # STATE_DB BGP 関連テーブル
 
-<!-- defaults -->
-
 ## 概要
 
 [SONiC](../../reference/glossary.md#term-sonic) の [BGP](../../reference/glossary.md#term-bgp) ランタイム状態は 2 つの [Redis](../../reference/glossary.md#term-redis) DB にまたがって格納される。

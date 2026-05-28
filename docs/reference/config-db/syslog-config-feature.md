@@ -511,7 +511,6 @@ db_migrator.py での SYSLOG_CONFIG_FEATURE マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- ordering -->
 ## 書込み順依存 (Phase B) (補足)
 
 `SYSLOG_CONFIG_FEATURE` は per-container の syslog rate-limit 設定テーブルで、
@@ -547,7 +546,5 @@ CONFIG_DB に接続し、`listen(init_data_handler=self.init_data_handler)` を�
 
 <!-- evidence: sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py L44-61,112-135 -->
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-syslog.yang (leaf service leafref) -->
-
-<!-- /ordering -->
 
 <!-- glossary-links-injected: 3d010c83e5f1 -->
