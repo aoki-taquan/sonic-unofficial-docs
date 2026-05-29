@@ -72,7 +72,7 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 [^1]: `schema.h`: `#define APP_NEXTHOP_GROUP_TABLE_NAME "NEXTHOP_GROUP_TABLE"`. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>; `orchdaemon.cpp`: `gNhgOrch = new NhgOrch(m_applDb, APP_NEXTHOP_GROUP_TABLE_NAME)`. <https://github.com/sonic-net/sonic-swss/blob/4305596/orchagent/orchdaemon.cpp>
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 > **注意**: `NEXTHOP_GROUP_TABLE` は **APPL\_DB** テーブルである。`APP_NEXTHOP_GROUP_TABLE_NAME` として `schema.h` で定義され、`fpmsyncd` (`routesync.cpp`) が [FRR](../../reference/glossary.md#term-frr)/Zebra から受信した netlink ECMP ルートを変換して書き込む。`NhgOrch` が APPL\_DB を購読して [SAI](../../reference/glossary.md#term-sai) next hop group を作成する。CONFIG\_DB には存在しない。
 
@@ -101,9 +101,7 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/nhg-ordering.md -->
+## 書込み順依存
 
 `NhgOrch` は APPL\_DB の `NEXTHOP_GROUP_TABLE` を `ConsumerStateTable` で購読し、`doTask()` で SAI next hop group の作成・更新・削除を行う。エントリの処理順序は複数の前提条件に依存しており、consumer から観測できる中間状態がいくつか存在する。
 
@@ -129,7 +127,7 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `NEXTHOP_GROUP_TABLE` は **APPL\_DB** テーブルであり、`NhgOrch` が書き込み先の SAI へ反映するための入力ソースである。`NhgOrch::doTask()` 内部で参照・依存する外部テーブル・Orch・リソースを以下に列挙する。
 
@@ -152,7 +150,7 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 <!-- /cross-refs -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### APPL\_DB 購読 — `ConsumerStateTable` ベース
 
@@ -217,9 +215,7 @@ orchagent 起動時、`Select::select()` ループ開始前に `ConsumerStateTab
 <!-- /pubsub -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/nhg-failure.md -->
+## 失敗挙動・retry / recovery
 
 ### retry パターン概要
 
@@ -277,9 +273,7 @@ SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時は�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/nhg-constants.md -->
+## ハードコード定数
 
 `NEXTHOP_GROUP_TABLE` / `NhgOrch` / `RouteOrch` に存在する、CONFIG\_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。出典は `sonic-swss/orchagent/routeorch.cpp`、`nexthopkey.h`、`orch.h`。
 
@@ -311,9 +305,7 @@ SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時は�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/nhg-side-effects.md -->
+## 副次 DB 書込
 
 `NhgOrch` は `NEXTHOP_GROUP_TABLE` の SET / DEL 処理において、**STATE\_DB・APPL\_DB・FLEX\_COUNTER\_DB への直接書込みは一切行わない**。副次変化は ASIC\_DB（SAI API 経由）と COUNTERS\_DB（[CRM](../../reference/glossary.md#term-crm) カウンタ）の 2 系統のみ。
 
@@ -338,7 +330,7 @@ SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時は�
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `NhgOrch::doTask()` 本体にはプラットフォーム分岐が存在しない。ただし、NHG 処理の上限値決定と orchdaemon 初期化の段階でプラットフォーム依存挙動が発生する。
 

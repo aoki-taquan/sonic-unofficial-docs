@@ -229,7 +229,7 @@ stateDiagram-v2
 ```
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 orchagent が [STATE_DB](../../reference/glossary.md#term-state_db) へ書き込む 5 テーブルはそれぞれ異なる初期化フェーズで出現する。下記は orchagent 起動シーケンスにおける書込み順と、テーブル間の強制先行関係をまとめたものである。
 
@@ -288,10 +288,9 @@ orchagent が [STATE_DB](../../reference/glossary.md#term-state_db) へ書き込
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
-> **調査根拠**: `orchagent/orchdaemon.cpp`, `orchagent/main.cpp`, `orchagent/portsorch.cpp`, `orchagent/fdborch.cpp`, `orchagent/vrforch.cpp`, `orchagent/macsecpost.cpp`, `common/warm_restart.cpp` 全行精読 (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/orchagent-state-cross-refs.md`
+> **Evidence**: `orchagent/orchdaemon.cpp`, `orchagent/main.cpp`, `orchagent/portsorch.cpp`, `orchagent/fdborch.cpp`, `orchagent/vrforch.cpp`, `orchagent/macsecpost.cpp`, `common/warm_restart.cpp` 全行精読 (2026-05-18)
 
 orchagent が STATE_DB へ書き込む各テーブルは、以下の上流 DB・SAI イベントを暗黙的に参照する。[YANG](../../reference/glossary.md#term-yang) leafref はいずれも存在しない。
 
@@ -325,7 +324,7 @@ orchagent が STATE_DB へ書き込む各テーブルは、以下の上流 DB・
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 orchagent が STATE_DB へ書き込む各テーブルは、SAI 失敗・初期化ガード・warm restart バリデーション失敗の 3 種の障害経路で異なる挙動を示す。**STATE_DB には「失敗」フィールドが書かれない——書き込みそのものがスキップされる**のが基本パターンである。
 
@@ -400,7 +399,7 @@ sonic-db-cli STATE_DB hget 'FIPS_MACSEC_POST_TABLE|sai' post_state
 <!-- /failure -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 orchagent が STATE_DB へ書き込む各テーブルのコード由来デフォルト一覧。[YANG](../../reference/glossary.md#term-yang) schema はいずれも存在しない。
 
@@ -456,7 +455,7 @@ orchagent が STATE_DB へ書き込む各テーブルのコード由来デフォ
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 orchagent が STATE_DB へ書き込む 5 テーブルのテーブル名・フィールド名・状態文字列はすべてソースコード内の `#define` マクロまたは静的マップで固定されている。動的に変わるのはキー部分（ポート名・MAC・VRF 名）のみ。
 
@@ -555,9 +554,8 @@ orchagent が STATE_DB へ書き込む 5 テーブルのテーブル名・フィ
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/orchagent-state-side.md`
 > ソース: `sonic-swss/orchagent/portsorch.cpp`, `fdborch.cpp`
 
 本ページが扱う STATE_DB 5 テーブル（`WARM_RESTART_TABLE` / `PORT_TABLE` / `FDB_TABLE` / `VRF_OBJECT_TABLE` / `FIPS_MACSEC_POST_TABLE`）の書込み主体のうち、**`portsorch`** と **`fdborch`** は STATE_DB 以外の DB にも副次的な書込みを行う。`vrforch` / `macsecpost` に副次 DB 書込みはない。
@@ -622,9 +620,7 @@ orchagent が STATE_DB へ書き込む 5 テーブルのテーブル名・フィ
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/orchagent-state-pubsub.md`
+## 通信メカニズム
 
 本ページが扱う STATE_DB 5 テーブル（`WARM_RESTART_TABLE` / `PORT_TABLE` / `FDB_TABLE` / `VRF_OBJECT_TABLE` / `FIPS_MACSEC_POST_TABLE`）はすべて、書込み主体が `swss::Table` (素の HSET / HDEL / DEL) で書き込む。`ProducerStateTable` や `NotificationProducer` は一切使用されず、PUBLISH 通知は発行されない。consumer 側はいずれも keyspace 通知を購読せず、CLI/管理プロセス起動契機の **オンデマンド polling** で読み出す。
 
@@ -690,14 +686,12 @@ consumer 側 (on-demand polling)
   portsorch → event_publish("if-state")  [DB 書込みとは無関係]
 ```
 
-> **Evidence**: `sonic-swss-common/common/warm_restart.cpp` L49-56（`swss::Table` 宣言）、L113-247（`hset` 書込み）。`sonic-swss/orchagent/portsorch.h` L320（`Table m_portStateTable`）、`portsorch.cpp` L725-726（初期化）、L3172, 3320, 4862, 4907, 5200, 9857, 9870, 11338, 11380（書込み呼び出し）、L3798, 7101（`event_publish`）。`sonic-swss/orchagent/fdborch.h` L114（`Table m_fdbStateTable`）、`fdborch.cpp` L135, 170, 1582, 1592（書込み）。`sonic-swss/orchagent/vrforch.cpp` L120, 150, 193（`state ok` / del）。`sonic-swss/orchagent/macsecpost.cpp` L9-24（`post_state` / `last_update_time` 書込み）。`sonic-utilities/show/warm_restart.py` L48-62（polling consumer）。詳細解析は `meta/_intermediate/cdb-flow/orchagent-state-pubsub.md` を参照。
+> **Evidence**: `sonic-swss-common/common/warm_restart.cpp` L49-56（`swss::Table` 宣言）、L113-247（`hset` 書込み）。`sonic-swss/orchagent/portsorch.h` L320（`Table m_portStateTable`）、`portsorch.cpp` L725-726（初期化）、L3172, 3320, 4862, 4907, 5200, 9857, 9870, 11338, 11380（書込み呼び出し）、L3798, 7101（`event_publish`）。`sonic-swss/orchagent/fdborch.h` L114（`Table m_fdbStateTable`）、`fdborch.cpp` L135, 170, 1582, 1592（書込み）。`sonic-swss/orchagent/vrforch.cpp` L120, 150, 193（`state ok` / del）。`sonic-swss/orchagent/macsecpost.cpp` L9-24（`post_state` / `last_update_time` 書込み）。`sonic-utilities/show/warm_restart.py` L48-62（polling consumer）。
 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/orchagent-state-platform.md`
+## プラットフォーム差
 
 ### WARM_RESTART_TABLE — プラットフォーム差なし
 

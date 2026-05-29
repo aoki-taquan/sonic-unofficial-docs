@@ -122,7 +122,6 @@ if (weight != 0) {
 | `members` | comma-separated NEXTHOP_GROUP_TABLE key list | yes | なし | 子 NHG キーのリスト。空・重複は SWSS_LOG_ERROR + 即破棄 |
 | `selection_map` | FC_TO_NHG_INDEX_MAP_TABLE key | yes | なし | FC→子NHGインデックスのマップキー。未存在は return false + 再試行 |
 
-
 ### フィールドデフォルト詳細
 
 **`members` のデフォルト: なし (必須)**
@@ -155,7 +154,7 @@ SAI グループ属性は固定:
 ---
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `NhgOrch` および `CbfNhgOrch` は `doTask()` 先頭で `gPortsOrch->allPortsReady()` を確認し、ポートが未初期化の間は処理を一切行わない。その後、テーブルエントリの SET / DEL 操作はいくつかの依存関係に従って処理される。
 
@@ -190,7 +189,7 @@ SAI グループ属性は固定:
 ---
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `NhgOrch` (`nhgorch.cpp`) および `CbfNhgOrch` (`cbf/cbfnhgorch.cpp`) が `NEXTHOP_GROUP_TABLE` / `CLASS_BASED_NEXT_HOP_GROUP_TABLE` を処理する際、[YANG](../../reference/glossary.md#term-yang) leafref は定義されていないが、複数の Orch / DB に対する暗黙参照が発生する。
 
@@ -220,15 +219,12 @@ SAI グループ属性は固定:
 !!! note "NhgMapOrch 参照は CBF 専用"
     `FC_TO_NHG_INDEX_MAP_TABLE` への参照は `CLASS_BASED_NEXT_HOP_GROUP_TABLE` の処理でのみ発生する。通常 `NEXTHOP_GROUP_TABLE` の処理パス (`NhgOrch`) は `NhgMapOrch` を参照しない。
 
-詳細分析: `meta/_intermediate/cdb-flow/nhg-table-cross-refs.md`
 <!-- /cross-refs -->
 
 ---
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/nhg-table-failure.md`
+## 失敗挙動
 
 Consumer: `NhgOrch::doTask()` (`orchagent/nhgorch.cpp`) および `CbfNhgOrch::doTask()` (`orchagent/cbf/cbfnhgorch.cpp`)。
 
@@ -307,7 +303,7 @@ SRv6 NHG はリソース枯渇時に temporary group を作成しないため、
 ---
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `NhgOrch` (`orchagent/nhgorch.cpp`)・`CbfNhgOrch` (`orchagent/cbf/cbfnhgorch.cpp`)・`RouteOrch` (`orchagent/routeorch.cpp`) に存在する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 
@@ -378,7 +374,7 @@ else
 ---
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `NhgOrch` および `CbfNhgOrch` は SAI 経由で ASIC に NHG を反映する主作用のほかに、**[COUNTERS_DB](../../reference/glossary.md#term-counters_db)** の `CRM` テーブルへ副次的なカウンタ書込を行う。[STATE_DB](../../reference/glossary.md#term-state_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / CONFIG_DB への直接書込みは確認されない。
 
@@ -417,13 +413,13 @@ m_countersCrmTable->set(cnt.first, attrs);
 
 テーブル名定数: `sonic-swss-common/common/schema.h:237` `COUNTERS_CRM_TABLE = "CRM"`。フィールド名: `crmorch.cpp:360-361` (used)、`crmorch.cpp:314-315` (available)。
 
-> **Evidence**: `nhgorch.cpp:795` (NHG inc)、`nhgbase.h:277` (NHG dec)、`nhgbase.h:132/151` (member inc/dec)、`cbfnhgorch.cpp:358` (CBF NHG inc)、`crmorch.cpp:1067-1115` (COUNTERS_DB 書込)、`schema.h:237` (テーブル名定数)。詳細調査ログ: `meta/_intermediate/cdb-flow/nhg-table-side-effects.md`。
+> **Evidence**: `nhgorch.cpp:795` (NHG inc)、`nhgbase.h:277` (NHG dec)、`nhgbase.h:132/151` (member inc/dec)、`cbfnhgorch.cpp:358` (CBF NHG inc)、`crmorch.cpp:1067-1115` (COUNTERS_DB 書込)、`schema.h:237` (テーブル名定数)。
 <!-- /side-effects -->
 
 ---
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 ### 書き込み側の通信構造
 
@@ -484,13 +480,13 @@ fpmsyncd: FRR の Netlink nexthop イベント受信
 
 orchdaemon の warm restart 時、`ConsumerStateTable` が保持するペンディングエントリは `m_toSync` に残り、reconcile フェーズで再処理される。`NhgOrch` / `CbfNhgOrch` は warm restart に対する個別ハンドラを持たず、`doTask()` の通常ループで `m_syncdNextHopGroups` に存在しないエントリを SAI 再作成する。
 
-> Evidence: `routesync.cpp:157` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 初期化、ZMQ 非使用)、`orch.cpp:1186-1196` (addConsumer)、`orchdaemon.cpp:23,338-339,959` (SELECT_TIMEOUT / Orch インスタンス生成 / select ループ)。詳細調査ログ: `meta/_intermediate/cdb-flow/nhg-table-pubsub.md`。
+> Evidence: `routesync.cpp:157` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 初期化、ZMQ 非使用)、`orch.cpp:1186-1196` (addConsumer)、`orchdaemon.cpp:23,338-339,959` (SELECT_TIMEOUT / Orch インスタンス生成 / select ループ)。
 <!-- /pubsub -->
 
 ---
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `NEXTHOP_GROUP_TABLE` / `CLASS_BASED_NEXT_HOP_GROUP_TABLE` の上限・capability はプラットフォームによって異なる。上限管理は `RouteOrch` が保持する `m_maxNextHopGroupCount` で一元管理され、`NhgOrch` / `CbfNhgOrch` の `doTask()` がこれを参照して temporary NHG 作成・`success=false` フォールバックを判断する。
 
@@ -581,7 +577,7 @@ if (nhg_key.is_srv6_nexthop()) {
 !!! warning "CBF NHG は ASIC capability 必須"
     `CLASS_BASED_NEXT_HOP_GROUP_TABLE` を使用する場合、SAI が `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MAP` をサポートしなければならない。サポートされていない ASIC では `FC_TO_NHG_INDEX_MAP_TABLE` の SET が全件失敗し、`selection_map` を持つ CBF NHG も全件 pending になる (`nhgmaporch.cpp:105`)。
 
-> **スキャン証跡**: `routeorch.cpp:37-38,61-124` (定数定義・RouteOrch コンストラクタ全読)、`nhgorch.cpp:252,257-261,320` (上限チェック・SRv6 スキップ)、`cbfnhgorch.cpp:100-104` (CbfNhgOrch 上限チェック)、`nhgmaporch.cpp:24-33,105` (NHG マップ上限取得)、`orch.h:41-49` (プラットフォーム識別文字列定数)。中間ファイル: `meta/_intermediate/cdb-flow/nhg-table-platform.md`。
+> **裏取り**: `routeorch.cpp:37-38,61-124` (定数定義・RouteOrch コンストラクタ全読)、`nhgorch.cpp:252,257-261,320` (上限チェック・SRv6 スキップ)、`cbfnhgorch.cpp:100-104` (CbfNhgOrch 上限チェック)、`nhgmaporch.cpp:24-33,105` (NHG マップ上限取得)、`orch.h:41-49` (プラットフォーム識別文字列定数)。
 <!-- /platform -->
 
 ---

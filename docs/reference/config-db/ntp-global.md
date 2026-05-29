@@ -173,7 +173,7 @@ show ntp
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 NTP_GLOBAL / NTP_SERVER / NTP_KEY テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -207,7 +207,7 @@ NTP_GLOBAL テーブルは YANG で定義されるが、CLI は NTP_SERVER/NTP_K
 <!-- /entry-points -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 `sonic-host-services/scripts/hostcfgd` の `NtpCfg` クラスと `sonic-buildimage/files/image_config/chrony/chrony.conf.j2` テンプレを精査し、[CONFIG_DB](../../reference/glossary.md#term-config_db) に値が無いときの実効デフォルトを整理する。[SONiC](../../reference/glossary.md#term-sonic) master は `ntpd` ではなく **chrony** を採用しているため、テンプレ実体は `chrony.conf.j2`（旧 [HLD](../../reference/glossary.md#term-hld) の `ntp.conf.j2` は不在）。
 
@@ -228,12 +228,10 @@ NTP_GLOBAL テーブルは YANG で定義されるが、CLI は NTP_SERVER/NTP_K
 - **`trusted_key` は本テーブルに存在しない**: `trusted` は `NTP_SERVER` / `NTP_KEY` の leaf (default `no`) であり `NTP|global` の管轄外。
 - **差分検知**: `ntp_global_update()` (hostcfgd:1344) は `cache == data` のとき no-op。`ntp_srv_key_update()` (hostcfgd:1383-1386) も同様。
 
-調査メモ詳細: `meta/_intermediate/cdb-flow/ntp-global-defaults.md`
-
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `hostcfgd` の `NtpCfg` クラスは `NTP_GLOBAL` / `NTP_SERVER` / `NTP_KEY` / `LOOPBACK_INTERFACE` を独立に購読し、それぞれのハンドラが `chrony` を再起動する。書込み順は chrony の中間状態（空サーバリスト等）と YANG must 制約の可否に影響する。
 
@@ -258,12 +256,10 @@ NTP_GLOBAL テーブルは YANG で定義されるが、CLI は NTP_SERVER/NTP_K
 
 **diff 検知による冪等性**: `ntp_global_update()` (hostcfgd:1344) はキャッシュと同一データなら no-op。`ntp_srv_key_update()` (hostcfgd:1383-1386) も同様。イベント到着順が逆でも最終状態は収束するが、中間状態で空サーバリストの chrony が一時的に動作する点に注意。
 
-調査メモ: `meta/_intermediate/cdb-flow/ntp-global-ordering.md`
-
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `hostcfgd` の `NtpCfg` クラスおよび `chrony.conf.j2` テンプレートが `NTP_GLOBAL` 処理時に暗黙的に読み出す関連テーブルの一覧。「暗黙参照」とは CONFIG_DB `NTP|global` への SET/DEL とは別に、chrony 設定生成や YANG must 制約の解決に使われるテーブルを指す。
 
@@ -285,12 +281,10 @@ NTP_GLOBAL テーブルは YANG で定義されるが、CLI は NTP_SERVER/NTP_K
 !!! note "vrf=mgmt 時は bindacqaddress を発行しない"
     `chrony.conf.j2:109` の `{% if not ((NTP) and NTP['global']['vrf'] == 'mgmt') %}` により、管理 VRF 使用時は `src_intf` 設定にかかわらず `bindacqaddress` ディレクティブが抑止される。IP アドレス取得のためのテーブル参照（`MGMT_INTERFACE` 等）は行われるが、結果は出力されない。
 
-調査メモ詳細: `meta/_intermediate/cdb-flow/ntp-global-cross-refs.md`
-
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-host-services/scripts/hostcfgd` (NtpCfg L1272–1406), `sonic-buildimage/files/image_config/chrony/chrony.conf.j2`, `chrony.keys.j2`, `chronyd-starter.sh`
 
@@ -329,12 +323,10 @@ NTP_GLOBAL テーブルは YANG で定義されるが、CLI は NTP_SERVER/NTP_K
 
 NTP 処理は `hostcfgd` + テンプレートエンジンのパイプラインで完結するため、**[STATE_DB](../../reference/glossary.md#term-state_db) への NTP ステータス書き込みは存在しない**。失敗検知は `journalctl -u chrony` と syslog の `NtpCfg: Failed to restart chrony service` ログのみで行う。
 
-調査メモ: `meta/_intermediate/cdb-flow/ntp-failure.md`
-
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `hostcfgd` (`NtpCfg`) / `chrony.conf.j2` / `chrony.keys.j2` / `caclmgrd` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
 
@@ -376,7 +368,7 @@ NTP UDP ポート 123 は CONFIG_DB の `NTP_GLOBAL` テーブルで変更でき
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込・ファイル書込 (Phase F)
+## 副次 DB 書込・ファイル書込
 
 `NTP_GLOBAL` への変更は [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) への副次書込を一切行わない。ただし、以下のファイルシステム副作用が発生する。
 
@@ -408,7 +400,7 @@ NTP UDP ポート 123 は CONFIG_DB の `NTP_GLOBAL` テーブルで変更でき
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `hostcfgd` の `NtpCfg` クラスは CONFIG_DB の複数テーブルを `config_db.subscribe()` で購読し、変更検知のたびに chrony を再起動する。
 
@@ -449,7 +441,7 @@ hostcfgd 起動 → config_db.listen(init_data_handler=self.load) → NtpCfg.loa
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 `hostcfgd` (`NtpCfg`) および `chrony.conf.j2` / `chronyd-starter.sh` はプラットフォーム条件に応じて NTP の挙動を変える。以下は `NTP|global` フィールドに影響するプラットフォーム別差異の一覧。
 
@@ -497,18 +489,16 @@ MGMT VRF は single-asic / multi-asic 双方の host 単位で有効化される
 
 `chrony.conf.j2` の `get_ip_on_interface` マクロは host CONFIG_DB のテーブルを参照して `bindacqaddress` を生成する。multi-asic 環境では `EthernetX` / `PortChannelX` はデータプレーン [ASIC](../../reference/glossary.md#term-asic) namespace に存在し、host CONFIG_DB の `INTERFACE` / `PORTCHANNEL_INTERFACE` にはアドレスが設定されないことがある。この場合 `bindacqaddress` が空になり、NTP パケットの送信元 IP 制限が silent に無効化される（エラーにはならない）。管理インタフェース経由で NTP を使う場合は `src_intf=eth0` または `Loopback0` 等を使うことを推奨する。
 
-調査メモ: `meta/_intermediate/cdb-flow/ntp-platform.md`
-
 <!-- /platform -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 minigraph.py からの `NTP_GLOBAL` 自動派生はなし。`NTP_SERVER` のみ minigraph.py が自動設定する (iburst='on' 付き)。`NTP_GLOBAL` は CLI (`config ntp`) または `hostcfgd` のテンプレート生成で参照される。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 `NTP_GLOBAL` は [orchagent](../../reference/glossary.md#term-orchagent) では処理されない。`hostcfgd` が CONFIG_DB の `NTP`, `NTP_SERVER`, `NTP_KEY`, `LOOPBACK_INTERFACE` を購読し、`ntp.conf` テンプレートを再生成する (`hostcfgd:1278-1384`)。条件付き platform 登録なし。
 
@@ -521,7 +511,7 @@ minigraph.py からの `NTP_GLOBAL` 自動派生はなし。`NTP_SERVER` のみ 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `hostcfgd` の NTP ハンドラ分岐:
 
@@ -532,7 +522,7 @@ minigraph.py からの `NTP_GLOBAL` 自動派生はなし。`NTP_SERVER` のみ 
 | `hostcfgd` | `ntp_global_update()` | `mgmtVrfEnabled` が false かつ `vrf=mgmt` | YANG `must` 制約が事前に拒否 (ntp.yang 制約) | `sonic-ntp.yang must` 制約 |
 | `hostcfgd` | `ntp_srv_key_update()` | サーバ設定が前回キャッシュと同一 | `ntp.conf` 再生成スキップ (diff なしの早期リターン) | `hostcfgd:1383-1384` |
 
-> **スキャン証跡**: `hostcfgd:1278-1389` を確認、4 件分岐抽出。NTP_GLOBAL は [orchagent](../../reference/glossary.md#term-orchagent) 非経由で hostcfgd が処理することを確認 — 誤読なし。
+> **裏取り**: `hostcfgd:1278-1389` を確認、4 件分岐抽出。NTP_GLOBAL は [orchagent](../../reference/glossary.md#term-orchagent) 非経由で hostcfgd が処理することを確認 — 誤読なし。
 
 <!-- /handler-branching -->
 

@@ -78,7 +78,7 @@ LOOPBACK_INTERFACE|<loopback_name>
 | `nat_zone` | uint8 (0..3) | `0` | インタフェースの [NAT](../../reference/glossary.md#term-nat) ゾーン ID。`0` = inside、`1` = outside (典型) |
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) default 以外の実装 hardcode fallback。
 
@@ -247,7 +247,7 @@ enum 等なし（uint8 数値のみ）。
 <!-- /runtime-trace -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 <!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doNatZoneIntfTask L7380-7640 / sonic-swss/orchagent/intfsorch.cpp doTask L660-990 -->
 
@@ -282,7 +282,7 @@ Loopback インタフェースは `isPortStateOk()` チェック対象外であ�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `nat_zone` フィールドが処理される際に `natmgrd` / `orchagent (IntfsOrch)` が暗黙的に依存する他テーブルの関係を示す。
 
@@ -306,7 +306,7 @@ Loopback インタフェースは `isPortStateOk()` チェック対象外であ�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-swss/cfgmgr/natmgr.cpp setMangleIptablesRules L894-924 / doNatIpInterfaceTask L7499-7585 / sonic-swss/orchagent/intfsorch.cpp setRouterIntfsNatZoneId L272-303 -->
 
@@ -369,7 +369,7 @@ if (status != SAI_STATUS_SUCCESS)
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `nat_zone` フィールドを処理する `natmgrd` (`NatMgr`) と `orchagent` (`IntfsOrch`) に存在する、CONFIG_DB / YANG で管理されない固定値の一覧。ソースは `sonic-swss/cfgmgr/natmgr.h`・`shellcmd.h`・`natmgr.cpp` と `sonic-swss/orchagent/intfsorch.cpp`・`orchdaemon.cpp`・`main.cpp`。
 
@@ -431,7 +431,7 @@ if (status != SAI_STATUS_SUCCESS)
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-swss/cfgmgr/natmgr.cpp setMangleIptablesRules L894-924 / doNatZoneIntfTask L7493-7628 / orchagent/intfsorch.cpp setRouterIntfsNatZoneId L272-303 -->
 
@@ -453,7 +453,7 @@ if (status != SAI_STATUS_SUCCESS)
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 <!-- evidence: sonic-swss/cfgmgr/natmgrd.cpp main() L100-155 / sonic-swss/cfgmgr/natmgr.cpp NatMgr::doTask L8163-8185 / sonic-swss/cfgmgr/intfmgrd.cpp main() L25-45 / sonic-swss/cfgmgr/intfmgr.cpp IntfMgr() L30-50 / sonic-swss/orchagent/orchdaemon.cpp L296 / sonic-swss/orchagent/intfsorch.cpp IntfsOrch() L63 -->
 
@@ -514,7 +514,7 @@ CONFIG_DB  INTERFACE|<port>  {nat_zone=N}
 <!-- /pubsub -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 `nat_zone` フィールドへの書き込みが発生するコード経路。
 
@@ -541,7 +541,7 @@ CONFIG_DB  INTERFACE|<port>  {nat_zone=N}
 <!-- /entry-points -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 `nat_zone` フィールドの実際の効果はプラットフォームの NAT ハードウェアサポート (`gIsNatSupported`) に強く依存する。SAI への書き込みと iptables mangle への書き込みで挙動が異なる。
 
@@ -578,7 +578,7 @@ main.cpp:936-948
 
 Loopback (`Loopback*`) インタフェースは iptables MARK ルールの設定・削除対象外 (`natmgr.cpp:7526-7528, 7548-7549`)。これは Loopback IP を NAT Public IP として使用する DC 構成での設計上の選択であり、SAI への zone_id 設定は行われる (`gIsNatSupported=true` の場合)。
 
-> **Evidence**: `intfsorch.cpp:978-986` (gIsNatSupported ガード / doIntfTask), `intfsorch.cpp:1287-1294` (gIsNatSupported ガード / RIF 作成), `natmgr.cpp:7526-7549` (Loopback スキップ), `main.cpp:936-948` (gIsNatSupported 決定); 詳細分析 `meta/_intermediate/cdb-flow/nat-zone-platform.md`
+> **Evidence**: `intfsorch.cpp:978-986` (gIsNatSupported ガード / doIntfTask), `intfsorch.cpp:1287-1294` (gIsNatSupported ガード / RIF 作成), `natmgr.cpp:7526-7549` (Loopback スキップ), `main.cpp:936-948` (gIsNatSupported 決定)
 
 <!-- /platform -->
 

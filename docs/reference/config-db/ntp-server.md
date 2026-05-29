@@ -73,14 +73,12 @@ NTP_SERVER|<server_address>
 - `admin_state`: テンプレートは `for server in NTP_SERVER if NTP_SERVER[server].admin_state != 'disabled'` (`chrony.conf.j2:20`)。DB キー不在なら `!= 'disabled'` が真と評価され、エントリは chrony.conf に含まれる (= 有効扱い)。YANG `default enabled` と同等の運用効果。
 - `key`: テンプレートは `global.authentication == 'enabled'` かつ `config.key` が truthy の場合のみ `key <id>` を付与 (`chrony.conf.j2:30-34`)。DB に `key` があっても NTP 認証が disabled なら chrony.conf には書かれない。
 
-派生メモ全体は [`meta/_intermediate/cdb-flow/ntp-server-defaults.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/ntp-server-defaults.md) を参照。
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> **調査根拠**: `sonic-ntp.yang` L195–236、`hostcfgd` L1366–1406、`chrony.conf.j2` L20–55、`minigraph.py` L2646 精読 (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/ntp-server-ordering.md`
+> **Evidence**: `sonic-ntp.yang` L195–236、`hostcfgd` L1366–1406、`chrony.conf.j2` L20–55、`minigraph.py` L2646 精読 (2026-05-18)
 
 ### NTP_KEY 先行必須 — key leafref
 
@@ -120,7 +118,7 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `NTP_SERVER` エントリを処理する `hostcfgd` の `ntp_srv_key_handler` と `chrony.conf.j2` テンプレートは、`NTP_SERVER` 以外の以下の CONFIG_DB テーブルを暗黙的に参照する。
 
@@ -140,9 +138,7 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/ntp-server-failure.md`
+## 失敗挙動
 
 ### hostcfgd ntp_srv_key_update の失敗経路
 
@@ -180,7 +176,7 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang (L174,L189,L195,L213,L219,L227-231),
      sonic-buildimage/files/image_config/chrony/chrony.conf.j2 (L26-27,L127,L132,L135,L141,L144,L156,L159),
@@ -260,7 +256,7 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `NTP_SERVER` テーブルの変更を受けた `hostcfgd` の `NtpCfg` ハンドラは、**CONFIG_DB 以外のいかなる DB にも書き込みを行わない**。副作用はすべてホスト OS ファイルシステムの変更とサービス再起動に閉じる。
 
@@ -295,10 +291,9 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `hostcfgd` L111–112、L1280、L1366–1406、L2387–2391、L2458–2466、L2511–2517、L2527–2528 精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/ntp-server-pubsub.md`
+> **Evidence**: `hostcfgd` L111–112、L1280、L1366–1406、L2387–2391、L2458–2466、L2511–2517、L2527–2528 精読 (2026-05-19)
 
 ### 購読チャンネル
 
@@ -489,7 +484,7 @@ enum: `association_type`=server/pool、`iburst`=on/off、`admin_state`=enabled/d
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 NTP_SERVER テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -523,9 +518,9 @@ db_migrator.py での NTP_SERVER マイグレーションなし
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -534,7 +529,7 @@ db_migrator.py での NTP_SERVER マイグレーションなし
 
 minigraph.py は NTP サーバ全台に対して `iburst: on` を自動設定する。init_cfg.json.j2 の `NTP` セクション (グローバル設定) は別テーブル。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 `NTP_SERVER` は [orchagent](../../reference/glossary.md#term-orchagent) では処理されない。`hostcfgd` が `NTP_SERVER` を購読し ntp.conf を再生成する (`hostcfgd:1308`)。条件付き platform 登録なし。YANG `max-elements 10` により 11 件目以降は拒否。
 
@@ -548,7 +543,7 @@ minigraph.py は NTP サーバ全台に対して `iburst: on` を自動設定す
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `hostcfgd` の NTP_SERVER 処理分岐:
 
@@ -559,12 +554,12 @@ minigraph.py は NTP サーバ全台に対して `iburst: on` を自動設定す
 | YANG validation | — | `version` が 3/4 以外 | YANG `range 3..4` 制約で拒否 | `sonic-ntp.yang` |
 | `hostcfgd` | `ntp_srv_key_update()` | `iburst == "on"` | ntp.conf サーバエントリに `iburst` オプションを追加 | `hostcfgd` NTP テンプレート |
 
-> **スキャン証跡**: `minigraph.py:2646` + `hostcfgd:1285-1389` を確認、4 件分岐抽出。iburst のデフォルト on が minigraph から自動付与されることを確認 — 誤読なし。
+> **裏取り**: `minigraph.py:2646` + `hostcfgd:1285-1389` を確認、4 件分岐抽出。iburst のデフォルト on が minigraph から自動付与されることを確認 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `NTP_SERVER` の設定処理 (`hostcfgd + chrony.conf.j2`) はプラットフォーム識別文字列（`getenv("platform")`）による静的分岐を持たない。ただし `DEVICE_METADATA.localhost` の `subtype`・`type` および `NTP.global.vrf` の値によって生成される `chrony.conf` の内容が変化する。
 
@@ -630,7 +625,7 @@ mgmt VRF で chronyd を起動する場合、NTP パケットは Linux の mgmt 
 | `bindacqaddress` 出力 | mgmt VRF モードでは抑制。それ以外は `src_intf` 種別でテーブルを切り替え |
 | multi-[ASIC](../../reference/glossary.md#term-asic) / VoQ chassis | NTP_SERVER テーブル処理への直接影響なし（管理インタフェース経由） |
 
-> **スキャン証跡**: `sonic-buildimage/files/image_config/chrony/chrony.conf.j2` 全行スキャン、`chronyd-starter.sh` 全行スキャン、`hostcfgd:1278-1410` 確認。`getenv("platform")` 参照なし — 誤読なし。
+> **裏取り**: `sonic-buildimage/files/image_config/chrony/chrony.conf.j2` 全行スキャン、`chronyd-starter.sh` 全行スキャン、`hostcfgd:1278-1410` 確認。`getenv("platform")` 参照なし — 誤読なし。
 <!-- /platform -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->

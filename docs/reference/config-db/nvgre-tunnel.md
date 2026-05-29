@@ -104,9 +104,7 @@ NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 <!-- /value-behavior -->
 
 <!-- defaults -->
-## コード由来デフォルト (Task F Phase A)
-
-<!-- evidence: meta/_intermediate/cdb-flow/nvgre-tunnel-defaults.md -->
+## コード由来デフォルト
 
 `sonic-swss/orchagent/nvgreorch.{h,cpp}` を全行調査した結果、**NVGRE_TUNNEL / NVGRE_TUNNEL_MAP 双方のフィールドにコード由来のデフォルト値は存在しない**。`request_description_t` の mandatory リストに全フィールドが登録されており、未指定時は `request_parser` 段階で reject される。
 
@@ -149,7 +147,7 @@ const request_description_t nvgre_tunnel_request_description = {
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### allPortsReady ガードなし
 
@@ -184,12 +182,12 @@ DEL NVGRE_TUNNEL|<tunnel_name>                  # その後トンネルを削除
 | `NVGRE_TUNNEL_MAP` DEL → `NVGRE_TUNNEL` DEL | 推奨 | 逆順でも [orchagent](../../reference/glossary.md#term-orchagent) は継続するが SAI エントリ孤立リスク |
 | allPortsReady | 不要 | NVGRE orch には allPortsReady ガードなし |
 
-> **スキャン証跡**: `nvgreorch.cpp:464-508` 全行精読、`orchdaemon.cpp:361-364` 登録順確認。
+> **裏取り**: `nvgreorch.cpp:464-508` 全行精読、`orchdaemon.cpp:361-364` 登録順確認。
 
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
 YANG leafref を超えた実装上の依存関係。ソース: `sonic-swss/orchagent/nvgreorch.cpp` および `sonic-swss/orchagent/orchdaemon.cpp`。
 
@@ -210,8 +208,6 @@ YANG leafref を超えた実装上の依存関係。ソース: `sonic-swss/orcha
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
-
-<!-- evidence: meta/_intermediate/cdb-flow/nvgre-tunnel.md -->
 
 ### YANG スキーマ検証
 - `src_ip` は mandatory (`inet:ip-address`)。未設定またはフォーマット不正は YANG validate で reject。
@@ -291,7 +287,7 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 NVGRE_TUNNEL / NVGRE_TUNNEL_MAP テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -325,13 +321,13 @@ db_migrator.py での NVGRE マイグレーションなし
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 minigraph.py および init_cfg.json.j2 からの `NVGRE_TUNNEL` 自動派生はなし。CLI (`config nvgre-tunnel`) または RESTCONF 経由での手動設定のみ。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -349,7 +345,7 @@ minigraph.py および init_cfg.json.j2 からの `NVGRE_TUNNEL` 自動派生は
 <!-- /derivation -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-swss/orchagent/nvgreorch.cpp:106,124,190,207,253,270,325-327,357-360,376-377,438,473-474,482-483,491-492,498-499,527,539-543,565-566,571-573 -->
 
@@ -377,7 +373,7 @@ minigraph.py および init_cfg.json.j2 からの `NVGRE_TUNNEL` 自動派生は
 ### 重要な設計特性
 
 **`return true` による永続廃棄 (シナリオ 7、9)**:
-`NvgreTunnelMapOrch` は親トンネル未登録 (シナリオ 7) および VLAN 未登録 (シナリオ 9) のいずれの場合も `return true` を返してエントリを**永続廃棄**する。`Orch2` フレームワークでは `true` = 消費完了のためキューへ再投入されない。これらの条件が解消された後も MAP エントリは自動復旧しない。`NVGRE_TUNNEL` SET が orchagent 処理完了した後に `NVGRE_TUNNEL_MAP` を書き込む手順を守ることで回避できる（Phase B 参照）。
+`NvgreTunnelMapOrch` は親トンネル未登録 (シナリオ 7) および VLAN 未登録 (シナリオ 9) のいずれの場合も `return true` を返してエントリを**永続廃棄**する。`Orch2` フレームワークでは `true` = 消費完了のためキューへ再投入されない。これらの条件が解消された後も MAP エントリは自動復旧しない。`NVGRE_TUNNEL` SET が orchagent 処理完了した後に `NVGRE_TUNNEL_MAP` を書き込む手順を守ることで回避できる（「書込み順依存」参照）。
 
 **SAI 操作失敗は orchagent abort (シナリオ 2–4、11)**:
 SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tunnel_termination / create_tunnel_map_entry`) が `SAI_STATUS_SUCCESS` 以外を返すと `std::runtime_error` がスローされる。`NvgreTunnelOrch::addOperation()` には catch ブロックが存在しないため、例外はスタックを伝播して orchagent プロセスを abort させる。systemd の自動再起動後に orchagent が CONFIG_DB を再読み込みして再処理する。
@@ -388,9 +384,7 @@ SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tu
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/nvgre-tunnel-constants.md -->
+## ハードコード定数
 
 `sonic-swss/orchagent/nvgreorch.cpp` および `nvgreorch.h` を全行調査して検出した、CONFIG_DB / YANG では管理されないハードコード定数の一覧。
 
@@ -412,7 +406,7 @@ SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tu
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 > 調査対象: `sonic-swss/orchagent/nvgreorch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`
 > 調査日: 2026-05-19
@@ -446,13 +440,11 @@ SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tu
 
 `NvgreTunnelOrch` は [FlexCounter](../../reference/glossary.md#term-flexcounter) への登録を行わない（`nvgreorch.cpp` に `addFlexCounter` / `FLEX_COUNTER_DB` 参照なし）。NVGRE トンネルのトラフィック統計はハードウェアサポート依存であり、[SONiC](../../reference/glossary.md#term-sonic) の [FlexCounter](../../reference/glossary.md#term-flexcounter) フレームワーク経由では管理されない。
 
-詳細スキャン証跡: `meta/_intermediate/cdb-flow/nvgre-tunnel-side-effects.md`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/nvgre-tunnel-pubsub.md`
 > ソース: `sonic-swss/orchagent/orchdaemon.cpp` L361-364; `sonic-swss/orchagent/nvgreorch.h` L115,155; `sonic-swss/orchagent/orch.h` L389-410
 
 ### 購読チャンネル一覧
@@ -483,14 +475,12 @@ CONFIG_DB 経路では `ProducerStateTable` を使用しない。CLI (`sonic-uti
 
 ### orchList 内の位置
 
-`orchdaemon.cpp:598-599` で `m_orchList.push_back(nvgre_tunnel_orch)` / `m_orchList.push_back(nvgre_tunnel_map_orch)` が末尾に追加される。`gPortsOrch`（`m_orchList` の上位）への依存は `allPortsReady` ガードではなく `gPortsOrch->getVlanByVlanId()` の直接呼び出しで表現される (Phase B 参照)。
+`orchdaemon.cpp:598-599` で `m_orchList.push_back(nvgre_tunnel_orch)` / `m_orchList.push_back(nvgre_tunnel_map_orch)` が末尾に追加される。`gPortsOrch`（`m_orchList` の上位）への依存は `allPortsReady` ガードではなく `gPortsOrch->getVlanByVlanId()` の直接呼び出しで表現される (「書込み順依存」参照)。
 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/nvgre-tunnel-platform.md -->
+## プラットフォーム差
 
 `NvgreTunnelOrch` / `NvgreTunnelMapOrch` は**全プラットフォームで同一の動作**をする。`orchdaemon.cpp:361-364` で両 Orch が無条件にインスタンス化されており、`platform` 変数や SAI capability 照会による条件分岐はゼロ。
 
@@ -504,7 +494,7 @@ multi-asic 構成では orchagent が `asic0`/`asic1`/... ごとに独立起動�
 
 ### SAI 実装依存性（プラットフォーム間の実質的な差）
 
-`NvgreTunnelOrch` は SAI capability を事前照会しない。`create_tunnel(SAI_TUNNEL_TYPE_NVGRE)` が成功するかどうかはハードウェア SAI 実装依存である。非サポート ASIC では SAI が非 `SAI_STATUS_SUCCESS` を返して `std::runtime_error` がスローされ orchagent が abort する（Phase D シナリオ 2–4 参照）。コードレベルでの ASIC 種別チェックはないため、サポート可否はハードウェアベンダーの SAI 実装に委ねられる。
+`NvgreTunnelOrch` は SAI capability を事前照会しない。`create_tunnel(SAI_TUNNEL_TYPE_NVGRE)` が成功するかどうかはハードウェア SAI 実装依存である。非サポート ASIC では SAI が非 `SAI_STATUS_SUCCESS` を返して `std::runtime_error` がスローされ orchagent が abort する（「失敗挙動」シナリオ 2–4 参照）。コードレベルでの ASIC 種別チェックはないため、サポート可否はハードウェアベンダーの SAI 実装に委ねられる。
 
 | 項目 | 状況 |
 |------|------|
@@ -517,7 +507,7 @@ multi-asic 構成では orchagent が `asic0`/`asic1`/... ごとに独立起動�
 <!-- /platform -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `NvgreTunnelOrch::addOperation()` の分岐:
 
@@ -527,7 +517,7 @@ multi-asic 構成では orchagent が `asic0`/`asic1`/... ごとに独立起動�
 | `NvgreTunnelOrch` | `addOperation()` | `isTunnelExists(tunnel_name)` = false | 新規 `NvgreTunnel` オブジェクトを作成して SAI トンネルを設定 | `nvgreorch.cpp:363` |
 | `NvgreTunnelOrch` | `delOperation()` | `!isTunnelExists(tunnel_name)` | ERROR ログ + `return true` (冪等) | `nvgreorch.cpp:374-378` |
 
-> **スキャン証跡**: `nvgreorch.cpp:350-385` を全行読了、3 件分岐抽出。minigraph.py からの自動派生なしを確認 — 誤読なし。
+> **裏取り**: `nvgreorch.cpp:350-385` を全行読了、3 件分岐抽出。minigraph.py からの自動派生なしを確認 — 誤読なし。
 
 <!-- /handler-branching -->
 
