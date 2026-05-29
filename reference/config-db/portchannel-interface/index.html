@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。Phase A–H 分析。">
+        <meta name="description" content="PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="PORTCHANNEL_INTERFACE テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。Phase A–H 分析。" />
+<meta property="og:description" content="PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/portchannel-interface.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/portchannel-interface/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="PORTCHANNEL_INTERFACE テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。Phase A–H 分析。" />
+<meta property="twitter:description" content="PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/portchannel-interface.png" />
 </head>
   
@@ -22831,15 +22831,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-a" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コード由来の暗黙デフォルト (Phase A)
+        コード由来の暗黙デフォルト
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -22914,7 +22914,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -22953,7 +22953,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -22964,7 +22964,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22986,7 +22986,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -22998,7 +22998,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -23009,7 +23009,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -23020,7 +23020,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -23097,15 +23097,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#direction-a" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
-        書き込み入り口 (Direction A)
+        書き込み入り口
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="書き込み入り口 (Direction A)">
+    <nav class="md-nav" aria-label="書き込み入り口">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -23164,7 +23164,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -23175,7 +23175,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -23191,22 +23191,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-67" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
-        派生・条件付き登録 (Phase 6/7)
+        派生・条件付き登録
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+    <nav class="md-nav" aria-label="派生・条件付き登録">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#phase-6" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 6: 自動派生
+        自動派生
       
     </span>
   </a>
@@ -23214,10 +23214,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#phase-7" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 7: 条件付き登録
+        条件付き登録
       
     </span>
   </a>
@@ -23225,7 +23225,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         グレップカバレッジ
@@ -23236,10 +23236,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#phase-8-handler" class="md-nav__link">
+  <a href="#handler" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 8: Handler メソッド内分岐
+        Handler メソッド内分岐
       
     </span>
   </a>
@@ -23252,15 +23252,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙参照 (Phase C)
+        暗黙参照
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="暗黙参照 (Phase C)">
+    <nav class="md-nav" aria-label="暗黙参照">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -23297,7 +23297,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     <span class="md-ellipsis">
       
         参照グラフ
@@ -23313,15 +23313,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c_1" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙参照マップ (Phase C)
+        暗黙参照マップ
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="暗黙参照マップ (Phase C)">
+    <nav class="md-nav" aria-label="暗黙参照マップ">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -23391,15 +23391,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-d" class="md-nav__link">
+  <a href="#_24" class="md-nav__link">
     <span class="md-ellipsis">
       
-        失敗挙動・エラーハンドリング (Phase D)
+        失敗挙動・エラーハンドリング
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="失敗挙動・エラーハンドリング (Phase D)">
+    <nav class="md-nav" aria-label="失敗挙動・エラーハンドリング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -23475,15 +23475,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-h" class="md-nav__link">
+  <a href="#_25" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラットフォーム差 (Phase H)
+        プラットフォーム差
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+    <nav class="md-nav" aria-label="プラットフォーム差">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -23514,10 +23514,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-e" class="md-nav__link">
+  <a href="#_26" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ハードコード定数 (Phase E)
+        ハードコード定数
       
     </span>
   </a>
@@ -23525,19 +23525,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-b" class="md-nav__link">
+  <a href="#_27" class="md-nav__link">
     <span class="md-ellipsis">
       
-        書込み順依存 (Phase B)
+        書込み順依存
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+    <nav class="md-nav" aria-label="書込み順依存">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_28" class="md-nav__link">
     <span class="md-ellipsis">
       
         他テーブル先行必須
@@ -23608,19 +23608,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#pubsub-keyspace-phase-g" class="md-nav__link">
+  <a href="#pubsub-keyspace" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PUBSUB / Keyspace 通知メカニズム (Phase G)
+        PUBSUB / Keyspace 通知メカニズム
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="PUBSUB / Keyspace 通知メカニズム (Phase G)">
+    <nav class="md-nav" aria-label="PUBSUB / Keyspace 通知メカニズム">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_29" class="md-nav__link">
     <span class="md-ellipsis">
       
         通知チャネル一覧
@@ -23686,7 +23686,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
+  <a href="#_30" class="md-nav__link">
     <span class="md-ellipsis">
       
         エンドツーエンド通信シーケンス
@@ -23702,15 +23702,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#db-phase-f" class="md-nav__link">
+  <a href="#db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        副次 DB 書込 (Phase F)
+        副次 DB 書込
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+    <nav class="md-nav" aria-label="副次 DB 書込">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -23763,15 +23763,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-h_1" class="md-nav__link">
+  <a href="#_31" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラットフォーム差 (Phase H) — 補足: カーネル依存
+        プラットフォーム差 — 補足: カーネル依存
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H) — 補足: カーネル依存">
+    <nav class="md-nav" aria-label="プラットフォーム差 — 補足: カーネル依存">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -23808,7 +23808,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_32" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差異サマリ
@@ -37081,15 +37081,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-a" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コード由来の暗黙デフォルト (Phase A)
+        コード由来の暗黙デフォルト
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -37164,7 +37164,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -37203,7 +37203,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -37214,7 +37214,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -37236,7 +37236,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -37248,7 +37248,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -37259,7 +37259,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -37270,7 +37270,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -37347,15 +37347,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#direction-a" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
-        書き込み入り口 (Direction A)
+        書き込み入り口
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="書き込み入り口 (Direction A)">
+    <nav class="md-nav" aria-label="書き込み入り口">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -37414,7 +37414,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -37425,7 +37425,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -37441,22 +37441,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-67" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
-        派生・条件付き登録 (Phase 6/7)
+        派生・条件付き登録
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+    <nav class="md-nav" aria-label="派生・条件付き登録">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#phase-6" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 6: 自動派生
+        自動派生
       
     </span>
   </a>
@@ -37464,10 +37464,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#phase-7" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 7: 条件付き登録
+        条件付き登録
       
     </span>
   </a>
@@ -37475,7 +37475,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         グレップカバレッジ
@@ -37486,10 +37486,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#phase-8-handler" class="md-nav__link">
+  <a href="#handler" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 8: Handler メソッド内分岐
+        Handler メソッド内分岐
       
     </span>
   </a>
@@ -37502,15 +37502,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙参照 (Phase C)
+        暗黙参照
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="暗黙参照 (Phase C)">
+    <nav class="md-nav" aria-label="暗黙参照">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -37547,7 +37547,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     <span class="md-ellipsis">
       
         参照グラフ
@@ -37563,15 +37563,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c_1" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙参照マップ (Phase C)
+        暗黙参照マップ
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="暗黙参照マップ (Phase C)">
+    <nav class="md-nav" aria-label="暗黙参照マップ">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -37641,15 +37641,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-d" class="md-nav__link">
+  <a href="#_24" class="md-nav__link">
     <span class="md-ellipsis">
       
-        失敗挙動・エラーハンドリング (Phase D)
+        失敗挙動・エラーハンドリング
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="失敗挙動・エラーハンドリング (Phase D)">
+    <nav class="md-nav" aria-label="失敗挙動・エラーハンドリング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -37725,15 +37725,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-h" class="md-nav__link">
+  <a href="#_25" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラットフォーム差 (Phase H)
+        プラットフォーム差
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+    <nav class="md-nav" aria-label="プラットフォーム差">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -37764,10 +37764,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-e" class="md-nav__link">
+  <a href="#_26" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ハードコード定数 (Phase E)
+        ハードコード定数
       
     </span>
   </a>
@@ -37775,19 +37775,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-b" class="md-nav__link">
+  <a href="#_27" class="md-nav__link">
     <span class="md-ellipsis">
       
-        書込み順依存 (Phase B)
+        書込み順依存
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+    <nav class="md-nav" aria-label="書込み順依存">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_28" class="md-nav__link">
     <span class="md-ellipsis">
       
         他テーブル先行必須
@@ -37858,19 +37858,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#pubsub-keyspace-phase-g" class="md-nav__link">
+  <a href="#pubsub-keyspace" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PUBSUB / Keyspace 通知メカニズム (Phase G)
+        PUBSUB / Keyspace 通知メカニズム
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="PUBSUB / Keyspace 通知メカニズム (Phase G)">
+    <nav class="md-nav" aria-label="PUBSUB / Keyspace 通知メカニズム">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_29" class="md-nav__link">
     <span class="md-ellipsis">
       
         通知チャネル一覧
@@ -37936,7 +37936,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
+  <a href="#_30" class="md-nav__link">
     <span class="md-ellipsis">
       
         エンドツーエンド通信シーケンス
@@ -37952,15 +37952,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#db-phase-f" class="md-nav__link">
+  <a href="#db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        副次 DB 書込 (Phase F)
+        副次 DB 書込
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+    <nav class="md-nav" aria-label="副次 DB 書込">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -38013,15 +38013,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-h_1" class="md-nav__link">
+  <a href="#_31" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラットフォーム差 (Phase H) — 補足: カーネル依存
+        プラットフォーム差 — 補足: カーネル依存
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H) — 補足: カーネル依存">
+    <nav class="md-nav" aria-label="プラットフォーム差 — 補足: カーネル依存">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -38058,7 +38058,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_32" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差異サマリ
@@ -38314,12 +38314,9 @@
 <!-- /value-behavior -->
 
 <!-- defaults -->
-<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<h2 id="_6">コード由来の暗黙デフォルト<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp / sonic-swss/cfgmgr/intfmgr.h -->
 
-<blockquote>
-<p><strong>詳細</strong>: <code>meta/_intermediate/cdb-flow/portchannel-interface-defaults.md</code></p>
-</blockquote>
 <p><code>PORTCHANNEL_INTERFACE</code> は <code>IntfMgr::doIntfGeneralTask()</code> が <code>INTERFACE</code> / <code>LOOPBACK_INTERFACE</code> / <code>VLAN_INTERFACE</code> と共通処理する。intfmgr.cpp 冒頭のハードコード定数は以下:</p>
 <table>
 <thead>
@@ -38401,9 +38398,7 @@
 <!-- /defaults -->
 
 <!-- cdb-exceptions -->
-<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- evidence: meta/_intermediate/cdb-flow/portchannel-interface.md -->
-
+<h2 id="_7">例外条件・特殊挙動<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h3 id="yang">YANG スキーマ検証<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>PORTCHANNEL_INTERFACE</code> の <code>nat_zone</code> は range 0..3: <code>error-message "Invalid nat zone for the portchannel interface."</code>。</li>
@@ -38418,14 +38413,14 @@
 
 <!-- ref-triangle:start -->
 
-<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-portchannel/"><code>sonic-portchannel</code></a></li>
 <li>CLI: <a href="../../cli/config-interface/"><code>config interface</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -38434,17 +38429,17 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>PORTCHANNEL_INTERFACE|PortChannel0001</code> と <code>PORTCHANNEL_INTERFACE|PortChannel0001|&lt;ip/prefix&gt;</code>。</li>
 <li><code>vrf_name</code>: <code>Vrfdefault</code> 等。</li>
 </ul>
-<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>メンバが 1 本も up していない <a href="../../glossary/#term-lag">LAG</a> に IP を載せても route がアクティブにならない。</li>
 </ul>
-<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORTCHANNEL_INTERFACE|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>ip<span class="w"> </span>interfaces
 </span></code></pre></div>
@@ -38473,7 +38468,7 @@
 </ul>
 <!-- /runtime-trace -->
 <!-- entry-points -->
-<h2 id="direction-a">書き込み入り口 (Direction A)<a class="headerlink" href="#direction-a" title="Permanent link">&para;</a></h2>
+<h2 id="_14">書き込み入り口<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <p>PORTCHANNEL_INTERFACE テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。</p>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <ul>
@@ -38487,15 +38482,15 @@
 <p>db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし</p>
 <h3 id="build-time-default">ビルド時デフォルト (build-time default)<a class="headerlink" href="#build-time-default" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_13">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<h3 id="_15">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_14">死活・デッドコード<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h3 id="_16">死活・デッドコード<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <p>なし</p>
 <!-- /entry-points -->
 
 <!-- derivation -->
-<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
-<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<h2 id="_17">派生・条件付き登録<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
+<h3 id="_18">自動派生<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -38515,9 +38510,9 @@
 </tbody>
 </table>
 <p><code>pc_intfs</code> の不整合 (PORTCHANNEL に存在しないインタフェース参照) があれば minigraph.py が削除して警告を出す (<code>minigraph.py:2550-2561</code>)。</p>
-<h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
+<h3 id="_19">条件付き登録<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <p><code>PORTCHANNEL_INTERFACE</code> は <code>IntfMgr</code> (cfgmgr) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し、カーネル side の LAG インタフェースに IP アドレスを付与する。orchagent の条件付き platform 登録はなし。</p>
-<h3 id="_15">グレップカバレッジ<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<h3 id="_20">グレップカバレッジ<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -38537,7 +38532,7 @@
 <!-- /derivation -->
 
 <!-- handler-branching -->
-<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<h3 id="handler">Handler メソッド内分岐<a class="headerlink" href="#handler" title="Permanent link">&para;</a></h3>
 <p><code>IntfMgr</code> の <code>PORTCHANNEL_INTERFACE</code> 処理分岐:</p>
 <table>
 <thead>
@@ -38588,12 +38583,12 @@
 </tbody>
 </table>
 <blockquote>
-<p><strong>スキャン証跡</strong>: <code>minigraph.py:2546-2561</code> + <code>intfmgr.cpp</code> を確認、5 件分岐抽出 — 誤読なし。</p>
+<p><strong>裏取り</strong>: <code>minigraph.py:2546-2561</code> + <code>intfmgr.cpp</code> を確認、5 件分岐抽出 — 誤読なし。</p>
 </blockquote>
 <!-- /handler-branching -->
 
 <!-- implicit-ref -->
-<h2 id="phase-c">暗黙参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<h2 id="_21">暗黙参照<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp -->
 
 <p><code>IntfMgr</code> は <code>PORTCHANNEL_INTERFACE</code> エントリを処理する前に、以下の暗黙的な依存テーブルが <a href="../../glossary/#term-state_db">STATE_DB</a> に存在することを確認する。存在しない場合はタスクをスキップ（<code>return false</code>）し、後で再試行する。</p>
@@ -38657,7 +38652,7 @@
 </tbody>
 </table>
 <p><code>isIntfChangeVrf(alias, vrf_name)</code> が true の場合（現在の VRF と異なる VRF への変更）、<code>"%s can not change to %s directly, skipping"</code> エラーを出力して処理を中断する。VRF 変更は一度 <code>vrf_name</code> を削除してから再設定する必要がある。</p>
-<h3 id="_16">参照グラフ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h3 id="_22">参照グラフ<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>PORTCHANNEL_INTERFACE (intfmgr SET処理)
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  ├─ 暗黙参照 → STATE_DB::LAG_TABLE[&lt;name&gt;]       (intfmgr.cpp:661-668, 833)
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  │              ↑ teamd / lagmgrd が書き込む
@@ -38667,10 +38662,7 @@
 <!-- /implicit-ref -->
 
 <!-- cross-refs -->
-<h2 id="phase-c_1">暗黙参照マップ (Phase C)<a class="headerlink" href="#phase-c_1" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>詳細証跡: <code>meta/_intermediate/cdb-flow/portchannel-interface-cross-refs.md</code></p>
-</blockquote>
+<h2 id="_23">暗黙参照マップ<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h2>
 <h3 id="portchannel_interface_1">PORTCHANNEL_INTERFACE が参照するテーブル（→ 方向）<a class="headerlink" href="#portchannel_interface_1" title="Permanent link">&para;</a></h3>
 <h4 id="yang-leafref">YANG leafref 制約<a class="headerlink" href="#yang-leafref" title="Permanent link">&para;</a></h4>
 <table>
@@ -38749,11 +38741,9 @@
 <!-- /cross-refs -->
 
 <!-- failure -->
-<h2 id="phase-d">失敗挙動・エラーハンドリング (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<h2 id="_24">失敗挙動・エラーハンドリング<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>調査対象: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code>
-調査日: 2026-05-16
-詳細調査ノート: <code>meta/_intermediate/cdb-flow/portchannel-interface-failure.md</code></p>
+<p>調査対象: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code></p>
 </blockquote>
 <h3 id="intfmgrd-intfmgr-retry">intfmgrd (IntfMgr) の失敗・retry パターン<a class="headerlink" href="#intfmgrd-intfmgr-retry" title="Permanent link">&para;</a></h3>
 <table>
@@ -38880,10 +38870,9 @@
 <!-- /failure -->
 
 <!-- platform -->
-<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<h2 id="_25">プラットフォーム差<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>調査対象</strong>: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code>
-<strong>調査日</strong>: 2026-05-16</p>
+<p><strong>調査対象</strong>: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code></p>
 </blockquote>
 <h3 id="voq-chassis-switch_type-voq">VOQ chassis (<code>switch_type == "voq"</code>)<a class="headerlink" href="#voq-chassis-switch_type-voq" title="Permanent link">&para;</a></h3>
 <table>
@@ -38935,7 +38924,7 @@
 <!-- /platform -->
 
 <!-- constants -->
-<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<h2 id="_26">ハードコード定数<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h2>
 <p>以下の定数は <code>sonic-swss/cfgmgr/intfmgr.cpp</code> および <code>orchagent/intfsorch.cpp</code> から検出したマジックナンバー・閾値。PORTCHANNEL_INTERFACE に直接影響する定数を優先して記載する。</p>
 <table>
 <thead>
@@ -39002,12 +38991,11 @@
 <!-- /constants -->
 
 <!-- ordering -->
-<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h2 id="_27">書込み順依存<a class="headerlink" href="#_27" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>調査対象: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code>
-調査日: 2026-05-16</p>
+<p>調査対象: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code></p>
 </blockquote>
-<h3 id="_17">他テーブル先行必須<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_28">他テーブル先行必須<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h3>
 <p><code>PORTCHANNEL_INTERFACE</code> は <code>intfmgrd</code> が <code>doIntfGeneralTask()</code> 内で処理する。<code>isIntfStateOk()</code> はエイリアスの先頭を <code>PortChannel</code> と照合し <code>STATE_LAG_TABLE</code> のエントリ存在を確認する（<code>intfmgr.cpp:661-667</code>）。</p>
 <table>
 <thead>
@@ -39089,7 +39077,6 @@
 <p><code>intfmgrd</code> は起動時に <code>SubscriberStateTable(stateDb, STATE_LAG_TABLE_NAME)</code> を購読する（pri=200）。lagmgrd が PORTCHANNEL の <code>state=ok</code> を STATE_DB に書いた瞬間、<code>doPortTableTask</code> がトリガされ、ペンディング中の <code>PORTCHANNEL_INTERFACE</code> エントリが再処理される。</p>
 <h3 id="warm-reboot">warm-reboot 影響<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h3>
 <p><code>buildIntfReplayList()</code> で CONFIG_DB の <code>PORTCHANNEL_INTERFACE</code> キーが <code>m_pendingReplayIntfList</code> に収集され（<code>intfmgr.cpp:276</code>）、warm-start 時に replay される。replay 完了後 <code>RECONCILED</code> に遷移。</p>
-<p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/portchannel-interface-ordering.md</code> 参照。</p>
 <h3 id="teammgr-state_lag_table">teammgr が STATE_LAG_TABLE に書くまでの経路（補完）<a class="headerlink" href="#teammgr-state_lag_table" title="Permanent link">&para;</a></h3>
 <p>上記テーブルの "lagmgrd" は実装上は <code>TeamMgr</code> (<code>sonic-swss/cfgmgr/teammgr.cpp</code>) が担う。具体的な経路:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>PORTCHANNEL (CONFIG_DB)
@@ -39126,12 +39113,11 @@
 <!-- /ordering -->
 
 <!-- pubsub -->
-<h2 id="pubsub-keyspace-phase-g">PUBSUB / Keyspace 通知メカニズム (Phase G)<a class="headerlink" href="#pubsub-keyspace-phase-g" title="Permanent link">&para;</a></h2>
+<h2 id="pubsub-keyspace">PUBSUB / Keyspace 通知メカニズム<a class="headerlink" href="#pubsub-keyspace" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>調査証跡: <code>meta/_intermediate/cdb-flow/interface-pubsub.md</code>
-ソース: <code>sonic-swss/cfgmgr/intfmgrd.cpp</code>, <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code>, <code>sonic-swss/orchagent/orchdaemon.cpp</code>, <code>sonic-swss-common/common/subscriberstatetable.cpp</code>, <code>sonic-swss-common/common/producerstatetable.cpp</code>, <code>sonic-swss-common/common/consumerstatetable.cpp</code></p>
+<p>ソース: <code>sonic-swss/cfgmgr/intfmgrd.cpp</code>, <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code>, <code>sonic-swss/orchagent/orchdaemon.cpp</code>, <code>sonic-swss-common/common/subscriberstatetable.cpp</code>, <code>sonic-swss-common/common/producerstatetable.cpp</code>, <code>sonic-swss-common/common/consumerstatetable.cpp</code></p>
 </blockquote>
-<h3 id="_18">通知チャネル一覧<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<h3 id="_29">通知チャネル一覧<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -39275,7 +39261,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_19">エンドツーエンド通信シーケンス<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<h3 id="_30">エンドツーエンド通信シーケンス<a class="headerlink" href="#_30" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>CONFIG_DB PORTCHANNEL_INTERFACE|PortChannelN  HSET
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  │  Redis keyspace notify
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  ▼
@@ -39297,9 +39283,9 @@
 <!-- /pubsub -->
 
 <!-- side-effects -->
-<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<h2 id="db">副次 DB 書込<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>詳細証跡: <code>sonic-swss/cfgmgr/intfmgr.cpp</code> / <code>sonic-swss/orchagent/intfsorch.cpp</code></p>
+<p>調査ソース: <code>sonic-swss/cfgmgr/intfmgr.cpp</code> / <code>sonic-swss/orchagent/intfsorch.cpp</code></p>
 </blockquote>
 <p><code>PORTCHANNEL_INTERFACE</code> エントリの SET/DEL が引き起こす CONFIG_DB 以外への書込みと SAI 呼び出しを示す。</p>
 <h3 id="set-appl_db-state_db-intfmgrd">属性ロウ SET — APPL_DB / STATE_DB 書込み (intfmgrd)<a class="headerlink" href="#set-appl_db-state_db-intfmgrd" title="Permanent link">&para;</a></h3>
@@ -39487,7 +39473,7 @@
 <!-- /side-effects -->
 
 <!-- platform -->
-<h2 id="phase-h_1">プラットフォーム差 (Phase H) — 補足: カーネル依存<a class="headerlink" href="#phase-h_1" title="Permanent link">&para;</a></h2>
+<h2 id="_31">プラットフォーム差 — 補足: カーネル依存<a class="headerlink" href="#_31" title="Permanent link">&para;</a></h2>
 <p><code>PORTCHANNEL_INTERFACE</code> テーブルを処理する <code>intfmgrd</code> (<code>cfgmgr/intfmgr.cpp</code>) および <code>IntfsOrch</code> (<code>orchagent/intfsorch.cpp</code>) には <code>getenv("platform")</code> 呼び出しも <code>#ifdef</code> プラットフォーム分岐も存在しない。SAI RIF 生成ロジックはすべてのプラットフォームで同一パスを通る。</p>
 <p>プラットフォームに依存する差異は以下の 3 点に局所化される。</p>
 <h3 id="a-mpls">A. MPLS — カーネルモジュール必須<a class="headerlink" href="#a-mpls" title="Permanent link">&para;</a></h3>
@@ -39570,7 +39556,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_20">プラットフォーム差異サマリ<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<h3 id="_32">プラットフォーム差異サマリ<a class="headerlink" href="#_32" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>

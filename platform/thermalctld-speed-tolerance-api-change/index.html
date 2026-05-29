@@ -36162,6 +36162,26 @@ excerpt: |
       return speed * 100 > target_speed * (100 + tolerance)
 reasoning: is_under_speed / is_over_speed は Fan(FanBase) のメソッド。FanDrawer ではない。get_speed_tolerance は既定実装が内部利用するため残存。
 -->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-platform-common/sonic_platform_base/fan_base.py#L69-L113 (sha: 64beade8cddecdbc154531bc84bed2fa86581ea8)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-platform-common/sonic_platform_base/fan_base.py#L69-L113 (sha: 64beade8cddecdbc154531bc84bed2fa86581ea8)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>def is_under_speed(self):
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    speed = self.get_speed()
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    target_speed = self.get_target_speed()
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    tolerance = self.get_speed_tolerance()
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    return speed * 100 &lt; target_speed * (100 - tolerance)
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>def is_over_speed(self):
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    ...
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    return speed * 100 &gt; target_speed * (100 + tolerance)
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: is_under_speed / is_over_speed は Fan(FanBase) のメソッド。FanDrawer ではない。get_speed_tolerance は既定実装が内部利用するため残存。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld#L399-L463 (sha: 4ba9612cb7756651062d37f977e3df17d57f740d)
 excerpt: |
@@ -36175,6 +36195,25 @@ excerpt: |
        ('is_over_speed', str(is_over_speed)), ...])
 reasoning: thermalctld は fan.is_under_speed/is_over_speed を呼び FAN_INFO に書き込む。DB のフィールド名は speed_target (target_speed ではない)。speed_tolerance は書き込み対象外。
 -->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld#L399-L463 (sha: 4ba9612cb7756651062d37f977e3df17d57f740d)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld#L399-L463 (sha: 4ba9612cb7756651062d37f977e3df17d57f740d)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>is_under_speed = try_get(fan.is_under_speed)
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>is_over_speed = try_get(fan.is_over_speed)
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>...
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>fvs = swsscommon.FieldValuePairs(
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    [(&#39;speed&#39;, str(speed)),
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>     (&#39;speed_target&#39;, str(speed_target)),
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>     (&#39;is_under_speed&#39;, str(is_under_speed)),
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>     (&#39;is_over_speed&#39;, str(is_over_speed)), ...])
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: thermalctld は fan.is_under_speed/is_over_speed を呼び FAN_INFO に書き込む。DB のフィールド名は speed_target (target_speed ではない)。speed_tolerance は書き込み対象外。</p>
+</details>
+<!-- evidence-rendered:end -->
 
 <!-- glossary-links-injected: 0f594312e2b7 -->
 

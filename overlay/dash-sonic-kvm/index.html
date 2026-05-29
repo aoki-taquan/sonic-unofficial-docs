@@ -12037,17 +12037,6 @@
   <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連トピック
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -36213,17 +36202,6 @@
   <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連トピック
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -36459,22 +36437,21 @@ reasoning: BMv2 単体では足りないので VPP + saidash で補い、SAIRedi
 <li>DASH テーブル更新が反映されない: KVM 内 GNMI を証明書付きで再起動しているか確認。</li>
 </ul>
 <h3 id="_13">コマンド例<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
-<p>DASH ENI / <a href="../../reference/glossary/#term-vnet">VNET</a> 経路と DPU 上のデータパスを確認する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># DASH / ENI の状態</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>dash<span class="w"> </span>eni
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>show<span class="w"> </span>dash<span class="w"> </span>vnet
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DASH_ENI_TABLE:*&#39;</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>orchagent_restart_check<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+<p><a href="../../reference/glossary/#term-vnet">VNET</a> 経路と DPU 上の DASH テーブルを確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># VNet ルート (sonic-utilities に実在する CLI は show vnet のみ)</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>vnet<span class="w"> </span>routes<span class="w"> </span>all
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># DASH のテーブルは CONFIG_DB / APP_DB を直接覗く (専用 show CLI は無い)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DASH_*&#39;</span><span class="w">        </span><span class="c1"># CONFIG_DB</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DASH_*&#39;</span><span class="w">        </span><span class="c1"># APP_DB (APPL_DB)</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>orchagent_restart_check<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
 </span></code></pre></div>
-<h2 id="_14">関連トピック<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../../topics/10-gnmi-openconfig/">Topics: GNMI / OpenConfig</a> — <a href="../../reference/glossary/#term-gnmi">gNMI</a> 経由の DASH 設定</li>
-<li><a href="../sonic-dash-hld/">sonic-dash-hld</a> — DASH の全体像</li>
-</ul>
-<h2 id="_15">引用元<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
+<li><a href="../sonic-dash-hld/">sonic-dash-hld</a> — DASH の全体像</li>
+<li><a href="../../topics/10-gnmi-openconfig/">Topics: GNMI / OpenConfig</a> — <a href="../../reference/glossary/#term-gnmi">gNMI</a> 経由の DASH 設定</li>
 <li><a href="../../topics/13-dash-smartswitch/">Topics: DASH と SmartSwitch</a></li>
 <li><a href="../../topics/21-lab-vs-developer/">Topics: Lab / Virtual SONiC / Developer Entry</a></li>
 </ul>

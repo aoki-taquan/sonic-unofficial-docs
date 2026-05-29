@@ -36457,6 +36457,43 @@ reasoning: AC_TRY_RUN ベースのビルド時検査と、PATCH 緩和ポリシ�
 </ul>
 <h2 id="_11">実装との乖離<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <p><code>monitor: partially_implemented</code> — HLD は SAI バージョン比較を <strong>MAJOR.MINOR の等値比較</strong> とするが、実装（<code>sonic-sairedis/configure.ac</code> l.226-261）は <code>minversion = SAI_VERSION(1,9,0)</code> の <strong>floor チェック</strong> に緩和されている（<code>return (version &lt; minversion) || (SAI_API_VERSION &lt; minversion);</code> のみが失敗条件）。MAJOR ずれや MINOR 上方差も許容するため、HLD 提案より実装は大幅に緩い。緩和の根拠は configure.ac コメントで OCP SAI PR 1297（enum binary backward compat）および PR 1795（structs）を引用。<code>syncd/VendorSai.cpp</code> l.52 の <code>.query_api_version = &amp;sai_query_api_version</code> は実装済みで、<code>sai_query_api_version()</code> の呼び出し自体は機能する。</p>
+<p>機能項目ごとの実装状況は以下のとおり。</p>
+<table>
+<thead>
+<tr>
+<th>機能項目</th>
+<th>HLD 提案</th>
+<th>実装状況</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sai_query_api_version()</code> の呼び出し</td>
+<td>必須</td>
+<td>実装済（<code>syncd/VendorSai.cpp</code> l.52）</td>
+</tr>
+<tr>
+<td>ビルド時バージョン検査（<code>AC_TRY_RUN</code>）</td>
+<td>必須</td>
+<td>実装済（<code>configure.ac</code> l.226-261）</td>
+</tr>
+<tr>
+<td>MAJOR.MINOR の等値比較</td>
+<td>HLD 案の判定方式</td>
+<td>未実装（<code>SAI_VERSION(1,9,0)</code> の floor 比較に緩和）</td>
+</tr>
+<tr>
+<td>PATCH バージョン差の検査</td>
+<td>（HLD 言及なし）</td>
+<td>未対応（OCP SAI の互換性保証に依存し意図的に無視）</td>
+</tr>
+<tr>
+<td>runtime での libsai 入れ替え検知</td>
+<td>（対象外）</td>
+<td>未実装（検査はビルド時限定）</td>
+</tr>
+</tbody>
+</table>
 <h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-19):
 - sonic-sairedis `configure.ac` l.226-261: `AC_CHECK_FUNCS(sai_query_api_version, [AC_MSG_CHECKING([SAI headers API version and library version check]) AC_TRY_RUN([...])`

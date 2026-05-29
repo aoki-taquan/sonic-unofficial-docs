@@ -15112,10 +15112,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#systemd-analyze" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コマンド例
+        補足: systemd-analyze（別ツール）
       
     </span>
   </a>
@@ -15128,7 +15128,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -15139,7 +15139,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36239,10 +36239,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#systemd-analyze" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コマンド例
+        補足: systemd-analyze（別ツール）
       
     </span>
   </a>
@@ -36255,7 +36255,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -36266,7 +36266,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36366,14 +36366,18 @@
 </span></code></pre></div>
 <p>enable は <strong>永続的</strong>。<code>config save</code> / <code>config reload</code> の影響を受けず、<code>disable</code> するまで boot 毎に走る<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h4 id="config">config<a class="headerlink" href="#config" title="Permanent link">&para;</a></h4>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span>config<span class="w"> </span>--time-span<span class="w"> </span><span class="m">50</span><span class="w"> </span>--frequency<span class="w"> </span><span class="m">10</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span>config<span class="w"> </span>--time<span class="w"> </span><span class="m">50</span><span class="w"> </span>--frequency<span class="w"> </span><span class="m">10</span>
 </span></code></pre></div>
 <p>このコマンドが <code>/etc/systemd/bootchart.conf</code> を直接更新する。<strong>次回 boot から</strong> 新値が使われる。</p>
-<p><code>samples = frequency × time-span</code> で換算される。</p>
+<p><code>Samples = frequency × time</code> で換算される。</p>
+<div class="admonition warning">
+<p class="admonition-title">HLD と master 実装の option 名差</p>
+<p>HLD 原文は <code>--time-span</code> と記すが、master 実装（<code>sonic-utilities</code> <code>scripts/sonic-bootchart</code> の <code>config</code> サブコマンド）の option は <strong><code>--time</code></strong>（<code>@click.option('--time', ...)</code>）。<code>show</code> の出力ヘッダも HLD の <code>Time Span (sec)</code> に対し実装は <strong><code>Time (sec)</code></strong>（<code>field_values</code> の key が <code>"Time (sec)"</code>）。本ページは master 実装に合わせて記述している。</p>
+</div>
 <h4 id="show">show<a class="headerlink" href="#show" title="Permanent link">&para;</a></h4>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ sudo sonic-bootchart show
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Status     Operational Status   Frequency  Time Span (sec)  Output
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>enabled    inactive            10         50               /run/log/bootchart-20220504-1325.svg
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Status     Operational Status   Frequency  Time (sec)  Output
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>enabled    inactive            10         50          /run/log/bootchart-20220504-1325.svg
 </span></code></pre></div>
 <table>
 <thead>
@@ -36396,8 +36400,8 @@
 <td>sample/sec</td>
 </tr>
 <tr>
-<td><code>Time Span</code></td>
-<td>起動後何秒間 sampling するか</td>
+<td><code>Time (sec)</code></td>
+<td>起動後何秒間 sampling するか（<code>Samples ÷ Frequency</code> で算出）</td>
 </tr>
 <tr>
 <td><code>Output</code></td>
@@ -36444,7 +36448,7 @@
 <td>無効化</td>
 </tr>
 <tr>
-<td><code>sudo sonic-bootchart config --time-span &lt;s&gt; --frequency &lt;hz&gt;</code></td>
+<td><code>sudo sonic-bootchart config --time &lt;s&gt; --frequency &lt;hz&gt;</code></td>
 <td>収集パラメータ更新</td>
 </tr>
 <tr>
@@ -36458,7 +36462,7 @@
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span><span class="nb">enable</span>
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># 50 秒 × 10 Hz = 500 samples に縮小</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span>config<span class="w"> </span>--time-span<span class="w"> </span><span class="m">50</span><span class="w"> </span>--frequency<span class="w"> </span><span class="m">10</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span>config<span class="w"> </span>--time<span class="w"> </span><span class="m">50</span><span class="w"> </span>--frequency<span class="w"> </span><span class="m">10</span>
 </span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
 </span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># reboot して計測</span>
 </span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>sudo<span class="w"> </span>reboot
@@ -36492,20 +36496,20 @@
 <li>SVG が生成されているのに古いまま → <code>/run/log/bootchart-*.svg</code> の timestamp、最新 boot の SVG が tmpfs に存在するか</li>
 <li>設定を変えても反映されない → <code>config</code> 後に <strong>必ず reboot</strong> が必要、<code>/etc/systemd/bootchart.conf</code> の現在値を直接確認</li>
 </ul>
-<h3 id="_12">コマンド例<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
-<p>boot 所要時間の breakdown を確認する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>systemd-analyze
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>systemd-analyze<span class="w"> </span>blame<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>systemd-analyze<span class="w"> </span>critical-chain
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>ls<span class="w"> </span>/run/log/bootchart-*.svg
+<h3 id="systemd-analyze">補足: <code>systemd-analyze</code>（別ツール）<a class="headerlink" href="#systemd-analyze" title="Permanent link">&para;</a></h3>
+<p><code>systemd-analyze</code> は <code>sonic-bootchart</code> とは別の <strong>systemd 標準ツール</strong>で、本 HLD のスコープ外。SVG sampling profile（<code>sonic-bootchart</code>）を取る前段で、boot 全体の所要時間や unit 単位の遅延を素早く把握したい場合に併用できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>systemd-analyze<span class="w">                       </span><span class="c1"># 全体の起動所要時間</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>systemd-analyze<span class="w"> </span>blame<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20<span class="w">      </span><span class="c1"># unit ごとの起動時間 (降順)</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>systemd-analyze<span class="w"> </span>critical-chain<span class="w">        </span><span class="c1"># critical path</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>ls<span class="w"> </span>/run/log/bootchart-*.svg<span class="w">           </span><span class="c1"># sonic-bootchart の出力 SVG 一覧</span>
 </span></code></pre></div>
-<h2 id="_13">関連リファレンス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CLI: <a href="../../reference/cli/show-version/">show version</a> / <a href="../../reference/cli/show-uptime/">show uptime</a> / <a href="../../reference/cli/show-services/">show services</a> / <a href="../../reference/cli/reboot-fast-warm/">reboot-fast-warm</a></li>
 <li>関連 HLD: <a href="../kdump/">kdump</a> / <a href="../sonic-debian-upgrade-cadence/">Debian upgrade cadence</a> / <a href="../analysis-of-disk-writers-in-sonic-devices/">analysis of disk writers</a></li>
 <li>Topic: <a href="../../topics/11-reboot/">Reboot / Upgrade</a></li>
 </ul>
-<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - INCLUDE_BOOTCHART / ENABLE_BOOTCHART build flag の sonic-buildimage への取り込み確認
 - sonic-bootchart CLI の sonic-utilities scripts/ への取り込み確認

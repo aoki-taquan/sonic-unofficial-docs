@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズム・Mellanox ECMP グループ数補正・VOQ ECMP メンバー数制限を含む Phase A+B+C+D+E+F+G+H 分析。">
+        <meta name="description" content="APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズム・Mellanox ECMP グループ数補正・VOQ ECMP メンバー数制限を含む分析。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="APPL_STATE_DB ROUTE_TABLE (route offload cache) - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズム・Mellanox ECMP グループ数補正・VOQ ECMP メンバー数制限を含む Phase A+B+C+D+E+F+G+H 分析。" />
+<meta property="og:description" content="APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズム・Mellanox ECMP グループ数補正・VOQ ECMP メンバー数制限を含む分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/route-cache.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/route-cache/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="APPL_STATE_DB ROUTE_TABLE (route offload cache) - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズム・Mellanox ECMP グループ数補正・VOQ ECMP メンバー数制限を含む Phase A+B+C+D+E+F+G+H 分析。" />
+<meta property="twitter:description" content="APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズム・Mellanox ECMP グループ数補正・VOQ ECMP メンバー数制限を含む分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/route-cache.png" />
 </head>
   
@@ -29278,19 +29278,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-b" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        書込み順依存 (Phase B)
+        書込み順依存
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+    <nav class="md-nav" aria-label="書込み順依存">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         検出された順序依存
@@ -29301,7 +29301,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         主要な制約詳細
@@ -29317,15 +29317,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙参照テーブル (Phase C)
+        暗黙参照テーブル
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+    <nav class="md-nav" aria-label="暗黙参照テーブル">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29384,7 +29384,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         参照関係サマリ
@@ -29400,15 +29400,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-a" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        フィールドのコード由来デフォルト (Phase A)
+        フィールドのコード由来デフォルト
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="フィールドのコード由来デフォルト (Phase A)">
+    <nav class="md-nav" aria-label="フィールドのコード由来デフォルト">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29434,7 +29434,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールドまとめ
@@ -29450,15 +29450,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-d" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        失敗挙動 (Phase D)
+        失敗挙動
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+    <nav class="md-nav" aria-label="失敗挙動">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29551,7 +29551,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         失敗パスまとめ
@@ -29567,15 +29567,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-e" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ハードコード定数 (Phase E)
+        ハードコード定数
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+    <nav class="md-nav" aria-label="ハードコード定数">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29645,7 +29645,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         定数まとめ
@@ -29661,19 +29661,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-f" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
-        副作用・連鎖変更 (Phase F)
+        副作用・連鎖変更
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="副作用・連鎖変更 (Phase F)">
+    <nav class="md-nav" aria-label="副作用・連鎖変更">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         連鎖変更マップ
@@ -29717,7 +29717,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         副作用サマリ
@@ -29733,15 +29733,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#redis-phase-g" class="md-nav__link">
+  <a href="#redis" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Redis 通知メカニズム (Phase G)
+        Redis 通知メカニズム
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+    <nav class="md-nav" aria-label="Redis 通知メカニズム">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29778,7 +29778,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         通知メカニズムまとめ
@@ -29794,15 +29794,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-h" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラットフォーム差 (Phase H)
+        プラットフォーム差
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+    <nav class="md-nav" aria-label="プラットフォーム差">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29856,7 +29856,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差サマリ
@@ -29872,7 +29872,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29884,7 +29884,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型エントリ例
@@ -29900,7 +29900,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29911,7 +29911,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36596,19 +36596,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-b" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        書込み順依存 (Phase B)
+        書込み順依存
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+    <nav class="md-nav" aria-label="書込み順依存">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         検出された順序依存
@@ -36619,7 +36619,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         主要な制約詳細
@@ -36635,15 +36635,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙参照テーブル (Phase C)
+        暗黙参照テーブル
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+    <nav class="md-nav" aria-label="暗黙参照テーブル">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -36702,7 +36702,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         参照関係サマリ
@@ -36718,15 +36718,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-a" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        フィールドのコード由来デフォルト (Phase A)
+        フィールドのコード由来デフォルト
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="フィールドのコード由来デフォルト (Phase A)">
+    <nav class="md-nav" aria-label="フィールドのコード由来デフォルト">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -36752,7 +36752,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールドまとめ
@@ -36768,15 +36768,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-d" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        失敗挙動 (Phase D)
+        失敗挙動
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+    <nav class="md-nav" aria-label="失敗挙動">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -36869,7 +36869,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         失敗パスまとめ
@@ -36885,15 +36885,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-e" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ハードコード定数 (Phase E)
+        ハードコード定数
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+    <nav class="md-nav" aria-label="ハードコード定数">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -36963,7 +36963,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         定数まとめ
@@ -36979,19 +36979,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-f" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
-        副作用・連鎖変更 (Phase F)
+        副作用・連鎖変更
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="副作用・連鎖変更 (Phase F)">
+    <nav class="md-nav" aria-label="副作用・連鎖変更">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         連鎖変更マップ
@@ -37035,7 +37035,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         副作用サマリ
@@ -37051,15 +37051,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#redis-phase-g" class="md-nav__link">
+  <a href="#redis" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Redis 通知メカニズム (Phase G)
+        Redis 通知メカニズム
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+    <nav class="md-nav" aria-label="Redis 通知メカニズム">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -37096,7 +37096,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         通知メカニズムまとめ
@@ -37112,15 +37112,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-h" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラットフォーム差 (Phase H)
+        プラットフォーム差
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+    <nav class="md-nav" aria-label="プラットフォーム差">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -37174,7 +37174,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差サマリ
@@ -37190,7 +37190,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -37202,7 +37202,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型エントリ例
@@ -37218,7 +37218,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -37229,7 +37229,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -37459,11 +37459,9 @@ APPL_STATE_DB のエントリ（<code>ROUTE_TABLE:&lt;prefix&gt;</code> ハッ�
 </span></code></pre></div>
 <p>APPL_STATE_DB の全 <a href="../../glossary/#term-route_table">ROUTE_TABLE</a> エントリを読み取り、<a href="../../glossary/#term-zebra">zebra</a> に offload 通知を一括送信する。これにより warm restart 後に <a href="../../glossary/#term-frr">FRR</a> が持つ経路の offload フラグが復元される。</p>
 <!-- ordering -->
-<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-ordering.md -->
-
+<h2 id="_3">書込み順依存<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p><code>RouteOrch::publishRouteState()</code> が <code>ResponsePublisher</code> 経由で APPL_STATE_DB <a href="../../glossary/#term-route_table">ROUTE_TABLE</a> へ書き込む際の順序依存を示す。</p>
-<h3 id="_3">検出された順序依存<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="_4">検出された順序依存<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -37506,7 +37504,7 @@ APPL_STATE_DB のエントリ（<code>ROUTE_TABLE:&lt;prefix&gt;</code> ハッ�
 </tr>
 </tbody>
 </table>
-<h3 id="_4">主要な制約詳細<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<h3 id="_5">主要な制約詳細<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p><strong>SAI 成功ゲート（依存 #1）</strong>: APPL_STATE_DB エントリは <code>addRoutePost()</code>（routeorch.cpp:L2729）または <code>removeRoutePost()</code>（routeorch.cpp:L2970）末尾の <code>publishRouteState()</code> 呼び出しから <code>ResponsePublisher::publish()</code> を経由して書き込まれる。<code>response_publisher.cpp:L129-148</code> の条件ガードにより、SAI 失敗（<code>status.ok()</code> が false）かつ SET 操作の場合は APPL_STATE_DB への書き込みがスキップされる。このため APPL_STATE_DB と APPL_DB の経路数差分は SAI プログラミング失敗経路の指標となる:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// response_publisher.cpp:129-133</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_enable_db_write_and_notify</span><span class="w"> </span><span class="o">&amp;&amp;</span>
@@ -37522,9 +37520,7 @@ APPL_STATE_DB のエントリ（<code>ROUTE_TABLE:&lt;prefix&gt;</code> ハッ�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-cross-refs.md -->
-
+<h2 id="_6">暗黙参照テーブル<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>APPL_STATE_DB <code>ROUTE_TABLE</code> は <a href="../../glossary/#term-yang">YANG</a> 未定義のオペレーショナルテーブルで、<code>RouteOrch</code> が<strong>書き手 (producer)</strong>、<code>fpmsyncd</code> と <code>route_check.py</code> が<strong>読み手 (consumer)</strong> となる。以下は <code>ResponsePublisher</code>・<code>routeorch.cpp</code>・<code>fpmsyncd.cpp</code>・<code>routesync.cpp</code>・<code>route_check.py</code> を横断したコード調査で検出した暗黙参照の一覧。</p>
 <h3 id="1-appl_db-route_table">1. APPL_DB ROUTE_TABLE（書き込みトリガ兼キー源泉）<a class="headerlink" href="#1-appl_db-route_table" title="Permanent link">&para;</a></h3>
 <ul>
@@ -37562,7 +37558,7 @@ APPL_STATE_DB のエントリ（<code>ROUTE_TABLE:&lt;prefix&gt;</code> ハッ�
 <li><strong>参照元</strong>: <code>scripts/route_check.py:767-771</code>（<code>mitigate_installed_not_offloaded_frr_routes()</code>）</li>
 <li><strong>意味</strong>: <code>route_check.py</code> は FRR に存在するが offload フラグが立っていない経路を検出した場合、<code>NotificationProducer</code> で <code>APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</code> に <code>SWSS_RC_SUCCESS</code> を注入して fpmsyncd に offload 通知を再送させる。APPL_STATE_DB を直接書き換えるのではなくチャネル経由でフローを再起動する点が特徴。</li>
 </ul>
-<h3 id="_5">参照関係サマリ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="_7">参照関係サマリ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -37608,9 +37604,7 @@ APPL_STATE_DB のエントリ（<code>ROUTE_TABLE:&lt;prefix&gt;</code> ハッ�
 <!-- /cross-refs -->
 
 <!-- defaults -->
-<h2 id="phase-a">フィールドのコード由来デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-defaults.md -->
-
+<h2 id="_8">フィールドのコード由来デフォルト<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <h3 id="protocol"><code>protocol</code> フィールドのデフォルト<a class="headerlink" href="#protocol" title="Permanent link">&para;</a></h3>
 <p>ソース: <code>orchagent/routeorch.h</code> line 152、<code>orchagent/routeorch.cpp</code> lines 157–160, 785–788<sup id="fnref2:rorch"><a class="footnote-ref" href="#fn:rorch">1</a></sup></p>
 <p><code>RouteBulkContext</code> 構造体の <code>protocol</code> メンバーは <code>std::string</code> のデフォルトコンストラクタによって <code>""</code> に初期化される:</p>
@@ -37689,7 +37683,7 @@ APPL_STATE_DB のエントリ（<code>ROUTE_TABLE:&lt;prefix&gt;</code> ハッ�
 </tr>
 </tbody>
 </table>
-<h3 id="_6">フィールドまとめ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<h3 id="_9">フィールドまとめ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -37717,9 +37711,7 @@ APPL_STATE_DB のエントリ（<code>ROUTE_TABLE:&lt;prefix&gt;</code> ハッ�
 <!-- /defaults -->
 
 <!-- failure -->
-<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-failure.md -->
-
+<h2 id="_10">失敗挙動<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p>APPL_STATE_DB <code>ROUTE_TABLE</code> への書き込みは <code>publishRouteState()</code> → <code>ResponsePublisher::publish()</code> 経由で行われる。SAI 操作の成否によって APPL_STATE_DB への書き込みが制御される。</p>
 <h3 id="set">SET 操作の失敗パス<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
 <h4 id="1-sai-create-set-appl_state_db">1. SAI create / set 失敗 — APPL_STATE_DB への書き込みなし<a class="headerlink" href="#1-sai-create-set-appl_state_db" title="Permanent link">&para;</a></h4>
@@ -37784,7 +37776,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 </span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="n">isSuccessReply</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;SWSS_RC_SUCCESS&quot;</span><span class="p">);</span>
 </span></code></pre></div>
 <p>SAI 失敗経路は FRR zebra への offload 通知が行われず、FRR 側で offload フラグが立たない。</p>
-<h3 id="_7">失敗パスまとめ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h3 id="_11">失敗パスまとめ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -37830,9 +37822,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 <!-- /failure -->
 
 <!-- constants -->
-<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-constants.md -->
-
+<h2 id="_12">ハードコード定数<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <p><code>orchagent/routeorch.cpp</code>・<code>orchagent/response_publisher.cpp</code>・<code>fpmsyncd/fpmsyncd.cpp</code>・<code>fpmsyncd/routesync.cpp</code>・<code>common/schema.h</code> から抽出した APPL_STATE_DB <code>ROUTE_TABLE</code> 経路オフロードキャッシュに関わる主要ハードコード定数。</p>
 <h3 id="ecmp-routeorchcpp">ECMP 上限デフォルト（<code>routeorch.cpp</code>）<a class="headerlink" href="#ecmp-routeorchcpp" title="Permanent link">&para;</a></h3>
 <table>
@@ -37979,7 +37969,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 </span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="n">fieldValues</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="s">&quot;err_str&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SWSS_RC_SUCCESS&quot;</span><span class="p">);</span>
 </span></code></pre></div>
 <p><code>markRoutesOffloaded()</code> が RESPONSE_CHANNEL に注入する <code>err_str</code> は <code>"SWSS_RC_SUCCESS"</code> リテラル固定。</p>
-<h3 id="_8">定数まとめ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h3 id="_13">定数まとめ<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -38055,11 +38045,9 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 <!-- /constants -->
 
 <!-- side-effects -->
-<h2 id="phase-f">副作用・連鎖変更 (Phase F)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h2>
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-side-effects.md -->
-
+<h2 id="_14">副作用・連鎖変更<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <p>APPL_STATE_DB <code>ROUTE_TABLE</code> への書き込みは、<a href="../../glossary/#term-orchagent">orchagent</a> の内部処理で終結せず、<code>fpmsyncd</code> を経由して FRR zebra への外向き副作用を持つ。また <code>route_check.py</code> による recovery パスも存在する。</p>
-<h3 id="_9">連鎖変更マップ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_15">連鎖変更マップ<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>orchagent (RouteOrch::publishRouteState)
 </span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>  └─▶ APPL_STATE_DB:ROUTE_TABLE  (ResponsePublisher, SET/DEL)
 </span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>        └─▶ APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL  (Redis Pub/Sub 通知)
@@ -38119,7 +38107,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 <li><strong>効果</strong>: fpmsyncd が <code>onRouteResponse()</code> を再実行し、FRR zebra への offload 通知を再送（recovery）</li>
 <li><strong>注意</strong>: APPL_STATE_DB エントリを直接書き換えるのではなく、RESPONSE_CHANNEL 経由でフローを再起動する</li>
 </ul>
-<h3 id="_10">副作用サマリ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_16">副作用サマリ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -38153,9 +38141,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 <!-- /side-effects -->
 
 <!-- pubsub -->
-<h2 id="redis-phase-g">Redis 通知メカニズム (Phase G)<a class="headerlink" href="#redis-phase-g" title="Permanent link">&para;</a></h2>
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-pubsub.md -->
-
+<h2 id="redis">Redis 通知メカニズム<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
 <h3 id="responsepublisher">書き込み側: ResponsePublisher の通知チャネル<a class="headerlink" href="#responsepublisher" title="Permanent link">&para;</a></h3>
 <p><code>RouteOrch::publishRouteState()</code> は <code>ResponsePublisher::publish()</code> を呼び出し、2 段階でデータを <a href="../../glossary/#term-redis">Redis</a> に送出する（<code>orchagent/response_publisher.cpp:L96-133</code>）<sup id="fnref5:respub"><a class="footnote-ref" href="#fn:respub">2</a></sup>:</p>
 <ol>
@@ -38194,7 +38180,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 </span><span id="__span-25-8"><a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>APPL_DB への書き込みパイプライン（<code>pipeline</code> = <code>RedisPipeline</code>、サイズ上限 <code>ROUTE_SYNC_PPL_SIZE = 50000</code> エントリ）は <code>flushPipeline()</code> で制御される。<code>SMALL_TRAFFIC = 500</code> エントリ未満または <code>FLUSH_TIMEOUT = 500 ms</code> 経過時にフラッシュし、<code>gSelectTimeout</code> を残余時間に調整する（<code>fpmsyncd.cpp:350-363</code>）。<code>onRouteResponse()</code> 自体は APPL_DB に書き込まず FRR zebra への netlink 送信のみを行うため、このパイプラインには関与しない。</p>
-<h3 id="_11">通知メカニズムまとめ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_17">通知メカニズムまとめ<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -38229,9 +38215,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 <!-- /pubsub -->
 
 <!-- platform -->
-<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-platform.md -->
-
+<h2 id="_18">プラットフォーム差<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
 <p>調査ソース: <code>orchagent/routeorch.cpp</code>、<code>orchagent/orch.h</code>、<code>fpmsyncd/fpmsyncd.cpp</code>、<code>fpmsyncd/routesync.cpp</code>、<code>orchagent/response_publisher.cpp</code>。</p>
 <h3 id="fpmsyncd-responsepublisher">fpmsyncd / ResponsePublisher — プラットフォーム差なし<a class="headerlink" href="#fpmsyncd-responsepublisher" title="Permanent link">&para;</a></h3>
 <p><code>fpmsyncd.cpp</code> / <code>routesync.cpp</code> に <code>getenv("platform")</code> および <code>gMySwitchType</code> 等のプラットフォーム条件分岐は存在しない。RESPONSE_CHANNEL の購読・<code>onRouteResponse()</code> の処理・<code>markRoutesOffloaded()</code> による Warm Restart offload 通知はすべてプラットフォーム非依存。<code>ResponsePublisher</code> / <code>response_publisher.cpp</code> にもプラットフォーム分岐なし。</p>
@@ -38264,7 +38248,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 </span><span id="__span-27-8"><a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a><span class="p">}</span>
 </span></code></pre></div>
 <p><a href="../../glossary/#term-voq">VOQ</a> chassis 環境では 1 つの ECMP グループで 128 を超えるメンバーを持つ経路は SAI 制限に抵触する可能性があり、当該経路の APPL_STATE_DB ROUTE_TABLE エントリが生成されない場合がある。</p>
-<h3 id="_12">プラットフォーム差サマリ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_19">プラットフォーム差サマリ<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -38303,7 +38287,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 </table>
 <!-- /platform -->
 
-<h2 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_20">確認コマンド<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="c1"># APPL_STATE_DB の特定経路エントリを確認</span>
 </span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:10.0.0.0/24&#39;</span>
 </span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>
@@ -38319,7 +38303,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 </span><span id="__span-28-13"><a id="__codelineno-28-13" name="__codelineno-28-13" href="#__codelineno-28-13"></a><span class="c1"># route_check.py でテーブル整合を確認</span>
 </span><span id="__span-28-14"><a id="__codelineno-28-14" name="__codelineno-28-14" href="#__codelineno-28-14"></a>sudo<span class="w"> </span>route_check.py
 </span></code></pre></div>
-<h3 id="_14">典型エントリ例<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h3 id="_21">典型エントリ例<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a># BGP 経路のオフロード成功
 </span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>APPL_STATE_DB&gt; hgetall ROUTE_TABLE:10.1.0.0/24
 </span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>1) &quot;protocol&quot;
@@ -38330,13 +38314,13 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 </span><span id="__span-29-8"><a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a>1) &quot;protocol&quot;
 </span><span id="__span-29-9"><a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a>2) &quot;&quot;
 </span></code></pre></div>
-<h2 id="_15">関連ページ<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h2 id="_22">関連ページ<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../app-route/"><code>ROUTE_TABLE (APPL_DB)</code></a> — fpmsyncd が書き込む経路要求テーブル</li>
 <li><a href="../route-state/"><code>ROUTE_TABLE (STATE_DB / APPL_STATE_DB)</code></a> — <a href="../../glossary/#term-state_db">STATE_DB</a> のデフォルト経路状態テーブルも含む統合ページ</li>
 <li><a href="../static-route/"><code>STATIC_ROUTE</code></a> — CONFIG_DB の静的経路設定</li>
 </ul>
-<h2 id="_16">引用元<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<h2 id="_23">引用元<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: d9fdc0139788 -->
 
 <div class="footnote">

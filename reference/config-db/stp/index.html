@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説。PVST / MSTP Phase A–C 分析（暗黙参照テーブル含む）。">
+        <meta name="description" content="CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説（暗黙参照テーブル含む）。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="STP / STP_VLAN / STP_PORT テーブル — 暗黙デフォルト詳細 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説。PVST / MSTP Phase A–C 分析（暗黙参照テーブル含む）。" />
+<meta property="og:description" content="CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説（暗黙参照テーブル含む）。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/stp/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="STP / STP_VLAN / STP_PORT テーブル — 暗黙デフォルト詳細 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説。PVST / MSTP Phase A–C 分析（暗黙参照テーブル含む）。" />
+<meta property="twitter:description" content="CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説（暗黙参照テーブル含む）。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp.png" />
 </head>
   
@@ -30329,10 +30329,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙参照テーブル (Phase C)
+        暗黙参照テーブル
       
     </span>
   </a>
@@ -30340,15 +30340,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-d" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        失敗挙動 (Phase D)
+        失敗挙動
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+    <nav class="md-nav" aria-label="失敗挙動">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -30423,15 +30423,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-e" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ハードコード定数 (Phase E)
+        ハードコード定数
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+    <nav class="md-nav" aria-label="ハードコード定数">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -30506,15 +30506,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#db-phase-f" class="md-nav__link">
+  <a href="#db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        副次 DB 書込・システム副作用 (Phase F)
+        副次 DB 書込・システム副作用
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="副次 DB 書込・システム副作用 (Phase F)">
+    <nav class="md-nav" aria-label="副次 DB 書込・システム副作用">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -30567,19 +30567,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-g" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        通知メカニズム (Phase G)
+        通知メカニズム
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="通知メカニズム (Phase G)">
+    <nav class="md-nav" aria-label="通知メカニズム">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         全体フロー
@@ -30639,10 +30639,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-h" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラットフォーム差 (Phase H)
+        プラットフォーム差
       
     </span>
   </a>
@@ -30650,7 +30650,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -36706,10 +36706,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙参照テーブル (Phase C)
+        暗黙参照テーブル
       
     </span>
   </a>
@@ -36717,15 +36717,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-d" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        失敗挙動 (Phase D)
+        失敗挙動
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+    <nav class="md-nav" aria-label="失敗挙動">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -36800,15 +36800,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-e" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ハードコード定数 (Phase E)
+        ハードコード定数
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+    <nav class="md-nav" aria-label="ハードコード定数">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -36883,15 +36883,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#db-phase-f" class="md-nav__link">
+  <a href="#db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        副次 DB 書込・システム副作用 (Phase F)
+        副次 DB 書込・システム副作用
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="副次 DB 書込・システム副作用 (Phase F)">
+    <nav class="md-nav" aria-label="副次 DB 書込・システム副作用">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -36944,19 +36944,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-g" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        通知メカニズム (Phase G)
+        通知メカニズム
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="通知メカニズム (Phase G)">
+    <nav class="md-nav" aria-label="通知メカニズム">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         全体フロー
@@ -37016,10 +37016,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-h" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラットフォーム差 (Phase H)
+        プラットフォーム差
       
     </span>
   </a>
@@ -37027,7 +37027,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -37065,7 +37065,7 @@
 <h1 id="stp-stp_vlan-stp_port">STP / STP_VLAN / STP_PORT テーブル — 暗黙デフォルト詳細<a class="headerlink" href="#stp-stp_vlan-stp_port" title="Permanent link">&para;</a></h1>
 <div class="admonition info">
 <p class="admonition-title">ページの位置付け</p>
-<p>このページは <code>STP</code>・<code>STP_VLAN</code>・<code>STP_PORT</code>・<code>STP_VLAN_PORT</code> テーブルの <strong>コード由来デフォルト値・ハードコード挙動・モード別差異</strong> を詳述する Phase A 分析ページ。
+<p>このページは <code>STP</code>・<code>STP_VLAN</code>・<code>STP_PORT</code>・<code>STP_VLAN_PORT</code> テーブルの <strong>コード由来デフォルト値・ハードコード挙動・モード別差異</strong> を詳述する。
 SONiC は PVST (Per-VLAN Spanning Tree) と MSTP (Multiple Spanning Tree Protocol) の 2 モードをサポートする。</p>
 </div>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -37123,8 +37123,6 @@ CLI の <code>config spanning-tree</code> コマンド (<a href="../../glossary/
 <!-- /cdb-mermaid -->
 
 <h2 id="_3">暗黙デフォルトとハードコード挙動<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<!-- evidence: meta/_intermediate/cdb-flow/stp-defaults.md -->
-
 <h3 id="1-stpglobal-pvst">1. STP|GLOBAL — PVST 有効化時の書き込みデフォルト<a class="headerlink" href="#1-stpglobal-pvst" title="Permanent link">&para;</a></h3>
 <p><code>config spanning-tree enable pvst</code> 実行時に <code>config/stp.py:520-528</code> で以下が一括書き込まれる:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">fvs</span> <span class="o">=</span> <span class="p">{</span>
@@ -37563,8 +37561,6 @@ stpmgrd 側の <code>STP_DEFAULT_MAX_INSTANCES = 255</code> (<code>stpmgr.h:38</
 <h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <!-- ordering -->
 <h2 id="warm-reboot">処理順序・依存関係・warm-reboot 挙動<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h2>
-<!-- evidence: meta/_intermediate/cdb-flow/stp-ordering.md -->
-
 <h3 id="1-port_init_done">1. 起動前提条件 — PORT_INIT_DONE 待機<a class="headerlink" href="#1-port_init_done" title="Permanent link">&para;</a></h3>
 <p><code>stpmgrd</code> は起動直後に <code>isPortInitDone()</code> (<code>stpmgr.cpp:1257-1273</code>) を呼び出し、
 <a href="../../glossary/#term-appl_db">APPL_DB</a> の <code>APP_PORT_TABLE</code> に <code>PortInitDone</code> キーが出現するまで <strong>1 秒ポーリングでブロッキング待機</strong> する。
@@ -37672,11 +37668,9 @@ STP ポート状態は stpd の内部状態に基づき継続される。</p>
 <!-- /ordering -->
 
 <!-- cross-refs -->
-<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<h2 id="_5">暗黙参照テーブル<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p><code>stpmgrd</code> が CONFIG_DB の STP テーブル群を購読・処理する際に参照する外部テーブルを示す。
 これらは CONFIG_DB への書き込み有無に関わらず、<strong>ガード条件・フィールド値解決・処理可否判定</strong>に影響する。</p>
-<!-- evidence: meta/_intermediate/cdb-flow/stp-cross-refs.md -->
-
 <table>
 <thead>
 <tr>
@@ -37752,10 +37746,8 @@ STP ポート状態は stpd の内部状態に基づき継続される。</p>
 <!-- /cross-refs -->
 
 <!-- failure -->
-<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<h2 id="_6">失敗挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p><code>stpmgrd</code> は CONFIG_DB を購読して stpd デーモンへ UDS (Unix Domain Socket) 経由で IPC メッセージを送信する設計であり、失敗は (A) IPC ソケット初期化失敗、(B) IPC 送信失敗 (silent discard)、(C) PVST インスタンス枯渇、(D) メモリ割り当て失敗、(E) ebtables / 不正フィールド、(F) 前提条件未達による defer の 6 系統に整理される。</p>
-<!-- evidence: meta/_intermediate/cdb-flow/stp-failure.md -->
-
 <h3 id="a-ipc-ipcinitstpd">A. IPC ソケット初期化失敗 (<code>ipcInitStpd</code>)<a class="headerlink" href="#a-ipc-ipcinitstpd" title="Permanent link">&para;</a></h3>
 <p><code>ipcInitStpd()</code> (<code>stpmgr.cpp:859-884</code>) は起動時に UDS ソケットを作成・bind する。</p>
 <table>
@@ -37932,15 +37924,13 @@ IPC 送信失敗後もエントリは <code>consumer.m_toSync.erase(it)</code> �
 <p>SET 操作の多くは <code>it++</code> による defer（次回 SELECT で再試行）だが、DEL 操作の多くは <code>erase(it)</code> による silent discard となる。STP 無効化・削除操作は前提条件が揃っていない場合に黙って捨てられる設計であり、実際に stpd 側に削除が届かない可能性がある。</p>
 </div>
 <blockquote>
-<p><strong>証跡</strong>: <code>stpmgr.cpp:116-119, 136, 164-165, 210-214, 246-250, 263-283, 319-324, 448-449, 477-479, 486-498, 502-507, 534-539, 634-635, 648-670, 784-795, 824, 859-884, 1218-1255</code>。詳細 grep 証跡は <code>meta/_intermediate/cdb-flow/stp-failure.md</code> を参照。</p>
+<p><strong>裏取り</strong>: <code>stpmgr.cpp:116-119, 136, 164-165, 210-214, 246-250, 263-283, 319-324, 448-449, 477-479, 486-498, 502-507, 534-539, 634-635, 648-670, 784-795, 824, 859-884, 1218-1255</code></p>
 </blockquote>
 <!-- /failure -->
 
 <!-- constants -->
-<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<h2 id="_7">ハードコード定数<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p><code>stpmgrd</code> / <code>config/stp.py</code> が設定・運用で使う固定値の一覧。CONFIG_DB・<a href="../../glossary/#term-device_metadata">DEVICE_METADATA</a> 等の外部入力では変更不能。</p>
-<!-- evidence: meta/_intermediate/cdb-flow/stp-constants.md -->
-
 <h3 id="1-pvst-configstppy">1. PVST タイマーデフォルト定数（<code>config/stp.py</code>）<a class="headerlink" href="#1-pvst-configstppy" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -38159,8 +38149,7 @@ IPC 送信失敗後もエントリは <code>consumer.m_toSync.erase(it)</code> �
 <!-- /constants -->
 
 <!-- side-effects -->
-<h2 id="db-phase-f">副次 DB 書込・システム副作用 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
-<!-- evidence: meta/_intermediate/cdb-flow/stp-side-effects.md -->
+<h2 id="db">副次 DB 書込・システム副作用<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <!-- source: sonic-swss/cfgmgr/stpmgr.cpp, sonic-swss/orchagent/stporch.cpp -->
 
 <p>STP CONFIG_DB テーブルへの書き込みは、DB への副次書き込みよりも <strong>Unix ドメインソケット IPC</strong> と <strong>カーネル ebtables</strong> を主な副作用経路として使用する。</p>
@@ -38263,12 +38252,9 @@ IPC 送信失敗後もエントリは <code>consumer.m_toSync.erase(it)</code> �
 <!-- /side-effects -->
 
 <!-- pubsub -->
-<h2 id="phase-g">通知メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h2 id="_8">通知メカニズム<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p><code>STP</code> / <code>STP_VLAN</code> / <code>STP_PORT</code> / <code>STP_VLAN_PORT</code> (CONFIG_DB) への変更は、<strong>keyspace 通知</strong> ベースの <code>SubscriberStateTable</code> で <code>stpmgrd</code> に配送され、さらに Unix Domain Socket (UDS) 経由で STP デーモン (<code>stpd</code>) に転送される。その後 <code>stpd</code> が <a href="../../glossary/#term-appl_db">APPL_DB</a> に書き込んだエントリを <a href="../../glossary/#term-orchagent">orchagent</a> の <code>StpOrch</code> が <strong><a href="../../glossary/#term-consumerstatetable">ConsumerStateTable</a></strong> (channel PUBLISH/SUBSCRIBE) で消費する。</p>
-<blockquote>
-<p>調査証跡: <code>meta/_intermediate/cdb-flow/stp-pubsub.md</code></p>
-</blockquote>
-<h3 id="_5">全体フロー<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="_9">全体フロー<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>config stp ... (sonic-utilities/config/stp.py)
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>  ↓ CONFIG_DB: HSET STP|GLOBAL / STP_VLAN|Vlan&lt;vid&gt; / ...
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>  ↓ Redis keyspace通知 __keyspace@4__:&lt;TABLE&gt;|&lt;key&gt;
@@ -38420,10 +38406,8 @@ IPC 送信失敗後もエントリは <code>consumer.m_toSync.erase(it)</code> �
 <!-- /pubsub -->
 
 <!-- platform -->
-<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<h2 id="_10">プラットフォーム差<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p><code>stpmgrd</code> は SAI / <a href="../../glossary/#term-asic-sdk">ASIC SDK</a> を一切経由しない純粋なソフトウェア STP 実装。プラットフォーム依存の挙動は以下の 2 点に集約される。</p>
-<!-- evidence: meta/_intermediate/cdb-flow/stp-platform.md -->
-
 <table>
 <thead>
 <tr>
@@ -38469,10 +38453,9 @@ IPC 送信失敗後もエントリは <code>consumer.m_toSync.erase(it)</code> �
 <p class="admonition-title">max_stp_instances の実効上限</p>
 <p>CLI の <code>PVST_MAX_INSTANCES = 255</code> チェックより ASIC 能力値が小さい場合、ASIC 側の値が実効上限となる。たとえば ASIC が 64 インスタンスしかサポートしない場合、65 番目の VLAN への STP 適用は <code>allocL2Instance()</code> 内の <code>IS_INST_ID_AVAILABLE()</code> チェックで失敗し、<code>SWSS_LOG_ERROR</code> + 恒久スキップとなる。この値は <code>stporch.cpp:612</code> が SAI から取得して <code>STATE_STP_TABLE|GLOBAL.max_stp_inst</code> に書き込む。</p>
 </div>
-<p>詳細根拠は <code>meta/_intermediate/cdb-flow/stp-platform.md</code> を参照。</p>
 <!-- /platform -->
 
-<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../vlan/">CONFIG_DB: VLAN</a></li>
 <li><a href="../port/">CONFIG_DB: PORT</a></li>

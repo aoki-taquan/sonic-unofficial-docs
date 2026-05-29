@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） — pmon container には既に ledd（LED）/ xcvrd（SFP）の daemon があるが、PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは pl…">
+        <meta name="description" content="PSU / FAN / chassis / syseeprom データを daemon が周期収集 (PSU/FAN) または boot 時 1 回 dump (syseeprom) して STATE_DB に集約し、CLI / SNMP は DB のみを read する pmon 強化 HLD。platform plugin の直接アクセスを pmon container 内に閉じ込め、高速化と container 跨ぎの一貫性を実現する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） — pmon container には既に ledd（LED）/ xcvrd（SFP）の daemon があるが、PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは pl…" />
+<meta property="og:description" content="PSU / FAN / chassis / syseeprom データを daemon が周期収集 (PSU/FAN) または boot 時 1 回 dump (syseeprom) して STATE_DB に集約し、CLI / SNMP は DB のみを read する pmon 強化 HLD。platform plugin の直接アクセスを pmon container 内に閉じ込め、高速化と container 跨ぎの一貫性を実現する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/platform-monitor-enhancement-design.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/system/platform-monitor-enhancement-design/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） — pmon container には既に ledd（LED）/ xcvrd（SFP）の daemon があるが、PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは pl…" />
+<meta property="twitter:description" content="PSU / FAN / chassis / syseeprom データを daemon が周期収集 (PSU/FAN) または boot 時 1 回 dump (syseeprom) して STATE_DB に集約し、CLI / SNMP は DB のみを read する pmon 強化 HLD。platform plugin の直接アクセスを pmon container 内に閉じ込め、高速化と container 跨ぎの一貫性を実現する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/platform-monitor-enhancement-design.png" />
 </head>
   
@@ -14731,28 +14731,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sonic-sonic-buildimage4646" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ポートのステータス変更が SONiC に反映されない問題（sonic-buildimage#4646）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show-interface-transceiver-sonic-buildimage5001" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新ビルドで show interface transceiver コマンドが壊れている問題（sonic-buildimage#5001）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#master-pmon-platform-monitor-sonic-buildimage5759" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -14768,50 +14746,6 @@
     <span class="md-ellipsis">
       
         最新 SONiC イメージで PMON コンテナがクラッシュする問題（sonic-buildimage#5986）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#multi-asic-chassis-asic-backend-pmon-xcvrd-sonic-buildimage6097" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュする問題（sonic-buildimage#6097）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hwskujson-fec-sonic-buildimage6495" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        hwsku.json から FEC パラメータがデフォルト設定できない問題（sonic-buildimage#6495）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dpb-xcvrd-sfp-sonic-buildimage6499" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DPB 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題（sonic-buildimage#6499）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cmis-40-qsfp-dd-eeprom-sonic-buildimage6516" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題（sonic-buildimage#6516）
       
     </span>
   </a>
@@ -36215,28 +36149,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sonic-sonic-buildimage4646" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ポートのステータス変更が SONiC に反映されない問題（sonic-buildimage#4646）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show-interface-transceiver-sonic-buildimage5001" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新ビルドで show interface transceiver コマンドが壊れている問題（sonic-buildimage#5001）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#master-pmon-platform-monitor-sonic-buildimage5759" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36252,50 +36164,6 @@
     <span class="md-ellipsis">
       
         最新 SONiC イメージで PMON コンテナがクラッシュする問題（sonic-buildimage#5986）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#multi-asic-chassis-asic-backend-pmon-xcvrd-sonic-buildimage6097" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュする問題（sonic-buildimage#6097）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hwskujson-fec-sonic-buildimage6495" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        hwsku.json から FEC パラメータがデフォルト設定できない問題（sonic-buildimage#6495）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dpb-xcvrd-sfp-sonic-buildimage6499" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DPB 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題（sonic-buildimage#6499）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cmis-40-qsfp-dd-eeprom-sonic-buildimage6516" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題（sonic-buildimage#6516）
       
     </span>
   </a>
@@ -36460,20 +36328,11 @@ reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
 <li><a href="../../reference/">Reference 索引</a></li>
 </ul>
 <h2 id="_6">既知の問題<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>本 HLD のスコープ（PSU / FAN / syseeprom の STATE_DB 集約と pmon daemon 化）に関連する既知の問題のみ挙げる。</p>
 <h3 id="bmc-baseboard-management-controller-sonic-buildimage633">BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフォーム（sonic-buildimage#633）<a class="headerlink" href="#bmc-baseboard-management-controller-sonic-buildimage633" title="Permanent link">&para;</a></h3>
 <p>BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフォームでは、platform API で BMC インターフェースを使う設計が必要</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/633">sonic-net/sonic-buildimage#633</a></li>
-</ul>
-<h3 id="sonic-sonic-buildimage4646">ポートのステータス変更が SONiC に反映されない問題（sonic-buildimage#4646）<a class="headerlink" href="#sonic-sonic-buildimage4646" title="Permanent link">&para;</a></h3>
-<p>ポートのステータス変更が <a href="../../reference/glossary/#term-sonic">SONiC</a> に反映されない問題。xcvrd または <a href="../../reference/glossary/#term-portsyncd">portsyncd</a> がポートの物理状態変更を正しく検知できていない場合に発生。<code>sudo systemctl restart pmon</code> で回復できることがある</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/4646">sonic-net/sonic-buildimage#4646</a></li>
-</ul>
-<h3 id="show-interface-transceiver-sonic-buildimage5001">最新ビルドで <code>show interface transceiver</code> コマンドが壊れている問題（sonic-buildimage#5001）<a class="headerlink" href="#show-interface-transceiver-sonic-buildimage5001" title="Permanent link">&para;</a></h3>
-<p>最新ビルドで <code>show interface transceiver</code> コマンドが壊れている問題。xcvrd の Python 3 移行後にインターフェース取得ロジックが変更されたため、パッケージのバージョン整合性を確認すること</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5001">sonic-net/sonic-buildimage#5001</a></li>
 </ul>
 <h3 id="master-pmon-platform-monitor-sonic-buildimage5759">最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題（sonic-buildimage#5759）<a class="headerlink" href="#master-pmon-platform-monitor-sonic-buildimage5759" title="Permanent link">&para;</a></h3>
 <p>最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題。プラットフォーム固有のドライバと pmon の Python 3 互換性を確認すること</p>
@@ -36481,29 +36340,9 @@ reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5759">sonic-net/sonic-buildimage#5759</a></li>
 </ul>
 <h3 id="sonic-pmon-sonic-buildimage5986">最新 SONiC イメージで PMON コンテナがクラッシュする問題（sonic-buildimage#5986）<a class="headerlink" href="#sonic-pmon-sonic-buildimage5986" title="Permanent link">&para;</a></h3>
-<p>最新 SONiC イメージで PMON コンテナがクラッシュする問題。プラットフォーム固有の Python プラグインが Python 3 に対応していない場合に発生</p>
+<p>最新 <a href="../../reference/glossary/#term-sonic">SONiC</a> イメージで PMON コンテナがクラッシュする問題。プラットフォーム固有の Python プラグインが Python 3 に対応していない場合に発生</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5986">sonic-net/sonic-buildimage#5986</a></li>
-</ul>
-<h3 id="multi-asic-chassis-asic-backend-pmon-xcvrd-sonic-buildimage6097">multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュする問題（sonic-buildimage#6097）<a class="headerlink" href="#multi-asic-chassis-asic-backend-pmon-xcvrd-sonic-buildimage6097" title="Permanent link">&para;</a></h3>
-<p>multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュする問題。xcvrd は FrontEnd ASIC の存在を前提としており、全 BackEnd 構成では初期化に失敗する</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6097">sonic-net/sonic-buildimage#6097</a></li>
-</ul>
-<h3 id="hwskujson-fec-sonic-buildimage6495">hwsku.json から FEC パラメータがデフォルト設定できない問題（sonic-buildimage#6495）<a class="headerlink" href="#hwskujson-fec-sonic-buildimage6495" title="Permanent link">&para;</a></h3>
-<p>hwsku.json から FEC パラメータがデフォルト設定できない問題。FEC の設定は <code>config interface fec</code> コマンドで明示的に行う必要がある</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6495">sonic-net/sonic-buildimage#6495</a></li>
-</ul>
-<h3 id="dpb-xcvrd-sfp-sonic-buildimage6499">DPB 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題（sonic-buildimage#6499）<a class="headerlink" href="#dpb-xcvrd-sfp-sonic-buildimage6499" title="Permanent link">&para;</a></h3>
-<p><a href="../../reference/glossary/#term-dpb">DPB</a> 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題。DPB 実行後に xcvrd の再起動が必要な場合がある</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6499">sonic-net/sonic-buildimage#6499</a></li>
-</ul>
-<h3 id="cmis-40-qsfp-dd-eeprom-sonic-buildimage6516">CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題（sonic-buildimage#6516）<a class="headerlink" href="#cmis-40-qsfp-dd-eeprom-sonic-buildimage6516" title="Permanent link">&para;</a></h3>
-<p>CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題。CMIS 4.0 対応の xcvrd バージョンが必要</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6516">sonic-net/sonic-buildimage#6516</a></li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
@@ -36515,7 +36354,7 @@ reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
 - ledd / xcvrd と新 daemon の責務境界の更新版 HLD 有無確認
 -->
 
-<!-- glossary-links-injected: f1ac8bca4a1f -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->
 
 <div class="footnote">
 <hr />
