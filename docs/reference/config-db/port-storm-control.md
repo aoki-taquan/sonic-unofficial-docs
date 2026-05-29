@@ -71,9 +71,7 @@ PORT_STORM_CONTROL|<ifname>|<storm_type>
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-storm-control`
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control-constants.md -->
+## ハードコード定数
 
 ### storm_type 文字列定数
 
@@ -109,8 +107,6 @@ storm control 用 SAI policer 作成時に常にハードコードされる属�
 
 <!-- defaults -->
 ## 暗黙デフォルトとハードコード挙動
-
-<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control-defaults.md -->
 
 ### kbps — YANG デフォルトなし・コード上必須
 
@@ -219,8 +215,6 @@ YANG にも CLI にも CBS・Green packet action・Yellow packet action は公�
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control.md -->
-
 ### consumer (policerorch) 例外動作
 - 不正/非サポートインターフェース: `Unsupported / Invalid interface %s` → SWSS_LOG_ERROR。
 - ポート未発見: `Failed to apply storm-control %s to port %s. Port not found` → SWSS_LOG_ERROR。
@@ -234,7 +228,7 @@ YANG にも CLI にも CBS・Green packet action・Yellow packet action は公�
 <!-- /cdb-exceptions -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
 `PORT_STORM_CONTROL` テーブルは以下の CONFIG_DB テーブルへ暗黙的に依存する。`policerorch.cpp` は CONFIG_DB の `PORT` テーブルを直接 lookup せず、`PortsOrch` のメモリ内キャッシュを介して PORT エントリの SAI object id を取得する。
 
@@ -243,8 +237,6 @@ YANG にも CLI にも CBS・Green packet action・Yellow packet action は公�
 | `PORT` | `PolicerOrch::handlePortStormControlTable()` — `gPortsOrch->getPort(interface_name, port)` (`policerorch.cpp:138`) | key の `<ifname>` を `PortsOrch::getPort()` で照合。PORT 未登録の場合は `SWSS_LOG_ERROR` を出力し `task_success` で silent drop (リトライなし) |
 | `PORT` (初期化状態) | `PolicerOrch::doTask()` — `gPortsOrch->allPortsReady()` (`policerorch.cpp:379`) | 全 PORT エントリ初期化完了まで `doTask()` を早期リターン。起動時に CONFIG_DB へ先書きされたエントリは silent defer される |
 | `PORT` (SAI oid) | `sai_port_api->set_port_attribute(port.m_port_id, ...)` (`policerorch.cpp:278, 291`) | `getPort()` で得た `port.m_port_id` (PORT 由来 SAI oid) を直接 SAI 呼び出しに渡す。CONFIG_DB には SAI oid は格納されない |
-
-詳細証跡: `meta/_intermediate/cdb-flow/port-storm-control-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- ref-triangle:start -->
@@ -308,7 +300,7 @@ show storm-control all
 <!-- /runtime-trace -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Producer/Consumer ペア
 
@@ -361,12 +353,12 @@ STATE_DB 書き込み: なし
 NotificationConsumer: なし
 ```
 
-> **証跡**: `sonic-swss/orchagent/orchdaemon.cpp:396-402` (TableConnector 登録)、`sonic-swss/orchagent/policerorch.cpp:374-407` (doTask / ディスパッチ / retry 制御)、`sonic-swss/orchagent/policerorch.cpp:120-300` (handlePortStormControlTable / SAI 呼び出し); 詳細分析 `meta/_intermediate/cdb-flow/port-storm-control-pubsub.md`
+> **裏取り**: `sonic-swss/orchagent/orchdaemon.cpp:396-402` (TableConnector 登録)、`sonic-swss/orchagent/policerorch.cpp:374-407` (doTask / ディスパッチ / retry 制御)、`sonic-swss/orchagent/policerorch.cpp:120-300` (handlePortStormControlTable / SAI 呼び出し)
 
 <!-- /pubsub -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 PORT_STORM_CONTROL テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -400,13 +392,13 @@ db_migrator.py での PORT_STORM_CONTROL マイグレーションなし
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 minigraph.py および init_cfg.json.j2 からの `PORT_STORM_CONTROL` 自動派生はなし。CLI (`config storm-control`) による手動設定のみ。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -422,7 +414,7 @@ minigraph.py および init_cfg.json.j2 からの `PORT_STORM_CONTROL` 自動派
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `PolicerOrch::handlePortStormControlTable()` の分岐:
 
@@ -434,14 +426,12 @@ minigraph.py および init_cfg.json.j2 からの `PORT_STORM_CONTROL` 自動派
 | `PolicerOrch` | `handlePortStormControlTable()` | 成功 または 失敗 | `task_success`/`task_failed` → `it = consumer.m_toSync.erase(it)` | `policerorch.cpp:397-401` |
 | `PolicerOrch` | `handlePortStormControlTable()` | `task_need_retry` | `it++` (リトライ) | `policerorch.cpp:402-405` |
 
-> **スキャン証跡**: `policerorch.cpp:374-407` を確認、5 件分岐抽出。PORT_STORM_CONTROL が PolicerOrch の `doTask()` 内で最優先にディスパッチされることを確認 — 誤読なし。
+> **裏取り**: `policerorch.cpp:374-407` を確認、5 件分岐抽出。PORT_STORM_CONTROL が PolicerOrch の `doTask()` 内で最優先にディスパッチされることを確認 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control-platform.md -->
+## プラットフォーム / SAI Capability 差異
 
 ### SAI capability チェックなし — orchagent は直接 push
 
@@ -477,7 +467,7 @@ minigraph.py および init_cfg.json.j2 からの `PORT_STORM_CONTROL` 自動派
 <!-- /platform -->
 
 <!-- ordering -->
-## 順序依存性 (Phase B)
+## 順序依存性
 
 ### PORT 先行制約
 
@@ -512,9 +502,8 @@ policer 名は `_<interface_name>_<storm_type>` 形式で自動生成される�
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control-failure.md -->
 <!-- source: sonic-swss/orchagent/policerorch.cpp — handlePortStormControlTable() -->
 
 ### PORT 未解決 → silent drop
@@ -567,11 +556,9 @@ update 時の remove-then-reapply フローで、一時解除の `set_port_attri
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `PORT_STORM_CONTROL` への変更が連鎖して書き込まれる副次テーブル一覧。
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/port-storm-control-phaseF-side-effects.md`
 
 | 副次 DB | オブジェクト / テーブル | 操作 | 条件 | evidence |
 |---|---|---|---|---|

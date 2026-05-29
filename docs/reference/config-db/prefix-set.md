@@ -146,20 +146,20 @@ vtysh -c 'show ip prefix-list'
 [^2]: YANG 定義: `sonic-routing-policy-sets.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang>
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 frrcfgd の `PrefixSetMgr` が `ip_prefix` の形式（`:` を含むか否か）に基づいて FRR コマンド種別を自動決定する。IPv6 → `ipv6 prefix-list`、IPv4 → `ip prefix-list`。CONFIG_DB 内フィールド間の自動付与なし。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 frrcfgd は常時起動し `PrefixSetMgr` を無条件登録する。[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework が非インストールの場合は frrcfgd 自体が存在しない（`PREFIX_SET` を消費するプロセスなし）。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -167,12 +167,12 @@ frrcfgd は常時起動し `PrefixSetMgr` を無条件登録する。[sonic-mgmt
 | `PrefixSetMgr` | `ip_prefix` に `.` 含む (IPv4) | `ip prefix-list` コマンド生成 | frrcfgd prefix_set manager |
 | `PrefixSetMgr` | del_handler | FRR に `no ip prefix-list` 発行 | frrcfgd prefix_set manager |
 
-> **スキャン証跡**: PREFIX_SET は [BGP](../../reference/glossary.md#term-bgp) 汎用ルーティングポリシーセット用。frrcfgd 経由で FRR に設定。CONFIG_DB 内の自動派生なし。
+> **裏取り**: PREFIX_SET は BGP 汎用ルーティングポリシーセット用。frrcfgd 経由で FRR に設定。CONFIG_DB 内の自動派生なし。
 
 <!-- /handler-branching -->
 
 <!-- defaults -->
-## フィールドの暗黙デフォルト (Phase A)
+## フィールドの暗黙デフォルト
 
 frrcfgd (`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`) のコード精読により判明したコード由来のデフォルトと、YANG 宣言との乖離点[^fdef]。
 
@@ -220,7 +220,7 @@ YANG モードで投入する経路（sonic-yang-mgmt / [sonic-cfggen](../../ref
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 PREFIX_SET テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -254,7 +254,7 @@ db_migrator.py での PREFIX_SET マイグレーションなし
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `frrcfgd` (`bgp_table_handler_common`) が `PREFIX_SET` / `PREFIX` / `ROUTE_MAP` 三者間の順序依存を持つ。`frrcfgd.py` L2227-2246, L2894-2916, L2663-2676 および `sonic-route-map.yang:163-187` の精読から抽出。
 
@@ -290,15 +290,12 @@ runtime で既存 `PREFIX_SET|<name>` に SET イベントが届いても `mode`
 
 frrcfgd init (L2227-2245) は `PREFIX_SET` → `PREFIX` の順でテーブルを読み込む。起動時は順序衝突なし。runtime の非同期イベントのみ順序依存が問題となる。
 
-<!-- evidence: frrcfgd.py:83,87,2227-2246,2894-2916,2663-2676; sonic-route-map.yang:163-187 -->
-
-> 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-ordering.md` を参照
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-YANG leafref および frrcfgd 実装スキャンにより確認した参照先・被参照テーブル一覧。詳細は `meta/_intermediate/cdb-flow/prefix-set-cross-refs.md` を参照。
+YANG leafref および frrcfgd 実装スキャンにより確認した参照先・被参照テーブル一覧。
 
 | 参照先テーブル / リソース | 参照方向 | 参照フィールド | 条件・備考 |
 |--------------------------|---------|--------------|-----------|
@@ -311,11 +308,10 @@ YANG leafref および frrcfgd 実装スキャンにより確認した参照先�
 !!! note "match_ipv6_prefix_set は dead field"
     `sonic-route-map.yang` では `match_ipv6_prefix_set` に `PREFIX_SET` への leafref が定義されているが、frrcfgd の `route_map_key_map`（`frrcfgd.py:1928-1929`）には `match_prefix_set|ipv4` / `match_prefix_set|ipv6` のエントリのみ存在し `match_ipv6_prefix_set` のエントリはない。CONFIG_DB に書いても frrcfgd が処理せず FRR に反映されない。
 
-> 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-cross-refs.md` を参照
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 frrcfgd は PREFIX_SET / PREFIX の変換失敗をすべて **syslog LOG_ERR + `continue`** で処理する。retry・rollback（DEL 失敗時のみ例外）・[STATE_DB](../../reference/glossary.md#term-state_db) 記録はない。
 
@@ -332,7 +328,7 @@ LOG_ERR: 'no mode given for prefix-set <name>'
 ### 2. 既存 PREFIX_SET への重複 SET → 無言スキップ
 
 既存エントリへの SET 時は LOG_DEBUG のみ出力し更新をスキップする（`frrcfgd.py:2896-2900`）。
-`mode` 変更は実行時に**反映されない**。変更には DEL → SET のシーケンスが必要（Phase B 参照）。
+`mode` 変更は実行時に**反映されない**。変更には DEL → SET のシーケンスが必要（書込み順依存参照）。
 
 ### 3. PREFIX_SET 未登録状態で PREFIX エントリが届く → LOG_ERR + DROP
 
@@ -400,14 +396,14 @@ vtysh -c 'show ip prefix-list'
 vtysh -c 'show ipv6 prefix-list'
 ```
 
-> **スキャン証跡**: `frrcfgd.py` L2894-2910 (PREFIX_SET ハンドラ), L2911-2997 (PREFIX ハンドラ), L181-218 (接続 retry)。詳細は `meta/_intermediate/cdb-flow/prefix-set-failure.md` を参照。
+> **裏取り**: `frrcfgd.py` L2894-2910 (PREFIX_SET ハンドラ), L2911-2997 (PREFIX ハンドラ), L181-218 (接続 retry)。
 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-frrcfgd が `PREFIX_SET` / `PREFIX` テーブル処理でハードコードしている定数一覧。詳細は `meta/_intermediate/cdb-flow/prefix-set-constants.md` を参照。
+frrcfgd が `PREFIX_SET` / `PREFIX` テーブル処理でハードコードしている定数一覧。
 
 ### TABLE_DAEMON ディスパッチ定数 (frrcfgd.py:83)
 
@@ -447,13 +443,10 @@ frrcfgd が発行する FRR コマンド文字列（frrcfgd.py:2945, 2960, 2977,
 | PREFIX_SET DEL (IPv4) | `no ip prefix-list <name>` |
 | PREFIX_SET DEL (IPv6) | `no ipv6 prefix-list <name>` |
 
-<!-- evidence: frrcfgd.py:83,1606-1607,1665,2904,2945,2960,2977,2991 -->
-
-> 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-constants.md` を参照
 <!-- /constants -->
 
 <!-- side-effects -->
-## 変更波及 / 副作用 (Phase F)
+## 変更波及 / 副作用
 
 PREFIX_SET / PREFIX の変更は frrcfgd 経由で FRR に即時反映され、ルーティングポリシー・BGP・OSPF・PIM に連鎖的な影響を及ぼす。CONFIG_DB 内の他テーブルへの直接書き込みはない。
 
@@ -490,13 +483,10 @@ frrcfgd は FRR への prefix-list 変更後に明示的な `clear ip bgp` コ�
 
 PREFIX_SET / PREFIX の変更は CONFIG_DB 内他テーブル・[APPL_DB](../../reference/glossary.md#term-appl_db)・[STATE_DB](../../reference/glossary.md#term-state_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db) を直接書き換えない。すべての副作用は FRR vtysh コマンド経由の FRR 内部状態変更のみ。
 
-<!-- evidence: frrcfgd.py:83,87,2931,2945,2960,2974-2981 -->
-
-> 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-side-effects.md` を参照
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## CONFIG_DB 購読メカニズム (Phase G)
+## CONFIG_DB 購読メカニズム
 
 PREFIX_SET / PREFIX テーブルを購読するデーモンは **frrcfgd** のみ。bgpcfgd はこれらのテーブルを直接購読しない。
 
@@ -533,14 +523,13 @@ CONFIG_DB PREFIX_SET / PREFIX
                     適用デーモン: IPv4 → 全デーモン / IPv6 → ['bgpd', 'zebra']
 ```
 
-> **スキャン証跡**: `frrcfgd.py` L2298-2299 (table_handler_list 登録), L2359-2361 (subscribe_all), L1536-1552 (listen_thread/psubscribe), L2894-2910 (PREFIX_SET ハンドラ), L2911-2936 (PREFIX ハンドラ)。`bgpd.conf.db.pref_list.j2` L1-42 (Jinja2 テンプレート)。詳細は `meta/_intermediate/cdb-flow/prefix-set-pubsub.md` を参照。
+> **裏取り**: `frrcfgd.py` L2298-2299 (table_handler_list 登録), L2359-2361 (subscribe_all), L1536-1552 (listen_thread/psubscribe), L2894-2910 (PREFIX_SET ハンドラ), L2911-2936 (PREFIX ハンドラ)。`bgpd.conf.db.pref_list.j2` L1-42 (Jinja2 テンプレート)。
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 > 調査対象: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`, `templates/bgpd/bgpd.conf.db.pref_list.j2`, `sonic-device_metadata.yang`
-> 調査日: 2026-05-19
 
 **プラットフォーム固有差異なし**: PREFIX_SET は FRR (`bgpd` / `zebra`) 制御プレーン上の prefix-list であり [SAI](../../reference/glossary.md#term-sai) 非経由。[ASIC](../../reference/glossary.md#term-asic) 種別（Broadcom / Mellanox / Marvell / Innovium / VPP）・[VOQ](../../reference/glossary.md#term-voq) chassis / chassis-packet・multi-asic namespace・ベンダー image_config のいずれにも分岐コードは存在しない。
 
@@ -574,7 +563,6 @@ PREFIX テーブルのエントリ処理では `PREFIX_SET.mode` の AF に応�
 
 根拠: `frrcfgd.py:2931-2936`
 
-> 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-platform.md` を参照
 <!-- /platform -->
 
 <!-- glossary-links-injected: e6bce8d842ac -->

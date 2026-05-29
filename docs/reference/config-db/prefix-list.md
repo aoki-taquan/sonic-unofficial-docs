@@ -171,25 +171,25 @@ PREFIX_LIST テーブルは全フィールドが key または YANG `must` 制�
 | `ip-prefix` | なし (key) | なし | key フィールド。PrefixListMgr が `netaddr.IPNetwork().cidr` で正規化するのみ |
 | `family` | なし | なし | YANG `must` で `ip-prefix` と整合チェック。FRR 展開の IPv4/IPv6 判定は `get_ip_type()` が `ip-prefix` の netaddr version から動的に導出（`family` フィールドは不使用） |
 
-> **スキャン証跡**: `managers_prefix_list.py` L112 `data["ipv"] = self.get_ip_type(prefix)`、L138-143 `get_ip_type` 全行読了。`sonic-bgp-prefix-list.yang` の `family` leaf に `default` 文なし確認済み。
+> **裏取り**: `managers_prefix_list.py` L112 `data["ipv"] = self.get_ip_type(prefix)`、L138-143 `get_ip_type` 全行読了。`sonic-bgp-prefix-list.yang` の `family` leaf に `default` 文なし確認済み。
 
 <!-- /defaults -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 bgpcfgd の `PrefixListMgr` が `family` フィールドの値に基づいて FRR コマンド種別を自動決定する。`family==IPv6` → `ipv6 prefix-list`、`family==IPv4` → `ip prefix-list`。`constants` に `bgp.prefix_list.<type>.ipv4_name` が定義されていれば、リスト名を上書きする（暗黙的派生）。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 bgpcfgd は platform 非依存で常時起動し `PrefixListMgr` を無条件登録する。ただし `DEVICE_METADATA|localhost` が未存在の場合は `bgp_asn` / `type` キーが取得できずリトライ待ちになる。`ANCHOR_PREFIX` は SpineRouter / UpperSpineRouter 以外のデバイスではスキップされる。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -199,12 +199,12 @@ bgpcfgd は platform 非依存で常時起動し `PrefixListMgr` を無条件登
 | `PrefixListMgr` | `netaddr.IPNetwork()` 解析失敗 | `log_warn` + return True (エントリスキップ) | `managers_prefix_list.py` |
 | `PrefixListMgr` | `ANCHOR_PREFIX` + SpineRouter 以外 | `log_warn` + スキップ | `managers_prefix_list.py` |
 
-> **スキャン証跡**: `managers_prefix_list.py` 全体読了。[CONFIG_DB](../../reference/glossary.md#term-config_db) 内フィールド間の自動派生なし（Phase 6 は FRR テキスト変換のみ）。
+> **裏取り**: `managers_prefix_list.py` 全体読了。CONFIG_DB 内フィールド間の自動派生なし（FRR テキスト変換のみ）。
 
 <!-- /handler-branching -->
 
 <!-- ordering -->
-## 順序依存性 (Phase B)
+## 順序依存性
 
 ### PREFIX_LIST エントリの順序
 
@@ -231,7 +231,7 @@ bgpcfgd が PrefixListMgr 経由で FRR に送出するテンプレートコマ�
 
 **注意**: `ANCHOR_PREFIX` テンプレートは prefix-list 設定と BGP aggregate-address（route-map `TAG_ANCHOR_COMMUNITY` 参照）を **同一 [vtysh](../../reference/glossary.md#term-vtysh) セッション**で送出する。prefix-list の欠如により aggregate-address が無効化されるリスクを避けるため、両者は `cfg_mgr.push()` により原子的に適用される。
 
-> **スキャン証跡**: `managers_prefix_list.py`、`add_radian.conf.j2`、`add_suppress_prefix.conf.j2`、`bgpd.main.conf.j2`、`frrcfgd.py` (table_handler_list L2293-2338) を確認。
+> **裏取り**: `managers_prefix_list.py`、`add_radian.conf.j2`、`add_suppress_prefix.conf.j2`、`bgpd.main.conf.j2`、`frrcfgd.py` (table_handler_list L2293-2338) を確認。
 
 <!-- /ordering -->
 
@@ -258,7 +258,7 @@ bgpcfgd が PrefixListMgr 経由で FRR に送出するテンプレートコマ�
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 PREFIX_LIST テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -292,7 +292,7 @@ db_migrator.py での PREFIX_LIST マイグレーションなし
 <!-- /entry-points -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `managers_prefix_list.py` の `PREFIX_TYPE_CONFIG` 辞書および `PrefixListMgr` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_prefix_list.py`。
 
@@ -354,7 +354,7 @@ db_migrator.py での PREFIX_LIST マイグレーションなし
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込・外部状態変化 (Phase F)
+## 副次 DB 書込・外部状態変化
 
 ### FRR vtysh コマンド経路
 
@@ -403,7 +403,7 @@ exit
 <!-- /side-effects -->
 
 <!-- failure -->
-## 失敗挙動・エラーパス (Phase D)
+## 失敗挙動・エラーパス
 
 ### 不正 prefix 文字列
 
@@ -440,7 +440,7 @@ except (netaddr.NotRegisteredError, netaddr.AddrFormatError, netaddr.AddrConvers
 <!-- /failure -->
 
 <!-- pubsub -->
-## CONFIG_DB 購読メカニズム (Phase G)
+## CONFIG_DB 購読メカニズム
 
 PREFIX_LIST テーブルは `bgpcfgd` (`docker-fpm-frr`) が `swsscommon.SubscriberStateTable` で購読する。
 
@@ -498,7 +498,7 @@ CONFIG_DB PREFIX_LIST (SubscriberStateTable)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 ### FRR バージョン差
 

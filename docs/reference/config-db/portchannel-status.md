@@ -77,7 +77,7 @@ LAG_TABLE:<lag_name>
 - **[intfmgrd](../../reference/glossary.md#term-intfmgrd)**: `STATE_LAG_TABLE` ([STATE_DB](../../reference/glossary.md#term-state_db)) の `state: ok` を確認してから [LAG](../../reference/glossary.md#term-lag) インタフェースの設定を適用する
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 > **注記**: [YANG](../../reference/glossary.md#term-yang) `default` 指定がない APPL_DB フィールドでも、teamsyncd / teammgrd がコード内でデフォルト値を注入する。以下は実装精読から検出した暗黙デフォルトと挙動。
 
@@ -134,7 +134,7 @@ LAG_TABLE:<lag_name>
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 APPL_DB `LAG_TABLE` への書き込みは **teamsyncd** (カーネル RTM_NEWLINK 駆動) と **teammgrd** (CONFIG_DB PORTCHANNEL 変更駆動) の 2 プロセスが担う。両者の間と orchagent (consumer) 側に以下の順序依存がある。
 
@@ -160,7 +160,7 @@ APPL_DB `LAG_TABLE` への書き込みは **teamsyncd** (カーネル RTM_NEWLIN
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 [YANG](../../reference/glossary.md#term-yang) leafref を超えた他テーブル・他 DB・プロセスへの実装上の依存関係。
 
@@ -183,7 +183,7 @@ APPL_DB `LAG_TABLE` への書き込みは **teamsyncd** (カーネル RTM_NEWLIN
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 APPL_DB `LAG_TABLE` の書き込み経路（teamsyncd / teammgrd）と orchagent (PortsOrch) の消費経路それぞれで、以下の失敗パスが存在する。
 
@@ -210,7 +210,7 @@ APPL_DB `LAG_TABLE` の書き込み経路（teamsyncd / teammgrd）と orchagent
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 以下の定数は `sonic-swss/cfgmgr/portmgr.h`、`sonic-swss/cfgmgr/shellcmd.h`、`sonic-swss/cfgmgr/teammgr.cpp`、`sonic-swss/teamsyncd/teamsync.h` から検出したマジックナンバー・パス・閾値。
 
@@ -236,7 +236,7 @@ APPL_DB `LAG_TABLE` の書き込み経路（teamsyncd / teammgrd）と orchagent
 <!-- /constants -->
 
 <!-- side-effects -->
-## SET/DEL 副次 DB 書込み (Phase F)
+## SET/DEL 副次 DB 書込み
 
 `APPL_DB LAG_TABLE` エントリの SET / DEL が引き起こす他 DB・他テーブル・カーネルへの副次書込み一覧。
 
@@ -294,7 +294,7 @@ CONFIG_DB `PORTCHANNEL` の SET が入力だが、`setLagMtu()` は LAG 本体�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 ### 書き込み側の通信構造
 
@@ -396,9 +396,7 @@ teamsyncd::addLag() → Table::set (通常 HSET)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差・SAI capability 分岐 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-status-platform.md`
+## プラットフォーム差・SAI capability 分岐
 
 ### Mellanox — LAG_MEMBER の collection/distribution 操作順が固定
 

@@ -100,9 +100,9 @@ POLICER|<name>
 - 関連 CLI: なし（`config_db.json` で投入）
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> 根拠: `policerorch.cpp` 全行精読。evidence: `meta/_intermediate/cdb-flow/policer-constants.md`
+> 根拠: `policerorch.cpp` 全行精読。
 
 ### enum マップ — CONFIG_DB 値 → SAI 属性
 
@@ -177,9 +177,9 @@ storm-control 由来の SAI policer は `POLICER` テーブルとは独立した
 <!-- /constants -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
-> 根拠: `policerorch.cpp` 全行精読。evidence: `meta/_intermediate/cdb-flow/policer-defaults.md`
+> 根拠: `policerorch.cpp` 全行精読。
 
 | フィールド | 省略時の実挙動 | 分類 |
 |-----------|--------------|------|
@@ -256,8 +256,6 @@ storm-control update パスでは **`CIR` のみ** SAI に渡す。`CBS` は upd
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
-
-<!-- evidence: meta/_intermediate/cdb-flow/policer.md -->
 
 ### consumer (policerorch) 例外動作
 - 重複 SET: 既存 policer は update パスへ分岐 (`policerExists()` チェック)。
@@ -337,7 +335,7 @@ show policer
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 POLICER テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -371,13 +369,13 @@ db_migrator.py での POLICER マイグレーションなし
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 minigraph.py および init_cfg.json.j2 からの `POLICER` 自動派生はなし。CLI (`config policer`) による手動設定のみ。`MIRROR_SESSION` の `policer` フィールドから参照されるが、`POLICER` エントリ自体は手動作成が必要。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -394,7 +392,7 @@ minigraph.py および init_cfg.json.j2 からの `POLICER` 自動派生はな�
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `PolicerOrch::doTask()` の分岐:
 
@@ -407,14 +405,14 @@ minigraph.py および init_cfg.json.j2 からの `POLICER` 自動派生はな�
 | `PolicerOrch` | `doTask()` SET | フィールド名が既知の enum 外 | ERROR ログ + `continue` (フィールドスキップ) | `policerorch.cpp:478-483` |
 | `PolicerOrch` | `doTask()` DEL | ポリサーが参照カウント > 0 | ERROR ログ + it++ (参照中は削除スキップ) | `policerorch.cpp` |
 
-> **スキャン証跡**: `policerorch.cpp:374-520` を全行読了、6 件分岐抽出。PolicerOrch が PORT_STORM_CONTROL も兼務することを確認 — 誤読なし。
+> **裏取り**: `policerorch.cpp:374-520` を全行読了、6 件分岐抽出。PolicerOrch が PORT_STORM_CONTROL も兼務することを確認 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
-> 根拠: `policerorch.cpp` 全行精読、`orchdaemon.cpp:1292-1312`。evidence: `meta/_intermediate/cdb-flow/policer-platform.md`
+> 根拠: `policerorch.cpp` 全行精読、`orchdaemon.cpp:1292-1312`。
 
 ### SAI Capability クエリ
 
@@ -472,9 +470,9 @@ storm-control UPDATE パスでは `CIR` のみ SAI に渡し、`CBS` は更新�
 <!-- /platform -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> 根拠: `policerorch.cpp` L374-589 全行精読、`mirrororch.cpp` L432-441、`orchdaemon.cpp` L396-402。evidence: `meta/_intermediate/cdb-flow/policer-ordering.md`
+> 根拠: `policerorch.cpp` L374-589 全行精読、`mirrororch.cpp` L432-441、`orchdaemon.cpp` L396-402。
 
 ### 順序依存サマリ
 
@@ -510,9 +508,9 @@ storm-control UPDATE パスでは `CIR` のみ SAI に渡し、`CBS` は更新�
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-> 根拠: `policerorch.cpp` L374-589 全行精読。evidence: `meta/_intermediate/cdb-flow/policer-failure.md`
+> 根拠: `policerorch.cpp` L374-589 全行精読。
 
 ### SET (create) 失敗
 
@@ -570,11 +568,9 @@ sai_status_t status = sai_policer_api->create_policer(...);
 <!-- /failure -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `POLICER` は YANG 未定義テーブルのため leafref は存在しない。以下はすべて実装レベルの暗黙参照。
-
-> evidence: `meta/_intermediate/cdb-flow/policer-cross-refs.md`
 
 | 参照元テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
@@ -597,9 +593,7 @@ sai_status_t status = sai_policer_api->create_policer(...);
 <!-- /cross-refs -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> evidence: `meta/_intermediate/cdb-flow/policer-pubsub.md`
+## 通信メカニズム
 
 ### 購読 API — `SubscriberStateTable` (keyspace 通知ベース)
 
@@ -688,9 +682,9 @@ APP_DB への書き込みは行われない。`PolicerOrch` は生成した SAI 
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> 根拠: `policerorch.cpp` 全行精読、`crmorch.cpp` / `p4orch/acl_rule_manager.cpp` 確認。evidence: `meta/_intermediate/cdb-flow/policer-side-effects.md`
+> 根拠: `policerorch.cpp` 全行精読、`crmorch.cpp` / `p4orch/acl_rule_manager.cpp` 確認。
 
 ### ASIC_DB
 
