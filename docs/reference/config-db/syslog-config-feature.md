@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-`SYSLOG_CONFIG.GLOBAL` の rate-limit を `FEATURE` (docker) ごとに上書きするテーブル[^1]。`containercfgd` (`SyslogHandler`) が読み出し、対象 docker のコンテナ内 rsyslog 設定 (例 `/etc/rsyslog.d/`) を再生成する。`hostcfgd` は本テーブルを購読しない（Phase G 参照）。
+`SYSLOG_CONFIG.GLOBAL` の rate-limit を `FEATURE` (docker) ごとに上書きするテーブル[^1]。`containercfgd` (`SyslogHandler`) が読み出し、対象 docker のコンテナ内 rsyslog 設定 (例 `/etc/rsyslog.d/`) を再生成する。`hostcfgd` は本テーブルを購読しない（「通信メカニズム」参照）。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -57,7 +57,7 @@ SYSLOG_CONFIG_FEATURE|<service>
 `SYSLOG_CONFIG` と異なり、`format`/`severity` 等は持たない (rate-limit 専用テーブル)。
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 YANG `default` 文を持たないフィールドについて、`containercfgd` (`sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py`) が実行時に与える暗黙デフォルト[^defaults-cfgd]。
 
@@ -111,7 +111,7 @@ YANG `default` 文を持たないフィールドについて、`containercfgd` (
 - [CONFIG_DB: FEATURE](feature.md)
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `containercfgd` (`SyslogHandler`) は `ConfigDBConnector.connect(wait_for_init=True, retry_on=True)` で CONFIG DB 初期化完了を待ってから変更を受信する。CLI 経由の書き込みでは `FEATURE` テーブルの先行存在が強制される。
 
@@ -133,10 +133,9 @@ YANG `default` 文を持たないフィールドについて、`containercfgd` (
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
-> **調査根拠**: `containercfgd.py`・`feature.py`・`rsyslog-container.conf.j2` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/syslog-config-feature-cross-refs.md`
+> **Evidence**: `containercfgd.py`・`feature.py`・`rsyslog-container.conf.j2` 全行精読 (2026-05-17)
 
 `SYSLOG_CONFIG_FEATURE` テーブルは実行時に以下のテーブルを暗黙参照する。
 
@@ -165,10 +164,9 @@ YANG `sonic-syslog.yang` の `leaf service` が `FEATURE_LIST.name` を `leafref
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 障害モード・エラー伝播 (Phase D)
+## 障害モード・エラー伝播
 
-> **調査根拠**: `containercfgd.py` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/syslog-config-feature-failure.md`
+> **Evidence**: `containercfgd.py` 全行精読 (2026-05-17)
 
 ### 障害経路一覧
 
@@ -190,7 +188,7 @@ YANG `sonic-syslog.yang` の `leaf service` が `FEATURE_LIST.name` を `leafref
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `containercfgd` (`SyslogHandler`) および `rsyslog-container.conf.j2` テンプレートに存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
 
@@ -250,15 +248,13 @@ evidence: `containercfgd.py:155-159`
 | `queue.size` | `"20000"` | 転送キューサイズ（メッセージ数） |
 | OMRELP ポート | `"2514"` | `$SYSLOG_TARGET_IP` 宛転送ポート |
 
-evidence: `rsyslog-container.conf.j2:63` / `meta/_intermediate/cdb-flow/syslog-config-feature-constants.md`
 
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> **調査根拠**: `containercfgd.py` 全行精読 (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/syslog-config-feature-side-effects.md`
+> **Evidence**: `containercfgd.py` 全行精読 (2026-05-18)
 
 `containercfgd` (`SyslogHandler`) は `SYSLOG_CONFIG_FEATURE` を **CONFIG_DB からの読取専用**で使用し、いかなる DB へも書き戻さない。副次書込はファイルシステムおよびプロセス管理に閉じる。
 
@@ -287,10 +283,9 @@ evidence: `rsyslog-container.conf.j2:63` / `meta/_intermediate/cdb-flow/syslog-c
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `containercfgd/containercfgd.py` 全行精読 (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/syslog-config-feature-pubsub.md`
+> **Evidence**: `containercfgd/containercfgd.py` 全行精読 (2026-05-18)
 
 ### Redis 購読方式
 
@@ -339,13 +334,13 @@ containercfgd 起動
 - **常駐 daemon による即時反映**: CLI 書き込み後、コンテナ内 `containercfgd` が keyspace 通知を受信して数百ミリ秒以内に rsyslog を再設定する（ポーリング不要）。
 - **per-container 分離**: 各コンテナが独立した `containercfgd` インスタンスを保持し、`key != service_name` で他コンテナ向けエントリを無視。同一 [Redis](../../reference/glossary.md#term-redis) の変更通知を全コンテナが受信しても、自コンテナ分のみ処理する。
 - **[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) 非使用**: CONFIG_DB のみ。pub/sub チャンネル (`PUBLISH`/`SUBSCRIBE`) や `NotificationProducer`/`NotificationConsumer` は不使用。
-- **冪等性の欠如**: `current_interval` / `current_burst` キャッシュが成功時のみ更新されるため、失敗後の再適用には意図的に値を変えてから戻す操作が必要（Phase D 参照）。
+- **冪等性の欠如**: `current_interval` / `current_burst` キャッシュが成功時のみ更新されるため、失敗後の再適用には意図的に値を変えてから戻す操作が必要（「障害モード・エラー伝播」参照）。
 
 <!-- evidence: sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py L44-61,112-135 -->
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `SYSLOG_CONFIG_FEATURE` は `containercfgd` が CONFIG_DB のみを参照し [SAI](../../reference/glossary.md#term-sai) を経由しないため、[ASIC](../../reference/glossary.md#term-asic) ベンダー差異は存在しない。multi-asic 環境では CLI と `containercfgd` の連携に固有の挙動がある。
 
@@ -375,7 +370,6 @@ CONFIG_DB に書き込む際も `SYSLOG_CONFIG_FEATURE|swss` 形式（asic suffi
 !!! warning "`rstrip` による予期しない除去"
     Python の `str.rstrip(chars)` は引数を **文字集合**として扱うため、`NAMESPACE_ID="10"` のとき `"syncd10".rstrip("10")` は `"syncd"` ではなく `"sync"` になる場合がある（末尾の `'1'` と `'0'` を個別に除去）。これはコード上の既知の制約であり、実運用では単一数字の namespace id (`0`..`9`) が前提となっている。
 
-詳細調査ログは `meta/_intermediate/cdb-flow/syslog-config-feature-platform.md` を参照。
 
 <!-- evidence: containercfgd/containercfgd.py:190-195, syslog_util/common.py:92-104, config/syslog.py:469-501 -->
 <!-- /platform -->
@@ -429,20 +423,20 @@ docker exec swss cat /etc/rsyslog.d/*.conf
 <!-- /ops-hint -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 `containercfgd` が `SYSLOG_CONFIG_FEATURE` の per-feature rate limit 設定を読み、未設定の場合は `SYSLOG_CONFIG` グローバル値を継承させる（フォールバック自動派生）。`rate_limit_interval` / `rate_limit_burst` が設定されている feature のみ個別 rsyslog conf ファイルが生成される。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 `containercfgd` は対象コンテナ内で常駐し `SYSLOG_CONFIG_FEATURE` テーブルを無条件購読する。Feature が `FEATURE` テーブルに登録されていない場合は per-feature syslog 設定が参照されない。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -451,7 +445,7 @@ docker exec swss cat /etc/rsyslog.d/*.conf
 | `containercfgd` (`SyslogHandler`) | フィールド未設定 | グローバル `SYSLOG_CONFIG` の値にフォールバック | `containercfgd.py` |
 | `containercfgd` (`SyslogHandler`) | エントリ削除 | feature 別 conf ファイルを削除して rsyslog reload | `containercfgd.py` |
 
-> **スキャン証跡**: `SYSLOG_CONFIG_FEATURE` は per-feature の syslog rate limit 設定。未設定時は `SYSLOG_CONFIG` グローバル値への暗黙的なフォールバックが Phase 6 派生相当。
+> **裏取り**: `SYSLOG_CONFIG_FEATURE` は per-feature の syslog rate limit 設定。未設定時は `SYSLOG_CONFIG` グローバル値への暗黙的なフォールバックが 派生相当。
 
 <!-- /handler-branching -->
 
@@ -477,7 +471,7 @@ docker exec swss cat /etc/rsyslog.d/*.conf
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 SYSLOG_CONFIG_FEATURE テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -510,7 +504,7 @@ db_migrator.py での SYSLOG_CONFIG_FEATURE マイグレーションなし
 なし
 <!-- /entry-points -->
 
-## 書込み順依存 (Phase B) (補足)
+## 書込み順依存 (補足)
 
 `SYSLOG_CONFIG_FEATURE` は per-container の syslog rate-limit 設定テーブルで、
 `containercfgd` (`sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py`) が購読する。

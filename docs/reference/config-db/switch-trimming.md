@@ -81,9 +81,9 @@ SWITCH_TRIMMING|GLOBAL
 - [CONFIG_DB index](index.md)
 
 <!-- defaults -->
-## コード由来のデフォルト・暗黙挙動 (Phase A)
+## コード由来のデフォルト・暗黙挙動
 
-> **調査根拠**: `sonic-swss/orchagent/switchorch.cpp` `SwitchOrch::setSwitchTrimming()` L1066–1304 + `orchagent/switch/trimming/{container.h, helper.cpp, capabilities.cpp, schema.h}` 全体精読 (2026-05-16)。`portsorch.cpp` の trim 関連は `nvda_port_trim_drop.lua` 統合と `DROPPED_TRIM_PACKETS` / `TX_TRIM_PACKETS` カウンタのみで、フィールド既定値処理は無い。
+> **Evidence**: `sonic-swss/orchagent/switchorch.cpp` `SwitchOrch::setSwitchTrimming()` L1066–1304 + `orchagent/switch/trimming/{container.h, helper.cpp, capabilities.cpp, schema.h}` 全体精読 (2026-05-16)。`portsorch.cpp` の trim 関連は `nvda_port_trim_drop.lua` 統合と `DROPPED_TRIM_PACKETS` / `TX_TRIM_PACKETS` カウンタのみで、フィールド既定値処理は無い。
 
 | フィールド | YANG default | switchorch 実装の実効デフォルト | 備考 |
 |-----------|-------------|------------------------------|------|
@@ -216,20 +216,20 @@ show switch-trimming
 <!-- /ops-hint -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 SwitchOrch が `dscp_value` フィールドの**値の種類**から SAI DSCP resolution mode を自動決定する。`dscp_value` が数値 → `SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_DSCP_VALUE`、`dscp_value` が `"from-tc"` → `SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_FROM_TC`、未指定 → SAI 属性送信なし (ベンダー依存デフォルト)。`queue` フィールドの値の種類も同様に SAI queue resolution mode を自動決定する。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 SwitchOrch は常時登録し `SWITCH_TRIMMING` テーブルを無条件購読する。`SWITCH_TRIMMING|GLOBAL` エントリのみ有効（シングルトン制約）。SAI trim capability 未サポートの場合はログのみで継続。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -240,7 +240,7 @@ SwitchOrch は常時登録し `SWITCH_TRIMMING` テーブルを無条件購読�
 | `SwitchOrch` | `queue` フィールドあり | STATIC モード + 指定キュー番号を SAI に設定 | `switchorch.cpp` |
 | `SwitchOrch` | del_handler | SAI trim 設定を解除 | `switchorch.cpp` |
 
-> **スキャン証跡**: `SWITCH_TRIMMING` はパケットトリミング機能の設定。`dscp_value` / `queue` の有無が SAI resolution mode を自動決定する点が主要 Phase 6 派生。
+> **裏取り**: `SWITCH_TRIMMING` はパケットトリミング機能の設定。`dscp_value` / `queue` の有無が SAI resolution mode を自動決定する点が主要な自動派生。
 
 <!-- /handler-branching -->
 
@@ -266,7 +266,7 @@ SwitchOrch は常時登録し `SWITCH_TRIMMING` テーブルを無条件購読�
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 SWITCH_TRIMMING テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -300,9 +300,8 @@ db_migrator.py での SWITCH_TRIMMING マイグレーションなし
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
-<!-- evidence: meta/_intermediate/cdb-flow/switch-trimming-ordering.md -->
 
 `SwitchOrch::doCfgSwitchTrimmingTableTask()` (`sonic-swss/orchagent/switchorch.cpp`) と
 `SwitchTrimmingCapabilities` (`orchagent/switch/trimming/capabilities.cpp`) の実装から導出した順序制約。
@@ -337,7 +336,7 @@ SET ハンドラが受け取ったフィールド群を `parseTrimConfig()` で�
 ---
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `SwitchOrch::doCfgSwitchTrimmingTableTask()` (`sonic-swss/orchagent/switchorch.cpp`) は他の Orch への依存が極めて少ない。CONFIG_DB の `SWITCH_TRIMMING` エントリを SAI へ直接マッピングするシンプルなフローだが、1 つの重要な副次書き込みが存在する。
 
@@ -365,14 +364,11 @@ SET ハンドラが受け取ったフィールド群を `parseTrimConfig()` で�
 
 !!! note "STATE_DB の利用方法"
     `STATE_DB:SWITCH_CAPABILITY|switch` の `SWITCH_TRIMMING_CAPABLE` フィールドを参照することで、現在の ASIC が packet trimming をサポートしているかを確認できる。CONFIG_DB への `SWITCH_TRIMMING|GLOBAL` 書き込みが SAI に反映されているかどうかは、この STATE_DB 値で判断するのが正しい運用 (`capabilities.cpp:130–131` の `SWSS_LOG_WARN("Switch trimming configuration is not supported: skipping ...")` と対応)。
-
-詳細調査ログ: `meta/_intermediate/cdb-flow/switch-trimming-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/switch-trimming-failure.md -->
 <!-- source: sonic-swss/orchagent/switchorch.cpp L1066-1364 -->
 
 ### 失敗パス一覧
@@ -419,9 +415,8 @@ SAI 上には一部の属性のみが適用された中間状態が固定され�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-<!-- evidence: meta/_intermediate/cdb-flow/switch-trimming-constants.md -->
 <!-- source: sonic-swss/orchagent/switch/trimming/schema.h, helper.cpp L25-26, capabilities.cpp L32-41 -->
 
 `SWITCH_TRIMMING` 処理に関わるハードコード定数の一覧。CONFIG_DB / YANG では管理されず、C++ ソース内でのみ定義される。
@@ -478,11 +473,10 @@ CONFIG_DB フィールド名文字列および `dscp_value` / `queue_index` の�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `SWITCH_TRIMMING` への SET 操作 (`doCfgSwitchTrimmingTableTask()` → `setSwitchTrimming()`) は SAI API を直接呼ぶのみであり、**通常の CONFIG_DB 書込に伴う他 [Redis](../../reference/glossary.md#term-redis) DB への副次書込は発生しない**。
 
-> 調査証跡: `meta/_intermediate/cdb-flow/switch-trimming-side-effects.md`
 
 ### 副次 DB 書込サマリ
 
@@ -524,9 +518,8 @@ CONFIG_DB フィールド名文字列および `dscp_value` / `queue_index` の�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/switch-trimming-pubsub.md`
 
 ### Redis 購読方式
 
@@ -584,10 +577,8 @@ SwitchOrch::doTask() → tableName == CFG_SWITCH_TRIMMING_TABLE_NAME
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> 調査対象: `sonic-swss/orchagent/switchorch.cpp`、`orchagent/switch/trimming/capabilities.cpp`、`orchagent/portsorch.cpp` L689-706, L855-865
-> 調査日: 2026-05-19
 
 `SWITCH_TRIMMING` の SET 処理本体にコード上のプラットフォーム分岐は存在しない。
 機能の可用性は **実行時 SAI capability クエリ**によって決まる。また、トリミング関連カウンタの計算は NVIDIA/Mellanox プラットフォームでのみ追加処理が入る。
@@ -638,7 +629,6 @@ if (isMlnxPlatform() &&
 !!! note "SWITCH_TRIMMING 設定自体の挙動はプラットフォーム不問"
     Packet trimming の有効化・フィールド値の適用は `SwitchTrimmingCapabilities` が SAI に問い合わせた capability の有無のみに依存する。コード上のプラットフォーム文字列比較は存在しない。
 
-> **Evidence**: `meta/_intermediate/cdb-flow/switch-trimming-platform.md`
 
 <!-- /platform -->
 

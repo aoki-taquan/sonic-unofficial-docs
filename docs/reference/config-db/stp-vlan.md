@@ -1,6 +1,6 @@
 ---
 title: STP_VLAN / STP_VLAN_PORT テーブル
-description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズム・プラットフォーム差異を詳細解説。Phase A+B+C+D+E+F+G+H 分析。"
+description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズム・プラットフォーム差異を詳細解説。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-14
@@ -63,8 +63,6 @@ flowchart LR
 <!-- /cdb-mermaid -->
 
 ## 暗黙デフォルトとハードコード挙動
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-defaults.md -->
 
 ### 1. STP_VLAN — デフォルト定数
 
@@ -252,9 +250,7 @@ if (stpGlobalTask == false || stpVlanTask == false || stpPortTask == false)
 <!-- /defaults -->
 
 <!-- ordering -->
-## 処理順序・依存関係 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-ordering.md -->
+## 処理順序・依存関係
 
 `stpmgrd` (`sonic-swss/cfgmgr/stpmgr.cpp`) は `STP_VLAN` / `STP_VLAN_PORT` テーブルの処理に対して複数段のガード条件を実装しており、前提テーブルが受信済みでなければ SET を **silent defer** または **silent skip** する。
 
@@ -369,9 +365,7 @@ if ((l2ProtoEnabled == L2_NONE) || (m_vlanInstMap[vlan_id] == INVALID_INSTANCE))
 <!-- cross-refs -->
 ## 暗黙参照（テーブル間依存）
 
-<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-cross-refs.md -->
-
-`STP_VLAN` / `STP_VLAN_PORT` テーブルを処理する `StpMgr::doStpVlanTask()` / `doStpVlanPortTask()` が実行時に参照する他テーブル・Orch 内状態。[YANG](../../reference/glossary.md#term-yang) の leafref 定義は VLAN への参照のみで、それ以外は実装レベルの暗黙依存である。コード調査の詳細は `meta/_intermediate/cdb-flow/stp-vlan-cross-refs.md` に記録した。
+`STP_VLAN` / `STP_VLAN_PORT` テーブルを処理する `StpMgr::doStpVlanTask()` / `doStpVlanPortTask()` が実行時に参照する他テーブル・Orch 内状態。[YANG](../../reference/glossary.md#term-yang) の leafref 定義は VLAN への参照のみで、それ以外は実装レベルの暗黙依存である。
 
 ### 1. `STP|GLOBAL` — l2ProtoEnabled フラグ源（必須依存）
 
@@ -451,9 +445,8 @@ STP_VLAN / STP_VLAN_PORT
 ---
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-failure.md -->
 <!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 
 `stpmgrd` は [orchagent](../../reference/glossary.md#term-orchagent) の `task_need_retry` / `task_failed` 戻り値機構を持たない。
@@ -592,9 +585,8 @@ stpmgr.cpp 内では例外がキャッチされないため、`stpmgrd.cpp:119` 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-constants.md -->
 <!-- source: sonic-swss/cfgmgr/stpmgr.h ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 <!-- source: sonic-swss/cfgmgr/stpmgrd.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 
@@ -635,7 +627,7 @@ int m_vlanInstMap[MAX_VLANS];  // サイズ 4096 の固定長配列
 fill_n(m_vlanInstMap, MAX_VLANS, INVALID_INSTANCE);  // 起動時に全要素を -1 で初期化
 ```
 
-`m_vlanInstMap[vlan_id]` が `INVALID_INSTANCE (-1)` のまま `STP_VLAN_PORT` SET が届いても silent skip される（Phase B / C で記載）。
+`m_vlanInstMap[vlan_id]` が `INVALID_INSTANCE (-1)` のまま `STP_VLAN_PORT` SET が届いても silent skip される（「処理順序・依存関係」「暗黙参照（テーブル間依存）」で記載）。
 配列は 4096 要素固定で動的拡張は不可。VLAN ID が範囲外の場合の境界チェックはコード上では行われない。
 
 証跡: `stpmgr.h:261`, `stpmgr.cpp:45`
@@ -677,7 +669,7 @@ fill_n(m_vlanInstMap, MAX_VLANS, INVALID_INSTANCE);  // 起動時に全要素を
 ```
 
 stpmgrd のメインループが `s.select(&sel, SELECT_TIMEOUT)` で最大 1000 ms 待機する。
-「保留エントリ（silent defer）」は最大 1 秒後の次ループで再試行される（Phase D 参照）。
+「保留エントリ（silent defer）」は最大 1 秒後の次ループで再試行される（「失敗挙動」参照）。
 
 証跡: `stpmgrd.cpp:17, 103`
 
@@ -701,9 +693,8 @@ stpmgrd のメインループが `s.select(&sel, SELECT_TIMEOUT)` で最大 1000
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・波及挙動 (Phase F)
+## 副作用・波及挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-side-effects.md -->
 <!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 
 `stpmgrd` は CONFIG_DB への書き込みをトリガーとして、stpmgrd 内部状態（`m_vlanInstMap[]`）の更新と
@@ -823,9 +814,7 @@ DEL と同時に stpd へ `STP_DEL_COMMAND` の `STP_VLAN_CONFIG` IPC が送信�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-pubsub.md -->
+## 通信メカニズム
 
 ### 購読方式: TableConnector + ConsumerStateTable
 
@@ -904,9 +893,7 @@ TTL は設定されない（CONFIG_DB は永続ストレージ前提）。
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-platform.md -->
+## プラットフォーム差異
 
 `STP_VLAN` / `STP_VLAN_PORT` テーブルの処理に ASIC ベンダー固有の条件分岐は存在しない。`stpmgrd` は [SAI](../../reference/glossary.md#term-sai) を直接呼ばず Unix Domain Socket 経由で `stpd` に IPC を送信する設計で、ASIC 差異は `stpd` 内部で吸収される。ただし以下 3 点でプラットフォームに依存した挙動が観測される。
 
@@ -933,7 +920,7 @@ if (l2ProtoEnabled == L2_PVSTP)
 
 ### B. ASIC ごとの最大 STP インスタンス数
 
-`stporch` 起動時に [SAI](../../reference/glossary.md#term-sai) 属性 `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を照会して `STATE_STP|GLOBAL.max_stp_inst` に書き込む[^4]。`stpmgrd` はこの値を読み取って `max_stp_instances` に設定し、超過 VLAN は silent truncation する (Phase E 参照)。
+`stporch` 起動時に [SAI](../../reference/glossary.md#term-sai) 属性 `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を照会して `STATE_STP|GLOBAL.max_stp_inst` に書き込む[^4]。`stpmgrd` はこの値を読み取って `max_stp_instances` に設定し、超過 VLAN は silent truncation する（「ハードコード定数」参照）。
 
 ```cpp
 // stporch.cpp:32-38

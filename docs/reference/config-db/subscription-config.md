@@ -45,7 +45,6 @@ flowchart LR
 
 ## 暗黙デフォルトとコード由来挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/subscription-config-defaults.md -->
 
 ### 1. `report_interval` — YANG・実装ともに 5000 ms
 
@@ -255,9 +254,8 @@ docker logs gnmi 2>&1 | grep -i "subscription\|dialout\|clientSubscription"
 ```
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-<!-- evidence: meta/_intermediate/cdb-flow/subscription-config-ordering.md -->
 
 `DialOutRun()` / `processTelemetryClientConfig()` (`sonic-gnmi/dialout/dialout_client/dialout_client.go`) における
 [CONFIG_DB](../../reference/glossary.md#term-config_db) エントリ処理の順序依存を以下に示す。
@@ -317,9 +315,8 @@ Global エントリが省略された構成では収束トリガーが発生し�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase C)
+## 暗黙テーブル参照
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/subscription-config-cross-refs.md`
 
 `DialOutRun()` が CONFIG_DB の `TELEMETRY_CLIENT` を購読・処理する際に暗黙的に参照するリソースを以下に示す。
 
@@ -358,9 +355,8 @@ YANG (`sonic-telemetry_client.yang`) は `path_target` を enum として定義 
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/subscription-config-failure.md -->
 
 ソース: `sonic-net/sonic-gnmi/dialout/dialout_client/dialout_client.go`
 
@@ -411,9 +407,8 @@ YANG (`sonic-telemetry_client.yang`) は `path_target` を enum として定義 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-<!-- evidence: meta/_intermediate/cdb-flow/subscription-config-constants.md -->
 
 `dialout_client.go` (`sonic-gnmi/dialout/dialout_client/`) に埋め込まれた、CONFIG_DB フィールドでは制御できない固定値を以下に示す。
 
@@ -475,9 +470,8 @@ const (
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-<!-- evidence: meta/_intermediate/cdb-flow/subscription-config-side.md -->
 
 CONFIG_DB `TELEMETRY_CLIENT` テーブルの変更に伴って `dialout_client.go` が副次的に書き込む DB エントリは **存在しない**。
 
@@ -499,9 +493,8 @@ CONFIG_DB `TELEMETRY_CLIENT` テーブルの変更に伴って `dialout_client.g
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
-<!-- evidence: meta/_intermediate/cdb-flow/subscription-config-pubsub.md -->
 
 `DialOutRun()` は swss-common の `SubscriberStateTable` を使わず、Go の `go-redis` クライアントが CONFIG_DB を **直接 PSUBSCRIBE** する独自実装である[^2]。
 
@@ -543,9 +536,8 @@ __keyspace@<CONFIG_DB_ID>__:TELEMETRY_CLIENT|*
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-<!-- evidence: meta/_intermediate/cdb-flow/subscription-config-platform.md -->
 
 ### プラットフォーム固有分岐の有無
 

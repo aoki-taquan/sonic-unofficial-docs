@@ -165,7 +165,7 @@ show tacacs
 <!-- /ops-hint -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `hostcfgd` (`AaaCfg`) の `modify_conf_file()` は `TACPLUS_SERVER` / `TACPLUS|global` / `AAA` いずれかが更新されるたびに `/etc/pam.d/common-auth-sonic`・`/etc/tacplus_nss.conf`・`/etc/nsswitch.conf` を**丸ごと再生成**する。このため書き込み順序が中間状態の整合性に直結する。
 
@@ -218,7 +218,7 @@ runtime 中はテーブル更新のたびに `modify_conf_file()` が呼ばれ�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照・共依存テーブル (Phase C)
+## 暗黙参照・共依存テーブル
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd L2221-2230 L641-816 L754-783, sonic-utilities/scripts/db_migrator.py L856-903, sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-aaa.yang L50-52 -->
 
@@ -272,20 +272,20 @@ error-message: "Authentication with 'tacacs+' is not allowed when passkey not ex
 <!-- /cross-refs -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 hostcfgd が `TACPLUS_SERVER.tcp_port` 未設定の場合にデフォルト `49` を補完し、`timeout` 未設定の場合にデフォルト `5` を補完する。`priority` フィールドの降順 (`sorted(..., reverse=True)`) でサーバを PAM 設定に並べる。大きい値ほど PAM の先頭に記載され高優先度として扱われる。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 hostcfgd は常時起動し `TACPLUS_SERVER` テーブルを無条件購読する。ただし `aaa.authentication.login` に `tacacs+` が含まれない場合、TACACS+ サーバ設定があっても PAM に反映されない。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -296,7 +296,7 @@ hostcfgd は常時起動し `TACPLUS_SERVER` テーブルを無条件購読す�
 | `hostcfgd` TACACS+ handler | `vrf_name` フィールドあり | VRF バインドで TACACS+ サーバに接続 | `hostcfgd.py` |
 | `hostcfgd` TACACS+ handler | `src_ip` フィールドあり | ソース IP を指定して接続 | `hostcfgd.py` |
 
-> **スキャン証跡**: `TACPLUS_SERVER` は TACACS+ 認証の設定テーブル。`auth_type` の分岐と `priority` による順序付けが主要な Phase 8 ポイント。デフォルト値補完が Phase 6 相当。
+> **裏取り**: `TACPLUS_SERVER` は TACACS+ 認証の設定テーブル。`auth_type` の分岐と `priority` による順序付けが主要なポイント。デフォルト値補完が 相当。
 
 <!-- /handler-branching -->
 
@@ -323,7 +323,7 @@ hostcfgd は常時起動し `TACPLUS_SERVER` テーブルを無条件購読す�
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 TACPLUS_SERVER / TACPLUS テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -357,7 +357,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /entry-points -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd L87-89 L366-370 L648-665, sonic-utilities/config/aaa.py L266-267 L283-286, sonic-host-services/data/templates/common-auth-sonic.j2, sonic-host-services/data/templates/tacplus_nss.conf.j2 -->
 
@@ -405,7 +405,7 @@ hostcfgd は `sorted(..., key=lambda t: int(t['priority']))` でソートする�
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd L86-89 L366-370 L665, sonic-utilities/config/aaa.py L229 L263-267, sonic-host-services/data/templates/tacplus_nss.conf.j2 L46-50 -->
 
@@ -449,7 +449,7 @@ TACACS+ 標準 TCP ポートは **49** (IANA well-known)。
 <!-- /constants -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd@c5bbbe8b07b96f078fa4b761316627404b01bd04 L665 L728-731 L483-493 L816, sonic-host-services/data/templates/common-auth-sonic.j2 L18 -->
 
@@ -472,7 +472,7 @@ hostcfgd は `auth_type` の値を検証せずテンプレートに直接渡す�
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `TACPLUS_SERVER` / `TACPLUS|global` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換えおよびプロセスシグナル送信に閉じる。
 
@@ -496,11 +496,11 @@ CONFIG_DB `TACPLUS_SERVER` / `TACPLUS|global` テーブルの変更に伴って 
 | TACACS+ NSS 設定再生成 | `/etc/tacplus_nss.conf` | 常時 | `hostcfgd:800-815` |
 | audisp-tacplus へ SIGHUP | `os.kill(pid, SIGHUP)` — アカウンティング設定リロード | 常時 (プロセス不在時は LOG_WARNING のみ) | `hostcfgd:483-493` |
 
-> **Evidence**: `sonic-host-services/scripts/hostcfgd:354-870` を `Producer`/`set(`/`hset`/`Notification`/`state_db` でスキャンして 0 ヒット。副作用は Linux ファイルシステム操作と `os.kill()` のみ (hostcfgd:641-870)。詳細スキャン手順は `meta/_intermediate/cdb-flow/tacplus-server-ordering.md` を参照。
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:354-870` を `Producer`/`set(`/`hset`/`Notification`/`state_db` でスキャンして 0 ヒット。副作用は Linux ファイルシステム操作と `os.kill()` のみ (hostcfgd:641-870)。 を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -545,11 +545,11 @@ make_callback() で (key=<ip>, op=SET, data=HGETALL結果) を生成
 - 設定変更から PAM ファイル反映まで数十ミリ秒〜数秒のラグが生じる場合がある（poll ループの実行タイミングに依存）。
 - PAM ファイルが書き換わった直後から新規 SSH セッション / console ログインに反映される。既存セッションは影響を受けない。
 
-> **Evidence**: `sonic-host-services/scripts/hostcfgd:2471-2472` (subscribe 登録)、`hostcfgd:2458-2466` (make_callback)、`hostcfgd:2303-2315` (tacacs_server_handler / tacacs_global_handler)、`hostcfgd:473-481` (tacacs_server_update)、`hostcfgd:399-417` (AaaCfg.load 起動時スナップショット)、`hostcfgd:2528` (listen)、`hostcfgd:641-870` (modify_conf_file); 詳細分析 `meta/_intermediate/cdb-flow/tacplus-server-pubsub.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2471-2472` (subscribe 登録)、`hostcfgd:2458-2466` (make_callback)、`hostcfgd:2303-2315` (tacacs_server_handler / tacacs_global_handler)、`hostcfgd:473-481` (tacacs_server_update)、`hostcfgd:399-417` (AaaCfg.load 起動時スナップショット)、`hostcfgd:2528` (listen)、`hostcfgd:641-870` (modify_conf_file)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 ソース: `sonic-net/sonic-host-services/scripts/hostcfgd`, `sonic-net/sonic-host-services/data/templates/tacplus_nss.conf.j2`, `sonic-net/sonic-buildimage/files/build_templates/sonic_debian_extension.j2`
 
@@ -583,7 +583,7 @@ make_callback() で (key=<ip>, op=SET, data=HGETALL結果) を生成
 
 `TACPLUS_SERVER.vrf` フィールドに `mgmt` を設定すると、テンプレートで PAM 行に `vrf=mgmt` が挿入される。管理 VRF 自体の有効/無効は `MGMT_VRF_CONFIG.mgmtVrfEnabled` で制御されるが、`AaaCfg` はこの値を読まない。管理 VRF が未有効の状態で `vrf=mgmt` を設定すると `pam_tacplus` が mgmt VRF ルーティングテーブルを参照し認証失敗する。これはプラットフォーム差ではなく運用上の設定整合性の問題。
 
-> **Evidence**: `hostcfgd:2182-2185` (is_multi_npu / AaaCfg 初期化)、`hostcfgd:641-816` (modify_conf_file)、`sonic_debian_extension.j2:317-335` (インストールブロック)、`tacplus_nss.conf.j2` (テンプレート全行)、`common-auth-sonic.j2` (テンプレート全行); 詳細分析 `meta/_intermediate/cdb-flow/tacplus-server-platform.md`
+> **Evidence**: `hostcfgd:2182-2185` (is_multi_npu / AaaCfg 初期化)、`hostcfgd:641-816` (modify_conf_file)、`sonic_debian_extension.j2:317-335` (インストールブロック)、`tacplus_nss.conf.j2` (テンプレート全行)、`common-auth-sonic.j2` (テンプレート全行)
 <!-- /platform -->
 
 <!-- glossary-links-injected: 30e1ce753e5d -->

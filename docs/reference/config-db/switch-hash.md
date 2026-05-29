@@ -147,7 +147,6 @@ show switch-hash global
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
-<!-- evidence: meta/_intermediate/cdb-flow/switch-hash-defaults.md -->
 
 ### `ecmp_hash` / `lag_hash` field set — コード側デフォルトなし（SAI/ASIC 依存）
 
@@ -185,20 +184,20 @@ capability 機構自体が ASIC で未実装の場合 (`isSwitchEcmpHashSupporte
 <!-- /defaults -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 SwitchOrch が `ecmp_hash_algorithm` / `lag_hash_algorithm` フィールド値を SAI scheduling type enum へ自動変換する。`ecmp_hash` / `lag_hash` leaf-list の各 hash-field から対応する SAI hash field オブジェクト群を自動生成する。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 SwitchOrch は常時登録し `SWITCH_HASH` テーブルを無条件購読する。`SWITCH_HASH|GLOBAL` エントリのみ有効（シングルトン制約、YANG で強制）。SAI hash capability 未サポートの場合はログのみで継続。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -208,14 +207,13 @@ SwitchOrch は常時登録し `SWITCH_HASH` テーブルを無条件購読する
 | `SwitchOrch` | `lag_hash` leaf-list あり | LAG 用 hash field オブジェクト群を生成して SAI に設定 | `switchorch.cpp` |
 | `SwitchOrch` | SAI 設定エラー | ログ出力 + 処理継続 | `switchorch.cpp` |
 
-> **スキャン証跡**: `SWITCH_HASH` はスイッチ全体の ECMP/LAG ハッシュポリシーの単一エントリ。SwitchOrch が SAI hash attribute を直接設定。`dscp_value` / `queue` の有無が SAI resolution mode を自動決定する点が主要 Phase 6。
+> **裏取り**: `SWITCH_HASH` はスイッチ全体の ECMP/LAG ハッシュポリシーの単一エントリ。SwitchOrch が SAI hash attribute を直接設定。`dscp_value` / `queue` の有無が SAI resolution mode を自動決定する点が主要な派生ポイント。
 
 <!-- /handler-branching -->
 
 <!-- ordering -->
-## 書込み順序依存・タイミング依存 (Phase B)
+## 書込み順序依存・タイミング依存
 
-<!-- evidence: meta/_intermediate/cdb-flow/switch-hash-ordering.md -->
 
 ### SAI 初期化 → OID キャッシュ → SWITCH_HASH SET（先行必須）
 
@@ -245,9 +243,8 @@ SwitchOrch は常時登録し `SWITCH_HASH` テーブルを無条件購読する
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase C)
+## 暗黙テーブル参照
 
-> 調査証跡: `meta/_intermediate/cdb-flow/switch-hash-cross-refs.md`
 
 ### YANG 明示 leafref
 
@@ -266,9 +263,8 @@ SwitchOrch は常時登録し `SWITCH_HASH` テーブルを無条件購読する
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-> 調査証跡: `meta/_intermediate/cdb-flow/switch-hash-failure.md`
 
 `SWITCH_HASH` の処理失敗は `doCfgSwitchHashTableTask()` / `setSwitchHash()` / `setSwitchHashFieldListSai()` 内で検出される。[STATE_DB](../../reference/glossary.md#term-state_db) へのステータス書き込みはなく、エラー記録は syslog (`SWSS_LOG_ERROR` / `SWSS_LOG_WARN`) のみ。
 
@@ -314,9 +310,8 @@ sonic-db-cli CONFIG_DB hgetall 'SWITCH_HASH|GLOBAL'
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> 調査証跡: `meta/_intermediate/cdb-flow/switch-hash-constants.md`
 > ソース: `sonic-swss/orchagent/switch/switch_schema.h` L1-37、`switch_helper.cpp` L22-53
 
 ### テーブルフィールド名定数 (switch_schema.h:25-37)
@@ -382,7 +377,7 @@ YANG の `sonic-types.yang` で定義された `hash-algorithm` typedef の列�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `SWITCH_HASH|GLOBAL` の SET 処理は `doCfgSwitchHashTableTask()` → `setSwitchHash()` → `setSwitchHashFieldListSai()` / `setSwitchHashAlgorithmSai()` を経て SAI API を直接呼ぶのみであり、**他の [Redis](../../reference/glossary.md#term-redis) DB への副次書込を一切発生させない**。
 
@@ -412,9 +407,8 @@ DEL 操作は `SWSS_LOG_ERROR` を出力して erase するだけで SAI API も
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/switch-hash-pubsub.md`
 
 ### Redis 購読方式
 
@@ -457,9 +451,8 @@ else
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> 調査証跡: `meta/_intermediate/cdb-flow/switch-hash-platform.md`
 
 `SwitchOrch` の SWITCH_HASH 処理経路には `BRCM_PLATFORM_SUBSTRING` / `MLNX_PLATFORM_SUBSTRING` などの **platform 文字列分岐が存在しない**。プラットフォーム差異はすべて **SAI capability クエリ** 経由で実行時に動的決定される。
 
@@ -528,7 +521,7 @@ show switch-hash capabilities
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 SWITCH_HASH テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 

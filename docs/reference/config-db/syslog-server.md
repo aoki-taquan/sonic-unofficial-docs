@@ -161,20 +161,20 @@ show syslog
 <!-- /ops-hint -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 [hostcfgd](../../reference/glossary.md#term-hostcfgd) が `protocol` フィールド値から rsyslog forwarding 形式を自動決定する。`udp` → `@<host>:<port>` 形式、`tcp` → `@@<host>:<port>` 形式。`port` フィールド未設定の場合はデフォルト UDP/514 を補完する。`vrf==mgmt` の場合は VRF バインド設定を自動付与する。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 [hostcfgd](../../reference/glossary.md#term-hostcfgd) は常時起動し `SYSLOG_SERVER` テーブルを無条件購読する。`DEVICE_METADATA.hostname` が必要（hostname ベースのフィルタ設定）。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -185,12 +185,12 @@ show syslog
 | `hostcfgd` | `source_interface` フィールドあり | rsyslog source IP 設定 | `hostcfgd.py` |
 | `hostcfgd` | サーバ削除 | 対応 rsyslog 設定を削除して reload | `hostcfgd.py` |
 
-> **スキャン証跡**: `SYSLOG_SERVER` はリモート syslog 転送先の設定。`protocol` フィールドと `vrf` フィールドの組み合わせが主要分岐。ポートデフォルト値の補完が Phase 6 相当。
+> **裏取り**: `SYSLOG_SERVER` はリモート syslog 転送先の設定。`protocol` フィールドと `vrf` フィールドの組み合わせが主要分岐。ポートデフォルト値の補完が 相当。
 
 <!-- /handler-branching -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `rsyslog-config.sh`, `rsyslog.conf.j2`, `hostcfgd` (RSyslogCfg), `config/syslog.py`
 
@@ -264,7 +264,7 @@ show syslog
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 SYSLOG_SERVER テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -298,7 +298,7 @@ db_migrator.py での SYSLOG_SERVER マイグレーションなし
 <!-- /entry-points -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 [CONFIG_DB](../../reference/glossary.md#term-config_db) `SYSLOG_SERVER` テーブルの変更に伴って `hostcfgd` の `RSyslogCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS のファイル書き換えおよび systemd サービス制御に閉じる。
 
@@ -340,7 +340,7 @@ SYSLOG_SERVER SET/DEL (CONFIG_DB)
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### CONFIG_DB 購読 API
 
@@ -408,7 +408,7 @@ fi
 <!-- /pubsub -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `rsyslog.conf.j2` および `rsyslog-config.sh` に直接埋め込まれた定数。CONFIG_DB フィールドや YANG で変更不可。
 
@@ -464,7 +464,7 @@ rsyslog がローカルで待ち受けるポートは固定値でハードコー
 <!-- /constants -->
 
 <!-- defaults -->
-## 暗黙デフォルト (Phase A)
+## 暗黙デフォルト
 
 YANG に `default` 宣言がなく、コード（Jinja2 テンプレート）側でフォールバックが注入されるフィールド一覧。
 
@@ -510,7 +510,7 @@ per-server 未設定 かつ SYSLOG_CONFIG|GLOBAL 未設定
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `hostcfgd` (`RSyslogCfg`) は `SYSLOG_SERVER` と `SYSLOG_CONFIG` の **両テーブルをまとめて再読込** して `rsyslog-config.service` を再起動する。このため書込み順序が中間状態の整合性に直結する。
 
@@ -567,7 +567,7 @@ HostConfigDaemon.load(init_data)
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — rsyslog 設定生成時に参照される CONFIG_DB テーブル (Phase C)
+## 暗黙参照 — rsyslog 設定生成時に参照される CONFIG_DB テーブル
 
 `SYSLOG_SERVER` エントリが変化すると `hostcfgd` の `rsyslog_server_handler` が `rsyslog_handler()` を呼び出し、`SYSLOG_CONFIG` と `SYSLOG_SERVER` の**両テーブルを再取得**して `rsyslog-config.service` を restart する。さらに起動された `rsyslog-config.sh` が `sonic-db-cli` で `DEVICE_METADATA|localhost` を直接参照する。この二段階の暗黙参照が存在する。
 
@@ -616,11 +616,10 @@ def rsyslog_handler(self):
 - **`FEATURE`**: `SYSLOG_CONFIG_FEATURE` が leafref で参照するが、rsyslog 設定生成パスで直接読まれない
 - **`DEVICE_METADATA.localhost.hostname`**: rsyslog-config.sh は `hostname` コマンドを使い CONFIG_DB から直接読まない
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/syslog-server-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 rsyslog 設定生成スクリプト (`rsyslog-config.sh`) および Jinja2 テンプレートに含まれるプラットフォーム固有分岐を示す。
 

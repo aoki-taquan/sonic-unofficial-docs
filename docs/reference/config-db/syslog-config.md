@@ -140,7 +140,7 @@ show syslog
 <!-- /ops-hint -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### SYSLOG_CONFIG と SYSLOG_SERVER のペア書込み
 
@@ -176,10 +176,9 @@ YANG `must "(../format != 'standard')"` 制約により、`welf_firewall_name` �
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
-> **調査根拠**: `hostcfgd` (`RSyslogCfg.update_rsyslog_config`, `rsyslog_handler`)・`rsyslog.conf.j2` 全行精読 (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/syslog-config-cross-refs.md`
+> **Evidence**: `hostcfgd` (`RSyslogCfg.update_rsyslog_config`, `rsyslog_handler`)・`rsyslog.conf.j2` 全行精読 (2026-05-18)
 
 `SYSLOG_CONFIG` テーブルは実行時に以下のテーブルを暗黙参照する。
 
@@ -208,10 +207,9 @@ YANG `must "(../format != 'standard')"` 制約により、`welf_firewall_name` �
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-host-services/scripts/hostcfgd` (`RSyslogCfg` クラス, L1695-1743)
-詳細証跡: `meta/_intermediate/cdb-flow/syslog-config-failure.md`
 
 ### SET 処理における失敗経路
 
@@ -237,10 +235,9 @@ YANG `must "(../format != 'standard')"` 制約により、`welf_firewall_name` �
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `SYSLOG_CONFIG` の処理に関与する `hostcfgd` および rsyslog Jinja2 テンプレートに存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
-詳細証跡: `meta/_intermediate/cdb-flow/syslog-config-constants.md`
 
 ### rsyslog.conf.j2 — テンプレートフォールバック値
 
@@ -288,7 +285,7 @@ YANG `must "(../format != 'standard')"` 制約により、`welf_firewall_name` �
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `SYSLOG_CONFIG` テーブルの変更に伴って `hostcfgd` の `RSyslogCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル再生成と `rsyslogd` 再起動に閉じる。
 
@@ -306,11 +303,10 @@ YANG `must "(../format != 'standard')"` 制約により、`welf_firewall_name` �
 - `rsyslogd` が再起動される（再起動中の数秒間、ホストとコンテナ間の RELP/UDP 転送が途絶する可能性がある）
 - 各 docker の rsyslog は RELP または UDP でホスト rsyslog に転送しているため、ホスト rsyslog 再起動中のログが欠落する可能性がある
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/syslog-config-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -349,11 +345,11 @@ make_callback() で (key, op, data) を生成
 | 変更なし (キャッシュ一致) | ノーオペレーション（再起動スキップ） | `RSyslogCfg.update_rsyslog_config` — hostcfgd L1725-1726 |
 | `rsyslog-config` 再起動失敗 | キャッシュ更新をスキップ、LOG_ERR のみ | `RSyslogCfg.update_rsyslog_config` — hostcfgd L1736-1739 |
 
-> **Evidence**: `sonic-host-services/scripts/hostcfgd` L2499-2503 (subscribe)、L2410-2423 (rsyslog_handler/rsyslog_config_handler/rsyslog_server_handler)、L1695-1743 (RSyslogCfg クラス)、L2528 (listen/init_data_handler); 詳細分析 `meta/_intermediate/cdb-flow/syslog-config-pubsub.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` L2499-2503 (subscribe)、L2410-2423 (rsyslog_handler/rsyslog_config_handler/rsyslog_server_handler)、L1695-1743 (RSyslogCfg クラス)、L2528 (listen/init_data_handler)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: `SYSLOG_CONFIG|GLOBAL` の各フィールド (`format` / `severity` / `rate_limit_interval` / `rate_limit_burst` / `welf_firewall_name`) の処理ロジックに [ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic 構成・chassis 構成・ベンダー固有の分岐はない。
 
@@ -369,24 +365,23 @@ make_callback() で (key, op, data) を生成
 
 [Multi-ASIC](../../reference/glossary.md#term-multi-asic) 構成では `rsyslog-config.sh` が `udp_server_ip` に `docker0` の IP を採用する（シングル [NPU](../../reference/glossary.md#term-npu) では `lo` アドレス）。この変化は rsyslog の**受信側**設定（どの IP でコンテナからのログを受け取るか）であり、`SYSLOG_CONFIG|GLOBAL` の `format` / `severity` / `rate_limit_*` を処理する経路とは独立している。
 
-詳細根拠は `meta/_intermediate/cdb-flow/syslog-config-platform.md` を参照。
 <!-- /platform -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
-hostcfgd が `rate_limit_interval==0` の場合に rate limit 無効化設定を自動生成する（特殊値による分岐）。`SYSLOG_CONFIG_FEATURE` が未設定の feature に対してグローバル値のフォールバックが発生する（間接的な Phase 6 派生）。
+hostcfgd が `rate_limit_interval==0` の場合に rate limit 無効化設定を自動生成する（特殊値による分岐）。`SYSLOG_CONFIG_FEATURE` が未設定の feature に対してグローバル値のフォールバックが発生する（間接的な自動派生）。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 hostcfgd は常時起動し `SYSLOG_CONFIG` テーブルを無条件購読する。`SYSLOG_CONFIG|GLOBAL` エントリのみ処理するシングルトン制約あり（YANG で強制）。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -395,12 +390,12 @@ hostcfgd は常時起動し `SYSLOG_CONFIG` テーブルを無条件購読する
 | `hostcfgd` | `rate_limit_burst==0` | burst limit 無効化 | `hostcfgd.py` |
 | `hostcfgd` | 設定変更 | rsyslog サービスを reload | `hostcfgd.py` |
 
-> **スキャン証跡**: `SYSLOG_CONFIG` はグローバル syslog rate limit 設定。`rate_limit_interval==0` での無効化分岐が主要ポイント。`SYSLOG_CONFIG_FEATURE` への値の伝播が Phase 6 自動派生相当。
+> **裏取り**: `SYSLOG_CONFIG` はグローバル syslog rate limit 設定。`rate_limit_interval==0` での無効化分岐が主要ポイント。`SYSLOG_CONFIG_FEATURE` への値の伝播が 自動派生相当。
 
 <!-- /handler-branching -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 YANG default 宣言 (`format=standard` / `severity=notice`) を補完する形で、テンプレート fallback や `containercfgd` のローカル fallback が複層に効く。CONFIG_DB に行が無い／フィールドが欠落した場合の実効値を以下にまとめる。
 
@@ -428,7 +423,7 @@ YANG default `notice` は `SYSLOG_CONFIG.GLOBAL.severity` に対するもの。�
 
 `SYSLOG_CONFIG` (GLOBAL) はコンテナ内 rsyslog では参照されない（`rsyslog-container.conf.j2` は `SYSLOG_CONFIG_FEATURE` のみ参照）。コンテナ側 rate limit のハードコードフォールバックは `interval=300` / `burst=20000`（テンプレート L27 の `default()` フィルタ）。ただし `containercfgd.py` L143-144 が `data.get(..., '0')` で空 dict 経由でも `'0'` を渡すため、ハードコード fallback `300/20000` が発動するのは [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) をスタンドアロン呼び出した特殊ケースに限られる。
 
-> **スキャン証跡**: `sonic-syslog.yang` L156-191、`rsyslog.conf.j2` L16-22 / L51-52 / L92、`rsyslog-container.conf.j2` L16-27、`containercfgd.py` L98-160、`hostcfgd` L1695-1743 を精読。詳細は `meta/_intermediate/cdb-flow/syslog-config-defaults.md`。
+> **裏取り**: `sonic-syslog.yang` L156-191、`rsyslog.conf.j2` L16-22 / L51-52 / L92、`rsyslog-container.conf.j2` L16-27、`containercfgd.py` L98-160、`hostcfgd` L1695-1743 を精読。
 
 <!-- /defaults -->
 
@@ -453,7 +448,7 @@ YANG default `notice` は `SYSLOG_CONFIG.GLOBAL.severity` に対するもの。�
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 SYSLOG_CONFIG テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
