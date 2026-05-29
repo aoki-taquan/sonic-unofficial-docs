@@ -25,7 +25,7 @@ related:
 [SONiC](../../reference/glossary.md#term-sonic) ホストを Kubernetes worker としてマスターに参加させるための接続情報を保持するテーブル。[SONiC](../../reference/glossary.md#term-sonic) の K8s 統合 (Smart Switch でも参照される [DPU](../../reference/glossary.md#term-dpu) 管理経路の一部) でコンテナ化された feature を K8s から起動するために使われる[^1]。
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `ctrmgrd` は `KUBERNETES_MASTER` テーブルを直接 [CONFIG_DB](../../reference/glossary.md#term-config_db) から購読し、`ip` / `disable` / `insecure` の変化に応じて kubelet join / reset を実行する。Kubernetes join はネットワーク到達が前提であるため、テーブル内フィールドの書込み順と、`STATE_DB:KUBERNETES_MASTER|SERVER` の初期状態が join タイミングを左右する。
 
@@ -47,13 +47,11 @@ related:
 
 **`FEATURE.set_owner=kube` との連動 (依存 #5)**: `FeatureTransition.on_config_update()` は `CONFIG_DB:FEATURE` を購読し、`set_owner` が `kube` になった feature を systemd restart する。この移行は `KUBERNETES_MASTER` の接続状態とは独立してトリガーされるため、kubelet join 完了前に `FEATURE.set_owner=kube` を書くと、対象コンテナが K8s からのデプロイを待ち続けてサービスが起動しない状態になる（evidence: `ctrmgrd.py:467-511`）。
 
-詳細解析: `meta/_intermediate/cdb-flow/kubernetes-master-ordering.md`
-
 <!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:23,169-173,339-356,370-413,444-455,467-511,688-694; sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.service:3-6 -->
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
 `ctrmgrd` は `KUBERNETES_MASTER` テーブルを購読するだけでなく、join 完了後のラベル設定・フィーチャー所有権移行のために複数の CONFIG_DB / STATE_DB テーブルを参照・書き込む。`sonic-kubernetes_master.yang` には `leafref` 宣言は存在しないため、以下はすべてコードレベルの暗黙参照である。
 
@@ -92,15 +90,13 @@ related:
 | `KUBE_LABELS` | `SET` | `<feat>_enabled` | FeatureTransitionHandler | `FEATURE.set_owner` 変化時 | ctrmgrd.py:505-506 |
 | `FEATURE` | `<feature>` | `restart` | restart_systemd_service() | サービス再起動が必要な場合 | ctrmgrd.py:157-158 |
 
-> **FEATURE との双方向参照**: `FEATURE.set_owner` の変化が `KUBERNETES_MASTER` 接続の副作用（ラベル付け）を引き起こし、逆に `KUBERNETES_MASTER` 接続状態が `FEATURE` の起動モード遷移に影響する。両テーブルは相互依存関係にある（Phase B `ordering` 依存 #5 参照）。
-
-詳細解析: `meta/_intermediate/cdb-flow/kubernetes-master-cross-refs.md`
+> **FEATURE との双方向参照**: `FEATURE.set_owner` の変化が `KUBERNETES_MASTER` 接続の副作用（ラベル付け）を引き起こし、逆に `KUBERNETES_MASTER` 接続状態が `FEATURE` の起動モード遷移に影響する。両テーブルは相互依存関係にある（「書込み順依存」参照）。
 
 <!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:157-158,292-307,333-342,413-414,440,471-474,488,505-506 -->
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:113-114,273-275,395-455,668-685 -->
 
@@ -157,13 +153,10 @@ join 成功直後に `set_node_labels()` → `LabelsPendingHandler.update_node_l
 | `select()` エラー | ctrmgrd abort → systemd 再起動 | systemd restart delay | 再起動後に再構築 |
 | DNS 解決失敗 (FQDN) | JOIN_RETRY ループ | **10s** | `connected = "false"` |
 
-詳細調査ノートは `meta/_intermediate/cdb-flow/kubernetes-master-failure.md` 参照。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/kubernetes-master-constants.md`
+## ハードコード定数
 
 ### タイマー定数 (`ctrmgrd.py:112-118`)
 
@@ -224,7 +217,7 @@ SELECT_TIMEOUT = 1000  # ms
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `ctrmgrd` は `KUBERNETES_MASTER|SERVER` 設定変化を受けて join / reset を実行し、その結果を STATE_DB に書き戻す。さらに join 成功時はノードラベルを STATE_DB に登録し、`FEATURE.set_owner` 変化時は feature ラベルと restart フラグを書き込む。
 
@@ -261,11 +254,11 @@ SELECT_TIMEOUT = 1000  # ms
 | `deployment_type` | `CONFIG_DB:DEVICE_METADATA\|localhost.type` | `ctrmgrd.py:297-299, 303` |
 | `worker.sonic/platform` | `device_info.get_platform()` | `ctrmgrd.py:304-305` |
 
-> **Evidence**: `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:157-158, 292-307, 306-307, 411-414, 423, 435-437, 440, 505-506, 659-681`; 詳細スキャン結果は `meta/_intermediate/cdb-flow/kubernetes-master-side-effects.md` 参照。
+> **Evidence**: `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:157-158, 292-307, 306-307, 411-414, 423, 435-437, 440, 505-506, 659-681`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 > 調査対象: `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py` L204-217, L249-288, L329-359, L466-475, L640-646
 > 調査日: 2026-05-19
@@ -319,13 +312,11 @@ selector.select(1000ms)
 
 複数テーブルへの同時更新は Python `set` の反復順でディスパッチされるため処理順序は不定。ただし `KUBERNETES_MASTER` と `FEATURE` は別クラスのハンドラで独立処理されるため相互干渉はない。
 
-詳細調査ノートは `meta/_intermediate/cdb-flow/kubernetes-master-pubsub.md` 参照。
-
 <!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:181,204-217,249-288,329-334,340-342,363-390,439-440,466-475,515-543,546-580,640-685 -->
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `KUBERNETES_MASTER` テーブルの処理コア (`ctrmgrd`) は **全プラットフォームで動作ロジックが同一**。`ctrmgrd.py` を `namespace|asic|multi_asic|is_multi_npu|chassis|per_asic` で grep してもヒット 0 件で、機種依存分岐コードは存在しない。プラットフォーム依存性は (1) ビルド時フラグによるパッケージ有無、(2) join 成功後に Kubernetes ラベルへ設定される文字列、の 2 点に限定される。
 
@@ -367,8 +358,6 @@ ctrmgrd.service は host namespace 固定の単一インスタンスとして動
 - ctrmgrd インスタンスは host に 1 個のみ
 - `asic0..N` の各 [Redis](../../reference/glossary.md#term-redis) には `KUBERNETES_MASTER` テーブルは存在しない
 - [VOQ](../../reference/glossary.md#term-voq) chassis の line card / supervisor も host 個別の `CONFIG_DB` を持ち、chassis 全体の集中制御経路はない
-
-詳細解析: `meta/_intermediate/cdb-flow/kubernetes-master-platform.md`
 
 <!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:290-307; sonic-buildimage/rules/config:258-260; sonic-buildimage/files/build_templates/sonic_debian_extension.j2:974-1011; sonic-buildimage/.azure-pipelines/azure-pipelines-build.yml:148; sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.service -->
 <!-- /platform -->
@@ -530,7 +519,7 @@ show kube server config
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `KUBERNETES_MASTER`
 

@@ -79,7 +79,7 @@ VLAN_INTERFACE|<name>               # 属性ロウ (VLAN)
 `mode-status` 型は `sonic-types.yang` で定義: `enum enable | enum disable`。
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 YANG `default disable` はスキーマ上の宣言であり、DB エントリ自体がない場合のランタイム fallback はコードで決まる。
 
@@ -108,7 +108,7 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `intfmgrd` は CONFIG_DB の `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` テーブルを購読し、`ipv6_use_link_local_only` フィールドを APP_DB に転送する。この転送はインターフェースの [STATE_DB](../../reference/glossary.md#term-state_db) 状態に依存するため、いくつかの順序依存が存在する。
 
@@ -134,7 +134,7 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 横断リファレンス (Phase C)
+## 横断リファレンス
 
 `ipv6_use_link_local_only` フィールドはインターフェース系 3 テーブルで共有され、複数の swss daemon・CLI・YANG モジュールから参照される。
 
@@ -170,9 +170,7 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/ipv6-link-local-failure.md`
+## 失敗挙動
 
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp:712-740,832-843, sonic-swss/neighsyncd/neighsync.cpp:93-110,193-243 -->
 
@@ -214,7 +212,7 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 > 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp` L712-740, L817-926, L1272-1280; `sonic-swss/neighsyncd/neighsync.cpp` L193-243; `sonic-utilities/config/main.py` L9451-9484
 > 調査日: 2026-05-19
@@ -261,11 +259,10 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 | `default` | `disable` | `sonic-interface.yang:99` |
 | 型 | `stypes:mode-status` = `enum enable \| enum disable` | `sonic-types.yang` |
 
-詳細は `meta/_intermediate/cdb-flow/ipv6-link-local-constants.md` を参照。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `ipv6_use_link_local_only` フィールドへの SET/DEL を受けた `intfmgrd` は CONFIG_DB 以外に **APP_DB と STATE_DB** へ副次書込を行う。
 
@@ -309,7 +306,7 @@ APP_DB.INTF_TABLE の `ipv6_use_link_local_only` フィールドは IntfsOrch (o
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `ipv6_use_link_local_only` フィールド周辺の Pub/Sub・通知経路を `intfmgrd.cpp` / `intfmgr.cpp` / `neighsync.cpp` から抽出した結果。
 
@@ -382,7 +379,7 @@ flowchart TD
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `ipv6_use_link_local_only` の処理経路は **全プラットフォームで同一**。`cfgmgr/intfmgr.cpp`・`neighsyncd/neighsync.cpp`・`sonic-interface.yang` をプラットフォーム識別キーワード (`multi_asic|is_multi_npu|chassis|asic[0-9]|namespace|platform|vendor|broadcom|mellanox|barefoot|cisco`) で検索してもヒット 0 件であり、機種依存コードが存在しない。
 

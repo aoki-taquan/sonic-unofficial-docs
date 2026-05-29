@@ -197,7 +197,7 @@ show ip interfaces
 <!-- /cdb-exceptions -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 > 調査対象: `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`
 > 調査日: 2026-05-16
@@ -270,7 +270,7 @@ show ip interfaces
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `INTERFACE`
 
@@ -299,7 +299,7 @@ show ip interfaces
 <!-- /entry-points -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Producer/Consumer ペア
 
@@ -410,7 +410,7 @@ STATE_DB[STATE_PORT_TABLE / STATE_LAG_TABLE]
 <!-- /pubsub -->
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 > 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
 > 調査日: 2026-05-14
@@ -451,7 +451,7 @@ STATE_DB[STATE_PORT_TABLE / STATE_LAG_TABLE]
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 > 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
 > 調査日: 2026-05-16 ([VLAN](../../reference/glossary.md#term-vlan)/[LAG](../../reference/glossary.md#term-lag) 先行・kernel netlink 順序を追記)
@@ -525,7 +525,7 @@ STATE_DB[STATE_PORT_TABLE / STATE_LAG_TABLE]
 <!-- /ordering -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 > 調査対象: `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/orchagent/main.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-buildimage/device/mellanox|broadcom/*/sai.profile`
 > 調査日: 2026-05-14
@@ -629,7 +629,7 @@ voqSyncDelIntf(port.m_alias);  // CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE から�
 <!-- /platform -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 INTERFACE テーブルへの SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと SAI 呼び出しを示す。
 
@@ -703,7 +703,7 @@ SAI 呼び出し:
 <!-- /side-effects -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
 YANG leafref を超えた他テーブル・他 DB・プラットフォームファイルへの実装上の依存関係。
 
@@ -728,7 +728,7 @@ YANG leafref を超えた他テーブル・他 DB・プラットフォームフ�
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 以下の定数は `sonic-swss/cfgmgr/intfmgr.cpp`、`orchagent/intfsorch.cpp`、`orchagent/intfsorch.h`、`lib/subintf.cpp` および YANG モデルから検出したマジックナンバー・閾値。
 

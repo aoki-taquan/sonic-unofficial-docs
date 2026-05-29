@@ -247,7 +247,7 @@ inband / recirc / backplane prefix を持つポートは `LLDP_PORT` エント�
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `LLDP_PORT`
 
@@ -277,7 +277,7 @@ inband / recirc / backplane prefix を持つポートは `LLDP_PORT` エント�
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
 > 根拠: `dockers/docker-lldp/lldpmgrd`, `src/sonic-yang-models/yang-models/sonic-lldp.yang`
 
@@ -313,7 +313,7 @@ APPL_DB: PORT_TABLE PortInitDone + PortConfigDone
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 > 根拠: `dockers/docker-lldp/lldpmgrd`, `src/sonic-yang-models/yang-models/sonic-lldp.yang`
 
@@ -338,7 +338,7 @@ APPL_DB: PORT_TABLE PortInitDone + PortConfigDone
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 > 根拠: `dockers/docker-lldp/lldpmgrd` (`process_pending_cmds`, `run`)
 
@@ -370,7 +370,7 @@ APPL_DB: PORT_TABLE PortInitDone + PortConfigDone
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 > 根拠: `dockers/docker-lldp/lldpmgrd` (全行 grep: `set(` / `hset` / `Producer` / `Notification` / `Table`)
 
@@ -390,9 +390,8 @@ lldp ネイバー情報の STATE_DB への書込は `lldp-syncd` が担当する
 <!-- /side-effects -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> 証跡: `meta/_intermediate/cdb-flow/lldp-port-constants.md`  
 > ソース: `dockers/docker-lldp/lldpmgrd`, `dockers/docker-lldp/lldpd.conf.j2`, `src/sonic-yang-models/yang-models/sonic-lldp.yang`
 
 ### lldpmgrd Python 定数（LLDP_PORT の retry / timeout 制御）
@@ -430,10 +429,9 @@ lldp ネイバー情報の STATE_DB への書込は `lldp-syncd` が担当する
 <!-- /constants -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `dockers/docker-lldp/lldpmgrd` 全行精読 (2026-05-18)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/lldp-port-pubsub.md`
+> **Evidence**: `dockers/docker-lldp/lldpmgrd` 全行精読 (2026-05-18)
 
 `LLDP_PORT` テーブルは **`lldpmgrd` に直接購読されていない**。lldpmgrd が購読するのは `APPL_DB PORT_TABLE`・`CONFIG_DB MGMT_INTERFACE`・`CONFIG_DB DEVICE_METADATA` の 3 テーブルのみであり、`LLDP_PORT` への書き込みは lldpmgrd のイベントループに到達しない。
 
@@ -489,10 +487,9 @@ sel.addSelectable(sst_device_confdb)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> 調査対象: `sonic-buildimage/dockers/docker-lldp/lldpmgrd`, `lldpd.conf.j2`, `supervisord.conf.j2`  
-> 詳細根拠: `meta/_intermediate/cdb-flow/lldp-port-platform.md`
+> 調査対象: `sonic-buildimage/dockers/docker-lldp/lldpmgrd`, `lldpd.conf.j2`, `supervisord.conf.j2`
 
 ### ASIC 種別による影響
 

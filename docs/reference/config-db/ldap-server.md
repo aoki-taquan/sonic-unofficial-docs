@@ -234,7 +234,7 @@ sudo cat /etc/nslcd.conf
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `LDAP_SERVER`
 
@@ -263,7 +263,7 @@ sudo cat /etc/nslcd.conf
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `hostcfgd` (`AaaCfg`) の `modify_conf_file()` はイベントごとに PAM / NSS / NSLCD 設定を**全部まとめて再生成**する。`is_ldap_config_complete()` が全条件を満たすまで `nslcd` は起動しない。書き込み順序が nslcd の可用性に直結する。
 
@@ -288,10 +288,9 @@ sudo cat /etc/nslcd.conf
 <!-- /ordering -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-> **調査根拠**: `sonic-host-services/scripts/hostcfgd` L.386, L.437-442, L.547-564, L.650-651, L.706-713, L.855-863; `sonic-host-services/scripts/ldap.py` L.8-18  
-> 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-derivation.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` L.386, L.437-442, L.547-564, L.650-651, L.706-713, L.855-863; `sonic-host-services/scripts/ldap.py` L.8-18
 
 ### Phase 6: 自動派生
 
@@ -333,10 +332,9 @@ hostcfgd は起動時から `LDAP` / `LDAP_SERVER` テーブルを常時購読�
 <!-- /derivation -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-> **調査根拠**: `sonic-host-services/scripts/hostcfgd` 全行精読 (2026-05-16)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-cross-refs.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` 全行精読 (2026-05-16)
 
 `LDAP_SERVER` テーブルは YANG leafref を持たないが、`hostcfgd` の `AaaCfg` クラスが以下のテーブルを暗黙参照する。**3 テーブルが揃って初めて nslcd が起動し LDAP 認証が有効になる**。
 
@@ -365,10 +363,9 @@ hostcfgd 初期化時に `DEVICE_METADATA` から `localhost.hostname` を取得
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
-> **調査根拠**: `sonic-host-services/scripts/hostcfgd` L.241-251, L.437-442, L.547-564, L.706-713, L.854-863  
-> 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-failure.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` L.241-251, L.437-442, L.547-564, L.706-713, L.854-863
 
 ### `is_ldap_config_complete()` が False → nslcd stop + mask
 
@@ -395,10 +392,9 @@ hostcfgd 初期化時に `DEVICE_METADATA` から `localhost.hostname` を取得
 <!-- /failure -->
 
 <!-- constants -->
-## 実装定数一覧 (Phase E)
+## 実装定数一覧
 
-> **調査根拠**: `sonic-host-services/scripts/ldap.py` 全行精読, `sonic-host-services/scripts/hostcfgd` L.40-43, L.106-107, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-ldap.yang`, `sonic-host-services/data/templates/nslcd.conf.j2`  
-> 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-constants.md`
+> **Evidence**: `sonic-host-services/scripts/ldap.py` 全行精読, `sonic-host-services/scripts/hostcfgd` L.40-43, L.106-107, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-ldap.yang`, `sonic-host-services/data/templates/nslcd.conf.j2`
 
 ### LdapCfg クラス定数 (`ldap.py`)
 
@@ -461,7 +457,7 @@ hostcfgd 初期化時に `DEVICE_METADATA` から `localhost.hostname` を取得
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `LDAP_SERVER` / `LDAP|global` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換えおよび `nslcd` サービス再起動に閉じる。
 
@@ -489,14 +485,12 @@ CONFIG_DB `LDAP_SERVER` / `LDAP|global` テーブルの変更に伴って `hostc
 !!! note "既存 SSH セッションへの影響"
     `nslcd` 再起動中は LDAP 認証が一時中断されるが、既存 SSH セッションは影響なし（PAM session フェーズは認証完了済みのため）。新規ログイン試行のみが中断期間中に失敗する可能性がある。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ldap-server-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `sonic-host-services/scripts/hostcfgd` L.2454-2466, L.2475-2476, L.2528, L.2331-2343, L.399-417, L.547-564, L.437-442, L.241-251  
-> 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-pubsub.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` L.2454-2466, L.2475-2476, L.2528, L.2331-2343, L.399-417, L.547-564, L.437-442, L.241-251
 
 ### Redis 購読方式
 
@@ -552,7 +546,7 @@ dbId は CONFIG_DB の通常値 4 ([sonic-swss-common](../../reference/glossary.
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 ソース: `sonic-net/sonic-host-services/scripts/hostcfgd`, `sonic-net/sonic-host-services/scripts/ldap.py`, `sonic-net/sonic-buildimage/files/build_templates/sonic_debian_extension.j2`
 
@@ -586,7 +580,6 @@ dbId は CONFIG_DB の通常値 4 ([sonic-swss-common](../../reference/glossary.
 
 LDAP_SERVER / LDAP|global テーブルには RADIUS の `vrf` フィールドに相当するフィールドが YANG で定義されていない。`mgmt_vrf_handler` は `MgmtIfaceCfg.update_mgmt_vrf()` のみを呼び、`AaaCfg.modify_conf_file()` は呼ばれない。nslcd の [VRF](../../reference/glossary.md#term-vrf) バインドはシステムレベルでの対応が必要だが、hostcfgd はこれを自動化しない（`hostcfgd:2352-2353`）。
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-platform.md`
 <!-- /platform -->
 
 <!-- glossary-links-injected: 2bdabe30dcfb -->

@@ -131,7 +131,7 @@ GNMI_CLIENT_CERT|<cname>
 <!-- /cdb-exceptions -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 > [YANG](../../reference/glossary.md#term-yang) `default` 以外の Shell/Go レベル fallback を per-field で整理する。
 > 書き込み時デフォルト (gnmi-native.sh の分岐) と実行時 fallback (Go CLI フラグ定数) の乖離を区別する。
@@ -256,7 +256,7 @@ GNMI_CLIENT_CERT|<cname>
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `gnmi-native.sh` はコンテナ起動時に **一度だけ** CONFIG_DB を読み込み、`telemetry` バイナリへの引数を構築して `exec` する。このため順序制約のほとんどは「コンテナ起動前に設定完了していること」に集中する。
 
@@ -285,7 +285,7 @@ GNMI_CLIENT_CERT|<cname>
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `gnmi-native.sh` は起動時に `sonic-cfggen -d -t telemetry_vars.j2` で CONFIG_DB 全体を読み込み、`GNMI` テーブルと `DEVICE_METADATA` の一部を JSON 化して参照する。実行時は `clientCertAuth.go` が接続ごとに `GNMI_CLIENT_CERT` テーブルを直接参照する。
 
@@ -318,7 +318,7 @@ GNMI_CLIENT_CERT|<cname>
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh`、`sonic-gnmi/telemetry/telemetry.go`、`sonic-gnmi/gnmi_server/clientCertAuth.go`
 
@@ -387,7 +387,7 @@ Go バイナリの `setupFlags()` が引数を検証し、不正な組み合わ�
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `telemetry` バイナリ (gNMI サーバ) は CONFIG_DB の `GNMI` / `GNMI_CLIENT_CERT` テーブルを**読み取るだけ**で、コアデータパス ([orchagent](../../reference/glossary.md#term-orchagent) / [SAI](../../reference/glossary.md#term-sai)) へは一切書き込まない。ただし、実行中に [STATE_DB](../../reference/glossary.md#term-state_db) へ副次的な書き込みを行い、カウンタ統計は共有メモリ (SysV IPC) に書き込む。
 
@@ -446,7 +446,7 @@ Go バイナリの `setupFlags()` が引数を検証し、不正な組み合わ�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### GNMI / GNMI_CLIENT_CERT テーブルの読み取り方式
 
@@ -514,10 +514,9 @@ journal.ps = journal.rc.PSubscribe(ctx, keyspace, keyevent)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
-> **調査根拠**: `sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh`、`sonic-gnmi/telemetry/telemetry.go`、`sonic-gnmi/sonic_data_client/mixed_db_client.go`、`sonic-gnmi/sonic_data_client/db_client.go`、`sonic-gnmi/sonic_db_config/db_config.go` 全行精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/gnmi-ordering.md`
+> **Evidence**: `sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh`、`sonic-gnmi/telemetry/telemetry.go`、`sonic-gnmi/sonic_data_client/mixed_db_client.go`、`sonic-gnmi/sonic_data_client/db_client.go`、`sonic-gnmi/sonic_db_config/db_config.go` 全行精読 (2026-05-19)
 
 ### 差異 1: SmartSwitch — ZMQ ポート自動付与
 
@@ -599,7 +598,7 @@ multi-ASIC 環境では各 ASIC ごとに独立した Redis インスタンス�
 <!-- /platform -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `telemetry` バイナリ (`telemetry.go`) および `gnmi-native.sh` 起動スクリプトに埋め込まれた固定値を整理する。これらは CONFIG_DB フィールドとは独立して動作し、設定変更なしに挙動に影響する。
 
