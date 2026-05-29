@@ -157,6 +157,11 @@ def main() -> int:
         help="CI informational モード。件数を stderr に出して 0 で終了する。",
     )
     parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="citation 不足ページがあれば 1 で終了する (CI strict ゲート用)。",
+    )
+    parser.add_argument(
         "--report",
         action="store_true",
         help="Markdown 形式の詳細レポートを stdout に出す。",
@@ -176,6 +181,19 @@ def main() -> int:
             f"(verification in {sorted(TARGET_STATUSES)}, informational)",
             file=sys.stderr,
         )
+        return 0
+
+    if args.strict:
+        if rows:
+            print(
+                f"[citation-quality] {len(rows)} citation-deficient page(s) "
+                f"(verification in {sorted(TARGET_STATUSES)}, strict):",
+                file=sys.stderr,
+            )
+            for r in rows:
+                print(f"  - {r[0]}", file=sys.stderr)
+            return 1
+        print("[citation-quality] OK (no citation-deficient pages)", file=sys.stderr)
         return 0
 
     if args.report:

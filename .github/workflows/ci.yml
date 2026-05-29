@@ -191,11 +191,11 @@ jobs:
       - name: partial-boundary phase-table (strict)
         run: python3 meta/scripts/check_partial_boundary.py --strict-phase-table
 
-      - name: citation-deficient pages (informational)
-        run: python3 meta/scripts/check_citation_quality.py --check || true
+      - name: citation-deficient pages (strict)
+        run: python3 meta/scripts/check_citation_quality.py --strict
 
-      - name: broken intra-doc links (informational)
-        run: python3 meta/scripts/check_broken_links.py --check || true
+      - name: broken intra-doc links (strict)
+        run: python3 meta/scripts/check_broken_links.py --strict
 
       - name: link-density outliers (informational)
         run: python3 meta/scripts/check_link_density.py --check || true
