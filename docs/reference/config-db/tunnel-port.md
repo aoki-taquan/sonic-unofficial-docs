@@ -103,7 +103,7 @@ VxlanTunnelMapOrch::addOperation [vxlanorch.cpp:2079]
 - `VxlanTunnelOrch::updateDbTunnelOperStatus()`: [STATE_DB](../../reference/glossary.md#term-state_db) の oper status を更新
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 以下のデフォルト値は DB フィールドとして公開されず、`portsorch.cpp` / `vxlanorch.cpp` 内でハードコードまたは暗黙的に設定される[^1]。
 
@@ -137,7 +137,7 @@ VxlanTunnelMapOrch::addOperation [vxlanorch.cpp:2079]
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `VxlanTunnelOrch` / `VxlanTunnelMapOrch` / `EvpnNvoOrch` はトンネルポート生成前に複数の前提条件を確認する。各ガードが失敗すると `return false` で再試行キューに戻るため、順序が逆になっても最終的には収束するが、中間状態でトンネルポートが存在しない期間が生じる[^1]。
 
@@ -161,7 +161,7 @@ VxlanTunnelMapOrch::addOperation [vxlanorch.cpp:2079]
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 [VXLAN](../../reference/glossary.md#term-vxlan) トンネルポートオブジェクト (`Port::TUNNEL`) は CONFIG_DB テーブルを直接購読しないが、生成・削除・状態更新の各フェーズで以下のオブジェクト / テーブルを暗黙的に参照する。
 
@@ -178,12 +178,11 @@ VxlanTunnelMapOrch::addOperation [vxlanorch.cpp:2079]
 !!! note "STATE_DB への operstatus 書き込み"
     `updateDbTunnelOperStatus()` (vxlanorch.cpp:1893) は `STATE_DB:VXLAN_TUNNEL_TABLE` の `operstatus` フィールドを `"up"` / `"down"` で更新する。初期値は `"down"` で、アンダーレイルートが確立されて SAI ポートイベントが `UP` を通知した時点で `"up"` に遷移する。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-port-ordering.md`
 
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ### SET 処理 (addTunnelUser / VxlanTunnelMapOrch::addOperation) における失敗経路
 
@@ -218,12 +217,11 @@ VxlanTunnelMapOrch::addOperation [vxlanorch.cpp:2079]
 | SAI `create_bridge_port()` 失敗 | SAI 依存 | SAI がリトライ可能ステータスを返せば `handleSaiCreateStatus` がキューに戻す |
 | `m_fdb_count != 0` でブリッジポート削除ブロック | あり | FDB エントリがエージング後に `deleteTunnelPort()` が再呼び出しされると削除が進行する |
 
-> スキャンノート: `meta/_intermediate/cdb-flow/tunnel-port-failure.md`
 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 CONFIG_DB の VXLAN_TUNNEL_MAP / VXLAN_EVPN_NVO テーブルから読み込まれず、コードに直書きされている定数。`config_db.json` での設定変更は効果なく、変更にはコードのリコンパイルが必要。
 
@@ -269,12 +267,11 @@ CONFIG_DB の VXLAN_TUNNEL_MAP / VXLAN_EVPN_NVO テーブルから読み込ま�
     `return true` を返すため、Orch の再試行キューに戻されない。
     設定値の誤りは再起動してエントリを修正するまで回復しない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-port-constants.md`
 
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `PortsOrch::addTunnel()` / `addBridgePort()` / `VxlanTunnelOrch` がトンネルポート生成・削除時に引き起こす副次的な DB 書込とシステム副作用。
 
@@ -314,12 +311,11 @@ SAI ポートステータス変化イベント
 
 `addBridgePort()` 終端 ([portsorch](../../reference/glossary.md#term-portsorch).cpp:7280–7281) が `SUBJECT_TYPE_BRIDGE_PORT_CHANGE` 通知を発行する。購読者は `IsolationGroupOrch` のみ (isolationgrouporch.cpp:233)。`IsolationGroupOrch` は Port::TUNNEL 型を特別扱いしないため、通知は到達するが実質的な副作用は発生しない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-port-side.md`
 
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `Port::TUNNEL` は CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) テーブルを直接購読しない。親テーブル (`VXLAN_TUNNEL_MAP` / `VXLAN_EVPN_NVO`) の処理結果として動的生成されるオブジェクトであり、pubsub の観点では「PortsOrch が内部 API 経由で生成し、STATE_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を書く」構造である[^1]。
 
@@ -338,12 +334,11 @@ SAI ポートステータス変化イベント
 !!! note "Redis Pub/Sub は使用しない"
     `Port::TUNNEL` の生成・削除は `ProducerStateTable` / `ConsumerStateTable` 型の Redis Pub/Sub を介さない。STATE_DB / COUNTERS_DB への書込は `Table` 型 (`HSET` 直接発行) であり、外部プロセスへの通知チャンネルは発生しない。VXLAN_TUNNEL_TABLE の変化を知るためには STATE_DB をポーリングするか keyspace notification を利用する必要がある。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-port-pubsub.md`
 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 VXLAN トンネルポートの生成モデルはプラットフォームの SAI 実装が `SAI_TUNNEL_ATTR_PEER_MODE` として `SAI_TUNNEL_PEER_MODE_P2P` をサポートするかどうかで二分される。この違いは `VxlanTunnelOrch` コンストラクタが SAI ケイパビリティクエリを実行することで起動時に確定し、以後 `isDipTunnelsSupported()` フラグで全処理パスを切り替える[^1]。
 
@@ -385,7 +380,6 @@ sonic-db-cli STATE_DB keys 'VXLAN_TUNNEL_TABLE|*'
 !!! warning "DIP サポートなし環境での EVPN 制限"
     `isDipTunnelsSupported() == false` の環境では `Port_EVPN_*` が生成されず、すべてのリモート VTEP が単一の `Port_SRC_VTEP_*` ポートを共用する。この場合、リモート VTEP ごとの FlexCounter 統計が取れず、リモート VTEP 単位のトラフィック分離もハードウェアレベルでは不可能となる。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-port-platform.md`
 
 <!-- /platform -->
 

@@ -194,11 +194,10 @@ if (alsv.size() == 0 && !blackhole)
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `mplsrouteorch.cpp` / `nhgorch.cpp` に `FlexCounter` / `COUNTERS_DB` 参照なし。SAI `inseg_entry` 用カウンタは未統合 |
 | APPL_STATE_DB | なし | `routeorch.cpp:3201` の `m_publisher.publish(APP_ROUTE_TABLE_NAME, ...)` は `ROUTE_TABLE` キー固定で、`LABEL_ROUTE_TABLE` に対する APPL_STATE_DB ミラーは存在しない |
 
-詳細な走査ログは `meta/_intermediate/cdb-flow/appl-mpls-route-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `mplsrouteorch.cpp` / `nhgorch.cpp` / `routeorch.cpp` / `saihelper.cpp` / `crmorch.cpp` の MPLS 経路を全文走査した結果、[APPL_DB](../../reference/glossary.md#term-appl_db) `LABEL_ROUTE_TABLE` の [orchagent](../../reference/glossary.md#term-orchagent) 処理はコミュニティ master 上で **コード上プラットフォーム非依存**である。実質的な差は SAI ベンダー実装側（`inseg_entry` サポートの有無、`sai_object_type_get_availability` の精度）に閉じ、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) スキーマ・キー構造には現れない。
 
@@ -213,14 +212,12 @@ if (alsv.size() == 0 && !blackhole)
 | multi-asic namespace 特殊化 | **なし** | `mplsrouteorch.cpp` / `nhgorch.cpp` / `onLabelRouteMsg()` に `namespace` / `asic_id` 参照 0 件。各 asic-namespace は独立 swss コンテナで同一ロジックを実行 | — |
 | VRF 制限 (プラットフォーム非依存) | **あり** | `fpmsyncd/routesync.cpp:2674-2681` で非デフォルト VRF (`master_index != 0`) は `SWSS_LOG_INFO("Unsupported Non-default VRF")` のみでスキップ。ASIC タイプとは無関係な fpmsyncd 全体の制約 | `routesync.cpp:2674-2681` |
 
-詳細な走査ログは `meta/_intermediate/cdb-flow/mpls-platform.md` および `meta/_intermediate/cdb-flow/appl-mpls-route-platform.md` を参照。
 <!-- /platform -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照
 
-> **調査根拠**: `mplsrouteorch.cpp`, `nhgorch.cpp`, `routeorch.cpp` の MPLS 経路を全行精読 (2026-05-15)
-> 詳細証跡: `meta/_intermediate/cdb-flow/appl-mpls-route-cross-refs.md`
+> **Evidence**: `mplsrouteorch.cpp`, `nhgorch.cpp`, `routeorch.cpp` の MPLS 経路を全行精読 (2026-05-15)
 
 `APPL_DB:LABEL_ROUTE_TABLE` は [YANG](../../reference/glossary.md#term-yang) モデルを持たないが、`routeorch::doLabelTask()` および `NhgOrch` の MPLS NH 分岐 (`isLabeled()`) を介して以下のオブジェクト/テーブルを実行時に暗黙参照する。
 
@@ -260,7 +257,7 @@ APPL_DB は [YANG](../../reference/glossary.md#term-yang) 非対応のため lea
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-swss/orchagent/mplsrouteorch.cpp`, `orchagent/nhgorch.cpp`
 
@@ -313,13 +310,12 @@ APPL_DB は [YANG](../../reference/glossary.md#term-yang) 非対応のため lea
 - **一時ルート**: ECMP NHG が一部メンバ未解決で作成不能な場合、`addTempLabelRoute()` で解決済み単独 NH を指す一時 inseg を登録し、全メンバ解決後の retry サイクルで本来の NHG に置換される。
 - **`handleSaiSetStatus` / `handleSaiRemoveStatus`** は SAI ステータスから `task_success` / `task_need_retry` / `task_failed` を導出する OrchAgent 共通ハンドラで、MPLS では `SAI_API_MPLS` を渡す。
 
-詳細な走査ログは `meta/_intermediate/cdb-flow/appl-mpls-route-failure.md` を参照。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-`mplsrouteorch` / `nhgorch` MPLS 経路 / `CrmOrch` MPLS resource から抽出した APPL_DB `LABEL_ROUTE_TABLE` 経路に関わる主要ハードコード定数。詳細スキャン結果は `meta/_intermediate/cdb-flow/appl-mpls-route-constants.md` および `meta/_intermediate/cdb-flow/mpls-constants.md`。
+`mplsrouteorch` / `nhgorch` MPLS 経路 / `CrmOrch` MPLS resource から抽出した APPL_DB `LABEL_ROUTE_TABLE` 経路に関わる主要ハードコード定数。
 
 ### APPL_DB テーブル名マクロ（`schema.h`）
 
@@ -410,7 +406,7 @@ MPLS 経路は `CRM_MPLS_INSEG` と `CRM_MPLS_NEXTHOP` の 2 リソースに連�
 <!-- /constants -->
 
 <!-- ordering -->
-## 書込み順依存・タイミング依存 (Phase B)
+## 書込み順依存・タイミング依存
 
 APPL_DB `LABEL_ROUTE_TABLE` は `fpmsyncd::RouteSync::onLabelRouteMsg()` が書き、`RouteOrch::doLabelTask()`
 (`mplsrouteorch.cpp:34-417`) と `NhgOrch` の MPLS NH 分岐 (`nhgorch.cpp` `isLabeled()`)
@@ -675,15 +671,12 @@ bulker flush を待つ。確定は項 8 の post-process ループで `addLabelR
 | 同一バッチ内重複 create | bulker flush 完了 | `SAI_STATUS_ITEM_ALREADY_EXISTS` で `return false` |
 | warm reboot | fpmsyncd `WarmStartHelper` + 通常起動順 | 通常 SET フロー (MPLS 専用 reconcile 差分なし) |
 
-詳細な grep 証跡は `meta/_intermediate/cdb-flow/appl-mpls-route-ordering.md` を参照[^mplsorderingmem].
-
 [^mplsrorch]: `sonic-net/sonic-swss` `orchagent/mplsrouteorch.cpp` (`RouteOrch::doLabelTask` / `addLabelRoute` / `addLabelRoutePost` / `addTempLabelRoute` / `removeLabelRoute*`)
 [^mplsnhgorch]: `sonic-net/sonic-swss` `orchagent/nhgorch.cpp` (`NextHopGroupMember::createSaiObject` `isLabeled()` 分岐 / `~NextHopGroupMember` の `removeMplsNextHop`)
-[^mplsorderingmem]: 順序依存スキャンの中間メモ: `meta/_intermediate/cdb-flow/appl-mpls-route-ordering.md`
 <!-- /ordering -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -748,7 +741,7 @@ SAI: sai_mpls_api->create_inseg_entry / set_inseg_entry_attribute / remove_inseg
 
 `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` feature が有効なら `ZmqConsumerStateTable` が `LABEL_ROUTE_TABLE` を ZMQ TCP socket 経由（[Redis](../../reference/glossary.md#term-redis) をバイパス）で受信する。ハンドラ (`doLabelTask`) は共通で、APPL_DB 上のデータも `dbPersistence` 引数に従って永続化される。デフォルトでは無効なので、標準フローは [Redis](../../reference/glossary.md#term-redis) channel PUBLISH 経路。
 
-> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:22-23, 315-337` (`SELECT_TIMEOUT` / `route_tables` / ZMQ feature 切替 / `RouteOrch` 生成)、`sonic-swss/orchagent/routeorch.cpp:40-58, 614-619, 1088-1090, 1231, 3185-3201` (`ZmqOrch` 継承コンストラクタ / `doTask` 分岐 / `publishRouteState` は IP route 固定)、`sonic-swss/orchagent/zmqorch.cpp:41-72` (`ZmqOrch::addConsumer` の DB ID / `zmqServer` 分岐)、`sonic-swss/orchagent/mplsrouteorch.cpp:34-417` (`doLabelTask` / bulker / `m_publisher` 参照 0 件)、`sonic-swss/orchagent/main.cpp:59-60, 459, 478` (`DEFAULT_BATCH_SIZE = 128` / `-b` オプション)、`sonic-swss/fpmsyncd/routesync.cpp:2674-2732` (`onLabelRouteMsg` の `ProducerStateTable::set`)、`sonic-swss-common/common/schema.h:48` (`APP_LABEL_ROUTE_TABLE_NAME`); 詳細分析 `meta/_intermediate/cdb-flow/appl-mpls-route-pubsub.md`
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:22-23, 315-337` (`SELECT_TIMEOUT` / `route_tables` / ZMQ feature 切替 / `RouteOrch` 生成)、`sonic-swss/orchagent/routeorch.cpp:40-58, 614-619, 1088-1090, 1231, 3185-3201` (`ZmqOrch` 継承コンストラクタ / `doTask` 分岐 / `publishRouteState` は IP route 固定)、`sonic-swss/orchagent/zmqorch.cpp:41-72` (`ZmqOrch::addConsumer` の DB ID / `zmqServer` 分岐)、`sonic-swss/orchagent/mplsrouteorch.cpp:34-417` (`doLabelTask` / bulker / `m_publisher` 参照 0 件)、`sonic-swss/orchagent/main.cpp:59-60, 459, 478` (`DEFAULT_BATCH_SIZE = 128` / `-b` オプション)、`sonic-swss/fpmsyncd/routesync.cpp:2674-2732` (`onLabelRouteMsg` の `ProducerStateTable::set`)、`sonic-swss-common/common/schema.h:48` (`APP_LABEL_ROUTE_TABLE_NAME`)
 <!-- /pubsub -->
 
 <!-- glossary-links-injected: 5510b1e3c75d -->

@@ -88,9 +88,9 @@ VRRP_TRACK|<interface_name>|<vrid>|<track_interface>
   - `show vrrp`
 
 <!-- ordering -->
-## 書込み順依存 (Phase B — コード由来)
+## 書込み順依存 (コード由来)
 
-`sonic-utilities/config/main.py` の `add_track_interface()` / `remove_track_interface()` を精読して検出した順序依存・タイミング依存。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-track-ordering.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-track-ordering.md)。
+`sonic-utilities/config/main.py` の `add_track_interface()` / `remove_track_interface()` を精読して検出した順序依存・タイミング依存。
 
 | # | 依存関係 | 方向 | 緩和策 / 備考 |
 |---|----------|------|--------------|
@@ -112,9 +112,9 @@ VRRP_TRACK|<interface_name>|<vrid>|<track_interface>
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-`VRRP_TRACK` テーブルは YANG leafref と CLI 実行時チェックの 2 系統で外部テーブルを参照する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-track-cross-refs.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-track-cross-refs.md)。
+`VRRP_TRACK` テーブルは YANG leafref と CLI 実行時チェックの 2 系統で外部テーブルを参照する。
 
 ### YANG leafref (VRRP_TRACK_LIST)
 
@@ -151,9 +151,9 @@ VRRP_TRACK への書き込みは直接 [APPL_DB](../../reference/glossary.md#ter
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-`VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは CLI (`sonic-utilities/config/main.py`) 経路と YANG/[gNMI](../../reference/glossary.md#term-gnmi) 直書き経路で異なる失敗分岐を持つ。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-track-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-track-failure.md)。
+`VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは CLI (`sonic-utilities/config/main.py`) 経路と YANG/[gNMI](../../reference/glossary.md#term-gnmi) 直書き経路で異なる失敗分岐を持つ。
 
 ### CLI 経路 — add_track_interface() の失敗パターン
 
@@ -218,9 +218,9 @@ VRRP_TRACK への書き込みは直接 [APPL_DB](../../reference/glossary.md#ter
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-`VRRP_TRACK` / `VRRP6_TRACK` に関連する、CONFIG_DB スキーマ外でソースコードに固定されたリテラル値の一覧。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-track-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-track-constants.md)。
+`VRRP_TRACK` / `VRRP6_TRACK` に関連する、CONFIG_DB スキーマ外でソースコードに固定されたリテラル値の一覧。
 
 ### スケール上限（CLI ハードコード整数）
 
@@ -260,10 +260,9 @@ CLI と YANG で許容範囲が意図的に乖離している。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 > 根拠: `SONiC/doc/vrrp/VRRP_Adaptation_HLD.md` L219-232, L481-492 全行精読。
-> 詳細証跡: `meta/_intermediate/cdb-flow/vrrp-track-side-effects.md`
 
 `VRRP_TRACK` / `VRRP6_TRACK` への SET / DEL は **他の DB（[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db)）へ直接書き込まない**。変更は CONFIG_DB から FRR `vrrpd` のインメモリ track 設定に反映されるのみであり、DB への副次書き込みは発生しない。
 
@@ -300,9 +299,9 @@ VRRP_TRACK priority_increment 変化
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-`VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは **macvlanmgrd が単独で購読する**。`VRRP` テーブルとは異なり、VRRP_TRACK の変更は [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) へ直接伝播しない。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-track-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-track-pubsub.md)。
+`VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは **macvlanmgrd が単独で購読する**。`VRRP` テーブルとは異なり、VRRP_TRACK の変更は [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) へ直接伝播しない。
 
 ### 購読方式一覧
 
@@ -339,7 +338,7 @@ vrrpd が VRRP Advertisement パケット送信 (priority フィールド更新)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: `VRRP_TRACK` テーブルへの書き込み・読み込みは [ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic 構成・[VOQ](../../reference/glossary.md#term-voq) chassis 構成に依らない。
 
@@ -351,7 +350,6 @@ vrrpd が VRRP Advertisement パケット送信 (priority フィールド更新)
 | [SAI](../../reference/glossary.md#term-sai) `SAI_ROUTER_INTERFACE_ATTR_IS_VIRTUAL` 未サポート ASIC | 間接的のみ | 当該 [SAI](../../reference/glossary.md#term-sai) capability 差は `vrrporch` / ASIC_DB 層の話であり、VRRP_TRACK → FRR vrrpd 経路には影響しない。VRRP_TRACK エントリ自体の書き込み・読み込みに差は出ない (HLD L519-520) |
 | ベンダー固有 FRR パッチ | なし | community master の `sonic-frr` は platform 分岐を持たない。`sonic-vrrp.yang` にも platform 条件付きフィールドは存在しない |
 
-詳細根拠は `meta/_intermediate/cdb-flow/vrrp-track-platform.md` を参照。
 <!-- /platform -->
 
 ## 引用元

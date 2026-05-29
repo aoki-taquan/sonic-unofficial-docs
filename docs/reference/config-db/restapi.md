@@ -151,20 +151,20 @@ systemctl status restapi
 [^2]: YANG 定義: `sonic-restapi.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-restapi.yang>
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 REST_API テーブルの各フィールドはサービス起動引数に直接マッピングされる。CONFIG_DB 内フィールド間の自動付与はなし。`client_auth` 未設定の場合はサービスデフォルトの認証モード（`user_auth`）が使用される。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 restapi サービス ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework / sonic-gnmi) がインストールされている場合のみ `REST_API` テーブルを消費するプロセスが存在する。サービスが有効化されていない場合はテーブルを読んでも REST API サービスは起動しない。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -173,7 +173,7 @@ restapi サービス ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-
 | `restapi` 起動処理 | `log_level` 値により | ログ出力レベルを変更 | restapi 設定処理 |
 | `restapi` 起動処理 | `server_crt` / `server_key` あり | TLS を有効化して起動 | restapi 設定処理 |
 
-> **スキャン証跡**: `RESTAPI` テーブルは REST API サービス設定の薄いラッパー。CONFIG_DB 内での自動派生なし。主にサービス起動時の設定ファイル生成に使われる。
+> **裏取り**: `RESTAPI` テーブルは REST API サービス設定の薄いラッパー。CONFIG_DB 内での自動派生なし。主にサービス起動時の設定ファイル生成に使われる。
 
 <!-- /handler-branching -->
 
@@ -200,7 +200,7 @@ restapi サービス ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 RESTAPI テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -234,7 +234,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /entry-points -->
 
 <!-- defaults -->
-## コード由来デフォルト (Phase A)
+## コード由来デフォルト
 
 `docker-sonic-mgmt-framework/rest-server.sh` が CONFIG_DB 値を読み込む際に適用するランタイムデフォルト。YANG スキーマに `default` 文が存在しない場合でも、起動スクリプト側で値が補完される。
 
@@ -246,15 +246,14 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 | `allow_insecure` (HTTP) | 無効 (`-enablehttp` フラグなし) | 起動引数に HTTP 許可フラグが含まれず、HTTPS のみで起動 |
 | `port` | rest_server バイナリデフォルト（8443） | `SERVER_PORT=$(... jq -r '.port // empty')` — 空の場合は `-port` 引数なし、rest_server の組み込みデフォルトが有効 |
 
-> **スキャン証跡**: `sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh` の起動スクリプトより抽出。YANG `sonic-restapi.yang` には `default` 文なし。コード由来デフォルトのみ。
+> **Evidence**: `sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh` の起動スクリプトより抽出。YANG `sonic-restapi.yang` には `default` 文なし。コード由来デフォルトのみ。
 
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> **調査根拠**: `supervisord.conf`, `rest-server.sh`, `mgmt_vars.j2`, `minigraph.py` L2689–2702, `db_migrator.py` L608–619 精読 (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/restapi-ordering.md`
+> **Evidence**: `supervisord.conf`, `rest-server.sh`, `mgmt_vars.j2`, `minigraph.py` L2689–2702, `db_migrator.py` L608–619 精読 (2026-05-18)
 
 ### コンテナ起動時シーケンス
 
@@ -296,12 +295,11 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `sonic-restapi.yang` には leafref / must / when 文がゼロ件であり、YANG スキーマレベルでの明示的 cross-table 参照は存在しない。
 代わりに `rest-server.sh` / `mgmt_vars.j2` / `minigraph.py` / `db_migrator.py` から抽出した **3 系統の暗黙依存**が実装レベルの cross-table 参照となる。
 
-<!-- evidence: meta/_intermediate/cdb-flow/restapi-cross-refs.md -->
 <!-- source: sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh -->
 <!-- source: sonic-buildimage/dockers/docker-sonic-mgmt-framework/mgmt_vars.j2 -->
 <!-- source: sonic-buildimage/src/sonic-config-engine/minigraph.py L2689-2702 -->
@@ -329,11 +327,9 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
+## 失敗挙動・retry / recovery
 
-<!-- evidence: sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh,
-     sonic-buildimage/dockers/docker-sonic-mgmt-framework/supervisord.conf,
-     sonic-utilities/scripts/db_migrator.py L608-619 -->
+
 
 RESTAPI テーブルの設定は `rest-server.sh` が起動時に一括読み込みするため、失敗は **起動時点** (静的) と **証明書生成時点** の 2 フェーズに集中する。[orchagent](../../reference/glossary.md#term-orchagent)/[syncd](../../reference/glossary.md#term-syncd) のような実行時 retry ループは存在しない。
 
@@ -412,10 +408,9 @@ RESTAPI テーブルの設定は `rest-server.sh` が起動時に一括読み込
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `rest-server.sh`, `supervisord.conf`, `mgmt_vars.j2`, `sonic-restapi.yang` 精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/restapi-constants.md`
+> **Evidence**: `rest-server.sh`, `supervisord.conf`, `mgmt_vars.j2`, `sonic-restapi.yang` 精読 (2026-05-19)
 
 ### rest-server.sh 起動スクリプト定数
 
@@ -454,17 +449,9 @@ RESTAPI テーブルの設定は `rest-server.sh` が起動時に一括読み込
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `RESTAPI` テーブルへの書込は CONFIG_DB 内で完結し、他の DB ([APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db)) への副次書込を**引き起こさない**。
-
-> 調査証跡: `meta/_intermediate/cdb-flow/restapi-side-effects.md`
-
-<!-- evidence:
-  sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh:13-66
-  sonic-host-services/scripts/hostcfgd:103
-  sonic-buildimage/dockers/docker-sonic-mgmt-framework/supervisord.conf:39-47
--->
 
 ### 一括読み取りモデル（subscribe なし）
 
@@ -497,10 +484,9 @@ FIPS_CFG (SET/DEL)
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh:13`, `supervisord.conf:39-47`, `sonic-host-services/scripts/hostcfgd` 購読リスト精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/restapi-pubsub.md`
+> **Evidence**: `sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh:13`, `supervisord.conf:39-47`, `sonic-host-services/scripts/hostcfgd` 購読リスト精読 (2026-05-19)
 
 ### RESTAPI テーブルに subscribe するデーモンは存在しない
 
@@ -546,12 +532,11 @@ supervisord 起動
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: RESTAPI は管理プレーン専用機能であり、SAI を経由しないため [ASIC](../../reference/glossary.md#term-asic) 種別・ベンダー・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成による動作差は存在しない。
 
-> **調査根拠**: `rest-server.sh`, `mgmt_vars.j2`, `supervisord.conf`, `minigraph.py:2689-2701` 精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/restapi-platform.md`
+> **Evidence**: `rest-server.sh`, `mgmt_vars.j2`, `supervisord.conf`, `minigraph.py:2689-2701` 精読 (2026-05-19)
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|

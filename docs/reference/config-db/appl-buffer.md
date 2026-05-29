@@ -131,7 +131,7 @@ VoQ スイッチ環境では `BUFFER_PG_TABLE` / `BUFFER_QUEUE_TABLE` のキー�
 - 関連 CLI: `config buffer`、`show buffer pool`、`show buffer profile`
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト / 実装乖離 (Phase A)
+## コード由来の暗黙デフォルト / 実装乖離
 
 ### `type=both` — buffermgrdyn が内部で `BUFFER_EGRESS` に折り畳む (乖離)
 
@@ -216,7 +216,7 @@ threshold_mode が未設定のとき、ingress_lossless_pool の `mode` フィ�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `BufferOrch` は SAI の隠れた依存ツリー（pool → profile → PG/Queue/ProfileList）に従って APPL_DB の `BUFFER_*_TABLE` を処理する。**外部から書き込む順序が逆でも `task_need_retry` で最終的には収束**するが、各 doTask が retry を出し続けるためログが暴れる。順序依存と PortsOrch readiness ゲートを以下に整理する[^buforch]。
 
@@ -313,16 +313,12 @@ buffer pool
 
 ### 詳細
 
-行番号付きの完全スキャンノート・grep カバレッジは中間ファイル参照:
-
-- `meta/_intermediate/cdb-flow/appl-buffer-ordering.md`
-
 > **証跡**: `bufferorch.cpp` の `isConfigDone` × 1 / `isInitDone` × 1 / `drain()` × 3 / `m_ready_list` × 16 / `m_port_ready_list_ref` × 7 / `WarmStart::isWarmStart` × 1 / `m_isBufferPoolWatermarkCounterIdListGenerated` × 3 を全件確認。`doTask(Consumer&)` (L2075-2138)、`doTask()` no-arg (L2040-2073)、`initBufferReadyLists()` (L86-143) を精読。
 
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗・retry 挙動 (Phase D)
+## 失敗・retry 挙動
 
 `BufferOrch::doTask()` (`bufferorch.cpp` L2096-2129) は per-table handler が返す `task_process_status` を一括処理する。ステータスごとの最終挙動は以下のとおり[^buforch]。
 
@@ -384,16 +380,12 @@ bufferorch は SAI 戻り値を直接 enum 化せず、`orch.cpp` 共通の `han
 
 ### 詳細マトリクス
 
-handler ごと・行番号付きの完全な失敗・retry 分岐マトリクス、ディスパッチャ挙動表、grep カバレッジは中間ファイル参照:
-
-- `meta/_intermediate/cdb-flow/appl-buffer-failure.md`
-
 > **証跡**: `bufferorch.cpp` 全 2138 行のうち、`task_need_retry` × 12 / `task_failed` × 10 / `task_invalid_entry` × 17 / `task_ignore` × 3 / `handleSai*Status` × 9 hit を全件確認。`doTask()` の switch 句 (L2107-2128) も精読。
 
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `BufferOrch` は APPL_DB の `BUFFER_*_TABLE` を購読して SAI に反映するのが主目的だが、**[STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)** にも副次的に書き込む。SET/DEL ハンドラとは別経路で発火するものを含めて以下に整理する[^buforch]。
 
@@ -466,16 +458,12 @@ redis-cli -n 5 keys 'FLEX_COUNTER_TABLE|BUFFER_POOL_WATERMARK*'
 
 ### 詳細マトリクス
 
-完全な行番号付き分析・PortsOrch 間接経路の詳細・grep カバレッジは中間ファイル参照:
-
-- `meta/_intermediate/cdb-flow/appl-buffer-side.md`
-
 > **証跡**: `bufferorch.cpp` 内の `STATE_BUFFER_MAXIMUM_VALUE_TABLE` × 2 / `m_counterNameMapUpdater` × 3 / `setFlexCounterGroup*` × 2 / `startFlexCounterPolling` × 1 / `stopFlexCounterPolling` × 1 / `m_publisher.publish` × 4 / `createPortBufferQueueCounters` × 1 / `createPortBufferPgCounters` × 1 を全件確認。
 
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 APPL_DB の 6 BUFFER テーブルは **`buffermgrd` (`buffermgrdyn` / `buffermgr`) が Producer、`orchagent` の `BufferOrch` が Consumer** という単一方向の Producer / Consumer 関係。すべて APPL_DB (db id = 0) 上で `ProducerStateTable` ↔ `ConsumerStateTable` の **PUBLISH/SUBSCRIBE 経路** を取る。keyspace notification (`PSUBSCRIBE __keyspace@N__:...`) は**使用しない**[^buforch].
 
@@ -518,7 +506,7 @@ for (auto &it : m_consumerMap) {           // PG / QUEUE / PROFILE_LIST_{INGRESS
 gPortsOrch->flushCounters();
 ```
 
-これにより、同一 doTask 呼び出し内で **pool → profile → (pg / queue / profile-list)** の SAI 依存関係順に消化される。ベース `Orch::doTask()` の `m_consumerMap` イテレート実装をオーバーライドしている。Phase B (順依存) で詳述した固定 drain 順と同じ実装。
+これにより、同一 doTask 呼び出し内で **pool → profile → (pg / queue / profile-list)** の SAI 依存関係順に消化される。ベース `Orch::doTask()` の `m_consumerMap` イテレート実装をオーバーライドしている。「書込み順依存」節で詳述した固定 drain 順と同じ実装。
 
 ### orchagent 主ループの select 周期
 
@@ -533,7 +521,7 @@ PUBLISH 受信ごとに `Select::select` が return → 該当 Consumer の `exe
 
 ### ガード — port 初期化未完時は m_toSync に積み残し
 
-`bufferorch.cpp:2079-2091` で port 初期化が終わっていない間は処理せず保留する (Phase B の readiness ゲートと同一):
+`bufferorch.cpp:2079-2091` で port 初期化が終わっていない間は処理せず保留する（「書込み順依存」節の readiness ゲートと同一）:
 
 ```cpp
 if (gMySwitchType == "voq") {
@@ -547,7 +535,7 @@ PUBLISH 自体は受信して `m_toSync` に積まれるが、その回の `doTa
 
 ### ResponsePublisher による上り ack (APPL_STATE_DB)
 
-`orch.h:382` の `ResponsePublisher m_publisher{"APPL_STATE_DB"}` を通じて、BufferOrch は **`BUFFER_POOL_TABLE` / `BUFFER_PROFILE_TABLE` のみ** SAI 反映完了を ack する (PG / Queue / PROFILE_LIST は ack なし、Phase F の副次書込と一致):
+`orch.h:382` の `ResponsePublisher m_publisher{"APPL_STATE_DB"}` を通じて、BufferOrch は **`BUFFER_POOL_TABLE` / `BUFFER_PROFILE_TABLE` のみ** SAI 反映完了を ack する（PG / Queue / PROFILE_LIST は ack なし、「副次 DB 書込」節と一致）:
 
 | 行 | テーブル | 条件 | 内容 |
 |---|---|---|---|
@@ -615,14 +603,12 @@ TTL / expire: なし
 
 ### 詳細ノート
 
-行番号付き完全マトリクス・PUBLISH チャネル列挙・warm reboot 経路は中間メモを参照: `meta/_intermediate/cdb-flow/appl-buffer-pubsub.md`。
-
 > **証跡**: `bufferorch.cpp:53` (`Orch(applDb, tableNames)`) → `orch.cpp:97-103, 1186-1196` (APPL_DB → [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) 分岐) → `bufferorch.cpp:2040-2073` (drain 順)、`m_publisher.publish` × 4 hit、`buffermgrdyn.h:208/214` + `buffermgr.h:48/50` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 型確認) を全件確認。
 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `BufferOrch` は単一バイナリで動作するが、(a) `gMySwitchType == "voq"` の chassis VOQ 経路、(b) SAI capability の動的判定、(c) ベンダ buffer pool Lua plugin、の 3 点でプラットフォーム差が生まれる[^buforch]。[BUFFER_PG](../../reference/glossary.md#term-buffer-pg) / BUFFER_QUEUE の **PG/queue index → SAI oid マッピング自体は `portsorch` 側に閉じている** ため、Broadcom / Mellanox の物理マップ差は bufferorch には現れない。
 
@@ -672,18 +658,12 @@ bufferorch は PG / queue の SAI oid を **`portsorch` が `SAI_PORT_ATTR_INGRE
 
 multi-asic non-VOQ (T2 chassis [BGP](../../reference/glossary.md#term-bgp)-only 等) では `BUFFER_*` は各 `asicX` namespace の独立 bufferorch インスタンスで処理される。VOQ chassis では `gMyHostName` / `gMyAsicName` と key の先頭 2 トークンを比較し (L1062-1064)、自 ASIC 配下を `local_port = true` として SAI bind、他 ASIC ぶんは ready list 管理のみ。
 
-### 詳細
-
-行番号付き完全マトリクスは中間ファイル参照:
-
-- `meta/_intermediate/cdb-flow/appl-buffer-platform.md`
-
 > **証跡**: `bufferorch.cpp` の `gMySwitchType` 5 hit / `SAI_STATUS_NOT_IMPLEMENTED` 3 hit / `SAI_STATUS_NOT_SUPPORTED` 1 hit を全件確認。VOQ 分岐の L116/L132/L916/L1049/L1136/L1168/L2079、capability 経路の L310-322/L506-512/L773-777 を精読。
 
 <!-- /platform -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `bufferorch.cpp` / `bufferorch.h` / `buffer/bufferschema.h` に固定された文字列・列挙値定数の一覧。フィールド名・列挙値文字列はすべて C++ ヘッダで `const string` として定義されており、CLI / [YANG](../../reference/glossary.md#term-yang) / API いずれの層でも同じ綴りを要求する。
 
@@ -775,16 +755,14 @@ flex counter スキップ判定として、プロファイル名に `_zero_` を
 | `COUNTERS_BUFFER_POOL_NAME_MAP` | pool name → OID マップ | `bufferorch.cpp:55` |
 | `"COUNTERS_DB"` (DB 名リテラル) | DBConnector 引数 | `bufferorch.cpp:55-56` |
 
-> 詳細スキャン証跡: `meta/_intermediate/cdb-flow/appl-buffer-constants.md`
-
 <!-- /constants -->
 
 ---
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-APPL_DB の `BUFFER_*_TABLE` 群を `BufferOrch` が処理する際に SAI OID 解決のために間接的に読み出す関連テーブル / Orch / DB を列挙する。`BufferOrch` は CONFIG_DB を**直接購読しない**ため、CONFIG_DB 側 `BUFFER_*` は `buffermgrd` 経由の Direction A 入力として扱われる（本ブロックには含めない）。
+APPL_DB の `BUFFER_*_TABLE` 群を `BufferOrch` が処理する際に SAI OID 解決のために間接的に読み出す関連テーブル / Orch / DB を列挙する。`BufferOrch` は CONFIG_DB を**直接購読しない**ため、CONFIG_DB 側 `BUFFER_*` は `buffermgrd` 経由の書込み入り口として扱われる（本ブロックには含めない）。
 
 ### BUFFER_PROFILE_TABLE の参照
 
@@ -835,7 +813,6 @@ APPL_DB の `BUFFER_*_TABLE` 群を `BufferOrch` が処理する際に SAI OID �
 !!! warning "buffermgrd 側 CONFIG_DB 参照は本ブロック対象外"
     CONFIG_DB の `BUFFER_POOL` / `BUFFER_PROFILE` / `BUFFER_PG` / `BUFFER_QUEUE` / `DEVICE_METADATA.localhost.buffer_model` / `PORT` / `PORT_QOS_MAP` 等は `buffermgrd` (`buffermgrdyn` / `buffermgr`) が読み出して APPL_DB に変換する。`bufferorch` から直接参照されるのは warm-reboot 復旧スキャン (`bufferorch.cpp:129-141`) のみ。
 
-詳細分析: `meta/_intermediate/cdb-flow/appl-buffer-cross-refs.md`
 <!-- /cross-refs -->
 
 ## 引用元

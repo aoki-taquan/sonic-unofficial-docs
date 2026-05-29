@@ -235,6 +235,16 @@ redis-cli -n 6 keys 'ASIC_SDK_HEALTH_EVENT*'
 
 `monitor: partially_implemented` — HLD は SAI バージョン比較を **MAJOR.MINOR の等値比較** とするが、実装（`sonic-sairedis/configure.ac` l.226-261）は `minversion = SAI_VERSION(1,9,0)` の **floor チェック** に緩和されている（`return (version < minversion) || (SAI_API_VERSION < minversion);` のみが失敗条件）。MAJOR ずれや MINOR 上方差も許容するため、HLD 提案より実装は大幅に緩い。緩和の根拠は configure.ac コメントで OCP SAI PR 1297（enum binary backward compat）および PR 1795（structs）を引用。`syncd/VendorSai.cpp` l.52 の `.query_api_version = &sai_query_api_version` は実装済みで、`sai_query_api_version()` の呼び出し自体は機能する。
 
+機能項目ごとの実装状況は以下のとおり。
+
+| 機能項目 | HLD 提案 | 実装状況 |
+|---|---|---|
+| `sai_query_api_version()` の呼び出し | 必須 | 実装済（`syncd/VendorSai.cpp` l.52） |
+| ビルド時バージョン検査（`AC_TRY_RUN`） | 必須 | 実装済（`configure.ac` l.226-261） |
+| MAJOR.MINOR の等値比較 | HLD 案の判定方式 | 未実装（`SAI_VERSION(1,9,0)` の floor 比較に緩和） |
+| PATCH バージョン差の検査 | （HLD 言及なし） | 未対応（OCP SAI の互換性保証に依存し意図的に無視） |
+| runtime での libsai 入れ替え検知 | （対象外） | 未実装（検査はビルド時限定） |
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-build-system/saiversioncheck.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

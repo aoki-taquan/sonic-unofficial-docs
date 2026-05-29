@@ -193,7 +193,7 @@ show vnet routes tunnel
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 ### CLI
 
@@ -250,7 +250,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` の CONFIG_DB エントリは `VNetCfgRouteOrch` が即座に APPL_DB へ passthrough するが、APPL_DB 側の `VNetRouteOrch` が [SAI](../../reference/glossary.md#term-sai) に反映する段階で複数の順序依存が存在する。
 
@@ -275,7 +275,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` の CONFIG_DB エントリは `VNetCfgRouteOrch` が依存チェックなしで APPL_DB に passthrough する。暗黙参照が発生するのは APPL_DB 購読側の `VNetRouteOrch` が SAI に反映する段階。以下は `vnetorch.cpp` コード精読による依存先整理[^vnetorch]。
 
@@ -309,13 +309,11 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（�
 !!! warning "peer VNET が多い構成は SAI 反映遅延に注意"
     `peer_list` に未作成の peer が 1 件でも存在すると `VNetRouteOrch` は `return false` で再キューする。peer 全件が揃うまで経路は SAI に反映されない。大規模 VNET mesh 構成では `VNET_ROUTE` の SAI 到達まで複数 orchagent サイクルを要する場合がある。
 
-詳細根拠は `meta/_intermediate/cdb-flow/vnet-route-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/vnet-route-failure.md -->
 <!-- source: sonic-swss/orchagent/vnetorch.cpp -->
 
 ### 失敗パス一覧
@@ -392,9 +390,8 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-<!-- evidence: meta/_intermediate/cdb-flow/vnet-route-constants.md -->
 <!-- source: sonic-swss/orchagent/vnetorch.h; sonic-swss-common/common/schema.h -->
 
 `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` 処理に関わる、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
@@ -447,9 +444,8 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-<!-- evidence: meta/_intermediate/cdb-flow/vnet-route-side-effects.md -->
 <!-- source: sonic-swss/orchagent/vnetorch.cpp -->
 
 `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` の CONFIG_DB 書込は `VNetCfgRouteOrch` が即座に APPL_DB へ passthrough する。その後 APPL_DB 消費側の `VNetRouteOrch` が SAI 反映を行い、条件次第でさらに STATE_DB や APPL_DB（BFD）への副次書込が発生する。
@@ -509,7 +505,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 ### 書き込み側 VNetCfgRouteOrch の通信構造
 
@@ -570,11 +566,10 @@ BFD セッション自体の書き込みは `bfd_session_producer_`（[ProducerS
 - `VNetRouteOrch` も同様に `return false` で `m_toSync` に残留し、1 サイクルごとに再試行する。
 - BFD 状態変化通知は非同期（BFD デーモン主導）であり、明示的な retry interval は存在しない。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/vnet-route-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 ### Ordered ECMP サポート — ASIC Capability 依存
 
@@ -617,7 +612,7 @@ BRIDGE モードは無効。
 `vnetorch.cpp` に VoQ / [Multi-ASIC](../../reference/glossary.md#term-multi-asic) 固有の分岐は存在しない。VNET は単一 ASIC 構成を前提とした
 機能であり、[Multi-ASIC](../../reference/glossary.md#term-multi-asic) / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 向け拡張は対象外。
 
-> **スキャン証跡**: `vnetorch.cpp:804,841,2778`（Ordered ECMP NHG type・SEQUENCE_ID 分岐）、`switchorch.cpp:467-501`（`setSwitchNonSaiAttributes` — `ordered_ecmp` 属性処理）、`switchorch.h:68`（`checkOrderedEcmpEnable`）、`vnetorch.h:63-67`（`VNET_EXEC` enum）、`orchdaemon.cpp:276`（VRF モード固定）。詳細は `meta/_intermediate/cdb-flow/vnet-route-platform.md` を参照。
+> **裏取り**: `vnetorch.cpp:804,841,2778`（Ordered ECMP NHG type・SEQUENCE_ID 分岐）、`switchorch.cpp:467-501`（`setSwitchNonSaiAttributes` — `ordered_ecmp` 属性処理）、`switchorch.h:68`（`checkOrderedEcmpEnable`）、`vnetorch.h:63-67`（`VNET_EXEC` enum）、`orchdaemon.cpp:276`（VRF モード固定）。
 <!-- /platform -->
 
 <!-- glossary-links-injected: 9ea391060461 -->

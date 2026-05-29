@@ -71,7 +71,7 @@ route_redist_key_map = [
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `frrcfgd`（`BGPConfigDaemon`）が `ROUTE_REDISTRIBUTE` イベントを処理する前に `BGP_GLOBALS.local_asn` を参照し、未設定の場合は **silent drop** する。また削除順序の逆転により FRR 側に設定が残存するリスクがある。
 
@@ -95,10 +95,9 @@ route_redist_key_map = [
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
+## 暗黙参照マップ
 
 > YANG leafref として静的に強制される参照と、`frrcfgd` が処理時に参照するランタイム依存を網羅する。
-> 詳細証跡: `meta/_intermediate/cdb-flow/route-redistribute-ordering.md`
 
 ### ROUTE_REDISTRIBUTE が参照する下流テーブル / リソース
 
@@ -129,9 +128,7 @@ ROUTE_REDISTRIBUTE
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-common-failure.md -->
+## 失敗挙動
 
 `frrcfgd`（`BGPConfigDaemon`）が `ROUTE_REDISTRIBUTE` イベントを処理する際の失敗は、(A) `BGP_GLOBALS.local_asn` 未設定による silent drop、(B) `dst_protocol` 不正による LOG_ERR + 恒久スキップ、(C) [vtysh](../../reference/glossary.md#term-vtysh) コマンド送出失敗による FRR 未反映の 3 系統に分類される。いずれの場合も CONFIG_DB エントリは変更されず、FRR running-config との乖離が生じる。
 
@@ -189,10 +186,9 @@ FRR bgpd が未起動の場合や socket 切断時に発生する。CONFIG_DB �
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `sonic-net/sonic-buildimage` `src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`
-証跡: `meta/_intermediate/cdb-flow/route-common-constants.md`
 
 | 定数 / リテラル | 値 | 定義箇所 | 用途 |
 |---|---|---|---|
@@ -213,9 +209,7 @@ FRR bgpd が未起動の場合や socket 切断時に発生する。CONFIG_DB �
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-common-side-effects.md -->
+## 副次 DB 書込
 
 `frrcfgd`（`BGPConfigDaemon`）は `ROUTE_REDISTRIBUTE` イベントを `bgpd` への vtysh コマンドに変換するのみで、[STATE_DB](../../reference/glossary.md#term-state_db)・[APPL_DB](../../reference/glossary.md#term-appl_db)・[ASIC_DB](../../reference/glossary.md#term-asic_db) への書込みは一切行わない。`frrcfgd.py` が接続する DB は `ConfigDBConnector`（CONFIG_DB 読み取り・購読）のみであり、ERROR_TABLE への書込みも実装されていない（evidence: `frrcfgd.py:2157`, `frrcfgd.py:3149-3168`）[^2]。
 
@@ -240,7 +234,7 @@ ROUTE_REDISTRIBUTE の SET/DEL は以下の FRR running-config 変化と、そ�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム（Pub/Sub・イベント経路）(Phase G)
+## 通信メカニズム（Pub/Sub・イベント経路）
 
 `ROUTE_REDISTRIBUTE` テーブルは `frrcfgd`（`sonic-frr-mgmt-framework`）の `BGPConfigDaemon` が **[Redis](../../reference/glossary.md#term-redis) keyspace 通知**経由で購読する。`swsscommon.SubscriberStateTable` は使用せず、独自の `ExtConfigDBConnector` を介して CONFIG_DB の変更イベントを受け取る[^2]。
 
@@ -299,9 +293,9 @@ CONFIG_DB:ROUTE_REDISTRIBUTE
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
-調査ソース: `frrcfgd.py` 全行スキャン。詳細スキャン結果は `meta/_intermediate/cdb-flow/route-common-platform.md`。
+調査ソース: `frrcfgd.py` 全行スキャン。
 
 ### docker_routing_config_mode（unified / separated）
 

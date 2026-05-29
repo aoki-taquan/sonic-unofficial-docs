@@ -179,7 +179,7 @@ show buffer profile
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `LOSSLESS_TRAFFIC_PATTERN`
 
@@ -207,7 +207,7 @@ show buffer profile
 <!-- /entry-points -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 ### `mtu`
 
@@ -226,11 +226,11 @@ show buffer profile
 | **経路依存 discrepancy** | j2 テンプレート経由では `50`、db_migrator 移行経由では `100` — 同一フィールドで経路によって初期値が異なる | `buffers_config.j2:345` / `db_migrator.py:414` |
 | **フィールド欠落時 Lua 算術エラー** | `small_packet_percentage` が `nil` の場合、乗算式 `small_packet_percentage * minimal_packet_size` が Lua 算術エラーで失敗 → YANG `mandatory true` で通常防止されるが、手動 redis-cli 書き込み時は発生する可能性 | `buffer_headroom_mellanox.lua:146` |
 
-> **スキャン証跡**: `buffers_config.j2` L342-347 全行読了、`db_migrator.py` L414 確認、`buffer_headroom_mellanox.lua` L91-102, 146-147 全行読了、`buffer_headroom_barefoot.lua` L80-90, 114 全行読了、`sonic-lossless-traffic-pattern.yang` 全行読了。
+> **裏取り**: `buffers_config.j2` L342-347 全行読了、`db_migrator.py` L414 確認、`buffer_headroom_mellanox.lua` L91-102, 146-147 全行読了、`buffer_headroom_barefoot.lua` L80-90, 114 全行読了、`sonic-lossless-traffic-pattern.yang` 全行読了。
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込順依存 (Task F Phase B)
+## 書込順依存
 
 `LOSSLESS_TRAFFIC_PATTERN` はベンダー別 Lua プラグイン (`buffer_headroom_<vendor>.lua`) が
 `buffermgrdyn` から呼び出された際に CONFIG_DB から直接参照される。
@@ -281,11 +281,10 @@ Mellanox 向け Lua プラグインは [STATE_DB](../../reference/glossary.md#te
 |---|---|---|---|
 | `STATE_DB.ASIC_TABLE` (Mellanox) | `cell_size` 等の [ASIC](../../reference/glossary.md#term-asic) パラメータが取得できなければ計算式が `nil` 演算でエラー | headroom 計算失敗 → BUFFER_PROFILE が APPL_DB に転送されない | `buffer_headroom_mellanox.lua:61-80` |
 
-詳細スキャンノートは `meta/_intermediate/cdb-flow/lossless-traffic-pattern-ordering.md` を参照。
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `LOSSLESS_TRAFFIC_PATTERN` の YANG モデルは他テーブルへの leafref を一切持たないが、
 `buffermgrdyn` から呼び出されるベンダー別 Lua プラグイン (`buffer_headroom_<vendor>.lua`) が
@@ -337,17 +336,16 @@ LOSSLESS_TRAFFIC_PATTERN (CONFIG_DB)  ←── 読み取られる側（leafref 
   └─ [条件] CONFIG_DB.BUFFER_POOL|ingress_lossless_pool  (xoff / SHP サイズ)
 ```
 
-> **スキャン証跡**: `buffer_headroom_mellanox.lua` L55-110 全行読了、`buffer_headroom_barefoot.lua` L55-94 全行読了、`sonic-lossless-traffic-pattern.yang` 全行読了（leafref なし確認済み）。3 件暗黙参照抽出。
+> **裏取り**: `buffer_headroom_mellanox.lua` L55-110 全行読了、`buffer_headroom_barefoot.lua` L55-94 全行読了、`sonic-lossless-traffic-pattern.yang` 全行読了（leafref なし確認済み）。3 件暗黙参照抽出。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗・リトライ挙動 (Phase D)
+## 失敗・リトライ挙動
 
 `LOSSLESS_TRAFFIC_PATTERN` テーブルの値は `buffermgrdyn` が直接購読するのではなく、
 ベンダー別 Lua ヘッドルーム計算プラグイン（`buffer_headroom_<vendor>.lua`）が実行時に
 CONFIG_DB から直接参照する。そのため、C++ レイヤーの retry メカニズムは存在せず、
 Lua 実行失敗はヘッドルーム計算の中断として現れる。
-詳細スキャンノートは `meta/_intermediate/cdb-flow/lossless-traffic-pattern-failure.md` を参照。
 
 ### 失敗モード一覧
 
@@ -385,7 +383,7 @@ orchagent / BufferOrch が古い headroom 値または未設定のまま SAI へ
 
 <!-- /failure -->
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `LOSSLESS_TRAFFIC_PATTERN` の `mtu` と `small_packet_percentage` はユーザ設定値だが、
 ヘッドルーム計算式内にはコードハードコードの物理定数・IEEE 規定値が多数存在し、
@@ -454,13 +452,11 @@ Mellanox のみ 800Gbps (`800000`) エントリを追加で保持。Barefoot は
 
 証拠: `buffer_headroom_mellanox.lua:157`, `buffer_headroom_barefoot.lua:124`
 
-> **スキャン証跡**: `buffer_headroom_mellanox.lua` 全行読了 (L1-180)、`buffer_headroom_barefoot.lua` 全行読了 (L1-141)。物理定数 5 種・IEEE テーブル 2 種・アライメント定数 1 種を抽出。
+> **裏取り**: `buffer_headroom_mellanox.lua` 全行読了 (L1-180)、`buffer_headroom_barefoot.lua` 全行読了 (L1-141)。物理定数 5 種・IEEE テーブル 2 種・アライメント定数 1 種を抽出。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込み (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/lossless-traffic-pattern-side-effects.md`
+## 副次 DB 書込み
 
 <!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.cpp:603-641,890-920, sonic-swss/cfgmgr/buffer_headroom_mellanox.lua:91-100, sonic-swss/cfgmgr/buffer_headroom_barefoot.lua:80-90 -->
 
@@ -508,9 +504,8 @@ orchagent BufferOrch → SAI sai_buffer_api (ASIC_DB 経由)
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-<!-- evidence: meta/_intermediate/cdb-flow/lossless-traffic-pattern-pubsub.md -->
 <!-- source: sonic-swss/cfgmgr/buffermgrd.cpp ref:master -->
 <!-- source: sonic-swss/cfgmgr/buffer_headroom_mellanox.lua ref:master -->
 <!-- source: sonic-swss/cfgmgr/buffer_headroom_barefoot.lua ref:master -->
@@ -572,13 +567,10 @@ local lossless_traffic = redis.call('HGETALL', lossless_traffic_keys[1])
 
 > **運用上の注意**: `LOSSLESS_TRAFFIC_PATTERN` を変更した後、新しい値をヘッドルーム計算に反映させるには、上記いずれかのテーブルを変更するか `buffermgrd` を再起動する必要がある。`LOSSLESS_TRAFFIC_PATTERN` 単体の変更のみでは即時反映されない。
 
-詳細根拠は `meta/_intermediate/cdb-flow/lossless-traffic-pattern-pubsub.md` を参照。
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/lossless-traffic-pattern-platform.md`
+## プラットフォーム差異
 
 `LOSSLESS_TRAFFIC_PATTERN` の `mtu` / `small_packet_percentage` はプラットフォームに関わらず同じ方法で CONFIG_DB から読み取られるが、ヘッドルーム計算式内の定数・補正係数がプラットフォームごとに異なる。
 

@@ -152,7 +152,7 @@ show fips status
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `FIPS`
 
@@ -181,7 +181,7 @@ show fips status
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `hostcfgd` の `FipsCfg` クラスは、[CONFIG_DB](../../reference/glossary.md#term-config_db) の `FIPS|global` エントリを **シングルトン** として購読する。`load()` は `FIPS` テーブルを一括取得してから `update()` を実行するため、フィールドが中途半端に書かれた中間状態は観測されにくい。ただし以下の順序依存が存在する。
 
@@ -204,7 +204,7 @@ show fips status
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `FipsCfg` が読み出す外部リソースと STATE_DB (Phase C)
+## 暗黙参照 — `FipsCfg` が読み出す外部リソースと STATE_DB
 
 `hostcfgd` の `FipsCfg` クラスは **他の CONFIG_DB テーブルを一切参照しない**（`__init__` 引数は `state_db_conn` のみ — hostcfgd:1759）。FIPS ハンドラは `FIPS` テーブル単体を購読・処理するが、以下の外部リソース（[STATE_DB](../../reference/glossary.md#term-state_db) / ファイルシステム / bootloader）への暗黙依存を持つ。
 
@@ -238,11 +238,10 @@ show fips status
 - `AAA` / `TACPLUS` / `SSH_SERVER` など同 `hostcfgd` プロセス内の他ハンドラが管理するテーブルは、`FipsCfg` から直接読み出されない。
 - ただし FIPS 設定変更時に再起動する `ssh` / `telemetry.service` / `restapi` は SSH_SERVER や [AAA](../../reference/glossary.md#term-aaa) テーブルの設定を引き継ぐため、**間接的に影響を受ける**（再起動によって最新 CONFIG_DB 設定を再ロードする）。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/fips-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 `sonic-fips.yang` には `enable` / `enforce` の `default` 文がないため、実効デフォルトは hostcfgd `FipsCfg` クラスのコード由来 fallback で決まる。
 
@@ -260,7 +259,7 @@ show fips status
 <!-- /defaults -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-host-services/scripts/hostcfgd`（`FipsCfg` クラス、L1753–1846）
 
@@ -314,11 +313,11 @@ show fips status
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` L100-108
 
 `hostcfgd` の `FipsCfg` クラスが使用するハードコード定数の一覧。これらは CONFIG_DB / YANG で変更できず、ソースコード上に直接埋め込まれている。
-
-<!-- evidence: sonic-host-services/scripts/hostcfgd L100-108 -->
 
 ### ファイルパス定数
 
@@ -363,9 +362,9 @@ show fips status
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・波及挙動 (Phase F)
+## 副作用・波及挙動
 
-<!-- evidence: sonic-host-services/scripts/hostcfgd L1788-1846 -->
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` L1788-1846
 
 `FIPS|global` テーブルへの書き込みは CONFIG_DB 以外のリソース（STATE_DB・ファイルシステム・bootloader・systemd ユニット）に対して副作用を生じる。副作用はすべて `FipsCfg.update()` のコールチェーン内で同期的に実行される。
 
@@ -456,7 +455,7 @@ for service in self.restart_services:  # デフォルト: ['ssh', 'telemetry.ser
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 > 調査対象: `sonic-host-services/scripts/hostcfgd` L2456-2509 (`register_callbacks`)、L2433-2436 (`fips_config_handler`)、L2527-2528 (`start`/`listen`)
 > 調査日: 2026-05-19
@@ -516,11 +515,11 @@ def make_callback(func):
 
 `daemon.start()` が `config_db.listen(init_data_handler=self.load)` を呼ぶ（hostcfgd:2527-2528）。`listen()` は Subscribe ループ開始前に `HostConfigDaemon.load()` を一度実行し、`init_data.get('FIPS', {})` → `self.fipscfg.load(fips_cfg)` で既存 CONFIG_DB エントリを一括適用する（hostcfgd:2254, 2271）。これにより `hostcfgd` 再起動後も FIPS 設定が自動的に再適用される。
 
-> **Evidence**: `sonic-host-services/scripts/hostcfgd:2456-2509` (`register_callbacks`)、`:2433-2436` (`fips_config_handler`)、`:2527-2528` (`start`/`listen`)、`:2254,2271` (起動時スナップショット)、`:1777-1779` (DEL 時早期 return)。詳細分析: `meta/_intermediate/cdb-flow/fips-pubsub.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2456-2509` (`register_callbacks`)、`:2433-2436` (`fips_config_handler`)、`:2527-2528` (`start`/`listen`)、`:2254,2271` (起動時スナップショット)、`:1777-1779` (DEL 時早期 return)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: FIPS は host 単位で適用され、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
 
@@ -532,7 +531,6 @@ def make_callback(func):
 | ベンダー固有モジュール | なし | community master の FIPS 経路は OpenSSL FIPS provider + `sonic_installer.bootloader` の標準実装。`files/image_config/` にも `files/build_templates/` にもベンダー hook 注入箇所なし |
 | YANG 条件分岐 | プラットフォーム条件なし | `sonic-fips.yang` を `platform\|asic\|chassis\|namespace\|vendor` で grep しても 0 ヒット。フィールド制約はなし |
 
-詳細根拠は `meta/_intermediate/cdb-flow/fips-platform.md` を参照。
 <!-- /platform -->
 
 <!-- glossary-links-injected: 6655c92ce87b -->

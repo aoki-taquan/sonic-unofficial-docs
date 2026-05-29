@@ -331,7 +331,7 @@ gnmi-native.sh は [CONFIG_DB](../../reference/glossary.md#term-config_db) か�
 ---
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 gNMI サブシステムの CONFIG_DB 参照は **起動時スナップショット** (dial-in サーバ) と **keyspace notification 購読** (dial-out クライアント) の 2 モデルに分かれる。それぞれに書込み順依存がある。
 
@@ -352,11 +352,10 @@ gNMI サブシステムの CONFIG_DB 参照は **起動時スナップショッ�
 
 **Global 後追い更新による全接続フラップ (依存 #4)**: `processTelemetryClientConfig()` の `Global` 処理では `clientCfg` を更新した後、全 DestinationGroup に対して `closeDestGroupClient(grpName)` → `setupDestGroupClients(ctx, grpName)` を実行する。`Global` エントリを DestGroup / Subscription より後に書くと、既存接続が全て一時切断・再接続される（evidence: `dialout_client.go:507-513`）。
 
-詳細根拠は `meta/_intermediate/cdb-flow/gnmi-server-ordering.md` を参照。
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 gNMI サブシステムは CONFIG_DB テーブルのうち GNMI / GNMI_CLIENT_CERT / TELEMETRY_CLIENT 以外のテーブルも起動時またはランタイムに参照する。以下に列挙する。
 
@@ -379,13 +378,12 @@ gNMI サブシステムは CONFIG_DB テーブルのうち GNMI / GNMI_CLIENT_CE
 `PopulateAuthStructByCommonName()` (`clientCertAuth.go:254`) は毎接続の認証インターセプター内から呼ばれ、`swsscommon.ConfigDBConnector.Get_entry(serviceConfigTableName, certCommonName)` で `GNMI_CLIENT_CERT|<cert_cname>` エントリを読み取る。`GNMI_CLIENT_CERT` は GNMI テーブルと同一ページに収録されているが、参照方向（認証ランタイム → ConfigDB）を明示するため暗黙参照として列挙する。エントリが存在しない場合は `Unauthenticated` エラーが返る (evidence: `clientCertAuth.go:273-283`)。
 
 !!! note "書き手は存在しない"
-    gNMI サーバは CONFIG_DB の**消費者専用**であり、これらのテーブルへの書き込みは行わない。副次 DB 書込 (Phase F) は該当なし。
+    gNMI サーバは CONFIG_DB の**消費者専用**であり、これらのテーブルへの書き込みは行わない。副次 DB 書込は該当なし。
 
-詳細根拠は `meta/_intermediate/cdb-flow/gnmi-server-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh`, `sonic-net/sonic-gnmi/telemetry/telemetry.go`
 
@@ -418,7 +416,7 @@ gNMI サブシステムは CONFIG_DB テーブルのうち GNMI / GNMI_CLIENT_CE
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `GNMI` / `GNMI_CLIENT_CERT` / `TELEMETRY_CLIENT` テーブルおよび関連デーモン内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-net/sonic-gnmi/telemetry/telemetry.go` と `dockers/docker-sonic-gnmi/gnmi-native.sh`。
 
@@ -483,11 +481,10 @@ gNMI サブシステムは CONFIG_DB テーブルのうち GNMI / GNMI_CLIENT_CE
 | `Encoding` | `JSON_IETF` (固定) | エンコーディング。DB から変更不可 (`dialout_client.go:502` で強制上書き) | `dialout_client_cli.go:22` |
 | `Unidirectional` | `true` (固定) | サーバ応答なし一方向モード。DB から変更不可 (`dialout_client.go:505` で強制上書き) | `dialout_client_cli.go:23,32` |
 
-詳細な定数一覧 (JWT 変数宣言箇所、ビルドタグ _write バリアント等) は `meta/_intermediate/cdb-flow/gnmi-server-constants.md` を参照。
 <!-- /constants -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 gNMI サブシステムは **3 種類の異なる購読モデル**を使い分けている。
 
@@ -547,11 +544,10 @@ rclient.HDel(ctx, table, key)             // 切断時
 - TTL なし。サーバ起動時に全エントリを一括削除 (`HGETALL` → `HDel` ループ) して初期化する (`connection_manager.go:52-59`)
 - `TELEMETRY_CONNECTIONS` は monitoring ツール（外部監視）向け。CONFIG_DB の `GNMI` / `TELEMETRY_CLIENT` テーブルを変更しても `TELEMETRY_CONNECTIONS` は影響を受けない
 
-詳細根拠は `meta/_intermediate/cdb-flow/gnmi-server-pubsub.md` を参照。
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 gNMI サブシステム (`telemetry` / `dialout_client_cli`) は GNMI / GNMI_CLIENT_CERT / TELEMETRY_CLIENT の消費に加え、セッション状態・証明書メタデータ・再起動通知を他 DB / 外部リソースへ副次的に書き込む。
 
@@ -569,11 +565,10 @@ gNMI サブシステム (`telemetry` / `dialout_client_cli`) は GNMI / GNMI_CLI
 !!! note "TELEMETRY_CONNECTIONS の threshold 連動"
     `GNMI\|gnmi.threshold` (デフォルト `100`) が満たされると新規 Subscribe RPC を拒否し、STATE_DB への `HSet` も行われない (`connection_manager.go:65`)。`threshold=0` は無制限。
 
-詳細な証跡は `meta/_intermediate/cdb-flow/gnmi-server-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 GNMI / GNMI_CLIENT_CERT / TELEMETRY_CLIENT テーブルの定義・処理ロジックは **ほぼ全プラットフォームで同一**。差分は SmartSwitch の 1 点に局所化される。
 
@@ -596,9 +591,8 @@ if [[ x"${LOCALHOST_SUBTYPE}" == x"SmartSwitch" ]]; then
 fi
 ```
 
-`-zmq_port=8100` が付与されると `telemetry.go` は Redis ベースの Pub/Sub 通信に加えて [orchagent](../../reference/glossary.md#term-orchagent) との ZMQ チャネルを開設する。SmartSwitch 以外の機種では ZMQ チャネルは開設されない。値 `8100` はハードコード定数であり CONFIG_DB で変更不可 (Phase E 参照)。
+`-zmq_port=8100` が付与されると `telemetry.go` は Redis ベースの Pub/Sub 通信に加えて [orchagent](../../reference/glossary.md#term-orchagent) との ZMQ チャネルを開設する。SmartSwitch 以外の機種では ZMQ チャネルは開設されない。値 `8100` はハードコード定数であり CONFIG_DB で変更不可（ハードコード定数セクション参照）。
 
-詳細根拠は `meta/_intermediate/cdb-flow/gnmi-server-platform.md` を参照。
 <!-- /platform -->
 
 <!-- cdb-exceptions -->

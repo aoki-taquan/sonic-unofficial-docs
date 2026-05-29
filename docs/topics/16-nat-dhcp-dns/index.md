@@ -130,9 +130,9 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 - [BUM ストームコントロール（PORT_STORM_CONTROL）](../../switching/sonic-bum-storm-control.md)
 - [YANG モデル既知問題と検証](../../system/yang-model-issues-and-validation.md)
 - [Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）](../../system/smart-switch-ip-address-assignment.md)
-- [SONiC Boot Chart（systemd-bootchart 統合）](../../system/sonic-boot-chart.md)
 - [SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）](../../system/sonic-network-time-protocol-ntp-client-configuration.md)
 - [VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）](../../switching/add-support-for-vlan-interface-using-openconfig-yang.md)
+- [ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）](../../switching/brief-introduction-of-iccp-code.md)
 
 **関連トラブルシュート 5 件**
 

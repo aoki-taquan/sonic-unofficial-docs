@@ -191,7 +191,7 @@ sonic-db-cli CONFIG_DB hgetall 'HOSTAPD_GLOBAL_CONFIG_TABLE|global'
 <!-- /value-behavior -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 ### CLI
 
@@ -220,13 +220,13 @@ sonic-db-cli CONFIG_DB hgetall 'HOSTAPD_GLOBAL_CONFIG_TABLE|global'
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 `doPacPortTableSetTask()` が呼ばれるたびに、未設定フィールドに `AUTHMGR_*_DEF` マクロ値を初期値として設定した後、DB 値で上書きする。これにより DB にフィールドが存在しない場合は暗黙デフォルトが適用される。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 - `pacmgrd` は `PAC_PORT_CONFIG_TABLE` を無条件購読。
 - ただし `dot1x_system_auth_control=false` の場合、802.1x 認証セッション (hostapd) は開始されない。
@@ -235,7 +235,7 @@ sonic-db-cli CONFIG_DB hgetall 'HOSTAPD_GLOBAL_CONFIG_TABLE|global'
 <!-- /derivation -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `pacmgrd` / `hostapdmgrd` は [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読するが、内部の初期化完了と外部依存 (RADIUS・[VLAN](../../reference/glossary.md#term-vlan)) の到着順が反映タイミングに影響する。
 
@@ -272,7 +272,7 @@ CONFIG_DB の購読は step 4 以降にのみ有効となるため、`PAC_PORT_C
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
+## 暗黙参照マップ
 
 `pacmgrd` / `hostapdmgrd` / `mabmgrd` が `PAC_PORT_CONFIG_TABLE` および `HOSTAPD_GLOBAL_CONFIG_TABLE` を処理する際に、暗黙的に参照・依存する CONFIG_DB / STATE_DB テーブルを示す。
 
@@ -289,11 +289,11 @@ CONFIG_DB の購読は step 4 以降にのみ有効となるため、`PAC_PORT_C
 | fpinfra 依存 | `PAC_PORT_CONFIG_TABLE` | (プラットフォームインタフェース) | `fpGetIntIfNumFromHostIfName()` が失敗すると設定エントリがスキップされる。インタフェース存在がハードな前提条件 (`pacmgr.cpp:172`) |
 | [YANG](../../reference/glossary.md#term-yang) | — | — | [SONiC](../../reference/glossary.md#term-sonic) [YANG](../../reference/glossary.md#term-yang) モデル未定義のため REST/[gNMI](../../reference/glossary.md#term-gnmi) 経路なし |
 
-> **Evidence**: `sonic-pac/pacmgr/pacmgr.cpp:63-89,103-127,172,684-754`; `sonic-pac/hostapdmgr/hostapdmgr.cpp:43-70,145-170,285-300`; `sonic-pac/mabmgr/mabmgr.cpp:35`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-cross-refs.md`
+> **Evidence**: `sonic-pac/pacmgr/pacmgr.cpp:63-89,103-127,172,684-754`; `sonic-pac/hostapdmgr/hostapdmgr.cpp:43-70,145-170,285-300`; `sonic-pac/mabmgr/mabmgr.cpp:35`; 
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `pacmgrd` (`sonic-pac docker`) が `PAC_PORT_CONFIG_TABLE` / `HOSTAPD_GLOBAL_CONFIG_TABLE` のイベントを処理する際に発生しうる失敗パスを示す。
 
@@ -337,13 +337,11 @@ CONFIG_DB の購読は step 4 以降にのみ有効となるため、`PAC_PORT_C
 docker logs pac 2>&1 | grep -E "ERROR|WARN" | grep -i authmgr
 ```
 
-> **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.cpp:140-200,218-345,355-415,444-565,613-665`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-failure.md`
+> **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.cpp:140-200,218-345,355-415,444-565,613-665`; 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/dot1x-constants.md`
+## ハードコード定数
 
 ### インタフェース名プレフィックス定数
 
@@ -392,13 +390,11 @@ hostapd 起動後の PID ファイル (`/etc/hostapd/hostapdPid`) 存在確認�
 | hostapd_config.json パス | `"/etc/hostapd/hostapd_config.json"` | `hostapdmgr.cpp:977` | hostapd 再起動時に渡す設定 JSON のパス |
 | JSON 削除待機 | `cnt=10`, `sleep(1)` | `hostapdmgr.cpp:975,985` | 旧 JSON ファイルが消えるまで最大 **10 秒** 待機。タイムアウト時はシグナル送信をスキップ |
 
-> **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.h:35-55`; `pacmgr.cpp:59,166-170,431-442,705,775,884,955`; `hostapdmgr/hostapdmgr.cpp:37-38,935,975-985,1261-1274`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-constants.md`
+> **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.h:35-55`; `pacmgr.cpp:59,166-170,431-442,705,775,884,955`; `hostapdmgr/hostapdmgr.cpp:37-38,935,975-985,1261-1274`; 
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/dot1x-side-effects.md`
+## 副次 DB 書込
 
 `pacmgrd` および `hostapdmgrd` は CONFIG_DB `PAC_PORT_CONFIG_TABLE` / `HOSTAPD_GLOBAL_CONFIG_TABLE` の変更を受け取り、**[APPL_DB](../../reference/glossary.md#term-appl_db) / STATE_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書き込みは行わない**。副作用は authmgr ライブラリ API 呼び出しおよびファイルシステム操作（hostapd conf 生成/削除）に閉じる。
 
@@ -425,13 +421,11 @@ hostapd 起動後の PID ファイル (`/etc/hostapd/hostapdPid`) 存在確認�
     スイッチ上のすべての 802.1x 認証セッションが即座に終了する。
     メンテナンス作業中に誤って設定変更を行うと全クライアントの通信が瞬断するため注意が必要。
 
-> **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.cpp:63-89,1160-1177`; `sonic-pac/hostapdmgr/hostapdmgr.cpp:260-346`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-side-effects.md`
+> **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.cpp:63-89,1160-1177`; `sonic-pac/hostapdmgr/hostapdmgr.cpp:260-346`; 
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/dot1x-pubsub.md`
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -476,11 +470,11 @@ processHostapdConfigGlobalTblEvent()
 - keyspace 通知のペイロードは操作名 (`hset`/`del`) のみ。フィールド値は HGETALL で別途取得する。
 - ポーリング間隔: swss::Select のデフォルトタイムアウト (通常 1000 ms)。
 
-> **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.h:137-147`; `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.cpp:80-133`; `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr_main.cpp:65`; `sonic-buildimage/src/sonic-pac/hostapdmgr/hostapdmgr.h:81-84`; `sonic-buildimage/src/sonic-pac/hostapdmgr/hostapdmgr.cpp:69-100`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-pubsub.md`
+> **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.h:137-147`; `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.cpp:80-133`; `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr_main.cpp:65`; `sonic-buildimage/src/sonic-pac/hostapdmgr/hostapdmgr.h:81-84`; `sonic-buildimage/src/sonic-pac/hostapdmgr/hostapdmgr.cpp:69-100`; 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: PAC / DOT1X は [SAI](../../reference/glossary.md#term-sai) 非経由のホスト内認証フレームワークであり、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
 
@@ -492,11 +486,10 @@ processHostapdConfigGlobalTblEvent()
 | ベンダー固有 PAC モジュール | なし | community master の `sonic-pac` に hook ポイント存在せず。`device/` 配下に PAC 固有設定ファイルなし (`device/` を `dot1x|PAC_PORT|hostapd` でgrep → 0 ヒット) |
 | プラットフォーム別 j2 テンプレート | なし | `files/build_templates/` / `files/image_config/` に PAC 関連テンプレートなし |
 
-詳細根拠は `meta/_intermediate/cdb-flow/dot1x-platform.md` を参照。
 <!-- /platform -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト (コード由来)
 
 > `AUTHMGR_*_DEF` マクロ (`pacmgr.h`) が C++ レベルの fallback を定義する。
 > `doPacPortTableSetTask()` は毎回これらで cache を初期化してから DB 値を上書きするため、

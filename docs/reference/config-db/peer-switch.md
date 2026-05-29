@@ -124,9 +124,8 @@ PEER_SWITCH|<peer_switch>
 <!-- /cdb-exceptions -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-> 調査証跡: `meta/_intermediate/cdb-flow/peer-switch-cross-refs.md`
 > ソース: `sonic-swss/orchagent/muxorch.cpp`
 
 `MuxOrch::handlePeerSwitch()` が `PEER_SWITCH` SET 処理中に暗黙的に参照するテーブル・内部オブジェクト。
@@ -257,9 +256,9 @@ db_migrator.py での PEER_SWITCH マイグレーションなし
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -267,7 +266,7 @@ db_migrator.py での PEER_SWITCH マイグレーションなし
 
 minigraph.py の `get_tunnel_entries()` 関数が `peer_switch_ip` を受け取り、TUNNEL テーブルと合わせて PEER_SWITCH 相当の設定を構築する。直接の `PEER_SWITCH` キー設定は CLI 経由が主。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -292,14 +291,13 @@ minigraph.py の `get_tunnel_entries()` 関数が `peer_switch_ip` を受け取�
 | `MuxOrch` | `addOperation()` | `address_ipv4` が無効な IPv4 アドレス | パース例外 → エントリスキップ | `sonic-swss/orchagent/muxorch.cpp` |
 | YANG validation | — | `max-elements 1` 超過 (2 件目以降) | YANG 制約で拒否 | `sonic-peer-switch.yang` |
 
-> **スキャン証跡**: `orchdaemon.cpp:467-471` + `muxorch.cpp` を確認、3 件分岐抽出。PEER_SWITCH は MuxOrch が MUX_CABLE と同一インスタンスで処理することを確認 — 誤読なし。
+> **裏取り**: `orchdaemon.cpp:467-471` + `muxorch.cpp` を確認、3 件分岐抽出。PEER_SWITCH は MuxOrch が MUX_CABLE と同一インスタンスで処理することを確認 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> 調査証跡: `meta/_intermediate/cdb-flow/peer-switch-constants.md`
 > ソース: `sonic-swss/orchagent/muxorch.cpp` + `sonic-swss/orchagent/tunneldecaporch.h`
 
 ### MuxTunnel0 固定名
@@ -324,9 +322,8 @@ minigraph.py の `get_tunnel_entries()` 関数が `peer_switch_ip` を受け取�
 <!-- /constants -->
 
 <!-- pubsub -->
-## Phase G: 通信メカニズム (CONFIG_DB Subscribe → SAI Tunnel)
+## 通信メカニズム (CONFIG_DB Subscribe → SAI Tunnel)
 
-> 証跡: `meta/_intermediate/cdb-flow/peer-switch-phaseG.md`
 > ソース: `sonic-swss/orchagent/orchdaemon.cpp:467-471`, `muxorch.cpp:217-331,2182-2391`
 
 ### CONFIG_DB Subscribe 登録
@@ -384,9 +381,8 @@ SAI tunnel 削除・`mux_peer_switch_` リセットは行われない。[orchage
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> 調査証跡: `meta/_intermediate/cdb-flow/peer-switch-platform.md`
 > ソース: `sonic-swss/orchagent/muxorch.cpp`、`sonic-buildimage/src/sonic-config-engine/minigraph.py`
 
 ### Dual-ToR vs Single-ToR
@@ -411,9 +407,8 @@ SAI tunnel 削除・`mux_peer_switch_` リセットは行われない。[orchage
 <!-- /platform -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/peer-switch-failure.md -->
 <!-- source: sonic-swss/orchagent/muxorch.cpp -->
 
 ### 失敗パス一覧
@@ -462,9 +457,8 @@ SET 時に `decap_orch_` が `MuxTunnel0` の宛先 IP を未登録の場合、`
 <!-- /failure -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> 調査証跡: `meta/_intermediate/cdb-flow/peer-switch-ordering.md`
 > ソース: `sonic-swss/orchagent/muxorch.cpp`
 
 ### SET 時の先行必須テーブル
@@ -531,9 +525,8 @@ CONFIG_DB に存在していることが望ましい。
 <!-- /ordering -->
 
 <!-- side-effects -->
-## 副次 DB 書込・外部テーブル連動 (Phase F)
+## 副次 DB 書込・外部テーブル連動
 
-> 調査証跡: `meta/_intermediate/cdb-flow/peer-switch-side-effects.md`
 > ソース: `sonic-swss/orchagent/muxorch.cpp`
 
 ### STATE_DB 書込

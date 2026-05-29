@@ -173,7 +173,7 @@ crm show resources all
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `CRM`
 
@@ -213,7 +213,7 @@ crm show resources all
 <!-- /entry-points -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `sonic-swss/orchagent/crmorch.cpp`
 
@@ -289,15 +289,15 @@ crm show resources all
 <!-- /constants -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | ビルド時 `init_cfg.json.j2` が CRM テーブルにデフォルト閾値を設定 | `CRM.Config.polling_interval = 300`、全リソースの `*_threshold_type = percentage`、`*_low_threshold = 70`、`*_high_threshold = 85` | `sonic-buildimage/files/build_templates/init_cfg.json.j2:11-21` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -309,7 +309,7 @@ crm show resources all
 - crmorch.cpp L440: doTask 登録（条件なし）
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -320,10 +320,10 @@ crm show resources all
 | `CrmOrch` | `handleSetCommand()` | `field` が `crmThreshHighResMap` に存在する | highThreshold を更新 | `sonic-swss/orchagent/crmorch.cpp:515` |
 | `CrmOrch` | `handleSetCommand()` | 上記いずれにも該当しない field | `log_error`（未知フィールド） | `sonic-swss/orchagent/crmorch.cpp:521` |
 
-> **スキャン証跡**: `CrmOrch::doTask` L440-477 + `handleSetCommand` L478-537 全行読了。6 件分岐抽出。
+> **裏取り**: `CrmOrch::doTask` L440-477 + `handleSetCommand` L478-537 全行読了。6 件分岐抽出。
 <!-- /handler-branching -->
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 ### ハードコードデフォルト (crmorch.cpp L12-15)
 
@@ -365,7 +365,7 @@ YANG の `must` は `high_threshold < 100` (strictly less) を要求するが、
 <!-- /defaults -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `CRM|Config` の SET 処理後、`CrmOrch` は以下の副次書込を行う。
 
@@ -397,7 +397,7 @@ YANG の `must` は `high_threshold < 100` (strictly less) を要求するが、
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### CONFIG_DB 購読経路
 
@@ -447,7 +447,7 @@ orchdaemon.cpp L500:  m_orchList = { gSwitchOrch, gCrmOrch, gPortsOrch, ... }
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 ### SAI capability 取得方式の差 (ASIC ベンダー依存)
 
@@ -483,7 +483,7 @@ SAI object-level availability API。[ASIC](../../reference/glossary.md#term-asic
 <!-- /platform -->
 
 <!-- cross-refs -->
-## 暗黙参照（Phase C）
+## 暗黙参照
 
 `CrmOrch` が `CRM` テーブルを処理する際、以下の外部テーブル・DB を明示的な設定フィールドとしてではなく、**実行時の判定条件または書き込み先**として暗黙的に参照する。
 
@@ -511,7 +511,7 @@ COUNTERS_DB CRM テーブル
 <!-- /cross-refs -->
 
 <!-- ordering -->
-## 順序依存 (Phase B)
+## 順序依存
 
 ### ポーリング起動順序
 
@@ -572,7 +572,7 @@ COUNTERS_DB CRM テーブル
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動詳細 (Phase D)
+## 失敗挙動詳細
 
 ソース: `sonic-swss/orchagent/crmorch.cpp`
 
@@ -589,7 +589,7 @@ COUNTERS_DB CRM テーブル
 | `DEL_COMMAND` 操作 | `doTask()` L463-466 | `SWSS_LOG_ERROR("Unsupported operation type")` のみ。閾値・interval 変更なし | `crmorch.cpp:463-466` |
 | 不明テーブル名 | `doTask()` L446-449 | `SWSS_LOG_ERROR("Invalid table %s")` のみ。処理継続（`return` しない） | `crmorch.cpp:446-449` |
 
-> **スキャン証跡**: `crmorch.cpp` L428-538（handleSetCommand / CrmResourceEntry コンストラクタ）、L760-835（getResAvailability）、L878-1060（getResAvailableCounters）全行読了。10 件失敗パターン抽出。
+> **裏取り**: `crmorch.cpp` L428-538（handleSetCommand / CrmResourceEntry コンストラクタ）、L760-835（getResAvailability）、L878-1060（getResAvailableCounters）全行読了。10 件失敗パターン抽出。
 <!-- /failure -->
 
 <!-- glossary-links-injected: a0efaf3c47b3 -->

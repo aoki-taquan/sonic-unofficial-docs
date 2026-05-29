@@ -163,7 +163,7 @@ show copp config
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `COPP_TRAP`
 
@@ -191,16 +191,16 @@ show copp config
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | COPP_TRAP は `copp_cfg.json` からロードされ、minigraph/init_cfg.json.j2 では生成されない | — | `/etc/sonic/copp_cfg.json` 参照 |
 | 派生なし | — | — |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -211,7 +211,7 @@ show copp config
 - copporch.cpp L880: COPP_TRAP を含む doTask ディスパッチ
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -220,13 +220,11 @@ show copp config
 | `CoppOrch` | `processCoppTrap()` | `trap_group` が `m_trap_group_map` に未存在 | `task_need_retry`（グループ未作成ガード） | `sonic-swss/orchagent/copporch.cpp:584` |
 | `CoppOrch` | `processCoppTrap()` | `op == DEL_COMMAND` | SAI トラップを削除しグループからアンバインド | `sonic-swss/orchagent/copporch.cpp:1102` |
 
-> **スキャン証跡**: `doTask` L880-935 + `processCoppTrap` L1164-1200 全行読了。4 件分岐抽出。
+> **裏取り**: `doTask` L880-935 + `processCoppTrap` L1164-1200 全行読了。4 件分岐抽出。
 <!-- /handler-branching -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 証跡: `meta/_intermediate/cdb-flow/copp-trap-constants.md`
+## ハードコード定数
 
 ### フィールド名定数 (copporch.h)
 
@@ -271,7 +269,7 @@ show copp config
 <!-- /constants -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### 強制先行条件
 
@@ -297,7 +295,7 @@ show copp config
 
 <!-- /ordering -->
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A)
+## フィールド暗黙デフォルト
 
 ### 検出種類の凡例
 
@@ -335,7 +333,7 @@ show copp config
 <!-- /defaults -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `COPP_TRAP` エントリが処理される際に `coppmgr` / `CoppOrch` が暗黙的に参照する
 他テーブルを示す。YANG の `leafref` として定義された `trap_group` に加え、
@@ -367,7 +365,7 @@ show copp config
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-swss/orchagent/copporch.cpp`・`cfgmgr/coppmgr.cpp`
 
@@ -407,8 +405,6 @@ show copp config
 
 <!-- pubsub -->
 ## 通信メカニズム (Redis PUBSUB / keyspace notification)
-
-<!-- evidence: meta/_intermediate/cdb-flow/copp-trap-pubsub.md -->
 
 ### CONFIG_DB → CoppMgr (SubscriberStateTable / keyspace notification)
 
@@ -481,9 +477,7 @@ CoppOrch::doTask(Consumer&) → processCoppRule() → SAI sai_hostif_api
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書き込み (Phase F)
-
-> 証跡: `meta/_intermediate/cdb-flow/copp-trap-side.md`
+## 副次 DB 書き込み
 
 `COPP_TRAP` の SET/DEL 処理は CONFIG_DB 以外の以下 DB・テーブルへも書き込みを行う。
 

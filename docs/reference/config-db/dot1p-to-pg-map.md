@@ -131,7 +131,7 @@ type_map QosOrch::m_qos_maps = {
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `DOT1P_TO_PG_MAP` テーブル自体は存在しないが、同等の機能を実現する 2 段マッピング (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) には `qosorch` (`handlePortQosMapTable`) が強制する書き込み順序依存がある。
 
@@ -152,7 +152,7 @@ type_map QosOrch::m_qos_maps = {
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `qosorch` / `handlePortQosMapTable` が読み出す関連テーブル (Phase C)
+## 暗黙参照 — `qosorch` / `handlePortQosMapTable` が読み出す関連テーブル
 
 `DOT1P_TO_PG_MAP` テーブルは存在しないが、等価な 2 段マッピング経路 (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) を処理する `qosorch` が参照する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルおよび外部リソースは以下のとおり。
 
@@ -171,13 +171,10 @@ type_map QosOrch::m_qos_maps = {
     `qosorch.cpp` の `handlePortQosMapTable()` は `BUFFER_PG`、`BUFFER_QUEUE`、`DEVICE_METADATA` を直接参照しない。
     PG バッファ割り当ては `BufferOrch` が担当し、`TC_TO_PRIORITY_GROUP_MAP` の SAI 適用後に独立して処理される。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dot1p-to-pg-map-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/dot1p-to-pg-map-failure.md -->
+## 失敗挙動・retry / recovery
 
 ### DOT1P_TO_PG_MAP 自体への書き込み — 無視
 
@@ -216,9 +213,7 @@ type_map QosOrch::m_qos_maps = {
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-pg-map-ordering.md`
+## ハードコード定数
 
 `DOT1P_TO_PG_MAP` テーブルは存在しないため、2 段マッピングパイプライン (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) を構成するハードコード定数を記述する。出典は `qosorch.h`、`qosorch.cpp`、および各 [YANG](../../reference/glossary.md#term-yang) モジュール。
 
@@ -277,9 +272,7 @@ type_map QosOrch::m_qos_maps = {
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込み (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-pg-map-side-effects.md`
+## 副次 DB 書込み
 
 `DOT1P_TO_PG_MAP` テーブルは存在しないため、副次 DB 書込みは 2 段マッピングパイプライン (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP`) および `PORT_QOS_MAP` の処理に由来する。
 
@@ -359,7 +352,7 @@ reasoning: PORT_QOS_MAP DEL 時に set_port_attribute で各 SAI 属性を NULL 
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `DOT1P_TO_PG_MAP` テーブルは存在しないが、等価な 2 段マッピング経路を処理する `QosOrch` の [Redis](../../reference/glossary.md#term-redis) 通信メカニズムを示す。
 
@@ -416,9 +409,7 @@ NotificationConsumer: なし
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/dot1p-to-pg-map-platform.md`
+## プラットフォーム差異
 
 `DOT1P_TO_PG_MAP` テーブルは存在しないが、等価な 2 段マッピング経路
 (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) を処理する

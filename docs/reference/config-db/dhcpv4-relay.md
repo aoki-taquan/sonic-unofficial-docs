@@ -63,7 +63,7 @@ DHCPV4_RELAY|<name>
 | `max_hop_count` | uint8 (1..16) | - | `4` (YANG) / `16` (C++ struct) | ホップ数上限。YANG-実装間で default 値が乖離 |
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `sonic-dhcpv4-relay` (`DHCPMgr`) は [CONFIG_DB](../../reference/glossary.md#term-config_db) の複数テーブルを同時購読する。`DHCPV4_RELAY` の SET イベント受信時点でこれらが揃っていないと、設定の欠落や誤った VRF での中間状態が発生する。
 
@@ -145,7 +145,7 @@ DB を YANG バリデーション外で書いた場合、`servers` が空のと�
 <!-- /defaults -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `sonic-dhcpv4-relay` が読み出す関連 CONFIG_DB テーブル (Phase C)
+## 暗黙参照 — `sonic-dhcpv4-relay` が読み出す関連 CONFIG_DB テーブル
 
 `dhcp4relay_mgr` スレッドは `DHCPV4_RELAY` 単体ではなく、9 テーブル + [STATE_DB](../../reference/glossary.md#term-state_db) 2 テーブルを同時購読し (`SubscriberStateTable`)、さらに処理中に `VLAN_INTERFACE` / `VLAN` / `MID_PLANE_BRIDGE` を direct read (`Table::hget`) する。relay の正常動作には以下の依存テーブルが先行して存在する必要がある。
 
@@ -189,13 +189,12 @@ DB を YANG バリデーション外で書いた場合、`servers` が空のと�
 | 4 | `FEATURE` | 排他制御 | `dhcp_server = enabled` は DHCPV4_RELAY 設定を全消去する副作用を持つ |
 | 5 | `VLAN_MEMBER` | 推奨 | メンバ未登録時は client_sock が未生成でパケット受信不可 |
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dhcpv4-relay-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.h` 全行精読、`sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py` 精読 (2026-05-16)
+> **Evidence**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.h` 全行精読、`sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py` 精読 (2026-05-16)
 
 ### プロトコル定数 (dhcp4relay.h)
 
@@ -236,9 +235,9 @@ CONFIG_DB・環境変数・設定ファイルから変更不可。
 <!-- /constants -->
 
 <!-- failure -->
-## 失敗挙動・リトライ・リカバリ (Phase D)
+## 失敗挙動・リトライ・リカバリ
 
-> **調査根拠**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.cpp` および `dhcp4relay_mgr.cpp` 全行精読 (2026-05-18)
+> **Evidence**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.cpp` および `dhcp4relay_mgr.cpp` 全行精読 (2026-05-18)
 
 ### 起動時 — fatal exit (exit(EXIT_FAILURE))
 
@@ -303,7 +302,7 @@ syslog(LOG_WARNING, "[DHCPV4_RELAY] Dropping server reply for %s: VLAN socket no
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `sonic-dhcpv4-relay` (`dhcp4relay` プロセス) が `DHCPV4_RELAY` テーブルの設定を処理する際、本テーブル以外の DB への副次書き込みを行う。以下にその全容を整理する。
 
@@ -335,11 +334,11 @@ COUNTERS_DB COUNTERS_DHCPV4|<Vlan>|TX  {Discover: N, Offer: N, ..., Dropped: N}
 
 なし。`DHCPV4_RELAY` は [APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし、[SAI](../../reference/glossary.md#term-sai) 非経由の Linux カーネル relay であるため、[orchagent](../../reference/glossary.md#term-orchagent) への通知は発生しない。
 
-> **スキャン証跡**: `dhcp4relay_stats.cpp` 全行読了。`dhcp4relay.cpp:86-87, 591-828, 1570-1571` 読了。`dhcp4relay_stats.h:12` 読了。`dhcp4relay_mgr.cpp:56-90, 510-518, 762-771` 読了。副次書き込み先は `COUNTERS_DB.COUNTERS_DHCPV4` のみ確認。CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みなし。
+> **裏取り**: `dhcp4relay_stats.cpp` 全行読了。`dhcp4relay.cpp:86-87, 591-828, 1570-1571` 読了。`dhcp4relay_stats.h:12` 読了。`dhcp4relay_mgr.cpp:56-90, 510-518, 762-771` 読了。副次書き込み先は `COUNTERS_DB.COUNTERS_DHCPV4` のみ確認。CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みなし。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `DHCPV4_RELAY` テーブルは `SubscriberStateTable`（keyspace notification）では**直接購読されない**。
 `dhcprelayd` は `FEATURE`・`VLAN`・`VLAN_INTERFACE` テーブルの変化をトリガとして受け取り、
@@ -378,7 +377,7 @@ COUNTERS_DB COUNTERS_DHCPV4|<Vlan>|TX  {Discover: N, Offer: N, ..., Dropped: N}
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `sonic-dhcpv4-relay` (`DHCPMgr`) は `DEVICE_METADATA.subtype` を購読し、プラットフォーム種別に応じて中継動作を自動変更する。[ASIC](../../reference/glossary.md#term-asic) 種別・multi-[ASIC](../../reference/glossary.md#term-asic)・[VOQ](../../reference/glossary.md#term-voq) chassis の差は [SAI](../../reference/glossary.md#term-sai) 非経由のため発生しない。
 
@@ -405,7 +404,6 @@ COUNTERS_DB COUNTERS_DHCPV4|<Vlan>|TX  {Discover: N, Offer: N, ..., Dropped: N}
 `OPTION82_SUBOPT_REMOTE_ID` に `host_mac_addr` の代わりに `bm_mac`（midplane bridge MAC）を使用する。
 これにより DHCP サーバ側で DPU とホストを MAC で区別することが可能になる。
 
-詳細根拠は `meta/_intermediate/cdb-flow/dhcpv4-relay-platform.md` を参照。
 <!-- /platform -->
 
 <!-- value-behavior -->
@@ -537,7 +535,7 @@ show dhcprelay_helper ipv4
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DHCPV4_RELAY`
 

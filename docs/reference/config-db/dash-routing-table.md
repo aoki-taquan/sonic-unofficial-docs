@@ -143,7 +143,7 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<prefix/tag>:<priority>
 <!-- /cdb-exceptions -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 [YANG](../../reference/glossary.md#term-yang) 未定義テーブルのため、全デフォルトはコード実装が正本。
 
@@ -199,11 +199,10 @@ sai_status_t status = sai_dash_outbound_routing_api->create_outbound_routing_gro
 
 `DASH_ROUTE_GROUP_TABLE` の `version` フィールドは orchagent 内部では一切参照されず、SAI にも渡されない。
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-defaults.md`
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存・タイミング依存 (Phase B)
+## 書込み順依存・タイミング依存
 
 `DashRouteOrch` (`dashrouteorch.cpp`) は依存オブジェクトが未作成の場合に `return false` でリトライキューに戻す設計になっている。以下の依存関係に従ってエントリを投入すること。
 
@@ -265,11 +264,10 @@ DEL DASH_ROUTE_RULE_TABLE|<eni>:<vni>:<pfx>:<prio>
 | 5 | `DASH_ENI_ROUTE_TABLE` DEL | ルートグループ内の ROUTE 変更・削除 | バインド中は WARN のみ・自動リトライなし |
 | 6 | `DASH_ROUTE_TABLE` 全削除 | `DASH_ROUTE_GROUP_TABLE` DEL | バインドカウントで管理 |
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-ordering.md`
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `DashRouteOrch` はエントリ処理時に複数の外部テーブル / in-memory マップを暗黙的に参照する。[YANG](../../reference/glossary.md#term-yang) 定義がないため制約はコードのみで表現されている。
 
@@ -307,13 +305,12 @@ DEL DASH_ROUTE_RULE_TABLE|<eni>:<vni>:<pfx>:<prio>
 
 `DASH_ROUTE_GROUP_TABLE` は [CRM](../../reference/glossary.md#term-crm) カウンタ未使用。
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
-`DashRouteOrch` (`dashrouteorch.cpp`) の各テーブルハンドラにおける失敗分岐を網羅する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/dash-routing-table-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/dash-routing-table-failure.md)。
+`DashRouteOrch` (`dashrouteorch.cpp`) の各テーブルハンドラにおける失敗分岐を網羅する。
 
 ### DASH_ROUTE_TABLE — SET 失敗パターン
 
@@ -370,11 +367,10 @@ DEL DASH_ROUTE_RULE_TABLE|<eni>:<vni>:<pfx>:<prio>
 !!! warning "バインド中ルートグループからの DEL は永続ループ"
     `removeOutboundRouting()` はバインド中グループからのルート削除を `return false` で処理し永続再試行する。`DASH_ENI_ROUTE_TABLE` DEL でバインドを解除するまで orchagent の m_toSync に残留し続ける。
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `DashRouteOrch` (`dashrouteorch.cpp`) および関連ヘッダ内のハードコード定数を網羅する。
 
@@ -449,11 +445,10 @@ inbound_routing_attr.value.u32 =
 | `SAI_STATUS_NOT_EXECUTED` | `removeOutboundRoutingPost()` L266, `removeInboundRoutingPost()` L550 | `return false` → bulker 再実行 |
 | `SAI_STATUS_OBJECT_IN_USE` | `removeRouteGroup()` L772 | `return false` → グループ削除拒否ループ |
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-constants.md`
 <!-- /constants -->
 
 <!-- side-effects -->
-## 操作の副作用 (Phase F)
+## 操作の副作用
 
 `DashRouteOrch` がエントリを処理した際に発生する外部への副作用を網羅する。
 
@@ -511,11 +506,10 @@ SAI API の呼び出し成功後、`gCrmOrch` のリソースカウンタが更�
 
 ルートグループは `EntityBulker` を使わず即時 SAI 呼び出し。ルートエントリは一括処理でバルクサイズ上限 (`gMaxBulkSize`) まで蓄積してから `flush()` で一括コミットされる。
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-side-effects.md`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Pub/Sub・通知経路 (Phase G)
+## Pub/Sub・通知経路
 
 ### 購読テーブル登録
 
@@ -573,11 +567,10 @@ dash_route_orch->unbindRouteGroup(route_group);
 !!! note "能動的イベント発行なし"
     `DashRouteOrch` は SAI 呼び出しと APP_STATE_DB 書き戻し以外に外部コンポーネントへの能動的なイベント発行を行わない。ログ出力 (`SWSS_LOG_*`) は `rsyslog` / `swssloglevel` ツールで観察可能。
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム固有制約 (Phase H)
+## プラットフォーム固有制約
 
 `DashRouteOrch` および DASH_ROUTE_* テーブル群が動作する前提条件・プラットフォーム依存挙動を網羅する。
 
@@ -668,7 +661,6 @@ IPv6 の `underlay_sip` を指定しても SAI 属性は設定されず、無言
 | `underlay_sip` | IPv4 のみ。IPv6 は無言スキップ | `dashrouteorch.cpp:149` |
 | CRM カウンタ | IPv4 / IPv6 別カウンタで管理（グループは対象外） | `dashrouteorch.cpp:220,262,507,546` |
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-platform.md`
 <!-- /platform -->
 
 <!-- glossary-links-injected: f39b500bf70f -->

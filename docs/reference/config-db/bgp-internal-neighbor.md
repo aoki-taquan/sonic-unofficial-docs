@@ -165,7 +165,7 @@ neighbor INTERNAL_PEER_V4 route-map TO_BGP_INTERNAL_PEER_V4 out
 
 5. **YANG-実装 discrepancy（local_addr mandatory）**: YANG バリデーターは `local_addr` 欠如を拒否するが、bgpcfgd ランタイムは欠如のまま処理を進める。YANG バリデーションを通過しないエントリが CONFIG_DB に直接書き込まれた場合の動作は未定義。
 
-### スキャン証跡
+### 裏取り
 
 - `instance.conf.j2` 34 行全行精読: timers ハードコード、nhopself 参照なし確認
 - `peer-group.conf.j2` 36 行全行精読: soft-reconfiguration/allowas-in/send-community 常時付与確認
@@ -180,7 +180,7 @@ neighbor INTERNAL_PEER_V4 route-map TO_BGP_INTERNAL_PEER_V4 out
 - 関連 CLI: マルチ ASIC 環境では `show ip bgp summary` / `vtysh -c 'show bgp neighbor'`
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### タイマー固定値（`internal/instance.conf.j2`）
 
@@ -283,10 +283,9 @@ CONFIG_DB の `holdtime` / `keepalive` フィールドは **dead field**。テ�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照
 
-> **調査根拠**: `managers_bgp.py`、`frrcfgd.py`、`policies.conf.j2`（internal）全行精読 (2026-05-16)
-> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-internal-neighbor-cross-refs.md`
+> **Evidence**: `managers_bgp.py`、`frrcfgd.py`、`policies.conf.j2`（internal）全行精読 (2026-05-16)
 
 `BGP_INTERNAL_NEIGHBOR` テーブルは YANG leafref が最小限だが、実行時に以下のテーブルを暗黙参照する。
 
@@ -334,7 +333,7 @@ CONFIG_DB の `holdtime` / `keepalive` フィールドは **dead field**。テ�
 <!-- /cross-refs -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -368,11 +367,11 @@ managers_bgp.py: deps 充足チェック → add_peer() / update_peer()
 
 `frrcfgd` は `ExtConfigDBConnector.listen_thread()` でデータベース全体の keyspace (`__keyspace@<dbId>__:*`) を `psubscribe` するが、`sub_msg_handler` 内の `table in self.handlers` チェックにより `BGP_INTERNAL_NEIGHBOR` はスキップされる。`DEVICE_METADATA.frr_mgmt_framework_config=true` 構成でも内部 iBGP は常に `bgpcfgd` 専用パスで処理される。
 
-> **Evidence**: `bgpcfgd/runner.py:23-73` (Runner クラス全体)、`bgpcfgd/main.py:88,134-136` (BGP_INTERNAL_NEIGHBOR 登録)、`bgpcfgd/managers_bgp.py:87-182` (BGPPeerMgrBase 初期化・deps)、`frrcfgd/frrcfgd.py:1536-1543` (ExtConfigDBConnector.listen_thread)、`frrcfgd/frrcfgd.py:2293-2338` (table_handler_list — BGP_INTERNAL_NEIGHBOR 不在確認)、`frrcfgd/frrcfgd.py:2359-2361` (subscribe_all); 詳細分析 `meta/_intermediate/cdb-flow/bgp-internal-neighbor-pubsub.md`
+> **Evidence**: `bgpcfgd/runner.py:23-73` (Runner クラス全体)、`bgpcfgd/main.py:88,134-136` (BGP_INTERNAL_NEIGHBOR 登録)、`bgpcfgd/managers_bgp.py:87-182` (BGPPeerMgrBase 初期化・deps)、`frrcfgd/frrcfgd.py:1536-1543` (ExtConfigDBConnector.listen_thread)、`frrcfgd/frrcfgd.py:2293-2338` (table_handler_list — BGP_INTERNAL_NEIGHBOR 不在確認)、`frrcfgd/frrcfgd.py:2359-2361` (subscribe_all)
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `BGPPeerMgrBase`（`peer_type="internal"`）は CONFIG_DB `BGP_INTERNAL_NEIGHBOR` の
 set/del を受けて **[STATE_DB](../../reference/glossary.md#term-state_db) `BGP_PEER_CONFIGURED_TABLE`** に副次書込を行う。
@@ -388,11 +387,10 @@ FRR bgpd への反映は `cfg_mgr.push()` 経由の [vtysh](../../reference/glos
 
 `frrcfgd.py`（frr-mgmt-framework パス）は `BGP_INTERNAL_NEIGHBOR` を購読しないため副次書込なし（全体スキャンで一致なし）。
 
-詳細スキャン結果: `meta/_intermediate/cdb-flow/bgp-internal-neighbor-side.md`
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 ### 対象プラットフォーム
 

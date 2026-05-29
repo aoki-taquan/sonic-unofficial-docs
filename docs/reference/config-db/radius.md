@@ -154,7 +154,7 @@ show radius
 [^2]: [hostcfgd](../../reference/glossary.md#term-hostcfgd) 実装: `sonic-host-services/scripts/hostcfgd`. <https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd>
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `hostcfgd` (`AaaCfg`) は `load()` フェーズで `AAA` → `TACPLUS` / `TACPLUS_SERVER` → `RADIUS` / `RADIUS_SERVER` → `LDAP` / `LDAP_SERVER` の順に全テーブルを読み込み、最後に 1 回だけ `modify_conf_file()` を呼ぶ。runtime (subscribe) フェーズでは各テーブルのイベントごとに即時 `modify_conf_file()` が呼ばれる。このため書き込み順序が中間状態の整合性に直結する。
 
@@ -182,7 +182,7 @@ show radius
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `AaaCfg` が `RADIUS` 処理時に読み出す関連テーブル (Phase C)
+## 暗黙参照 — `AaaCfg` が `RADIUS` 処理時に読み出す関連テーブル
 
 `hostcfgd` の `AaaCfg` は `RADIUS|global` イベントを受け取ると `radius_global_update()` でメモリ上の `self.radius_global` を更新し、即座に `modify_conf_file()` を呼ぶ。この `modify_conf_file()` は RADIUS 設定の生成に際して `RADIUS` 単体だけでなく、以下の関連テーブルを直接または間接に参照する。
 
@@ -220,7 +220,7 @@ RADIUS 設定は `RADIUS` / `RADIUS_SERVER` テーブルのイベントだけで
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `hostcfgd` の `AaaCfg.radius_global_update()` と `modify_conf_file()` (`sonic-host-services/scripts/hostcfgd`) を全行調査した結果。
 
@@ -258,7 +258,7 @@ RADIUS 設定は `RADIUS` / `RADIUS_SERVER` テーブルのイベントだけで
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `RADIUS` テーブルを処理する `hostcfgd` (`sonic-host-services/scripts/hostcfgd`) 内に存在する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG で管理されないハードコード定数の一覧。
 
@@ -271,7 +271,7 @@ RADIUS 設定は `RADIUS` / `RADIUS_SERVER` テーブルのイベントだけで
 | `PAM_RADIUS_AUTH_CONF_TEMPLATE` | `/usr/share/sonic/templates/pam_radius_auth.conf.j2` | `pam_radius_auth.conf` 生成用 Jinja2 テンプレートのパス | `hostcfgd:38` |
 | `RADIUS_PAM_AUTH_CONF_DIR` | `/etc/pam_radius_auth.d/` | サーバごとの PAM RADIUS 設定ファイル (`{ip}_{auth_port}.conf`) を 0600 で配置するディレクトリ | `hostcfgd:97` |
 
-> **ファイル命名規則**: サーバごとの PAM 設定ファイルは `RADIUS_PAM_AUTH_CONF_DIR + srv['ip'] + "_" + srv['auth_port'] + ".conf"` の形式で生成される (`hostcfgd:829`)。サーバ削除時にはファイルが削除されずに残留する（Phase D 参照）。
+> **ファイル命名規則**: サーバごとの PAM 設定ファイルは `RADIUS_PAM_AUTH_CONF_DIR + srv['ip'] + "_" + srv['auth_port'] + ".conf"` の形式で生成される (`hostcfgd:829`)。サーバ削除時にはファイルが削除されずに残留する（「失敗挙動」参照）。
 
 ### RADIUS サーバデフォルト値
 
@@ -295,9 +295,8 @@ RADIUS 設定は `RADIUS` / `RADIUS_SERVER` テーブルのイベントだけで
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次書込・副次動作 (Phase F)
+## 副次書込・副次動作
 
-> 調査証跡: `meta/_intermediate/cdb-flow/radius-side-effects.md`
 > ソース: `sonic-host-services/scripts/hostcfgd` L641-860 (`modify_conf_file`)
 
 `RADIUS` の SET/DEL を受けた `hostcfgd` (`AaaCfg`) の処理経路では **[Redis](../../reference/glossary.md#term-redis) DB（[STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 等）への書き込みは一切発生しない**。副次動作はすべて OS ファイルシステムへの設定ファイル再生成と systemd サービス制御。
@@ -332,7 +331,7 @@ RADIUS 設定は `RADIUS` / `RADIUS_SERVER` テーブルのイベントだけで
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -395,11 +394,9 @@ radius_global_handler(key="global", op=SET, data={passkey: "..."})
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: RADIUS は SSH / コンソール認証のコントロールプレーン処理であり、[SAI](../../reference/glossary.md#term-sai) 非経由。[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
-
-> 調査証跡: `meta/_intermediate/cdb-flow/radius-platform.md`
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
@@ -410,8 +407,6 @@ radius_global_handler(key="global", op=SET, data={passkey: "..."})
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([NPU](../../reference/glossary.md#term-npu) + [DPU](../../reference/glossary.md#term-dpu) 構成) | 影響なし | RADIUS は管理プレーン認証。[DPU](../../reference/glossary.md#term-dpu) 側の [orchagent](../../reference/glossary.md#term-orchagent) / [SAI](../../reference/glossary.md#term-sai) は参照しない。`DPU` テーブルに RADIUS 関連フィールドなし |
 | Jinja2 テンプレート内のプラットフォーム分岐 | なし | `pam_radius_auth.conf.j2` / `radius_nss.conf.j2` を `platform|asic|chassis|namespace|vendor` で grep して 0 ヒット。分岐は `auth_type` / `src_ip` / `vrf_name` / `statistics` フィールド値のみ |
 
-<!-- evidence: sonic-host-services/scripts/hostcfgd:527-545 (radius_global_update — SAI 呼び出しなし) -->
-<!-- evidence: sonic-host-services/scripts/hostcfgd:2166-2185 (hostcfgd main — multi-asic 無考慮) -->
 <!-- /platform -->
 
 <!-- defaults -->
@@ -439,24 +434,24 @@ hostcfgd の `RadiusCfg` は `self.radius_global_default` というモジュー�
 
 `RADIUS_SERVER_PASSKEY_DEFAULT = ""` (`hostcfgd:93`) が `radius_global_default['passkey']` (`hostcfgd:380`) に設定。空文字は PAM 設定で `secret=` 行が省略される動作に相当し、サーバごとの passkey 上書きが無い場合は認証が成立しない設定となる（YANG-実装 discrepancy: YANG は `passkey` を `RADIUS` global の任意フィールドとして許容するが、値なし時のフォールバックは空文字でありそのまま使うと PAM が認証拒否する）。
 
-> **Evidence**: `sonic-host-services/scripts/hostcfgd:92-96` (モジュール定数)、`:374-382` (`self.radius_global_default` 構築)。SHA `c5bbbe8b07b96f078fa4b761316627404b01bd04`。詳細は `meta/_intermediate/cdb-flow/radius-defaults.md` を参照。
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:92-96` (モジュール定数)、`:374-382` (`self.radius_global_default` 構築)。SHA `c5bbbe8b07b96f078fa4b761316627404b01bd04`。
 <!-- /defaults -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
-hostcfgd が `RADIUS` テーブルを読み、未設定フィールドに PAM のデフォルト値を補完する。`auth_type` 未設定 → `pap`、`auth_port` 未設定 → `1812`、`timeout` 未設定 → `5`、`retransmit` 未設定 → `3`。これらはデフォルト値による自動補完（Phase 6 相当）。
+hostcfgd が `RADIUS` テーブルを読み、未設定フィールドに PAM のデフォルト値を補完する。`auth_type` 未設定 → `pap`、`auth_port` 未設定 → `1812`、`timeout` 未設定 → `5`、`retransmit` 未設定 → `3`。これらはデフォルト値による自動補完。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 hostcfgd は常時起動し `RADIUS` テーブルを無条件購読する。ただし `aaa.authentication.login` に `radius` が含まれない場合、RADIUS サーバ設定があっても PAM に反映されない。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -467,7 +462,7 @@ hostcfgd は常時起動し `RADIUS` テーブルを無条件購読する。た�
 | `hostcfgd` RADIUS handler | `vrf_name` あり | `vrf=<vrf_name>` を PAM 設定に追加 | `hostcfgd.py` |
 | `hostcfgd` RADIUS handler | `passkey` フィールドあり | `secret=<passkey>` を設定 | `hostcfgd.py` |
 
-> **スキャン証跡**: `RADIUS` テーブルは PAM/NSS 設定ファイル生成のための入力。hostcfgd が `RADIUS` + `RADIUS_SERVER` + `AAA` を合わせて処理する。デフォルト値補完が Phase 6 派生相当。
+> **裏取り**: `RADIUS` テーブルは PAM/NSS 設定ファイル生成のための入力。hostcfgd が `RADIUS` + `RADIUS_SERVER` + `AAA` を合わせて処理する。デフォルト値補完が自動派生相当。
 
 <!-- /handler-branching -->
 
@@ -494,7 +489,7 @@ hostcfgd は常時起動し `RADIUS` テーブルを無条件購読する。た�
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 RADIUS / RADIUS_SERVER テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 

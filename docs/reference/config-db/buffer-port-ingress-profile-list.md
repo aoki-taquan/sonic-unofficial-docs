@@ -96,7 +96,7 @@ YANG に `default` 節は存在しない。以下はすべてコード実装か�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
 このテーブルにエントリを書き込む前に以下の前提条件を満たす必要がある。
 
@@ -214,7 +214,7 @@ show buffer pool
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BUFFER_PORT_INGRESS_PROFILE_LIST`
 
@@ -242,15 +242,15 @@ show buffer pool
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | Dynamic buffer model: `buffermgrd` がポートの ingress プロファイルリストを自動生成 | `BUFFER_PORT_INGRESS_PROFILE_LIST` にエントリを書き込む | `sonic-swss/cfgmgr/buffermgrdyn.cpp:447,3567` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -261,18 +261,18 @@ show buffer pool
 - buffermgrdyn.cpp L447: BUFFER_PORT_INGRESS_PROFILE_LIST ハンドラ登録（条件なし）
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
 | `BufferMgrDynamic` | `handleBufferObjectTables()` | キー形式が不正（ポート名空） | `task_invalid_entry` 返却 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:3514` |
 | `BufferMgrDynamic` | `handleBufferObjectTables()` | カンマ区切りポートリスト | ポートごとにシングルポートハンドラを繰り返し呼び出し | `sonic-swss/cfgmgr/buffermgrdyn.cpp:3536-3547` |
 
-> **スキャン証跡**: `handleBufferPortIngressProfileListTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_PORT_INGRESS_PROFILE_LIST_NAME, false)` に委譲。egress 版と同一パス。2 件分岐抽出。
+> **裏取り**: `handleBufferPortIngressProfileListTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_PORT_INGRESS_PROFILE_LIST_NAME, false)` に委譲。egress 版と同一パス。2 件分岐抽出。
 <!-- /handler-branching -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### CONFIG_DB 購読 — `SubscriberStateTable`
 
@@ -350,7 +350,7 @@ sai_port_api->set_ports_attribute(
 <!-- /pubsub -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### テーブル名・フィールド名定数
 
@@ -510,7 +510,7 @@ evidence: `bufferorch.cpp:1660-1774`（`processIngressBufferProfileList`: voq �
 <!-- /side-effects -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `BUFFER_PORT_INGRESS_PROFILE_LIST` エントリが CONFIG_DB に書かれたとき、`buffermgrd` および `BufferOrch` が以下のテーブルを**暗黙的に leafref 参照**する。YANG スキーマ上は leafref として定義されているが、実装上はコード内 lookup / resolve で処理される。
 
@@ -527,7 +527,6 @@ evidence: `bufferorch.cpp:1660-1774`（`processIngressBufferProfileList`: voq �
 - `profile_list` の各プロファイルは `direction=ingress` でなければならない。egress プロファイルを混入すると `task_failed`（`buffermgrdyn.cpp:3289-3296`）。
 - `packet_discard_action=trim` のプロファイルは `BufferOrch` が ingress profile list への適用を拒否（`bufferorch.cpp:1725-1731`）。
 - admin-down ポートでは `m_portInfoLookup[port].state == PORT_ADMIN_DOWN` を検出し、通常 profile_list の代わりに zero profile list を APPL_DB に書き込む（`buffermgrdyn.cpp:3418-3438`）。
-- 詳細スキャン記録: `meta/_intermediate/cdb-flow/buffer-port-ingress-profile-list-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- glossary-links-injected: 8982a00c0143 -->

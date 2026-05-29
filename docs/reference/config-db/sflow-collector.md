@@ -97,12 +97,11 @@ SFLOW_COLLECTOR|<name>   # コレクタ名 (1..64 文字)
 <!-- /topics-back-ref -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 SFLOW_COLLECTOR テーブルを CONFIG_DB へ書き込む際の **必須・推奨順序** を実装コードから導出した。
 
-> **調査根拠**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sflowmgrd.cpp` 全行精読 + `sonic-utilities/config/main.py` sflow 周辺 + `sonic-sflow.yang` 精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-collector-ordering.md`
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sflowmgrd.cpp` 全行精読 + `sonic-utilities/config/main.py` sflow 周辺 + `sonic-sflow.yang` 精読 (2026-05-17)
 
 ### O1: `MGMT_VRF_CONFIG|vrf_global` → `SFLOW_COLLECTOR` (条件付き必須)
 
@@ -138,12 +137,11 @@ SFLOW_COLLECTOR|<name>  SET  →  (hsflowd 再起動) → 反映
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照（テーブル間依存）(Phase C)
+## 暗黙参照（テーブル間依存）
 
 SFLOW_COLLECTOR テーブルを処理する際に暗黙的に依存するテーブル・コンポーネントを実装コードから導出した。
 
-> **調査根拠**: `sonic-swss/cfgmgr/sflowmgrd.cpp`, `sflowmgr.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py` 全行精読 (2026-05-17)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-collector-cross-refs.md`
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp`, `sflowmgr.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py` 全行精読 (2026-05-17)
 
 ### MGMT_VRF_CONFIG（`collector_vrf = 'mgmt'` 時の必須依存）
 
@@ -172,10 +170,9 @@ MGMT_VRF_CONFIG|vrf_global (mgmtVrfEnabled=true) ←── 必須参照 ── S
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
-> **調査根拠**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sflowmgrd.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py`, `sonic-mgmt-common/translib/transformer/xfmr_sflow.go` 全行精読 (2026-05-17)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-collector-failure.md`
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sflowmgrd.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py`, `sonic-mgmt-common/translib/transformer/xfmr_sflow.go` 全行精読 (2026-05-17)
 
 ### SET 処理における失敗経路
 
@@ -210,12 +207,11 @@ MGMT_VRF_CONFIG|vrf_global (mgmtVrfEnabled=true) ←── 必須参照 ── S
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `SFLOW_COLLECTOR` テーブルに関連するハードコード定数を YANG モデルおよびソースコードから抽出した。
 
-> **調査根拠**: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-collector-constants.md`
+> **Evidence**: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py` 全行精読 (2026-05-17)
 
 ### YANG 由来の定数
 
@@ -244,12 +240,11 @@ MGMT_VRF_CONFIG|vrf_global (mgmtVrfEnabled=true) ←── 必須参照 ── S
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・波及変更 (Phase F)
+## 副作用・波及変更
 
 `SFLOW_COLLECTOR` テーブルへの書き込み・削除が引き起こす downstream への副作用を実装コードから導出した。
 
-> **調査根拠**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sflowmgrd.cpp`, `sonic-utilities/config/main.py`, `sonic-utilities/show/sflow.py`, `sonic-mgmt-common/translib/transformer/xfmr_sflow.go` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-collector-side-effects.md`
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sflowmgrd.cpp`, `sonic-utilities/config/main.py`, `sonic-utilities/show/sflow.py`, `sonic-mgmt-common/translib/transformer/xfmr_sflow.go` 全行精読 (2026-05-17)
 
 ### SE1: 直接副作用 — CONFIG_DB 書き込みのみ（即時・非同期なし）
 
@@ -291,7 +286,7 @@ SFLOW_COLLECTOR テーブルのエントリは [APPL_DB](../../reference/glossar
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -338,11 +333,11 @@ sflowmgrd: doTask(CFG_SFLOW_TABLE_NAME)
 | `SFLOW\|global.admin_state` が `up→down` に変化 | `service hsflowd stop` | `sflowmgr.cpp:456-460` |
 | `SFLOW_COLLECTOR` の SET / DEL のみ | **なし（再起動されない）** | `sflowmgrd.cpp:36-41` |
 
-> **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp:15-16,31-41,56-75` (SELECT_TIMEOUT / TableConnector リスト / メインループ)、`sonic-swss/cfgmgr/sflowmgr.cpp:51-78,403-414,456-470` (`sflowHandleService` / doTask テーブル分岐 / admin_state 処理)、`sonic-swss/cfgmgr/sflowmgr.h:31-60` (SflowMgr クラス定義)；詳細分析 `meta/_intermediate/cdb-flow/sflow-collector-pubsub.md`
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp:15-16,31-41,56-75` (SELECT_TIMEOUT / TableConnector リスト / メインループ)、`sonic-swss/cfgmgr/sflowmgr.cpp:51-78,403-414,456-470` (`sflowHandleService` / doTask テーブル分岐 / admin_state 処理)、`sonic-swss/cfgmgr/sflowmgr.h:31-60` (SflowMgr クラス定義)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 **プラットフォーム差なし**: `SFLOW_COLLECTOR` は [SAI](../../reference/glossary.md#term-sai) を経由しない。CONFIG_DB への書き込みと hsflowd 設定ファイル再生成のみで完結するため、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
 
@@ -354,7 +349,7 @@ sflowmgrd: doTask(CFG_SFLOW_TABLE_NAME)
 | `collector_vrf = 'mgmt'` | mgmt VRF 有効化が前提 | kernel routing table のソフトウェア制約。[ASIC](../../reference/glossary.md#term-asic) 非依存。`sonic-utilities/config/main.py:9327-9329` で CLI がチェック |
 | IPv6 コレクタ | CONFIG_DB 経路は同一 | YANG `inet:ip-address` で IPv4/IPv6 両対応。hsflowd 実装依存だが DB 経路は ASIC 非依存 |
 
-> **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp:28-41`（DB 接続・TableConnector リスト）、`sonic-swss/orchagent/sfloworch.cpp`（SFLOW_COLLECTOR 参照なし）、`sonic-utilities/config/main.py:9314-9331`（CLI VRF 制約）、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`（YANG must / max-elements）；詳細分析 `meta/_intermediate/cdb-flow/sflow-collector-platform.md`
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp:28-41`（DB 接続・TableConnector リスト）、`sonic-swss/orchagent/sfloworch.cpp`（SFLOW_COLLECTOR 参照なし）、`sonic-utilities/config/main.py:9314-9331`（CLI VRF 制約）、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`（YANG must / max-elements）
 <!-- /platform -->
 
 <!-- glossary-links-injected: 4fa57fff7d6e -->

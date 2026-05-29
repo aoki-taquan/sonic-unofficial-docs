@@ -2,7 +2,7 @@
 title: スナップショット
 area: meta
 verification: meta
-last_verified: 2026-05-26
+last_verified: 2026-05-29
 sources: []
 ---
 
@@ -20,10 +20,10 @@ sources: []
 
 | verification | 件数 |
 |---|---:|
-| code-verified | 745 |
+| code-verified | 746 |
 | runbook-verified | 27 |
 | discrepancy-found | 112 |
-| issue-confirmed | 10 |
+| issue-confirmed | 9 |
 | hld-only | 0 |
 | meta | 209 |
 | stub | 1 |
@@ -31,13 +31,13 @@ sources: []
 
 ## last_verified 鮮度
 
-基準日 **2026-05-26**。
+基準日 **2026-05-29**。
 
 | バケツ | 件数 |
 |---|---:|
-| 今日 (0d) | 18 |
-| 7 日以内 (1-7d) | 22 |
-| 30 日以内 (8-30d) | 1061 |
+| 今日 (0d) | 2 |
+| 7 日以内 (1-7d) | 17 |
+| 30 日以内 (8-30d) | 1082 |
 | 30 日超 / 古い | 0 |
 | 不明 / パース不可 | 3 |
 
@@ -66,7 +66,7 @@ sources: []
 
 | 種別 | mermaid あり | 総ページ | カバレッジ |
 |---|---:|---:|---:|
-| CONFIG_DB | 236 | 293 | 80.5% |
+| CONFIG_DB | 232 | 293 | 79.2% |
 | CLI | 72 | 72 | 100.0% |
 | YANG | 84 | 84 | 100.0% |
 
@@ -78,8 +78,8 @@ sources: []
 
 | 項目 | 値 |
 |---|---:|
-| 用語数 (`### ` アンカー) | 335 |
-| docs 内被リンク数 | 19681 |
+| 用語数 (`### ` アンカー) | 323 |
+| docs 内被リンク数 | 19903 |
 
 ## 直近 5 round quality-audit
 
@@ -112,7 +112,7 @@ sources: []
 | 項目 | 値 |
 |---|---:|
 | 低密度ページ残数 (link-density < 2) | 68 |
-| backlog 残数 (active) | 20 |
+| backlog 残数 (active) | 10 |
 
 ## 関連メタページ
 

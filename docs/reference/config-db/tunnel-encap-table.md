@@ -167,7 +167,7 @@ GRE tunnel は warm-reboot 後に P4RT controller が [APPL_DB](../../reference/
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `GreTunnelManager` が `FIXED_TUNNEL_TABLE` エントリを SET / DEL する際、APPL_DB フィールドには現れないが処理上で参照・更新されるテーブル・リソースを列挙する。
 
@@ -188,7 +188,7 @@ GRE tunnel は warm-reboot 後に P4RT controller が [APPL_DB](../../reference/
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `GreTunnelManager` (`gre_tunnel_manager.cpp`) は失敗を即時 P4RT gRPC レスポンスに返す。自動リトライ機構はなく、失敗エントリは `Consumer::m_toSync` に残留しない。
 
@@ -223,12 +223,11 @@ GRE tunnel は warm-reboot 後に P4RT controller が [APPL_DB](../../reference/
 !!! warning "自動リトライなし"
     P4Orch は失敗エントリを `Consumer::m_toSync` に残さない。P4RT controller 側で再試行を実装する必要がある。RIF / Neighbor が未登録の状態でエントリを書いた場合は、依存先を作成した後に controller が GRE tunnel を再 SET しなければならない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-table-failure.md`
 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `FIXED_TUNNEL_TABLE` の処理に使われる、DB フィールドではなくコード中にハードコードされた文字列定数・SAI 定数の一覧。
 
@@ -269,12 +268,11 @@ GRE tunnel は warm-reboot 後に P4RT controller が [APPL_DB](../../reference/
 | `SAI_BULK_OP_ERROR_MODE` | `SAI_BULK_OP_ERROR_MODE_STOP_ON_ERROR` | `createGreTunnels()` / `removeGreTunnels()` (`gre_tunnel_manager.cpp:431, 493`) |
 | `SAI_TUNNEL_ATTR_OVERLAY_INTERFACE` | `gUnderlayIfId`（グローバルループバック RIF） | `createGreTunnels()` (`gre_tunnel_manager.cpp:420`) で代用。将来削除予定の TODO あり |
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-table-constants.md`
 
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・他オブジェクトへの波及 (Phase F)
+## 副作用・他オブジェクトへの波及
 
 `GreTunnelManager` が `FIXED_TUNNEL_TABLE` エントリを **SET / DEL** した際に、GRE tunnel 本体の SAI 操作以外で変化するシステム状態を記す。
 
@@ -307,12 +305,11 @@ GRE Tunnel を SET すると RIF / Neighbor の ref_count が増加し、Tunnel 
 !!! note "CRM カウンタは非対象"
     `gre_tunnel_manager.cpp` は `crmorch.h` をインクルードし `extern CrmOrch *gCrmOrch` を宣言するが、実際には `gCrmOrch->incCrmResUsedCounter()` / `decCrmResUsedCounter()` を呼び出していない。GRE tunnel オブジェクトは CRM カウンタの対象外であり、COUNTERS_DB / FLEX_COUNTER_DB への書込みは一切発生しない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-table-side.md`
 
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### 購読方式 — ZMQ ベース
 
@@ -372,12 +369,11 @@ DEL 成功時は当該エントリが APPL_STATE_DB から削除される。
 
 なし。`GreTunnelManager` は orchagent プロセス内のハンドラであり、エントリの追加/削除は SAI GRE トンネルオブジェクトのライブ操作のみで反映され、プロセス再起動を伴わない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-table-pubsub.md`
 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 `FIXED_TUNNEL_TABLE` は P4RT gRPC サービスを持つプラットフォームでのみ機能する。`gre_tunnel_manager.cpp` にはプラットフォーム分岐コード（`getenv("platform")` / `MLNX_PLATFORM_SUBSTRING` 等）は存在せず、差異は SAI 実装レベルで生じる。
 
@@ -419,7 +415,6 @@ entries[i].overlay_if_oid = gUnderlayIfId;
 
 `create_tunnels` / `remove_tunnels` は `SAI_BULK_OP_ERROR_MODE_STOP_ON_ERROR` 固定で呼ばれる（`gre_tunnel_manager.cpp:431, 493`）。部分成功モードは使用されない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-table-platform.md`
 
 <!-- /platform -->
 

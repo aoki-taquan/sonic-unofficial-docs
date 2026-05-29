@@ -102,7 +102,7 @@ FLEX_COUNTER_TABLE|<group>
 - `pfcwd`、`watermarkmgr` 等のカウンタ依存モジュール
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `FlexCounterOrch` は `Orch` 基底クラス経由で `FLEX_COUNTER_TABLE` を購読する。[CONFIG_DB](../../reference/glossary.md#term-config_db) 起源のため `Orch::addConsumer()` の DB 種別分岐で **`SubscriberStateTable`** が選ばれ、[Redis](../../reference/glossary.md#term-redis) の **keyspace 通知** (`__keyspace@4__:FLEX_COUNTER_TABLE:*` の PSUBSCRIBE) を購読する。channel ベースの `PUBLISH` は使用しない。
 
@@ -242,7 +242,7 @@ counterpoll show
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `FLEX_COUNTER_TABLE`
 
@@ -272,15 +272,7 @@ counterpoll show
 <!-- /entry-points -->
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
-
-<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/flexcounterorch.h,
-     sonic-buildimage/files/build_templates/init_cfg.json.j2,
-     sonic-buildimage/src/sonic-config-engine/minigraph.py,
-     sonic-buildimage/dockers/docker-orchagent/enable_counters.py,
-     sonic-utilities/counterpoll/main.py,
-     sonic-utilities/scripts/db_migrator.py,
-     sonic-buildimage/src/sonic-yang-models/yang-models/sonic-flex_counter.yang -->
+## 暗黙デフォルト・コード由来挙動
 
 ### `FLEX_COUNTER_STATUS` の暗黙デフォルト
 
@@ -355,9 +347,7 @@ YANG に `default` なし。counterpoll CLI の表示上のソフトデフォル
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/orchdaemon.cpp -->
+## 書込み順依存
 
 ### orchdaemon 初期化順序
 
@@ -429,11 +419,10 @@ FLEX_COUNTER_STATUS → enable/disable アクション + setFlexCounterGroupOper
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 <!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/orchdaemon.cpp,
-     sonic-swss/orchagent/saihelper.cpp, sonic-swss/orchagent/portsorch.cpp;
-     詳細調査: meta/_intermediate/cdb-flow/flex-counter-table-cross-refs.md -->
+     sonic-swss/orchagent/saihelper.cpp, sonic-swss/orchagent/portsorch.cpp -->
 
 `FlexCounterOrch` が `FLEX_COUNTER_TABLE` を処理する際に暗黙的に参照・書き込む他テーブルを示す。YANG leafref として明示されない依存も含む。
 
@@ -455,9 +444,7 @@ FLEX_COUNTER_STATUS → enable/disable アクション + setFlexCounterGroupOper
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
-
-<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp -->
+## 失敗挙動マトリクス
 
 ### SET 処理における失敗経路
 
@@ -479,7 +466,7 @@ FLEX_COUNTER_STATUS → enable/disable アクション + setFlexCounterGroupOper
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-utilities/counterpoll/main.py -->
 
@@ -521,7 +508,7 @@ YANG に `default` 宣言なし。orchagent / syncd にもハードコードな�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/saihelper.cpp,
      sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp, sonic-swss/orchagent/portsorch.cpp -->
@@ -563,9 +550,7 @@ Gearbox 有効時は `PORT` / `MACSEC*` グループに対して `GB_FLEX_COUNTE
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/flex-counter-table-platform.md -->
+## プラットフォーム / SAI Capability 差異
 
 ### VOQ シャーシ — キューカウンタの全ポート一括登録
 

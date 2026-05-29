@@ -203,7 +203,7 @@ show buffer pool
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BUFFER_POOL`
 
@@ -232,16 +232,16 @@ show buffer pool
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | DB 移行: 旧 DB の BUFFER_POOL エントリのフィールド区切り文字を更新 | `BUFFER_POOL` のフィールド値を新形式に変換 | `sonic-utilities/scripts/db_migrator.py:447` |
 | Dynamic buffer model: `size` フィールドが未指定 | `bufferPool.dynamic_size = true` → buffermgrd がプールサイズを動的計算して APPL_DB へ書き込む | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2525,2534` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -253,7 +253,7 @@ show buffer pool
 - buffermgrdyn.cpp L2525/2534: dynamic_size フラグ分岐
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -262,10 +262,10 @@ show buffer pool
 | `BufferMgrDynamic` | `handleBufferPoolTable()` | `xoff` フィールドあり（SHP 設定） | Shared [Headroom](../../reference/glossary.md#term-headroom) Pool サイズを計算・更新 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2539` |
 | `BufferMgrDynamic` | `handleBufferPoolTable()` | `op == DEL_COMMAND` | プールを APPL_DB から削除し内部キャッシュを更新 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2634` |
 
-> **スキャン証跡**: `handleBufferPoolTable` L2509-2669 全行読了。dynamic_size フラグと SHP xoff フィールド有無が核心分岐。4 件抽出。
+> **裏取り**: `handleBufferPoolTable` L2509-2669 全行読了。dynamic_size フラグと SHP xoff フィールド有無が核心分岐。4 件抽出。
 <!-- /handler-branching -->
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### CONFIG_DB → buffermgr/buffermgrdyn: SubscriberStateTable
 
@@ -321,7 +321,7 @@ APPL_STATE_DB:BUFFER_POOL_TABLE   ← ResponsePublisher (xoff/DEL 時のみ)
 | bufferorch → APPL_STATE_DB | `ResponsePublisher.publish` | `bufferorch.cpp:555,589` |
 <!-- /pubsub -->
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `cfgmgr/buffermgr.cpp`, `orchagent/bufferorch.cpp`
 
@@ -381,10 +381,10 @@ processBufferPool() / handleBufferPoolTable()
   task_success       → 正常完了
 ```
 
-> **スキャン証跡**: `buffermgrdyn.cpp` L100-123, L684-795, L2509-2669 全行読了、`bufferorch.cpp` L232-244, L286-335, L395-597 全行読了、`buffermgr.cpp` L575-590 読了。`task_need_retry` 6件、`task_invalid_entry` 4件、`task_ignore` 1件、`LOG_ERROR` 11件を抽出。
+> **裏取り**: `buffermgrdyn.cpp` L100-123, L684-795, L2509-2669 全行読了、`bufferorch.cpp` L232-244, L286-335, L395-597 全行読了、`buffermgr.cpp` L575-590 読了。`task_need_retry` 6件、`task_invalid_entry` 4件、`task_ignore` 1件、`LOG_ERROR` 11件を抽出。
 <!-- /failure -->
 <!-- defaults -->
-## コード由来の暗黙デフォルト / 実装乖離 (Phase A)
+## コード由来の暗黙デフォルト / 実装乖離
 
 ### `xoff` — YANG default と実装 fallback が一致
 
@@ -431,7 +431,7 @@ else
 <!-- /defaults -->
 
 <!-- platform -->
-## プラットフォーム・ASIC 差 (Phase H)
+## プラットフォーム・ASIC 差
 
 ### 1. dynamic vs static buffer model
 
@@ -490,7 +490,7 @@ bufferorch は静的なベンダ名判定を行わず SAI 戻り値で capabilit
 <!-- /platform -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `BUFFER_POOL` 自身の YANG leafref 定義は `BUFFER_PROFILE.pool` からの被参照のみだが、実装上の処理経路では以下の 4 テーブルを暗黙参照している。
 
@@ -549,10 +549,10 @@ BUFFER_POOL
   └─ [暗黙/static-only]  PORT_QOS_MAP                       (pfc_enable → headroom 再計算トリガ)
 ```
 
-> **スキャン証跡**: `buffermgrdyn.cpp` L40, L150-153, L442, L605-815, L1978-2040 読了 / `buffermgr.cpp` L167-176, L413-462, L517-519 読了 / `buffermgrd.cpp` L183-201 読了 / `buffer_headroom_mellanox.lua` L9-115 読了 / `buffer_pool_mellanox.lua` L261-310 読了 / `buffer_headroom_barefoot.lua` L8-93 読了 / `buffer_pool_barefoot.lua` L9-20 読了。
+> **裏取り**: `buffermgrdyn.cpp` L40, L150-153, L442, L605-815, L1978-2040 読了 / `buffermgr.cpp` L167-176, L413-462, L517-519 読了 / `buffermgrd.cpp` L183-201 読了 / `buffer_headroom_mellanox.lua` L9-115 読了 / `buffer_pool_mellanox.lua` L261-310 読了 / `buffer_headroom_barefoot.lua` L8-93 読了 / `buffer_pool_barefoot.lua` L9-20 読了。
 <!-- /cross-refs -->
 <!-- ordering -->
-## 登録順序依存 (Phase B)
+## 登録順序依存
 
 BUFFER_POOL → BUFFER_PROFILE → [BUFFER_PG](../../reference/glossary.md#term-buffer-pg) / BUFFER_QUEUE の 3 段が依存関係を形成する。
 誤順序で登録すると `task_need_retry` や SAI create-only 属性の乖離が生じる。
@@ -628,10 +628,10 @@ zero profile の削除は zero pool よりも先に行う（依存関係の逆�
   BUFFER_PG/QUEUE → BUFFER_PROFILE → BUFFER_POOL (zero: profile 先削除 → pool 削除)
 ```
 
-> **スキャン証跡**: `bufferorch.cpp` L437-471, L640-662, L694-712, L1206-1210, L1576-1580 / `buffermgrdyn.cpp` L76-78, L108-114, L121, L232-239 読了。
+> **裏取り**: `bufferorch.cpp` L437-471, L640-662, L694-712, L1206-1210, L1576-1580 / `buffermgrdyn.cpp` L76-78, L108-114, L121, L232-239 読了。
 <!-- /ordering -->
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `BufferOrch` は `BUFFER_POOL` の SET/DEL 処理後に APPL_STATE_DB・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) へ副次書き込みを行う。`buffermgrdyn` は [STATE_DB](../../reference/glossary.md#term-state_db) を読み取るのみで書き込みは発生しない。
 
@@ -694,7 +694,7 @@ FlexCounterOrch から `FLEX_COUNTER_STATUS=enable` を受信した際に全プ�
 <!-- /side-effects -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `cfgmgr/buffermgr.cpp`, `orchagent/bufferorch.cpp`, `orchagent/bufferorch.h`
 

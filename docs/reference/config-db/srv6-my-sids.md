@@ -73,7 +73,7 @@ SRV6_MY_SIDS|<locator_name>|<ip_prefix>
 | `decap_dscp_mode` | enum (`uniform` / `pipe`) | **なし（[SAI](../../reference/glossary.md#term-sai) 依存）** | デカプセル後の [DSCP](../../reference/glossary.md#term-dscp) 処理モード。省略時は [SAI](../../reference/glossary.md#term-sai)/プラットフォームのデフォルト動作に委ねる |
 
 <!-- defaults -->
-### コード由来のデフォルト（Phase A 解析）
+### コード由来のデフォルト
 
 | フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード fallback | 実効デフォルト |
 |-----------|-------------|----------------|--------------|
@@ -99,9 +99,8 @@ SAI 実装の多くは `uniform` をデフォルトとするが [SONiC](../../re
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-sids-ordering.md`
 
 ### SRV6_MY_LOCATORS が先行必須（bgpcfgd 経路）
 
@@ -143,9 +142,8 @@ DEL SRV6_MY_LOCATORS|<locator_name>            # ロケータは後
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## テーブル間参照 (Phase C)
+## テーブル間参照
 
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-sids-cross-refs.md`
 
 ### 読込み元テーブル（SRV6_MY_SIDS が依存するテーブル）
 
@@ -186,9 +184,8 @@ SRV6_MY_SIDS のエントリが参照する外部リソースには refcount が
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-sids-failure.md`
 
 ### SET 処理における失敗経路
 
@@ -226,9 +223,8 @@ SRV6_MY_SIDS のエントリが参照する外部リソースには refcount が
 <!-- /failure -->
 
 <!-- constants -->
-## 定数・上限値 (Phase E)
+## 定数・上限値
 
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-sids-constants.md`
 
 ### コード埋め込み定数一覧
 
@@ -277,9 +273,8 @@ SRV6_MY_SIDS のエントリが参照する外部リソースには refcount が
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-sids-side-effects.md`
 
 `SRV6_MY_SIDS` テーブルへの書込みは **bgpcfgd パス** と **Srv6Orch パス** の 2 経路で副次書込みを引き起こす。CONFIG_DB への書き戻しは発生しない。
 
@@ -333,9 +328,8 @@ IPinIP Tunnel SAI オブジェクトは `decap_dscp_mode` 値ごとに 1 つ共�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Pub/Sub・イベント通知 (Phase G)
+## Pub/Sub・イベント通知
 
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-sids-pubsub.md`
 
 `SRV6_MY_SIDS` テーブルの変更は **bgpcfgd パス** と **Srv6Orch パス** の 2 経路でそれぞれ異なる購読メカニズムで処理される。
 
@@ -390,9 +384,8 @@ SRV6_MY_SIDS 変更が直接トリガする [Redis](../../reference/glossary.md#
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム制約 (Phase H)
+## プラットフォーム制約
 
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-sids-platform.md`
 
 ### SAI ケイパビリティ照会（カウンタ）
 

@@ -65,7 +65,7 @@ VLAN_TABLE|<VlanName>
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
 ### SET 時の書込み順序
 
@@ -128,10 +128,9 @@ warm-restart 時、STATE_DB `VLAN_TABLE` に既存エントリがあり in-memor
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## テーブル間クロスリファレンス (Phase C)
+## テーブル間クロスリファレンス
 
 > 根拠: `vlanmgr.cpp` L27-33, L318-322, L371-378, L437-443, L517-530, L642; `intfmgr.cpp` L649-659; `stpmgr.cpp` L210, L1276-1282; `natmgr.cpp` L100-108; `vxlanmgr.cpp` L537, L767-774; `nbrmgr.cpp` L48; `schema.h` L423。
-> evidence: `meta/_intermediate/cdb-flow/vlan-state-cross-refs.md`
 
 | 参照元 | 参照先 | 種別 | 必須条件 |
 |--------|--------|------|----------|
@@ -171,9 +170,8 @@ CONFIG_DB VLAN|VlanN  →  vlanmgrd doVlanTask()  →  STATE_DB VLAN_TABLE|VlanN
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/vlan-state-failure.md -->
 <!-- source: sonic-swss/cfgmgr/vlanmgr.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
 
 `VLAN_TABLE` への書き込みは `doVlanTask()` の最終ステップであるため、それ以前の失敗は STATE_DB に痕跡を残さない。失敗時は `"error"` 値を書き込む実装は存在せず、エントリ未存在が失敗を間接的に示す。
@@ -223,9 +221,8 @@ syncd が Switch MAC を確定するまで `doVlanTask()` は全タスクを保�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-<!-- evidence: meta/_intermediate/cdb-flow/vlan-state-constants.md -->
 <!-- source: sonic-swss/cfgmgr/vlanmgr.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
 
 `vlanmgrd` が VLAN_TABLE を書き込む際に利用するハードコード定数。いずれも CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) では設定不可。
@@ -253,9 +250,8 @@ syncd が Switch MAC を確定するまで `doVlanTask()` は全タスクを保�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-<!-- evidence: meta/_intermediate/cdb-flow/vlan-state-side-effects.md -->
 <!-- source: sonic-swss/cfgmgr/vlanmgr.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
 
 `VLAN_TABLE` への SET/DEL 処理に伴い `vlanmgrd` が書き込む副次 DB エントリ。`vlanmgrd` は cfgmgr 層のデーモンであり [SAI](../../reference/glossary.md#term-sai) を直接呼ばないため、[ASIC_DB](../../reference/glossary.md#term-asic_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書き込みは発生しない。
@@ -288,9 +284,8 @@ vlanmgrd doVlanTask()
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## PUBSUB / Keyspace 通知メカニズム (Phase G)
+## PUBSUB / Keyspace 通知メカニズム
 
-<!-- evidence: meta/_intermediate/cdb-flow/vlan-state-pubsub.md -->
 <!-- source: sonic-swss/cfgmgr/vlanmgr.h; sonic-swss/cfgmgr/vlanmgr.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d); sonic-swss/cfgmgr/intfmgr.cpp -->
 
 ### 書き込みメカニズム: swss::Table（直接書き込み）
@@ -336,11 +331,9 @@ poll のタイミングは、各 consumer が自身の（CONFIG_DB 等の）イ�
 ---
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `STATE_DB VLAN_TABLE` の書込スキーマ・格納先・通信方式は**全プラットフォームで共通**。`vlanmgr.cpp` 全 1008 行を `platform`・`mellanox`・`broadcom`・`voq`・`getenv`・`SAI` で grep してもヒット 0 件。Linux kernel bridge 操作のみで SAI を呼ばない純 cfgmgr ロジックのため、[ASIC](../../reference/glossary.md#term-asic) ベンダー依存がない。
-
-詳細調査ログ: `meta/_intermediate/cdb-flow/vlan-state-platform.md`
 
 ### 1. fabric ASIC カード — vlanmgrd 不起動
 
@@ -385,7 +378,7 @@ Elba ASIC を搭載した Pensando [DPU](../../reference/glossary.md#term-dpu) �
 !!! note "fabric カードの readiness ガードへの影響"
     `intfmgrd`・`nbrmgrd`・`stpmgrd` は `isVlanStateOk()` で VLAN_TABLE の存在を確認してから処理を進める。fabric カードでは vlanmgrd が起動しないため VLAN_TABLE が書かれず、これらのデーモンも事実上 VLAN 依存の処理を行わない。fabric ASIC でそれらのデーモンが必要になるユースケースは想定されていない。
 
-> **スキャン証跡**: `vlanmgr.cpp` 全 1008 行 grep（platform/SAI 分岐なし）、`supervisord.conf.j2:33-38,164-177`（is_fabric_asic 定義・vlanmgrd block）、`device/pensando/arm64-elba-asic-flash128-r0/system_health_monitoring_config.json`（services_to_ignore）。
+> **裏取り**: `vlanmgr.cpp` 全 1008 行 grep（platform/SAI 分岐なし）、`supervisord.conf.j2:33-38,164-177`（is_fabric_asic 定義・vlanmgrd block）、`device/pensando/arm64-elba-asic-flash128-r0/system_health_monitoring_config.json`（services_to_ignore）。
 <!-- /platform -->
 
 ---

@@ -154,11 +154,9 @@ DOWN 時はフィールドが更新されない（stale 値が残留する）。
 <!-- /value-behavior -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 > **注記**: このページのフィールドは [CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく STATE_DB に存在し、[YANG](../../reference/glossary.md#term-yang) スキーマで定義されていない。以下はコード精読から導出した暗黙デフォルト。
-
-<!-- evidence: meta/_intermediate/cdb-flow/ports-status-defaults.md -->
 
 | フィールド | コード由来デフォルト | fallback 源 |
 |-----------|-------------------|------------|
@@ -189,9 +187,9 @@ DOWN 時はフィールドが更新されない（stale 値が残留する）。
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B — コード由来)
+## 書込み順依存 (コード由来)
 
-`portsyncd/linksync` と `PortsOrch` が STATE_DB `PORT_TABLE` に書き込む際の順序依存・タイミング依存をコード精読で検出した。詳細スキャンノート: [`meta/_intermediate/cdb-flow/ports-status-ordering.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/ports-status-ordering.md)。
+`portsyncd/linksync` と `PortsOrch` が STATE_DB `PORT_TABLE` に書き込む際の順序依存・タイミング依存をコード精読で検出した。
 
 | # | 依存関係 | 方向 | 緩和策 / 備考 |
 |---|----------|------|--------------|
@@ -210,7 +208,7 @@ DOWN 時はフィールドが更新されない（stale 値が残留する）。
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 STATE_DB `PORT_TABLE` は `portsyncd/linksync` と `PortsOrch` が**書き手**として書き込む。本セクションではこれらの書込み処理が依存する入力テーブル・読み取り先テーブルを列挙する。
 
@@ -240,7 +238,7 @@ portsyncd  →  RTM_NEWLINK 受信  →  STATE_DB PORT_TABLE.state = "ok"
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 STATE_DB `PORT_TABLE` への書込みは `portsyncd/linksync` と `PortsOrch` の 2 経路に分かれる。各経路の失敗パスをコード精読で列挙する。
 
@@ -270,15 +268,12 @@ sonic-db-cli STATE_DB hgetall 'PORT_TABLE|Ethernet0'
 sudo grep -iE "host_tx_ready|supported_speed|oper speed|oper fec" /var/log/swss/orchagent.log | tail -20
 ```
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/ports-status-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `portsyncd/linksync` と `PortsOrch` が STATE_DB `PORT_TABLE` に書き込む際に使用する、コード上で固定された文字列定数・列挙値マッピングを列挙する。これらは [YANG](../../reference/glossary.md#term-yang) スキーマや CONFIG_DB 設定では変更できない。
-
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/ports-status-constants.md`
 
 ### linksync 由来の定数
 
@@ -328,7 +323,7 @@ static map<sai_port_link_training_rx_status_t, string> link_training_rx_status_m
 <!-- /constants -->
 
 <!-- side-effects -->
-## SET/DEL 副次 DB 書込み (Phase F)
+## SET/DEL 副次 DB 書込み
 
 `STATE_DB PORT_TABLE` エントリの SET / DEL が引き起こす他 DB・他テーブル・他デーモンへの副次動作一覧。このテーブルは **書き込まれる側**（linksync / PortsOrch が書き手）であるため、副次効果は「他デーモンがこのテーブルの変化を読み取って自身の処理を進める」という形で現れる。
 
@@ -394,11 +389,9 @@ static map<sai_port_link_training_rx_status_t, string> link_training_rx_status_m
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 STATE_DB `PORT_TABLE` は `portsyncd/linksync` と `PortsOrch` が `Table` 型（直接 HSET / DEL）で書き込む。書き込みごとに [Redis](../../reference/glossary.md#term-redis) keyspace notification が発行され、購読側デーモンのイベントループに到達する。
-
-> 中間調査詳細: `meta/_intermediate/cdb-flow/ports-status-pubsub.md`
 
 ### 書き込み側の通信方式
 
@@ -442,11 +435,9 @@ priority = 100 を指定しているため、他の Consumer (priority = 0) よ�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `STATE_DB PORT_TABLE` への書き込みは `portsyncd/linksync` と `PortsOrch` の 2 経路に分かれており、プラットフォーム差の大部分は PortsOrch 側の SAI capability クエリ結果と `gMySwitchType` 分岐に起因する。
-
-> 中間調査詳細: `meta/_intermediate/cdb-flow/ports-status-platform.md`
 
 ### switch_type == "dpu" の影響
 

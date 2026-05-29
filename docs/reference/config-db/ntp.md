@@ -44,7 +44,7 @@ related:
     - sonic-ntp
 ---
 
-# NTP テーブル群 — コード由来デフォルト (Phase A) + 書込み順依存 (Phase B) + 失敗挙動 (Phase D) + 副次ファイル書込 (Phase F) + 通信メカニズム (Phase G) + プラットフォーム差 (Phase H)
+# NTP テーブル群
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -215,9 +215,7 @@ YANG `must` 制約は DB 書き込み時のみ評価されるが、`chronyd-star
 <!-- /defaults -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-> 詳細証跡は `meta/_intermediate/cdb-flow/ntp-failure.md` を参照。
+## 失敗挙動
 
 ### hostcfgd NtpCfg ハンドラの失敗経路
 
@@ -264,7 +262,7 @@ NTP 処理系は **[STATE_DB](../../reference/glossary.md#term-state_db) への 
 <!-- /failure -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### NTP_KEY 先行必須 — NTP_SERVER.key leafref
 
@@ -309,11 +307,10 @@ DEL の逆順序: `NTP_SERVER` の `key` フィールドをクリアまたは `N
 | 5 | `NTP\|global.vrf=default` 先行 → `MGMT_VRF_CONFIG.mgmtVrfEnabled=false` | chronyd 起動失敗（mgmt VRF 不存在） |
 | 6 | 対応インタフェーステーブル 先行 → `NTP\|global.src_intf=<intf>` (eth0 以外) | YANG leafref 拒否（SET 失敗） |
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/ntp-ordering.md`
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `NtpCfg` / テンプレートが読み出す関連 CONFIG_DB テーブル (Phase C)
+## 暗黙参照 — `NtpCfg` / テンプレートが読み出す関連 CONFIG_DB テーブル
 
 `hostcfgd` の `NtpCfg` ハンドラおよびテンプレート (`chrony.conf.j2`・`chronyd-starter.sh`) は、`NTP` / `NTP_SERVER` / `NTP_KEY` 以外の以下のテーブルを暗黙的に参照する。
 
@@ -327,7 +324,7 @@ DEL の逆順序: `NTP_SERVER` の `key` フィールドをクリアまたは `N
 
 `hostcfgd` は `MGMT_VRF_CONFIG` 変更を `mgmt_vrf_handler` で購読し、`MgmtIfaceCfg.update_mgmt_vrf()` が `systemctl stop chrony` → `systemctl start chrony` を発火する ([hostcfgd](../../reference/glossary.md#term-hostcfgd):2352,2496,1655-1669)。NTP 設定変更がなくても管理 VRF 切替で chrony が再起動されるため、**`MGMT_VRF_CONFIG` は NTP に対して間接的な制御テーブルとして機能する**。
 
-> 依存方向の注意: `NTP.vrf=mgmt` は `MGMT_VRF_CONFIG.mgmtVrfEnabled=true` が先行している状態でのみ YANG `must` を通過できる (sonic-ntp.yang:127-129)。逆に `mgmtVrfEnabled` を `false` に戻す前に `NTP.vrf` を `default` に戻さないと、`chronyd-starter.sh` が mgmt VRF で起動を試みてサービス障害になる（書込み順依存は Phase B `<!-- ordering -->` 参照）。
+> 依存方向の注意: `NTP.vrf=mgmt` は `MGMT_VRF_CONFIG.mgmtVrfEnabled=true` が先行している状態でのみ YANG `must` を通過できる (sonic-ntp.yang:127-129)。逆に `mgmtVrfEnabled` を `false` に戻す前に `NTP.vrf` を `default` に戻さないと、`chronyd-starter.sh` が mgmt VRF で起動を試みてサービス障害になる（書込み順依存は「書込み順依存」セクション参照）。
 
 ### MGMT_INTERFACE — src_intf=eth0 時の IP アドレス解決
 
@@ -367,11 +364,10 @@ binddevice bridge-midplane
 - `LOOPBACK_INTERFACE`: `lpbk_handler` (hostcfgd:2357-2365) が `NtpCfg.handle_ntp_source_intf_chg()` を呼び出す。これは `src_intf` に一致する Loopback が変化した場合のみ chrony 再起動をトリガーする。`NtpCfg` が `LOOPBACK_INTERFACE` の内容を読み取る経路はなく、トリガー専用。
 - `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE`: `src_intf` にこれらが設定された場合は `chrony.conf.j2` の `get_ip_on_interface` が参照するが、`hostcfgd` の NTP ハンドラからのコールバックはない。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ntp-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence:
   caclmgrd:95-100
@@ -446,13 +442,10 @@ keyfile /etc/chrony/chrony.keys
 
 CONFIG_DB の NTP テーブルにキーファイルパスを変更するフィールドはない。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/ntp-constants.md`
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込・ファイル書込 (Phase F)
-
-> 中間調査詳細: `meta/_intermediate/cdb-flow/ntp-side-effects.md`
+## 副次 DB 書込・ファイル書込
 
 ### APPL_DB / STATE_DB への副次書込
 
@@ -503,9 +496,7 @@ chrony の実際の起動 VRF は `ExecStart` に登録された `chronyd-starte
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G) — CONFIG_DB Subscribe / chrony 制御 / SIGHUP
-
-> 詳細証跡は `meta/_intermediate/cdb-flow/ntp-pubsub.md` を参照。
+## 通信メカニズム — CONFIG_DB Subscribe / chrony 制御 / SIGHUP
 
 ### CONFIG_DB Subscribe 登録
 
@@ -570,7 +561,7 @@ def start(self):
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 <!-- evidence:
   chrony.conf.j2:57-64 (SmartSwitch NPU server_role / dhcp)
@@ -579,8 +570,6 @@ def start(self):
   chronyd-starter.sh:1-16 (MGMT_VRF ランタイム選択)
   hostcfgd:1645-1693 (MgmtIfaceCfg.update_mgmt_vrf chrony stop/start)
 -->
-
-> 詳細証跡は `meta/_intermediate/cdb-flow/ntp-platform.md` を参照。
 
 ### SmartSwitch — NTP server 機能の自動有効化
 

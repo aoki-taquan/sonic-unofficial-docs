@@ -166,20 +166,20 @@ vtysh -c 'show ip route'
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 staticroutemgrd が `ip_prefix` の形式（`:` 含むか否か）から FRR コマンド種別を自動決定する。IPv6 → `ipv6 route`、IPv4 → `ip route`。`distance` 未設定の場合は FRR デフォルト distance (1) を使用する。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 staticroutemgrd は常時起動し `STATIC_ROUTE` テーブルを無条件購読する。VRF が `STATIC_ROUTE|<vrf>|<prefix>` 形式で指定される場合は FRR に VRF 付き static route を設定する。`bfd==true` の場合は BFD セッション連携が有効になる。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -191,7 +191,7 @@ staticroutemgrd は常時起動し `STATIC_ROUTE` テーブルを無条件購読
 | `staticroutemgrd` | `distance` フィールドあり | FRR route distance を設定 | `staticroutemgrd` |
 | `staticroutemgrd` | del_handler | FRR に `no ip route` 発行 | `staticroutemgrd` |
 
-> **スキャン証跡**: `STATIC_ROUTE` は FRR 静的ルート設定の直接マッピング。IPv4/IPv6 の自動判定と VRF/BFD オプション分岐が主要。
+> **裏取り**: `STATIC_ROUTE` は FRR 静的ルート設定の直接マッピング。IPv4/IPv6 の自動判定と VRF/BFD オプション分岐が主要。
 
 <!-- /handler-branching -->
 
@@ -218,7 +218,7 @@ staticroutemgrd は常時起動し `STATIC_ROUTE` テーブルを無条件購読
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 STATIC_ROUTE テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -252,7 +252,7 @@ db_migrator.py での STATIC_ROUTE マイグレーションなし
 <!-- /entry-points -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ### 失敗パス一覧
 
@@ -306,11 +306,10 @@ journalctl -u bgp | grep -i "static route"
 journalctl -u swss | grep -i "VRF name\|RTN_BLACKHOLE"
 ```
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/static-route-failure.md`
 <!-- /failure -->
 
 <!-- pubsub -->
-## CONFIG_DB 購読メカニズム (Phase G)
+## CONFIG_DB 購読メカニズム
 
 `STATIC_ROUTE` テーブルは `bgpcfgd` の `StaticRouteMgr` が `SubscriberStateTable` 経由で購読し、FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドに変換する。
 
@@ -393,7 +392,7 @@ APPL_DB STATIC_ROUTE
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `STATIC_ROUTE` テーブルへの書込が発生すると、`bgpcfgd` の `StaticRouteMgr` が以下の副次処理を行う。
 
@@ -457,7 +456,7 @@ BFD 連携時は `staticroutebfd` が APPL_DB `STATIC_ROUTE_TABLE` を更新し�
 <!-- /side-effects -->
 
 <!-- ordering -->
-## 順序依存関係 (Phase B)
+## 順序依存関係
 
 静的経路が CONFIG_DB → FRR → kernel FIB → APPL_DB へ伝播する際の処理順序を以下に示す。
 
@@ -499,7 +498,7 @@ FRR の [zebra](../../reference/glossary.md#term-zebra) が [Netlink](../../refe
 <!-- /ordering -->
 
 <!-- defaults -->
-## フィールドの暗黙デフォルト (Phase A)
+## フィールドの暗黙デフォルト
 
 以下はコード精読により判明したコード由来の暗黙デフォルト。YANG の `default` 宣言と実装が乖離している箇所を含む。
 
@@ -558,7 +557,7 @@ BGP redistribute static に使われる route-map 名は `'STATIC_ROUTE_FILTER'`
 <!-- /defaults -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
 STATIC_ROUTE テーブルは以下の CONFIG_DB テーブルへ暗黙的に依存する。参照はコード上に明示的な lookup なしに行われる。
 
@@ -569,11 +568,10 @@ STATIC_ROUTE テーブルは以下の CONFIG_DB テーブルへ暗黙的に依�
 | `VRF`（カーネル IF 名） | fpmsyncd `routesync` | [Netlink](../../reference/glossary.md#term-netlink) route の `rta_table` を `getIfName` でカーネル VRF デバイス名 (`Vrf...`) に変換して APP_DB key に付与 |
 | `INTERFACE`（カーネル IF 名） | fpmsyncd `routesync` | nexthop の `rtnh_ifindex` を `getIfName` で IF 名に変換して APP_DB `ROUTE_TABLE` の `ifname` フィールドにセット |
 
-詳細エビデンス: `meta/_intermediate/cdb-flow/static-route-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
 ### VOQ Chassis
 
@@ -593,7 +591,7 @@ STATIC_ROUTE テーブルは以下の CONFIG_DB テーブルへ暗黙的に依�
 <!-- /platform -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `bgpcfgd/managers_static_rt.py`、`bgpcfgd/static_rt_timer.py`
 

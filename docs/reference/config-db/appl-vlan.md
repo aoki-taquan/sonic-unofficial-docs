@@ -85,7 +85,7 @@ VLAN_MEMBER_TABLE|<vlan_name>|<port_alias>
 | `dynamic` | string (`yes`) | PAC 経路のみ注入 | [YANG](../../reference/glossary.md#term-yang) 定義なし・CONFIG_DB 非存在の隠しフィールド。`doVlanPacVlanMemberTask()` が PAC 制御メンバにのみ挿入する |
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` の書込み元 (`cfgmgr/vlanmgr.cpp`) と購読側 (`orchagent/portsorch.cpp` [VLAN](../../reference/glossary.md#term-vlan) 経路) に存在する `#define` / [SAI](../../reference/glossary.md#term-sai) enum 由来のハードコード定数を列挙する。
 
@@ -170,7 +170,7 @@ YANG では `2..4094` だが vlanmgr 側に数値範囲チェックなし。`Vla
 4. **`DEFAULT_MTU_STR = "9100"` と YANG `mtu range 1..9216`**: コード default 9100 は YANG 範囲内。Jumbo frame 最大 9216 まで設定可能だが、デフォルトは 9100 固定。
 5. **タイマー定数なし**: vlanmgr / portsorch VLAN 経路に sleep / usleep / timeout 定数は一切存在せず、member port/[LAG](../../reference/glossary.md#term-lag) 未 ready 時は次 select サイクルでの retry のみ。
 
-> **証跡**: テーブル名 `schema.h:41-42`、vlanmgr `#define` `vlanmgr.cpp:15-20`、Linux bridge リテラル `vlanmgr.cpp:96-139`、portsorch `#define` `portsorch.cpp:80-82`、`MAX_VALID_VLAN_ID` 検査 `portsorch.cpp:2016`、SAI 属性 `portsorch.cpp:1019,7389,7409-7410,7540-7547,7800-7849`。詳細分析 `meta/_intermediate/cdb-flow/appl-vlan-constants.md`
+> **裏取り**: テーブル名 `schema.h:41-42`、vlanmgr `#define` `vlanmgr.cpp:15-20`、Linux bridge リテラル `vlanmgr.cpp:96-139`、portsorch `#define` `portsorch.cpp:80-82`、`MAX_VALID_VLAN_ID` 検査 `portsorch.cpp:2016`、SAI 属性 `portsorch.cpp:1019,7389,7409-7410,7540-7547,7800-7849`。
 <!-- /constants -->
 
 <!-- defaults -->
@@ -203,10 +203,9 @@ YANG では `2..4094` だが vlanmgr 側に数値範囲チェックなし。`Vla
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> **調査根拠**: `cfgmgr/vlanmgr.cpp`, `orchagent/portsorch.cpp` 全行精読 (2026-05-15)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/appl-vlan-ordering.md`
+> **Evidence**: `cfgmgr/vlanmgr.cpp`, `orchagent/portsorch.cpp` 全行精読 (2026-05-15)
 
 ### 他テーブル先行必須 (CONFIG_DB → APPL_DB 段)
 
@@ -306,7 +305,6 @@ PAC 経路 (vlanmgr.cpp:894) では state vector ではなく APPL_DB 用 vector
 
 `portsorch.cpp` の `FlexCounterManager` インスタンス (portsorch.cpp:727-739: `port_stat_manager` / `queue_stat_manager` / `pg_watermark_manager` ほか) はいずれも物理ポート / queue / priority-group スコープで、VLAN 単位の `FlexCounterManager` は存在しない。`APPL_DB|VLAN_TABLE` SET の連鎖で `FLEX_COUNTER_DB` への書込みは発火しない。
 
-副次書込みの evidence は `meta/_intermediate/cdb-flow/appl-vlan-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- platform -->
@@ -330,7 +328,6 @@ APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` 自体のスキーマ・暗黙デフ�
 
 `vlanmgrd` および `portsorch` は asic namespace 内のコンテナ (`swss@<asicN>`) で起動し、その namespace の CONFIG_DB / APPL_DB のみを購読・書込みする。`VLAN_TABLE` / `VLAN_MEMBER_TABLE` は asic ごとにローカルで、chassis-wide 統合経路（`CHASSIS_APP_DB`）は VLAN には存在しない（`CHASSIS_APP_DB` 連携は SYSTEM_PORT / SYSTEM_NEIGH 系のみ）。
 
-詳細は `meta/_intermediate/cdb-flow/appl-vlan-platform.md` を参照。
 <!-- /platform -->
 
 <!-- failure -->
@@ -369,7 +366,6 @@ VLAN_TABLE / VLAN_MEMBER_TABLE への書込みは複数経路で失敗し得る�
 - 永続失敗 (key 形式不正、不正 tagging_mode、`Unknown operation`) は `erase(it)` で破棄。CONFIG_DB 側の不正エントリは検出されず残る（silent drop）。
 - 形式上 retryable だが永続 stuck になるケース: `end_point_ip` capability 不在の VLAN_MEMBER。capability は switch 初期化時に確定するため自然解消しない。
 
-詳細な分岐・呼び出し順は `meta/_intermediate/cdb-flow/appl-vlan-failure.md` を参照。
 <!-- /failure -->
 
 <!-- cross-refs -->
@@ -402,11 +398,10 @@ APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` は YANG 未定義のため、明示�
 購読することで [MCLAG](../../reference/glossary.md#term-mclag) peer 同期をトリガする。`portsorch.cpp` には `mclag` / `MCLAG` 識別子の
 直接参照は存在しない。
 
-詳細な evidence は `meta/_intermediate/cdb-flow/appl-vlan-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -462,7 +457,7 @@ VLAN 経路には `createRetryCache()` のような明示的 retry キャッシ�
 
 なし。`PortsOrch` は同一 [orchagent](../../reference/glossary.md#term-orchagent) プロセス内のハンドラであり、APPL_DB エントリの追加/削除は SAI VLAN オブジェクトのライブ操作 (`sai_vlan_api->create_vlan` / `remove_vlan` / `create_vlan_member` / `remove_vlan_member`) のみで反映され、プロセス再起動・サービス restart を伴わない。warm-restart 時は `addExistingData(APP_VLAN_TABLE_NAME)` / `addExistingData(APP_VLAN_MEMBER_TABLE_NAME)` (`portsorch.cpp:4389-4390`) で既存エントリを `m_toSync` に再注入する。
 
-> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:215-224` (ports_tables 登録)、`sonic-swss/orchagent/orch.cpp:1186-1196` (`Orch::addConsumer()` DB ID 分岐 → [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) 選択)、`sonic-swss/orchagent/portsorch.cpp:4389-4390,6464-6526` (warm bake / doTask fixed-order drain / 分岐)、`sonic-swss/cfgmgr/vlanmgr.h:22-23`, `sonic-swss/cfgmgr/vlanmgr.cpp:33-34` (`ProducerStateTable` バインド)、`sonic-swss-common/common/schema.h:41-42` (テーブル名定数); 詳細分析 `meta/_intermediate/cdb-flow/appl-vlan-pubsub.md`
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:215-224` (ports_tables 登録)、`sonic-swss/orchagent/orch.cpp:1186-1196` (`Orch::addConsumer()` DB ID 分岐 → [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) 選択)、`sonic-swss/orchagent/portsorch.cpp:4389-4390,6464-6526` (warm bake / doTask fixed-order drain / 分岐)、`sonic-swss/cfgmgr/vlanmgr.h:22-23`, `sonic-swss/cfgmgr/vlanmgr.cpp:33-34` (`ProducerStateTable` バインド)、`sonic-swss-common/common/schema.h:41-42` (テーブル名定数)
 <!-- /pubsub -->
 
 ## 書き込み主体

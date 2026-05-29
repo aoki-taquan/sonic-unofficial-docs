@@ -142,20 +142,20 @@ sonic-db-cli APPL_DB keys 'TUNNEL_DECAP_TABLE:*'
 <!-- /ops-hint -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 tunneldecaporch が `src_ip` フィールドの有無から SAI term entry type を自動決定する。`src_ip` あり → `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2P`、なし → `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP`。`dscp_mode` / `ttl_mode` の値が SAI enum に自動変換される。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録
 
 tunneldecaporch は常時登録し `TUNNEL_DECAP_TABLE` テーブルを無条件購読する。SAI tunnel capability 未サポートの場合は SAI 属性設定がエラーになるがログのみで継続。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -167,7 +167,7 @@ tunneldecaporch は常時登録し `TUNNEL_DECAP_TABLE` テーブルを無条件
 | `tunneldecaporch` | `src_ip` なし | P2MP term entry 作成 (any source) | `tunnelorch.cpp` |
 | `tunneldecaporch` | del_handler | SAI tunnel + term entry を削除 | `tunnelorch.cpp` |
 
-> **スキャン証跡**: `TUNNEL_DECAP_TABLE` は IP-in-IP/[VXLAN](../../reference/glossary.md#term-vxlan) デカプセルトンネルの termination 設定。`src_ip` の有無が P2P/P2MP を自動決定する点が主要 Phase 6 派生。
+> **裏取り**: `TUNNEL_DECAP_TABLE` は IP-in-IP/[VXLAN](../../reference/glossary.md#term-vxlan) デカプセルトンネルの termination 設定。`src_ip` の有無が P2P/P2MP を自動決定する。
 
 <!-- /handler-branching -->
 
@@ -194,7 +194,7 @@ tunneldecaporch は常時登録し `TUNNEL_DECAP_TABLE` テーブルを無条件
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 TUNNEL_DECAP_TABLE テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -228,7 +228,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /entry-points -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 <!-- evidence: sonic-swss/orchagent/tunneldecaporch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d + tunneldecaporch.h -->
 
@@ -272,7 +272,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 TUNNEL_DECAP_TABLE エントリを書き込む際に守るべき順序制約を実装から導出した。
 
@@ -309,7 +309,7 @@ TUNNEL_DECAP_TABLE エントリを書き込む際に守るべき順序制約を�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `TUNNEL_DECAP_TABLE` エントリが APPL_DB に書かれると `tunneldecaporch` が以下のテーブル / リソースを暗黙的に参照する。
 YANG leafref は存在せず、すべて実装コードのみに現れる暗黙依存。
@@ -336,7 +336,7 @@ YANG leafref は存在せず、すべて実装コードのみに現れる暗黙�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-net/sonic-swss orchagent/tunneldecaporch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d -->
 
@@ -384,7 +384,7 @@ YANG leafref は存在せず、すべて実装コードのみに現れる暗黙�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `TUNNEL_DECAP_TABLE` の処理で CONFIG_DB フィールドから読み込まれず、コードに直書きされている定数。`config_db.json` での設定変更は効果なく、変更にはコードのリコンパイルが必要。
 
@@ -422,12 +422,10 @@ Overlay ループバック RIF は以下の SAI 属性を常時ハードコー�
     `MuxOrch` は `MuxTunnel0` をハードコードで参照する。
     トンネル名を `MuxTunnel1` 等にすると MuxOrch が対象を見つけられず Dual-ToR が機能しない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-table-constants.md`
-
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `tunneldecaporch` が APPL_DB の `TUNNEL_DECAP_TABLE` を処理する際に発生する副次的な DB 書き込みを整理する。
 
@@ -458,13 +456,10 @@ evidence: `tunneldecaporch.cpp` L1521-1566
 
 `encap_tc_to_dscp_map` / `encap_tc_to_queue_map` は SAI に直接 push **されない**。`tunneldecaporch` は OID を内部キャッシュ (`tunnelTable`) に保持し、`MuxOrch` が `MUX_CABLE` 処理時に `TunnelDecapOrch::getQosMapId()` 経由で取得して自身の SAI 書き込みに利用する (`muxorch.cpp:L2368-2380`)。
 
-!!! note "詳細スキャンノート"
-    `meta/_intermediate/cdb-flow/tunnel-decap-table-cross-refs.md`
-
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Consumer 登録経路
 
@@ -525,12 +520,10 @@ task_process_status handle_status = handleSaiCreateStatus(SAI_API_TUNNEL, status
 
 SAI `create_tunnel()` / `create_tunnel_term_table_entry()` 成功後、`stateTunnelDecapTable` と `stateTunnelDecapTermTable` へ書き戻す。これらは `Table`（非 [ProducerStateTable](../../reference/glossary.md#term-producerstatetable)）のため [Redis](../../reference/glossary.md#term-redis) `hset`/`del` を直接発行する。NotificationProducer / Consumer 型のチャンネル通知は使用しない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-table-pubsub.md`
-
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差・SAI capability 分岐 (Phase H)
+## プラットフォーム差・SAI capability 分岐
 
 ### SAI create-only 属性の更新スキップ — 全プラットフォーム共通
 
@@ -554,8 +547,6 @@ SAI `create_tunnel()` / `create_tunnel_term_table_entry()` 成功後、`stateTun
 ### SAI capability query なし
 
 `tunneldecaporch` は orchagent 起動時に `sai_query_attribute_enum_values_capability()` を呼ばない。プラットフォーム capability による動作分岐は存在せず、すべてのプラットフォームで同一の SAI 属性セットを使用する。特定の SAI 属性が非サポートの場合はエラーログのみで継続する。
-
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-table-platform.md`
 
 <!-- /platform -->
 

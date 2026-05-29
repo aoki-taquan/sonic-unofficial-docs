@@ -155,7 +155,7 @@ DASH_ACL_RULE_TABLE:<group_id>:<rule_num>
 <!-- /cdb-exceptions -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 [YANG](../../reference/glossary.md#term-yang) 未定義テーブルのため、全デフォルトはコード実装が正本。
 
@@ -216,11 +216,10 @@ auto any_ip = [](const auto& g) {
 };
 ```
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-defaults.md`
 <!-- /defaults -->
 
 <!-- ordering -->
-## エントリ投入順序・依存関係 (Phase B)
+## エントリ投入順序・依存関係
 
 ### 投入の必須順序
 
@@ -292,13 +291,11 @@ auto any_ip = [](const auto& g) {
 
 `warmRestoreAndSyncUp()` の 3 イテレーションループは `m_orchList` に対して実行されるため、**DASH ACL orch は warm-reboot の自動リプレイ対象外**となる。DASH ACL エントリのリストアは SDN コントローラ（[gNMI](../../reference/glossary.md#term-gnmi) 側）がエントリを再投入することで実現する設計であり、orchagent 自体による状態保存・リプレイ機構は実装されていない（ステートレス warm-reboot）。
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-ordering.md`
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-<!-- evidence: meta/_intermediate/cdb-flow/dash-acl-cross-refs.md -->
 
 各テーブルが SAI 書き込み時に参照する外部テーブル・リソース。[YANG](../../reference/glossary.md#term-yang) leafref は存在しないため、すべて実装レベルの暗黙参照。
 
@@ -316,13 +313,11 @@ auto any_ip = [](const auto& g) {
 !!! note "YANG leafref なし"
     4 テーブルはすべて YANG 未定義のため leafref による静的な参照整合性チェックは行われない。参照整合性はすべて `DashAclOrch` / `DashAclGroupMgr` のランタイムチェックのみで保証される。
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
+## 失敗挙動・retry / recovery
 
-<!-- evidence: meta/_intermediate/cdb-flow/dash-acl-failure.md -->
 
 ### retry パターン概要
 
@@ -398,13 +393,11 @@ SAI `set_eni_attribute` 失敗: `SWSS_LOG_ERROR "Failed to bind ACL group to ENI
 
 DEL 操作で ACL エントリが `m_dash_acl_in/out_table` に存在しない場合は `task_success`（冪等）: `SWSS_LOG_WARN "ACL %s doesn't exist"`。アンバインド SAI 失敗は `handleSaiSetStatus(SAI_API_DASH_ENI, …)` 経由。(`dashaclorch.cpp:356-359`, `dashaclgroupmgr.cpp:487-490`)
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## コード由来の固定定数 (Phase E)
+## コード由来の固定定数
 
-<!-- evidence: meta/_intermediate/cdb-flow/dash-acl-constants.md -->
 
 ### ファイルスコープ静的定数
 
@@ -459,13 +452,11 @@ DEL 操作で ACL エントリが `m_dash_acl_in/out_table` に存在しない�
 | `APP_DASH_ACL_RULE_TABLE_NAME` | `DASH_ACL_RULE_TABLE` |
 | `APP_DASH_PREFIX_TAG_TABLE_NAME` | `DASH_PREFIX_TAG_TABLE` |
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-constants.md`
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込み (Phase F)
+## 副次 DB 書込み
 
-<!-- evidence: meta/_intermediate/cdb-flow/dash-acl-side-effects.md -->
 
 ### ASIC_DB 書込み（SAI 経由）
 
@@ -532,11 +523,10 @@ DASH ACL 系の SAI 呼び出しは `sai_dash_acl_api` と `sai_dash_eni_api` �
 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | **なし** | [FlexCounter](../../reference/glossary.md#term-flexcounter) 未登録 |
 | APP_DB | **なし** | 購読のみ、書き戻しなし |
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-side-effects.md`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis / ZMQ 購読方式
 
@@ -598,11 +588,11 @@ ZMQ 無効時は通常の `ConsumerStateTable`（channel ベース PUBLISH/SUBSC
 
 `orchdaemon.cpp:1409` にて `addOrchList(dash_acl_orch)` が呼ばれ、`DpuOrchDaemon` の `m_orchList` に登録される。`m_orchList` はメインの event loop でイテレーションされ、各 Executor の `drain()` を定期的に呼び出す。
 
-> **Evidence**: `sonic-swss/orchagent/dash/dashaclorch.h:33` (`ZmqOrch` 継承)、`sonic-swss/orchagent/zmqorch.cpp:8-78` (`ZmqConsumer::execute` / `ZmqOrch::addConsumer`)、`sonic-swss/orchagent/orchdaemon.cpp:1327-1378,1409` (フラグ確認・テーブル登録・addOrchList)、`sonic-swss/lib/orch_zmq_config.h:21` (`ORCH_NORTHBOND_DASH_ZMQ_ENABLED`)；詳細分析 `meta/_intermediate/cdb-flow/dash-acl-pubsub.md`
+> **Evidence**: `sonic-swss/orchagent/dash/dashaclorch.h:33` (`ZmqOrch` 継承)、`sonic-swss/orchagent/zmqorch.cpp:8-78` (`ZmqConsumer::execute` / `ZmqOrch::addConsumer`)、`sonic-swss/orchagent/orchdaemon.cpp:1327-1378,1409` (フラグ確認・テーブル登録・addOrchList)、`sonic-swss/lib/orch_zmq_config.h:21` (`ORCH_NORTHBOND_DASH_ZMQ_ENABLED`)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差・SAI capability (Phase H)
+## プラットフォーム差・SAI capability
 
 ### DPU 専用コンポーネント
 

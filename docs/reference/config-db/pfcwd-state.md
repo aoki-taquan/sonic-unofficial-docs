@@ -74,8 +74,6 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
-<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-defaults.md -->
-
 ### `PFC_WD_STATUS` — 初期値 `"operational"`
 
 `initWdCounters()` (`pfcactionhandler.cpp:192`) が [PFC](../../reference/glossary.md#term-pfc) WD 有効化直後に `PFC_WD_QUEUE_STATUS_OPERATIONAL = "operational"` を書き込む。storm 検知時に `"stormed"` へ、storm 復旧時に `"operational"` へ遷移する。
@@ -107,11 +105,9 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `pfcwdorch` が `pfcwd start <port>` を処理して COUNTERS_DB へフィールドを書き込む際、内部で複数ステップに分かれており、consumer が中間状態を観測しうる。
-
-<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-ordering.md -->
 
 ### 検出された順序依存
 
@@ -133,12 +129,10 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `pfcwdorch` が依存する関連テーブル (Phase C)
+## 暗黙参照 — `pfcwdorch` が依存する関連テーブル
 
 `COUNTERS:<queue_oid>` ハッシュは [YANG](../../reference/glossary.md#term-yang) 定義を持たないため leafref による明示的 cross-table 参照はゼロ件。
 代わりに `pfcwdorch.cpp` / `pfcactionhandler.cpp` / Lua プラグイン群から抽出した **4 系統の暗黙依存** が実装レベルの cross-table 参照となる。
-
-<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-cross-refs.md -->
 
 ### 主要テーブル / コンポーネント参照
 
@@ -162,11 +156,10 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 - `COUNTERS_QUEUE_NAME_MAP` — OID 解決のための読み取り専用マップ。`pfcwdorch` は書き込まない。
 - `FLEX_COUNTER_TABLE` — `pfcwdorch` は `PFC_WD` グループに counter ID リストを設定するが、`COUNTERS:<queue_oid>` フィールドへの直接参照はない。
 
-詳細スキャン手順と行番号一覧は `meta/_intermediate/cdb-flow/pfcwd-state-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `pfcwdorch` の `doTask()` はタスクステータスを `task_success` / `task_need_retry` / `task_invalid_entry` の 3 値で管理し、失敗時の挙動が種別ごとに異なる。
 
@@ -225,9 +218,8 @@ sudo grep -i "pfc watchdog\|pfcwd" /var/log/syslog
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-constants.md -->
 <!-- source: sonic-swss/orchagent/pfcwdorch.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
 <!-- source: sonic-swss/orchagent/pfcactionhandler.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
 
@@ -255,11 +247,9 @@ sudo grep -i "pfc watchdog\|pfcwd" /var/log/syslog
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `pfcwdorch` / `pfcactionhandler` は CONFIG_DB `PFC_WD` の SET/DEL 処理と storm イベント処理の結果として、COUNTERS_DB 以外の複数の場所へ書き込む。
-
-<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-side-effects.md -->
 
 ### APPL_DB — `PFC_WD_INSTORM|<port>` (storm 状態の永続化)
 
@@ -386,9 +376,7 @@ warm-reboot 後は `refillToSync()` (`pfcwdorch.cpp:1108`) が `APPL_DB:PFC_WD_I
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-platform.md -->
+## プラットフォーム / SAI Capability 差異
 
 `pfcwdorch` はプラットフォーム (`getenv("platform")`) に応じて Lua プラグインの選択・storm ハンドラ・SAI 操作が分岐し、COUNTERS_DB への書き込みの有無や動作が変わる。
 

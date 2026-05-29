@@ -33,22 +33,6 @@ related:
 
 `FLEX_COUNTER_TABLE|ENI` および `FLEX_COUNTER_TABLE|DASH_METER` は、[DASH](../../reference/glossary.md#term-dash) (Disaggregated API for [SONiC](../../reference/glossary.md#term-sonic) Hosts) の [ENI](../../reference/glossary.md#term-eni) (Elastic Network Interface) カウンタと [DASH](../../reference/glossary.md#term-dash) メータカウンタのポーリング設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するエントリ[^1]。これらは [DPU](../../reference/glossary.md#term-dpu) (Data Processing Unit) ノード専用であり、`switch_type == 'dpu'` の場合のみ `enable_counters.py` が自動的に有効化する[^2]。通常の ToR / Spine では `init_cfg.json.j2` に記載がなく、デフォルトで無効状態となる。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
-  DM["FlexCounterOrch"]
-  CDB --> DM
-  SAI["SAI<br/>sai_counter_api"]
-  DM --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
-
 ## key 構造
 
 ```text
@@ -154,7 +138,7 @@ if platform_info.get('switch_type') == 'dpu':
 <!-- /value-behavior -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `FLEX_COUNTER_TABLE|ENI` および `FLEX_COUNTER_TABLE|DASH_METER` の書込みが実際にカウンタポーリングを開始するまでには、複数の先行条件が連鎖する。`FlexCounterOrch::doTask()` の冒頭ガードがそれらを強制する。
 
@@ -179,10 +163,9 @@ if platform_info.get('switch_type') == 'dpu':
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-> **調査根拠**: `flexcounterorch.cpp`, `dashorch.cpp`, `dashorch.h`, `dashcounter.h`, `enable_counters.py`, `device_info.py` 全行精読 (2026-05-19)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/dpu-counter-cross-refs.md`
+> **Evidence**: `flexcounterorch.cpp`, `dashorch.cpp`, `dashorch.h`, `dashcounter.h`, `enable_counters.py`, `device_info.py` 全行精読 (2026-05-19)  
 
 `FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` はいずれも YANG leafref を持たないが、
 実行時に以下のテーブル・リソースを暗黙参照する。
@@ -255,7 +238,7 @@ FLEX_COUNTER_TABLE|ENI の `enable` が実際に機能するためには、
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
+## 失敗挙動・retry / recovery
 
 `FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` に対する書き込みが、ENI カウンタポーリング開始に至らない失敗パターンをコードから特定した。
 
@@ -364,10 +347,9 @@ if (fc_status != prev_enabled)
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `dashorch.h:29-33`, `flexcounterorch.cpp:44`, `enable_counters.py:50-63`, `schema.h:293-295`, `flex_counter_manager.cpp:54-55` 全行精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/dpu-counter-constants.md`
+> **Evidence**: `dashorch.h:29-33`, `flexcounterorch.cpp:44`, `enable_counters.py:50-63`, `schema.h:293-295`, `flex_counter_manager.cpp:54-55` 全行精読 (2026-05-19)
 
 `FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` に関連する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
 
@@ -444,7 +426,7 @@ else:
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence:
      sonic-swss/orchagent/flexcounterorch.cpp:202-214,380-392,
@@ -492,13 +474,11 @@ ENI 削除時は `removeEniMapEntry()` → `m_eni_name_table->hdel("", name)` �
     - ENI OID が `SAI_NULL_OBJECT_ID` の場合 `addToFC()` が即 return するため FLEX_COUNTER_DB per-OID 書込なし (ただし `COUNTERS_ENI_NAME_MAP` は `addEniMapEntry()` で書かれる可能性がある)
     - orchagent 再起動後、`DashOrch` コンストラクタが `applyGroupConfiguration()` を呼び FLEX_COUNTER_GROUP_TABLE に初期状態 (`disable`, `POLL_INTERVAL=10000`) を再書込する。per-OID エントリは ENI エントリ再処理後に再投入される
 
-詳細根拠は `meta/_intermediate/cdb-flow/dpu-counter-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-<!-- evidence: meta/_intermediate/cdb-flow/dpu-counter-pubsub.md -->
 <!-- source: sonic-swss/orchagent/flexcounterorch.cpp:60-93,127-167,299-305,
      sonic-swss/orchagent/orchdaemon.cpp:620-628,1350-1352,
      sonic-swss/orchagent/orch.cpp:1186-1196,
@@ -569,10 +549,9 @@ if (dash_orch && (key == DASH_METER_KEY))
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-<!-- evidence: meta/_intermediate/cdb-flow/dpu-counter-platform.md
-     sonic-swss/orchagent/main.cpp:990-994,
+<!-- source: sonic-swss/orchagent/main.cpp:990-994,
      sonic-swss/orchagent/orchdaemon.cpp:1313-1419,
      sonic-swss/orchagent/flexcounterorch.cpp:42,546,
      sonic-swss/orchagent/dash/dashcounter.cpp:12-40,
@@ -771,7 +750,7 @@ show dash counters eni
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `FLEX_COUNTER_TABLE|ENI`, `FLEX_COUNTER_TABLE|DASH_METER`
 

@@ -49,9 +49,9 @@ flowchart LR
 <!-- /cdb-mermaid -->
 
 <!-- defaults -->
-## コード由来のデフォルト・暗黙挙動 (Phase A)
+## コード由来のデフォルト・暗黙挙動
 
-> **調査根拠**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` L1347–1509 全行精読 + `qosorch.h` L22, 44–53 定数定義確認 + `sonic-scheduler.yang` 照合 (2026-05-15)
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` L1347–1509 全行精読 + `qosorch.h` L22, 44–53 定数定義確認 + `sonic-scheduler.yang` 照合 (2026-05-15)
 
 | フィールド | YANG default | qosorch 実装の実効デフォルト | 備考 |
 |-----------|-------------|--------------------------|------|
@@ -151,7 +151,7 @@ QUEUE 等から参照中の SCHEDULER を削除しようとすると `task_need_
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### ADD 時: SCHEDULER → QUEUE の順が必須
 
@@ -182,7 +182,7 @@ DEL が `m_pendingRemove` 状態のまま同一名の SET を発行すると、S
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `SCHEDULER` エントリが処理される際に `QosOrch` が暗黙的に関与する他テーブルの依存関係を示す。
 
@@ -205,11 +205,9 @@ DEL が `m_pendingRemove` 状態のまま同一名の SET を発行すると、S
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 `handleSchedulerTable()`（`sonic-swss/orchagent/qosorch.cpp`）における SET / DEL 失敗条件と結果を網羅する。
-
-<!-- evidence: meta/_intermediate/cdb-flow/scheduler-orch-failure.md -->
 
 ### SET 失敗マトリクス（新規作成 / 既存更新）
 
@@ -235,14 +233,12 @@ DEL が `m_pendingRemove` 状態のまま同一名の SET を発行すると、S
 
 - **`task_invalid_entry`** はエントリを `m_toSync` から破棄し再試行しない。CONFIG_DB への SET は成功しているが SAI 反映はゼロとなる。`priority` フィールドによる誤投入は特に気づきにくい。
 - **`task_need_retry`** はエントリを `m_toSync` に残留させ次の `doTask()` で再評価する。自動回復するが完了タイミングは不確定。
-- **`meter_type` クラッシュ**は YANG enum バリデーションが機能している通常経路では発生しない。`sonic-db-cli` 等で直接投入する場合のみリスクがある（Phase A 参照）。
+- **`meter_type` クラッシュ**は YANG enum バリデーションが機能している通常経路では発生しない。`sonic-db-cli` 等で直接投入する場合のみリスクがある（「コード由来デフォルト」参照）。
 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 証跡: `meta/_intermediate/cdb-flow/scheduler-orch-constants.md`
+## ハードコード定数
 
 ### フィールド名定数 (qosorch.h)
 
@@ -263,7 +259,7 @@ DEL が `m_pendingRemove` 状態のまま同一名の SET を発行すると、S
 
 ### meter_type 許容値マップ (qosorch.cpp)
 
-`scheduler_meter_map` は `"packets"` と `"bytes"` の 2 値のみを保持する。これ以外の値に対しては `std::map::at()` が `std::out_of_range` 例外を送出し、orchagent がクラッシュする（Phase D 参照）。
+`scheduler_meter_map` は `"packets"` と `"bytes"` の 2 値のみを保持する。これ以外の値に対しては `std::map::at()` が `std::out_of_range` 例外を送出し、orchagent がクラッシュする（「失敗挙動マトリクス」参照）。
 
 ```cpp
 // qosorch.cpp L75–78
@@ -283,14 +279,12 @@ YANG `sonic-scheduler.yang` の enum も同じ 2 値（`bytes` / `packets`）を
 | `cir` / `cbs` / `pir` / `pbs` | `stoull(fvValue(*i))` | 数値文字列, 非負整数 | `stoull()` 失敗時は `std::invalid_argument` → orchagent クラッシュ |
 
 !!! note "`priority` フィールドの定数欠如"
-    YANG `sonic-scheduler.yang` に `leaf priority { type uint8 { range "0..9"; } }` が定義されているが、`qosorch.h` に対応する定数 `scheduler_priority_field_name` は存在しない。`handleSchedulerTable()` の if-else チェーンにも `priority` の処理分岐がないため、このフィールドは dead field となる（Phase A 参照）。
+    YANG `sonic-scheduler.yang` に `leaf priority { type uint8 { range "0..9"; } }` が定義されているが、`qosorch.h` に対応する定数 `scheduler_priority_field_name` は存在しない。`handleSchedulerTable()` の if-else チェーンにも `priority` の処理分岐がないため、このフィールドは dead field となる（「コード由来デフォルト」参照）。
 
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/scheduler-orch-side-effects.md`
+## 副次 DB 書込
 
 `QosOrch::handleSchedulerTable()` の SET/DEL は [APPL_DB](../../reference/glossary.md#term-appl_db)・[STATE_DB](../../reference/glossary.md#term-state_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への直接書き込みを行わない。副次書き込みは SAI API 経由の **[ASIC_DB](../../reference/glossary.md#term-asic_db) のみ** である。
 
@@ -321,7 +315,7 @@ sai_status = sai_scheduler_group_api->set_scheduler_group_attribute(group_id, &a
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 ### 購読方式: SubscriberStateTable + Keyspace Notification
 
@@ -384,9 +378,7 @@ ASIC_DB への SAI 書き込み
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 証跡: `meta/_intermediate/cdb-flow/scheduler-orch-platform.md`
+## プラットフォーム差
 
 `QosOrch::handleSchedulerTable()` のコード自体に [ASIC](../../reference/glossary.md#term-asic) ベンダー・`platform` / `sub_platform` 文字列・`gMySwitchType` に依存する処理分岐は**存在しない**。プラットフォーム差は SAI 層での属性サポート有無という形で間接的に現れる。
 

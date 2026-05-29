@@ -207,7 +207,7 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BGP_PEER_GROUP_AF`
 
@@ -236,16 +236,16 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | minigraph.py は BGP_PEER_GROUP_AF を生成しない | — | minigraph.py に代入なし |
 | 派生なし | — | — |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -256,17 +256,17 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 - frrcfgd.py L2305: BGP_PEER_GROUP_AF 購読（条件なし）
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
 | `BGPConfigDaemon` | `bgp_table_handler_common()` | `data is None`（DELETE） | `del_table=True` → AF を FRR から削除 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3918` |
 | `BGPConfigDaemon` | `bgp_table_handler_common()` | `data` あり（SET） | FRR peer-group AF 設定コマンドを生成・送出 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3930` |
 
-> **スキャン証跡**: BGP_PEER_GROUP_AF は comb_attr_list なしの `bgp_table_handler_common` に直接渡される。BGP_NEIGHBOR_AF と同一パスを共有。
+> **裏取り**: BGP_PEER_GROUP_AF は comb_attr_list なしの `bgp_table_handler_common` に直接渡される。BGP_NEIGHBOR_AF と同一パスを共有。
 <!-- /handler-branching -->
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
 `BGP_PEER_GROUP_AF` の処理に **プラットフォーム固有分岐は存在しない**。
 
@@ -283,10 +283,9 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 
 `frrcfgd` は FRR (bgpd) と [vtysh](../../reference/glossary.md#term-vtysh) 経由で通信するコントロールプレーンデーモンであり、[ASIC](../../reference/glossary.md#term-asic) / ハードウェアアクセラレーションと無関係。BGP peer-group の AF 設定は FRR 内部で処理されるため、プラットフォーム種別によるコードパスの差異は生じない。
 
-詳細スキャン手順・grep 証跡は `meta/_intermediate/cdb-flow/bgp-peer-group-af-platform.md` を参照。
 <!-- /platform -->
 <!-- failure -->
-## 失敗挙動・retry 分岐 (Phase D)
+## 失敗挙動・retry 分岐
 
 `frrcfgd.py` の `BGPConfigDaemon` が `BGP_PEER_GROUP_AF` を処理する際に到達しうる失敗パスを示す。
 
@@ -307,7 +306,7 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 - **推奨書き込み順**: `BGP_GLOBALS` → `BGP_GLOBALS_AF` → `ROUTE_MAP` → `BGP_PEER_GROUP` → `BGP_PEER_GROUP_AF`
 <!-- /failure -->
 <!-- defaults -->
-## 暗黙デフォルトとコード由来の挙動 (Phase A)
+## 暗黙デフォルトとコード由来の挙動
 
 ### 全フィールド共通: YANG default なし
 
@@ -373,7 +372,7 @@ YANG では `afi_safi` が独立した leaf として定義されているが、
 `max_prefix_limit` が必須のアンカー。`max_prefix_warning_threshold` が不在の場合は `max_prefix_restart_interval` と `max_prefix_warning_only` も生成されない（`++` オプション連鎖）。
 <!-- /defaults -->
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `frrcfgd` の `bgp_table_handler_common()` が BGP_PEER_GROUP_AF を処理する際に検出された順序依存を示す。
 
@@ -388,7 +387,7 @@ YANG では `afi_safi` が独立した leaf として定義されているが、
 > **推奨書き込み順**: `BGP_GLOBALS` → `BGP_GLOBALS_AF` → `ROUTE_MAP` → `BGP_PEER_GROUP` → `BGP_PEER_GROUP_AF`
 <!-- /ordering -->
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `frrcfgd.py` の `nbr_af_key_map` と `bgp_table_handler_common()` の `BGP_PEER_GROUP_AF` 分岐に埋め込まれた定数。`BGP_PEER_GROUP_AF` は `BGP_NEIGHBOR_AF` と同一の `nbr_af_key_map` を共用する。
 
@@ -438,11 +437,10 @@ YANG では `afi_safi` が独立した leaf として定義されているが、
 | 小文字正規化 | `.lower()` (大文字混在を吸収) | `frrcfgd.py:2867` |
 | tbl_key ディスパッチキー | `admin_status` (`admin_status\|<af>` の照合に使用) | `frrcfgd.py:2665-2668` |
 
-詳細スキャン結果は `meta/_intermediate/cdb-flow/bgp-peer-group-af-constants.md` を参照。
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `BGPConfigDaemon` が読み出す関連 CONFIG_DB テーブル (Phase C)
+## 暗黙参照 — `BGPConfigDaemon` が読み出す関連 CONFIG_DB テーブル
 
 `frrcfgd` の `BGPConfigDaemon` は `BGP_PEER_GROUP_AF` テーブル単体ではなく、起動時に関連テーブルを一括ロードし、ランタイム処理の前提として参照する。以下は `frrcfgd.py` のスキャンで検出した暗黙参照テーブル。
 
@@ -471,10 +469,9 @@ YANG では `afi_safi` が独立した leaf として定義されているが、
 
 > `ROUTE_MAP` と `PREFIX` / `PREFIX_SET` は `frrcfgd` が起動時に一括ロードしてキャッシュする (L2206, L2227-2247)。フィールド値は FRR に文字列として渡されるだけで DB ルックアップは行われないが、FRR 側で未定義名を参照すると policy が機能しない。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-peer-group-af-cross-refs.md` を参照。
 <!-- /cross-refs -->
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 ### 検出結果: 副次 DB 書込なし
 
@@ -503,11 +500,11 @@ CONFIG_DB BGP_PEER_GROUP_AF (SET/DEL)
 
 BGP セッション状態（Established / Idle 等）や prefix カウンタは bgpd が自律的に [STATE_DB](../../reference/glossary.md#term-state_db) へ書き込むが、それは **bgpd → sonic-[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) の独立した経路**であり `frrcfgd` の BGP_PEER_GROUP_AF ハンドラには含まれない。
 
-> **結論**: Phase F 対象の副次書込は存在しない。FRR vtysh 経由でのみ影響が波及する。
+> **結論**: 副次書込は存在しない。FRR vtysh 経由でのみ影響が波及する。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 購読メカニズム — ExtConfigDBConnector / Redis keyspace (Phase G)
+## 購読メカニズム — ExtConfigDBConnector / Redis keyspace
 
 `BGP_PEER_GROUP_AF` の変更通知は **`ExtConfigDBConnector` + [Redis](../../reference/glossary.md#term-redis) keyspace PSUBSCRIBE** で実装される。`bgpcfgd` 系の `SubscriberStateTable` とは異なる frrcfgd 独自方式。
 
@@ -547,7 +544,6 @@ Redis keyspace pmessage ("__keyspace@4__:BGP_PEER_GROUP_AF|<vrf>|<pg>|<af>")
 
 `start()` 前に `get_table_data(table_list)` で既存エントリを全件ロードし、`__fire()` で再生する。再起動後も CONFIG_DB に残存するエントリは自動的に FRR へ再投入される（frrcfgd.py:2327-2350）。
 
-詳細は `meta/_intermediate/cdb-flow/bgp-peer-group-af-pubsub.md` を参照。
 <!-- /pubsub -->
 
 <!-- glossary-links-injected: 0239bda450f9 -->

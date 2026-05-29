@@ -120,7 +120,7 @@ related:
 | setup | 248 | ✅ 完成 | meta | セットアップ手順 |
 | operations | 187 | ✅ 完成 | meta | 運用・デバッグ |
 | internals | 129 | ✅ 完成 | meta | 内部実装 |
-| advanced | 112 | ✅ 完成 | meta | 発展トピック |
+| advanced | 111 | ✅ 完成 | meta | 発展トピック |
 
 <!-- /chapter-progress -->
 
@@ -142,9 +142,9 @@ related:
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../../system/sonic-libsairedis-api-idempotence-support.md)
 - [SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）](../../system/sonic-snmp-table-schema-proposal.md)
 - [ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）](../../system/asic-thermal-monitoring-high-level-design.md)
-- [pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）](../../system/platform-monitor-enhancement-design.md)
 - [Redis Client Manager（RCM: connection pool / transactional client）](../../management/redis-client-manager-rcm-hld.md)
 - [SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB）](../../system/snmp-transceiver-monitoring-testbed-test-plan.md)
+- [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）](../../management/sonic-nos-configuration-methods.md)
 
 **関連トラブルシュート 5 件**
 

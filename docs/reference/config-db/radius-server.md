@@ -219,7 +219,7 @@ show radius
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `sonic-net/sonic-host-services/scripts/hostcfgd` L91-98
 
@@ -252,20 +252,20 @@ hostcfgd はこれらの値を検証せず `pam_radius_auth.conf.j2` に直接�
 <!-- /constants -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 hostcfgd が `RADIUS_SERVER` テーブルを読み、未設定フィールドに `radius_global_default` のデフォルト値を補完する。`auth_port` 未設定 → `1812`、`auth_type` 未設定 → `pap`、`timeout` 未設定 → `5`、`retransmit` 未設定 → `3`、`priority` 未設定 → `0`。さらに `RADIUS|global` の値が各サーバにコピーされ、サーバ固有設定で上書きされる (server merge)。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する。ただし `AAA.authentication.login` に `radius` が含まれない場合、RADIUS_SERVER エントリがあっても PAM に反映されない (NSS の radius プラグインは無効化される)。
 
 <!-- /derivation -->
 
 <!-- ordering -->
-## 設定生成順序・PAM 順序 (Phase B)
+## 設定生成順序・PAM 順序
 
 ### RADIUS 設定ファイル生成順序
 
@@ -297,7 +297,7 @@ hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する
 <!-- /ordering -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -308,15 +308,14 @@ hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する
 | `hostcfgd` radius_server_update | `skip_msg_auth` あり | `is_true()` で bool 変換 | `hostcfgd` L.541 |
 | `hostcfgd` modify_conf_file | `radsrvs_conf` 空 | 統計サービス (`aaastatsd`) を stop | `hostcfgd` L.839-844 |
 
-> **スキャン証跡**: `RADIUS_SERVER` テーブルは `hostcfgd` が `RADIUS|global` と merged して各サーバの pam_radius_auth.conf を生成する。CLI は `auth_port` と `priority` を必ず書き込むが `auth_type`/`timeout`/`retransmit` は省略時に未書き込みとなり hostcfgd の fallback 定数が使われる。
+> **裏取り**: `RADIUS_SERVER` テーブルは `hostcfgd` が `RADIUS|global` と merged して各サーバの pam_radius_auth.conf を生成する。CLI は `auth_port` と `priority` を必ず書き込むが `auth_type`/`timeout`/`retransmit` は省略時に未書き込みとなり hostcfgd の fallback 定数が使われる。
 
 <!-- /handler-branching -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> **調査根拠**: `sonic-host-services/scripts/hostcfgd` 全行精読 (2026-05-16)
-> 詳細証跡: `meta/_intermediate/cdb-flow/radius-server-side-effects.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` 全行精読 (2026-05-16)
 
 `RADIUS_SERVER` テーブルへの書込みが発生すると、`hostcfgd` の `AaaCfg.modify_conf_file()` が以下の副次処理を行う。DB への書込みは発生しない（すべてファイルシステム書込みと systemd サービス制御）。
 
@@ -371,7 +370,7 @@ hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する
 <!-- /side-effects -->
 
 <!-- failure -->
-## Phase D: 失敗挙動マトリクス
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-host-services/scripts/hostcfgd`
 
@@ -430,7 +429,7 @@ hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 RADIUS_SERVER テーブルへの書き込みが発生するコード経路を調査した結果。
 
@@ -464,7 +463,7 @@ db_migrator.py での RADIUS_SERVER マイグレーションなし
 <!-- /entry-points -->
 
 <!-- pubsub -->
-## Phase G: CONFIG_DB Subscribe 経路と PAM 再生成
+## CONFIG_DB Subscribe 経路と PAM 再生成
 
 ### Subscribe 登録
 
@@ -516,7 +515,7 @@ CONFIG_DB LOOPBACK_INTERFACE / MGMT_INTERFACE / VLAN_INTERFACE / PORTCHANNEL_INT
 <!-- /pubsub -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `radius_server_update` が間接読み出す関連 CONFIG_DB テーブル (Phase C)
+## 暗黙参照 — `radius_server_update` が間接読み出す関連 CONFIG_DB テーブル
 
 `hostcfgd` の `radius_server_update()` は `RADIUS_SERVER` テーブルをメモリに反映した後、`modify_conf_file()` を呼ぶ。この関数は `RADIUS_SERVER` 単体ではなく、以下の関連テーブルを結合してから PAM / NSS テンプレを再生成する。
 
@@ -549,11 +548,10 @@ CONFIG_DB LOOPBACK_INTERFACE / MGMT_INTERFACE / VLAN_INTERFACE / PORTCHANNEL_INT
 | [`MGMT_INTERFACE`](mgmt-interface.md) | `mgmt_intf_handler` → `handle_radius_nas_ip_chg()` | eth0 IP 変化時に RADIUS `nas_ip` を再計算し pam_radius_auth.conf を再生成 | hostcfgd:2348-2349,2485 |
 | `MGMT_VRF_CONFIG` | `mgmt_vrf_handler` | 管理 VRF 切替時に eth0 の到達性が変わり `nas_ip` 自動補完結果に影響。`vrf: mgmt` を持つ RADIUS_SERVER エントリの接続経路も切り替わる | hostcfgd:2352-2353,2496 |
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/radius-server-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 ソース: `sonic-net/sonic-host-services/scripts/hostcfgd`
 

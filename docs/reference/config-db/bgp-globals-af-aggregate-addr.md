@@ -166,7 +166,6 @@ YANG の `sonic-bgp-global.yang` は `as_set`、`summary_only`、`policy` すべ
 | 一次経路の重複 (bgpcfgd テンプレ vs frr-mgmt-framework) | あり (プラットフォーム非依存) | `BGP_GLOBALS_AF_AGGREGATE_ADDR` を購読するのは `frrcfgd.py` のみ (`DEVICE_METADATA.frr_mgmt_framework_config=true` 経路)。`bgpcfgd/` 配下と `dockers/docker-fpm-frr/` 配下を grep しても 0 ヒット。bgpcfgd テンプレ経路は別テーブル `BGP_AGGREGATE_ADDRESS` を使う点に注意 (ASIC 差ではなく機能経路の切替) |
 | ビルド時 platform オーバライド | なし | `device/<vendor>/<platform>/` 配下に本テーブルを差し替える j2 / json / hwsku-d 由来の差分は検出されず |
 
-詳細な走査ログは `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-platform.md` を参照。
 <!-- /platform -->
 
 <!-- ref-triangle:start -->
@@ -234,7 +233,7 @@ vtysh -c "show running-config bgpd" | grep aggregate-address
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BGP_GLOBALS_AF_AGGREGATE_ADDR`
 
@@ -262,7 +261,7 @@ vtysh -c "show running-config bgpd" | grep aggregate-address
 <!-- /entry-points -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 ### STATE_DB / COUNTERS_DB への書込: **なし**
 
@@ -280,11 +279,11 @@ vtysh -c "show running-config bgpd" | grep aggregate-address
 | CONFIG_DB (書き戻し) | なし | CONFIG_DB の変更は受信するが書き戻しは行わない |
 | FRR vtysh (bgpd) | あり | vtysh 経由で `aggregate-address` コマンドを `bgpd` に投入 ([SAI](../../reference/glossary.md#term-sai) 非経由) |
 
-> **Evidence**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` L1-3985 全体 grep 結果 ([STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / StateTable / CounterTable 各 0 件); ハンドラ L1313-1328, L3169-3196 実装確認。中間ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-side.md`
+> **Evidence**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` L1-3985 全体 grep 結果 ([STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / StateTable / CounterTable 各 0 件); ハンドラ L1313-1328, L3169-3196 実装確認。
 <!-- /side-effects -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### `BGP_GLOBALS` 先行必須 (bgp_asn)
 
@@ -314,11 +313,10 @@ DEL 操作では `key_map.run_command` で `no aggregate-address` を vtysh に�
 
 `normalize_ip_prefix()` が None を返す不正キーは当該 entry のみ skip され、後続エントリの処理は継続する。順序依存なしだが、ログ (`invalid IP prefix format`) を見落とすと該当 aggregate のみ未適用となる。<!-- evidence: frrcfgd.py:3172-3175 -->
 
-詳細スキャンログは `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-ordering.md` を参照。
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `BGP_GLOBALS_AF_AGGREGATE_ADDR` の YANG (`sonic-bgp-global.yang`) は `vrf_name` を `BGP_GLOBALS.vrf_name`、`policy` を `ROUTE_MAP_SET.name` への leafref として宣言する。実装側 (`frrcfgd.py`) では、これらに加え `BGP_GLOBALS` の `local_asn`、`BGP_GLOBALS_AF` の AF コンテキスト、`DEVICE_METADATA.frr_mgmt_framework_config = true` が暗黙の前提として読み取れる。
 
@@ -335,11 +333,10 @@ DEL 操作では `key_map.run_command` で `no aggregate-address` を vtysh に�
 !!! note "VRF / PORT / NEXTHOP は参照しない"
     `frrcfgd.py` の `BGP_GLOBALS_AF_AGGREGATE_ADDR` 分岐 (L3169-3197) および `hdl_af_aggregate()` (L1313-) は **`VRF` / `PORT` / `INTERFACE` / `NEXTHOP` / `ROUTE_TABLE`** を直接参照しない。aggregate-address は L3 prefix ベースで bgpd 内部 RIB に基づき集約計算されるため、interface / nexthop の CONFIG_DB エントリには依存しない。
 
-> **中間ファイル**: `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 スコープ: `frr-mgmt-framework` 経路 (`DEVICE_METADATA.frr_mgmt_framework_config=true`)。bgpcfgd テンプレ経路 (`BGP_AGGREGATE_ADDRESS`) の失敗挙動は別ページを参照。
 
@@ -389,8 +386,6 @@ vtysh -c "show running-config bgpd" | grep aggregate-address  # bgpd 反映の�
 
 - `ERROR_TABLE` への記録もなし。
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-failure.md`
-
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3169-3197 -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1313-1328 -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:928-930 -->
@@ -399,13 +394,13 @@ vtysh -c "show running-config bgpd" | grep aggregate-address  # bgpd 反映の�
 <!-- /failure -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
 `BGP_GLOBALS_AF_AGGREGATE_ADDR` テーブルへの変更通知は **`frrcfgd` (sonic-frr-mgmt-framework) のみ** が受信する。`frrcfgd` は `ConfigDBConnector` を継承した独自 `ExtConfigDBConnector.subscribe()` + `listen()` で **[Redis](../../reference/glossary.md#term-redis) keyspace 通知 (`PSUBSCRIBE __keyspace@<dbId>__:*`)** を購読する。`swsscommon.SubscriberStateTable` (channel ベース PUBLISH/SUBSCRIBE) は本経路では使用しない。CONFIG_DB は永続前提のため TTL は設定されない。
 
-`bgpcfgd` のテンプレ経路 (`bgpd.conf.db.addr_family.j2`) は別テーブル `BGP_AGGREGATE_ADDRESS` (フラット) を使用し、本テーブルは購読しない (Phase F `<!-- side-effects -->` で確認済)。両者は同一機能の異なる設定経路のため、混在は避ける。
+`bgpcfgd` のテンプレ経路 (`bgpd.conf.db.addr_family.j2`) は別テーブル `BGP_AGGREGATE_ADDRESS` (フラット) を使用し、本テーブルは購読しない (`<!-- side-effects -->` セクションで確認済)。両者は同一機能の異なる設定経路のため、混在は避ける。
 
 | 購読者 | 対象テーブル | 購読 API | 通信方式 | ハンドラ |
 |--------|------------|---------|---------|---------|
@@ -447,11 +442,11 @@ bgp_table_handler_common(table, key, data) → bgp_message キューへ enqueue
 
 vtysh コマンド送出のみで BGP セッション自体は再起動されない。集約広告の反映は **FRR の RIB 計算ループ** の次サイクルで行われ、contributing route が RIB に 1 本以上存在する場合のみ aggregate が広告される (BGP 仕様)。
 
-> **Evidence**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:98, 1313, 1506-1555, 1982-1983, 2118, 2257, 2317, 2340-2357, 2359-2361, 3169-3196, 3955-3956` (keyspace listen / subscribe / `bgp_table_handler_common` / `hdl_af_aggregate` / 起動スナップショット / config replay); 詳細分析 `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-pubsub.md`
+> **Evidence**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:98, 1313, 1506-1555, 1982-1983, 2118, 2257, 2317, 2340-2357, 2359-2361, 3169-3196, 3955-3956` (keyspace listen / subscribe / `bgp_table_handler_common` / `hdl_af_aggregate` / 起動スナップショット / config replay)
 <!-- /pubsub -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### FRR コマンド literal (`frrcfgd.py` ハンドラ)
 
@@ -483,7 +478,7 @@ vtysh コマンド送出のみで BGP セッション自体は再起動されな
 | boolean 真値リテラル | `'true'` | `data[attr].data == 'true'` 比較で `as_set` / `summary_only` を反映 | `frrcfgd.py:3191` |
 | `AggregateAddr` 内部属性初期値 | `as_set=False`, `summary_only=False` | 内部キャッシュ `af_aggr_list[vrf][prefix]` の既定状態 | `frrcfgd.py:1704-1705` |
 
-> **スキャン証跡**: `frrcfgd.py` L98 / L800-830 / L920-944 / L1313-1328 / L1600-1640 / L1700-1710 / L1982-1983 / L2118 / L2139 / L2256-2270 / L2317 / L3169-3197 を確認。定数 8 + 4 + 3 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-constants.md`
+> **裏取り**: `frrcfgd.py` L98 / L800-830 / L920-944 / L1313-1328 / L1600-1640 / L1700-1710 / L1982-1983 / L2118 / L2139 / L2256-2270 / L2317 / L3169-3197 を確認。定数 8 + 4 + 3 件抽出。
 <!-- /constants -->
 
 <!-- glossary-links-injected: 547c48f84c7d -->

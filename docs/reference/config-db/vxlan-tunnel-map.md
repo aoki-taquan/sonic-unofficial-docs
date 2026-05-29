@@ -90,9 +90,7 @@ VXLAN_TUNNEL_MAP|<tunnel_name>|<map_name>
 <!-- /value-behavior -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
-
-<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-defaults.md -->
+## コード由来の暗黙デフォルト
 
 | 挙動 | 実装動作 | コードロケーション |
 |------|---------|------------------|
@@ -116,9 +114,9 @@ VXLAN_TUNNEL_MAP|<tunnel_name>|<map_name>
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
-<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-ordering.md; sonic-swss/orchagent/vxlanorch.cpp -->
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
 
 ### 作成順序
 
@@ -149,9 +147,9 @@ VXLAN_EVPN_NVO 削除 → VXLAN_TUNNEL_MAP 全削除 → VXLAN_TUNNEL 削除 →
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗・リトライ挙動 (Phase D)
+## 失敗・リトライ挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-failure.md; sonic-swss/orchagent/vxlanorch.cpp -->
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
 
 ### addOperation() 失敗分類
 
@@ -219,9 +217,9 @@ HW にマッピング実体が存在しない状態となる。後続の `delOpe
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-constants.md; sonic-swss/orchagent/vxlanorch.h; sonic-swss/orchagent/vxlanorch.cpp -->
+<!-- evidence: sonic-swss/orchagent/vxlanorch.h; sonic-swss/orchagent/vxlanorch.cpp -->
 
 ### vxlanorch.h — 数値マクロ
 
@@ -269,9 +267,9 @@ HW にマッピング実体が存在しない状態となる。後続の `delOpe
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・連動更新 (Phase F)
+## 副作用・連動更新
 
-<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-side.md; sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-swss/orchagent/vxlanorch.cpp -->
+<!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-swss/orchagent/vxlanorch.cpp -->
 
 `VXLAN_TUNNEL_MAP` への SET / DEL は CONFIG_DB 外の複数のコンポーネントに副作用を及ぼす。
 
@@ -297,9 +295,9 @@ HW にマッピング実体が存在しない状態となる。後続の `delOpe
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-pubsub.md; sonic-swss/cfgmgr/vxlanmgrd.cpp; sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-swss/orchagent/vxlanorch.cpp -->
+<!-- evidence: sonic-swss/cfgmgr/vxlanmgrd.cpp; sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-swss/orchagent/vxlanorch.cpp -->
 
 `VXLAN_TUNNEL_MAP` テーブルは **[vxlanmgrd](../../reference/glossary.md#term-vxlanmgrd) → [APPL_DB](../../reference/glossary.md#term-appl_db) → orchagent** の 2 段階パイプラインで処理される。
 
@@ -355,9 +353,9 @@ APPL_DB 書込 → Redis Lists → orchagent VxlanTunnelMapOrch ConsumerStateTab
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-platform.md; sonic-swss/orchagent/vxlanorch.cpp -->
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
 
 `VXLAN_TUNNEL_MAP` の SAI オブジェクト生成・削除パスは、`VxlanTunnelOrch` 初期化時に実行される SAI ケーパビリティクエリによって P2P / P2MP モードが決定され、[ASIC](../../reference/glossary.md#term-asic) 種別によって挙動が分岐する。
 
@@ -487,7 +485,7 @@ show vxlan vlanvnimap
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 VXLAN_TUNNEL_MAP テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -521,7 +519,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /entry-points -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C / vxlanorch.cpp)
+## 暗黙参照 (vxlanorch.cpp)
 
 <!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
 

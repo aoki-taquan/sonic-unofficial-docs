@@ -82,7 +82,7 @@ FLEX_COUNTER_TABLE|PG_WATERMARK
 ---
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 <!-- evidence: sonic-swss/orchagent/portsorch.cpp, sonic-swss/orchagent/portsorch.h,
      sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/watermarkorch.cpp,
@@ -135,7 +135,7 @@ static const vector<sai_ingress_priority_group_stat_t> ingressPriorityGroupWater
 ---
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `FLEX_COUNTER_TABLE|PG_WATERMARK` の `FLEX_COUNTER_STATUS=enable` が反映されるまでに、flexcounterorch・[portsorch](../../reference/glossary.md#term-portsorch)・watermarkorch の 3 コンポーネント間で以下の順序依存が発生する。
 
@@ -165,9 +165,7 @@ static const vector<sai_ingress_priority_group_stat_t> ingressPriorityGroupWater
 ---
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pg-watermark-cross-refs.md -->
+## 暗黙参照テーブル
 
 [YANG](../../reference/glossary.md#term-yang) leafref を超えた他テーブル・他 DB・プロセスへの実装上の依存関係。
 
@@ -192,9 +190,7 @@ static const vector<sai_ingress_priority_group_stat_t> ingressPriorityGroupWater
 ---
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-> 証跡: `meta/_intermediate/cdb-flow/pg-watermark-failure.md`
+## 失敗挙動
 
 `FlexCounterOrch::doTask(Consumer&)`（`sonic-swss/orchagent/flexcounterorch.cpp`）および `portsorch` の PG watermark 登録関数を調査した。
 
@@ -229,7 +225,7 @@ static const vector<sai_ingress_priority_group_stat_t> ingressPriorityGroupWater
 ---
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/orchagent/portsorch.h, sonic-swss/orchagent/portsorch.cpp,
      sonic-swss/orchagent/watermarkorch.cpp -->
@@ -259,9 +255,7 @@ static const vector<sai_ingress_priority_group_stat_t> ingressPriorityGroupWater
 ---
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 証跡: `meta/_intermediate/cdb-flow/pg-watermark-side-effects.md`
+## 副次 DB 書込
 
 `FLEX_COUNTER_TABLE|PG_WATERMARK` の `FLEX_COUNTER_STATUS` 変化を起点として、以下の副次 DB 書き込みが発生する。
 
@@ -317,9 +311,8 @@ PG_WATERMARK（または QUEUE_WATERMARK）が enable になると `WatermarkOrc
 ---
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> 証跡: `meta/_intermediate/cdb-flow/pg-watermark-pubsub.md`
 > スキャン対象: `orchagent/orchdaemon.cpp:432-437,620-626`、`orchagent/flexcounterorch.cpp:40-155`、`orchagent/watermarkorch.cpp:23-50,52-143,144-232`
 
 ### CONFIG_DB 購読方式
@@ -372,7 +365,7 @@ syncd FlexCounter スレッド: FLEX_COUNTER_DB を読んで SAI ポーリング
 ---
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `FLEX_COUNTER_TABLE|PG_WATERMARK` の処理ロジック自体は [ASIC](../../reference/glossary.md#term-asic) ベンダー・スイッチタイプに依存しないが、有効化後に実際に収集されるカウンタ値やカウンタの存在はプラットフォーム構成に依存する。
 

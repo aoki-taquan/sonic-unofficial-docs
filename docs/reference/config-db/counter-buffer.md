@@ -197,7 +197,7 @@ VoQ (Virtual Output Queue) 環境では追加で:
 - CLI: `sonic-clear queue counters`, `sonic-clear priority-group drop counters`
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 <!-- evidence: sonic-swss/orchagent/portsorch.cpp, portsorch.h,
      bufferorch.cpp, bufferorch.h,
@@ -285,7 +285,7 @@ redis.call('HSET', ..., periodic_shared_wm and math.max(...) or pg_shared_wm)
 <!-- /defaults -->
 
 <!-- ordering -->
-## 処理順序・依存関係 (Phase B)
+## 処理順序・依存関係
 
 <!-- evidence: sonic-swss/orchagent/bufferorch.cpp, flexcounterorch.cpp, orchdaemon.cpp -->
 
@@ -369,9 +369,7 @@ buffer pool
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counter-buffer-cross-refs.md`
+## 暗黙参照テーブル
 
 以下はすべて実装レベルの暗黙参照（[YANG](../../reference/glossary.md#term-yang) leafref なし）。
 
@@ -396,9 +394,7 @@ buffer pool
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/counter-buffer-failure.md -->
+## 失敗挙動・retry / recovery
 
 ### retry パターン概要
 
@@ -459,9 +455,7 @@ SAI `create_buffer_pool` 失敗時は `handleSaiCreateStatus(SAI_API_BUFFER, sai
 <!-- /failure -->
 
 <!-- constants -->
-## 定数・マジックナンバー (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/counter-buffer-constants.md -->
+## 定数・マジックナンバー
 
 ### FlexCounter グループ名文字列
 
@@ -581,9 +575,7 @@ CONFIG_DB の BUFFER_POOL / BUFFER_PROFILE テーブルのフィールド名と�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書き込み (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/counter-buffer-side.md -->
+## 副次 DB 書き込み
 
 バッファカウンタに関連する処理が [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / APPL_STATE_DB / syncd FLEX_COUNTER_TABLE へ
 行う副次書き込みの全体像。YANG / [HLD](../../reference/glossary.md#term-hld) には明示されていない。
@@ -647,9 +639,7 @@ Gearbox PHY が有効な環境では、`COUNTERS_PORT_NAME_MAP` が
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-<!-- evidence: meta/_intermediate/cdb-flow/counter-buffer-pubsub.md -->
+## 通信メカニズム
 
 バッファ / ウォーターマークカウンタ周辺で使われる通知経路は 3 種類存在する。
 すべて [HLD](../../reference/glossary.md#term-hld) には明示されていない。
@@ -729,14 +719,12 @@ TTL なし・永続コネクション・fan-out なしの 1:1 通知。[HLD](../
     対象は `m_periodicWatermarkTable (PERIODIC_WATERMARKS)` のみ。
     Buffer Pool WM の User/Persistent クリアは `WATERMARK_CLEAR_REQUEST` 経由でのみ行われる。
 
-> **Evidence**: `watermarkorch.cpp:23-44` (コンストラクタ)、`watermarkorch.cpp:52-92` (doTask Consumer)、`watermarkorch.cpp:116-142` (handleFcConfigUpdate)、`watermarkorch.cpp:144-231` (doTask NotificationConsumer)、`watermarkorch.cpp:233-281` (doTask SelectableTimer)、`flexcounterorch.cpp:225-295` (FLEX_COUNTER_STATUS ハンドラ)、`orchdaemon.cpp:432-437` (WatermarkOrch 初期化)、`watermarkstat:323-325` (CLI 送信側); 詳細分析 `meta/_intermediate/cdb-flow/counter-buffer-pubsub.md`
+> **Evidence**: `watermarkorch.cpp:23-44` (コンストラクタ)、`watermarkorch.cpp:52-92` (doTask Consumer)、`watermarkorch.cpp:116-142` (handleFcConfigUpdate)、`watermarkorch.cpp:144-231` (doTask NotificationConsumer)、`watermarkorch.cpp:233-281` (doTask SelectableTimer)、`flexcounterorch.cpp:225-295` (FLEX_COUNTER_STATUS ハンドラ)、`orchdaemon.cpp:432-437` (WatermarkOrch 初期化)、`watermarkstat:323-325` (CLI 送信側)
 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/counter-buffer-platform.md -->
+## プラットフォーム差
 
 ### VoQ (Virtual Output Queue) システム
 
@@ -772,7 +760,7 @@ WRED 統計 (`SAI_QUEUE_STAT_WRED_*`) は `sai_query_stats_capability()` (portso
 
 この設定は runtime の `DEVICE_METADATA` テーブル変更で更新可能だが (flexcounterorch.cpp:508-520)、既登録のカウンタ ID リストは自動再構成されない。
 
-> **Evidence**: `portsorch.cpp:399-402` (voq_stat_ids), `portsorch.cpp:8483-8614` (generateQueueMapPerPort/addQueueFlexCountersPerPortPerQueueIndex), `bufferorch.cpp:64-67,116-140,916,1049-1075,1136-1168,2075-2092`, `flexcounterorch.cpp:44,169-172,291-295,508-520,540-555`; 詳細分析 `meta/_intermediate/cdb-flow/counter-buffer-platform.md`
+> **Evidence**: `portsorch.cpp:399-402` (voq_stat_ids), `portsorch.cpp:8483-8614` (generateQueueMapPerPort/addQueueFlexCountersPerPortPerQueueIndex), `bufferorch.cpp:64-67,116-140,916,1049-1075,1136-1168,2075-2092`, `flexcounterorch.cpp:44,169-172,291-295,508-520,540-555`
 <!-- /platform -->
 
 <!-- ref-triangle:start -->

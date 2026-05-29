@@ -126,7 +126,7 @@ CONFIG_DB / FLOW_COUNTER_ROUTE_PATTERN|<key>   (Hash)
 | `max_match_count` | uint (1–50) | 30 | このパターンにマッチさせるルートの最大件数。超過分にはカウンタが割り当てられない |
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 <!-- evidence:
      sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp,
@@ -197,7 +197,7 @@ FlowCounterRouteOrch は [COUNTERS_DB](../../reference/glossary.md#term-counters
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 <!-- evidence:
      sonic-swss/orchagent/orchdaemon.cpp,
@@ -274,11 +274,10 @@ if (gFabricPortsOrch && !gFabricPortsOrch->allPortsReady()) { return; }
 !!! warning "再評価不可な capability"
     `mRouteFlowCounterSupported` は orchagent 起動時に 1 回だけ SAI 問い合わせされ、その後 STATE_DB と内部フラグに固定される。SAI ドライバを差し替える / ASIC 設定を変えるなどして capability が変動するケースでは、`FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE` の enable/disable を切り替えるだけでは検出されず、**orchagent プロセス再起動が必要**。
 
-詳細な行番号インデックスは `meta/_intermediate/cdb-flow/app-counter-ordering.md` を参照。
 <!-- /ordering -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence:
      sonic-swss/orchagent/flexcounterorch.cpp,
@@ -357,12 +356,10 @@ CONFIG_DB key から [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_cou
 !!! note "ユーザ可変項目との対比"
     `FLEX_COUNTER_TABLE|FLOW_CNT_TRAP|FLOW_CNT_ROUTE` でユーザが変更できるのは `FLEX_COUNTER_STATUS` と `POLL_INTERVAL` のみ。stats_mode・stat ID リスト・group 名・warm-up 遅延・1 秒タイマー周期・capability キー文字列はすべてビルド時固定。
 
-詳細根拠は `meta/_intermediate/cdb-flow/app-counter-constants.md` を参照。
-
 <!-- /constants -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `FLEX_COUNTER_TABLE` と `FLOW_COUNTER_ROUTE_PATTERN` はどちらも orchagent 内の単一スレッドで消費される。両者は **[Redis](../../reference/glossary.md#term-redis) keyspace notification (PSUBSCRIBE)** で変更検出される `SubscriberStateTable` 経路を取る。`ConsumerStateTable` / `NotificationConsumer` は CONFIG_DB 側では**使用しない**。
 
@@ -472,12 +469,10 @@ FLEX_COUNTER_DB → syncd → COUNTERS_DB
 
 ### 詳細ノート
 
-詳細な購読パターン・PSUBSCRIBE チャンネル・競合解析は中間メモを参照: `meta/_intermediate/cdb-flow/app-counter-pubsub.md`。
-
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 `FLEX_COUNTER_TABLE|FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` の動作は、ハードコード定数（ポーリング間隔・stat リスト・`max_match_count` デフォルト）はプラットフォーム共通だが、**route flow counter は SAI capability ゲート**で機種差が大きく、**multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis** は asic 単位での独立制御になる。
 
@@ -524,11 +519,10 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 
 `HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS = 10000`、`ROUTE_FLOW_COUNTER_POLLING_INTERVAL_MS = 10000`、`ROUTE_PATTERN_DEFAULT_MAX_MATCH_COUNT = 30`、`FLEX_COUNTER_UPD_INTERVAL = 1` 秒、generic counter の stat リスト (`SAI_COUNTER_STAT_PACKETS` / `_BYTES`) はベンダー側で上書きする手段がなく、全機種同一。
 
-詳細根拠は `meta/_intermediate/cdb-flow/app-counter-platform.md` を参照。
 <!-- /platform -->
 
 <!-- failure -->
-## 失敗挙動・retry 経路 (Phase D)
+## 失敗挙動・retry 経路
 
 <!-- evidence:
      sonic-swss/orchagent/flexcounterorch.cpp,
@@ -589,14 +583,14 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 
 !!! warning "ユーザ視点の代表的な失敗症状"
     - **`FLEX_COUNTER_STATUS=enable` を書いたのにカウンタが現れない** — group key typo (`Invalid flex counter group input`)、SAI capability 不足、`max_match_count` 超過のいずれか。
-    - **`max_match_count=0` を設定したのに 30 になっている** — Phase D で挙動として確定 (silent fallback)。
+    - **`max_match_count=0` を設定したのに 30 になっている** — silent fallback 挙動（前述の失敗挙動節を参照）。
     - **VRF 作成直後に route flow counter が出ない** — 1 秒タイマーの再試行待ちで数秒のラグ。
     - **`POLL_INTERVAL` に不正値を入れても何も起きない** — orchagent 段では検証されず syncd 側で握り潰される。
 
 <!-- /failure -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `FLEX_COUNTER_TABLE|FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` および `FLOW_COUNTER_ROUTE_PATTERN` は **[YANG](../../reference/glossary.md#term-yang) leafref を一切持たない**（`sonic-flex_counter` / `sonic-flow_counter` どちらも leafref 未定義）。以下はすべて実装レベルの暗黙参照。
 
@@ -624,12 +618,10 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 !!! note "PORT_TABLE / ACL_RULE は参照しない"
     flow counter は port 単位でも ACL 単位でもないため `PORT_TABLE` / `ACL_RULE` / `ACL_TABLE` への暗黙参照は無い。port counter は `PORT` group、ACL counter は `ACL` group が別系統で扱う。
 
-詳細な参照経路・行番号は `meta/_intermediate/cdb-flow/app-counter-cross-refs.md` を参照。
-
 <!-- /cross-refs -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence:
      sonic-swss/orchagent/flexcounterorch.cpp,
@@ -654,7 +646,7 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 |---|---|---|---|---|
 | `FLOW_COUNTER_CAPABILITY_TABLE\|route` | `support` = `"true"` / `"false"` | FlowCounterRouteOrch コンストラクタ実行時に **1 回のみ** (SAI capability query 結果) | FlowCounterRouteOrch (`initRouteFlowCounterCapability()`) | `flowcounterrouteorch.cpp:166-179`, `flow_counter_handler.cpp:51-62` |
 
-`FLOW_CNT_TRAP` 側には STATE_DB capability エントリは書かれない (Phase H 参照)。`show flowcnt-route capabilities` はこのテーブルを読む。
+`FLOW_CNT_TRAP` 側には STATE_DB capability エントリは書かれない (「プラットフォーム / SAI Capability 差異」参照)。`show flowcnt-route capabilities` はこのテーブルを読む。
 
 ### FLEX_COUNTER_DB
 
@@ -681,7 +673,6 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
     - `STATE_DB FLOW_COUNTER_CAPABILITY_TABLE\|route` は **orchagent 再起動でのみ再評価**。SAI driver 差し替え後は再起動が必要。
     - `COUNTERS_ROUTE_TO_PATTERN_MAP` のクリアはパターン削除経路でのみ走るため、route 単独の削除では古いエントリが残る可能性がある（次回 pattern 評価でクリーンアップ）。
 
-詳細根拠は `meta/_intermediate/cdb-flow/app-counter-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- ref-triangle:start -->

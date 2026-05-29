@@ -49,9 +49,7 @@ flowchart LR
 <!-- /cdb-mermaid -->
 
 <!-- ordering -->
-## オブジェクト生成順序・依存関係 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-table-ordering.md -->
+## オブジェクト生成順序・依存関係
 
 `PBH_TABLE` 自体は他の PBH テーブルに対する上流依存を持たないが、参照する `PORT` / `PORTCHANNEL` の PortsOrch 初期化を必要とする。`PBH_RULE` はこのテーブルに依存するため、**作成は PBH_RULE より前**、**削除は PBH_RULE より後**が必須。
 
@@ -120,9 +118,7 @@ PBH_TABLE|<table_name>  DEL
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-table-cross-refs.md -->
+## 暗黙参照テーブル
 
 `PBH_TABLE` は CONFIG_DB の他テーブルを**直接読まない**が、`interface_list` の解決で `PORT` / `PORTCHANNEL` に暗黙依存し、[SAI](../../reference/glossary.md#term-sai) 操作で `AclOrch` に依存する。
 
@@ -147,9 +143,9 @@ PBH_TABLE|<table_name>  DEL
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗・リトライ挙動 (Phase D)
+## 失敗・リトライ挙動
 
-`PBH_TABLE` の処理失敗は `pbhmgr.cpp` の `parsePbhTable()` / `validatePbhTable()` と `pbhorch.cpp` の `deployPbhTableSetupTasks()` / `deployPbhTableRemoveTasks()` で発生する。`ACL_TABLE` とは異なり [STATE_DB](../../reference/glossary.md#term-state_db) へのステータス書き込みはなく、失敗はすべて syslog (`SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE`) のみで通知される。詳細スキャンノートは `meta/_intermediate/cdb-flow/pbh-table-failure.md` を参照。
+`PBH_TABLE` の処理失敗は `pbhmgr.cpp` の `parsePbhTable()` / `validatePbhTable()` と `pbhorch.cpp` の `deployPbhTableSetupTasks()` / `deployPbhTableRemoveTasks()` で発生する。`ACL_TABLE` とは異なり [STATE_DB](../../reference/glossary.md#term-state_db) へのステータス書き込みはなく、失敗はすべて syslog (`SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE`) のみで通知される。
 
 ### SET 時の失敗パターン
 
@@ -194,11 +190,9 @@ PBH_TABLE が SAI に未反映のまま
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `pbhorch.cpp` / `config/plugins/pbh.py` にハードコードされ、CONFIG_DB・YANG では管理されない定数の一覧。
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-table-constants.md -->
 
 ### 1. CONFIG_DB テーブル名定数 (pbh.py:47–50)
 
@@ -251,9 +245,7 @@ CLI プラグイン (`config/plugins/pbh.py`) で定義される CONFIG_DB テ�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書き込み (Phase F)
-
-> 証跡: `meta/_intermediate/cdb-flow/pbh-table-side-effects.md`
+## 副次 DB 書き込み
 
 `PBH_TABLE` の SET/DEL 処理は **[STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) への直接書き込みを行わない**。副次的な状態変更は以下に限られる。
 
@@ -281,7 +273,7 @@ SAI の変更は CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db)
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 > 根拠: `sonic-swss/orchagent/orchdaemon.cpp:550-565`、`sonic-swss/orchagent/pbhorch.cpp:88-97,1804-1831`、`sonic-swss/orchagent/orch.cpp:1186-1195`
 
@@ -354,9 +346,7 @@ CONFIG_DB PBH_RULE|<table>|<rule>  (SET/DEL)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-table-platform.md -->
+## プラットフォーム差
 
 `PBH_TABLE` の処理は `PbhCapabilities` クラスが orchagent 起動時に環境変数 `ASIC_VENDOR` を読み取り、プラットフォーム（`GENERIC` / `MELLANOX`）を判定する。判定結果は起動直後に STATE_DB `PBH_CAPABILITIES` テーブルへ書き出される。`PBH_TABLE` のフィールド自体は両プラットフォームで同一動作だが、関連する `PBH_HASH` / `PBH_RULE` の UPDATE 可否に差異がある。
 

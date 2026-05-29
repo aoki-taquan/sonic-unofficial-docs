@@ -135,7 +135,7 @@ SmartSwitch では `ips` が使用され、各 DPU に `169.254.200.<dpu_id+1>` 
 ---
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `dhcpservd` の `generate()` と `dhcprelayd` の `refresh_dhcrelay()` はイベントごとに [CONFIG_DB](../../reference/glossary.md#term-config_db) を全量スナップショットし Kea / dhcrelay 設定を再生成する。このため書き込み順序が初回起動時の設定完全性に影響する。
 
@@ -157,13 +157,12 @@ SmartSwitch では `ips` が使用され、各 DPU に `169.254.200.<dpu_id+1>` 
 
 **DPUS 先行必須 (依存 #3)**: `DHCP_SERVER_IPV4_PORT.<port>` フィールドは `DPUS.<dpu_name>.midplane_interface` への YANG leafref であるため、`DPUS` エントリが存在しない状態で `DHCP_SERVER_IPV4_PORT` を書いても YANG バリデーションで reject される（evidence: `sonic-dhcp-server-ipv4.yang:231-233`）。
 
-詳細スキャン手順と依存関係の根拠は `meta/_intermediate/cdb-flow/smart-switch-ordering.md` を参照。
 <!-- /ordering -->
 
 ---
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `MID_PLANE_BRIDGE` および `DHCP_SERVER_IPV4_PORT` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の複数テーブルを YANG leafref
 またはコード側の implicit 参照で依存する。
@@ -195,7 +194,6 @@ DHCP_SERVER_IPV4|bridge-midplane                    ← DHCP_SERVER_IPV4_PORT.na
 DHCP_SERVER_IPV4_PORT|bridge-midplane|<dpu>         ← 全依存が揃ってから書き込む
 ```
 
-詳細は `meta/_intermediate/cdb-flow/smart-switch-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 ---
@@ -203,7 +201,6 @@ DHCP_SERVER_IPV4_PORT|bridge-midplane|<dpu>         ← 全依存が揃ってか
 <!-- defaults -->
 ## 暗黙デフォルトとハードコード挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/smart-switch-defaults.md -->
 
 ### 1. MID_PLANE_BRIDGE|GLOBAL.bridge — YANG pattern で値を固定
 
@@ -308,9 +305,8 @@ leaf midplane_interface {
 ---
 
 <!-- failure -->
-## 無効入力・障害時の挙動 (Phase E)
+## 無効入力・障害時の挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/smart-switch-failure.md -->
 
 ### 1. YANG バリデーション失敗（書き込み拒否）
 
@@ -385,10 +381,9 @@ Kea の lease ファイル（デフォルト `/var/lib/kea/kea-lease.csv`）が�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `src/sonic-yang-models/yang-models/sonic-smart-switch.yang`, `src/sonic-config-engine/config_samples.py`, `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py` (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-constants.md`
+> **Evidence**: `src/sonic-yang-models/yang-models/sonic-smart-switch.yang`, `src/sonic-config-engine/config_samples.py`, `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py` (2026-05-17)
 
 ### `MID_PLANE_BRIDGE` — ハードコード値
 
@@ -447,10 +442,9 @@ NPU ブリッジ IP (`169.254.200.254`) は最大値 `.8`（`dpu7`）と衝突�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込・ファイルシステム副作用 (Phase F)
+## 副次 DB 書込・ファイルシステム副作用
 
-> **調査根拠**: `dhcpservd.py`, `dhcp_cfggen.py`, `dhcp_lease.py`, `dhcprelayd.py`, `config_samples.py` 全行精読 (2026-05-17)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-side-effects.md`
+> **Evidence**: `dhcpservd.py`, `dhcp_cfggen.py`, `dhcp_lease.py`, `dhcprelayd.py`, `config_samples.py` 全行精読 (2026-05-17)
 
 `MID_PLANE_BRIDGE` / `DPUS` / `DHCP_SERVER_IPV4_PORT` を CONFIG_DB へ書き込むと、以下の副次書き込みが発生する。
 
@@ -518,10 +512,9 @@ data['FEATURE'] = {
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:9,16-17,69-75,130-136,220-236,349-388`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py:25,96,130-148`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:23,97-100`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:28,84-103,156-158,395` (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-pubsub.md`
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:9,16-17,69-75,130-136,220-236,349-388`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py:25,96,130-148`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:23,97-100`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:28,84-103,156-158,395` (2026-05-17)
 
 ### Producer / Consumer ペア
 
@@ -599,10 +592,9 @@ dhcpservd [DEFAULT_SELECT_TIMEOUT=5000ms]
 ---
 
 <!-- platform -->
-## プラットフォーム依存・ハードウェア固有挙動 (Phase H)
+## プラットフォーム依存・ハードウェア固有挙動
 
-> **調査根拠**: `sonic-chassisd/scripts/chassisd:1571-1583,717-731,1074-1110,1180-1228,236-256`; `sonic_platform_base/chassis_base.py:171-184,317-340` (2026-05-17)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-platform.md`
+> **Evidence**: `sonic-chassisd/scripts/chassisd:1571-1583,717-731,1074-1110,1180-1228,236-256`; `sonic_platform_base/chassis_base.py:171-184,317-340` (2026-05-17)
 
 ### 1. chassisd のデーモン分岐 — is_smartswitch() / is_dpu()
 

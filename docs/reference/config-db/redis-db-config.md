@@ -129,7 +129,7 @@ related:
 <!-- /defaults -->
 
 <!-- ordering -->
-## 初期化順序依存 (Phase B)
+## 初期化順序依存
 
 `database_config.json` は [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルではなく、[Redis](../../reference/glossary.md#term-redis) インスタンスと DB ID マッピングを定義するインフラ層ファイルである。ここでの「書込み順依存」は、ファイル生成 → Redis 起動 → アプリ接続 の厳密なシーケンスに関するものである。
 
@@ -170,14 +170,10 @@ docker-database コンテナ起動
 
 **database_config.json 生成後の変更は非対応**: `SonicDBConfig` は起動時に一度ファイルを読み込んだあとは再読み込みを行わない。Redis ポートや DB ID を変更する場合はコンテナ再起動が必要（`reset()` + `initialize()` の明示的な再実行、または再起動）。
 
-<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L182-204 (initialize()) -->
-<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L89-180 (initializeGlobalConfig()) -->
-<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L220-260 (getDbInfo 自動初期化) -->
-<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh (全体: 生成ロジック) -->
 
 <!-- /ordering -->
 <!-- cross-refs -->
-## 暗黙参照リソース (Phase C)
+## 暗黙参照リソース
 
 `database_config.json` は [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルではなくインフラ層ファイルであるため、
 他 [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルへの leafref は存在しない。
@@ -201,7 +197,7 @@ docker-database コンテナ起動
 
 <!-- /cross-refs -->
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `database_config.json` は CONFIG_DB テーブルではなくインフラ層ファイルであり、`SonicDBConfig` クラスが起動時に一度だけ読み込む。読み込み・解析に失敗した場合は例外として呼び出し元に伝播し、キャッチされなければプロセス abort → systemd 再起動という自己回復経路を取る。
 
@@ -243,12 +239,12 @@ docker-database コンテナ起動
 - `parseDatabaseConfig()` や `initialize()` から `runtime_error` が伝播した場合、各デーモン（`swss`/`syncd`/`mgmt` 等）がキャッチしなければプロセス abort → systemd 再起動 → 再 `initialize()` で自己回復する。
 - Redis 接続層（`DBConnector` コンストラクタ）の TCP/UNIX ソケット接続失敗は `system_error` として伝播し、各アプリが個別に処理する (`dbconnector.cpp:589`, `605`)。
 
-> **証跡**: `parseDatabaseConfig()` L27-87、`initialize()` L182-204、`initializeGlobalConfig()` L89-180、`getDbInfo()` L246-278、`getRedisInfo()` L280-310。詳細は `meta/_intermediate/cdb-flow/redis-db-config-failure.md` を参照。
+> **Evidence**: `parseDatabaseConfig()` L27-87、`initialize()` L182-204、`initializeGlobalConfig()` L89-180、`getDbInfo()` L246-278、`getRedisInfo()` L280-310。
 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 実装コードに直接埋め込まれている文字列キー・数値定数・マクロ名を一覧化する。
 
@@ -312,15 +308,11 @@ docker-database コンテナ起動
 | `REDIS_DIR` | `/var/run/redis${NAMESPACE_ID}` | `docker-database-init.sh:51` |
 | `KEY_DEL_CHUNK_SIZE` | `128` | `dbconnector.cpp:23` (Redis キー一括削除サイズ) |
 
-<!-- evidence: sonic-net/sonic-swss-common/common/schema.h L12-33 (DB ID マクロ定義) -->
-<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.h L90-91,169,206 (パス・ソケット定数) -->
-<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L45-64 (parseDatabaseConfig JSON キー) -->
-<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L20,28,40,49,51 (ポート・パス定数) -->
 
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `database_config.json` は CONFIG_DB テーブルではなくインフラ層ファイルである。`SonicDBConfig` がこのファイルを読み込んだ結果は **プロセス内のインメモリキャッシュ** (`m_inst_info` / `m_db_info` / `m_db_separator`) に格納されるのみで、他のRedis DB への副次書込は発生しない。
 
@@ -345,12 +337,10 @@ docker-database コンテナ起動
 !!! note "実運用での reset() 使用"
     `reset()` はテストコードと一部の設定リロードシナリオ専用と位置付けられる。本番環境での使用は原則 `docker-database` コンテナ再起動で代替する (`docker-database-init.sh` 参照)。
 
-<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L209-218 (reset 実装) -->
-<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L252-253 (自動再初期化) -->
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `database_config.json` は CONFIG_DB テーブルではなくインフラ層ファイルであるため、通常の CONFIG_DB テーブルが用いる Redis PUBLISH/SUBSCRIBE メカニズムは **一切使用しない**。`SonicDBConfig` クラスはファイルを起動時に一度読み込んでインメモリキャッシュに格納するのみで、keyspace notification の発行も受信も行わない。
 
@@ -380,15 +370,11 @@ supervisord が Redis インスタンスを再起動
 （pub/sub チャンネルや keyspace notification は介在しない）
 ```
 
-<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp (SonicDBConfig 全体: PUBLISH/SUBSCRIBE 呼出なし) -->
-<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh (生成・配置ロジック) -->
 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/redis-db-config-platform.md`
+## プラットフォーム差
 
 `SonicDBConfig` クラス自体はプラットフォーム識別文字列 (`broadcom` / `mellanox` 等) を一切参照しない。プラットフォーム差はすべて `docker-database-init.sh` が生成する `database_config.json` の **内容** の差として現れ、`SonicDBConfig` はそのファイルを単純に読み込む。
 
@@ -403,8 +389,6 @@ supervisord が Redis インスタンスを再起動
 | `bmcdb` | BMC 搭載ノード | `database_config.json.j2` | BMP DB エントリ除外 |
 | `chassisdb` | VoQ Chassis Supervisor 専用 DB コンテナ | supervisord config のみ生成して `exit 0` | `update_chassisdb_config -k` で chassis 専用設定を保持 |
 
-<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L22-46 (DATABASE_TYPE 分岐) -->
-<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L84-100 (chassisdb 分岐) -->
 
 ### `NAMESPACE_ID` による multi-ASIC 対応
 
@@ -412,8 +396,6 @@ supervisord が Redis インスタンスを再起動
 
 `database_global.json` の生成は `NAMESPACE_ID == "" && DATABASE_TYPE == "" && (NAMESPACE_COUNT > 1 || NUM_DPU > 1)` の条件を満たす場合のみ行われる。
 
-<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L5-9 (INTFC 分岐) -->
-<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L104-110 (database_global.json 生成条件) -->
 
 ### VoQ Chassis: `chassisdb.conf` によるエントリ制御
 
@@ -424,8 +406,6 @@ supervisord が Redis インスタンスを再起動
 
 VoQ ラインカードでは Redis の **protected mode が無効化** される。ラインカード外部の midplane ネットワーク越しに supervisor の `redis_chassis` への接続を許可するためである。
 
-<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L74-78 (chassisdb.conf 読み込み) -->
-<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L117-120 (linecard protected mode 無効化) -->
 
 ### 構成別まとめ
 

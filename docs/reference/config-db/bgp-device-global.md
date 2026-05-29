@@ -229,7 +229,7 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BGP_DEVICE_GLOBAL`
 
@@ -258,7 +258,7 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `BGP_DEVICE_GLOBAL` は **[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 側 (`DeviceGlobalCfgMgr`)** と **orchagent 側 (`BgpGlobalStateOrch`)** の 2 つの consumer が同じ CONFIG_DB テーブルを購読する。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は FRR への [vtysh](../../reference/glossary.md#term-vtysh) 反映、`BgpGlobalStateOrch` は SAI / `BfdOrch` への TSA 連動を担当する。両者は独立に動作するため、書込み順により中間状態が異なる結果になる。
 
@@ -287,7 +287,7 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 <!-- /ordering -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 > YANG `default` 以外の Python/C++ レベル fallback を per-field で整理する。
 > 書き込み時デフォルト (init_cfg 注入) と実行時 fallback (del_handler / `or` / クラス定数) の乖離を区別する。
@@ -356,7 +356,7 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 <!-- /defaults -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **[ASIC](../../reference/glossary.md#term-asic) ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco) ごとの直接分岐は無いが、`device_info.is_chassis()` / `switch_role` (`DEVICE_METADATA.localhost.type`) / `switch_type` / SAI [BFD](../../reference/glossary.md#term-bfd) offload capability の 4 系統でテーブル処理が間接分岐する**。BGP_DEVICE_GLOBAL 自体は [SAI](../../reference/glossary.md#term-sai) を直接駆動しないが、CONFIG_DB を購読する `BgpGlobalStateOrch` がコンストラクタで SAI capability を問い合わせ、結果が `BfdOrch` の software/hw 経路選択に伝播する。
 
@@ -373,13 +373,12 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 | `use_software_bfd` という BGP_DEVICE_GLOBAL フィールド | **存在しない** | `bfdorch.cpp:116` の local 変数名であり CONFIG_DB のフィールドではない。YANG (`sonic-bgp-device-global.yang`) にも未定義 |
 | `tsa_enabled` / `wcmp_enabled` のテーブル受理ロジック | 影響なし | `managers_device_global.py` の値検証 (`"true"/"false"`) と FRR push は platform / asic / hwsku を参照しない |
 
-詳細根拠 (関数本体・呼出関係・SAI attr id) は `meta/_intermediate/cdb-flow/bgp-device-global-platform.md` を参照。
 <!-- /platform -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
-`BGP_DEVICE_GLOBAL` テーブル本体のフィールド (`tsa_enabled` / `wcmp_enabled` / `idf_isolation_state` / `asn` / `peers`) には現れないが、`bgpcfgd` の `DeviceGlobalCfgMgr` と orchagent の `BgpGlobalStateOrch` / `BfdOrch` が**間接的に**読み出すエンティティ群。詳細根拠は `meta/_intermediate/cdb-flow/bgp-device-global-cross-refs.md` を参照。
+`BGP_DEVICE_GLOBAL` テーブル本体のフィールド (`tsa_enabled` / `wcmp_enabled` / `idf_isolation_state` / `asn` / `peers`) には現れないが、`bgpcfgd` の `DeviceGlobalCfgMgr` と orchagent の `BgpGlobalStateOrch` / `BfdOrch` が**間接的に**読み出すエンティティ群。
 
 ### `DEVICE_METADATA` (CONFIG_DB)
 
@@ -441,7 +440,7 @@ orchagent 側では `BgpGlobalStateOrch` (`bfdorch.h:58-72`) が `BGP_DEVICE_GLO
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### managers_device_global.py クラス定数 (L12-14)
 
@@ -514,11 +513,11 @@ orchagent 側では `BgpGlobalStateOrch` (`bfdorch.h:58-72`) が `BGP_DEVICE_GLO
 
 > orchagent 側は `tsa_enabled` 1 フィールドしか購読しない (`if (type == "tsa_enabled")`)。`wcmp_enabled` / `idf_isolation_state` は完全に bgpcfgd → FRR 経路で閉じ、SAI まで届かない。
 
-> **スキャン証跡**: `managers_device_global.py` 全 288 行読了 (クラス定数 3、受理文字列 8、ロール 3、substring 4、regex 1)。`bfdorch.cpp` L114-200 / L729-829 読了 (リテラル 8、SAI attr id 2)。FRR j2 テンプレート 5 件読了 (route-map 名 3、seq 番号 9 種、extcommunity リテラル 1)。中間ファイル: `meta/_intermediate/cdb-flow/bgp-device-global-constants.md`
+> **裏取り**: `managers_device_global.py` 全 288 行読了 (クラス定数 3、受理文字列 8、ロール 3、substring 4、regex 1)。`bfdorch.cpp` L114-200 / L729-829 読了 (リテラル 8、SAI attr id 2)。FRR j2 テンプレート 5 件読了 (route-map 名 3、seq 番号 9 種、extcommunity リテラル 1)。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `BGP_DEVICE_GLOBAL|STATE` / `BGP_DEVICE_GLOBAL|CONFED` への SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと SAI 呼び出しを示す。bgpcfgd 経路 (`DeviceGlobalCfgMgr` / `ChassisAppDbMgr`) は **副次 DB への直接書込みを行わず**、すべて FRR への [vtysh](../../reference/glossary.md#term-vtysh) コマンド送出 (`cfg_mgr.push`) と in-process `directory` キャッシュ更新に閉じる。副次 DB 書込みは orchagent 側 `BgpGlobalStateOrch` から `BfdOrch::handleTsaStateChange` への dispatch、および CLI スクリプト (`TSA`/`TSB`) からの直接書込みでのみ発生する。
 
@@ -565,7 +564,7 @@ SAI 呼び出し: なし (`BgpGlobalStateOrch` 側で DEL を処理しないた�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `BGP_DEVICE_GLOBAL` テーブルは **`SubscriberStateTable`** を用いた [Redis](../../reference/glossary.md#term-redis) keyspace notification ベースの push 型購読で 2 プロセスに配信される。
 
@@ -608,7 +607,7 @@ addExecutor(new Consumer(
 | `ChassisAppDbMgr` (bgpcfgd, chassis のみ) | `directory.subscribe` (in-process) | CONFIG_DB / `BGP_DEVICE_GLOBAL` | `tsa_enabled` (LC ローカル変化追従) |
 | `BgpGlobalStateOrch` (orchagent) | `SubscriberStateTable` (Orch 基底) | CONFIG_DB | `tsa_enabled` のみ |
 
-bgpcfgd と orchagent は独立プロセスのため、同一 SET イベントに対して並列に処理が走り、完了の相対順序は保証されない。詳細根拠は `meta/_intermediate/cdb-flow/bgp-device-global-pubsub.md` を参照。
+bgpcfgd と orchagent は独立プロセスのため、同一 SET イベントに対して並列に処理が走り、完了の相対順序は保証されない。
 <!-- /pubsub -->
 
 <!-- glossary-links-injected: 8c9bb48d191c -->

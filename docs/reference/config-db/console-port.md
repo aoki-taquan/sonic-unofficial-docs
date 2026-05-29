@@ -67,7 +67,7 @@ CONSOLE_SWITCH|console_mgmt
 | `default_escape_char` | string `[a-z]` | — | picocom のグローバル既定エスケープ文字 |
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 ### CONSOLE_PORT フィールド
 
@@ -121,7 +121,7 @@ CONSOLE_SWITCH|console_mgmt
 - console switch を有効化したときの host service
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
 ### 1. CONSOLE_SWITCH.enabled を先に設定する
 
@@ -155,7 +155,7 @@ CONSOLE_SWITCH|console_mgmt
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase C)
+## 暗黙テーブル参照
 
 `CONSOLE_PORT` テーブルが直接・間接的に参照するテーブルと参照方向の一覧。
 
@@ -173,11 +173,9 @@ CONSOLE_SWITCH|console_mgmt
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-utilities/config/console.py`、`sonic-utilities/consutil/main.py`、`sonic-utilities/consutil/lib.py`
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/console-port-failure.md`
 
 ### CLI 書き込み時の失敗経路
 
@@ -210,11 +208,9 @@ CONSOLE_SWITCH|console_mgmt
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `consutil/lib.py` および `config/console.py` 内に存在する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG で管理されないハードコード定数の一覧。
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/console-port-constants.md`
 
 ### エラーコード定数 (consutil/lib.py L17–21)
 
@@ -253,7 +249,7 @@ CONSOLE_SWITCH|console_mgmt
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `CONSOLE_PORT` / `CONSOLE_SWITCH` テーブルの変更に伴って `consutil` が副次的に書き込む DB エントリを示す。
 
@@ -273,11 +269,10 @@ CONSOLE_SWITCH|console_mgmt
 
 **[APPL_DB](../../reference/glossary.md#term-appl_db) / その他 DB への書込**: なし。`config/console.py` は CONFIG_DB にのみ書き込み、[APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込は発生しない（[SAI](../../reference/glossary.md#term-sai) 非経由）。
 
-> 詳細スキャン結果は `meta/_intermediate/cdb-flow/console-port-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -319,11 +314,10 @@ CONFIG_DB 変更は次回の `consutil` 呼び出し時にのみ反映される�
 
 CONFIG_DB エントリに TTL 設定はない（永続エントリ）。
 
-> 詳細スキャン結果: `meta/_intermediate/cdb-flow/console-port-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 `CONSOLE_PORT` テーブルのスキーマ自体はプラットフォーム間で共通だが、`consutil` が参照する物理 TTY デバイスのパスがプラットフォームごとに異なる。
 
@@ -425,7 +419,7 @@ CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。`
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `CONSOLE_PORT`
 
@@ -454,15 +448,15 @@ CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。`
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | minigraph XML に `<Console>` エントリが存在する | `CONSOLE_PORT` テーブルにポートエントリを生成 | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2516` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -474,15 +468,15 @@ CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。`
 - consutil/lib.py L106: get_keys 読み取りのみ（デーモン購読なし）
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `CONSOLE_PORT` テーブルを直接消費する常駐デーモンは存在しない。consutil が CONFIG_DB から読み取るのみであり、handler メソッド内分岐の対象外。
 
-> **スキャン証跡**: ソース横断 grep で CONSOLE_PORT の subscribe/doTask 呼び出しなし。分岐: 0 件。
+> **裏取り**: ソース横断 grep で CONSOLE_PORT の subscribe/doTask 呼び出しなし。分岐: 0 件。
 <!-- /handler-branching -->
 
 <!-- ordering-detail -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `consutil` は CONFIG_DB の `CONSOLE_SWITCH` を読み取ってから `CONSOLE_PORT` を参照する。この読み取り順は実行のたびにバッチで行われるが、DB 書き込み側から見ると以下の順序依存が存在する。
 

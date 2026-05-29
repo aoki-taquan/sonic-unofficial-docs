@@ -226,7 +226,7 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 <!-- /value-behavior -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `NAT_RESTORE_TABLE` と `COUNTERS_DB:COUNTERS_NAT*` は互いに独立した書き手（`restore_nat_entries.py` / `NatOrch`）が管理する。ただし warm reboot 時は `restored` フラグの到達タイミングが `natsyncd` の reconciliation 開始を決定するため、フラグ書き込みの順序が重要になる。
 
@@ -252,7 +252,7 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `STATE_DB:NAT_RESTORE_TABLE` は `restore_nat_entries.py` が唯一の書き手であり、`natsyncd` は読み手として warm reboot 時のみ参照する。`COUNTERS_DB:COUNTERS_NAT*` は `NatOrch` が唯一の書き手であり、`show nat statistics` / `config nat` CLI が読み手となる。
 
@@ -275,7 +275,7 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `NAT_RESTORE_TABLE` と `COUNTERS_DB:COUNTERS_NAT*` にまたがる失敗パターンを以下に示す。
 
@@ -301,7 +301,7 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `NAT_RESTORE_TABLE` / `COUNTERS_DB:COUNTERS_NAT*` の動作を支配する、CONFIG_DB・[YANG](../../reference/glossary.md#term-yang) の外側に存在するコードレベルのハードコード定数一覧。出典は `sonic-swss/orchagent/natorch.h` および `sonic-swss/cfgmgr/natmgr.h`。
 
@@ -336,7 +336,7 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-buildimage/dockers/docker-nat/restore_nat_entries.py L49-52 / sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch() L108-138 / enableNatFeature() L2534-2580 / disableNatFeature() L2583-2627 / cleanupAppDbEntries() L2457-2532 -->
 
@@ -370,12 +370,12 @@ natorch docker 停止シグナルで APPL_DB `FLUSHNATSTATISTICS` / `NAT_DB_CLEA
 
 `disableNatFeature()` (`admin_mode=disabled`) では SAI への無効化のみ行われ、COUNTERS_DB の `COUNTERS_NAT*` エントリは**削除されない**。disabled 状態でも `show nat statistics` はキャッシュ値を表示し続ける。
 
-> **証跡**: `restore_nat_entries.py:49-52` ([STATE_DB](../../reference/glossary.md#term-state_db) 書込み), `natorch.cpp:108-138` (コンストラクタ初期化), `natorch.cpp:2534-2580` (enableNatFeature), `natorch.cpp:2583-2627` (disableNatFeature), `natorch.cpp:2457-2532` (cleanupAppDbEntries), `natorch.cpp:4474-4478` (NAT_DB_CLEANUP_NOTIFICATION dispatch), `natorch.cpp:789,873` (updateNatCounters 初期値書込み), `natsyncd.cpp:48-62` (isNatRestoreDone ポーリングループ); 詳細スキャン結果は `meta/_intermediate/cdb-flow/nat-state-side-effects.md` を参照。
+> **Evidence**: `restore_nat_entries.py:49-52` ([STATE_DB](../../reference/glossary.md#term-state_db) 書込み), `natorch.cpp:108-138` (コンストラクタ初期化), `natorch.cpp:2534-2580` (enableNatFeature), `natorch.cpp:2583-2627` (disableNatFeature), `natorch.cpp:2457-2532` (cleanupAppDbEntries), `natorch.cpp:4474-4478` (NAT_DB_CLEANUP_NOTIFICATION dispatch), `natorch.cpp:789,873` (updateNatCounters 初期値書込み), `natsyncd.cpp:48-62` (isNatRestoreDone ポーリングループ)
 
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 > 調査対象: `sonic-swss/orchagent/natorch.cpp`, `sonic-swss/natsyncd/natsync.cpp`, `sonic-buildimage/dockers/docker-nat/restore_nat_entries.py`
 
@@ -436,7 +436,7 @@ NAT パスには APPL_DB 上の `NotificationConsumer / NotificationProducer` �
 <!-- /pubsub -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) 定義外の実行時テーブルのためコード hardcode 値のみ。
 
@@ -459,7 +459,7 @@ NAT パスには APPL_DB 上の `NotificationConsumer / NotificationProducer` �
 <!-- /defaults -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `NAT_RESTORE_TABLE` / `COUNTERS_NAT*` テーブル群の挙動に影響するプラットフォーム固有の差異を整理する。
 
@@ -511,7 +511,7 @@ if (platform && strstr(platform, BRCM_PLATFORM_SUBSTRING))
 | `NAT_RESTORE_TABLE` の存在 | NAT 機能有効 + warm reboot | `restored="true"` が書き込まれる |
 | `NAT_RESTORE_TABLE` の存在 | 通常起動 / NAT 機能無効 | テーブルエントリなし |
 
-> **スキャン証跡**: `natorch.cpp` L44 (`gNhTrackingSupported` 定義), L107-148 (コンストラクタ — platform チェックと SAI 問い合わせ), L1921-1932 (addNatEntry DNAT パス), L1957-1968 (removeNatEntry DNAT パス), `orch.h:43` (`BRCM_PLATFORM_SUBSTRING` 定義), `natsync.cpp:96-108` (isNatRestoreDone), `restore_nat_entries.py:49-52` (STATE_DB hset)。中間ファイル: `meta/_intermediate/cdb-flow/nat-state-platform.md`
+> **裏取り**: `natorch.cpp` L44 (`gNhTrackingSupported` 定義), L107-148 (コンストラクタ — platform チェックと SAI 問い合わせ), L1921-1932 (addNatEntry DNAT パス), L1957-1968 (removeNatEntry DNAT パス), `orch.h:43` (`BRCM_PLATFORM_SUBSTRING` 定義), `natsync.cpp:96-108` (isNatRestoreDone), `restore_nat_entries.py:49-52` (STATE_DB hset)
 
 <!-- /platform -->
 

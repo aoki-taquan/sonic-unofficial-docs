@@ -1,6 +1,6 @@
 ---
 title: SECURITY_PROFILES / PKI テーブル
-description: "SECURITY_PROFILES テーブル — gNSI Certz の SSL プロファイルと証明書ファイル名のマッピングを CONFIG_DB に保持するテーブル。sonic-pki.yang で定義されるが、コミュニティ master の主要 YANG モデルには未マージ (2026-05 時点)。Phase A–H 分析。"
+description: "SECURITY_PROFILES テーブル — gNSI Certz の SSL プロファイルと証明書ファイル名のマッピングを CONFIG_DB に保持するテーブル。sonic-pki.yang で定義されるが、コミュニティ master の主要 YANG モデルには未マージ (2026-05 時点)。"
 area: reference
 verification: discrepancy-found
 monitor: not_implemented
@@ -113,7 +113,7 @@ CREDENTIALS|CERT|<profileID>
 デフォルトプロファイル名: `"gnxi"` (`gnsi_certz.go:30` — `defaultProfile` 定数)[^2]
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 > SECURITY_PROFILES [YANG](../../reference/glossary.md#term-yang) フィールドおよび gNSI Certz 内部デフォルトを整理する。
 
@@ -161,20 +161,10 @@ bootstrap 時に生成されるすべてのエンティティ (Cert / TrustBundl
 
 各パスはコマンドライン引数 (`telemetry.go:196-207`) で設定される。シンボリックリンク (`/keys/*.lnk`) が存在しファイルが有効な場合はそちらが優先される (`restoreFromFile()` ロジック)[^2]。
 
-<!-- evidence:
-  sonic-mgmt-common/cvl/testdata/schema/sonic-pki.yang:28-44 — SECURITY_PROFILES YANG 定義
-  sonic-mgmt-common/cvl/testdata/schema/sonic-security-global.yang:26-38 — SECURITY_GLOBAL leafref
-  sonic-mgmt-common/cvl/cvl_test.go:2505-2535 — instance-in-use エラーテスト
-  sonic-gnmi/gnmi_server/gnsi_certz.go:29-36 — 定数 (defaultProfile="gnxi", certTbl, credentialsTbl)
-  sonic-gnmi/gnmi_server/gnsi_certz.go:178-222 — bootstrapDefaultProfile (Version="V1")
-  sonic-gnmi/gnmi_server/gnsi_certz.go:385-416 — doUpload バリデーション (version必須)
-  sonic-gnmi/gnmi_server/gnsi_certz.go:688-715 — writeEntityFreshness (STATE_DB 書き込み)
-  sonic-gnmi/telemetry/telemetry.go:196-207 — CaCertLnk/SrvCertLnk/SrvKeyLnk CLI フラグデフォルト
--->
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `SECURITY_PROFILES` / `SECURITY_GLOBAL` はハンドラが community master で未実装のため、DB レベルの順序制約は CVL バリデーション層のみが強制する。gNSI Certz は CONFIG_DB を参照しないが、STATE_DB への書込みには起動内部の固定順序がある。
 
@@ -195,19 +185,10 @@ bootstrap 時に生成されるすべてのエンティティ (Cert / TrustBundl
 
 **CONFIG_DB ハンドラ未実装による非影響 (注記)**: community master では `SECURITY_PROFILES` を消費するハンドラが存在しないため、CONFIG_DB への書込み順序が runtime の動作に影響を与える経路は現時点で確認されていない。上記 #1/#2 の制約は CVL バリデーション層のみで有効であり、[orchagent](../../reference/glossary.md#term-orchagent) / translib 等との協調順序は将来のハンドラ実装時に改めて評価が必要である。
 
-<!-- evidence:
-  sonic-mgmt-common/cvl/testdata/schema/sonic-security-global.yang:29-35 — security_profile leafref 定義
-  sonic-mgmt-common/cvl/cvl_test.go:2506-2537 — instance-in-use テスト (SECURITY_PROFILES 削除ブロック)
-  sonic-gnmi/gnmi_server/gnsi_certz.go:126-141 — NewGNSICertzServer: loadCertzMetadata → bootstrapDefaultProfile → writeEntityFreshness × 4 → saveCertzMetadata
-  sonic-gnmi/gnmi_server/gnsi_certz.go:134-138 — Cert/TrustBundle/CrlBundle/AuthPolicy の順序固定ループ
-  sonic-gnmi/gnmi_server/gnsi_certz.go:688-715 — writeEntityFreshness (STATE_DB CREDENTIALS|CERT|<profileID> 書込み)
--->
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 他テーブル・コンポーネントとの参照関係 (Phase C)
-
-詳細な調査メモは `meta/_intermediate/cdb-flow/pki-trusted-certs-cross-refs.md` を参照。
+## 他テーブル・コンポーネントとの参照関係
 
 ### SECURITY_PROFILES が参照する / される先
 
@@ -231,19 +212,10 @@ bootstrap 時に生成されるすべてのエンティティ (Cert / TrustBundl
 
 `SECURITY_PROFILES` を直接参照する production ハンドラ ([orchagent](../../reference/glossary.md#term-orchagent) / translib / certmgr) は community master では確認されていない。gNSI Certz のプロファイル管理は `/keys/grpc-version.json` (CertzMetaFile) とファイルシステムシンボリックリンクで独立して行われる。
 
-<!-- evidence:
-  sonic-mgmt-common/cvl/testdata/schema/sonic-security-global.yang:29-35 — security_profile leafref → SECURITY_PROFILES
-  sonic-gnmi/gnmi_server/gnsi_certz.go:46-48 — certTbl="CERT", credentialsTbl="CREDENTIALS" 定数
-  sonic-gnmi/gnmi_server/gnsi_certz.go:1036-1059 — writeCredentialsMetadataToDB (STATE_DB 書込み)
-  sonic-gnmi/common_utils/notification_producer.go:16 — dbName="STATE_DB"
-  sonic-gnmi/gnmi_server/clientCertAuth.go:259-263 — ConfigDB GNMI_CLIENT_CERT 参照 (CN→ロール解決)
--->
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・エラーパス (Phase D)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/pki-trusted-certs-failure.md`
+## 失敗挙動・エラーパス
 
 ### CVL バリデーション失敗
 
@@ -299,25 +271,10 @@ bootstrap 時に生成されるすべてのエンティティ (Cert / TrustBundl
 
 `SECURITY_PROFILES` を CONFIG_DB から読み込む production ハンドラ ([orchagent](../../reference/glossary.md#term-orchagent) / translib / certmgr) が community master に存在しないため、DB 書込みエラー (CVL バリデーション以外) が runtime 動作に影響を与える経路は現時点で確認されない。
 
-<!-- evidence:
-  sonic-mgmt-common/cvl/testdata/schema/sonic-security-global.yang:29-35 — security_profile leafref (invalid-value / instance-in-use の根拠)
-  sonic-mgmt-common/cvl/cvl_test.go:2506-2537 — instance-in-use テスト
-  sonic-gnmi/gnmi_server/gnsi_certz.go:126-127 — loadCertzMetadata エラー処理
-  sonic-gnmi/gnmi_server/gnsi_certz.go:145-155 — MkdirAll エラー処理
-  sonic-gnmi/gnmi_server/gnsi_certz.go:162-170 — Unimplemented RPC
-  sonic-gnmi/gnmi_server/gnsi_certz.go:232-234 — TryLock (並行 Rotate 拒否)
-  sonic-gnmi/gnmi_server/gnsi_certz.go:244-248 — EOF without Finalize
-  sonic-gnmi/gnmi_server/gnsi_certz.go:286-305 — processRotateRequest (InvalidArgument)
-  sonic-gnmi/gnmi_server/gnsi_certz.go:381-430 — doUpload バリデーションと Aborted エラー
-  sonic-gnmi/gnmi_server/gnsi_certz.go:925-989 — atomicSetSrvCertKeyPair / atomicSetCACert ロールバック
-  sonic-gnmi/gnmi_server/gnsi_certz.go:1037-1055 — writeCredentialsMetadataToDB REDIS unavailable
--->
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 詳細調査メモ: `meta/_intermediate/cdb-flow/pki-trusted-certs-constants.md`
+## ハードコード定数
 
 gNSI Certz は CONFIG_DB を直接参照しないため、CONFIG_DB レベルの定数は少ない。ただしプロファイル管理と STATE_DB 書込みで以下の定数が固定化される。
 
@@ -395,19 +352,10 @@ const (
 
 3. **CONFIG_DB ハンドラ未実装**: `SECURITY_PROFILES` テーブルを読む production ハンドラが community master に存在しないため、定数がハンドラロジック（順序・デフォルト値選択）に影響を与える経路は現時点で確認されていない。
 
-<!-- evidence:
-  sonic-gnmi/gnmi_server/gnsi_certz.go:29-49 — const ブロック (defaultProfile, certTbl, credentialsTbl, versionFld, createdFld 等)
-  sonic-gnmi/gnmi_server/gnsi_certz.go:91-96 — Entity type enum (certType, tbType, crlType, apType の iota)
-  sonic-gnmi/gnmi_server/gnsi_certz.go:134-138 — bootstrapDefaultProfile 内 for-loop (Entity 書込み固定順序)
-  sonic-gnmi/gnmi_server/gnsi_certz.go:178-222 — bootstrapDefaultProfile (Version="V1" 初期化, 4 entity)
-  sonic-gnmi/gnmi_server/gnsi_certz.go:385-416 — doUpload validation (version 必須, codes.InvalidArgument)
-  sonic-gnmi/gnmi_server/gnsi_certz.go:54 — integrityManifestFile default path
-  sonic-gnmi/gnmi_server/gnsi_certz.go:122-123 — NewGNSICertzServer (IntManFile override)
--->
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込・外部副作用 (Phase F)
+## 副次 DB 書込・外部副作用
 
 `SECURITY_PROFILES` / `SECURITY_GLOBAL` を書き込む production ハンドラは community master に存在しないため、CONFIG_DB 操作に伴う orchagent / translib 由来の副次 DB 書込はない。ただし gNSI Certz が Rotate RPC・起動処理を通じて以下の副次作用を持つ。
 
@@ -448,23 +396,10 @@ Rotate RPC が証明書を差し替えると、以下のシンボリックリン
 
 対象なし。`SECURITY_PROFILES` を消費する translib / orchagent ハンドラが community master に存在しないため、CONFIG_DB への書込みが [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) へ伝播する経路は確認されない。
 
-<!-- evidence:
-  sonic-gnmi/gnmi_server/gnsi_certz.go:134-138 — bootstrapDefaultProfile: writeEntityFreshness × 4
-  sonic-gnmi/gnmi_server/gnsi_certz.go:502 — activateEntity: writeEntityFreshness
-  sonic-gnmi/gnmi_server/gnsi_certz.go:646-685 — finalizeProfile: writeEntityFreshness × 4 + saveCertzMetadata
-  sonic-gnmi/gnmi_server/gnsi_certz.go:688-715 — writeEntityFreshness (STATE_DB HSET)
-  sonic-gnmi/gnmi_server/gnsi_certz.go:717-735 — saveCertzMetadata (CertzMetaFile JSON 書込)
-  sonic-gnmi/gnmi_server/gnsi_certz.go:924-963 — atomicSetSrvCertKeyPair (SrvCertLnk / SrvKeyLnk 更新)
-  sonic-gnmi/gnmi_server/gnsi_certz.go:966-989 — atomicSetCACert (CaCertLnk 更新)
-  sonic-gnmi/gnmi_server/gnsi_certz.go:1036-1057 — writeCredentialsMetadataToDB (STATE_DB DB=6, REDIS unavailable 処理)
-  sonic-gnmi/gnmi_server/server.go:423-434 — GetIdentityCertificatesForServer: 新規接続ごと LoadX509KeyPair + muPath.RLock
-  sonic-gnmi/gnmi_server/server.go:448-460 — GetRootCertificates: 新規接続ごと ReadFile(CaCertLnk) + muPath.RLock
-  sonic-gnmi/common_utils/notification_producer.go:16 — dbName="STATE_DB" (DB=6)
--->
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `SECURITY_PROFILES` / `SECURITY_GLOBAL` テーブルを購読するプロセスは community master では**検出されなかった**。
 
@@ -495,7 +430,7 @@ gNSI Certz (`gnsi_certz.go`) はプロファイル管理に CONFIG_DB を使用�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
 **プラットフォーム差なし**: `SECURITY_PROFILES` / `SECURITY_GLOBAL` テーブルおよび gNSI Certz は [ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 構成に依らず同一動作をする。
 

@@ -126,7 +126,7 @@ STATE_DB / DEBUG_COUNTER_CAPABILITIES | <counter_type>   (Hash)
 ---
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 <!-- evidence: sonic-swss/orchagent/portsorch.cpp, sonic-swss/orchagent/debugcounterorch.cpp,
      sonic-swss/orchagent/debug_counter/drop_counter.cpp,
@@ -161,7 +161,7 @@ STATE_DB / DEBUG_COUNTER_CAPABILITIES | <counter_type>   (Hash)
 ---
 
 <!-- ordering -->
-## 書込み順・タイミング依存 (Phase B)
+## 書込み順・タイミング依存
 
 <!-- evidence: sonic-swss/orchagent/portsorch.cpp, sonic-swss/orchagent/debugcounterorch.cpp,
      sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/orchdaemon.cpp -->
@@ -226,9 +226,7 @@ orchdaemon.cpp:452  gDebugCounterOrch = new DebugCounterOrch(...)
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-state-cross-refs.md`
+## 暗黙参照テーブル
 
 `PORT_COUNTER_CAPABILITIES` / `QUEUE_COUNTER_CAPABILITIES` / `DEBUG_COUNTER_CAPABILITIES` はいずれも [YANG](../../reference/glossary.md#term-yang) 未モデル化のオペレーショナルテーブルであり、orchagent が **書き手 (producer only)** として書き込む。ここでの暗黙参照は、生成側（portsorch / debugcounterorch）が依存する SAI / DB リソースと、消費側（portstat / dropconfig）が参照するテーブルを指す。
 
@@ -268,9 +266,7 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 ---
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-state-failure.md`
+## 失敗挙動マトリクス
 
 <!-- evidence: sonic-swss/orchagent/portsorch.cpp:1850-1968,
      sonic-swss/orchagent/debugcounterorch.cpp:315-363,
@@ -300,9 +296,7 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 ---
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-state-constants.md`
+## ハードコード定数
 
 <!-- evidence: sonic-swss/orchagent/portsorch.cpp:421-435,1866-1879,
      sonic-swss/orchagent/debugcounterorch.cpp:357-358,
@@ -364,9 +358,7 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 ---
 
 <!-- side-effects -->
-## 副作用 (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-state-side.md`
+## 副作用
 
 <!-- evidence: sonic-swss/orchagent/portsorch.cpp:9476-9494,
      sonic-swss/orchagent/flexcounterorch.cpp:271-279,
@@ -419,9 +411,7 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 ---
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-state-pubsub.md`
+## 通信メカニズム
 
 これらの STATE_DB テーブルは CONFIG_DB テーブルとは根本的に異なる通信パターンを持つ。書き込み側は `Table::set()` による **スナップショット書き込み** (起動時 1 回限り) であり、読み取り側は `db.get()` / `db.get_all()` による **on-demand polling** である。keyspace 通知や `SubscriberStateTable` は使用しない。
 
@@ -471,9 +461,7 @@ STATE_DB
 ---
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-state-platform.md`
+## プラットフォーム / SAI Capability 差異
 
 これらの STATE_DB テーブルの内容は CONFIG_DB 設定ではなく **[ASIC](../../reference/glossary.md#term-asic) が SAI を通じて公開する能力** によって決まる。プラットフォームによって書き込まれる値が根本的に異なる。
 

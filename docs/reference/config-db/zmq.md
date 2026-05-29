@@ -82,7 +82,7 @@ ZMQ 関連フィールドはいずれも [YANG](../../reference/glossary.md#term
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ZMQ 関連フィールドは [orchagent](../../reference/glossary.md#term-orchagent) **起動時の一回のみ** 読まれる。以下の順序依存が存在する。
 
@@ -107,7 +107,7 @@ ZMQ 関連フィールドは [orchagent](../../reference/glossary.md#term-orchag
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
+## 暗黙参照マップ
 
 <!-- evidence: sonic-swss/lib/orch_zmq_config.cpp; sonic-swss/orchagent/orchdaemon.cpp; sonic-swss/fpmsyncd/routesync.cpp; sonic-buildimage/dockers/docker-orchagent/orch_zmq_tables.conf.j2 -->
 
@@ -129,10 +129,7 @@ ZMQ 関連フィールドは独立テーブルを持たず `DEVICE_METADATA|loca
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-> 調査対象: `sonic-swss/lib/orch_zmq_config.cpp`, `sonic-swss-common/common/zmqserver.cpp`, `sonic-swss-common/common/zmqclient.cpp`, `sonic-swss/orchagent/main.cpp`
-> 調査日: 2026-05-19
+## 失敗挙動
 
 ZMQ 関連の失敗は大きく「CONFIG_DB 読み取り失敗」「ZmqServer 起動・受信失敗」「ZmqClient 送信失敗」の 3 系統に分かれる。
 
@@ -205,7 +202,7 @@ orchagent 自体はクライアント側の送信失敗を直接検出しない�
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-swss/lib/orch_zmq_config.cpp; sonic-buildimage/dockers/docker-orchagent/docker-init.j2; sonic-buildimage/dockers/docker-orchagent/orch_zmq_tables.conf.j2 -->
 
@@ -257,7 +254,7 @@ orchagent の `load_zmq_tables()` (`orch_zmq_config.cpp:18-33`) がコンテナ�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ZMQ 関連 CONFIG_DB フィールドは orchagent **起動時の一回のみ** `hget` で読まれる。`SubscriberStateTable` / `ConsumerStateTable` による購読は行われない。また、これらのフィールドが `true` に設定されると、対象 APPL_DB テーブルへの書き込み経路が Redis Pub/Sub から **ZeroMQ TCP ソケット**に切り替わるという特殊な構造を持つ。
 
@@ -299,8 +296,6 @@ orchagent 側は `ZmqConsumerStateTable` で ZMQ メッセージを受信する�
 | 順序保証 | table 内 FIFO | `orderedQueue=true` のとき `m_queue` で FIFO 保証 |
 | bind タイミング | 不要 | 全ハンドラ登録後に `main.cpp:1036` で `zmqServer->bind()` |
 
-詳細解析: `meta/_intermediate/cdb-flow/zmq-pubsub.md`
-
 <!-- evidence: sonic-swss/lib/orch_zmq_config.cpp:88 (config_db.hget("DEVICE_METADATA|localhost", feature) — 購読なし) -->
 <!-- evidence: sonic-swss/orchagent/orchdaemon.cpp:334,1329 (get_feature_status() — 起動時一回読み) -->
 <!-- evidence: sonic-swss/lib/orch_zmq_config.cpp:64-79 (create_zmq_server() lazy bind) -->
@@ -308,9 +303,7 @@ orchagent 側は `ZmqConsumerStateTable` で ZMQ メッセージを受信する�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 調査日 2026-05-19。ソース: `sonic-swss/lib/orch_zmq_config.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`, `sonic-buildimage/dockers/docker-orchagent/orchagent.sh`
+## プラットフォーム差
 
 ### 共通: ZMQ ロジック自体はプラットフォーム非依存
 
@@ -354,7 +347,7 @@ asic0 → 8101、asic1 → 8102 のようにオフセットされる。global na
 <!-- /platform -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ZMQ チャネル実装に存在する、CONFIG_DB / YANG では管理されないハードコード定数の一覧。
 出典は `sonic-swss-common/common/zmqserver.h`、`sonic-swss/lib/orch_zmq_config.h`、

@@ -368,7 +368,7 @@ PUBLISH ペイロードは固定文字列 `"G"`。
 <!-- /pubsub -->
 
 <!-- phase-g:start -->
-## SAI RIF 生成経路の詳細 (Phase G)
+## SAI RIF 生成経路の詳細
 
 > ソース: `sonic-swss/orchagent/intfsorch.cpp` (L1180–1318)[^pg1]
 
@@ -446,7 +446,7 @@ CLI / minigraph
 
 ### 段階 3: APPL → SAI
 
-- IntfsOrch が `sai_router_interface_api->create_router_interface()` で VLAN に対する SAI RIF を作成。
+- IntfsOrch が `sai_router_interface_api->create_router_interface()` で VLAN に対する SAI [RIF](../../reference/glossary.md#term-rif) を作成。
 - IP プレフィックスに対して `sai_route_api` でコネクテッドルートを作成。
 
 ### 段階 4: タイミング + 副作用
@@ -456,7 +456,7 @@ CLI / minigraph
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 VLAN_INTERFACE テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -490,10 +490,9 @@ db_migrator.py での VLAN_INTERFACE マイグレーションなし
 <!-- /entry-points -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-> **調査根拠**: `intfmgr.cpp`、`sonic-vlan.yang`、`dhcp4relay.cpp`、`config_interface.cpp`、`dhcp_cfggen.py`、`natconfig`、`neighbor_advertiser`、`filter_fdb_entries.py`、`xfmr_intf.go` 全行精読 (2026-05-15)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/vlan-interface-cross-refs.md`
+> **Evidence**: `intfmgr.cpp`、`sonic-vlan.yang`、`dhcp4relay.cpp`、`config_interface.cpp`、`dhcp_cfggen.py`、`natconfig`、`neighbor_advertiser`、`filter_fdb_entries.py`、`xfmr_intf.go` 全行精読 (2026-05-15)
 
 `VLAN_INTERFACE` は YANG leafref で `VLAN`・`VRF`・`VNET` を公式参照するほか、
 実行時に以下のテーブルを**暗黙的に参照または被参照**する。
@@ -539,11 +538,7 @@ VRF が未登録のままだと `m_toSync` に積まれ VRF 登録後にリト�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・エラー処理 (Phase D)
-
-> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`、`sonic-swss/orchagent/intfsorch.cpp`  
-> 調査日: 2026-05-18  
-> 詳細証跡: `meta/_intermediate/cdb-flow/vlan-interface-failure.md`
+## 失敗挙動・エラー処理
 
 ### intfmgrd 側の失敗シナリオ
 
@@ -620,11 +615,7 @@ if (status != SAI_STATUS_SUCCESS)
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込み・SAI 呼出し (Phase F)
-
-> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`、`sonic-swss/orchagent/intfsorch.cpp`  
-> 調査日: 2026-05-18  
-> 詳細証跡: `meta/_intermediate/cdb-flow/vlan-interface-side-effects.md`
+## 副次 DB 書込み・SAI 呼出し
 
 ### SET — 属性ロウ (`VLAN_INTERFACE|Vlan<N>`)
 
@@ -674,10 +665,9 @@ if (status != SAI_STATUS_SUCCESS)
 <!-- /side-effects -->
 
 <!-- secondary-db-writes -->
-## 副次 DB 書込み (Phase F)
+## 副次 DB 書込み
 
-> intfmgr が CONFIG_DB エントリを処理した結果として書き込む APPL_DB・STATE_DB のキー・フィールドを網羅的に記録する。  
-> 調査根拠: `sonic-swss/cfgmgr/intfmgr.cpp` 全行精読 (2026-05-16)
+intfmgr が CONFIG_DB エントリを処理した結果として書き込む APPL_DB・STATE_DB のキー・フィールドを網羅的に記録する（ソース: `sonic-swss/cfgmgr/intfmgr.cpp` 全行精読 2026-05-16）。
 
 ### APPL_DB — `INTF_TABLE`
 
@@ -751,10 +741,7 @@ CONFIG_DB: VLAN_INTERFACE|Vlan100|10.0.0.1/24
 <!-- /secondary-db-writes -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 調査対象: `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`
-> 調査日: 2026-05-16
+## プラットフォーム差
 
 ### VOQ Chassis — システムインタフェース同期差
 
@@ -795,4 +782,4 @@ VLAN IF へ IPv6 アドレスを付与する場合、VOQ 構成では `ip -6 add
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 9d36d7b4722f -->
+<!-- glossary-links-injected: d8d75455adfd -->

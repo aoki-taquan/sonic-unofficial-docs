@@ -209,9 +209,7 @@ sonic-db-cli CONFIG_DB hgetall 'TAM_INT_IFA_FLOW_TABLE|flow1'
 <!-- /value-behavior -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/tam-ordering.md`
+## 書込み順依存
 
 ### 1. TAM_COLLECTOR_TABLE → TAM_INT_IFA_FLOW_TABLE
 
@@ -256,9 +254,7 @@ ADD と逆順で削除する。`TAM_INT_IFA_FLOW_TABLE` のエントリを削除
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/tam-cross-refs.md`
+## 暗黙参照テーブル
 
 `TAM_INT_IFA_FLOW_TABLE` の各フィールドは YANG leafref および CVL must 制約によって
 以下のテーブルのエントリを**参照**する。CVL ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common) が GNMI/REST 経由の
@@ -286,9 +282,7 @@ ADD と逆順で削除する。`TAM_INT_IFA_FLOW_TABLE` のエントリを削除
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/tam-failure.md`
+## 失敗挙動マトリクス
 
 TAM テーブル群の失敗経路は **2 つのレイヤ** に分かれる。(1) Management Framework
 経由での設定時に CVL が検出する YANG 制約違反、(2) [orchagent](../../reference/glossary.md#term-orchagent)（[portsorch](../../reference/glossary.md#term-portsorch) / HFTelOrch）
@@ -351,9 +345,7 @@ docker logs swss 2>&1 | grep -E "TAM|HFTel|Path Tracing"
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/tam-constants.md`
+## ハードコード定数
 
 TAM テーブル群に関わる定数は YANG スキーマ由来のバリデーション定数と、orchagent が SAI オブジェクト生成時に使用するランタイム定数の 2 層に存在する。
 
@@ -406,9 +398,7 @@ TAM テーブル群に関わる定数は YANG スキーマ由来のバリデー�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/tam-side-effects.md`
+## 副次 DB 書込
 
 TAM テーブル群（`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_FEATURE_TABLE` / `TAM_INT_IFA_FLOW_TABLE`）に対する主要購読者（`portsorch` および `HFTelOrch`）が副次的に書き込む DB エントリを以下に示す。
 
@@ -439,9 +429,7 @@ STATE_DB:HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE|<profile_name>|<group_type>
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/tam-pubsub.md`
+## 通信メカニズム
 
 TAM 4 テーブル（`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_FEATURE_TABLE` / `TAM_INT_IFA_FLOW_TABLE`）は **コミュニティ版 orchagent によって購読されない**。`orchdaemon.cpp` に対応する `TableConnector` / `addConsumer` 登録が存在しないため、keyspace 通知・`SubscriberStateTable`・`ConsumerStateTable` のいずれも発生しない。
 
@@ -467,9 +455,7 @@ TAM 4 テーブル（`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_F
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/tam-platform.md`
+## プラットフォーム差
 
 TAM 4 テーブル（`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_FEATURE_TABLE` / `TAM_INT_IFA_FLOW_TABLE`）の処理コードには `getenv("platform")` や `ASIC_VENDOR` 環境変数によるプラットフォーム固有分岐が**存在しない**。ただし TAM に関わる 2 つの主要処理経路はともに **SAI capability query** の結果でランタイムに有効/無効が決まるため、ベンダー SAI 実装によって動作差が生じる。
 

@@ -82,7 +82,7 @@ VRF_TABLE:<vrf_name>
 - ※4 `mgmtVrfEnabled` / `in_band_mgmt_enabled` は `SWSS_LOG_INFO("MGMT VRF field: %s ignored")` で明示的に無視 (vrforch.cpp:74-78)
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 > 調査日 2026-05-15。ソース: `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/orchagent/vrforch.h`, `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss-common/common/schema.h`
 
@@ -170,7 +170,7 @@ VRFOrch は VRF 作成/更新成功後に `STATE_VRF_OBJECT_TABLE|<vrf_name>` �
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `vrfmgrd` (`sonic-swss/cfgmgr/vrfmgr.cpp`) および `VRFOrch::addOperation` / `VRFOrch::delOperation` (`sonic-swss/orchagent/vrforch.cpp`) を精読した結果、以下の順序依存・タイミング依存を検出した。
 
@@ -220,7 +220,7 @@ DEL CONFIG_DB VRF|VrfRed
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `APPL_DB VRF_TABLE` はエントリの **書き手が vrfmgrd 単独** であり、[YANG](../../reference/glossary.md#term-yang) leafref も未定義のため、暗黙参照はすべて実装レベルの依存として現れる。以下は (A) vrfmgrd が CONFIG_DB から読む入力テーブル、(B) VRFOrch が [orchagent](../../reference/glossary.md#term-orchagent) の `gDirectory` 経由で参照する内部 Orch、(C) 書込み先となる [STATE_DB](../../reference/glossary.md#term-state_db) / APPL_DB テーブルを整理したもの。
 
@@ -258,12 +258,10 @@ DEL CONFIG_DB VRF|VrfRed
 !!! note "APPL_DB VXLAN_VRF_TABLE は NVO 設定の有無に依存"
     `VXLAN_EVPN_NVO` が未設定（`m_evpnVxlanTunnel` が空）の場合、vrfmgrd は `doVrfVxlanTableUpdate()` で即座に `false` を返してスキップする (`vrfmgr.cpp:503-508`)。VNI が設定済みの VRF でも `VXLAN_VRF_TABLE` には何も書かれない。EVPN NVO が後から追加されると `VrfVxlanTableSync(true)` が呼ばれて既存の VNI マッピングが一括書込みされる (`vrfmgr.cpp:531-542`)。
 
-詳細な参照経路・行番号は `meta/_intermediate/cdb-flow/vrf-orch-cross-refs.md` を参照。
-
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 > 調査日 2026-05-19。ソース: `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/cfgmgr/vrfmgr.cpp`
 
@@ -298,11 +296,10 @@ DEL CONFIG_DB VRF|VrfRed
 | VNI 重複 (`vni` が既存 VRF にマップ済み) | `vrfmgr.cpp:436-444` | `doVrfVxlanTableCreateTask` が `false` 返却 → Consumer がエントリを **erase**（再試行なし）。`setLink` + `STATE_VRF_TABLE.set` は実行済みで APPL_DB 書き込みのみ抑止 | `SWSS_LOG_ERROR " vni %d is already mapped to vrf %s"` | `vrfmgr.cpp:441-443` |
 | VRF-VNI マッピング済みの VRF に対して異なる VNI を再 SET | `vrfmgr.cpp:459-462` | `doVrfVxlanTableCreateTask` が `false` 返却 → Consumer erase（再試行なし） | `SWSS_LOG_ERROR " vrf %s is already mapped to vni %d"` | `vrfmgr.cpp:461-462` |
 
-詳細解析: `meta/_intermediate/cdb-flow/vrf-orch-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 > 調査日 2026-05-19。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp:12-15`, `sonic-swss-common/common/schema.h:80,84,429-430`
 
@@ -329,11 +326,10 @@ DEL CONFIG_DB VRF|VrfRed
 !!! note "テーブル ID プール設計"
     ルーティングテーブル ID `1001`〜`5096` は `vrfmgr.cpp:28` の for ループで `m_freeTables` キューに積まれる。プール枯渇時（4096 VRF 使用済み）は `getFreeTable()` が `0` を返し `setLink()` が失敗するが、STATE_DB.set / APPL_DB.set は継続実行されるため「Linux VRF デバイスなし + SAI VR あり」の中間状態が生じうる。
 
-詳細調査ノートは `meta/_intermediate/cdb-flow/vrf-orch-constants.md` 参照。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 > 調査日 2026-05-19。ソース: `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/orchagent/vrforch.h`, `sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp`, `sonic-swss/orchagent/portsorch.cpp`
 
@@ -363,13 +359,10 @@ VNI 付き VRF の追加時に `gPortsOrch->updateL3VniStatus(vlan_id, true)` �
 !!! note "副次書込みの条件"
     `STATE_VRF_OBJECT_TABLE` は SAI 成否に関わらず必ず 1 回書かれる（成功時に `state=ok`）。`FlowCounterRouteOrch` への通知は `mRouteFlowCounterSupported` フラグに依存するため、VS / SAI 未対応環境では一切の副次 DB 書込みが生じない。VLAN VE 状態変更は VNI 付き VRF かつ `VxlanTunnelOrch::getVlanMappedToVni()` が非ゼロを返す場合のみ発生する。
 
-詳細: `meta/_intermediate/cdb-flow/vrf-orch-side-effects.md`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/vrf-orch-pubsub.md`
+## 通信メカニズム
 
 `APPL_DB VRF_TABLE` を書くのは `vrfmgrd` の `ProducerStateTable` であり、消費するのは `VRFOrch` の `ConsumerStateTable`。CONFIG_DB → vrfmgrd の経路は [CONFIG_DB VRF テーブル](./vrf.md) を参照。ここでは APPL_DB → VRFOrch の経路に絞る。
 
@@ -446,7 +439,7 @@ orchagent Select::select()
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 > 調査日 2026-05-19。ソース: `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-buildimage/dockers/docker-orchagent/supervisord.conf.j2`, `sonic-swss/orchagent/orchdaemon.cpp`
 
@@ -513,7 +506,6 @@ vrfmgrd コンストラクタは `WarmStart::isWarmStart()` で以下のよう�
 | l3mdev カーネル | l3mdev 未対応カーネルでは vrfmgrd クラッシュ | **なし**（例外発生） |
 | warm restart | 起動時 Linux VRF デバイスの削除 vs 保持 | `WarmStart::isWarmStart()` 条件 |
 
-詳細: `meta/_intermediate/cdb-flow/vrf-orch-platform.md`
 <!-- /platform -->
 
 ## 例外条件・特殊挙動

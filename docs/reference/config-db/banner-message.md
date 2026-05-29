@@ -47,8 +47,7 @@ BANNER_MESSAGE|global
 <!-- pubsub -->
 ## 通信メカニズム (Redis PUBSUB / keyspace notification)
 
-> **調査根拠**: `sonic-host-services/scripts/hostcfgd` の `BannerCfg` クラス全体 (2044-2117) + `register_callbacks()` (2480-2521) 精読、`sonic-buildimage/files/image_config/bannerconfig/banner-config.sh` 精読 (2026-05-15)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/banner-message-pubsub.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` の `BannerCfg` クラス全体 (2044-2117) + `register_callbacks()` (2480-2521) 精読、`sonic-buildimage/files/image_config/bannerconfig/banner-config.sh` 精読 (2026-05-15)  
 
 ### 購読方式
 
@@ -128,7 +127,7 @@ CONFIG_DB 書込み → keyspace 通知到達 → `banner_handler` 呼び出し 
 | `logout` | string | `""` | ログアウト時に表示 |
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト
 
 YANG `default` 文はプロビジョニング時 ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) が `init_cfg.json.j2` を展開して DB に書く段階) に適用される。
 以下は **DB エントリ自体がない場合** のランタイム fallback を per-field で示す。
@@ -149,7 +148,7 @@ YANG `default` 文はプロビジョニング時 ([sonic-cfggen](../../reference
 <!-- /defaults -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-host-services/scripts/hostcfgd` (`BannerCfg`) + `sonic-net/sonic-buildimage/files/image_config/bannerconfig/banner-config.sh`
 
@@ -195,11 +194,10 @@ YANG `default` 文はプロビジョニング時 ([sonic-cfggen](../../reference
 - **silent 誤動作**: `dict` 型外データ、`global` 以外のキー、`\n` 二重エスケープ、`state=disabled` 時のファイル残存はいずれもログを出さない。
 - **明示的 try/except なし**: `BannerCfg` クラスは明示的な `try/except` を持たず、例外ハンドリングは `run_cmd` 内部に委ねる。`raise` も無い。
 
-詳細な失敗経路 (grep カバレッジ、systemd unit 構成、PAM/sshd 連動経路) は `meta/_intermediate/cdb-flow/banner-message-failure.md` を参照。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `BANNER_MESSAGE` テーブルおよびその購読者 (`hostcfgd` `BannerCfg` クラス + `banner-config.sh`) に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-host-services/scripts/hostcfgd` と `sonic-buildimage/files/image_config/bannerconfig/`。
 
@@ -270,7 +268,6 @@ YANG `default` 文はプロビジョニング時 ([sonic-cfggen](../../reference
 - `state=enabled` で上書きしたファイルは `state=disabled` に戻しても復元されない (CONFIG_DB のみ無効化される)
 - `sshd_config` の `Banner /etc/issue.net` ディレクティブが前提。SONiC イメージビルド時に有効化されている
 
-詳細な定数一覧 (systemd 依存関係、改行処理の細部、CFG_BANNER_MESSAGE_TABLE_NAME の C++ 由来) は `meta/_intermediate/cdb-flow/banner-message-constants.md` を参照。
 <!-- /constants -->
 
 ## 購読者
@@ -297,7 +294,7 @@ YANG `default` 文はプロビジョニング時 ([sonic-cfggen](../../reference
 <!-- /cdb-exceptions -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `BannerCfg` が間接的に駆動する依存 (Phase C)
+## 暗黙参照 — `BannerCfg` が間接的に駆動する依存
 
 `BANNER_MESSAGE` はシングルトンテーブルで、CONFIG_DB レベルでは**他テーブルへの暗黙参照を持たない** (`AAA` のような共依存テーブル群は存在しない)。一方で、`hostcfgd` の `BannerCfg` ハンドラは `systemctl restart banner-config` 経由で `/usr/bin/banner-config.sh` を再実行させ、結果として **OS 側のテキストファイル経由** で sshd / getty / PAM / shell logout と暗黙連携する。本ブロックではこれら「配送経路ベースの依存」と systemd unit 依存をまとめる。
 
@@ -324,7 +321,7 @@ YANG `default` 文はプロビジョニング時 ([sonic-cfggen](../../reference
 | `/etc/motd` | `pam_motd.so` (`/etc/pam.d/sshd` / `/etc/pam.d/login` の `session optional pam_motd.so`) | PAM stack に `pam_motd` が含まれていること (Debian デフォルト) | banner-config.sh:15 |
 | `/etc/logout_message` | 各ユーザ shell の `~/.bash_logout` / `/etc/skel/.bash_logout` 等 | SONiC 独自パス。Debian 標準にないため、profile 側で明示的に cat する設定が必要 | banner-config.sh:16 |
 
-> いずれも `echo -e "$VAR" > path` による **truncate 上書き**。`state=disabled` に戻しても元の Debian 標準内容は復元されない (Phase E 定数ブロックの「副作用」参照)。
+> いずれも `echo -e "$VAR" > path` による **truncate 上書き**。`state=disabled` に戻しても元の Debian 標準内容は復元されない 。
 
 ### systemd unit 依存
 
@@ -346,7 +343,6 @@ YANG `default` 文はプロビジョニング時 ([sonic-cfggen](../../reference
 - **`DEVICE_METADATA.localhost.hostname`**: banner 文字列はリテラル展開 (`echo -e`) のみで、hostname を埋め込む処理は `banner-config.sh` に存在しない (getty/login 側の `\h` escape は使えない)
 - **`FIPS`**: sshd の暗号方針には影響するが banner には無関係
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/banner-message-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- value-behavior -->
@@ -414,7 +410,6 @@ hostcfgd.load()  ─── 順次呼び出し ───
 - sshd は `Banner /etc/issue.net` ディレクティブに従い接続ごとにファイルを再読込する Debian 標準挙動。
 - `/etc/motd` は `pam_motd.so` がログインセッション開始時に都度読む。PAM スタックの再ロードは発生しない。
 
-詳細は `meta/_intermediate/cdb-flow/banner-message-ordering.md` を参照。
 <!-- /ordering -->
 
 <!-- ref-triangle:start -->
@@ -477,7 +472,7 @@ show banner
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BANNER_MESSAGE`
 
@@ -507,7 +502,7 @@ show banner
 <!-- /entry-points -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **結論: プラットフォーム差なし**（multi-asic / chassis / ベンダー固有 banner すべて該当なし）。
 
@@ -526,12 +521,11 @@ show banner
 
 ### 補足
 
-- 本判定の詳細は `meta/_intermediate/cdb-flow/banner-message-platform.md` を参照。
 - multi-asic chassis (例: VoQ chassis supervisor + linecard 構成) においても `banner-config.service` はホスト側に 1 インスタンスのみ存在し、すべての SSH / console セッションで同じバナーが表示される。
 <!-- /platform -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 **結論: 副次 Redis DB ([APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / その他) への書込は一切なし**。
 
@@ -566,7 +560,6 @@ show banner
 - 適用済みかどうかの確認は **ホスト OS ファイル参照** または **systemd journal (`journalctl -u banner-config`)** に閉じる
 - 比較として `FipsCfg` (`hostcfgd:1759-1821`) は `STATE_DB` の `FIPS_STATS|state` を `hset` で公開するが、`BannerCfg` には同等のパターンが意図的に実装されていない
 
-詳細な走査コマンドと grep ヒット一覧は `meta/_intermediate/cdb-flow/banner-message-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- glossary-links-injected: d2191ccfe0bd -->

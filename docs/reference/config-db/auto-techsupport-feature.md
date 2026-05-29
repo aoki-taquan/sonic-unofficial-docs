@@ -108,9 +108,7 @@ GLOBAL 側にある `max_techsupport_limit` / `max_core_limit` / `since` はこ�
 <!-- /value-behavior -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/auto-techsupport-feature-failure.md -->
+## 失敗挙動・retry / recovery
 
 ### 全体観
 
@@ -168,13 +166,10 @@ invoke_ts_cmd(db, num_retry=0)
 - **container 名一致は前方一致ではなく完全一致**: `coredump_gen_handler.py:54` の `FEATURE.format(self.container)` は完全一致 `HGET` を行う。`trim_masic_suffix` で末尾数字を削った後の名前と一致しなければ即 skip。
 - **uncaught 例外**: `coredump_gen_handler.py` / `techsupport_cleanup.py` には top-level `try/except` がなく、`subprocess_exec` や [Redis](../../reference/glossary.md#term-redis) 接続で raise が起きるとプロセス異常終了。syslog に Python traceback が出るが、`coredump-compress` 側に rc が戻らないため kernel 側からは silent failure。
 
-> **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:1-82`; `sonic-utilities/scripts/techsupport_cleanup.py:1-59`; `sonic-utilities/utilities_common/auto_techsupport_helper.py:84,115-124,170-193,232-256,285-301,317-331`; 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-feature-failure.md`
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/auto-techsupport-feature-side.md -->
+## 副次 DB 書込
 
 `AUTO_TECHSUPPORT_FEATURE` テーブル本体には常駐 subscriber が存在せず、書込みは「core dump 発生 → `coredump_gen_handler` 起動」「techsupport rotate → `techsupport_cleanup` 起動」のイベント駆動経路でのみ発生する。両 script (`sonic-utilities/scripts/coredump_gen_handler.py` / `techsupport_cleanup.py` / 共通実装 `utilities_common/auto_techsupport_helper.py`) を走査した結果、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への書込みは無く、副次書込は **[STATE_DB](../../reference/glossary.md#term-state_db) の `AUTO_TECHSUPPORT_DUMP_INFO` のみ** に閉じる。
 
@@ -199,11 +194,10 @@ invoke_ts_cmd(db, num_retry=0)
 
 ### 特性
 
-- **STATE_DB 書込は techsupport 1 回成功につき 2〜4 field の HSET**。中断 (Redis 切断) で partial entry が残ると `get_ts_map` の `int(creation_time)` 変換失敗で rate-limit 計算から漏れる (Phase D 失敗パターン表と整合)。
+- **STATE_DB 書込は techsupport 1 回成功につき 2〜4 field の HSET**。中断 (Redis 切断) で partial entry が残ると `get_ts_map` の `int(creation_time)` 変換失敗で rate-limit 計算から漏れる (失敗パターン表と整合)。
 - **`AUTO_TECHSUPPORT_FEATURE` の field は副次書込の値には反映されない**。`container` / `event_type` / `core_dump` は実行コンテキスト由来、`timestamp` は wall clock。`AUTO_TECHSUPPORT_FEATURE.state` / `rate_limit_interval` は「書込みを行うか否か」の gate にのみ寄与する。
 - **DELETE 経路は GLOBAL の `max_techsupport_limit` 駆動**で、本テーブル (`AUTO_TECHSUPPORT_FEATURE`) のフィールドは参照されない。
 
-> **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:69-71`; `sonic-utilities/scripts/techsupport_cleanup.py:13-18,52-54`; `sonic-utilities/utilities_common/auto_techsupport_helper.py:43,57,60,302-310,334-337`; 詳細スキャン `meta/_intermediate/cdb-flow/auto-techsupport-feature-side.md`
 <!-- /side-effects -->
 
 <!-- ref-triangle:start -->
@@ -252,7 +246,7 @@ ls -lh /var/dump/
 
 ### 段階 1 — Consumer 登録
 
-本テーブルに対する常駐 subscriber は存在しない（`sonic-host-services/scripts/hostcfgd` の grep で `AUTO_TECHSUPPORT_FEATURE` 0 hit）。実装は [hostcfgd](../../reference/glossary.md#term-hostcfgd) と独立した kernel `core_pattern` → `coredump-compress` → `coredump_gen_handler.py` のパイプラインで、必要なフィールドは一発起動スクリプトが同期 HGET で取得する。詳細は Phase G を参照。
+本テーブルに対する常駐 subscriber は存在しない（`sonic-host-services/scripts/hostcfgd` の grep で `AUTO_TECHSUPPORT_FEATURE` 0 hit）。実装は [hostcfgd](../../reference/glossary.md#term-hostcfgd) と独立した kernel `core_pattern` → `coredump-compress` → `coredump_gen_handler.py` のパイプラインで、必要なフィールドは一発起動スクリプトが同期 HGET で取得する。詳細は を参照。
 
 ### 段階 2 — CFG→APPL 翻訳
 
@@ -270,7 +264,7 @@ ls -lh /var/dump/
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `AUTO_TECHSUPPORT_FEATURE`
 
@@ -300,7 +294,7 @@ ls -lh /var/dump/
 <!-- /entry-points -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A コード由来)
+## フィールド暗黙デフォルト
 
 YANG 宣言デフォルトに加え、Python コードが持つ fallback を per-field で記録する。
 
@@ -335,9 +329,9 @@ YANG 宣言デフォルトに加え、Python コードが持つ fallback を per
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-`AUTO_TECHSUPPORT_FEATURE` テーブルは **常駐 subscriber を持たない pull-on-event 型テーブル** (Phase G 参照) であり、CONFIG_DB 書込み時刻と handler 評価時刻が完全に分離している。順序依存はトランザクショナルではなく eventual だが、**GLOBAL → FEATURE の二段ゲート**、**FEATURE 行 → AUTO_TECHSUPPORT_FEATURE 行**、**container start → kernel `core_pattern` 経由の handler 起動** という 3 種の順序制約が存在する。
+`AUTO_TECHSUPPORT_FEATURE` テーブルは **常駐 subscriber を持たない pull-on-event 型テーブル**  であり、CONFIG_DB 書込み時刻と handler 評価時刻が完全に分離している。順序依存はトランザクショナルではなく eventual だが、**GLOBAL → FEATURE の二段ゲート**、**FEATURE 行 → AUTO_TECHSUPPORT_FEATURE 行**、**container start → kernel `core_pattern` 経由の handler 起動** という 3 種の順序制約が存在する。
 
 ### 検出された順序依存
 
@@ -372,13 +366,11 @@ YANG 宣言デフォルトに加え、Python コードが持つ fallback を per
 - install 時の自動生成は `init_cfg.json` の **build-time 静的設定** に依存しており、custom image で `AUTO_TECHSUPPORT|GLOBAL` を削ると後追い不能で feature override が消える (#3)。
 - cleanup と invocation の責任分界が GLOBAL/FEATURE で**非対称** (#7) という設計トレードオフを認識しておくと運用判断が容易。
 
-詳細解析: `meta/_intermediate/cdb-flow/auto-techsupport-feature-ordering.md`
-
 <!-- evidence: sonic-utilities/scripts/coredump_gen_handler.py:14-82; sonic-utilities/scripts/techsupport_cleanup.py:13-55; sonic-utilities/sonic_package_manager/service_creator/feature.py:60-200; sonic-utilities/utilities_common/auto_techsupport_helper.py:60,69,300-338; sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45 -->
 <!-- /ordering -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: AUTO_TECHSUPPORT_FEATURE は host 単位で適用され、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)・ベンダーに依らない。
 
@@ -414,11 +406,10 @@ def trim_masic_suffix(container_name):
 
 このため `AUTO_TECHSUPPORT_FEATURE` の key は **asic suffix を含まない形式**で書く必要がある (例: `swss0` ではなく `swss`)。誤って suffix 付きで登録しても silent skip となり techsupport が起動しないため注意。
 
-詳細根拠と grep ログは `meta/_intermediate/cdb-flow/auto-techsupport-feature-platform.md` を参照。
 <!-- /platform -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -460,13 +451,12 @@ coredump_gen_handler.py
 - rate-limit 状態は CONFIG_DB ではなく `STATE_DB` の `AUTO_TECHSUPPORT_DUMP_INFO_TABLE` (前回 dump の timestamp) に保管される。
 
 !!! warning "本文 `<!-- runtime-trace -->` ブロックとの差異"
-    本文の段階 1 に「`auto_techsupport_handler` が `hostcfgd` 内部のサブハンドラとして `AUTO_TECHSUPPORT_FEATURE` を購読する」旨の記述があるが、`sonic-host-services/scripts/hostcfgd:2468-2528` を実コード grep した範囲では AUTO_TECHSUPPORT / AUTO_TECHSUPPORT_FEATURE への `subscribe()` 呼び出しは確認できない。実装は hostcfgd と独立した kernel `core_pattern` → `coredump-compress` → `coredump_gen_handler.py` のパイプライン (本ページの Phase G 分析)。次回 verifier 巡回で本文修正候補。
+    本文の段階 1 に「`auto_techsupport_handler` が `hostcfgd` 内部のサブハンドラとして `AUTO_TECHSUPPORT_FEATURE` を購読する」旨の記述があるが、`sonic-host-services/scripts/hostcfgd:2468-2528` を実コード grep した範囲では AUTO_TECHSUPPORT / AUTO_TECHSUPPORT_FEATURE への `subscribe()` 呼び出しは確認できない。実装は hostcfgd と独立した kernel `core_pattern` → `coredump-compress` → `coredump_gen_handler.py` のパイプライン (本ページの 分析)。次回 verifier 巡回で本文修正候補。
 
-> **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:1-82`; `sonic-utilities/scripts/techsupport_cleanup.py:1-59`; `sonic-utilities/utilities_common/auto_techsupport_helper.py:300-338`; `sonic-utilities/scripts/coredump-compress:1-35`; `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45`; `sonic-host-services/scripts/hostcfgd:2468-2528`; 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-feature-pubsub.md`
 <!-- /pubsub -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `AUTO_TECHSUPPORT_FEATURE` を消費する Python パイプライン (`coredump_gen_handler.py` / `techsupport_cleanup.py` / `memory_threshold_check.py` / 共通ヘルパ `auto_techsupport_helper.py`) と、パッケージ install 時の初期値を担う `feature.py` に存在する CONFIG_DB に格納されないハードコード定数の一覧。
 
@@ -533,16 +523,15 @@ kernel `core_pattern` 側 (`sonic-buildimage/files/image_config/sysctl/90-sonic.
 
 ### 7. 重要な特性
 
-- **`coredump_gen_handler.py` 単体は定数を持たない**: `from utilities_common.auto_techsupport_helper import *` で全定数を取り込む。Phase E の実体は `auto_techsupport_helper.py`。
+- **`coredump_gen_handler.py` 単体は定数を持たない**: `from utilities_common.auto_techsupport_helper import *` で全定数を取り込む。の実体は `auto_techsupport_helper.py`。
 - **`techsupport_cleanup.py` は `TS_DIR` / `CFG_MAX_TS` のみ参照**: `AUTO_TECHSUPPORT_FEATURE` テーブルは見ず、GLOBAL の `state` と `max_techsupport_limit` だけで cleanup 判定。
 - **`TS_GLOBAL_TIMEOUT="60"` は CONFIG_DB から上書き不可**: 長時間 techsupport を必要とする運用ではソース改変が要る。
 - **`TIME_BUF=20` 秒**: handler 起動時に `find_new_core_files()` で「直近 20 秒以内」の `*.core.gz` のみを対象にして二重起動を避ける。
 
-> **Evidence**: `sonic-utilities/utilities_common/auto_techsupport_helper.py:1-84`; `sonic-utilities/scripts/coredump_gen_handler.py:1-82`; `sonic-utilities/scripts/techsupport_cleanup.py:1-59`; `sonic-utilities/scripts/memory_threshold_check.py:1-30`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:22-26`; `sonic-utilities/scripts/coredump-compress:1-35`; 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-feature-constants.md`
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `coredump_gen_handler` パイプラインが読み出す関連テーブル (Phase C)
+## 暗黙参照 — `coredump_gen_handler` パイプラインが読み出す関連テーブル
 
 `AUTO_TECHSUPPORT_FEATURE|<feat>` 単独では techsupport 起動可否は決定しない。`coredump_gen_handler.py` / `techsupport_cleanup.py` および共通ヘルパ `auto_techsupport_helper.py` は kernel `core_pattern` で起動されたあと、`AUTO_TECHSUPPORT|GLOBAL` を必ず先に評価し、さらに `FEATURE` テーブルの docker 名空間と STATE_DB 上の `AUTO_TECHSUPPORT_DUMP_INFO` を組み合わせて per-feature rate-limit を判定する。
 
@@ -593,7 +582,6 @@ per-feature `rate_limit_interval` の経過判定は CONFIG_DB 値だけでは�
 - **`DEVICE_METADATA`**: `coredump_gen_handler.py` / `techsupport_cleanup.py` / `memory_threshold_check.py` / `auto_techsupport_helper.py` を `DEVICE_METADATA` で grep して 0 ヒット。multi-asic 判定や hostname 解決は本パイプラインに存在しない。
 - **`CORE_DUMP_NAME_TO_CONTAINER_MAP`**: 現行 [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) master のコード上に該当 CONFIG_DB / STATE_DB テーブルは存在しない (`grep -rn "CORE_DUMP_NAME_TO_CONTAINER" .cache/sonic-sources/` で 0 ヒット)。kernel `core_pattern` → `coredump-compress %e %t %p %P` でユーザ空間に渡される `args.container` がコンテナ名→`FEATURE` key への暗黙マッピングを果たしており、DB レベルのテーブルとしては具現化されていない。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-feature-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- glossary-links-injected: 9bd150521228 -->

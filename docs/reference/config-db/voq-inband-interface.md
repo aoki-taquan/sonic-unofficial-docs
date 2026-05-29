@@ -184,7 +184,7 @@ show ip interface | grep Ethernet-IB
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 VOQ_INBAND_INTERFACE テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -218,10 +218,7 @@ db_migrator.py での VOQ_INBAND_INTERFACE マイグレーションなし
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`
-> 調査日: 2026-05-16
+## 書込み順依存
 
 ### 他テーブル先行必須
 
@@ -250,16 +247,10 @@ if((table_name == CFG_VOQ_INBAND_INTERFACE_TABLE_NAME) &&
 - IP プレフィクスロウ（2-key）は通常の `doIntfAddrTask()` パスを通るため `isIntfCreated()` が必要
 - `VoqOrch` が APP_DB の `INTF_TABLE` を購読し、inband ポートの [SAI](../../reference/glossary.md#term-sai) [RIF](../../reference/glossary.md#term-rif) を作成する
 
-詳細調査ノートは `meta/_intermediate/cdb-flow/voq-inband-interface-ordering.md` 参照。
-
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/nbrmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/orchagent/portsorch.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang`
-> 調査日: 2026-05-18
-> 調査証跡: `meta/_intermediate/cdb-flow/voq-inband-interface-cross-refs.md`
+## 暗黙参照テーブル
 
 YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上の依存関係。
 
@@ -281,7 +272,7 @@ YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 対象: `intfmgrd` (`sonic-swss/cfgmgr/intfmgr.cpp`) および `orchagent` の `IntfsOrch` / `PortsOrch` (`sonic-swss/orchagent/intfsorch.cpp`, `portsorch.cpp`)。
 
@@ -315,11 +306,10 @@ VOQ 系には [ACL](../../reference/glossary.md#term-acl)/[QoS](../../reference/
 journalctl -u swss | grep -i "inband"
 ```
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/voq-inband-interface-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 以下の定数は `sonic-swss/cfgmgr/intfmgr.cpp`、`sonic-swss/cfgmgr/intfmgrd.cpp`、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang` から検出したマジックナンバー・閾値。
 
@@ -335,17 +325,12 @@ journalctl -u swss | grep -i "inband"
 !!! note "metric 256 の意味"
     VOQ chassis では、inband ポート経由の eBGP / iBGP 学習経路と直接接続ルートが競合したとき、カーネルの connected route metric (デフォルト 256) に合わせて IPv6 アドレスを `metric 256` で追加することで両者を同一 ECMP グループに統合できる。IPv4 ではカーネルの connected / static 両 metric がデフォルト 0 のため明示指定不要 (`intfmgr.cpp:101-102` コメント参照)。
 
-> 調査証跡: `meta/_intermediate/cdb-flow/voq-inband-interface-constants.md`
-
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `VOQ_INBAND_INTERFACE` テーブルへの SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みを示す。
-
-> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_intf.py`, `sonic-swss/cfgmgr/nbrmgr.cpp`
-> 調査日: 2026-05-18
 
 ### SET — インタフェースロウ (`VOQ_INBAND_INTERFACE|<name>`)
 
@@ -394,10 +379,7 @@ journalctl -u swss | grep -i "inband"
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Redis PUBSUB / ConsumerStateTable) (Phase G)
-
-> 調査対象: `sonic-swss/cfgmgr/intfmgrd.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`
-> 調査日: 2026-05-18
+## 通信メカニズム (Redis PUBSUB / ConsumerStateTable)
 
 ### 購読方式
 
@@ -450,10 +432,7 @@ IP プレフィクスロウ SET パス (keys.size() == 2):
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 調査対象: `sonic-swss/orchagent/main.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/portsorch.cpp`
-> 調査日: 2026-05-19
+## プラットフォーム差
 
 ### switch_type による有効性
 

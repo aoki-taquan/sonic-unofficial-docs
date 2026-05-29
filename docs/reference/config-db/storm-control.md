@@ -54,7 +54,6 @@ flowchart LR
 
 ## 暗黙デフォルトとハードコード挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/storm-control-defaults.md -->
 
 ### 1. kbps — YANG optional だが実装は mandatory
 
@@ -261,9 +260,8 @@ def add_storm_config(self, port, storm_type, kbps):
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
-<!-- evidence: meta/_intermediate/cdb-flow/storm-control-ordering.md -->
 
 `PolicerOrch::doTask()` / `handlePortStormControlTable()` (`sonic-swss/orchagent/policerorch.cpp`) の実装から導出した順序制約。
 
@@ -336,7 +334,7 @@ PolicerOrch::handlePortStormControlTable()
 <!-- cross-refs -->
 ## 暗黙参照（テーブル間依存）
 
-`PORT_STORM_CONTROL` テーブルを処理する `PolicerOrch::handlePortStormControlTable()` が実行時に参照する他テーブル・Orch 内状態。YANG の leafref 定義は PORT への参照のみで、それ以外は実装レベルの暗黙依存である。コード調査の詳細は `meta/_intermediate/cdb-flow/storm-control-cross-refs.md` に記録した。
+`PORT_STORM_CONTROL` テーブルを処理する `PolicerOrch::handlePortStormControlTable()` が実行時に参照する他テーブル・Orch 内状態。YANG の leafref 定義は PORT への参照のみで、それ以外は実装レベルの暗黙依存である。
 
 ### 1. PORT（キーポート名の OID 解決 — 必須依存）
 
@@ -387,9 +385,8 @@ PORT_STORM_CONTROL テーブル
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/storm-control-failure.md -->
 <!-- source: sonic-swss/orchagent/policerorch.cpp -->
 
 ### 失敗パス一覧
@@ -437,9 +434,7 @@ DEL パスでは `set_port_attribute(NULL)` でデタッチ後、`remove_policer
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/storm-control-constants.md`
+## ハードコード定数
 
 ### フィールド名文字列定数 (`policerorch.cpp:29-32`)
 
@@ -509,9 +504,7 @@ attr.value.u64 = (stoul(value) * 1000 / 8);
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/storm-control-side-effects.md`
+## 副次 DB 書込
 > ソース: `sonic-swss/orchagent/policerorch.cpp`
 
 `PolicerOrch::handlePortStormControlTable()` は CONFIG_DB `PORT_STORM_CONTROL` の SET / DEL を処理するが、**[STATE_DB](../../reference/glossary.md#term-state_db)・[APPL_DB](../../reference/glossary.md#term-appl_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db) への明示的な書込みは一切存在しない**。副次変化は [ASIC_DB](../../reference/glossary.md#term-asic_db)（SAI API 経由）と PolicerOrch 内部状態の 2 系統のみ。
@@ -547,9 +540,7 @@ storm control 専用 policer の参照カウントは常に `0` で固定され�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/storm-control-pubsub.md`
+## 通信メカニズム
 > ソース: `sonic-swss/orchagent/orchdaemon.cpp:395-402`, `policerorch.cpp:374-404`
 
 ### Redis 購読方式
@@ -588,9 +579,7 @@ SAI API → syncd → ASIC_DB
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/storm-control-platform.md`
+## プラットフォーム差
 > ソース: `sonic-utilities/config/main.py:806-814`, `sonic-swss/orchagent/orchdaemon.cpp:401`, `sonic-swss/orchagent/policerorch.cpp:156-240`
 
 ### ASIC 種別依存

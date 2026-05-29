@@ -120,7 +120,7 @@ db_hmset(ConfigDB, "HARDWARE|ACCESS_LIST", {
 - 関連 [YANG](../../reference/glossary.md#term-yang): なし（YANG 未定義）
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 community [sonic-swss](../../reference/glossary.md#term-sonic-swss)/[orchagent](../../reference/glossary.md#term-orchagent) は `HARDWARE` テーブルを**購読しない**（dead consumer）。
 `orchagent/`・`cfgmgr/`・`fpmsyncd/` 全体で `COUNTER_MODE` / `LOOKUP_MODE` / `TCAM_SHARING` / `ACCESS_LIST` の参照は 0 件であり、書込み順依存は community コードパスでは発生しない。
@@ -138,13 +138,10 @@ community [sonic-swss](../../reference/glossary.md#term-sonic-swss)/[orchagent](
     `HARDWARE|ACCESS_LIST` を READ/WRITE するとされる。当該コードは community リポジトリ外のため
     書込み順序の詳細は本ページの対象外。
 
-詳細探索証跡: `meta/_intermediate/cdb-flow/hardware-ordering.md`
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照・共依存コンポーネント (Phase C)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/hardware-cross-refs.md`
+## 暗黙参照・共依存コンポーネント
 
 `HARDWARE|ACCESS_LIST` は CONFIG_DB に書き込まれるが、community [SONiC](../../reference/glossary.md#term-sonic) コードパスでは**いずれのコンポーネントも参照しない**（dead consumer）。YANG モジュールが存在しないため leafref による参照整合性保証も一切ない。
 
@@ -170,7 +167,7 @@ Dell 等のベンダー向け [gNMI](../../reference/glossary.md#term-gnmi)/tran
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `HARDWARE` テーブルは community [sonic-swss](../../reference/glossary.md#term-sonic-swss)/orchagent に**購読されない**（dead consumer）。このため、書き込み自体の成否と ACL ハードウェア設定の反映との間に失敗パスは存在しない。
 
@@ -218,11 +215,10 @@ community sonic-swss は `HARDWARE` テーブルを読み取らないため、**
 
 **フィールド由来**: sonic-gnmi/testdata と [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common/dbinit.py で確認。community sonic-swss (`grep -rn 'COUNTER_MODE\|LOOKUP_MODE\|TCAM_SHARING' sonic-swss/`) は 0 件。
 
-詳細探索証跡: `meta/_intermediate/cdb-flow/hardware-defaults.md`
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 > 調査対象: `sonic-swss/orchagent/aclorch.cpp`、`sonic-gnmi/testdata/db_dump.json`、`sonic-mgmt-common/tools/test/dbinit.py`
 > 調査日: 2026-05-19
@@ -247,11 +243,10 @@ community sonic-swss は `HARDWARE` テーブルを読み取らないため、**
     YANG モジュールが存在しないため enum 制約もなく、任意の文字列を書き込んでも CVL はエラーにならない。
     consumer が存在しないため実際の ASIC 動作への影響もない。
 
-詳細探索証跡: `meta/_intermediate/cdb-flow/hardware-constants.md`
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用 (Phase F)
+## 副作用
 
 > 調査対象: `sonic-swss/orchagent/`、`sonic-swss/cfgmgr/`、`sonic-swss/fpmsyncd/`、`sonic-gnmi/`（本番コード）、`sonic-mgmt-common/`（本番コード）
 > 調査日: 2026-05-19
@@ -273,11 +268,10 @@ community sonic-swss は `HARDWARE` テーブルを読み取らないため、**
 
 orchagent / cfgmgr は HARDWARE テーブルを購読しないため、ファイル書換・プロセス再起動・SIGHUP 送信も発生しない。ベンダー向け gNMI/translib スタック（sonic-mgmt-common transformer 層）では別途動作しうるが、community リポジトリ外のため対象外とする。
 
-詳細スキャン証跡: `meta/_intermediate/cdb-flow/hardware-side-effects.md`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 > 調査対象: `sonic-swss/orchagent/orchdaemon.cpp`、`sonic-swss/orchagent/aclorch.cpp`、`sonic-swss/cfgmgr/` 全体
 > 調査日: 2026-05-19
@@ -296,11 +290,10 @@ CONFIG_DB `HARDWARE|ACCESS_LIST` に書き込まれたキー変更イベント�
     Dell 等のベンダー向け gNMI/translib スタック（`sonic-mgmt-common` transformer 層の vendored 拡張）は
     `HARDWARE|ACCESS_LIST` を READ/WRITE しうるが、当該コードは community リポジトリ外のため対象外。
 
-詳細根拠: `meta/_intermediate/cdb-flow/hardware-side-effects.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: `HARDWARE|ACCESS_LIST` は dead consumer のため、ASIC 種別・multi-asic / chassis 構成・ベンダーにかかわらず挙動は同一（いかなる操作も SAI には到達しない）。
 
@@ -312,7 +305,6 @@ CONFIG_DB `HARDWARE|ACCESS_LIST` に書き込まれたキー変更イベント�
 | ベンダー固有 SAI / SDK 差分 | なし | SAI 呼出が発生しないため、SAI 実装の差に依存しない |
 | YANG / CVL 差分 | なし | HARDWARE テーブルは YANG モジュール未定義。プラットフォーム別 CVL プロファイルなし |
 
-詳細根拠: `meta/_intermediate/cdb-flow/hardware-platform.md`
 <!-- /platform -->
 ## 引用元
 

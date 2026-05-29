@@ -138,7 +138,7 @@ m_qos_handler_map.insert(qos_handler_pair(CFG_TC_TO_PRIORITY_GROUP_MAP_TABLE_NAM
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `DSCP_TO_PG_MAP` テーブルは存在しないため、実際の 2 段マッピングチェーン全体の書き込み順依存を記述する。
 
@@ -176,11 +176,11 @@ DEL TC_TO_PRIORITY_GROUP_MAP|<pg_name>  # 参照がなくなってから削除
 | PORT_QOS_MAP DEL → DSCP_TO_TC_MAP DEL | 必須先行 | m_pendingRemove + task_need_retry |
 | PORT_QOS_MAP DEL → TC_TO_PRIORITY_GROUP_MAP DEL | 必須先行 | m_pendingRemove + task_need_retry |
 
-> **スキャン証跡**: `QosOrch::doTask()` L2254-2299、`handlePortQosMapTable()` L2046-2134、汎用マップハンドラ L130-196 参照。
+> **裏取り**: `QosOrch::doTask()` L2254-2299、`handlePortQosMapTable()` L2046-2134、汎用マップハンドラ L130-196 参照。
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照・共依存テーブル (Phase C)
+## 暗黙参照・共依存テーブル
 
 `DSCP_TO_PG_MAP` テーブルは存在しないため、DSCP → PG マッピング機能を実現する 2 段構成の各テーブル間の参照関係を記述する。
 
@@ -217,13 +217,11 @@ PORT_QOS_MAP
   └─ [参照元]  TC_TO_PRIORITY_GROUP_MAP  (tc_to_pg_map フィールド)
 ```
 
-> **スキャン証跡**: `qosorch.cpp:80-96` (m_qos_maps 初期化), `qosorch.cpp:99-116` (qos_to_ref_table_map), `qosorch.cpp:2124-2133` (resolveFieldRefValue in handlePortQosMapTable), `qosorch.cpp:2258-2261` (allPortsReady ガード), `sonic-port-qos-map.yang:85-91,129-135` (leafref 定義)。
+> **裏取り**: `qosorch.cpp:80-96` (m_qos_maps 初期化), `qosorch.cpp:99-116` (qos_to_ref_table_map), `qosorch.cpp:2124-2133` (resolveFieldRefValue in handlePortQosMapTable), `qosorch.cpp:2258-2261` (allPortsReady ガード), `sonic-port-qos-map.yang:85-91,129-135` (leafref 定義)。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/dscp-to-pg-map-failure.md`
+## 失敗挙動
 
 `DSCP_TO_PG_MAP` テーブルは存在しないため、2 段マッピングパイプラインを構成する `DSCP_TO_TC_MAP` および `TC_TO_PRIORITY_GROUP_MAP` の失敗挙動を記述する。
 
@@ -283,9 +281,7 @@ PORT_QOS_MAP
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/dscp-to-pg-map-constants.md`
+## ハードコード定数
 
 `DSCP_TO_PG_MAP` テーブルは存在しないため、2 段マッピングパイプライン (`DSCP_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) を構成するハードコード定数を記述する。出典は `qosorch.h`、`qosorch.cpp`、および各 YANG モジュール。
 
@@ -346,9 +342,7 @@ YANG バリデーションで強制される値域はコードではなく YANG 
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書き込み・連鎖副作用 (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/dscp-to-pg-map-side-effects.md`
+## 副次 DB 書き込み・連鎖副作用
 
 `DSCP_TO_PG_MAP` テーブルは存在しないため、2 段マッピングパイプライン (`DSCP_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) の CONFIG_DB 書き込みが引き起こす副次的な DB 変更および連鎖動作を記述する。CONFIG_DB → QosOrch 直結であり、cfgmgr ステージ / [APPL_DB](../../reference/glossary.md#term-appl_db) ステージは存在しない。
 
@@ -405,9 +399,7 @@ YANG バリデーションで強制される値域はコードではなく YANG 
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/dscp-to-pg-map-pubsub.md`
+## 通信メカニズム
 
 `DSCP_TO_PG_MAP` テーブルは存在しないため、DSCP → PG マッピング機能を構成する 3 テーブル (`DSCP_TO_TC_MAP` / `TC_TO_PRIORITY_GROUP_MAP` / `PORT_QOS_MAP`) の通信メカニズムを記述する。
 
@@ -465,9 +457,7 @@ NotificationConsumer: なし
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/dscp-to-pg-map-platform.md`
+## プラットフォーム差
 
 `DSCP_TO_PG_MAP` テーブルは存在しないため、2 段マッピングパイプライン (`DSCP_TO_TC_MAP` / `TC_TO_PRIORITY_GROUP_MAP` / `PORT_QOS_MAP`) のプラットフォーム依存挙動を記述する。
 

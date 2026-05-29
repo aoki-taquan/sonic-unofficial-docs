@@ -157,7 +157,7 @@ CONFIG_DB から `NEIGH` エントリを削除しても、`doSetNeighTask` の `
 <!-- /defaults -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-swss/orchagent/neighorch.cpp`
 
@@ -239,7 +239,7 @@ CONFIG_DB から `NEIGH` エントリを削除しても、`doSetNeighTask` の `
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `NEIGH` テーブルの変更に伴う副次的 DB 書込みは、処理経路によって異なる。
 
@@ -273,11 +273,10 @@ CONFIG_DB `NEIGH` → `nbrmgrd` → カーネル → `neighsyncd` → APPL_DB `N
     CONFIG_DB `NEIGH` エントリの SET は `nbrmgrd` → カーネル Netlink のみ。APPL_DB `NEIGH_RESOLVE_TABLE` への書込みは `NeighOrch` が行うものであり、CONFIG_DB `NEIGH` 書込みから直接発生するわけではない。  
     ただし `nbrmgrd` が MAC なしで `NUD_DELAY+NTF_USE` を発行してカーネルが ARP 解決を行うと、`neighsyncd` がその結果を APPL_DB `NEIGH_TABLE` に書き込み、間接的に上記ネストした副作用が発生する。
 
-詳細スキャン手順は `meta/_intermediate/cdb-flow/neigh-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `NeighOrch` が依存する関連テーブル (Phase C)
+## 暗黙参照 — `NeighOrch` が依存する関連テーブル
 
 `orchagent` の `NeighOrch` は APPL_DB `NEIGH_TABLE` を処理する際、CONFIG_DB `NEIGH` → `nbrmgrd` → Netlink 経路とは独立して、複数のオーケストレーターを通じて以下のテーブルを暗黙参照する。
 
@@ -335,13 +334,11 @@ APPL_DB NEIGH_TABLE ─(NeighOrch)─→ IntfsOrch [INTERFACE RIF]
                                    VRFOrch   [Port.m_vr_id → route_entry.vr_id]
 ```
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/neigh-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-<!-- evidence: meta/_intermediate/cdb-flow/neigh-pubsub.md -->
 
 ### CONFIG_DB NEIGH の購読方式
 
@@ -382,7 +379,7 @@ CONFIG_DB NEIGH|<port>|<ip> SET
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `nbrmgrd` / `neighorch` の動作は `DEVICE_METADATA.switch_type`、`isChassisDbInUse()`、inband インターフェース型 (`port` / `vlan`)、および `ASIC_VENDOR` 環境変数によって分岐する。分岐は主に **VoQ (Virtual Output Queue) シャーシ構成** に集中しており、標準的なシングル ASIC 環境では分岐に入らない。
 
@@ -514,7 +511,7 @@ Consumer が `CHASSIS_APP_SYSTEM_NEIGH_TABLE_NAME` のとき `doVoqSystemNeighTa
 | **VS platform** (`ASIC_VENDOR="vs"`) | (VoQ 部分の) STATE_DB MAC 差し替えをしない（元 MAC 維持） | 同左 | 変化なし |
 | **multi-asic** (namespace 分離) | namespace ごとに独立プロセス（ソース内に explicit 分岐なし） | 同左 | 変化なし |
 
-> **スキャン証跡**: `nbrmgr.cpp:74-83, 406-505, 524-549, 552-580` / `neighorch.cpp:22-23, 28, 51-57, 887-931, 1313-1318, 1433-1437, 1602-1606, 2048-2068, 2209-2219, 2559-2585, 2587-2655, 2657-2688` / `orch.h:40-45`. 中間ファイル: `meta/_intermediate/cdb-flow/neigh-platform.md`
+> **裏取り**: `nbrmgr.cpp:74-83, 406-505, 524-549, 552-580` / `neighorch.cpp:22-23, 28, 51-57, 887-931, 1313-1318, 1433-1437, 1602-1606, 2048-2068, 2209-2219, 2559-2585, 2587-2655, 2657-2688` / `orch.h:40-45`
 <!-- /platform -->
 
 <!-- value-behavior -->

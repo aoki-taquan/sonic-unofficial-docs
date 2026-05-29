@@ -104,7 +104,7 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<prefix>[:<priority>]
 <!-- /cdb-exceptions -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) / proto3 デフォルト以外の実装由来 fallback。`DashRouteOrch::addInboundRouting()` (`dashrouteorch.cpp:421-477`) の [SAI](../../reference/glossary.md#term-sai) 属性組み立てロジックから導出。
 
@@ -128,9 +128,7 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<prefix>[:<priority>]
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/route-rule-ordering.md`
+## 書込み順依存
 
 ### SET 時の先行必須テーブル
 
@@ -160,7 +158,7 @@ DashRouteOrch が DASH_ROUTE_RULE_TABLE エントリを処理 → SAI 反映
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `DashRouteOrch` は `DASH_ROUTE_RULE_TABLE` の処理時に以下の参照テーブル・リソースを読み書きする。
 
@@ -192,13 +190,11 @@ DashRouteOrch が DASH_ROUTE_RULE_TABLE エントリを処理 → SAI 反映
 
 SIP アドレスファミリ（IPv4 / IPv6）に応じて異なる [CRM](../../reference/glossary.md#term-crm) カウンタを更新する。`CrmOrch` がリソース上限監視に使用する。
 
-Evidence: `dashrouteorch.cpp` 全体スキャン; 詳細スキャンノートは `meta/_intermediate/cdb-flow/route-rule-cross-refs.md` を参照。
+Evidence: `dashrouteorch.cpp` 全体スキャン。
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-rule-constants.md -->
+## ハードコード定数
 
 `DashRouteOrch` が `DASH_ROUTE_RULE_TABLE` 処理時に使用する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。出典は `orchagent/dash/dashrouteorch.cpp`・`orchagent/dash/dashorch.h`・`common/schema.h`・`orchagent/crmorch.h`。
 
@@ -245,9 +241,7 @@ protobuf の `has_*()` で各フィールドの存在を確認してから `inbo
 <!-- /constants -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-rule-failure.md -->
+## 失敗挙動
 
 `DASH_ROUTE_RULE_TABLE` の処理は 2 フェーズ bulker パターンを採用している。`addInboundRouting()` (pre-op) で SAI エントリを bulker にエンキューし、`inbound_routing_bulker_.flush()` 後に `addInboundRoutingPost()` (post-op) で結果を評価する。
 
@@ -313,9 +307,7 @@ it = consumer.m_toSync.erase(it);
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-rule-side-effects.md -->
+## 副次 DB 書込
 
 `DashRouteOrch` は `DASH_ROUTE_RULE_TABLE` の SET/DEL 処理に伴い、以下の DB へ副次的に書き込む。
 
@@ -353,7 +345,7 @@ it = consumer.m_toSync.erase(it);
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `DASH_ROUTE_RULE_TABLE` の受信・フィードバックは 2 系統の通信経路を使う。
 
@@ -435,11 +427,10 @@ flowchart LR
   RES -->|keyspace PUBLISH| CTRL
 ```
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/route-rule-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 調査ソース: `orchagent/dash/dashrouteorch.cpp`、`orchagent/orchdaemon.cpp`、`orchagent/main.cpp`。
 

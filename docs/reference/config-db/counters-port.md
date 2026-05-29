@@ -214,11 +214,8 @@ COUNTERS_DB / COUNTERS:<oid>           (Hash)
 - CLI: `show interface counters` (`portstat`)、`counterpoll port enable/disable/interval`
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
-<!-- evidence: sonic-swss/orchagent/portsorch.cpp, sonic-swss/orchagent/portsorch.h,
-     sonic-swss/orchagent/flexcounterorch.cpp,
-     sonic-utilities/utilities_common/portstat.py -->
 
 ### ポーリング間隔のコード由来デフォルト
 
@@ -271,9 +268,8 @@ gearbox 有効環境では `gb_port_stat_manager` が `GB_COUNTERS_DB` に別途
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-port-ordering.md`
 
 ### SET 時の先行必須テーブル / イベント
 
@@ -339,9 +335,8 @@ COUNTERS_DB:COUNTERS:<oid> フィールドが更新される
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-port-cross-refs.md`
 
 以下はすべて実装レベルの暗黙参照（[YANG](../../reference/glossary.md#term-yang) leafref なし）。
 
@@ -361,9 +356,8 @@ COUNTERS_DB:COUNTERS:<oid> フィールドが更新される
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
+## 失敗挙動・retry / recovery
 
-<!-- evidence: meta/_intermediate/cdb-flow/counters-port-failure.md -->
 
 ### retry パターン概要
 
@@ -425,7 +419,7 @@ SAI が特定の counter stat を返せない場合（[ASIC](../../reference/glo
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `portsorch` / `flexcounterorch` 内に存在する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 
@@ -465,9 +459,8 @@ SAI が特定の counter stat を返せない場合（[ASIC](../../reference/glo
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・他テーブルへの波及 (Phase F)
+## 副作用・他テーブルへの波及
 
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-port-side-effects.md`
 
 `FLEX_COUNTER_TABLE|PORT` の enable/disable は [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の更新だけでなく、以下の DB・テーブルにも波及する。
 
@@ -532,9 +525,8 @@ SAI 生カウンタからレートを計算して **COUNTERS_DB:RATES:<oid>** �
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-port-pubsub.md`
 > 調査対象: `sonic-swss/orchagent/flexcounterorch.cpp`, `sonic-swss/orchagent/portsorch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`, `sonic-utilities/utilities_common/portstat.py`
 
 ### Producer/Consumer ペア
@@ -605,9 +597,8 @@ NotificationConsumer: なし（カウンタ配信に使用せず）
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-port-platform.md`
 
 ### WRED drop カウンタの SAI capability ゲート
 

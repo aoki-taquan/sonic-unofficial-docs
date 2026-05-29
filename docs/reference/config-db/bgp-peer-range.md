@@ -177,7 +177,7 @@ vtysh -c 'show bgp listen range'
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BGP_PEER_RANGE`
 
@@ -206,16 +206,16 @@ vtysh -c 'show bgp listen range'
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | minigraph XML に `<BGPPeerRange>` エントリが存在する | `BGP_PEER_RANGE` テーブルに `ip_range` エントリを生成 | `sonic-buildimage/src/sonic-config-engine/minigraph.py:1401-1408,2275` |
 | `PeerRange.Address` が IPv4/IPv6 のどちらか | `ip_range` の CIDR 文字列として格納 | `sonic-buildimage/src/sonic-config-engine/minigraph.py:1401` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -227,7 +227,7 @@ vtysh -c 'show bgp listen range'
 - [bgpcfgd](../../reference/glossary.md#term-bgpcfgd)/main.py L90: 条件なし登録
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -235,13 +235,11 @@ vtysh -c 'show bgp listen range'
 | `BGPPeerMgrBase` | `update_peer()` | `"ip_range" in data AND peer_type == "dynamic"` | `change_ip_range()` を呼び出し（動的 BGP range 更新） | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:317` |
 | `BGPPeerMgrBase` | `del_handler()` | `peer_type == "dynamic" OR peer_type == "sentinels"` | `no bgp listen range` コマンドを送出 | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:461` |
 
-> **スキャン証跡**: peer_type="dynamic" 固有の ip_range 更新分岐と del_handler の `no listen range` テンプレート使用を確認。3 件分岐抽出。
+> **裏取り**: peer_type="dynamic" 固有の ip_range 更新分岐と del_handler の `no listen range` テンプレート使用を確認。3 件分岐抽出。
 <!-- /handler-branching -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
-
-> **調査根拠**: `bgpcfgd/managers_bgp.py` および `dynamic/policies.conf.j2`、`dynamic/instance.conf.j2` を精読 (2026-05-16)。詳細証跡: `meta/_intermediate/cdb-flow/bgp-peer-range-platform.md`
+## プラットフォーム差分
 
 `BGP_PEER_RANGE` の処理経路（`BGPPeerMgrBase` / dynamic テンプレート群）には `switch_type`、`sub_role`、`DEVICE_METADATA.localhost.type` を**条件分岐として使用する箇所は存在しない**。
 
@@ -263,7 +261,7 @@ vtysh -c 'show bgp listen range'
 <!-- /platform -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
 ### 順序依存サマリ
 
@@ -285,14 +283,13 @@ vtysh -c 'show bgp listen range'
 
 FRR 10.1 以降は peer-group に listen range が紐付いている場合、peer-group を先に削除すると FRR がエラーを返す。`del_handler()` はこれに対応し `no bgp listen range <prefix> peer-group <name>` を先に発行してから peer-group 削除コマンドを送る（managers_bgp.py:456–472）。listen range 削除失敗時は `log_err` のみで処理を続行するため、FRR 側でエラーが残るリスクがある。
 
-> **ソース**: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:119,192,456-472,2658-2662`、`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2658-2662,2847`。詳細は `meta/_intermediate/cdb-flow/bgp-peer-range-ordering.md` を参照。
+> **ソース**: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:119,192,456-472,2658-2662`、`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2658-2662,2847`。
 <!-- /ordering -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> **調査根拠**: `bgpcfgd/managers_bgp.py` L271–304, L239, L353, L443, L487 精読 (2026-05-16)
-> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-peer-range-side.md`
+> **Evidence**: `bgpcfgd/managers_bgp.py` L271–304, L239, L353, L443, L487 精読
 
 ### STATE_DB — BGP_PEER_CONFIGURED_TABLE
 
@@ -367,7 +364,7 @@ YANG は `peer_asn` を optional としているが、この fallback の存在�
 
 <!-- /defaults -->
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`
 
@@ -403,10 +400,9 @@ YANG は `peer_asn` を optional としているが、この fallback の存在�
 
 <!-- /failure -->
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
-> **調査根拠**: `bgpcfgd/managers_bgp.py`, `frrcfgd/frrcfgd.py`, `dynamic/policies.conf.j2` 精読 (2026-05-16)
-> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-peer-range-cross-refs.md`
+> **Evidence**: `bgpcfgd/managers_bgp.py`, `frrcfgd/frrcfgd.py`, `dynamic/policies.conf.j2` 精読 (2026-05-16)
 
 `BGP_PEER_RANGE` テーブルは YANG leafref を最小限しか持たないが、実行時に以下のテーブルを暗黙参照する。
 
@@ -437,10 +433,9 @@ YANG は `peer_asn` を optional としているが、この fallback の存在�
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `bgpcfgd/managers_bgp.py`、`frrcfgd/frrcfgd.py`、`dynamic/policies.conf.j2`、`dynamic/instance.conf.j2` 精読 (2026-05-16)
-> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-peer-range-constants.md`
+> **Evidence**: `bgpcfgd/managers_bgp.py`、`frrcfgd/frrcfgd.py`、`dynamic/policies.conf.j2`、`dynamic/instance.conf.j2` 精読 (2026-05-16)
 
 ### FRR コマンド literal
 
@@ -481,10 +476,9 @@ YANG は `peer_asn` を optional としているが、この fallback の存在�
 - **`dynamic/peer-group.conf.j2`**: dynamic タイプの peer-group テンプレートは実質空（コメントのみ）。peer-group 属性はすべて `instance.conf.j2` 側で定義済み。
 <!-- /constants -->
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `bgpcfgd/runner.py`, `bgpcfgd/main.py`, `frrcfgd/frrcfgd.py` 精読 (2026-05-16)
-> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-peer-range-pubsub.md`
+> **Evidence**: `bgpcfgd/runner.py`, `bgpcfgd/main.py`, `frrcfgd/frrcfgd.py` 精読 (2026-05-16)
 
 ### bgpcfgd 経路: SubscriberStateTable + Runner (同期 Select ループ)
 

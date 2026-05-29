@@ -244,7 +244,7 @@ enum: `nat_type`=snat/dnat (有効値は snat のみ)。
 <!-- /runtime-trace -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 <!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::addNatEntry L1866-1935 / enableNatFeature L2534-2581 / doDnatPoolTableTask L2968-3031 / doNatGlobalTableTask L2904-2966 / addAllDnatPoolEntries L1854-1864 / addAllNatEntries L3178-3271 / sonic-swss/cfgmgr/natmgr.cpp addDynamicNatRule / doNatBindingTask L6868-7100 -->
 
@@ -310,7 +310,7 @@ DEL ACL_TABLE|<acl_name>   # ACL は binding 削除後に削除
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::addNatEntry L1866-1935 / addTwiceNatEntry L1981-2004 / addHwSnatEntry L1307-1316 / addHwTwiceNatEntry L1387-1397 / addHwDnatPoolEntry L1806-1814 / NatOrch constructor L107-122 -->
 
@@ -390,7 +390,7 @@ NatOrch は `ERROR_TABLE` への書き込みなし。syslog (`SWSS_LOG_ERROR` / 
 <!-- /failure -->
 
 <!-- platform -->
-## プラットフォーム差・ASIC ベンダー依存 (Phase H)
+## プラットフォーム差・ASIC ベンダー依存
 
 <!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch L107-149 / enableNatFeature L2534-2581 / addNatEntry L1866-1935 / sonic-swss/orchagent/orch.h L43 / sonic-swss/orchagent/main.cpp L935-949 -->
 
@@ -456,7 +456,7 @@ Broadcom では ネクストホップ未解決時に DNAT エントリを SAI �
 <!-- /platform -->
 
 <!-- constants -->
-## ハードコード定数（orchagent/natorch.cpp 由来）(Phase E)
+## ハードコード定数（orchagent/natorch.cpp 由来）
 
 <!-- evidence: sonic-swss/orchagent/natorch.cpp, sonic-swss/orchagent/natorch.h -->
 
@@ -565,7 +565,7 @@ udp_timeout = 300;  // NAT default udp timeout
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `NAT_BINDINGS` エントリが処理される際に `NatOrch` (`natorch.cpp`) が
 暗黙的に依存する他テーブルの関係を示す。
@@ -591,7 +591,7 @@ udp_timeout = 300;  // NAT default udp timeout
 <!-- /cross-refs -->
 
 <!-- pubsub -->
-## 通信メカニズム — Redis Subscribe / SAI nat_api / conntrack (Phase G)
+## 通信メカニズム — Redis Subscribe / SAI nat_api / conntrack
 
 <!-- evidence: sonic-swss/cfgmgr/natmgrd.cpp:100-198 / natmgr.cpp:35-49,4621-4679,6868-7100 / orchagent/natorch.cpp:82-140,1271-1309,3033-3094 -->
 
@@ -677,7 +677,7 @@ status = sai_nat_api->create_nat_entry(&snat_entry, attr_count, nat_entry_attr);
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `NAT_BINDINGS` エントリが処理されると、`natmgrd` → `orchagent / NatOrch` の経路で以下の副次書込が発生する。ソース: `sonic-swss/orchagent/natorch.cpp`[^F1]。
 

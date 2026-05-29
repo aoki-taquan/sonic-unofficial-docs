@@ -174,7 +174,7 @@ show qos map tc-dscp
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `TC_TO_DSCP_MAP`
 
@@ -247,9 +247,7 @@ qos_map_attr.value.u32 = SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP;
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/tc-to-dscp-map-ordering.md`
+## 書込み順依存
 
 ### SET 時の先行必須テーブル
 
@@ -290,7 +288,7 @@ config qos reload
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `QosOrch` が TC_TO_DSCP_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)
+## 暗黙参照 — `QosOrch` が TC_TO_DSCP_MAP を基点に連鎖参照する CONFIG_DB テーブル
 
 `QosOrch` は `TC_TO_DSCP_MAP` を `SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP` として SAI 登録した後、
 `PORT_QOS_MAP` および `TUNNEL` ハンドラを通じてポート/トンネルに bind する。
@@ -329,15 +327,12 @@ config qos reload
 - `WRED_PROFILE`: DROP profile。TC_TO_DSCP_MAP ハンドラからの参照なし。
 - `DSCP_TO_FC_MAP` / `EXP_TO_FC_MAP`: Forwarding Class 系は別系統で TC_TO_DSCP_MAP と直接連鎖しない。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/tc-to-dscp-map-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `QosOrch` が `TC_TO_DSCP_MAP` の SET / DEL を処理する際、失敗種別に応じて `task_invalid_entry` / `task_failed` / `task_need_retry` の 3 種類のステータスを返す。
-
-<!-- evidence: meta/_intermediate/cdb-flow/tc-to-dscp-map-failure.md -->
 
 ### タスク処理ステータスと対応挙動
 
@@ -381,11 +376,9 @@ sudo grep -i "tc.*dscp\|Invalid DSCP\|qosorch" /var/log/syslog
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `TC_TO_DSCP_MAP` の処理に関わる定数はすべてソースコードに固定されており、CONFIG_DB や [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) から変更できない。
-
-> 調査証跡: `meta/_intermediate/cdb-flow/tc-to-dscp-map-constants.md`
 
 ### テーブル名・フィールド名定数
 
@@ -429,13 +422,11 @@ sudo grep -i "tc.*dscp\|Invalid DSCP\|qosorch" /var/log/syslog
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/tunneldecaporch.cpp`
 
 `TC_TO_DSCP_MAP` の SET/DEL を受けた `QosOrch` が書き込む副次 DB を示す。cfgmgr 中間層はなく [CONFIG_DB](../../reference/glossary.md#term-config_db) → orchagent 直結。[STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みはない。[CRM](../../reference/glossary.md#term-crm) カウンタ・[FlexCounter](../../reference/glossary.md#term-flexcounter) も使用しない。
-
-> 調査証跡: `meta/_intermediate/cdb-flow/tc-to-dscp-map-side-effects.md`
 
 ### SET — TC_TO_DSCP_MAP 作成・更新
 
@@ -484,7 +475,7 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:*'
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### 購読 API
 
@@ -528,14 +519,12 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 | channel PUBLISH | 使わない |
 | TTL | 未使用 |
 
-> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp`（`qos_tables` ベクタ定義）、`sonic-swss/orchagent/qosorch.cpp:2231-2252`（drain 順序制御）、`sonic-swss-common/common/table.h:164`（`DEFAULT_POP_BATCH_SIZE`）。詳細スキャンと grep 結果は `meta/_intermediate/cdb-flow/tc-to-dscp-map-pubsub.md` を参照。
+> **裏取り**: `sonic-swss/orchagent/orchdaemon.cpp`（`qos_tables` ベクタ定義）、`sonic-swss/orchagent/qosorch.cpp:2231-2252`（drain 順序制御）、`sonic-swss-common/common/table.h:164`（`DEFAULT_POP_BATCH_SIZE`）。
 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/tc-to-dscp-map-platform.md`
+## プラットフォーム差分
 
 ### ビルド時注入の有無
 

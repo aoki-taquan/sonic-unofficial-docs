@@ -162,7 +162,7 @@ DPUS|<dpu_name>
 
 ## 関連 CONFIG_DB / CLI
 
-- 関連 CONFIG_DB: [`DASH_ACL_*`](dash-acl.md)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DASH_ACL_*`](dash-acl.md)
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
@@ -211,7 +211,7 @@ DPUS|<dpu_name>
 [^dashenifwdorch-cpp]: `sonic-swss/orchagent/dash/dashenifwdorch.cpp` — `DpuRegistry::populate()` の DPU / REMOTE_DPU / VDPU parse ロジック・ENI から ACL ルールへの変換・暗黙参照 / 失敗挙動。 <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.cpp>
 [^dashenifwdorch-ut]: `sonic-swss/tests/mock_tests/dashenifwdorch_ut.cpp` — DashEniFwdOrch のユニットテスト。テーブル投入順序・必須フィールド・ACL 生成の期待値を裏付ける。 <https://github.com/sonic-net/sonic-swss/blob/master/tests/mock_tests/dashenifwdorch_ut.cpp>
 [^smartswitch-config]: `sonic-buildimage/src/sonic-config-engine/smartswitch_config.py` — `platform.json` から `DPUS` テーブルを CONFIG_DB へ投入する config-engine ロジック。 <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-config-engine/smartswitch_config.py>
-[^eni-fwd-hld]: SONiC HLD: `doc/smart-switch/high-availability/eni-based-forwarding.md` — ENI Based Forwarding のアーキテクチャ設計文書。 <https://github.com/sonic-net/SONiC/blob/master/doc/smart-switch/high-availability/eni-based-forwarding.md>
+[^eni-fwd-hld]: [SONiC](../../reference/glossary.md#term-sonic) [HLD](../../reference/glossary.md#term-hld): `doc/smart-switch/high-availability/eni-based-forwarding.md` — ENI Based Forwarding のアーキテクチャ設計文書。 <https://github.com/sonic-net/SONiC/blob/master/doc/smart-switch/high-availability/eni-based-forwarding.md>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -257,7 +257,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 <!-- /ops-hint -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) schema が存在しないため、すべてのデフォルトはコード (`dashenifwdorch.h` / `dashenifwdorch.cpp`) のフィールド定数定義と `request_description_t` の必須指定から由来する。
 
@@ -305,9 +305,9 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B) — 詳細版
+## 書込み順依存 — 詳細版
 
-`DashEniFwdOrch` は CONFIG_DB の `DPU` / `REMOTE_DPU` / `VDPU` と APPL_DB の `DASH_ENI_FORWARD_TABLE` を組み合わせて ACL ルールを生成する。テーブル間の処理順序と Neighbor 解決状態が ACL 生成タイミングを支配する。
+`DashEniFwdOrch` は CONFIG_DB の `DPU` / `REMOTE_DPU` / `VDPU` と [APPL_DB](../../reference/glossary.md#term-appl_db) の `DASH_ENI_FORWARD_TABLE` を組み合わせて ACL ルールを生成する。テーブル間の処理順序と Neighbor 解決状態が ACL 生成タイミングを支配する。
 
 ### 検出された順序依存
 
@@ -333,7 +333,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `DashEniFwdOrch` は CONFIG_DB の複数テーブルと他 [orchagent](../../reference/glossary.md#term-orchagent) を横断して参照する。以下はコード (`dashenifwdorch.h` / `dashenifwdorch.cpp` / `dashenifwdinfo.cpp`) から抽出した暗黙参照の一覧。
 
@@ -342,7 +342,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 | `CONFIG_DB:DPU\|<name>` | 読み取り（スナップショット） | 起動後最初の ENI ADD 時。`lazyInit()` → `DpuRegistry::populate()` | `dashenifwdorch.cpp:212-266` `processDpuTable()` |
 | `CONFIG_DB:REMOTE_DPU\|<name>` | 読み取り（スナップショット） | 起動後最初の ENI ADD 時。`lazyInit()` → `DpuRegistry::populate()` | `dashenifwdorch.cpp:269-306` `processRemoteDpuTable()` |
 | `CONFIG_DB:VDPU\|<name>` | 読み取り（スナップショット）+ `dpus_name_map_` 参照 | DPU / REMOTE_DPU populate 後に処理。未登録 DPU ID はスキップ | `dashenifwdorch.cpp:308-347` `processVdpuTable()` |
-| `CONFIG_DB:VIP_TABLE\|<prefix>` | 読み取り（lazy、1回限り） | CLUSTER 型 ENI の ACL ルール生成時に `getVip()` が呼ばれる。テーブルが空の場合 `SWSS_LOG_THROW` で orchagent abort | `dashenifwdorch.cpp:492-517` `EniFwdCtxBase::getVip()` |
+| `CONFIG_DB:VIP_TABLE\|<prefix>` | 読み取り（lazy、1回限り） | CLUSTER 型 ENI の ACL ルール生成時に `getVip()` が呼ばれる。テーブルが空の場合 `SWSS_LOG_THROW` で [orchagent](../../reference/glossary.md#term-orchagent) abort | `dashenifwdorch.cpp:492-517` `EniFwdCtxBase::getVip()` |
 | `CONFIG_DB:PORT\|<name>` (`port_tbl_`) | 読み取り（PORT_ROLE フィールド） | ACL テーブル作成時の `getBindPoints()` で `role=DPC` のポートを internal として除外 | `dashenifwdorch.cpp:414-431` `findInternalPorts()` |
 | `NeighOrch` (Neighbor テーブル) | OID 解決 + Observer subscribe | LOCAL DPU の `pa_ipv4` に対して Neighbor 解決。未解決時は ACL ルール未インストール。`NeighOrch::attach(this)` で Up/Down 通知を受信 | `dashenifwdorch.cpp:17-21`, `dashenifwdorch.cpp:78-103` |
 | `IntfsOrch` (INTERFACE テーブル) | エイリアス参照 | LOCAL DPU の `pa_ipv4` に対応するルーターインタフェースのエイリアスを取得 (`getRouterIntfsAlias()`) | `dashenifwdorch.cpp:544-547` |
@@ -361,7 +361,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `DashEniFwdOrch` / `DpuRegistry` / `EniInfo` の各レイヤで発生する失敗を、影響範囲と回復手段とともに整理する。
 
@@ -419,7 +419,7 @@ APPL_DB の `ACL_RULE_TABLE` に未インストール状態のルールは存在
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `DashEniFwdOrch` / `DpuRegistry` / `EniAclRule` が CONFIG_DB フィールド名・ACL テーブル名・優先度・MAC フォーマットをコード内定数で管理する。YANG 定義が存在しないため、これらの定数がスキーマの正本となる。出典は `sonic-swss/orchagent/dash/dashenifwdorch.h` と `sonic-swss/orchagent/dash/dashenifwdinfo.cpp`。
 
@@ -498,9 +498,8 @@ ENI の MAC アドレス（例: `f4:93:9f:ef:c4:7e`）は `EniInfo::formatMac()`
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/dpu-eni-side-effects.md`
 
 `DashEniFwdOrch` は CONFIG_DB / APPL_DB の DPU / ENI テーブルを読み込み、処理結果を APPL_DB の ACL 関連テーブルへ書き出す。[STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への直接書込はない。
 
@@ -541,9 +540,8 @@ Neighbor が解決されると `NeighOrch` からの Observer 通知 (`DashEniFw
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/dpu-eni-pubsub.md`
 
 ### 書き込み側 — HaMgrd から APPL_DB への ProducerStateTable
 
@@ -615,9 +613,8 @@ ARP/NDP 解決
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> 調査証跡: `meta/_intermediate/cdb-flow/dpu-eni-platform.md`
 
 ### SmartSwitch サブタイプ限定
 
@@ -653,4 +650,4 @@ if (gMySwitchSubType == "SmartSwitch")
 | multi-asic | SmartSwitch 構成では単一 [ASIC](../../reference/glossary.md#term-asic) を想定。multi-asic では DashEniFwdOrch 非起動 | `orchdaemon.cpp:613` |
 <!-- /platform -->
 
-<!-- glossary-links-injected: d1159e193828 -->
+<!-- glossary-links-injected: 5d875463018e -->

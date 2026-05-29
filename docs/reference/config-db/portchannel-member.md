@@ -108,8 +108,6 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member.md -->
-
 ### YANG スキーマ検証
 - key `(name, port)` は PORTCHANNEL と PORT への leafref。参照先が存在しない場合は YANG validate で reject。
 
@@ -124,9 +122,7 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 <!-- /cdb-exceptions -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-failure.md -->
+## 失敗挙動マトリクス
 
 ### 失敗シナリオ一覧
 
@@ -229,7 +225,7 @@ show interfaces portchannel
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 PORTCHANNEL_MEMBER テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -263,7 +259,7 @@ db_migrator.py での PORTCHANNEL_MEMBER マイグレーションなし
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 <!-- evidence: sonic-swss/cfgmgr/teammgr.cpp; sonic-swss/orchagent/portsorch.cpp -->
 
@@ -302,9 +298,9 @@ DEL PORTCHANNEL|PortChannel0001
 <!-- /ordering -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -312,7 +308,7 @@ DEL PORTCHANNEL|PortChannel0001
 
 `PORTCHANNEL_MEMBER` は key-only テーブル (フィールドなし)。minigraph.py が自動生成し、[port_config.ini](../../reference/glossary.md#term-port-config-ini) に存在しないポートは除外される (`minigraph.py:2531-2545`)。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 `PORTCHANNEL_MEMBER` は `TeamMgr` (`cfgmgr/teammgr.cpp`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し `teamd` にメンバ追加/削除を通知する。`orchdaemon.cpp` の条件付き登録なし。
 
@@ -325,7 +321,7 @@ DEL PORTCHANNEL|PortChannel0001
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `TeamMgr::doLagMemberTask()` の分岐:
 
@@ -336,12 +332,12 @@ DEL PORTCHANNEL|PortChannel0001
 | `TeamMgr` | `doLagMemberTask()` | SET 操作 | `teamdctl <lag> port add <member>` でメンバをポートチャネルに追加 | `sonic-swss/cfgmgr/teammgr.cpp` |
 | `TeamMgr` | `doLagMemberTask()` | DEL 操作 | `teamdctl <lag> port remove <member>` でメンバを削除 | `sonic-swss/cfgmgr/teammgr.cpp` |
 
-> **スキャン証跡**: `teammgr.cpp:149-169` + `minigraph.py:2547` を確認、4 件分岐抽出。PORTCHANNEL_MEMBER は key-only テーブルであることを確認 — 誤読なし。
+> **裏取り**: `teammgr.cpp:149-169` + `minigraph.py:2547` を確認、4 件分岐抽出。PORTCHANNEL_MEMBER は key-only テーブルであることを確認 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `PORTCHANNEL_MEMBER` の [CONFIG_DB](../../reference/glossary.md#term-config_db) Consumer 経路は **CONFIG_DB → TeamMgr → teamd (UNIX ソケット) → APP_DB → PortsOrch → SAI** の 3 段構成である。
 
@@ -388,14 +384,12 @@ teamd 操作完了後、TeamMgr が APP_DB `LAG_MEMBER_TABLE` (= `APP_LAG_MEMBER
 | [APPL_DB](../../reference/glossary.md#term-appl_db) (db=0) | `LAG_MEMBER_TABLE_CHANNEL@0` | PortsOrch の [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) が SUBSCRIBE |
 | [STATE_DB](../../reference/glossary.md#term-state_db) (db=6) | `__keyspace@6__:LAG_TABLE\|*` | TeamMgr が isLagStateOk() で LAG 状態監視 |
 
-<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-pubsub.md -->
 <!-- /pubsub -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
+## 暗黙参照マップ
 
 > leafref として YANG スキーマで強制される参照に加え、orchagent `m_port_ref_count` 機構・teammgrd runtime ゲート・CLI ガード・YANG `must` 制約として PORTCHANNEL_MEMBER が関与する暗黙参照を網羅する。
-> 詳細証跡: `meta/_intermediate/cdb-flow/portchannel-member-cross-refs.md`
 
 ### PORTCHANNEL_MEMBER が参照する下流テーブル / リソース
 
@@ -433,9 +427,7 @@ LAG を [VLAN](../../reference/glossary.md#term-vlan) に trunk させる場合�
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-constants.md -->
+## ハードコード定数
 
 ### SAI lag_member_attr — create_lag_member() 時
 
@@ -465,9 +457,7 @@ LAG を [VLAN](../../reference/glossary.md#term-vlan) に trunk させる場合�
 <!-- /constants -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-platform.md -->
+## プラットフォーム差異
 
 ### VOQ Chassis — CHASSIS_APP_LAG_MEMBER_TABLE 経由処理
 
@@ -509,9 +499,7 @@ LAG メンバの有効化・無効化シーケンスは Mellanox の SAI 制約�
 <!-- /platform -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-side-effects.md -->
+## 副次 DB 書込
 
 PORTCHANNEL_MEMBER の SET/DEL は CONFIG_DB への書き込みに留まらず、複数の DB とカーネルに副次的な書き込みを生じさせる。
 

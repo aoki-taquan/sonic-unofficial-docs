@@ -81,10 +81,9 @@ SRV6_MY_LOCATORS|<locator_name>
 - 関連 CLI: なし（[config_db.json](../../reference/glossary.md#term-config_db.json) または RESTCONF で投入）
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 > 根拠: `bgpcfgd/managers_srv6.py` L135-142 (Locator クラス) および `sonic-srv6.yang` L41-91 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-defaults.md`
 
 | フィールド | 省略時の実挙動 | 分類 |
 |-----------|--------------|------|
@@ -112,12 +111,11 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `bgpcfgd` の `SRv6Mgr` は `SRV6_MY_LOCATORS` と `SRV6_MY_SIDS` を個別に購読し、SID 処理時にロケータの存在を確認する。このため書き込み順序が SID の通知タイミングに直接影響する。
 
 > 根拠: `bgpcfgd/managers_srv6.py` `sids_set_handler()` L62-76、`locators_del_handler()` L106-115 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-ordering.md`
 
 ### 検出された順序依存
 
@@ -147,10 +145,9 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## テーブル間クロスリファレンス (Phase C)
+## テーブル間クロスリファレンス
 
 > 根拠: `sonic-srv6.yang` L81-82, L108-109、`srv6orch.cpp` L107, L331-350、`frrcfgd.py` L121, L2335, L2732 精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-cross-refs.md`
 
 | 参照元 | 参照先 | 種別 | 必須条件 |
 |--------|--------|------|----------|
@@ -174,10 +171,9 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
+## 失敗挙動・retry / recovery
 
 > 根拠: `bgpcfgd/managers_srv6.py` L62-76, L106-115, L136-142 および `srv6orch.cpp` L331-338, L455-468 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-failure.md`
 
 | # | 失敗条件 | 検出箇所 | 結果 | 自動回復 | ログ種別 |
 |---|----------|----------|------|----------|----------|
@@ -206,10 +202,9 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数・上限値 (Phase E)
+## ハードコード定数・上限値
 
 > 根拠: `srv6orch.cpp` L19-24, L331-350 および `managers_srv6.py` L6-12, L37-53, L135-142 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-constants.md`
 
 ### srv6orch.cpp — ロケータ長フォールバック定数
 
@@ -250,10 +245,9 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・他テーブルへの波及 (Phase F)
+## 副作用・他テーブルへの波及
 
 > 根拠: `bgpcfgd/managers_srv6.py` L41-53, L64-68, L106-115 および `frrcfgd/frrcfgd.py` L121, L2335, L2732-2742 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-side-effects.md`
 
 `SRV6_MY_LOCATORS` の SET / DEL は CONFIG_DB の単一テーブル操作に留まらず、bgpcfgd・frrcfgd・Srv6Orch の 3 コンポーネントにわたる副作用を持つ。
 
@@ -290,10 +284,9 @@ FRR 側では `no locator <name>` によりロケータ設定が削除される�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 > 根拠: `bgpcfgd/runner.py` L27,L49-51, L54-73、`bgpcfgd/main.py` L109、`managers_srv6.py` L67-68、`frrcfgd/frrcfgd.py` L121,L2335、`srv6orch.cpp` L107,L331-338、`subscriberstatetable.cpp` L17-43 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-pubsub.md`
 
 ### 購読者一覧
 
@@ -332,10 +325,9 @@ self.directory.subscribe([(self.db_name, "SRV6_MY_LOCATORS", locator_name)], sel
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム制約 (Phase H)
+## プラットフォーム制約
 
 > 根拠: `bgpcfgd/managers_srv6.py` L37-53, L47、`frrcfgd/frrcfgd.py` L2732-2744、`srv6orch.cpp` L104-107, L331-350 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-platform.md`
 
 ### SAI 非依存テーブル（ハードウェア制約なし）
 

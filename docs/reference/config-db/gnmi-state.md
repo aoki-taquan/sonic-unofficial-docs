@@ -101,7 +101,7 @@ TELEMETRY_CONNECTIONS   (Redis Hash — シングルキー)
 <!-- /cdb-exceptions -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `TELEMETRY_CONNECTIONS` は `telemetry` デーモン (`sonic-gnmi`) が直接 STATE_DB に HSet / HDel する単純な構造であり、[orchagent](../../reference/glossary.md#term-orchagent) 経由の間接書き込みは一切行われない。しかし以下の順序依存が存在する。
 
@@ -131,7 +131,7 @@ TELEMETRY_CONNECTIONS   (Redis Hash — シングルキー)
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `TELEMETRY_CONNECTIONS` は `telemetry` デーモン (`sonic-gnmi`) が **唯一の書き手** であり、外部 Orch やパイプラインを経由しない。以下はこのテーブルのエントリ生成・制御に間接的に影響する入力リソースと暗黙参照先の一覧である。
 
@@ -139,7 +139,7 @@ TELEMETRY_CONNECTIONS   (Redis Hash — シングルキー)
 |--------------------------|---------|------|----------------|
 | `database_config.json` (`/var/run/redis/sonic-db/database_config.json`) | STATE_DB アドレス・DB 番号の解決 | `PrepareRedis()` 呼び出し時に常時参照。このファイルが欠損または STATE_DB エントリが未定義の場合 `rclient` は nil となり以降の HSet / HDel はすべて silent no-op | `sonic_db_config/db_config.go:14` — `SONIC_DB_CONFIG_FILE` 定数; `connection_manager.go:33-43` — `GetDbTcpAddr("STATE_DB", ns)` / `GetDbId("STATE_DB", ns)` |
 | `GNMI\|gnmi` (CONFIG_DB) — `threshold` フィールド | 接続上限の間接制御 (エントリ数の上限) | `telemetry.go` フラグ `--threshold` (デフォルト 100) またはシステム起動時に CONFIG_DB から読み込んだ値が `Server.config.Threshold` にセットされ、`Subscribe()` RPC ごとに `setConnectionManager(s.config.Threshold)` へ渡される。閾値到達後は `Add()` が `false` を返し STATE_DB への書き込みが発生しない | `server.go:866` — `c.setConnectionManager(s.config.Threshold)`; `connection_manager.go:65` — `len(cm.connections) >= cm.threshold && cm.threshold != 0` チェック; `telemetry.go:187` — `fs.Int("threshold", 100, ...)` |
-| `Server.clients` (in-memory, `server.go`) | STATE_DB エントリの概念的ミラー | `Subscribe()` RPC ハンドラが `s.clients[clientKey] = c` でメモリ登録した後に `ConnectionManager.Add()` → `storeKeyRedis()` で STATE_DB に反映。同一 peer が重複して Subscribe した場合は `oc.Close()` + `delete(s.clients, clientKey)` でメモリから削除後、`Remove()` → `deleteKeyRedis()` で STATE_DB からも削除される（Phase B 依存 #1 と連動） | `server.go:872-877` — 重複クライアント削除フロー; `client_subscribe.go:73-85` — `setConnectionManager()` 再初期化ロジック |
+| `Server.clients` (in-memory, `server.go`) | STATE_DB エントリの概念的ミラー | `Subscribe()` RPC ハンドラが `s.clients[clientKey] = c` でメモリ登録した後に `ConnectionManager.Add()` → `storeKeyRedis()` で STATE_DB に反映。同一 peer が重複して Subscribe した場合は `oc.Close()` + `delete(s.clients, clientKey)` でメモリから削除後、`Remove()` → `deleteKeyRedis()` で STATE_DB からも削除される（書込み順依存 #1 と連動） | `server.go:872-877` — 重複クライアント削除フロー; `client_subscribe.go:73-85` — `setConnectionManager()` 再初期化ロジック |
 
 ### consumer（読み取り側）
 
@@ -164,7 +164,7 @@ TELEMETRY_CONNECTIONS   (Redis Hash — シングルキー)
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `TELEMETRY_CONNECTIONS` テーブルへの書き込み・削除は `storeKeyRedis()` / `deleteKeyRedis()` で行われる。これらの関数は **best-effort** 設計であり、Redis 操作が失敗してもデーモン本体の動作を止めない。
 
@@ -200,7 +200,7 @@ TELEMETRY_CONNECTIONS   (Redis Hash — シングルキー)
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `ConnectionManager` および `telemetry` デーモンは、テーブル名・接続値・閾値デフォルト・キー生成正規表現をソース内でハードコードしており、CONFIG_DB からは変更できない。
 
@@ -246,7 +246,7 @@ TELEMETRY_CONNECTIONS   (Redis Hash — シングルキー)
 <!-- /constants -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 > 調査対象: `sonic-net/sonic-gnmi/gnmi_server/connection_manager.go`, `client_subscribe.go`, `telemetry/telemetry.go`  
 > 調査日: 2026-05-15
@@ -303,7 +303,7 @@ connection key 末尾に付加される RFC3339 タイムスタンプは `time.N
 <!-- /defaults -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `TELEMETRY_CONNECTIONS` テーブル自体は STATE_DB への書込専用ランタイム状態テーブルであり、このテーブルへの HSet / HDel が他の DB テーブルへの書込を **連鎖的にトリガすることはない**。
 
@@ -341,7 +341,7 @@ connection key 末尾に付加される RFC3339 タイムスタンプは `time.N
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `TELEMETRY_CONNECTIONS` は STATE_DB に直接書き込まれるランタイム状態テーブルであり、CONFIG_DB 購読メカニズム（`SubscriberStateTable` / `ConsumerStateTable` / `NotificationConsumer`）は**一切使用しない**。
 
@@ -392,7 +392,7 @@ telemetry デーモン
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `TELEMETRY_CONNECTIONS` テーブルへの書き込みロジックは `gnmi_server/connection_manager.go` 内に完結しており、[ASIC](../../reference/glossary.md#term-asic) 種別・`DEVICE_METADATA` の `platform` / `hwsku` フィールド・サードパーティ [SAI](../../reference/glossary.md#term-sai) 実装に**依存しない**。STATE_DB への HSet / HDel は Redis TCP 接続経由でのみ行われ、スイッチ [ASIC](../../reference/glossary.md#term-asic) とは直接関係しない。
 

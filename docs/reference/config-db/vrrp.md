@@ -132,7 +132,7 @@ RFC 5798 に基づき以下の仮想 MAC が使用される:
 <!-- /cdb-exceptions -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `VRRP` / `VRRP6` テーブルはインターフェース存在・インスタンス存在・YANG leafref という 3 系統の順序依存を持つ。`sonic-utilities/config/main.py` の VRRP サブコマンド全行精読と `sonic-vrrp.yang` の leafref 確認で抽出。
 
@@ -182,9 +182,9 @@ RFC 5798 に基づき以下の仮想 MAC が使用される:
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-`VRRP` / `VRRP6` テーブルは YANG leafref と CLI 実行時チェックの 2 系統で外部テーブルを参照する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-cross-refs.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-cross-refs.md)。
+`VRRP` / `VRRP6` テーブルは YANG leafref と CLI 実行時チェックの 2 系統で外部テーブルを参照する。
 
 ### YANG leafref (VRRP / VRRP6 — `ifname` フィールド)
 
@@ -232,9 +232,9 @@ YANG バリデーションとは独立して CLI が `get_table()` で存在確�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-`VRRP` / `VRRP6` / `VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは CLI (`sonic-utilities/config/main.py`) 経路と YANG/[gNMI](../../reference/glossary.md#term-gnmi) 直書き経路で異なる失敗分岐を持つ。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-failure.md)。
+`VRRP` / `VRRP6` / `VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは CLI (`sonic-utilities/config/main.py`) 経路と YANG/[gNMI](../../reference/glossary.md#term-gnmi) 直書き経路で異なる失敗分岐を持つ。
 
 ### CLI 経路の失敗パターン
 
@@ -290,9 +290,9 @@ HLD `Warmboot and Fastboot Design Impact` セクション (L622-628) の記述:
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-`VRRP` / `VRRP6` / `VRRP_TRACK` / `VRRP6_TRACK` テーブルおよび `macvlanmgrd` / `vrrpsyncd` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-constants.md)。
+`VRRP` / `VRRP6` / `VRRP_TRACK` / `VRRP6_TRACK` テーブルおよび `macvlanmgrd` / `vrrpsyncd` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
 
 ### スケール上限リテラル (config/main.py)
 
@@ -340,9 +340,9 @@ HLD `Warmboot and Fastboot Design Impact` セクション (L622-628) の記述:
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-`VRRP` / `VRRP6` テーブルへの SET/DEL が起点となり、`macvlanmgrd` → `vrrpsyncd` → `intforch (vrrporch)` の 3 段チェーンで CONFIG_DB 以外のリソースへ書き込む。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-side-effects.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-side-effects.md)。
+`VRRP` / `VRRP6` テーブルへの SET/DEL が起点となり、`macvlanmgrd` → `vrrpsyncd` → `intforch (vrrporch)` の 3 段チェーンで CONFIG_DB 以外のリソースへ書き込む。
 
 ### macvlanmgrd — Linux カーネルへの書込 (CONFIG_DB → kernel)
 
@@ -393,9 +393,9 @@ HLD `Warmboot and Fastboot Design Impact` セクション (L622-628) の記述:
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-`VRRP` / `VRRP6` テーブルへの書き込みは 3 段の非同期チェーンで処理される。macvlanmgrd が CONFIG_DB を購読し、vrrpsyncd が Linux カーネルの netlink イベントを購読し、vrrporch が APPL_DB を購読する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-pubsub.md)。
+`VRRP` / `VRRP6` テーブルへの書き込みは 3 段の非同期チェーンで処理される。macvlanmgrd が CONFIG_DB を購読し、vrrpsyncd が Linux カーネルの netlink イベントを購読し、vrrporch が APPL_DB を購読する。
 
 ### 購読方式一覧
 
@@ -450,9 +450,7 @@ vrrporch ConsumerStateTable 受信 → SAI API → syncd → ASIC_DB
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/vrrp-platform.md -->
+## プラットフォーム / SAI Capability 差異
 
 ### ベンダー SAI — `SAI_ROUTER_INTERFACE_ATTR_IS_VIRTUAL` 対応差
 

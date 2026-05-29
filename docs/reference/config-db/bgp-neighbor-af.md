@@ -199,7 +199,7 @@ vtysh -c 'show bgp neighbor <ip>'
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BGP_NEIGHBOR_AF`
 
@@ -228,16 +228,16 @@ vtysh -c 'show bgp neighbor <ip>'
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | minigraph.py は BGP_NEIGHBOR_AF を直接生成しない | — | `sonic-buildimage/src/sonic-config-engine/minigraph.py` に代入なし |
 | frrcfgd が FRR running-config から AF 設定を同期 | BGP_NEIGHBOR_AF の各フィールドを反映 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2140` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -248,20 +248,18 @@ vtysh -c 'show bgp neighbor <ip>'
 - frrcfgd.py L2304: BGP_NEIGHBOR_AF 購読（条件なし）
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
 | `BGPConfigDaemon` | `bgp_table_handler_common()` | `data is None`（DELETE） | `del_table=True` → AF を FRR から削除 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3918` |
 | `BGPConfigDaemon` | `bgp_table_handler_common()` | `data` あり（SET） | `bgp_message` キューに積み `__update_bgp()` で FRR 更新 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3930` |
 
-> **スキャン証跡**: BGP_NEIGHBOR_AF は `bgp_table_handler_common` に直接渡され、BGP_GLOBALS_AF 相当の comb_attr_list 制約はなし。2 件分岐抽出。
+> **裏取り**: BGP_NEIGHBOR_AF は `bgp_table_handler_common` に直接渡され、BGP_GLOBALS_AF 相当の comb_attr_list 制約はなし。2 件分岐抽出。
 <!-- /handler-branching -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-neighbor-af-platform.md`
+## プラットフォーム差
 
 **プラットフォーム差なし**。`BGP_NEIGHBOR_AF` の適用経路は `frrcfgd` → [vtysh](../../reference/glossary.md#term-vtysh) → FRR `bgpd`（ユーザ空間）で完結し、[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) を直接呼び出さない。
 
@@ -280,9 +278,7 @@ FRR `address-family` ブロック内の AF コマンド群（`activate` / `route
 <!-- /platform -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-neighbor-af-ordering.md`
+## 書込み順依存
 
 ### 強制先行 (書かないと FRR に反映されない)
 
@@ -321,10 +317,9 @@ configure terminal
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
+## 暗黙参照マップ
 
 > YANG leafref で強制される構造的参照に加え、`frrcfgd.py` の `nbr_af_key_map` を介して FRR 設定文に展開される際に間接参照されるテーブル / オブジェクトを網羅する。
-> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-neighbor-af-cross-refs.md`
 
 ### BGP_NEIGHBOR_AF が参照する下流テーブル / リソース
 
@@ -355,7 +350,7 @@ configure terminal
 <!-- /cross-refs -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 > 調査対象: `frrcfgd.py` `nbr_af_key_map`、`hdl_*` ハンドラ、`bgpd.conf.db.nbr_af.j2`
 
@@ -403,9 +398,7 @@ configure terminal
 <!-- /defaults -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 証跡: `meta/_intermediate/cdb-flow/bgp-neighbor-af-side.md`
+## 副次 DB 書込
 
 ### 調査結果: 副次書込なし
 
@@ -434,9 +427,7 @@ BGP ネイバー AF の動的ステート（セッション状態・受信 prefi
 <!-- /side-effects -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-neighbor-af-constants.md`
+## ハードコード定数
 
 `frrcfgd.py` の `nbr_af_key_map`（L1895-1925）および `BGP_NEIGHBOR_AF` ハンドラ（L2865-2871）に存在する、YANG / CONFIG_DB で管理されないハードコード定数・リテラル一覧。
 
@@ -474,7 +465,7 @@ BGP ネイバー AF の動的ステート（セッション状態・受信 prefi
 <!-- /constants -->
 
 <!-- failure -->
-## 失敗挙動・リトライ分岐 (Phase D)
+## 失敗挙動・リトライ分岐
 
 > 調査対象: `frrcfgd.py` `__update_bgp`、`bgp_table_handler_common`、`g_run_command`、`BgpdClientMgr.__create_frr_client`
 
@@ -508,7 +499,7 @@ BGP ネイバー AF の動的ステート（セッション状態・受信 prefi
 <!-- /failure -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 

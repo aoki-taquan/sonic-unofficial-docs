@@ -141,7 +141,7 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 <!-- /value-behavior -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 以下は YANG `default` 宣言の**外**にあるコードレベルの fallback。`init_cfg.json.j2` の初期値 + ランタイム `.get`/`try-except`/`or` パターンを全行精読して導出。
 
@@ -171,7 +171,7 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 [CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG / init_cfg.json.j2 のいずれからも変更不可能な、コード内固定値。
 `coredump_gen_handler.py` / `techsupport_cleanup.py` / 共有ライブラリ `auto_techsupport_helper.py` から抽出。
@@ -210,13 +210,12 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 `/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:` を `PATH` 先頭に注入。
 `show techsupport` が依存する utilities をネイティブパスから発見させる。
 
-!!! note "Phase A の defaults 表との関係"
+!!! note "の defaults 表との関係"
     `state` / `rate_limit_interval` / `max_techsupport_limit` / `min_available_mem` / `since` の
-    既定値そのものは Phase A の「コード由来の暗黙デフォルト」表を参照。
-    Phase E は **DB / YANG / init_cfg のいずれからも変更不可能なリテラル**
+    既定値そのものは の「コード由来の暗黙デフォルト」表を参照。
+    は **DB / YANG / init_cfg のいずれからも変更不可能なリテラル**
     (`/var/core`, `/var/dump`, `SINCE_DEFAULT`, `TS_GLOBAL_TIMEOUT`, `TIME_BUF` 等) のみを扱う。
 
-詳細は `meta/_intermediate/cdb-flow/auto-techsupport-constants.md` を参照。
 <!-- /constants -->
 
 <!-- ref-triangle:start -->
@@ -265,7 +264,7 @@ show auto-techsupport global
 
 ### 段階 1 — Consumer 登録
 
-本テーブルに対する常駐 subscriber は存在しない（`sonic-host-services` 全体で `AUTO_TECHSUPPORT` の grep 0 hit）。実装は [hostcfgd](../../reference/glossary.md#term-hostcfgd) と独立した kernel `core_pattern` → `coredump-compress` → `coredump_gen_handler.py` のパイプラインで、必要なフィールドは一発起動スクリプトが同期 HGET で取得する。詳細は Phase G を参照。
+本テーブルに対する常駐 subscriber は存在しない（`sonic-host-services` 全体で `AUTO_TECHSUPPORT` の grep 0 hit）。実装は [hostcfgd](../../reference/glossary.md#term-hostcfgd) と独立した kernel `core_pattern` → `coredump-compress` → `coredump_gen_handler.py` のパイプラインで、必要なフィールドは一発起動スクリプトが同期 HGET で取得する。詳細は を参照。
 
 ### 段階 2 — CFG→APPL 翻訳
 
@@ -283,7 +282,7 @@ show auto-techsupport global
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `AUTO_TECHSUPPORT`
 
@@ -313,7 +312,7 @@ show auto-techsupport global
 <!-- /entry-points -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `AUTO_TECHSUPPORT` テーブルの変更を直接の入力とする host service スクリプト (`coredump_gen_handler.py` / `techsupport_cleanup.py`) は、techsupport ダンプ生成および掃除の過程で **[STATE_DB](../../reference/glossary.md#term-state_db)** に副次的な書込を行う。CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への書込は発生しない。
 
@@ -342,7 +341,6 @@ CONFIG_DB `AUTO_TECHSUPPORT` テーブルの変更を直接の入力とする ho
 - `coredump_gen_handler.py` 経由: critical process の core dump 検出 → `invoke_ts_command_rate_limited()` → `invoke_ts_cmd()` 成功時に `write_to_state_db()` が呼ばれ STATE_DB に新規エントリ追加。
 - `techsupport_cleanup.py` 経由: `max_techsupport_limit` 超過時に `cleanup_process()` が物理ファイル削除を返却し、`clean_state_db_entries()` が対応する STATE_DB エントリを `db.delete` で除去。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- platform -->
@@ -361,13 +359,10 @@ AUTO_TECHSUPPORT (GLOBAL) の挙動は [ASIC](../../reference/glossary.md#term-a
 !!! note "sonic-host-services/scripts/ に consumer なし"
     `grep -rli AUTO_TECHSUPPORT .cache/sonic-sources/sonic-host-services/` は 0 hit。実コンシューマは `sonic-utilities/scripts/{coredump_gen_handler,techsupport_cleanup,memory_threshold_check}.py` + `utilities_common/auto_techsupport_helper.py` に集約。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-platform.md` を参照。
 <!-- /platform -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/auto-techsupport-ordering.md`
+## 書込み順依存
 
 ### 起動順 (kernel core_pattern → handler)
 
@@ -440,7 +435,7 @@ handle_coredump_cleanup → /var/core の max_core_limit 超過分削除
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `coredump_gen_handler` / `techsupport_cleanup` が読み書きする関連テーブル (Phase C)
+## 暗黙参照 — `coredump_gen_handler` / `techsupport_cleanup` が読み書きする関連テーブル
 
 `AUTO_TECHSUPPORT|GLOBAL` の値を起点に動く host service スクリプト
 `coredump_gen_handler.py` / `techsupport_cleanup.py` は、共有モジュール
@@ -460,8 +455,8 @@ masic suffix を除去してから (`swss0` → `swss`) `AUTO_TECHSUPPORT_FEATUR
 
 ### STATE_DB 暗黙参照 — `AUTO_TECHSUPPORT_DUMP_INFO`
 
-Phase F (`side-effects`) で書込先として扱っているのと同テーブルだが、本スクリプトは
-**rate-limit 判定の入力**としても本テーブルを読み出す。読み書きの双方向に依存している点が Phase F 観点と異なる。
+「副次 DB 書込」で書込先として扱っているのと同テーブルだが、本スクリプトは
+**rate-limit 判定の入力**としても本テーブルを読み出す。読み書きの双方向に依存している点が 観点と異なる。
 
 | 操作 | キー / フィールド | 参照箇所 | 用途 |
 |---|---|---|---|
@@ -489,14 +484,12 @@ Phase F (`side-effects`) で書込先として扱っているのと同テーブ�
 - `FEATURE` テーブル本体は `hostcfgd` の `FeatureHandler` が docker サービス on/off の起点として
   使うのみで、auto-techsupport 起動判定には関与しない
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・エラーパス (Phase D)
+## 失敗挙動・エラーパス
 
-> **調査根拠**: `coredump_gen_handler.py`, `techsupport_cleanup.py`, `utilities_common/auto_techsupport_helper.py` 全行精読 (2026-05-15)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/auto-techsupport-failure.md`
+> **Evidence**: `coredump_gen_handler.py`, `techsupport_cleanup.py`, `utilities_common/auto_techsupport_helper.py` 全行精読 (2026-05-15)  
 
 ### techsupport 起動失敗・retry (`auto_techsupport_helper.invoke_ts_cmd`)
 
@@ -557,7 +550,7 @@ Phase F (`side-effects`) で書込先として扱っているのと同テーブ�
 <!-- /failure -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -611,7 +604,6 @@ kernel.core_pattern=|/usr/local/bin/coredump-compress %e %t %p %P
 
 > **常駐 subscriber 不在のため、変更直後に即時反映する仕組みは存在しない。** 反映遅延は外部トリガー (core dump 発生 / monit cycle) の周期に依存する。
 
-> **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:47,54-55,60,69-71`、`sonic-utilities/scripts/techsupport_cleanup.py:22-39`、`sonic-utilities/scripts/memory_threshold_check.py:17-18,117-145`、`sonic-utilities/utilities_common/auto_techsupport_helper.py:315-326`、`sonic-utilities/scripts/coredump-compress:29-31`、`sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45`、`sonic-host-services/scripts/hostcfgd` (grep `AUTO_TECHSUPPORT` 0 hit); 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-pubsub.md`
 <!-- /pubsub -->
 
 ## コア生成から techsupport 起動までの順序依存関係

@@ -167,7 +167,7 @@ VoQ モードでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKE
     `QUEUE_WATERMARK` / `PG_WATERMARK` グループは `READ_AND_CLEAR` モードで動作する。SAI からポーリングするたびにハードウェアのウォーターマークレジスタがクリアされる。`watermarkstat` の PERIODIC / PERSISTENT / USER テーブル分岐は syncd 側の lua スクリプトが処理する。
 
 <!-- ordering -->
-## 書込み順依存・初期化タイミング (Phase B)
+## 書込み順依存・初期化タイミング
 
 <!-- evidence: sonic-swss/orchagent/portsorch.cpp (initializeQueuesBulk, generateQueueMap,
      generateQueueMapPerPort, addQueueFlexCounters, addQueueFlexCountersPerPortPerQueueIndex,
@@ -210,7 +210,7 @@ Warm-reboot 時のみ `m_delayTimerExpired` フラグが false のままタイ�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 <!-- evidence: sonic-swss/orchagent/portsorch.cpp (createPortBufferQueueCounters,
      createPortBufferPgCounters, addPortBufferQueueCounters, initializeQueuesBulk),
@@ -240,9 +240,7 @@ Warm-reboot 時のみ `m_delayTimerExpired` フラグが false のままタイ�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/counters-queue-failure.md -->
+## 失敗挙動・retry / recovery
 
 ### retry / failure パターン概要
 
@@ -299,12 +297,7 @@ supervisor による orchagent 自動再起動後に再試行される。SAI ド
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: sonic-swss/orchagent/portsorch.cpp:83-93,389-434,727-739,866-886,
-     sonic-swss/orchagent/portsorch.h:29-43,
-     sonic-swss/orchagent/flexcounterorch.cpp:34-44,
-     sonic-swss-common/common/schema.h:225-270,528 -->
+## ハードコード定数
 
 ### FlexCounter グループ名（ソースコードハードコード）
 
@@ -372,14 +365,7 @@ Cold boot では `m_delayTimerExpired = true` に即初期化され（`flexcount
 <!-- /constants -->
 
 <!-- side-effects -->
-## COUNTERS_DB 書き込みの副作用 (Phase F)
-
-<!-- evidence: sonic-swss/orchagent/portsorch.cpp (generateQueueMap, generateQueueMapPerPort,
-     createPortBufferQueueCounters, deletePortBufferQueueCounters, generatePriorityGroupMap,
-     createPortBufferPgCounters, deletePortBufferPgCounters),
-     sonic-swss/orchagent/high_frequency_telemetry/counternameupdater.cpp,
-     sonic-swss/orchagent/high_frequency_telemetry/hftelorch.cpp (locallyNotify, SUPPORT_COUNTER_TABLES),
-     sonic-swss/orchagent/countercheckorch.cpp (addPort, removePort, mcCounterCheck) -->
+## COUNTERS_DB 書き込みの副作用
 
 ### CounterNameMapUpdater → HFTelOrch 連鎖（高周波テレメトリ有効時）
 
@@ -415,15 +401,7 @@ Queue / PG マッピング書き込み関数は COUNTERS_DB 更新と同時に `
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-<!-- evidence: sonic-swss/orchagent/orchdaemon.cpp:432-437,620-625,
-     sonic-swss/orchagent/flexcounterorch.cpp:100-167,183-281,
-     sonic-swss/orchagent/watermarkorch.cpp:23-45,144-231,233-281,
-     sonic-utilities/scripts/watermarkstat:325,
-     sonic-swss/orchagent/watermark_queue.lua,
-     sonic-swss/orchagent/watermark_pg.lua;
-     詳細分析 meta/_intermediate/cdb-flow/counters-queue-pubsub.md -->
+## 通信メカニズム
 
 ### Producer/Consumer ペア
 
@@ -517,16 +495,11 @@ CLI: queuestat / watermarkstat / pg-drop
   └─ COUNTERS_DB 直接読み取り（pub/sub なし）
 ```
 
-> **Evidence**: `orchdaemon.cpp:432-437,620-625`; `flexcounterorch.cpp:100-167,183-281`; `watermarkorch.cpp:23-45,144-231,233-281`; `watermarkstat:325`; `watermark_queue.lua`, `watermark_pg.lua`; 詳細分析 `meta/_intermediate/cdb-flow/counters-queue-pubsub.md`
+> **Evidence**: `orchdaemon.cpp:432-437,620-625`; `flexcounterorch.cpp:100-167,183-281`; `watermarkorch.cpp:23-45,144-231,233-281`; `watermarkstat:325`; `watermark_queue.lua`, `watermark_pg.lua`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム固有挙動 (Phase H)
-
-<!-- evidence: sonic-swss/orchagent/portsorch.cpp:689-704,857-863,1850-1967,6449-6458,6589-6592,8446-8530,
-     sonic-swss/orchagent/orchdaemon.cpp:635-843,
-     sonic-swss/orchagent/orch.h:40-50,
-     sonic-swss/orchagent/nvda_port_trim_drop.lua -->
+## プラットフォーム固有挙動
 
 キュー / PG カウンタの収集挙動はプラットフォーム（`platform` 環境変数）およびスイッチタイプ（`gMySwitchType`）によって以下の点が異なる。
 
@@ -587,12 +560,7 @@ Broadcom の `PFC_DLR_INIT_ENABLE` 環境変数は `gSwitchOrch->checkPfcDlrInit
 <!-- /platform -->
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
-
-<!-- evidence: sonic-swss/orchagent/portsorch.cpp, sonic-swss/orchagent/portsorch.h,
-     sonic-swss-common/common/schema.h, sonic-sairedis/syncd/FlexCounter.cpp,
-     sonic-utilities/scripts/queuestat, sonic-utilities/scripts/pg-drop,
-     sonic-utilities/scripts/watermarkstat -->
+## 暗黙デフォルト・コード由来挙動
 
 ### カウンタフィールドセットはコードハードコード
 

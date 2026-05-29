@@ -99,12 +99,11 @@ SFLOW_SESSION|all      # 全ポートへのグローバル既定
 <!-- /topics-back-ref -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 SFLOW_SESSION テーブルを CONFIG_DB へ書き込む際の **必須・推奨順序** を実装コードから導出した。
 
-> **調査根拠**: `sonic-swss/cfgmgr/sflowmgr.cpp` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-session-ordering.md`
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp` 全行精読 (2026-05-17)
 
 ### O1: `PORT` → `SFLOW_SESSION` (必須)
 
@@ -157,12 +156,11 @@ APP_SFLOW_TABLE  SET  →  APP_SFLOW_SESSION_TABLE  SET
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照（テーブル間依存）(Phase C)
+## 暗黙参照（テーブル間依存）
 
 SFLOW_SESSION テーブルを処理する際に暗黙的に依存するテーブル・コンポーネントを実装コードから導出した。
 
-> **調査根拠**: `sonic-swss/cfgmgr/sflowmgrd.cpp`, `sflowmgr.cpp`, `orchagent/sfloworch.cpp` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-session-cross-refs.md`
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp`, `sflowmgr.cpp`, `orchagent/sfloworch.cpp` 全行精読 (2026-05-17)
 
 ### PORT（必須参照 — m_sflowPortConfMap 登録）
 
@@ -204,12 +202,11 @@ PORT|<port>  SET  →  m_sflowPortConfMap 登録  →  SFLOW_SESSION|<port>  SET
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 `sflowmgrd` および `SflowOrch` の失敗経路を実装コードから導出した。
 
-> **調査根拠**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-session-failure.md`
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp` 全行精読 (2026-05-17)
 
 ### sflowmgrd — SET 処理の失敗経路
 
@@ -249,12 +246,11 @@ PORT|<port>  SET  →  m_sflowPortConfMap 登録  →  SFLOW_SESSION|<port>  SET
 <!-- /failure -->
 
 <!-- constants -->
-## 定数・マジックナンバー (Phase E)
+## 定数・マジックナンバー
 
 `sflowmgrd` および `SflowOrch` が使用するハードコード定数・センチネル値・YANG 制約を実装コードから導出した。
 
-> **調査根拠**: `sonic-swss/cfgmgr/sflowmgr.h`, `sflowmgr.cpp`, `orchagent/sfloworch.cpp`, `sonic-sflow.yang` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-session-constants.md`
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.h`, `sflowmgr.cpp`, `orchagent/sfloworch.cpp`, `sonic-sflow.yang` 全行精読 (2026-05-17)
 
 ### マクロ定数 (sflowmgr.h)
 
@@ -312,7 +308,7 @@ findSamplingRate() がポート未登録を検出
 
 <!-- /constants -->
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `SFLOW_SESSION` テーブルへの書込をトリガーとして、他 DB・テーブルへ副次的に書き込まれる経路を `sflowmgr.cpp` / `sfloworch.cpp` から抽出した。
 
@@ -386,12 +382,11 @@ evidence: sfloworch.cpp:119–150 (`sflowAddPort`), sfloworch.cpp:161–195 (`sf
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `SFLOW_SESSION` テーブルを中心とした購読・通知 API を `sflowmgrd.cpp`, `sflowmgr.h`, `sfloworch.cpp`, `orchdaemon.cpp` から導出した。
 
-> **調査根拠**: `sonic-swss/cfgmgr/sflowmgrd.cpp`, `sflowmgr.h`, `orchagent/sfloworch.cpp`, `orchagent/orchdaemon.cpp` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-session-pubsub.md`
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp`, `sflowmgr.h`, `orchagent/sfloworch.cpp`, `orchagent/orchdaemon.cpp` 全行精読 (2026-05-17)
 
 ### CONFIG_DB → sflowmgrd（SubscriberStateTable）
 
@@ -460,12 +455,11 @@ sess_info = sess_db.get_all(sess_db.APPL_DB, intf_key)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
 `sflowmgrd` および `SflowOrch` の全コードを精読した結果、SFLOW_SESSION 処理に **プラットフォーム固有分岐は存在しない**。
 
-> **調査根拠**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-session-platform.md`
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp` 全行精読 (2026-05-17)
 
 ### 静的プラットフォーム比較: なし
 

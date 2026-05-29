@@ -101,9 +101,7 @@ COUNTERS_RIF_NAME_MAP  (hash、key = "")
 - [YANG](../../reference/glossary.md#term-yang): `sonic-portchannel`
 
 <!-- defaults -->
-## コード由来暗黙デフォルト (Phase A)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-defaults.md`
+## コード由来暗黙デフォルト
 
 [COUNTERS_DB](../../reference/glossary.md#term-counters_db) は書き込み元がコードのみであり、ユーザが直接フィールドを設定することはない。以下は [orchagent](../../reference/glossary.md#term-orchagent) / [FlexCounter](../../reference/glossary.md#term-flexcounter) がどのような初期値・条件でフィールドを登録するかを示す。
 
@@ -144,9 +142,7 @@ COUNTERS_RIF_NAME_MAP  (hash、key = "")
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-ordering.md`
+## 書込み順依存
 
 ### COUNTERS_LAG_NAME_MAP の書込み順序
 
@@ -229,9 +225,7 @@ FlexCounter (RIF_STAT_COUNTER_FLEX_COUNTER_GROUP)  → COUNTERS:<rif_oid>
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-cross-refs.md`
+## 暗黙参照テーブル
 
 `portsorch` / `intfsorch` が `COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` を書き込む際に
 [YANG](../../reference/glossary.md#term-yang) leafref として宣言されていない以下の DB / テーブルを暗黙的に参照する。
@@ -258,9 +252,7 @@ FlexCounter (RIF_STAT_COUNTER_FLEX_COUNTER_GROUP)  → COUNTERS:<rif_oid>
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 障害挙動 (Phase D)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-failure.md`
+## 障害挙動
 
 ### SAI LAG 作成失敗（`addLag`）
 
@@ -304,9 +296,7 @@ RIF が `m_rifsToAdd` にキューイング後、タイマーループ（`intfso
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-ordering.md`
+## ハードコード定数
 
 `portsorch` / `intfsorch` が COUNTERS_DB に書き込む際に使用する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG で管理されないハードコード定数の一覧。
 
@@ -348,9 +338,7 @@ RIF が `m_rifsToAdd` にキューイング後、タイマーループ（`intfso
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-ordering.md`
+## 副次 DB 書込
 
 `portsorch` / `intfsorch` が `COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` を書き込む際に、
 CONFIG_DB とは別の DB（FLEX_COUNTER_DB / COUNTERS_DB 内の他テーブル）に以下を副次的に書き込む。
@@ -415,9 +403,7 @@ sonic-db-cli COUNTERS_DB hgetall COUNTERS_RIF_TYPE_MAP
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-ordering.md`
+## Redis 通知メカニズム
 
 ### 書き込み方式 — ProducerStateTable を使わない直接 HSET
 
@@ -458,9 +444,7 @@ COUNTERS_DB COUNTERS:<rif_oid>  ← SAI 収集値が書き込まれる
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-platform.md`
+## プラットフォーム / SAI Capability 差異
 
 `COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` の書き込み自体はプラットフォームを問わず同じコードパスを通るが、以下のプラットフォーム固有の差異が存在する。
 

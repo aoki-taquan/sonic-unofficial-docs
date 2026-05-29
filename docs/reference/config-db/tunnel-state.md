@@ -140,7 +140,7 @@ VXLAN_TABLE|<vxlan_name>
 - 関連 [APPL_DB](../../reference/glossary.md#term-appl_db): `TUNNEL_DECAP_TABLE`、`TUNNEL_DECAP_TERM_TABLE`、`VXLAN_TUNNEL_TABLE`
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 以下は設定省略時にコード実装から導出される暗黙の挙動。
 
@@ -191,7 +191,7 @@ VXLAN_TABLE|<vxlan_name>
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 STATE_DB への書き込みは [CONFIG_DB](../../reference/glossary.md#term-config_db) → [APPL_DB](../../reference/glossary.md#term-appl_db) → [SAI](../../reference/glossary.md#term-sai) の処理完了を受けて行われる。以下は各テーブルの書き込みが確定するために必要な前提条件と、DEL 操作の安全順序。
 
@@ -228,12 +228,10 @@ DEL CONFIG_DB VXLAN_TUNNEL_MAP|*                        # map を先に DEL
 DEL CONFIG_DB VXLAN_TUNNEL|<name>                       # vxlanmgrd が STATE_DB を自動削除
 ```
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-ordering.md`
-
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 他テーブル・Orch とのクロスリファレンス (Phase C)
+## 他テーブル・Orch とのクロスリファレンス
 
 STATE_DB の TUNNEL 系テーブルは他 Orch からの**直接読み取り対象ではない**。他 Orch はインメモリキャッシュを通じて参照し、STATE_DB はモニタリング向けの読み取り専用ミラーとして機能する。ただし、STATE_DB 書き込みの**契機**となるイベントは複数の Orch にまたがる。
 
@@ -262,12 +260,10 @@ MuxOrch は `TunnelDecapOrch*` を直接保持しており、`TUNNEL_DECAP_TABLE
 
 `VxlanMgr` (cfgmgr) が Linux [VXLAN](../../reference/glossary.md#term-vxlan) netdevice を作成した際に独立して書き込む。`VxlanTunnelOrch` や他 Orch との直接的な依存はない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-crossrefs.md`
-
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 `tunneldecaporch` / `VxlanTunnelOrch` / `VxlanMgr` における STATE_DB 書き込みの失敗経路を網羅する。
 
@@ -320,12 +316,10 @@ MuxOrch は `TunnelDecapOrch*` を直接保持しており、`TUNNEL_DECAP_TABLE
 | MAC アドレス未設定 | `doVxlanCreateTask()` | 保留・STATE_DB 書き込みなし | SWSS_LOG_DEBUG | `vxlanmgr.cpp:336-342` |
 | `createVxlan()` 失敗（Linux netdevice 作成エラー） | `doVxlanCreateTask()` | `m_stateVxlanTable.set()` 未呼び出し → `state=ok` が書き込まれない | SWSS_LOG_ERROR | `vxlanmgr.cpp:366-370` |
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-failure.md`
-
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 コードに直書きされており、`config_db.json` での変更が効かない定数。変更にはコードのリコンパイルが必要。
 
@@ -392,12 +386,10 @@ EVPN 由来の動的トンネルは `EVPN_<vtep_ip>` 形式で VXLAN_TUNNEL_TABL
 | `EVPN_TUNNEL_PORT_PREFIX` | `"Port_EVPN_"` | `vxlanorch.h:42` |
 | `EVPN_TUNNEL_NAME_PREFIX` | `"EVPN_"` | `vxlanorch.h:43` |
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-constants.md`
-
 <!-- /constants -->
 
 <!-- side-effects -->
-## STATE_DB 書き込みの副作用 (Phase F)
+## STATE_DB 書き込みの副作用
 
 STATE_DB への書き込みは単なる状態ミラーにとどまらず、以下の連鎖処理を引き起こす。
 
@@ -463,12 +455,10 @@ link-up / link-down イベントが発生すると `PortsOrch::updateDbPortOperS
 | 5 | VxLAN IF を [VNET](../../reference/glossary.md#term-vnet) にアタッチ |
 | 6 | `ip link set ... up` (VxLAN IF) |
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-side-effects.md`
-
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム・pub/sub (Phase G)
+## 通信メカニズム・pub/sub
 
 STATE_DB のトンネル関連テーブルへの書き込みはすべて `swsscommon::Table::set()` / `del()` による直接操作であり、`NotificationProducer` / `ConsumerStateTable` ベースのチャネル通知は使用しない。
 
@@ -507,15 +497,10 @@ SAI ポートリンク変化通知
 - `tunneldecaporch.cpp` L39 の `SubscriberStateTable` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `CFG_SUBNET_DECAP_TABLE_NAME` 購読専用であり、STATE_DB 書き込み通知とは無関係
 - STATE_DB のいずれのトンネルテーブルも、`NotificationProducer` / `NotificationConsumer` による channel 通知パスを持たない
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-pubsub.md`
-
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 調査対象: `orchagent/vxlanorch.cpp`, `orchagent/tunneldecaporch.cpp`, `cfgmgr/vxlanmgr.cpp`
-> 調査日: 2026-05-17
+## プラットフォーム差
 
 ### VXLAN_TUNNEL_TABLE — P2P DIP トンネルの SAI 対応可否
 
@@ -567,8 +552,6 @@ SAI 仕様上の create-only 属性であるため [ASIC](../../reference/glossa
 ### VXLAN_TABLE — Linux カーネル VXLAN モジュール依存
 
 `createVxlan()` は Linux カーネルの VXLAN デバイス作成に依存する。カーネルモジュール (`vxlan.ko`) が未ロードの環境では `ip link add ... type vxlan` が失敗し、`m_stateVxlanTable.set()` が呼ばれず `state=ok` が書き込まれない。[VS](../../reference/glossary.md#term-vs) (virtual switch) 環境ではカーネル VXLAN が利用可能なためテスト動作する。
-
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-platform.md`
 
 <!-- /platform -->
 

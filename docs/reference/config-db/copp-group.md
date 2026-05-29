@@ -45,7 +45,7 @@ flowchart LR
 <!-- /cdb-mermaid -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### CONFIG_DB → APPL_DB (coppmgr)
 
@@ -232,7 +232,7 @@ show copp config
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `COPP_GROUP`
 
@@ -260,16 +260,16 @@ show copp config
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | COPP_GROUP は init_cfg / minigraph では生成されない（`/etc/sonic/copp_cfg.json` からロード） | — | `sonic-swss/orchagent/copporch.cpp` コメント |
 | 派生なし | — | — |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -280,7 +280,7 @@ show copp config
 - copporch.cpp 1200+ 行、COPP_GROUP 購読: 1 件（条件なし）
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -289,10 +289,10 @@ show copp config
 | `CoppOrch` | `processCoppTrapGroup()` | `genetlink_name` フィールドが存在する | Genetlink hostif を作成してトラップグループに紐付け | `sonic-swss/orchagent/copporch.cpp:844` |
 | `CoppOrch` | `processCoppTrapGroup()` | `trap_ids` フィールド変更あり | `trapGroupProcessTrapIdChange()` でトラップ ID を追加・削除 | `sonic-swss/orchagent/copporch.cpp:853` |
 
-> **スキャン証跡**: `processCoppTrapGroup` L737-872 全行読了。デフォルトグループ削除拒否が最重要分岐。4 件抽出。
+> **裏取り**: `processCoppTrapGroup` L737-872 全行読了。デフォルトグループ削除拒否が最重要分岐。4 件抽出。
 <!-- /handler-branching -->
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 ### SAI hostif trap group capability クエリ
 
@@ -321,7 +321,7 @@ show copp config
 <!-- /platform -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `COPP_GROUP` への変更が連鎖して書き込まれる副次テーブル一覧。
 
@@ -341,7 +341,7 @@ CONFIG_DB `COPP_GROUP` への変更が連鎖して書き込まれる副次テー
 3. `CoppOrch` 起動時に SAI ケーパビリティを問い合わせ → STATE_DB `COPP_TRAP_CAPABILITY_TABLE` に対応 trap_ids を一括記録
 4. トラップにカウンタをバインド → [COUNTERS_DB](../../reference/glossary.md#term-counters_db) `COUNTERS_TRAP_NAME_MAP` を更新
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 ### `default` グループ — `trap_action` 省略
 
@@ -379,11 +379,11 @@ YANG では `cir` のデフォルトは `0`。SAI 仕様では `SAI_POLICER_ATTR
 
 SAI capability query（`sai_query_attribute_enum_values_capability`）が失敗した場合、`default_supported_trap_ids` の静的リストにフォールバックする。このリストには `neighbor_miss` が意図的に含まれていない（コメント: "This list is intended to remain static"）。古い SAI を使うプラットフォームでは `neighbor_miss` trap が silent drop される可能性がある。<!-- evidence: copporch.cpp L104-151, L263-270 -->
 
-> **スキャン証跡**: coppmgr.cpp 全行、copporch.cpp L1-1500 読了、sonic-copp.yang 全行、copp_cfg.j2 全行。発見 9 件。
+> **裏取り**: coppmgr.cpp 全行、copporch.cpp L1-1500 読了、sonic-copp.yang 全行、copp_cfg.j2 全行。発見 9 件。
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### 初期化時の処理順序
 
@@ -412,7 +412,7 @@ mergeConfig(COPP_GROUP)  # L372: GROUP をマージ — checkTrapGroupPending() 
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ### 失敗パス一覧
 
@@ -450,11 +450,10 @@ COPP_GROUP に関する `STATE_DB` への障害記録はなし。`syslog`（`SWS
 journalctl -u swss | grep -i copp
 ```
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/copp-group-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### copporch.h / copporch.cpp 固定値
 
@@ -493,11 +492,10 @@ journalctl -u swss | grep -i copp
 
 `queue4_group3` は `DEVICE_METADATA['localhost']['type']` に `'Mgmt'` を含む場合のみ `cir=cbs=300`、それ以外 `100`。<!-- evidence: copp_cfg.j2:37-43 -->
 
-> **スキャン証跡**: `copporch.h` 全行、`copporch.cpp` L1-200, L330-370, `orch.h` L41-42、`copp_cfg.j2` 全行読了。定数 6+2+8 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/copp-group-constants.md`
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `COPP_GROUP` エントリが処理される際に `coppmgr` / `CoppOrch` が暗黙的に関与する
 他テーブルの依存関係を示す。COPP_GROUP 自体は他テーブルへの leafref を持たないが、
@@ -531,9 +529,7 @@ journalctl -u swss | grep -i copp
 - `default` グループは `CoppOrch` 側でも削除を `task_ignore` で拒否する二重防護
 <!-- /cross-refs -->
 
-## 副次 DB 書き込み (Phase F)
-
-> 証跡: `meta/_intermediate/cdb-flow/copp-group-side.md`
+## 副次 DB 書き込み
 
 `COPP_GROUP` の SET/DEL 処理は CONFIG_DB 以外の以下 DB・テーブルへも書き込みを行う。
 

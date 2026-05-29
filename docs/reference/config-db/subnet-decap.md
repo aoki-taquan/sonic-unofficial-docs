@@ -151,7 +151,7 @@ sonic-db-cli CONFIG_DB keys 'SUBNET_DECAP|*'
 [^2]: tunneldecaporch 実装: `sonic-swss/orchagent/tunneldecaporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/tunneldecaporch.cpp>
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A)
+## フィールド暗黙デフォルト
 
 > コード精読由来。YANG `default` 値の外側にある実装上の暗黙挙動をまとめる。
 
@@ -191,20 +191,20 @@ YANG は `src_ip` と `src_ip_v6` 両方を `mandatory true` とするが、実�
 <!-- /defaults -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 [tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) が `SUBNET_DECAP` エントリの存在に基づいて IP-in-IP デカプセルトンネルを自動作成する。Config-DB 内フィールド間の自動付与なし。YANG の `must` 制約による論理チェックのみ。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 [tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) は常時起動し `SUBNET_DECAP` テーブルを無条件購読する。`DEVICE_METADATA.subtype==DualToR` 構成で主に使用される。`ip_prefix_list` が空の場合はエラーログ + スキップ。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -212,7 +212,7 @@ YANG は `src_ip` と `src_ip_v6` 両方を `mandatory true` とするが、実�
 | `tunnelmgrd` | `SUBNET_DECAP` エントリ削除 | 対応トンネル削除 | `tunnelmgrd` |
 | `tunnelmgrd` | `ip_prefix_list` が空 | ログエラー + スキップ | `tunnelmgrd` |
 
-> **スキャン証跡**: `SUBNET_DECAP` は主に DualToR 構成で使われる。[tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) 経由でサブネット decap トンネルを管理。Config-DB 内の自動付与なし（該当なし）。
+> **裏取り**: `SUBNET_DECAP` は主に DualToR 構成で使われる。[tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) 経由でサブネット decap トンネルを管理。Config-DB 内の自動付与なし（該当なし）。
 
 <!-- /handler-branching -->
 
@@ -239,7 +239,7 @@ YANG は `src_ip` と `src_ip_v6` 両方を `mandatory true` とするが、実�
 <!-- /runtime-trace -->
 
 <!-- ordering -->
-## 処理順序と順序依存 (Phase B)
+## 処理順序と順序依存
 
 ### orchagent 初期化順序
 
@@ -328,10 +328,9 @@ routeorch / vnetorch が **ランタイムで動的生成** する。
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
-> **調査根拠**: `tunneldecaporch.cpp`, `tunneldecaporch.h`, `routeorch.cpp`, `vnetorch.cpp`, `ipinip.json.j2` 全行精読 (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/subnet-decap-ordering.md`
+> **Evidence**: `tunneldecaporch.cpp`, `tunneldecaporch.h`, `routeorch.cpp`, `vnetorch.cpp`, `ipinip.json.j2` 全行精読 (2026-05-18)
 
 `SUBNET_DECAP` テーブルは直接の YANG leafref をほとんど持たないが、実行時に以下のテーブルを暗黙的に参照・連動する。
 
@@ -366,9 +365,8 @@ routeorch / vnetorch が **ランタイムで動的生成** する。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/subnet-decap-failure.md -->
 <!-- source: sonic-swss/orchagent/tunneldecaporch.cpp -->
 
 ### `SUBNET_DECAP` テーブル処理 (`doSubnetDecapTask`) の失敗パス
@@ -414,9 +412,8 @@ tunnel が存在しない場合 (#11) や `src_ip` が未設定の場合 (#12) �
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-<!-- evidence: meta/_intermediate/cdb-flow/subnet-decap-constants.md -->
 <!-- source: sonic-swss/orchagent/tunneldecaporch.cpp, sonic-swss/orchagent/tunneldecaporch.h, sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2 -->
 
 `TunnelDecapOrch` は `SUBNET_DECAP` テーブルの処理に関連するトンネル名・MTU・各種モード値をソースコードにハードコードしている。これらは CONFIG_DB の `SUBNET_DECAP` フィールドから変更できない。
@@ -473,9 +470,8 @@ DualToR の Mux トンネル識別に使われる定数。`TunnelDecapOrch` が�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-<!-- evidence: meta/_intermediate/cdb-flow/subnet-decap-side-effects.md -->
 <!-- source: sonic-swss/orchagent/tunneldecaporch.cpp, routeorch.cpp, vnetorch.cpp -->
 
 CONFIG_DB `SUBNET_DECAP` テーブルの変更に伴って `TunnelDecapOrch` が副次的に書き込む DB エントリは以下のとおり。[ASIC_DB](../../reference/glossary.md#term-asic_db) への `sai_tunnel_api` 呼び出し（主作用）はこの表から除外する。
@@ -506,11 +502,10 @@ CONFIG_DB `SUBNET_DECAP` テーブルの変更に伴って `TunnelDecapOrch` が
 
 `TunnelDecapOrch` 自身は [APPL_DB](../../reference/glossary.md#term-appl_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db) への直接書込を行わない。[ASIC_DB](../../reference/glossary.md#term-asic_db) への反映は SAI (`sai_tunnel_api`) 経由で orchagent フレームワークが管理する。[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / APPL_STATE_DB / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) / CONFIG_DB への書込みも検出されなかった。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/subnet-decap-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -572,9 +567,8 @@ TunnelDecapOrch::doSubnetDecapTask(consumer)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
-<!-- evidence: meta/_intermediate/cdb-flow/subnet-decap-platform.md -->
 <!-- source: sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2 ref:master -->
 <!-- source: sonic-swss/orchagent/tunneldecaporch.cpp ref:master -->
 
@@ -616,11 +610,11 @@ TunnelDecapOrch::doSubnetDecapTask(consumer)
 
 `subnet_type: vlan` / `subnet_type: vip` を持つ TUNNEL_DECAP_TERM_TABLE エントリは `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP` として SAI に登録される (`tunneldecaporch.cpp:934-936`)。[ASIC](../../reference/glossary.md#term-asic) が MP2MP を未実装の場合 `addDecapTunnelTermEntry()` が `false` を返し、エントリは `unhandledTerms` キューに残って後続のポーリングで再試行される。再試行が成功するまで SUBNET_DECAP 機能は有効にならない。
 
-> 詳細根拠: `meta/_intermediate/cdb-flow/subnet-decap-platform.md`
+>
 <!-- /platform -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 SUBNET_DECAP テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 

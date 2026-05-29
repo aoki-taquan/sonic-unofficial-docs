@@ -173,7 +173,7 @@ ERSPAN セッションは以下の非同期チェーンで活性化される:
 dst_ip のルートが存在しない場合、セッションは永久に `inactive` のまま。
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `MirrorOrch` は [CONFIG_DB](../../reference/glossary.md#term-config_db) `MIRROR_SESSION` を消費し、ERSPAN セッションを SAI に反映する。ERSPAN 種別は RouteOrch / NeighOrch との非同期協調を必要とするため、書込み順依存が複数存在する。
 
@@ -199,9 +199,7 @@ dst_ip のルートが存在しない場合、セッションは永久に `inact
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照・共依存テーブル (Phase C)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/erspan-cross-refs.md`
+## 暗黙参照・共依存テーブル
 
 `MIRROR_SESSION` (ERSPAN 種別) は YANG leafref を持たないが、実装レベルで以下の外部テーブル・コンポーネントへの依存が存在する。
 
@@ -240,9 +238,7 @@ MIRROR_SESSION SET
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/erspan-failure.md`
+## 失敗挙動マトリクス
 
 ### SET 処理 (createEntry) における失敗経路
 
@@ -308,7 +304,7 @@ MIRROR_SESSION SET
 <!-- /cdb-exceptions -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `MirrorOrch` (`mirrororch.cpp` / `mirrororch.h`) 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。これらの値は ERSPAN セッションの SAI 設定・STATE_DB 書き込み値・バリデーション上限に直接影響する。
 
@@ -353,13 +349,12 @@ MIRROR_SESSION SET
 |------|----|------|--------|
 | `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | `getenv("platform")` の戻り値と比較して Mellanox プラットフォームを判定。`greType` の分岐に使用（`mirrororch.cpp:L395, L65`）。完全一致比較（`== MLNX_PLATFORM_SUBSTRING`）であり、部分一致ではない点に注意 | `orch.h:L42` |
 
-> **スキャン証跡**: `mirrororch.cpp` L14-45 (define 定数), L57-77 (MirrorEntry コンストラクタ), L100-109 (m_maxNumTC 初期化), L395 (platform getenv), L997-1011 (VLAN PRI/CFI + IP HDR VER), L1003-1007 (ERSPAN カプセル化タイプ) 読了。`mirrororch.h` L36, L99-100 読了。`orch.h` L42 読了。定数 6 種別 16 件を確認。
+> **裏取り**: `mirrororch.cpp` L14-45 (define 定数), L57-77 (MirrorEntry コンストラクタ), L100-109 (m_maxNumTC 初期化), L395 (platform getenv), L997-1011 (VLAN PRI/CFI + IP HDR VER), L1003-1007 (ERSPAN カプセル化タイプ) 読了。`mirrororch.h` L36, L99-100 読了。`orch.h` L42 読了。定数 6 種別 16 件を確認。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込み (Phase F)
+## 副次 DB 書込み
 
-> 調査証跡: `meta/_intermediate/cdb-flow/erspan-side-effects.md`  
 > ソース: `sonic-swss/orchagent/mirrororch.cpp` (setSessionState L574-637, removeSessionState L640-645, activateSession L921-1100, deactivateSession L1104-1151)
 
 ### STATE_DB — MIRROR_SESSION_TABLE
@@ -413,9 +408,8 @@ MirrorOrch はこれらへの書き込みを行わない。[CRM](../../reference
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/erspan-pubsub.md`  
 > ソース: `sonic-swss/orchagent/mirrororch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`, `sonic-swss/orchagent/orch.cpp`, `sonic-swss/orchagent/aclorch.cpp`
 
 ### 購読方式: SubscriberStateTable + keyspace PSUBSCRIBE
@@ -467,14 +461,11 @@ CONFIG_DB MIRROR_SESSION|<name> に SET/DEL
 
 `task_need_retry` 返却時（policer 未登録など）は `it++` で `m_toSync` に残留し、次回 select イベントループ (1000 ms 以内) で `doTask` が再呼び出しされる。明示的な sleep / timer は存在しない。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/erspan-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
 
-## プラットフォーム / SAI Capability 差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/erspan-platform.md -->
+## プラットフォーム / SAI Capability 差異
 
 ### 差異 1: GRE protocol type の Mellanox 分岐
 

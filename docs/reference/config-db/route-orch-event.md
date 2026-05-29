@@ -278,9 +278,7 @@ assert(!entry.second.routeTable.empty());
 ---
 
 <!-- defaults -->
-## コード由来デフォルト詳細 (Phase A)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-orch-event-defaults.md -->
+## コード由来デフォルト詳細
 
 ### ResponsePublisher — `protocol` フィールドのデフォルト: `""`
 
@@ -291,7 +289,7 @@ assert(!entry.second.routeTable.empty());
 protocol.clear();  // デフォルト: ""
 ```
 
-APPL_DB に `protocol` フィールドが存在する場合のみ上書き (L785–788):
+[APPL_DB](../../reference/glossary.md#term-appl_db) に `protocol` フィールドが存在する場合のみ上書き (L785–788):
 
 ```cpp
 if (fvField(i) == "protocol" && fvValue(i) != "")
@@ -335,9 +333,7 @@ NextHopUpdate update = { vrf_id, entry.first.second, prefix, nexthops };
 ---
 
 <!-- ordering -->
-## 書込み順・初期化順依存 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-orch-event-ordering.md -->
+## 書込み順・初期化順依存
 
 RouteOrch の通知機構（ResponsePublisher / NextHopObserver）は以下の 2 軸で順序依存が存在する。
 
@@ -345,7 +341,7 @@ RouteOrch の通知機構（ResponsePublisher / NextHopObserver）は以下の 2
 
 `fpmsyncd` が `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` を購読するのは、
 `CONFIG_DB DEVICE_METADATA|localhost` に `suppress-fib-pending = "enabled"` が設定されているときのみ
-(fpmsyncd.cpp L78–120)[^4]:
+([fpmsyncd](../../reference/glossary.md#term-fpmsyncd).cpp L78–120)[^4]:
 
 ```cpp
 deviceMetadataTable.hget("localhost", "suppress-fib-pending", suppressionEnabledStr);
@@ -357,7 +353,7 @@ if (suppressionEnabledStr == "enabled")
 }
 ```
 
-Redis の Pub/Sub は通知をバッファしないため、この設定が未有効の状態で fpmsyncd が起動すると
+[Redis](../../reference/glossary.md#term-redis) の Pub/Sub は通知をバッファしないため、この設定が未有効の状態で [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が起動すると
 `publishRouteState()` が送出する通知はすべて消失する。
 
 **必要な順序**:
@@ -426,9 +422,7 @@ RouteOrch が `addRoute()` 内で `hasNhg()` / `hasNextHop()` を確認した時
 ---
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-orch-event-cross-refs.md -->
+## 暗黙参照テーブル
 
 全依存が実装レベルの暗黙参照（[YANG](../../reference/glossary.md#term-yang) 未定義テーブル）。
 
@@ -455,9 +449,7 @@ RouteOrch が `addRoute()` 内で `hasNhg()` / `hasNextHop()` を確認した時
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-orch-event-failure.md -->
+## 失敗挙動
 
 `RouteOrch` の通知経路（ResponsePublisher + NextHopObserver）における失敗は、(A) SAI バルク操作失敗による APPL_STATE_DB 非更新、(B) 事前失敗パスでの SUCCESS 扱い publish、(C) `addRoutePost()` false 返却によるリトライ、(D) SAI DEL 失敗時の矛盾した状態遷移の 4 系統に分類される。
 
@@ -503,7 +495,7 @@ if (status.ok()) { state_attrs = intent_attrs; }
 
 | 失敗条件 | 行番号 | リトライ先行 |
 |----------|--------|-------------|
-| VRF が `m_syncdRoutes` に未登録 | L2396–2401 | VRF 登録後に自動再処理 |
+| [VRF](../../reference/glossary.md#term-vrf) が `m_syncdRoutes` に未登録 | L2396–2401 | [VRF](../../reference/glossary.md#term-vrf) 登録後に自動再処理 |
 | NhgOrch / CbfNhgOrch に NHG 未登録 | L2411–2415 | NHG 登録後に自動再処理 |
 | 単一 NH の [RIF](../../reference/glossary.md#term-rif) が `SAI_NULL_OBJECT_ID` | L2431–2436 | IntfsOrch [RIF](../../reference/glossary.md#term-rif) 作成後に再処理 |
 | `hasNextHop()` = false | L2440–2445 | NeighOrch 登録後に再処理 |
@@ -544,9 +536,7 @@ publishRouteState(ctx);  // DEL を APPL_STATE_DB に書く
 <!-- /failure -->
 
 <!-- constants -->
-## 埋め込み定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-orch-event-constants.md -->
+## 埋め込み定数
 
 `RouteOrch` の通知機構（ResponsePublisher + NextHopObserver）に直接影響する埋め込み定数を以下に示す。
 
@@ -609,9 +599,7 @@ const auto routeResponseChannelName =
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書き込み (Phase F)
-
-> 証跡: `meta/_intermediate/cdb-flow/route-orch-event-side.md`
+## 副次 DB 書き込み
 
 `RouteOrch` の通知機構は [CONFIG_DB](../../reference/glossary.md#term-config_db) 以外の以下の DB・テーブルへ書き込みを行う。
 
@@ -654,9 +642,9 @@ SAI 失敗時は RESPONSE_CHANNEL 通知は送出されるが、APPL_STATE_DB �
 ---
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
-`RouteOrch` の通知機構は 2 種類の Redis 通信を利用する: ResponsePublisher による Pub/Sub チャネル通知と、内部 NextHopObserver によるプロセス内コールバック。
+`RouteOrch` の通知機構は 2 種類の [Redis](../../reference/glossary.md#term-redis) 通信を利用する: ResponsePublisher による Pub/Sub チャネル通知と、内部 NextHopObserver によるプロセス内コールバック。
 
 ### ResponsePublisher — `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL`
 
@@ -692,7 +680,7 @@ Redis Pub/Sub はメッセージをバッファリングしないため、fpmsyn
 
 ### NextHopObserver — プロセス内コールバック
 
-`NextHopObserver` は Redis を介さない orchagent プロセス内の直接コールバック機構。
+`NextHopObserver` は Redis を介さない [orchagent](../../reference/glossary.md#term-orchagent) プロセス内の直接コールバック機構。
 
 | 項目 | 詳細 |
 |------|------|
@@ -717,9 +705,9 @@ Redis Pub/Sub はメッセージをバッファリングしないため、fpmsyn
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-調査ソース: `orchagent/routeorch.cpp`、`orchagent/response_publisher.cpp`。詳細スキャン結果は `meta/_intermediate/cdb-flow/route-orch-event-platform.md`。
+調査ソース: `orchagent/routeorch.cpp`、`orchagent/response_publisher.cpp`。
 
 ### ResponsePublisher — プラットフォーム差なし
 
@@ -746,6 +734,7 @@ RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字
 <!-- evidence: sonic-net/sonic-swss/orchagent/routeorch.cpp:83-87L (Mellanox ECMP グループ数補正) -->
 <!-- evidence: sonic-net/sonic-swss/orchagent/routeorch.cpp:109-123L (VOQ ECMP メンバー数制限) -->
 <!-- evidence: sonic-net/sonic-swss/orchagent/response_publisher.cpp (プラットフォーム分岐なし) -->
+
 <!-- /platform -->
 
 ---
@@ -828,4 +817,4 @@ APPL_STATE_DB ROUTE_TABLE:192.168.1.0/24
 - `protocol` が空文字列 → APPL_DB の `ROUTE_TABLE` エントリに `protocol` フィールドが存在しない（静的経路や一部の直接書き込みツールで発生する）。
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: d6cf63fda5d8 -->
+<!-- glossary-links-injected: f362a38991d7 -->

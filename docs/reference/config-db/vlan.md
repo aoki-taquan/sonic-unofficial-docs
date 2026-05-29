@@ -275,7 +275,7 @@ VLAN SET/DEL 単体では **[COUNTERS_DB](../../reference/glossary.md#term-count
 <!-- /side-effects -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 VLAN テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -309,7 +309,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 <!-- evidence: sonic-swss/cfgmgr/vlanmgr.cpp; sonic-swss/cfgmgr/intfmgr.cpp -->
 
@@ -552,7 +552,7 @@ orchagent VlanOrch
 <!-- /pubsub -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `VLAN` テーブルエントリが CONFIG_DB に書かれたとき、`vlanmgrd` (`cfgmgr/vlanmgr.cpp`) が
 STATE_DB を通じて以下のテーブルを**暗黙的に参照**する。YANG leafref として公式定義されていない

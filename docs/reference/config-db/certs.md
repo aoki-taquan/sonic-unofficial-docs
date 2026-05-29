@@ -95,7 +95,7 @@ CREDENTIALS|CERT|<profileID>
 <!-- /cdb-exceptions -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `CREDENTIALS|CERT` は **STATE_DB** テーブルであり、`gnsi_certz.go` が gNSI Certz RPC の処理結果として書き込む。[CONFIG_DB](../../reference/glossary.md#term-config_db) の書き込み順ではなく、**gRPC Rotate RPC の呼び出し順序・フラグ設定・systemd 起動順序**が STATE_DB の整合性に影響する。
 
@@ -123,7 +123,7 @@ CREDENTIALS|CERT|<profileID>
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `CREDENTIALS|CERT` は **STATE_DB への書き出し専用**テーブルであり、`gnsi_certz.go` が CONFIG_DB テーブルを直接読み込むことは **ゼロ**である。外部参照はすべてファイルシステムまたは systemd 起動順序依存となる。
 
@@ -144,11 +144,10 @@ CREDENTIALS|CERT|<profileID>
 
 **`GNMI|certs` 設定との分離**: `GNMI` テーブルは gnmi サーバのリスニングポート・[VRF](../../reference/glossary.md#term-vrf)・証明書パス等を保持するが、`gnsi_certz.go` は `GNMI` テーブルを読まない。Certz Rotate で証明書ファイルを更新しても gnmi サーバが TLS 証明書を再ロードするタイミングは `server.go` の実装依存であり、`GNMI` テーブルへの書き戻しは発生しない。
 
-詳細根拠は `meta/_intermediate/cdb-flow/certs-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-gnmi/gnmi_server/gnsi_certz.go`
 
@@ -199,11 +198,10 @@ CREDENTIALS|CERT|<profileID>
 
 `AddProfile` / `DeleteProfile` / `GetProfileList` はすべて `codes.Unimplemented` を返す（`gnsi_certz.go:163-169`）。
 
-詳細根拠は `meta/_intermediate/cdb-flow/certs-failure.md` を参照。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `gnsi_certz.go` および `common_utils/notification_producer.go` 内に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 
@@ -258,7 +256,7 @@ CREDENTIALS|CERT|<profileID>
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `CREDENTIALS|CERT` 書込時に `gnsi_certz.go` が STATE_DB 以外に与える副次効果を整理する。
 
@@ -281,11 +279,10 @@ CREDENTIALS|CERT|<profileID>
 `CREDENTIALS|CERT` の STATE_DB フィールドは freshness メタデータのみを保持し、証明書の実体はファイルシステム上のシンボリックリンク先ファイルである。
 Rotate 成功後に gnmi サーバを再起動しなくても新証明書が有効になる（go の `tls.Config.GetCertificate` による都度ロードによる）。
 
-詳細スキャン結果は `meta/_intermediate/cdb-flow/certs-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 `CREDENTIALS|CERT` は `gnsi_certz.go` が **直接 HSET** で STATE_DB に書き込むテーブルである。Redis pub/sub チャンネルへの明示的な PUBLISH は行わず、Redis keyspace notification 経由で consumer に変更が伝播する。
 
@@ -327,11 +324,10 @@ OnChange 通知受信後、`DbToYang_grpc_server_xfmr` (`xfmr_system.go:540-590`
 | STATE_DB → translib | Redis keyspace notification (`__keyspace@6__`) | [SONiC](../../reference/glossary.md#term-sonic) デフォルト設定で有効 |
 | translib → [gNMI](../../reference/glossary.md#term-gnmi) クライアント | gNMI `SubscribeResponse` (OnChange) | 変更検出ごとにプッシュ |
 
-詳細スキャン結果は `meta/_intermediate/cdb-flow/certs-pubsub.md` を参照。
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: `CREDENTIALS|CERT` は gNSI Certz が STATE_DB へ直接 HSet するテーブルであり、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic・[VOQ](../../reference/glossary.md#term-voq) chassis・ベンダー固有設定のいずれにも依存しない。
 
@@ -343,11 +339,10 @@ OnChange 通知受信後、`DbToYang_grpc_server_xfmr` (`xfmr_system.go:540-590`
 | ベンダー固有実装 | なし | community master の `sonic-gnmi` は標準 Go TLS / gRPC のみ使用。`gnsi_certz.go` / `telemetry.go` にベンダー条件分岐なし |
 | CRL ディレクトリパス (`--cert_crl_dir`) | 実行時設定依存 | デフォルト `/mtls/crl` は platform 条件分岐ではなく CLI フラグで変更可能。platform 固有の自動切替はない |
 
-詳細根拠は `meta/_intermediate/cdb-flow/certs-platform.md` を参照。
 <!-- /platform -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 > gNSI Certz `gnsi_certz.go` および `telemetry/telemetry.go` のコードから導出した フィールドデフォルト値を整理する。
 

@@ -134,8 +134,6 @@ ip_mask は IPv4 フィールドの場合 `.` 含む、IPv6 フィールドの�
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/pbh.md -->
-
 ### YANG スキーマ検証
 - `PBH_HASH_FIELD.hash_field`、`sequence_id`、`PBH_RULE.priority`、`PBH_RULE.hash`、`PBH_TABLE.description` は mandatory。
 - `ip_mask` は `when` + `must` 条件: IPv4 フィールドに `:` を含む address や IPv6 フィールドに `.` を含む address は reject。
@@ -152,9 +150,7 @@ ip_mask は IPv4 フィールドの場合 `.` 含む、IPv6 フィールドの�
 <!-- /cdb-exceptions -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-phaseD-failure.md -->
+## 失敗挙動
 
 ### 不正 match field（`pbhrule.cpp:validateAddMatch`）
 
@@ -316,11 +312,7 @@ db_migrator.py での PBH マイグレーションなし
 <!-- /entry-points -->
 
 <!-- defaults -->
-## 暗黙デフォルト・ハードコード挙動 (Phase A)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-table-defaults.md -->
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-rule-defaults.md -->
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-hash-defaults.md -->
+## 暗黙デフォルト・ハードコード挙動
 
 ### PBH_TABLE フィールド別デフォルト
 
@@ -396,13 +388,13 @@ db_migrator.py での PBH マイグレーションなし
 <!-- /defaults -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 minigraph.py および init_cfg.json.j2 からの `PBH_TABLE` / `PBH_RULE` / `PBH_HASH` / `PBH_HASH_FIELD` 自動派生はなし。CLI (`config pbh`) による手動設定のみ。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -431,7 +423,7 @@ minigraph.py および init_cfg.json.j2 からの `PBH_TABLE` / `PBH_RULE` / `PB
 | `PbhOrch` | `doTask()` | `table_name == CFG_PBH_HASH_FIELD_TABLE_NAME` | PBH ハッシュフィールドの作成/削除。`hash_field` enum によりSAI attr が決まる | `sonic-swss/orchagent/pbhorch.cpp` |
 | `PbhOrch` | `addPbhRule()` | `flow_counter == "ENABLED"` | SAI カウンタオブジェクトを追加でアタッチ | `sonic-swss/orchagent/pbhorch.cpp` |
 
-> **スキャン証跡**: `orchdaemon.cpp:553-565` および `pbhorch.cpp` を確認、5 件分岐抽出。PBH は minigraph 非依存を確認 — 誤読なし。
+> **裏取り**: `orchdaemon.cpp:553-565` および `pbhorch.cpp` を確認、5 件分岐抽出。PBH は minigraph 非依存を確認 — 誤読なし。
 
 <!-- /handler-branching -->
 
@@ -480,15 +472,10 @@ config pbh → HSET CONFIG_DB PBH_RULE|<table>|<rule> ...
 - APP_DB への書き込みなし ([orchagent](../../reference/glossary.md#term-orchagent) 直接 SAI)。
 - `allPortsReady()` が false の場合、`PbhOrch::doTask()` は即 return して処理をスキップする。
 
-<!-- evidence: sonic-net/sonic-swss/orchagent/pbhorch.cpp:88-97 (PbhOrch::PbhOrch — Orch(connectorList)) -->
-<!-- evidence: sonic-net/sonic-swss/orchagent/pbhorch.cpp:1804-1838 (PbhOrch::doTask — getTableName 分岐 + deployPbhTasks) -->
-<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:553-565 (TableConnector 構築 + gPbhOrch 生成) -->
-<!-- evidence: sonic-net/sonic-swss/orchagent/orch.cpp (Orch::addConsumer — CONFIG_DB → SubscriberStateTable 分岐) -->
-<!-- evidence: sonic-net/sonic-swss-common/common/table.h:164 (DEFAULT_POP_BATCH_SIZE = 128) -->
 <!-- /pubsub -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `sonic-swss/orchagent/pbh/pbhschema.h`、`pbhmgr.cpp`、`pbhrule.cpp`
 
@@ -561,9 +548,7 @@ match field が 0 件、または action が 1 件以外の場合は `AclRulePbh
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-side-effects.md -->
+## 副次 DB 書込
 
 ### ASIC_DB への書込
 
@@ -613,7 +598,7 @@ PBH_RULE (flow_counter=DISABLED / デフォルト)
 <!-- /side-effects -->
 
 <!-- ordering -->
-## オブジェクト生成順序・依存関係 (Phase B)
+## オブジェクト生成順序・依存関係
 
 ### CONFIG_DB 書き込み順序の要件
 
@@ -658,9 +643,7 @@ PBH_RULE → PBH_TABLE → PBH_HASH → PBH_HASH_FIELD
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-cross-refs.md -->
+## 暗黙参照テーブル
 
 `PBH_TABLE.interface_list` に記載されたインターフェース名は CONFIG_DB 上では文字列だが、
 `PbhOrch` が `AclTable::validateAddPorts()` → `gPortsOrch->getPort()` を通じて以下のテーブルの
@@ -690,9 +673,7 @@ PBH_RULE → PBH_TABLE → PBH_HASH → PBH_HASH_FIELD
 <!-- /cross-refs -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-phaseH-platform.md -->
+## プラットフォーム差異
 
 ### ASIC ベンダー検出と capability ロード
 

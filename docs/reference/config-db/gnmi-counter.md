@@ -38,24 +38,6 @@ related:
 
 本ページは、このカウンタ群の種別・初期値・リセット挙動をコードから導出したリファレンスである。
 
-<!-- cdb-mermaid -->
-### データフロー (概略)
-
-```mermaid
-flowchart LR
-  CLI["gNMI / gNOI / gNSI\nクライアント"]
-  TELEMETRYD["telemetryd\n(sonic-gnmi)"]
-  SHM[("共有メモリ\nkey=7749")]
-  DUMP["gnmi_dump"]
-  CLI -->|gRPC RPC| TELEMETRYD
-  TELEMETRYD -->|IncCounter| SHM
-  DUMP -->|GetMemCounters| SHM
-```
-
-!!! note "凡例"
-    カウンタは CONFIG_DB ではなく SysV 共有メモリに格納される。`gnmi_dump` が読み出す。
-<!-- /cdb-mermaid -->
-
 ## 共有メモリ仕様
 
 | パラメータ | 値 | 出典 |
@@ -121,7 +103,7 @@ flowchart LR
 - `GNMI_SET`: 同様。成功 = `GNMI_SET - GNMI_SET_FAIL - GNMI_SET_BYPASS`
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 <!-- evidence: sonic-gnmi/common_utils/context.go, sonic-gnmi/common_utils/shareMem.go,
      sonic-gnmi/gnmi_server/server.go, sonic-gnmi/sonic_service_client/dbus_client.go,
@@ -170,7 +152,7 @@ flowchart LR
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 > 根拠: `sonic-buildimage/dockers/docker-sonic-telemetry/supervisord.conf`, `sonic-gnmi/gnmi_server/server.go`, `sonic-gnmi/common_utils/context.go`, `sonic-gnmi/common_utils/shareMem.go`, `sonic-gnmi/gnmi_dump/gnmi_dump.go`
 
@@ -205,7 +187,7 @@ dialout 起動 (priority=4, telemetry:running 待機)
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — telemetryd が読み出す関連テーブル (Phase C)
+## 暗黙参照 — telemetryd が読み出す関連テーブル
 
 <!-- evidence:
 source: sonic-gnmi/pkg/bypass/bypass.go#L148-L168 (master)
@@ -290,13 +272,11 @@ excerpt: |
 - **`COUNTERS_DB`** — sonic-gnmi の `sonic_data_client` が [gNMI](../../reference/glossary.md#term-gnmi) Get/Subscribe のデータソースとして参照するが、共有メモリカウンタの増分ロジックとは無関係。
 - **`APPL_DB`** — [gNMI](../../reference/glossary.md#term-gnmi) Set の書き込み先になりうるが、カウンタ自体はテーブルを問わず `GNMI_SET` または `GNMI_SET_FAIL` が増分されるだけで、[APPL_DB](../../reference/glossary.md#term-appl_db) を参照してカウンタを変えるパスは存在しない。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/gnmi-counter-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/gnmi-counter-failure.md -->
 <!-- source: sonic-gnmi/common_utils/shareMem.go ref:master -->
 <!-- source: sonic-gnmi/common_utils/context.go ref:master -->
 <!-- source: sonic-gnmi/gnmi_dump/gnmi_dump.go ref:master -->
@@ -347,7 +327,7 @@ func IncCounter(cnt CounterType) {
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence:
 source: sonic-net/sonic-gnmi/common_utils/shareMem.go (master)
@@ -429,13 +409,11 @@ reasoning: iota 番兵として COUNTER_SIZE = 32 が確定。配列サイズと
 
 > `gnmi_dump` の終了コードは失敗時も `0`。自動化スクリプトで異常検知するには出力文字列の `"Error:"` プレフィクスを確認する必要がある。
 
-詳細な定数一覧は `meta/_intermediate/cdb-flow/gnmi-counter-constants.md` を参照。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-<!-- evidence: meta/_intermediate/cdb-flow/gnmi-counter-side-effects.md -->
 <!-- source: sonic-gnmi/gnmi_server/connection_manager.go ref:master -->
 <!-- source: sonic-gnmi/gnmi_server/client_subscribe.go ref:master -->
 
@@ -464,13 +442,11 @@ reasoning: iota 番兵として COUNTER_SIZE = 32 が確定。配列サイズと
 
 > **Get / Set RPC は `TELEMETRY_CONNECTIONS` を更新しない**。`ConnectionManager` は Subscribe セッション専用。
 
-詳細根拠は `meta/_intermediate/cdb-flow/gnmi-counter-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-<!-- evidence: meta/_intermediate/cdb-flow/gnmi-counter-pubsub.md -->
 <!-- source: sonic-gnmi/common_utils/shareMem.go ref:master -->
 <!-- source: sonic-gnmi/common_utils/context.go ref:master -->
 <!-- source: sonic-gnmi/gnmi_dump/gnmi_dump.go ref:master -->
@@ -528,11 +504,10 @@ gRPC RPC 受信
 
 > **外部監視の注意点**: カウンタを Prometheus 等に収集する場合、Redis から直接取得するパスは存在しない。`gnmi_dump` を定期実行してテキスト出力をパースするか、gNMI Subscribe RPC で `COUNTERS_DB` を購読する方式（カウンタ自体とは別経路）を使う必要がある。
 
-詳細根拠は `meta/_intermediate/cdb-flow/gnmi-counter-pubsub.md` を参照。
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 gNMI 内部カウンタは SysV 共有メモリ（key=`7749`）に格納されるため、[SAI](../../reference/glossary.md#term-sai) capability の有無に依存するプラットフォーム差はない。ただし **`GNMI_SET_BYPASS` カウンタ**は特定の Cisco [HwSku](../../reference/glossary.md#term-hwsku) 専用であり、[SmartSwitch](../../reference/glossary.md#term-smartswitch)/[DPU](../../reference/glossary.md#term-dpu) 環境ではカウント集計の分離に注意が必要である。
 
@@ -583,7 +558,6 @@ Broadcom / Mellanox / Marvell / Barefoot 系 HwSku ではバイパス条件を�
 | SmartSwitch (NPU 側) | HwSku 依存 | DPU 側は別 SHM | 正常 |
 | [VS](../../reference/glossary.md#term-vs) / シミュレーター | 常に 0 | N/A | 正常 |
 
-詳細根拠は `meta/_intermediate/cdb-flow/gnmi-counter-platform.md` を参照。
 <!-- /platform -->
 
 <!-- ops-hint -->

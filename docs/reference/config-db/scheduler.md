@@ -152,7 +152,7 @@ show queue counters
 
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()`
 
@@ -186,20 +186,20 @@ show queue counters
 <!-- /failure -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 QosOrch が `SCHEDULER.type` の値から SAI scheduling type を自動決定する。`STRICT` → `SAI_SCHEDULING_TYPE_STRICT`、`DWRR` → `SAI_SCHEDULING_TYPE_DWRR`、`WRR` → `SAI_SCHEDULING_TYPE_WRR`。`meter_type` も同様に SAI enum に変換される。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 QosOrch は常時登録し `SCHEDULER` テーブルを無条件購読する。`SCHEDULER` が `QUEUE.scheduler` から参照されている場合のみ SAI キューオブジェクトに scheduler profile が bind される。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -211,7 +211,7 @@ QosOrch は常時登録し `SCHEDULER` テーブルを無条件購読する。`S
 | `QosOrch` | `cir` / `cbs` / `pir` / `pbs` フィールドあり | SAI rate/burst 属性を設定 | `qosorch.cpp` |
 | `QosOrch` | del_handler | SAI scheduler profile を削除、QUEUE 参照を解除してから削除 | `qosorch.cpp` |
 
-> **スキャン証跡**: `SCHEDULER` は SAI scheduler profile の属性マッピング。`type` フィールドで SAI enum を決定する主要分岐あり。[CONFIG_DB](../../reference/glossary.md#term-config_db) 内フィールド間の自動付与はなし。
+> **裏取り**: `SCHEDULER` は SAI scheduler profile の属性マッピング。`type` フィールドで SAI enum を決定する主要分岐あり。[CONFIG_DB](../../reference/glossary.md#term-config_db) 内フィールド間の自動付与はなし。
 
 <!-- /handler-branching -->
 
@@ -239,7 +239,7 @@ QosOrch は常時登録し `SCHEDULER` テーブルを無条件購読する。`S
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 SCHEDULER テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -273,9 +273,9 @@ db_migrator.py での SCHEDULER マイグレーションなし
 <!-- /entry-points -->
 
 <!-- defaults -->
-## コード由来のデフォルト・暗黙挙動 (Phase A)
+## コード由来のデフォルト・暗黙挙動
 
-> **調査根拠**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` 全行精読 + `sonic-scheduler.yang` 照合 (2026-05-14)
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` 全行精読 + `sonic-scheduler.yang` 照合 (2026-05-14)
 
 | フィールド | YANG default | qosorch 実装の実効デフォルト | 備考 |
 |-----------|-------------|--------------------------|------|
@@ -296,7 +296,7 @@ db_migrator.py での SCHEDULER マイグレーションなし
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### ADD 時: SCHEDULER → QUEUE の順が必須
 
@@ -327,9 +327,9 @@ QUEUE|<port>|<idx> の scheduler 参照を解除  →  SCHEDULER|<name> を DEL
 <!-- /ordering -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-swss/orchagent/qosorch.h` L44-53 + `qosorch.cpp` L75-78, L1378-1494 精読 (2026-05-16)
+> **Evidence**: `sonic-swss/orchagent/qosorch.h` L44-53 + `qosorch.cpp` L75-78, L1378-1494 精読 (2026-05-16)
 
 ### type enum 文字列 → SAI 変換
 
@@ -370,7 +370,7 @@ QUEUE|<port>|<idx> の scheduler 参照を解除  →  SCHEDULER|<name> を DEL
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `SCHEDULER` プロファイルは CONFIG_DB 上では独立したエントリだが、`QosOrch` の
 `resolveFieldRefValue` 機構を通じて以下のテーブルから**暗黙的に leafref 参照**される。
@@ -409,9 +409,9 @@ SCHEDULER|<name> を DEL
 <!-- /cross-refs -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> **調査根拠**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` / `applySchedulerToQueueSchedulerGroup()` / `handleQueueTable()` 精読 (2026-05-16)
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` / `applySchedulerToQueueSchedulerGroup()` / `handleQueueTable()` 精読 (2026-05-16)
 
 [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への直接書き込みは **一切なし**。
 副次 DB 書き込みは SAI API 経由の [ASIC_DB](../../reference/glossary.md#term-asic_db) のみ。
@@ -443,7 +443,7 @@ SCHEDULER SET
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -512,13 +512,12 @@ QosOrch::doTask(Consumer&)            (qosorch.cpp:2254)
 - `allPortsReady()` が `false` の間（起動直後のポート初期化フェーズ）は `doTask` が早期 return するため、全ポートが Ready になるまで SCHEDULER エントリの処理は保留される。
 - QUEUE 参照がある SCHEDULER への DEL は `task_need_retry` で保留され、QUEUE 参照解除まで SAI 削除は実行されない。
 
-詳細は `meta/_intermediate/cdb-flow/scheduler-pubsub.md` を参照。
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
-> **調査根拠**: `sonic-net/sonic-swss/orchagent/qosorch.cpp` `applySchedulerToQueueSchedulerGroup()` / `handleQueueTable()` 精読 (2026-05-16)
+> **Evidence**: `sonic-net/sonic-swss/orchagent/qosorch.cpp` `applySchedulerToQueueSchedulerGroup()` / `handleQueueTable()` 精読 (2026-05-16)
 
 ### VOQ シャーシ構成
 

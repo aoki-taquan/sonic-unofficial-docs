@@ -143,7 +143,7 @@ ERROR_NEIGH_TABLE|<intf>|<prefix>
 ---
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 ERROR_DB のフィールドはすべて OrchAgent が SAI 通知から動的に生成する。  
 コード実装が master 未マージのため、デフォルト値根拠は HLD スキーマ定義による。
@@ -174,7 +174,7 @@ ERROR_DB のフィールドはすべて OrchAgent が SAI 通知から動的に�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ERROR_DB への書込みは **OrchAgent が唯一の producer** であり、[syncd](../../reference/glossary.md#term-syncd) → OrchAgent → ERROR_DB → ErrorListener の単一経路で伝搬する。HLD Section 3.3.1 は「単一通知チャネルを使うことで通知の順序が保たれる」と明記している[^1]。
 
@@ -206,10 +206,9 @@ ERROR_DB は warm reboot をまたいで永続しない（HLD Section 6）。Orc
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
-> **調査根拠**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.3–3.4、`doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md` Section 3.7  
-> 詳細証跡: `meta/_intermediate/cdb-flow/errordb-cross-refs.md`
+> **Evidence**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.3–3.4、`doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md` Section 3.7
 
 ERROR_DB (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE) は独立した Redis データベースだが、以下のテーブルを実行時に暗黙参照する。
 
@@ -239,9 +238,9 @@ ERROR_DB は SAI の操作**結果**（失敗通知）を格納するデータ�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-> **調査根拠**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.3.1–3.3.3、Section 6 (Warm Boot)  
+> **Evidence**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.3.1–3.3.3、Section 6 (Warm Boot)  
 > **注意**: ERROR_DB / ErrorReporter / ErrorListener は 2026-05 時点で master 未マージのため、以下は HLD 設計に基づく記述である。
 
 ### 失敗パス一覧
@@ -289,11 +288,10 @@ ERROR_DB は Redis のインメモリ DB として設計されており、warm r
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-swss-common/common/status_code_util.h` (実装済み)、HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.3.2  
-> **注意**: ERROR_DB / ErrorReporter / ErrorListener は 2026-05 時点で master 未マージのため、以下の定数の多くは HLD 設計上の定義である。  
-> 詳細証跡: `meta/_intermediate/cdb-flow/errordb-constants.md`
+> **Evidence**: `sonic-swss-common/common/status_code_util.h` (実装済み)、HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.3.2  
+> **注意**: ERROR_DB / ErrorReporter / ErrorListener は 2026-05 時点で master 未マージのため、以下の定数の多くは HLD 設計上の定義である。
 
 ### `StatusCode` enum — 実装済み (status_code_util.h)
 
@@ -345,9 +343,9 @@ ErrorListener fpmErrorListener(APP_ROUTE_TABLE_NAME,
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> **調査根拠**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.1・3.3.1・3.3.2・5、`doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md` Section 3.1・3.3・3.4.1  
+> **Evidence**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.1・3.3.1・3.3.2・5、`doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md` Section 3.1・3.3・3.4.1  
 > **注意**: ERROR_DB / ErrorReporter / ErrorListener は 2026-05 時点で master 未マージのため、以下は HLD 設計に基づく記述である。
 
 ERROR_DB への `HSET` / `DEL` + `publish` は OrchAgent が行う。その後、**ERROR_DB 自体への書込が起点となって以下の副次処理が連鎖する**。
@@ -411,11 +409,10 @@ ERROR_DB フレームワークは SAI 抽象化層の上で動作し、特定の
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G) — ErrorListener 購読方式
+## 通信メカニズム — ErrorListener 購読方式
 
-> **調査根拠**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.3.1–3.3.2  
-> **注意**: ErrorListener / ErrorReporter クラスは 2026-05 時点で master 未マージのため、以下は HLD 設計に基づく記述である。  
-> 詳細証跡: `meta/_intermediate/cdb-flow/errordb-pubsub.md`
+> **Evidence**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.3.1–3.3.2  
+> **注意**: ErrorListener / ErrorReporter クラスは 2026-05 時点で master 未マージのため、以下は HLD 設計に基づく記述である。
 
 ### Producer / Consumer ペア
 
@@ -454,7 +451,7 @@ s.addSelectable(&fpmErrorListener);
 | `ERR_NOTIFY_FAIL` | SAI 操作失敗時のみコールバックを受ける（デフォルト動作） |
 | `ERR_NOTIFY_POSITIVE_ACK` | SAI 操作成功時にもコールバックを受ける（オプション） |
 
-フラグの正式なビット値は HLD 未定義。master には `ERR_NOTIFY_*` 定数もヘッダも存在しない（Phase E 参照）。
+フラグの正式なビット値は HLD 未定義。master には `ERR_NOTIFY_*` 定数もヘッダも存在しない（ハードコード定数節参照）。
 
 ### 通知チャンネルの動作
 
@@ -505,11 +502,10 @@ grep -r "ErrorListener\|ErrorReporter" .cache/sonic-sources/sonic-swss/
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> **調査根拠**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.2・3.4.3、`sonic-swss-common/common/status_code_util.h`  
-> **注意**: ERROR_DB / ErrorReporter / ErrorListener は 2026-05 時点で master 未マージのため、以下は HLD 設計と実装済み `status_code_util.h` に基づく記述である。  
-> 詳細証跡: `meta/_intermediate/cdb-flow/errordb-platform.md`
+> **Evidence**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.2・3.4.3、`sonic-swss-common/common/status_code_util.h`  
+> **注意**: ERROR_DB / ErrorReporter / ErrorListener は 2026-05 時点で master 未マージのため、以下は HLD 設計と実装済み `status_code_util.h` に基づく記述である。
 
 ### 結論: ERROR_DB フレームワーク自体はプラットフォーム非依存
 

@@ -105,11 +105,9 @@ stateDiagram-v2
 - 確認コマンド: `show interfaces portchannel`、`teamdctl <lag_name> state`
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [STATE_DB](../../reference/glossary.md#term-state_db) `LAG_TABLE` に対応する [YANG](../../reference/glossary.md#term-yang) schema は存在しない。すべてのフィールドとデフォルト値は `teamsync.cpp` および `values_store.h` のコードレベルで定義される。
-
-<!-- evidence: meta/_intermediate/cdb-flow/portchannel-state-defaults.md -->
 
 | フィールド | STATE_DB 初期値 | コード由来 | 備考 |
 |-----------|---------------|----------|------|
@@ -134,11 +132,9 @@ stateDiagram-v2
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 > 調査対象: `sonic-swss/teamsyncd/teamsync.cpp`, `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/vlanmgr.cpp`, `sonic-swss/cfgmgr/stpmgr.cpp`
-> 調査日: 2026-05-18
-> 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-state-ordering.md`
 
 このテーブルは STATE_DB の **書き込み専用**（teamsyncd / tlm_teamd のみが書き込む）であり、ユーザが直接操作するものではない。`state=ok` エントリの有無が複数デーモンの readiness ガードとして機能するため、書き込み・削除の順序が後続処理の可否を決定する。
 
@@ -195,11 +191,9 @@ PORTCHANNEL を先に削除した場合、LAG_TABLE エントリが残存した�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
 > 調査対象: `sonic-swss/teamsyncd/teamsync.cpp`, `sonic-swss/tlm_teamd/main.cpp`, `sonic-swss/tlm_teamd/values_store.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/cfgmgr/vlanmgr.cpp`, `sonic-swss/cfgmgr/stpmgr.cpp`, `sonic-swss/cfgmgr/nbrmgr.cpp`, `sonic-swss/cfgmgr/natmgr.cpp`
-> 調査日: 2026-05-18
-> 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-state-cross-refs.md`
 
 [YANG](../../reference/glossary.md#term-yang) leafref を超えた他テーブル・他 DB・プロセスへの実装上の依存関係。STATE_DB テーブルであるため「何が書き込むか」と「何が読むか」の両方向を示す。
 
@@ -223,11 +217,9 @@ PORTCHANNEL を先に削除した場合、LAG_TABLE エントリが残存した�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 > 調査対象: `sonic-swss/teamsyncd/teamsync.cpp`, `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`
-> 調査日: 2026-05-18
-> 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-state-failure.md`
 
 STATE_DB `LAG_TABLE` への書き込みは teamsyncd と teammgrd の正常完了に依存するため、各ステップで失敗が発生すると `state=ok` エントリが書かれず後続デーモンが保留状態になる。
 
@@ -277,11 +269,9 @@ warm-restart 中 (`m_warmstart == true`) は `addLag()` が STATE_DB に直接�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 > 調査対象: `sonic-swss/teamsyncd/teamsync.h`, `sonic-swss/teamsyncd/teamsync.cpp`, `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/cfgmgr/portmgr.h`, `sonic-swss/cfgmgr/shellcmd.h`, `sonic-swss-common/common/schema.h`
-> 調査日: 2026-05-18
-> 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-state-constants.md`
 
 以下の定数は STATE_DB `LAG_TABLE` の書き込み動作・タイミングに直接影響するマジックナンバーおよびハードコード値。
 
@@ -309,11 +299,9 @@ warm-restart 中 (`m_warmstart == true`) は `addLag()` が STATE_DB に直接�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 > 調査対象: `sonic-swss/tlm_teamd/values_store.h`, `sonic-swss/tlm_teamd/values_store.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`
-> 調査日: 2026-05-18
-> 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-state-ordering.md`
 
 STATE_DB `LAG_TABLE` への書き込みをトリガーとして、他テーブル・他 DB へのカスケード書き込みが発生する。
 
@@ -361,11 +349,9 @@ STATE_DB `LAG_TABLE` への書き込みをトリガーとして、他テーブ�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 > 調査対象: `sonic-swss/tlm_teamd/main.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss-common/common/subscriberstatetable.cpp`
-> 調査日: 2026-05-18
-> 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-state-pubsub.md`
 
 ### SubscriberStateTable の仕組み（共通基盤）
 
@@ -432,11 +418,10 @@ teamsyncd: m_stateLagTable.del(lagName)  [teamsync.cpp:L255]
        └─→ [intfmgrd] DEL イベント → サブインタフェース状態クリーンアップ
 ```
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/portchannel-state-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 STATE_DB `LAG_TABLE` への書き込みは Linux netlink (`RTM_NEWLINK` / `RTM_DELLINK`) と `teamdctl` UNIX ソケット経由の JSON dump に依存する。いずれも [SAI](../../reference/glossary.md#term-sai) を経由しないカーネル・ユーザ空間の仕組みであるため、プラットフォーム（[ASIC](../../reference/glossary.md#term-asic) ベンダー）差異は生じない。
 
@@ -447,7 +432,6 @@ STATE_DB `LAG_TABLE` への書き込みは Linux netlink (`RTM_NEWLINK` / `RTM_D
 | [VOQ](../../reference/glossary.md#term-voq) chassis (Virtual Output Queue) | 影響なし | [VOQ](../../reference/glossary.md#term-voq) chassis 固有の `SYSTEM_LAG_TABLE` / `SYSTEM_LAG_ID_TABLE` (`orchagent/lagids.lua`) は [APPL_DB](../../reference/glossary.md#term-appl_db) / CHASSIS_APP_DB 上のテーブルであり `STATE_DB::LAG_TABLE` とは別物。`teamsyncd` は [VOQ](../../reference/glossary.md#term-voq) 特有コードパスを持たず Linux netlink イベントに純粋に従う |
 | warm restart タイマー | プラットフォーム非依存 | `WarmStart::getWarmStartTimer(TEAMSYNCD_APP_NAME, "teamd")` でタイマー取得し、未設定時は `DEFAULT_WR_PENDING_TIMEOUT = 70` 秒を使用 (`teamsync.h:L16`)。タイマー値はプラットフォームではなく mgmt 設定に依存 |
 
-詳細根拠は `meta/_intermediate/cdb-flow/portchannel-state-platform.md` を参照。
 <!-- /platform -->
 
 ## 引用元

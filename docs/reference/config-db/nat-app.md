@@ -112,7 +112,7 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 フィールドなし (`NULL: NULL`)。key の IP アドレスが DNAT pool に登録されたことを示すフラグテーブル。1 セグメント以外のキーは ERROR + erase (`natorch.cpp:2983-2987`)。
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `NatOrch` は `NAT_GLOBAL_TABLE.admin_mode` が `"enabled"` になるまで NAT/NAPT エントリを [SAI](../../reference/glossary.md#term-sai) に降ろさず内部キャッシュに保持する。[APPL_DB](../../reference/glossary.md#term-appl_db) への書き込み順序によって [SAI](../../reference/glossary.md#term-sai) 操作のタイミングが変わる。
 
@@ -139,7 +139,7 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `NatOrch` が APPL_DB NAT テーブル群を消費する際、[YANG](../../reference/glossary.md#term-yang) leafref 定義を超えて実装上で参照するテーブル・リソース・Orch を示す。
 
@@ -161,7 +161,7 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 `NatOrch` (`orchagent/natorch.cpp`) が APPL_DB NAT テーブル群を消費する際の各テーブルごとの失敗経路を示す。
 
@@ -212,7 +212,7 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `natorch.h` / `natmgr.h` に定義されたマジックナンバー・列挙値で、APPL_DB NAT テーブル群の処理挙動に直接影響する。
 
@@ -261,11 +261,11 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 | `MATCH_IP_PROTOCOL_TCP` | `6` | TCP (NAPT_TABLE キーの `TCP`) |
 | `MATCH_IP_PROTOCOL_UDP` | `17` | UDP (NAPT_TABLE キーの `UDP`) |
 
-> **スキャン証跡**: `natorch.h` 全行、`natmgr.h` L33-127 読了。定数 20 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/nat-app-constants.md`
+> **裏取り**: `natorch.h` 全行、`natmgr.h` L33-127 読了。定数 20 件抽出。
 <!-- /constants -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 APPL_DB NAT テーブル群は [YANG](../../reference/glossary.md#term-yang) の管轄外 (YANG は [CONFIG_DB](../../reference/glossary.md#term-config_db) 側を定義) のため、デフォルト値はコード実装のみから確認する。
 
@@ -328,7 +328,7 @@ CONFIG_DB の `STATIC_NAT|<global_ip>` 1 件 → APPL_DB `NAT_TABLE|<global_ip>`
 <!-- /defaults -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `APPL_DB` NAT テーブル群の SET/DEL に伴い、主購読者 `NatOrch` が以下の副次 DB エントリを書き込む。SAI `sai_nat_api` への直接 [ASIC_DB](../../reference/glossary.md#term-asic_db) 操作は主作用のため除外する。
 
@@ -355,11 +355,11 @@ CONFIG_DB の `STATIC_NAT|<global_ip>` 1 件 → APPL_DB `NAT_TABLE|<global_ip>`
 
 [STATE_DB](../../reference/glossary.md#term-state_db), [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db), CONFIG_DB, [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) への書込みは確認されなかった。
 
-> **Evidence**: `sonic-swss/orchagent/natorch.cpp` (COUNTERS_DB 初期化 L51-56, per-entry counters L4049-4134, global counters L4481-4588, enableNatFeature L2534-2562, SETTIMEOUTNAT L137/1888/2002/2118/2287/3336-3501, routeOrch attach L408-560); `sonic-swss-common/common/schema.h:260-264` (COUNTERS_NAT* table defines); 詳細スキャン結果は `meta/_intermediate/cdb-flow/nat-app-side.md` を参照。
+> **Evidence**: `sonic-swss/orchagent/natorch.cpp` (COUNTERS_DB 初期化 L51-56, per-entry counters L4049-4134, global counters L4481-4588, enableNatFeature L2534-2562, SETTIMEOUTNAT L137/1888/2002/2118/2287/3336-3501, routeOrch attach L408-560); `sonic-swss-common/common/schema.h:260-264` (COUNTERS_NAT* table defines)
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -418,7 +418,7 @@ doTwiceNaptTableTask() / doNatGlobalTableTask() / doDnatPoolTableTask()
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 APPL_DB NAT テーブル群の処理は、`orchagent` 起動時に設定される 2 つのグローバルフラグ `gIsNatSupported` と `gNhTrackingSupported` によってプラットフォーム依存の挙動分岐が発生する。
 

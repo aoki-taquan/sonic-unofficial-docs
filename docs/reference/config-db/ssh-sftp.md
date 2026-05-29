@@ -89,7 +89,7 @@ if protocol == "SFTP":
 ```
 
 <!-- defaults -->
-## 暗黙デフォルト (Phase A)
+## 暗黙デフォルト
 
 SFTP サブシステムに関して CONFIG_DB フィールドは存在しないため、すべてのデフォルトは OS (Debian/OpenSSH パッケージ) が提供する。
 
@@ -111,7 +111,7 @@ SFTP サブシステムに関して CONFIG_DB フィールドは存在しない�
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd L32-75 -->
 
@@ -179,7 +179,7 @@ SSH_MAX_VALUES = {
 <!-- /constants -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `SSH_SFTP` テーブルは存在せず CONFIG_DB 経由の書込み経路はない。`Subsystem sftp` 行は OS テンプレートに固定されており、`hostcfgd` の更新ループ外に位置する。
 
@@ -221,7 +221,7 @@ hostcfgd 起動
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `SSH_SFTP` テーブルは存在しないため、SFTP サブシステム固有の CONFIG_DB 参照関係はない。ただし `SSH_SERVER|POLICIES` の各フィールドは sshd_config 経由で SFTP セッションにも間接的に影響する。
 
@@ -239,11 +239,11 @@ hostcfgd 起動
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd L67-75,1110-1168 -->
 
-`SSH_SFTP` テーブルは存在せず、SFTP サブシステムは CONFIG_DB の管理外（OS テンプレート固定）。Phase D の失敗挙動は「`SSH_SERVER|POLICIES` を更新する `SshServer.set_policies()` が失敗したとき、`Subsystem sftp` 行がどう扱われるか」に帰着する。
+`SSH_SFTP` テーブルは存在せず、SFTP サブシステムは CONFIG_DB の管理外（OS テンプレート固定）。失敗挙動は「`SSH_SERVER|POLICIES` を更新する `SshServer.set_policies()` が失敗したとき、`Subsystem sftp` 行がどう扱われるか」に帰着する。
 
 ### set_policies() 失敗時の SFTP 行への影響
 
@@ -263,16 +263,12 @@ hostcfgd 起動
 !!! note "スキャン証跡"
     `sonic-host-services/scripts/hostcfgd L1110-1168` (`set_policies()` 全体) を確認。`copy2` 後の `rename` / `remove` 分岐と `sshd -T` ゲートを追跡。`Subsystem sftp` 行が変更対象に含まれないことを確認 — 誤読なし。
 
-詳細調査ノートは `meta/_intermediate/cdb-flow/ssh-sftp-failure.md` 参照。
-
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `SSH_SERVER|POLICIES` を更新した際に `hostcfgd` が行う副次処理は、**すべてファイルシステム操作とプロセス再起動**であり、[Redis](../../reference/glossary.md#term-redis) DB への副次書込みは発生しない。
-
-> 調査証跡: `meta/_intermediate/cdb-flow/ssh-sftp-side-effects.md`
 
 ### 副次書込先サマリ
 
@@ -324,9 +320,7 @@ sshd_config バリデーション成功時に `systemctl restart ssh` が発行�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/ssh-sftp-pubsub.md`
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -369,9 +363,7 @@ ssh_handler(key="POLICIES", op=SET, data={ciphers:"aes128-ctr,aes256-ctr"})
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/ssh-sftp-platform.md`
+## プラットフォーム差
 
 `SshServer` クラス (`hostcfgd:1045-1161`) と SFTP サブシステムの取り扱いは **全プラットフォームで同一**。`class SshServer` を `platform|multi_asic|is_multi_npu|chassis|asic[0-9]|namespace|vendor` で grep しても **0 ヒット** であり、機種依存分岐コードが存在しない。
 

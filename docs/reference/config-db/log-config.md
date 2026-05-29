@@ -60,7 +60,7 @@ LOGGER|<component>
 | `require_manual_refresh` | boolean | なし（省略可） | `true` の場合、loglevel 変更に SIGHUP が必要。未設定時は false 相当 |
 
 <!-- defaults -->
-## コード由来デフォルト (Phase A)
+## コード由来デフォルト
 
 ### `LOGLEVEL`
 
@@ -89,9 +89,9 @@ LOGGER|<component>
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-`Logger::linkToDbWithOutput()` / `settingThread()` (`sonic-swss-common/common/logger.cpp`) を全行精読した結果、以下の順序依存・タイミング依存を検出した。中間ノート: `meta/_intermediate/cdb-flow/log-config-ordering.md`。
+`Logger::linkToDbWithOutput()` / `settingThread()` (`sonic-swss-common/common/logger.cpp`) を全行精読した結果、以下の順序依存・タイミング依存を検出した。
 
 ### 他テーブル先行必須
 
@@ -135,13 +135,13 @@ SET CONFIG_DB LOGGER|orchagent  LOGLEVEL=NOTICE
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `LOGGER` テーブルの処理コード (`sonic-swss-common/common/logger.cpp`) は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `LOGGER` テーブル**のみ**を読み書きし、他の CONFIG_DB テーブルへのアクセスは一切発生しない。
 
 YANG `sonic-logger.yang` にも `leafref` が存在せず、他モジュールへの参照依存はない。
 
-> evidence: `logger.cpp:126-149` (`linkToDbWithOutput()`)、`sonic-logger.yang` 全行精読。中間ノート: `meta/_intermediate/cdb-flow/log-config-cross-refs.md`
+> evidence: `logger.cpp:126-149` (`linkToDbWithOutput()`)、`sonic-logger.yang` 全行精読。
 
 ### LOGGER テーブルを読み取る側
 
@@ -155,9 +155,9 @@ YANG `sonic-logger.yang` にも `leafref` が存在せず、他モジュール�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 異常系・フォールバック挙動 (Phase D)
+## 異常系・フォールバック挙動
 
-`sonic-swss-common/common/logger.cpp` を全行精読した結果、以下の異常系・フォールバック挙動を検出した。中間ノート: `meta/_intermediate/cdb-flow/log-config-failure.md`。
+`sonic-swss-common/common/logger.cpp` を全行精読した結果、以下の異常系・フォールバック挙動を検出した。
 
 ### 無効値フォールバック
 
@@ -187,9 +187,9 @@ evidence: `logger.cpp:210-241`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-swss-common/common/logger.cpp`, `logger.h`, `schema.h` 全行精読 (2026-05-19)
+> **Evidence**: `sonic-swss-common/common/logger.cpp`, `logger.h`, `schema.h` 全行精読 (2026-05-19)
 
 `LOGGER` テーブルの処理で使われる値のうち、CONFIG_DB フィールドで制御できずソースに固定されている定数をまとめる。
 
@@ -260,9 +260,9 @@ CONFIG_DB の `LOGGER` テーブルにエントリが存在しない場合は、
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-`sonic-swss-common/common/logger.cpp` および `loglevel.cpp` を全行精読した結果、`LOGGER` テーブルの処理は `CONFIG_DB` の `LOGGER` テーブル**のみ**を読み書きし、他 DB への副次書込は発生しない。中間ノート: `meta/_intermediate/cdb-flow/log-config-side-effects.md`。
+`sonic-swss-common/common/logger.cpp` および `loglevel.cpp` を全行精読した結果、`LOGGER` テーブルの処理は `CONFIG_DB` の `LOGGER` テーブル**のみ**を読み書きし、他 DB への副次書込は発生しない。
 
 ### DB 別書込有無
 
@@ -293,10 +293,9 @@ SIGHUP は `logger.cpp` 自体が送信するのではなく `config syslog leve
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 > 調査対象: `sonic-swss-common/common/logger.cpp` L192-262、`common/loglevel.cpp` L42-206、`common/subscriberstatetable.cpp` L20-24、`common/schema.h` L16
-> 中間ノート: `meta/_intermediate/cdb-flow/log-config-pubsub.md`
 
 ### 購読チャンネル
 
@@ -354,9 +353,8 @@ CONFIG_DB への `HSET` から `settingThread` が反映するまでの最大遅
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
-> 調査証跡: `meta/_intermediate/cdb-flow/log-config-platform.md`
 > ソース: `sonic-swss-common/common/logger.cpp`, `sonic-swss-common/common/loglevel.cpp`, `sonic-utilities/config/syslog.py:661-698`
 
 ### ASIC/ベンダー依存性

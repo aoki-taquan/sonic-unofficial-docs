@@ -131,7 +131,7 @@ COUNTERS_DB / RATES:<oid>              (Hash)
 - CLI: `intfstat`（L3 インタフェース統計表示）、`counterpoll rif enable/disable/interval`
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 <!-- evidence: sonic-swss/orchagent/intfsorch.cpp, sonic-swss/orchagent/intfsorch.h,
      sonic-swss/orchagent/rif_rates.lua,
@@ -195,7 +195,7 @@ intfsorch は [RIF](../../reference/glossary.md#term-rif) ごとに `COUNTERS_RI
 <!-- /defaults -->
 
 <!-- ordering -->
-## 処理順序と順序依存 (Phase B)
+## 処理順序と順序依存
 
 ### orchdaemon 初期化順序
 
@@ -276,7 +276,7 @@ FlexCounterOrch::doTask()
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 <!-- evidence: sonic-swss/orchagent/intfsorch.cpp (doTask Consumer, doTask SelectableTimer,
      addRifToFlexCounter, addRouterIntfs),
@@ -302,7 +302,7 @@ FlexCounterOrch::doTask()
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
+## 失敗挙動・retry / recovery
 
 <!-- evidence: sonic-swss/orchagent/intfsorch.cpp (addRouterIntfs L1297-1305,
      removeRouterIntfs L1327-1357, doTask Consumer L665-668,
@@ -386,11 +386,10 @@ warm-reboot 完了前に `FLEX_COUNTER_TABLE|RIF = enable` が届いても、`Fl
 | VIDTORID 未書込み | `SWSS_LOG_INFO` のみ | 1 秒タイマー自動リトライ | 登録保留（永続的な場合あり）|
 | warm-reboot 60 秒遅延 | なし | 60 秒後自動回復 | 最大 60 秒遅延 |
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/counters-rif-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/orchagent/intfsorch.cpp (L43-45, L96-100, L1551),
      sonic-swss/orchagent/intfsorch.h (L19-21),
@@ -461,7 +460,7 @@ SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_OCTETS
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・他 DB への波及 (Phase F)
+## 副作用・他 DB への波及
 
 <!-- evidence: sonic-swss/orchagent/intfsorch.cpp (L86-100, L1309, L1317, L1327-1330, L1363, L1370, L1537-1551, L1559-1566, L1778),
      sonic-swss/orchagent/neighorch.cpp (L349,L441,L676,L744),
@@ -538,13 +537,11 @@ RIF 作成時 (intfsorch.cpp:1309) と削除時 (intfsorch.cpp:1363) に `gPorts
 
 これらは CONFIG_DB 変化と無関係に、orchagent 起動時に自動実行される。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/counters-rif-side-effects.md`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-rif-pubsub.md`
 > 調査対象: `sonic-swss/orchagent/flexcounterorch.cpp`, `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`, `sonic-utilities/scripts/intfstat`
 
 ### Producer/Consumer ペア
@@ -630,9 +627,7 @@ NotificationConsumer: なし（カウンタ配信に使用せず）
 
 <!-- platform -->
 
-## プラットフォーム / SAI Capability 差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/counters-rif-platform.md -->
+## プラットフォーム / SAI Capability 差異
 
 ### VoQ シャーシ vs 非 VoQ — リモートシステムポートの扱い
 

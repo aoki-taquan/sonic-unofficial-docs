@@ -134,7 +134,7 @@ YANG の `default` 節には値がないが、`bgpcfgd` (`managers_allow_list.py
 <!-- /defaults -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `BGP_ALLOWED_PREFIXES` テーブルの変更に伴って `bgpcfgd` の `BGPAllowListMgr` ハンドラが副次的に書き込む DB エントリは **存在しない**。出力はすべて [FRR](../../reference/glossary.md#term-frr) [vtysh](../../reference/glossary.md#term-vtysh) への設定 push (`ip prefix-list` / `ipv6 prefix-list` / `bgp community-list standard` / `route-map`) と必要に応じた peer-group `soft clear` に閉じる。
 
@@ -147,11 +147,10 @@ CONFIG_DB `BGP_ALLOWED_PREFIXES` テーブルの変更に伴って `bgpcfgd` の
 
 主購読者 `BGPAllowListMgr.set_handler()` / `del_handler()` の副作用は `__update_policy()` / `__remove_policy()` 内の `cfg_mgr.push_list()` 呼出による FRR [vtysh](../../reference/glossary.md#term-vtysh) への route-map / prefix-list / community-list 投入 (`managers_allow_list.py:167-176, 200-207`) と、`__find_peer_group()` で逆引きした peer-group に対する `restart_peer_groups()` (BGP soft clear) のみ。[Redis](../../reference/glossary.md#term-redis) (CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db)) を経由しない。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- constants -->
-## コード由来のハードコード定数 (Phase E)
+## コード由来のハードコード定数
 
 `bgpcfgd` の `managers_allow_list.py` と FRR テンプレ `policies.conf.j2` には、ユーザが [CONFIG_DB](../../reference/glossary.md#term-config_db) や [YANG](../../reference/glossary.md#term-yang) から変更できない固定文字列・固定数値が多数埋め込まれている。
 
@@ -234,7 +233,6 @@ CONFIG_DB から変更不可。
 
 ---
 
-詳細根拠は `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-constants.md` を参照。
 <!-- /constants -->
 
 <!-- cdb-exceptions -->
@@ -280,7 +278,7 @@ CONFIG_DB から変更不可。
 <!-- /value-behavior -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **[ASIC](../../reference/glossary.md#term-asic)・ベンダー依存はないが、`switch_type` と `type/subtype` で FRR route-map 生成テンプレートが分岐する**。テーブル処理ロジック自体 (`managers_allow_list.py`) はプラットフォーム非依存だが、ALLOW_LIST がぶら下がる `FROM_BGP_PEER_V4/V6` ポリシーの末尾処理が [VOQ](../../reference/glossary.md#term-voq) chassis (chassis-packet) で差し替わり、追加の DEFAULT prefix-list ブロックは UpstreamLC な SpineRouter でのみ生成される。
 
@@ -294,13 +292,12 @@ CONFIG_DB から変更不可。
 | constants.yml (`bgp.allow_list`) | プラットフォーム非依存 | `files/image_config/constants/constants.yml` 1 ファイルで image 全体共通。`files/device/<platform>/` 配下の上書き機構なし |
 | テーブル値検証 (`default_action`, `prefixes_v4/v6`) | 影響なし | `managers_allow_list.py` は IP family 構文のみを見て分岐。`platform / asic / chassis / namespace / switch_type` を参照する箇所が 0 ヒット |
 
-詳細根拠は `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-platform.md` を参照。
 <!-- /platform -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
-`BGP_ALLOWED_PREFIXES` テーブル本体のフィールドには現れないが、`bgpcfgd` の `BGPAllowListMgr` と FRR Jinja テンプレ `policies.conf.j2` (general/) が**間接的に**読み出すエンティティ群。詳細根拠は `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-cross-refs.md` を参照。
+`BGP_ALLOWED_PREFIXES` テーブル本体のフィールドには現れないが、`bgpcfgd` の `BGPAllowListMgr` と FRR Jinja テンプレ `policies.conf.j2` (general/) が**間接的に**読み出すエンティティ群。
 
 ### 値変換で生成される FRR community-list
 
@@ -410,7 +407,7 @@ vtysh -c 'show running-config bgp'
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BGP_ALLOWED_PREFIXES`
 
@@ -438,7 +435,7 @@ vtysh -c 'show running-config bgp'
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 > 調査対象: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py` / `sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2`
 > 調査日: 2026-05-16
@@ -480,8 +477,6 @@ vtysh -c 'show running-config bgp'
 
 `policies.conf.j2:17-29` は起動時に **deployment_id=0 限定** で `route-map ALLOW_LIST_DEPLOYMENT_ID_0_V4|V6 permit 65535 / set community ... additive` を書き出す。一方 `BGPAllowListMgr.__update_default_route_map_entry` も SET ごとに seq=65535 を上書きする。**deployment_id=0 で template 引数 `allow_list_default_action` と CONFIG_DB の `default_action` が食い違うと、bgpcfgd 起動直後〜最初の SET 到達までの短時間は template 値、その後は CONFIG_DB 値**という遷移が発生する。
 
-詳細根拠とスキャンログは intermediate メモ (`meta/_intermediate/cdb-flow/bgp-allowed-prefixes-ordering.md`) を参照。
-
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:45 -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:167 -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:177 -->
@@ -491,10 +486,9 @@ vtysh -c 'show running-config bgp'
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動・エラーパス (Phase D)
+## 失敗挙動・エラーパス
 
-> **調査根拠**: `bgpcfgd/managers_allow_list.py` および `docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2` 精読 (2026-05-16)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-failure.md`
+> **Evidence**: `bgpcfgd/managers_allow_list.py` および `docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2` 精読 (2026-05-16)
 
 `BGPAllowListMgr` (Manager 基底) の `set_handler` / `del_handler` 戻り値は CONFIG_DB SubscriberStateTable ループで解釈される。**`return False` は「未消化」扱いで自動再投入** され、依存物 (FRR `community-list`、vtysh セッション、constants 整備) が揃うまで暗黙にリトライが続く。`return True` は消化 (成功または明示スキップ)。
 
@@ -541,8 +535,7 @@ vtysh -c 'show running-config bgp'
 <!-- pubsub -->
 ## 通信メカニズム (Redis PUBSUB / keyspace notification)
 
-> **調査根拠**: `sonic-bgpcfgd/bgpcfgd/runner.py` + `manager.py` + `managers_allow_list.py` + `main.py` 精読 (2026-05-16)
-> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-pubsub.md`
+> **Evidence**: `sonic-bgpcfgd/bgpcfgd/runner.py` + `manager.py` + `managers_allow_list.py` + `main.py` 精読 (2026-05-16)
 
 ### 購読方式
 
@@ -601,7 +594,7 @@ __find_peer_group → restart_peer_groups → "clear bgp ... soft"
 
 ### 反映タイミング
 
-CONFIG_DB write から FRR 反映まで通常**≤ 1 秒** (Select timeout = 1000 ms)。`set_handler` が `False` を返した場合は `set_queue` に退避され、後続の SET イベントで再試行される (回数上限・バックオフなし。詳細は Phase D セクションを参照)。
+CONFIG_DB write から FRR 反映まで通常**≤ 1 秒** (Select timeout = 1000 ms)。`set_handler` が `False` を返した場合は `set_queue` に退避され、後続の SET イベントで再試行される (回数上限・バックオフなし。詳細は失敗挙動・エラーパスセクションを参照)。
 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:21 -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:47 -->

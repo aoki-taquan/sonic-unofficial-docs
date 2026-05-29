@@ -25,10 +25,10 @@ last_verified: 2026-05-11
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 745 |
+| code-verified | 746 |
 | runbook-verified | 27 |
 | discrepancy-found | 112 |
-| issue-confirmed | 10 |
+| issue-confirmed | 9 |
 | hld-only | 0 |
 | meta | 209 |
 | stub | 1 |
@@ -46,7 +46,7 @@ last_verified: 2026-05-11
 | `internals` | 10 | 0 | 6 | 2 | 0 | 1 | 0 | 19 |
 | `management` | 31 | 0 | 16 | 3 | 0 | 1 | 0 | 51 |
 | `overlay` | 19 | 0 | 1 | 0 | 0 | 1 | 0 | 21 |
-| `platform` | 34 | 0 | 13 | 4 | 0 | 1 | 0 | 52 |
+| `platform` | 35 | 0 | 13 | 3 | 0 | 1 | 0 | 52 |
 | `reference` | 467 | 27 | 8 | 0 | 0 | 13 | 1 | 516 |
 | `routing` | 46 | 0 | 11 | 0 | 0 | 1 | 0 | 58 |
 | `switching` | 18 | 0 | 8 | 0 | 0 | 1 | 0 | 27 |

@@ -212,7 +212,7 @@ self.sshscfg.load(ssh_server)
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `SSH_SERVER`
 
@@ -252,7 +252,7 @@ self.sshscfg.load(ssh_server)
 <!-- /entry-points -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 YANG default と hostcfgd コード由来の fallback をまとめる。`SshServer.__init__` では `self.policies = {}` (空 dict) のみ定義。DB に `SSH_SERVER|POLICIES` が存在しない場合、`set_policies()` は呼ばれず `/etc/ssh/sshd_config` は変更されない。実効デフォルトは OS (Debian) の sshd_config 初期値となる。
 
@@ -279,7 +279,7 @@ YANG default と hostcfgd コード由来の fallback をまとめる。`SshServ
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### hostcfgd 起動シーケンス
 
@@ -324,7 +324,7 @@ self.pamLimitsCfg.update_config_file()
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase C)
+## 暗黙テーブル参照
 
 `SSH_SERVER` テーブルが直接・間接的に参照するテーブルと参照方向の一覧。
 
@@ -344,7 +344,7 @@ self.pamLimitsCfg.update_config_file()
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-host-services/scripts/hostcfgd` (コミット `c5bbbe8b`)
 
@@ -380,7 +380,7 @@ self.pamLimitsCfg.update_config_file()
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `hostcfgd` (`SshServer` / `PamLimitsCfg` クラス) および `sonic-host-services/scripts/hostcfgd` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
 
@@ -437,7 +437,7 @@ CONFIG_DB フィールド名から sshd_config ディレクティブ名へのマ
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の `SshServer` / `PamLimitsCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換えに閉じる。
 
@@ -459,11 +459,10 @@ CONFIG_DB `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の `SshServ
 | `/etc/security/limits.conf` | `PamLimitsCfg.render_conf_file()` | `max_sessions` 変更時 (`ssh_handler` 経由) |
 | `/etc/pam.d/pam-limits-conf` | `PamLimitsCfg.render_conf_file()` | 同上 |
 
-> 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ssh-config-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -502,11 +501,11 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5", ...})
 | `SSH_SERVER|POLICIES` SET 時 (`max_sessions` 含む) | `/etc/security/limits.conf` 書換 (ssh 再起動なし) | hostcfgd:L1473 (`PamLimitsCfg`) |
 | `SSH_SERVER|POLICIES` DEL 時 | `len(ssh_policies) == 0` → `set_policies()` 未呼出 → ssh 再起動なし | hostcfgd:L1053-1055 |
 
-> **Evidence**: `hostcfgd:2478` (`subscribe('SSH_SERVER', ...)`)、`hostcfgd:2528` (`config_db.listen(init_data_handler=self.load)`)、`hostcfgd:2245,2265` (`sshscfg.load(ssh_server)`)、`hostcfgd:2297-2299` (`ssh_handler`)、`hostcfgd:2454-2466` (`make_callback` 定義); 詳細証跡 `meta/_intermediate/cdb-flow/ssh-config-pubsub.md`
+> **Evidence**: `hostcfgd:2478` (`subscribe('SSH_SERVER', ...)`)、`hostcfgd:2528` (`config_db.listen(init_data_handler=self.load)`)、`hostcfgd:2245,2265` (`sshscfg.load(ssh_server)`)、`hostcfgd:2297-2299` (`ssh_handler`)、`hostcfgd:2454-2466` (`make_callback` 定義)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**。`SSH_SERVER` は `hostcfgd` が host namespace の CONFIG_DB のみを購読し、[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) を経由しない純粋な host-only 設定処理のため、[ASIC](../../reference/glossary.md#term-asic) ベンダー・multi-asic / chassis 構成に依存しない。
 
@@ -523,7 +522,7 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5", ...})
 !!! note "プラットフォーム差なしの根拠"
     SSH 設定はカーネル・OpenSSH・PAM の host OS レイヤで完結し、データプレーン ASIC との接点がない。`hostcfgd` が `is_multi_npu()` を取得しても SSH 処理経路では参照されない点がコードで確認されている (`hostcfgd:2182` 取得 → SSH ハンドラへの伝播なし)。
 
-> **証跡**: `hostcfgd:1045-1186` (`SshServer`)、`hostcfgd:1408-1476` (`PamLimitsCfg`)、`data/templates/limits.conf.j2` (platform 分岐なし)、`data/templates/pam_limits.j2` (platform 分岐なし); 詳細分析 `meta/_intermediate/cdb-flow/ssh-config-platform.md`
+> **証跡**: `hostcfgd:1045-1186` (`SshServer`)、`hostcfgd:1408-1476` (`PamLimitsCfg`)、`data/templates/limits.conf.j2` (platform 分岐なし)、`data/templates/pam_limits.j2` (platform 分岐なし)
 <!-- /platform -->
 
 <!-- glossary-links-injected: adbc248f73ea -->

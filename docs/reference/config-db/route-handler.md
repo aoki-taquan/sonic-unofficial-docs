@@ -276,7 +276,7 @@ if(nbZmqEnabled) {
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### 前提プロセス・コンポーネントの先行必須
 
@@ -334,7 +334,7 @@ evidence: `fpmsyncd/routesync.cpp:172-200`; `fpmsyncd/fpmsyncd.cpp:148-220`
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `RouteSync` は **書き手 (producer)** として複数の APPL_DB テーブルに書き込む一方、
 起動設定・warm-restart 状態・suppress-fib-pending 応答の 3 系統を**入力参照**として持つ。
@@ -369,14 +369,13 @@ evidence: `fpmsyncd/routesync.cpp:172-200`; `fpmsyncd/fpmsyncd.cpp:148-220`
 
 `ROUTE_TABLE` が主要出力であり、8 つのハンドラのうち 4 つがこのテーブルに書き込む。残りの 7 テーブルは専用ハンドラが 1 対 1 で担当する。
 
-Evidence: `routesync.cpp:156-164` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 初期化); `fpmsyncd.cpp:78-118` (suppress-fib-pending 読取・チャネル設定); 詳細スキャン手順は `meta/_intermediate/cdb-flow/route-handler-cross-refs.md` を参照。
+Evidence: `routesync.cpp:156-164` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 初期化); `fpmsyncd.cpp:78-118` (suppress-fib-pending 読取・チャネル設定)。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・エラーパス (Phase D)
+## 失敗挙動・エラーパス
 
-> **調査根拠**: `fpmsyncd/routesync.cpp` @ `4305596156d70e9797e8a881b3d19b46de0bce0d` 全行精読  
-> 詳細証跡: `meta/_intermediate/cdb-flow/route-handler-failure.md`
+> **Evidence**: `fpmsyncd/routesync.cpp` @ `4305596156d70e9797e8a881b3d19b46de0bce0d` 全行精読
 
 ### onMsgRaw() — netlink メッセージサイズ不正
 
@@ -460,7 +459,7 @@ suppress-fib-pending 有効時、RouteSync は orchagent から RESPONSE_CHANNEL
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `fpmsyncd/routesync.cpp` および `fpmsyncd/fpmsyncd.cpp` に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 
@@ -512,10 +511,9 @@ suppress-fib-pending 有効時、RouteSync は orchagent から RESPONSE_CHANNEL
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・連鎖変更 (Phase F)
+## 副作用・連鎖変更
 
-> **調査根拠**: `sonic-swss/fpmsyncd/routesync.cpp:156,172-189,198-206,3100-3131,3165-3269,3291-3295`; `sonic-swss/orchagent/routeorch.cpp:126-127,287-295,3185-3201` (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/route-handler-side-effects.md`
+> **Evidence**: `sonic-swss/fpmsyncd/routesync.cpp:156,172-189,198-206,3100-3131,3165-3269,3291-3295`; `sonic-swss/orchagent/routeorch.cpp:126-127,287-295,3185-3201` (2026-05-18)
 
 `RouteSync` がハンドラ分岐を経て `APPL_DB:ROUTE_TABLE` へ書き込む動作は、orchagent 側で複数の連鎖変更を引き起こす。また fpmsyncd 自身も [zebra](../../reference/glossary.md#term-zebra) へのオフロード応答という外向き副作用を持つ。
 
@@ -585,10 +583,9 @@ warm-restart 終了時 (`onWarmStartEnd()`) には `markRoutesOffloaded()` が `
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `sonic-swss/fpmsyncd/routesync.cpp:154-158,1001-1055`; `sonic-swss/fpmsyncd/fpmsyncd.cpp:78-143`; `sonic-swss/orchagent/routeorch.cpp:40-44`; `sonic-swss/orchagent/orchdaemon.cpp:329-337`; `sonic-swss/orchagent/zmqorch.cpp:59-68` (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/route-pubsub.md`
+> **Evidence**: `sonic-swss/fpmsyncd/routesync.cpp:154-158,1001-1055`; `sonic-swss/fpmsyncd/fpmsyncd.cpp:78-143`; `sonic-swss/orchagent/routeorch.cpp:40-44`; `sonic-swss/orchagent/orchdaemon.cpp:329-337`; `sonic-swss/orchagent/zmqorch.cpp:59-68` (2026-05-18)
 
 ### Producer / Consumer ペア
 
@@ -712,9 +709,9 @@ ASIC / APPL_STATE_DB ROUTE_TABLE
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-調査ソース: `fpmsyncd/routesync.cpp`、`fpmsyncd/fpmsyncd.cpp`、`orchagent/routeorch.cpp`。詳細スキャン結果は `meta/_intermediate/cdb-flow/route-handler-platform.md`。
+調査ソース: `fpmsyncd/routesync.cpp`、`fpmsyncd/fpmsyncd.cpp`、`orchagent/routeorch.cpp`。
 
 ### fpmsyncd (RouteSync) — プラットフォーム差なし
 

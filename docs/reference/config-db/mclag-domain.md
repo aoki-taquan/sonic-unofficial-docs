@@ -195,7 +195,7 @@ enum: `unique_ip` = `enable` のみ (無効化はエントリ削除)。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `MCLAG_DOMAIN`
 
@@ -223,13 +223,13 @@ enum: `unique_ip` = `enable` のみ (無効化はエントリ削除)。
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 minigraph.py および init_cfg.json.j2 からの `MCLAG_DOMAIN` 自動派生はなし。iccpd デーモンが CONFIG_DB の `MCLAG_DOMAIN` を読み取り、`APP_DB` に状態を書き込む方向。CONFIG_DB への書き込みは CLI (`config mclag`) のみ。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -246,7 +246,7 @@ minigraph.py および init_cfg.json.j2 からの `MCLAG_DOMAIN` 自動派生は
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `MlagOrch::doTask()` → `doMlagDomainTask()` の分岐:
 
@@ -258,12 +258,12 @@ minigraph.py および init_cfg.json.j2 からの `MCLAG_DOMAIN` 自動派生は
 | `MlagOrch` | `doMlagDomainTask()` | SET で `peer_link` フィールドが空 | erase してスキップ（peer_link は必須） | `sonic-swss/orchagent/mlagorch.cpp:98-99` |
 | `MlagOrch` | `doMlagDomainTask()` | `addIslInterface(peer_link)` = false | `it++` (retry) | `sonic-swss/orchagent/mlagorch.cpp:96` |
 
-> **スキャン証跡**: `mlagorch.cpp:45-105` を全行読了、5 件分岐抽出。minigraph からの自動派生なしを確認 — 誤読なし。
+> **裏取り**: `mlagorch.cpp:45-105` を全行読了、5 件分岐抽出。minigraph からの自動派生なしを確認。
 
 <!-- /handler-branching -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-250 -->
 
@@ -301,7 +301,7 @@ docker exec swss cat /var/log/swss/orchagent.log | grep -i "MLAG"
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-swss/orchagent/mlagorch.cpp / sonic-swss/mclagsyncd/mclaglink.cpp / sonic-swss/fdbsyncd/fdbsync.cpp -->
 
@@ -362,7 +362,7 @@ FDB_TABLE|Vlan<vid>:<mac>
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 MCLAG の通信経路は **MlagOrch 系**（orchagent 内・Observer パターン）と **mclagsyncd 系**（独立デーモン・TCP IPC 経由で iccpd へ転送）の二系統ある。
 
@@ -412,11 +412,10 @@ iccpd からの命令を受けて [APPL_DB](../../reference/glossary.md#term-app
 | orchagent | 1000 ms (`orchdaemon.cpp:23`) | 特別なバックオフなし |
 | iccpd | 1 秒（CONNECT_INTERVAL_SEC） | TCP 再接続周期 |
 
-> **中間解析メモ**: `meta/_intermediate/cdb-flow/mclag-domain-pubsub.md`
 <!-- /pubsub -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 <!-- evidence: sonic-swss/orchagent/mlagorch.cpp / sonic-swss/orchagent/fdborch.cpp / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang -->
 
@@ -446,7 +445,7 @@ iccpd からの命令を受けて [APPL_DB](../../reference/glossary.md#term-app
 <!-- /cross-refs -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
 <!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-250 / sonic-swss/mclagsyncd/mclaglink.cpp L626-930 / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang / sonic-utilities/config/mclag.py -->
 
@@ -502,7 +501,7 @@ iccpd からの命令を受けて [APPL_DB](../../reference/glossary.md#term-app
 <!-- /ordering -->
 
 <!-- defaults -->
-## フィールドデフォルト (Phase A)
+## フィールドデフォルト
 
 ### MCLAG_DOMAIN
 
@@ -530,7 +529,7 @@ iccpd からの命令を受けて [APPL_DB](../../reference/glossary.md#term-app
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/orchagent/mlagorch.cpp / sonic-swss/mclagsyncd/mclag.h / sonic-buildimage/src/iccpd/include/scheduler.h / sonic-buildimage/src/iccpd/include/iccp_csm.h / sonic-swss/mclagsyncd/mclaglink.cpp -->
 
@@ -583,7 +582,7 @@ mclagsyncd が ISOLATION_GROUP_TABLE の MEMBERS を構築する際、ASIC_DB �
 <!-- /constants -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 <!-- evidence: sonic-swss/orchagent/mlagorch.cpp / sonic-swss/mclagsyncd/mclaglink.cpp / sonic-swss/mclagsyncd/mclaglink.h -->
 
@@ -655,7 +654,6 @@ MCLAG は kernel bridge (`brX`) を iccpd が直接操作しない設計。FDB �
 | kernel bridge 連携 | 全プラットフォーム共通 (`fdbsyncd` 経由) |
 | multi-ASIC (chassis / T2) | サポート外（host 名前空間 CONFIG_DB のみ参照） |
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/mclag-domain-platform.md`
 <!-- /platform -->
 
 <!-- glossary-links-injected: f50d4e92baed -->

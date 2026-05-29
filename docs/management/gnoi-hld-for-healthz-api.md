@@ -1,6 +1,6 @@
 ---
 title: gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
-description: gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service） — gNOI Healthz は コンポーネント単位のヘルスチェック結果と関連アーティファクト（log / DB snapshot / show tech 出力等）を gRPC 経由で…
+description: gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service） — gNOI Healthz は コンポーネント単位のヘルスチェック結果と関連アーティファクト（log / DB snapshot / show tech 出力等）を gRPC 経由で取得する API。artifact 収集は SONiC Host Service の debug_info モジュールに DBUS で委譲する。
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -25,7 +25,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
-    `sonic-gnmi/gnmi_server/gnoi_healthz.go` L25-29 で `ddComponentAll = "all"` / `ddLogLvlAlert = "alert"` / `ddLogLvlCritical = "critical"` / `ddLogLvlAll = "all"` を定義、L39 `isDebugData(p)` / L91 `getDebugData(p)` / L191 `Get RPC` でパス解釈を確認。`sonic-host-services/host_modules/debug_info.py` L47 `class DebugArtifactCollector` の `collect_artifacts` / `_collect_counter_artifacts` / `_collect_teamdctl_data` / `_collect_host_files` 実装、`sonic-gnmi/sonic_service_client/dbus_client.go` の `HealthzClient` DBUS 経路、`gnoi_client/healthz/healthz.go` と `gnoi_client.go` L89-100 で `Get` / `Artifact` / `Acknowledge` / `List` / `Check` サブコマンドを確認（verified at: 2026-05-09）。
+    `sonic-gnmi/gnmi_server/gnoi_healthz.go` L25-29 で `ddComponentAll = "all"` / `ddLogLvlAlert = "alert"` / `ddLogLvlCritical = "critical"` / `ddLogLvlAll = "all"` を定義、L39 `isDebugData(p)` / L91 `getDebugData(p)` / L191 `Get RPC` でパス解釈を確認。`sonic-host-services/host_modules/debug_info.py` L47 `class DebugArtifactCollector` の `collect_artifacts` / `_collect_counter_artifacts` / `_collect_teamdctl_data` / `_collect_host_files` 実装、`sonic-gnmi/sonic_service_client/dbus_client.go` L46-49 の DBUS メソッド `HealthzAck` / `HealthzCheck` / `HealthzCollect`（gRPC 側の `pb.NewHealthzClient` とは別経路）、`gnoi_client/healthz/healthz.go` と `gnoi_client.go` の `case "Healthz"` で `Get` / `Artifact` / `Acknowledge` / `List` / `Check` サブコマンドを確認（verified at: 2026-05-09）。
 
 # gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
 
@@ -169,11 +169,13 @@ reasoning: collect → poll → ready の DBUS 経路と persistent_storage フ�
 
 ### 関連する CLI
 
+`gnoi_client` は `-module Healthz -rpc <RPC>` のフラグでサブコマンドを選択し、引数は `-jsonin '<JSON>'`（`Artifact` のみ `-id <ID>`）で渡す（`sonic-gnmi/gnoi_client/gnoi_client.go` の `case "Healthz"`、`gnoi_client/healthz/healthz.go`）。
+
 | Command | 用途 |
 |---------|------|
-| `gnoi_client healthz get ...` | `Healthz.Get` 呼び出し（JSON / proto 形式対応予定）[^1] |
-| `gnoi_client healthz artifact ...` | `Healthz.Artifact` 呼び出し |
-| `gnoi_client healthz acknowledge ...` | `Healthz.Acknowledge` 呼び出し |
+| `gnoi_client -module Healthz -rpc Get -jsonin '{"path":"..."}'` | `Healthz.Get` 呼び出し[^1] |
+| `gnoi_client -module Healthz -rpc Artifact -id <event-id>` | `Healthz.Artifact` 呼び出し |
+| `gnoi_client -module Healthz -rpc Acknowledge -jsonin '{"path":"...","id":"..."}'` | `Healthz.Acknowledge` 呼び出し |
 
 ### 関連する YANG
 
@@ -182,17 +184,21 @@ OpenConfig `components` モデルが対応する想定。SONiC [YANG](../referen
 ### 設定例
 
 ```bash
-# all-info の health event 取得
-gnoi_client healthz get \
-  --path /components/component[name=healthz]/all-info
+# all-info の health event 取得（-jsonin に path を JSON で渡す）
+gnoi_client -target localhost:8080 -module Healthz -rpc Get \
+  -jsonin '{"path":"/components/component[name=healthz]/all-info"}'
 
-# 取れた artifact id でファイル取得
-gnoi_client healthz artifact --id <event-id> > artifact.tar.gz
+# 取れた artifact id でファイル取得（Artifact は -id で受け取り stream で返す）
+gnoi_client -target localhost:8080 -module Healthz -rpc Artifact \
+  -id <event-id>
 
-# event ack
-gnoi_client healthz acknowledge \
-  --path /components/component[name=healthz]/all-info --id <event-id>
+# event ack（path と id を JSON で渡す）
+gnoi_client -target localhost:8080 -module Healthz -rpc Acknowledge \
+  -jsonin '{"path":"/components/component[name=healthz]/all-info","id":"<event-id>"}'
 ```
+
+!!! note "実装メモ"
+    `Get` / `Acknowledge` / `List` / `Check` は `-jsonin` の JSON を `config.Args` で受け取り `json.Unmarshal` する。`Artifact` のみ `-id`（`config.Id`）を直接読み、`ArtifactRequest.Id` に渡す。`Artifact` の応答は `header` / `bytes` / `proto` / `trailer` の stream で、`gnoi_client` 標準実装では受信内容をサマリ表示する（生バイトをそのままファイルに書き出すわけではない）。
 
 ## 制限事項
 
@@ -221,9 +227,9 @@ gnoi_client healthz acknowledge \
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
-# Healthz API でサブシステム状態取得
-gnoic -a 127.0.0.1:9339 --skip-verify healthz get --path '/components/component[name=PSU1]'
-redis-cli -n 6 hgetall 'PSU_INFO|PSU 1'
+# Healthz API でサブシステム状態取得（gnoi_client の Get RPC）
+gnoi_client -target 127.0.0.1:9339 -module Healthz -rpc Get \
+  -jsonin '{"path":"/components/component[name=healthz]/all-info"}'
 docker logs gnmi 2>&1 | tail -30
 ```
 
@@ -237,15 +243,6 @@ docker logs gnmi 2>&1 | tail -30
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnoi_healthz_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- concerns hint:
-- UMF Healthz FE 実装存在確認 (sonic-gnmi telemetry)
-- host service の debug_info.collect / debug_info.check モジュール実装確認
-- 3 つのサポートパス (alert-info / critical-info / all-info) の解釈実装確認
-- gnoi_client CLI への healthz サブコマンド追加状況
-- artifact GC ポリシーの現行実装
-- HLD 2025-06 v0.1 と現行 master の差分有無
--->
-
 ## 関連リファレンス
 
 本ページに関連する参照ドキュメント:
@@ -255,16 +252,5 @@ docker logs gnmi 2>&1 | tail -30
 - [用語集 (Glossary)](../reference/glossary.md)
 
 <!-- augmented-links: v1 -->
-
-<!-- ops-entry -->
-## 運用入口
-
-この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
-
-### 関連 CLI
-
-- `gnoi_client`
-
-<!-- /ops-entry -->
 
 <!-- glossary-links-injected: c671e32e187d -->

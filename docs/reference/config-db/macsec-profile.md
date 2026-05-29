@@ -266,7 +266,7 @@ configureMACsec() — wpa_cli 経由でインターフェース追加・MKA 設�
 <!-- /cdb-exceptions -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ### 失敗パス一覧
 
@@ -283,7 +283,7 @@ configureMACsec() — wpa_cli 経由でインターフェース追加・MKA 設�
 | 7 | `enableMACsec()` 内 `runtime_error` | `catch(runtime_error)` | `SWSS_LOG_WARN("Enable MACsec fail : %s")` → ポート非暗号化のまま継続 | なし |
 | 8 | `disableMACsec()` で wpa_supplicant 停止失敗 | `stopMKASession()` / `stopWPASupplicant()` | `SWSS_LOG_WARN("Cannot stop MKA session ...")` / `SWSS_LOG_WARN("Cannot stop WPA_SUPPLICANT ...")` → `task_failed`、プロセス残留の可能性 | なし |
 | 9 | [SAI](../../reference/glossary.md#term-sai) `create/set macsec` 恒久エラー | `parseHandleSaiStatusFailure()` | `task_failed` | なし |
-| 10 | SAI MACsec POST 失敗通知 | `doPostCompletionTask()` | `setMacsecPostState(m_state_db, "fail")` + `SWSS_LOG_ERROR("MACSec POST failed")` | なし |
+| 10 | [SAI](../../reference/glossary.md#term-sai) MACsec POST 失敗通知 | `doPostCompletionTask()` | `setMacsecPostState(m_state_db, "fail")` + `SWSS_LOG_ERROR("MACSec POST failed")` | なし |
 | 11 | プロファイル DEL 時にポートが使用中 | `removeProfile()` | `task_need_retry`（全ポート MACsec 無効化まで待機） | 無制限 |
 
 ### task_failed 後の挙動
@@ -311,7 +311,6 @@ journalctl -u macsecmgrd | grep -iE "fail|warn|error"
 sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 ```
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/macsec-profile-failure.md`
 <!-- /failure -->
 
 <!-- runtime-trace -->
@@ -339,7 +338,7 @@ sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `MACSEC_PROFILE`
 
@@ -367,7 +366,7 @@ sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 <!-- /entry-points -->
 
 <!-- cross-refs -->
-## 暗黙参照（Phase C）
+## 暗黙参照
 
 `MACsecMgr` / `MACsecOrch` が `MACSEC_PROFILE` テーブルを処理する際、以下の外部テーブル・DB を明示的な設定フィールドとしてではなく、**実行時のトリガー条件・ゲート・書き込み先**として暗黙的に参照する。
 
@@ -375,7 +374,7 @@ sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 |--------|----------|-----------------|----------|
 | `PORT.<ifname>.macsec` (CONFIG_DB) | 読み取り（トリガー） | `enableMACsec()` が `CFG_PORT_TABLE` SET イベントを受け `get_value(port_attr, "macsec", profile_name)` でプロファイル名を取得。空または未設定なら `disableMACsec()` へフォールバック。 | `sonic-swss/cfgmgr/macsecmgr.cpp:298,480-484` |
 | `PORT_TABLE.<ifname>` ([STATE_DB](../../reference/glossary.md#term-state_db)) | 読み取り（起動ゲート） | `isPortStateOk()` が STATE_DB `PORT_TABLE` から `state == "ok"` かつ `netdev_oper_status == "up"` を確認。満たされない間は `task_need_retry` が続く。 | `sonic-swss/cfgmgr/macsecmgr.cpp:614-631` |
-| `MACSEC_EGRESS_SC` / `MACSEC_INGRESS_SC` (APPL_DB) | 受信（非同期） | `MACsecOrch::doTask()` が `APP_MACSEC_EGRESS_SC_TABLE_NAME` / `APP_MACSEC_INGRESS_SC_TABLE_NAME` を購読。キー形式 `<port>:<sci>`。SC エントリ到達時に SAI `sai_macsec_api` でセキュリティチャネルを確立する。 | `sonic-swss/orchagent/macsecorch.cpp:872-882` |
+| `MACSEC_EGRESS_SC` / `MACSEC_INGRESS_SC` ([APPL_DB](../../reference/glossary.md#term-appl_db)) | 受信（非同期） | `MACsecOrch::doTask()` が `APP_MACSEC_EGRESS_SC_TABLE_NAME` / `APP_MACSEC_INGRESS_SC_TABLE_NAME` を購読。キー形式 `<port>:<sci>`。SC エントリ到達時に SAI `sai_macsec_api` でセキュリティチャネルを確立する。 | `sonic-swss/orchagent/macsecorch.cpp:872-882` |
 | `PORT_TABLE.<ifname>.pfc_encryption_mode` (APPL_DB) | 読み取り（[PFC](../../reference/glossary.md#term-pfc) [ACL](../../reference/glossary.md#term-acl)） | `createMACsecACLTable()` が `m_applPortTable.get(port_name, values)` で APPL_DB PORT エントリの `pfc_encryption_mode` を読み取り [PFC](../../reference/glossary.md#term-pfc) [ACL](../../reference/glossary.md#term-acl) エントリを生成。フィールド不在時はデフォルト値使用。 | `sonic-swss/orchagent/macsecorch.cpp:2709-2715` |
 
 ### 依存関係サマリ
@@ -396,7 +395,7 @@ MACsecOrch が SAI sai_macsec_api でセキュリティチャネル確立
 <!-- /cross-refs -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 <!-- source: sonic-swss/cfgmgr/macsecmgr.cpp, sonic-swss/cfgmgr/macsecmgrd.cpp -->
 
@@ -447,11 +446,10 @@ macsecmgrd::enableMACsec()
        sai_macsec_api → ASIC/HW
 ```
 
-詳細分析: `meta/_intermediate/cdb-flow/macsec-profile-pubsub.md`
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Direction B — orch / mgr が書く先)
+## 副次 DB 書込 (orch / mgr が書く先)
 
 > ソース: `sonic-swss/orchagent/macsecorch.cpp`, `sonic-swss/cfgmgr/macsecmgr.cpp`
 
@@ -503,7 +501,7 @@ macsecmgrd::enableMACsec()
 <!-- /side-effects -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### macsecmgr.cpp 固定値
 
@@ -640,4 +638,4 @@ attr.value.booldata = true;
 - master ブランチ以外のバックポート差異はスコープ外
 <!-- /platform -->
 
-<!-- glossary-links-injected: 6f36db8074ad -->
+<!-- glossary-links-injected: dcccc62926bb -->

@@ -9,15 +9,10 @@ sources:
   path: doc/dash/dash-sonic-kvm.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - DASH_VNET_TABLE
-  - DASH_APPLIANCE_TABLE
-  - DASH_ENI_TABLE
+  _no_related_config_db: true
+  _no_related_yang: true
   cli:
-  - show dash eni
-  - show dash vnet
-  yang:
-  - sonic-dash
+  - show vnet
 ---
 
 <!-- topics-tip -->
@@ -209,20 +204,17 @@ KVM 自体には追加 [CONFIG_DB](../reference/glossary.md#term-config_db) ス�
 
 ### コマンド例
 
-DASH ENI / [VNET](../reference/glossary.md#term-vnet) 経路と DPU 上のデータパスを確認する。
+[VNET](../reference/glossary.md#term-vnet) 経路と DPU 上の DASH テーブルを確認する。
 
 ```bash
-# DASH / ENI の状態
-show dash eni
-show dash vnet
-redis-cli -n 4 keys 'DASH_ENI_TABLE:*'
+# VNet ルート (sonic-utilities に実在する CLI は show vnet のみ)
+show vnet routes all
+
+# DASH のテーブルは CONFIG_DB / APP_DB を直接覗く (専用 show CLI は無い)
+redis-cli -n 4 keys 'DASH_*'        # CONFIG_DB
+redis-cli -n 0 keys 'DASH_*'        # APP_DB (APPL_DB)
 docker exec swss orchagent_restart_check 2>&1 | tail
 ```
-
-## 関連トピック
-
-- [Topics: GNMI / OpenConfig](../topics/10-gnmi-openconfig/index.md) — [gNMI](../reference/glossary.md#term-gnmi) 経由の DASH 設定
-- [sonic-dash-hld](sonic-dash-hld.md) — DASH の全体像
 
 ## 引用元
 
@@ -231,6 +223,8 @@ docker exec swss orchagent_restart_check 2>&1 | tail
 <!-- topics-back-ref -->
 ## 関連 Topics
 
+- [sonic-dash-hld](sonic-dash-hld.md) — DASH の全体像
+- [Topics: GNMI / OpenConfig](../topics/10-gnmi-openconfig/index.md) — [gNMI](../reference/glossary.md#term-gnmi) 経由の DASH 設定
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 

@@ -194,7 +194,7 @@ enum: `use_well_known_mac`=enabled/disabled、`src_mac`=ToRMac/VlanMac、`log_ve
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 MUX_LINKMGR テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -228,9 +228,9 @@ db_migrator.py での MUX_LINKMGR マイグレーションなし
 <!-- /entry-points -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
-YANG はほぼすべての MUX_LINKMGR フィールドに `default` を持たない (例外: `oscillation_enabled = true`, `kill_radv = True`)。CONFIG_DB に該当キーが無い場合は `linkmgrd` (`sonic-linkmgrd/src/common/MuxConfig.h`) の **C++ メンバ初期化子で焼かれた値** がそのまま有効になる。詳細・派生注意点は `meta/_intermediate/cdb-flow/mux-linkmgr-defaults.md` を参照。
+YANG はほぼすべての MUX_LINKMGR フィールドに `default` を持たない (例外: `oscillation_enabled = true`, `kill_radv = True`)。CONFIG_DB に該当キーが無い場合は `linkmgrd` (`sonic-linkmgrd/src/common/MuxConfig.h`) の **C++ メンバ初期化子で焼かれた値** がそのまま有効になる。
 
 | フィールド | container | コード由来デフォルト | 出典 (linkmgrd) | 備考 |
 |-----------|-----------|---------------------|-----------------|------|
@@ -257,13 +257,13 @@ YANG はほぼすべての MUX_LINKMGR フィールドに `default` を持たな
 <!-- /defaults -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 `MUX_LINKMGR` への自動派生はなし。init_cfg.json.j2 および minigraph.py からの直接書き込みなし。`linkmgrd` デーモンが起動時に `oscillation_enabled` / `kill_radv` のデフォルト値を CONFIG_DB に書き込む場合がある (`oscillation_enabled` デフォルト `true`、`kill_radv` デフォルト `True`)。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 `MUX_LINKMGR` は [orchagent](../../reference/glossary.md#term-orchagent) では処理されない。`linkmgrd` (sonic-linkmgrd) が CONFIG_DB を直接購読する。orchdaemon.cpp の条件付き登録なし。
 
@@ -276,7 +276,7 @@ YANG はほぼすべての MUX_LINKMGR フィールドに `default` を持たな
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `linkmgrd` が `MUX_LINKMGR` を処理する:
 
@@ -287,12 +287,12 @@ YANG はほぼすべての MUX_LINKMGR フィールドに `default` を持たな
 | `linkmgrd` | CONFIG_DB 購読ハンドラ | `kill_radv == "True"` | RA デーモン (radvd) を停止 | `sonic-linkmgrd` (kill_radv デフォルト=True) |
 | `linkmgrd` | CONFIG_DB 購読ハンドラ | `interval_v4`/`interval_v6`/`positive_signal_count`/`negative_signal_count` 等 | HB タイマー・閾値を更新 | `sonic-linkmgrd/src/MuxManager.cpp` |
 
-> **スキャン証跡**: MUX_LINKMGR は [orchagent](../../reference/glossary.md#term-orchagent) 非経由で linkmgrd が直接処理することを確認。orchdaemon.cpp での条件付き登録なし — 誤読なし。
+> **裏取り**: MUX_LINKMGR は [orchagent](../../reference/glossary.md#term-orchagent) 非経由で linkmgrd が直接処理することを確認。orchdaemon.cpp での条件付き登録なし — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 <!-- evidence: sonic-swss/orchagent/muxorch.cpp / sonic-linkmgrd/src/DbInterface.cpp / sonic-linkmgrd/src/MuxManager.cpp -->
 
@@ -311,10 +311,9 @@ YANG はほぼすべての MUX_LINKMGR フィールドに `default` を持たな
 <!-- /cross-refs -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> 調査証跡: `meta/_intermediate/cdb-flow/mux-linkmgr-side-effects.md`
-> ソース: `sonic-linkmgrd/src/DbInterface.cpp` L463-473、`sonic-swss-common/common/schema.h` L459-460
+<!-- evidence: sonic-linkmgrd/src/DbInterface.cpp L463-473 / sonic-swss-common/common/schema.h L459-460 -->
 
 `MUX_LINKMGR` パラメータを linkmgrd が読み取った結果、発生する **他 DB への副次書込** を示す。
 
@@ -360,7 +359,7 @@ STATE_DB MUX_LINKMGR_TABLE (state フィールド更新)
 <!-- /side-effects -->
 
 <!-- failure -->
-## Phase D: 失敗挙動 (Failure Behavior)
+## 失敗挙動 (Failure Behavior)
 
 ソース: `sonic-linkmgrd` — `src/DbInterface.cpp`, `src/MuxPort.cpp`, `src/MuxManager.cpp`, `src/link_manager/LinkManagerStateMachineActiveStandby.cpp`
 
@@ -400,7 +399,7 @@ linkmgrd は [SAI](../../reference/glossary.md#term-sai) を直接呼ばない�
 <!-- /failure -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `linkmgrd` は [ASIC](../../reference/glossary.md#term-asic) ベンダー識別子（broadcom / mellanox 等）を参照しない。プラットフォームプロファイルは **ケーブルタイプ** (`PortCableType`) によって決まる。`MUX_LINKMGR` フィールドの有効性・意味論はケーブルタイプによって以下のとおり異なる。
 
@@ -439,14 +438,12 @@ cable_type == "active-active"   →  PortCableType::ActiveActive   (Y-cable Smar
 
 `docker-mux` (linkmgrd) は `feature: subtype=="DualToR"` 環境専用デーモン。[SmartSwitch](../../reference/glossary.md#term-smartswitch) の [DPU](../../reference/glossary.md#term-dpu) ポートは `MUX_CABLE` テーブルに登録されず `MUX_LINKMGR` も参照されない。なお Active-Active ケーブルタイプは Y-cable SmartNiC 搭載の DualToR 向けであり、[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)（`subtype=="SmartSwitch"`）とは別概念。
 
-詳細根拠は `meta/_intermediate/cdb-flow/mux-linkmgr-platform.md` を参照。
 <!-- /platform -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> 調査証跡: `meta/_intermediate/cdb-flow/mux-linkmgr-constants.md`
-> ソース: `sonic-linkmgrd/src/common/MuxConfig.h`, `sonic-linkmgrd/src/common/MuxLogger.h`, `sonic-linkmgrd/src/LinkMgrdMain.cpp`, `sonic-linkmgrd/src/DbInterface.h`
+<!-- evidence: sonic-linkmgrd/src/common/MuxConfig.h / sonic-linkmgrd/src/common/MuxLogger.h / sonic-linkmgrd/src/LinkMgrdMain.cpp / sonic-linkmgrd/src/DbInterface.h -->
 
 ### MuxConfig.h — C++ メンバ初期化子
 
@@ -519,10 +516,9 @@ ICMP heartbeat パケットバッファの最大サイズ。Jumbo frame 対応 (
 <!-- /constants -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> 調査証跡: `meta/_intermediate/cdb-flow/mux-linkmgr-ordering.md`
-> ソース: `sonic-swss/orchagent/muxorch.cpp`、`sonic-linkmgrd/src/DbInterface.cpp`
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp / sonic-linkmgrd/src/DbInterface.cpp -->
 
 ### MUX_LINKMGR は orchagent 非経由 — 他テーブルと独立
 
@@ -591,7 +587,7 @@ MUX_CABLE SET    →  MuxCable オブジェクト生成
 <!-- /ordering -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### CONFIG_DB Subscribe 経路
 
