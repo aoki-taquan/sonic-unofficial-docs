@@ -629,7 +629,7 @@ IP route 版にある `SAI_STATUS_ITEM_NOT_FOUND` 専用補正 (DualToR tunnel r
 （MPLS 経路は DualToR tunnel 経由で書かれない）。SAI status は一律
 `handleSaiSetStatus(SAI_API_MPLS, ...)` / `handleSaiRemoveStatus(SAI_API_MPLS, ...)`
 (`mplsrouteorch.cpp:907-915`) に委譲され、`task_need_retry` / `task_failed` のいずれかに振り分けられる
-（Phase D で整理）。
+（失敗挙動の節で整理）。
 
 ### 11. Warm reboot 順序
 

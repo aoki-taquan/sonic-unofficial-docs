@@ -425,7 +425,7 @@ createPbhRule() → AclOrch::addAclRule() → SAI: sai_acl_api->create_acl_entry
 | `show pbh rule` | CONFIG_DB `PBH_RULE`（直読み） | 設定値の表示 (`cfgdb_pipe.get_table()`) |
 | `show pbh statistics` | CONFIG_DB `PBH_RULE` + [COUNTERS_DB](../../reference/glossary.md#term-counters_db) `ACL_COUNTER_RULE_MAP` + `COUNTERS:<oid>` | `flow_counter=ENABLED` ルールのパケット / バイト数表示 |
 
-`show pbh rule` は [orchagent](../../reference/glossary.md#term-orchagent) の処理を経由せず CONFIG_DB を直接参照するため、SAI 反映状態とは独立して最新の設定を表示する。`show pbh statistics` の `ACL_COUNTER_RULE_MAP` は `AclOrch::registerFlexCounter()` が `flow_counter=ENABLED` の SET 成功時に書き込む（Phase F 参照）。
+`show pbh rule` は [orchagent](../../reference/glossary.md#term-orchagent) の処理を経由せず CONFIG_DB を直接参照するため、SAI 反映状態とは独立して最新の設定を表示する。`show pbh statistics` の `ACL_COUNTER_RULE_MAP` は `AclOrch::registerFlexCounter()` が `flow_counter=ENABLED` の SET 成功時に書き込む（副次 DB 書込の節を参照）。
 
 ### TTL / バックプレッシャー
 

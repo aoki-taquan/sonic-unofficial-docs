@@ -146,8 +146,8 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 | CONFIG_DB | `PORTCHANNEL_INTERFACE` | 同上 (共通 parser) | [PortChannel](../../reference/glossary.md#term-portchannel) 系の一次格納 |
 | CONFIG_DB | `VLAN_INTERFACE` | 同上 (共通 parser) | [VLAN](../../reference/glossary.md#term-vlan) 系の一次格納 |
 | CONFIG_DB | `PORT` / `PORTCHANNEL` / `VLAN` | `show/main.py:1611-1623` | `show ipv6 link-local-mode` の母集合 |
-| STATE_DB | `PORT_TABLE` / `LAG_TABLE` / `VLAN_TABLE` | `intfmgr.cpp:833-837` (`isIntfStateOk`) | APP_DB 転送の gating (Phase B 既述) |
-| STATE_DB | `VRF_TABLE` | `intfmgr.cpp:839-843` | VRF バインド時の gating (Phase B 既述) |
+| STATE_DB | `PORT_TABLE` / `LAG_TABLE` / `VLAN_TABLE` | `intfmgr.cpp:833-837` (`isIntfStateOk`) | APP_DB 転送の gating (書込み順依存の節で既述) |
+| STATE_DB | `VRF_TABLE` | `intfmgr.cpp:839-843` | VRF バインド時の gating (書込み順依存の節で既述) |
 | APP_DB | `INTF_TABLE` | `intfmgr.cpp:926` (`fvTuple`) | `"enable"` 時に転送、ただし [orchagent](../../reference/glossary.md#term-orchagent) は dead consumer |
 | APP_DB | `NEIGH_TABLE` | `neighsyncd/neighsync.cpp:227` | link-local neigh 登録時のフィルタキー |
 | daemon | `intfmgrd` | `cfgmgr/intfmgr.cpp` | CONFIG_DB → APP_DB 転送と `m_ipv6LinkLocalModeList` 管理 |
@@ -347,7 +347,7 @@ m_cfgLagInterfaceTable(cfgDb, CFG_LAG_INTF_TABLE_NAME),
 m_cfgVlanInterfaceTable(cfgDb, CFG_VLAN_INTF_TABLE_NAME),
 ```
 
-`isLinkLocalEnabled()` は netlink `RTM_NEWNEIGH` / `RTM_DELNEIGH` イベント受信時に呼ばれ、CONFIG_DB を同期的に `get()` する。これにより `intfmgrd` の APP_DB 転送完了を待たずに CONFIG_DB 書き込みの瞬間からフィルタリングが有効になる（Phase B 依存 #3 で既述）。
+`isLinkLocalEnabled()` は netlink `RTM_NEWNEIGH` / `RTM_DELNEIGH` イベント受信時に呼ばれ、CONFIG_DB を同期的に `get()` する。これにより `intfmgrd` の APP_DB 転送完了を待たずに CONFIG_DB 書き込みの瞬間からフィルタリングが有効になる（書込み順依存 #3 で既述）。
 
 ### 通信フロー概要
 
@@ -403,7 +403,7 @@ flowchart TD
 
 ### 差異が残る唯一の領域（インターフェース名種別）
 
-Phase E で示したインターフェース名プレフィクス (`Ethernet` / `PortChannel` / `Vlan`) によるテーブル振り分けは、特定 ASIC 機種固有ではなくインターフェース命名規則依存である。スマートスイッチ / [DPU](../../reference/glossary.md#term-dpu) などで異なるプレフィクス名を持つインターフェース (`dpu0` 等) が登場した場合、`isLinkLocalEnabled()` が `false` を返して link-local neigh を無視するが、これはプラットフォーム分岐ではなく未サポートインターフェース種別として Phase D (#5) で既述。
+「コード由来デフォルト」で示したインターフェース名プレフィクス (`Ethernet` / `PortChannel` / `Vlan`) によるテーブル振り分けは、特定 ASIC 機種固有ではなくインターフェース命名規則依存である。スマートスイッチ / [DPU](../../reference/glossary.md#term-dpu) などで異なるプレフィクス名を持つインターフェース (`dpu0` 等) が登場した場合、`isLinkLocalEnabled()` が `false` を返して link-local neigh を無視するが、これはプラットフォーム分岐ではなく未サポートインターフェース種別として失敗挙動の節 (#5) で既述。
 <!-- /platform -->
 
 ## 購読者
