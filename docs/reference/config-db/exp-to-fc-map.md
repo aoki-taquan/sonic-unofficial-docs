@@ -127,7 +127,7 @@ HSET "EXP_TO_FC_MAP|AZURE" "0" "0" "1" "1" "2" "2" "3" "3" "4" "4" "5" "5" "6" "
 <!-- /value-behavior -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `QosOrch` (`ExpToFcMapHandler`) は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `EXP_TO_FC_MAP` を直接購読し、SAI [QoS](../../reference/glossary.md#term-qos) map を生成する。生成された SAI oid は内部キャッシュ `m_qos_maps[CFG_EXP_TO_FC_MAP_TABLE_NAME]` に保持され、`PORT_QOS_MAP` ハンドラからの参照解決に使われる。
 
@@ -253,7 +253,7 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `EXP_TO_FC_MAP`
 
@@ -287,9 +287,7 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 - なし
 <!-- /entry-points -->
 
-## 書込み順依存 (Phase B) (補足)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-ordering.md`
+## 書込み順依存 (補足)
 
 対象テーブル: `EXP_TO_FC_MAP`。Consumer: `QosOrch::handleExpToFcTable()` / `QosOrch::handlePortQosMapTable()` (`qosorch.cpp`)。
 
@@ -316,9 +314,7 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照・共依存テーブル (Phase C)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-cross-refs.md`
+## 暗黙参照・共依存テーブル
 
 `EXP_TO_FC_MAP` は YANG leafref を持たない自己完結テーブルだが、実装レベルで以下の外部依存が存在する。
 
@@ -339,9 +335,7 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-failure.md`
+## 失敗挙動
 
 対象テーブル: `EXP_TO_FC_MAP`。Consumer: `QosOrch::handleExpToFcTable()` / `QosOrch::doTask()` (`orchagent/qosorch.cpp`)。
 
@@ -386,9 +380,7 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-constants.md`
+## ハードコード定数
 
 ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/qosorch.h`、`sonic-swss/orchagent/cbf/nhgmaporch.cpp`
 
@@ -433,9 +425,7 @@ EXP 値は 0..7 の範囲のみ有効。`convertFieldValuesToAttributes()` L1150
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/exp-to-fc-map-side-effects.md -->
+## 副作用
 
 ### MAP SET/DEL の直接副作用
 
@@ -473,9 +463,8 @@ DEL 試行時に参照が残っている場合、`m_pendingRemove = true` がセ
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-pubsub.md`
 > ソース: `sonic-swss/orchagent/orchdaemon.cpp:367-384`, `orch.cpp:1186-1196`, `qosorch.cpp:1317-1345,2231-2300`
 
 ### 購読方式
@@ -519,9 +508,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-platform.md`
+## プラットフォーム差異
 
 `EXP_TO_FC_MAP` は MPLS EXP ビット→Forwarding Class の分類テーブルであり、ASIC の MPLS/CBF サポート状況によって動作が大きく異なる。
 

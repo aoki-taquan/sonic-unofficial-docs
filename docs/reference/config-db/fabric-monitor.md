@@ -118,7 +118,7 @@ FABRIC_MONITOR|FABRIC_MONITOR_DATA
 - `monState` は `enable` または `disable`
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### 1. `fabricmgrd` の APPL_DB 書込み → `FabricPortsOrch` コンストラクタ実行
 
@@ -146,7 +146,7 @@ FABRIC_MONITOR|FABRIC_MONITOR_DATA
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ### 失敗パス一覧
 
@@ -188,13 +188,12 @@ APPL_DB の `FABRIC_MONITOR_DATA` エントリが存在しない場合、`update
 
 `monCapacityThreshWarn` は `updateFabricCapacity()` 内で `threshold=100` にフォールバックする（`fabricportsorch.cpp:1052`）。YANG default の `10` とは異なる値のため `cdb-exceptions` ブロックに記載済みの乖離が生じる。
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/fabric-monitor-failure.md`
 <!-- /failure -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
-> **調査根拠**: `fabricmgr.cpp`, `fabricportsorch.cpp` 全行精読 (2026-05-18)
+> **Evidence**: `fabricmgr.cpp`, `fabricportsorch.cpp` 全行精読 (2026-05-18)
 
 `FABRIC_MONITOR` テーブルは YANG leafref を持たないが、`fabricmgrd` / `FabricPortsOrch` が実行時に以下のテーブル・リソースを暗黙参照する。
 
@@ -226,7 +225,7 @@ CRC エラー率の判定には SAI から収集された `SAI_PORT_STAT_IF_IN_E
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `fabricportsorch.cpp` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。`fabricmgr.cpp` には数値定数なし（値の転送のみ）。
 
@@ -286,7 +285,7 @@ APPL_DB に `FABRIC_MONITOR_DATA` エントリが存在する場合は CONFIG_DB
 <!-- /constants -->
 
 <!-- side-effects -->
-## SET/DEL 副次 DB 書込み (Phase F)
+## SET/DEL 副次 DB 書込み
 
 `CONFIG_DB FABRIC_MONITOR|FABRIC_MONITOR_DATA` の SET が `fabricmgrd` / `FabricPortsOrch` を経由して引き起こす他 DB への副次書込みの一覧。
 
@@ -321,7 +320,7 @@ APPL_DB への書込み完了後、`FabricPortsOrch` がポーリング周期（
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 ### 購読方式の全体像
 
@@ -383,13 +382,11 @@ fabricmgrd は CONFIG_DB イベントを受けて APPL_DB へ 2 種類の方式�
 | CONFIG_DB → fabricmgrd | `SubscriberStateTable` (PSUBSCRIBE) | 1000 ms | `FABRIC_MONITOR` / `FABRIC_PORT` | `FabricMgr::doTask()` |
 | APPL_DB → FabricPortsOrch | `SubscriberStateTable` (PSUBSCRIBE) | 1000 ms | `FABRIC_PORT_TABLE` / `FABRIC_MONITOR_TABLE` | `FabricPortsOrch::doTask()` / `doFabricPortTask()` |
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/fabric-monitor-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
-> 調査証跡: `meta/_intermediate/cdb-flow/fabric-monitor-platform.md`
 > ソース: `sonic-swss/orchagent/main.cpp:995-1014`, `orchagent/orchdaemon.cpp:601-611,1297-1303`, `orchagent/fabricportsorch.cpp:33-34,104-111,1201-1214`
 
 ### switch_type による FabricPortsOrch 起動モード分岐
@@ -442,9 +439,9 @@ if (gMySwitchType == "voq")
 <!-- /platform -->
 
 <!-- pubsub-2 -->
-## 通信メカニズム補足 (Phase G — 詳細)
+## 通信メカニズム補足
 
-> **調査根拠**: `fabricmgrd.cpp:14-72`; `fabricmgr.cpp:14-21`; `orchdaemon.cpp:604-610,1297-1303`; `fabricportsorch.cpp:80-133,1396-1400` 全行精読 (2026-05-19)
+> **Evidence**: `fabricmgrd.cpp:14-72`; `fabricmgr.cpp:14-21`; `orchdaemon.cpp:604-610,1297-1303`; `fabricportsorch.cpp:80-133,1396-1400` 全行精読 (2026-05-19)
 
 ### Producer/Consumer ペア
 
@@ -495,7 +492,6 @@ FabricPortsOrch orchdaemon select() loop
   ↓ STATE_DB: FABRIC_PORT_TABLE|PORT<n>, FABRIC_CAPACITY_TABLE|FABRIC_CAPACITY_DATA
 ```
 
-詳細根拠は `meta/_intermediate/cdb-flow/fabric-monitor-pubsub.md` を参照。
 <!-- /pubsub-2 -->
 
 ## 購読者
@@ -585,7 +581,7 @@ fabric 固有 SAI (fabric link monitor threshold)
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `FABRIC_MONITOR`
 

@@ -155,7 +155,7 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 - 関連 CLI: `config fabric`、`show fabric`
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `FABRIC_PORT` テーブルの変更が SAI に反映されるまでには、CONFIG_DB → fabricmgrd → APPL_DB → FabricPortsOrch → SAI という多段パイプラインを通過し、各段に順序依存が存在する。
 
@@ -180,9 +180,8 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/fabric-port-failure.md -->
 <!-- source: sonic-swss/orchagent/fabricportsorch.cpp -->
 
 ### 失敗パス一覧
@@ -234,7 +233,7 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 <!-- /failure -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `FABRIC_PORT` テーブルの処理において `FabricPortsOrch` が暗黙的に参照する他テーブル・外部情報源を示す。YANG 定義に leafref は存在しないが、実装レベルで以下の依存がある。
 
@@ -257,7 +256,7 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/orchagent/fabricportsorch.cpp:21-48, fabricportsorch.h:14-16, sonic-swss-common/common/schema.h:40,255,405-406,548-549 -->
 
@@ -386,9 +385,7 @@ FlexCounter グループ名（`FABRIC_PORT_STAT_COUNTER` / `FABRIC_QUEUE_STAT_CO
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/fabric-port-ordering.md`
+## 副次 DB 書込
 
 `FABRIC_PORT` テーブルへの変更に起因して `FabricPortsOrch` が CONFIG_DB 以外の DB へ書き込む副次的書込みと SAI 呼び出しを示す。
 
@@ -464,9 +461,8 @@ FlexCounter グループ名（`FABRIC_PORT_STAT_COUNTER` / `FABRIC_QUEUE_STAT_CO
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
-> 調査証跡: `meta/_intermediate/cdb-flow/fabric-port-platform.md`
 > ソース: `sonic-swss/orchagent/main.cpp:995-1014`、`orchagent/orchdaemon.cpp:601-611`、`orchagent/fabricportsorch.cpp:33-34,104-111`
 
 ### switch_type による FabricPortsOrch 起動モード分岐
@@ -528,9 +524,9 @@ if (gMySwitchType == "voq")
 <!-- /platform -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
-> **調査根拠**: `fabricmgrd.cpp:27-35`; `fabricmgr.cpp:14-21`; `orchdaemon.cpp:604-610,1297-1303`; `fabricportsorch.cpp:80-133,1394-1400` 全行精読 (2026-05-19)
+> **Evidence**: `fabricmgrd.cpp:27-35`; `fabricmgr.cpp:14-21`; `orchdaemon.cpp:604-610,1297-1303`; `fabricportsorch.cpp:80-133,1394-1400` 全行精読 (2026-05-19)
 
 ### Producer/Consumer ペア
 
@@ -662,7 +658,7 @@ fabric 固有 SAI (fabric port enable/isolate)
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `FABRIC_PORT`
 
