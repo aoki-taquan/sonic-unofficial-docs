@@ -32,7 +32,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SNMP_AGENT_ADDRESS_CONFIG")]
-  DM["snmp-config"]
+  DM["docker-snmp 起動スクリプト"]
   CDB --> DM
 ```
 
@@ -63,7 +63,7 @@ SNMP_AGENT_ADDRESS_CONFIG|<agent_ip>|<port>|<vrf_name>
 
 ## 購読者
 
-- `docker-snmp` の `snmpd` テンプレ: [CONFIG_DB](../../reference/glossary.md#term-config_db) → `agentaddress udp:<ip>:<port>[%vrf]` 行を生成
+- `docker-snmp` 起動スクリプト (`start.sh` → `sonic-cfggen -d` → `snmpd.conf.j2`): [CONFIG_DB](../../reference/glossary.md#term-config_db) を起動時に一括読み取りし、`agentAddress <udp|udp6>:[<ip>]{@<vrf>}{:<port>}` 行を生成（リアルタイム購読プロセスなし）
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -165,7 +165,7 @@ agentAddress udp6:161
 
 `sonic-utilities/config/main.py:4139-4140` で `-p` / `-v` には click `default=` が **宣言されておらず**、省略時は CONFIG_DB key に空文字部分 (`<ip>||` 等) が格納される。実効値はすべてテンプレ側で補完される設計。
 
-> **Evidence**: `sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2:19-34` (テンプレ macro + for/else 分岐)、`sonic-utilities/config/main.py:4137-4190` (CLI 側 click default 不在)、`sonic-host-services/scripts/hostcfgd` (grep で `SNMP_AGENT_ADDRESS` ヒット 0 件 = 非経由)。詳細は `meta/_intermediate/cdb-flow/snmp-agent-address-config-defaults.md` を参照。
+> **Evidence**: `sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2:19-34` (テンプレ macro + for/else 分岐)、`sonic-utilities/config/main.py:4137-4190` (CLI 側 click default 不在)、`sonic-host-services/scripts/hostcfgd` (grep で `SNMP_AGENT_ADDRESS` ヒット 0 件 = 非経由)。
 <!-- /defaults -->
 
 <!-- cdb-exceptions -->
@@ -180,29 +180,38 @@ agentAddress udp6:161
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### agentAddress 行の生成
 
-snmp-config サービスが `ip` + `port` + `interface` の組み合わせから snmpd の `agentAddress` ディレクティブを自動生成する。`interface` フィールドが mgmt VRF 名の場合は `udp:<ip>:<port>@<vrf>` 形式で VRF バインドが自動付与される。
+`SNMP_AGENT_ADDRESS_CONFIG` を購読する常駐サービス（`snmp-config` のような handler / manager）は存在しない。`docker-snmp` 起動時に `start.sh` が `sonic-cfggen -d` を実行し、`snmpd.conf.j2` が CONFIG_DB のエントリ `(agent_ip, port, vrf_name)` の 3 要素から snmpd の `agentAddress` ディレクティブを生成する（`snmpd.conf.j2:27-34`）。1 行のフォーマットは:
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+```text
+agentAddress <udp|udp6>:[<agent_ip>]{@<vrf_name>}{:<port>}
+```
 
-sonic-snmpagent サービスが有効の場合のみ `SNMP_AGENT_ADDRESS_CONFIG` を購読する snmp-config が動作する。エントリがない場合は snmpd がデフォルトの agentAddress を使用する。
+- プロトコル（`udp` / `udp6`）は `agent_ip` が IPv6 リテラルかどうかをテンプレ macro `protocol()` が判定して決まる。
+- `vrf_name` が非空のときのみ `@<vrf_name>` が付き、その後ろに `port` が非空のときのみ `:<port>` が付く。`interface` というフィールドは存在しない（YANG は `agent_ip` / `port` / `vrf_name` のみ）。
+
+### エントリなし時のフォールバック
+
+エントリが 1 件もない場合は `{% else %}` 分岐で `agentAddress udp:161` / `agentAddress udp6:161` がハードコード出力される（`snmpd.conf.j2:31-34`）。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### テンプレート内の条件分岐
 
-| Handler | 分岐条件 | 効果 | evidence |
-|---|---|---|---|
-| `snmp-config` | `interface` フィールドあり | VRF バインド形式の agentAddress 生成 | `snmp_config` |
-| `snmp-config` | `interface` フィールドなし | シンプルな `udp:<ip>:<port>` 形式 | `snmp_config` |
-| `snmp-config` | `port` フィールドあり | カスタムポート使用 (デフォルト 161) | `snmp_config` |
-| `snmp-config` | エントリ削除時 | snmpd 設定から対応 agentAddress 行を削除して reload | `snmp_config` |
+handler メソッドではなく `snmpd.conf.j2` のテンプレート式が agentAddress 1 行の構成を分岐させる。
 
-> **スキャン証跡**: `SNMP_AGENT_ADDRESS_CONFIG` は snmpd のリッスンアドレス/ポート/VRF を設定するシンプルテーブル。`interface` フィールド有無が VRF バインドを自動決定する（Phase 6 相当）。
+| 条件 | 効果 | evidence |
+|---|---|---|
+| `agent_ip` が IPv6 リテラル | プロトコルが `udp6`、それ以外は `udp`（`protocol()` macro） | `snmpd.conf.j2:19-25` |
+| `vrf_name` が非空 | `@<vrf_name>` サフィックスを付与（VRF バインド） | `snmpd.conf.j2:29` |
+| `port` が非空 | `:<port>` サフィックスを付与、空なら snmpd 既定 161 | `snmpd.conf.j2:29` |
+| エントリ 0 件 | `udp:161` / `udp6:161` をハードコード出力 | `snmpd.conf.j2:31-34` |
+
+> **裏取り**: `SNMP_AGENT_ADDRESS_CONFIG` は snmpd のリッスンアドレス / ポート / VRF を設定するテーブルで、リアルタイム購読 handler は無く、起動時テンプレートレンダリングのみ。VRF バインドの有無は `vrf_name` フィールド（`interface` フィールドは存在しない）が決める。
 
 <!-- /handler-branching -->
 
@@ -230,7 +239,7 @@ sonic-snmpagent サービスが有効の場合のみ `SNMP_AGENT_ADDRESS_CONFIG`
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 SNMP_AGENT_ADDRESS_CONFIG テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -264,7 +273,7 @@ db_migrator.py での SNMP_AGENT_ADDRESS_CONFIG マイグレーションなし
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### 1. 同一 (ip, port) 重複: DEL 先行が必須
 
@@ -302,7 +311,7 @@ CLI は `netifaces.interfaces()` で agentip が実際にホスト NIC に付与
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `snmpd.conf.j2` テンプレートが読む関連 CONFIG_DB テーブル (Phase C)
+## 暗黙参照 — `snmpd.conf.j2` テンプレートが読む関連 CONFIG_DB テーブル
 
 `SNMP_AGENT_ADDRESS_CONFIG` は `hostcfgd` を経由せず、`docker-snmp` コンテナの Jinja2 テンプレート (`dockers/docker-snmp/snmpd.conf.j2`) が CONFIG_DB を直接読んで `snmpd.conf` を一括生成する。テンプレートは同一レンダリング呼び出し内で以下のテーブルも参照するため、`SNMP_AGENT_ADDRESS_CONFIG` の変更だけでなく隣接テーブルの状態も snmpd の最終的な動作に影響する。
 
@@ -341,14 +350,11 @@ multi-asic 環境 (`is_multi_asic() == True`) では両テーブルを解析せ�
 ### hostcfgd は非購読 (確認済み)
 
 `sonic-host-services/scripts/hostcfgd` を `SNMP_AGENT_ADDRESS` でフルテキスト検索した結果 0 件。`docker-snmp` は [hostcfgd](../../reference/glossary.md#term-hostcfgd) の subscribe/callback フローを使わず、テンプレート直接レンダリング方式を採る。
-
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/snmp-agent-address-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-address-config-failure.md`
 
 ### key フォーマット不正 → テンプレートレンダリング失敗
 
@@ -378,10 +384,9 @@ CLI の `add_snmp_agent_address()` / `del_snmp_agent_address()` はともに `os
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `snmpd.conf.j2` L19-34, `minigraph.py:2314`, `sonic-snmp.yang` L178-196, `config/main.py:4137-4186` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-address-config-constants.md`
+> **Evidence**: `snmpd.conf.j2` L19-34, `minigraph.py:2314`, `sonic-snmp.yang` L178-196, `config/main.py:4137-4186` 全行精読 (2026-05-17)
 
 `SNMP_AGENT_ADDRESS_CONFIG` テーブルおよび `docker-snmp` コンテナに存在する、CONFIG_DB で管理されないハードコード定数の一覧。
 
@@ -419,10 +424,9 @@ YANG に `default` ステートメントなし — テンプレート固有の�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用 (Phase F)
+## 副作用
 
-> **調査根拠**: `sonic-buildimage/dockers/docker-snmp/start.sh`, `supervisord.conf.j2`, `base_image_files/monit_snmp`, `sonic-utilities/config/main.py:4189,4209` (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-address-config-side-effects.md`
+> **Evidence**: `sonic-buildimage/dockers/docker-snmp/start.sh`, `supervisord.conf.j2`, `base_image_files/monit_snmp`, `sonic-utilities/config/main.py:4189,4209` (2026-05-17)
 
 ### docker-snmp コンテナ全体の再起動
 
@@ -452,10 +456,9 @@ CONFIG_DB → [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](.
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `docker-snmp/start.sh`, `snmpd.conf.j2`, `snmp_yml_to_configdb.py`, `sonic_ax_impl/mibs/__init__.py`, `hostcfgd` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-address-config-pubsub.md`
+> **Evidence**: `docker-snmp/start.sh`, `snmpd.conf.j2`, `snmp_yml_to_configdb.py`, `sonic_ax_impl/mibs/__init__.py`, `hostcfgd` 全行精読 (2026-05-17)
 
 ### 購読方式: なし (起動時スナップショット読み取りのみ)
 
@@ -492,10 +495,9 @@ snmpd 起動 → 新しいアドレス/ポートで listen
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
-> **調査根拠**: `sonic-buildimage/src/sonic-config-engine/minigraph.py:2310-2324`, `dockers/docker-snmp/snmpd.conf.j2:16-34`, `dockers/docker-snmp/supervisord.conf.j2:52-64` (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-address-config-platform.md`
+> **Evidence**: `sonic-buildimage/src/sonic-config-engine/minigraph.py:2310-2324`, `dockers/docker-snmp/snmpd.conf.j2:16-34`, `dockers/docker-snmp/supervisord.conf.j2:52-64` (2026-05-17)
 
 ### single-ASIC と multi-ASIC の挙動差異
 

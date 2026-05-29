@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-[SNMP](../../reference/glossary.md#term-snmp) エージェント (`snmpd` in `docker-snmp`) のシステム情報 (Contact / Location) を保持するテーブル[^1]。`docker-snmp` 内の起動スクリプトと `hostcfgd` の [SNMP](../../reference/glossary.md#term-snmp) ハンドラが [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み、`/etc/snmp/snmpd.conf` のテンプレ展開で `sysContact` / `sysLocation` 行に反映される。
+[SNMP](../../reference/glossary.md#term-snmp) エージェント (`snmpd` in `docker-snmp`) のシステム情報 (Contact / Location) を保持するテーブル[^1]。`docker-snmp` 内の起動スクリプト (`start.sh` → `sonic-cfggen -d` → `snmpd.conf.j2`) が起動時に [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み、`/etc/snmp/snmpd.conf` のテンプレ展開で `sysContact` / `sysLocation` 行に反映される（`hostcfgd` は `SNMP` テーブルを購読しない）。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -32,7 +32,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SNMP")]
-  DM["snmp-config"]
+  DM["docker-snmp 起動スクリプト"]
   CDB --> DM
 ```
 
@@ -70,8 +70,7 @@ container `SNMP` の下に 2 つのシングルトン container (`CONTACT`/`LOCA
 
 ## 購読者
 
-- `docker-snmp` の `snmpd` 起動テンプレ: [CONFIG_DB](../../reference/glossary.md#term-config_db) → `/etc/snmp/snmpd.conf`
-- `hostcfgd` の SNMP ハンドラ (`sonic-host-services`)
+- `docker-snmp` の起動スクリプト + `snmpd.conf.j2` テンプレ: [CONFIG_DB](../../reference/glossary.md#term-config_db) → `/etc/snmp/snmpd.conf`（起動時一括レンダリング、リアルタイム購読プロセスなし）
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -148,30 +147,32 @@ show snmp community
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### sysLocation / sysContact の生成
 
-snmp-config が `DEVICE_METADATA.hostname` を参照して snmpd の `sysName` を自動設定する。`SNMP.traps` 値に基づいて snmpd trap 設定の有無を決定する（`enabled` → `trap2sink` ディレクティブ生成）。
+`SNMP` テーブルを購読する常駐サービス（`snmp-config` のような handler / manager）は存在しない。`docker-snmp` 起動時に `start.sh` が `sonic-cfggen -d` を実行し、`snmpd.conf.j2` が CONFIG_DB を一括読み取りして snmpd の `sysLocation` / `sysContact` ディレクティブを生成する。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+- `SNMP.LOCATION.Location` が定義済みなら `sysLocation <value>` を出力し、未定義なら `sysLocation public` のハードコードフォールバック（`snmpd.conf.j2:88-91`）。
+- `SNMP.CONTACT` が定義済みなら `sysContact <key> <value>` を出力し、未定義なら `sysContact Azure Cloud Switch vteam <linuxnetdev@microsoft.com>` のハードコードフォールバック（`snmpd.conf.j2:93-96`）。
 
-sonic-snmpagent サービスが有効の場合のみ `SNMP` テーブルを購読する snmp-config が動作する。`SNMP.traps==enabled` の場合のみ trap 送信が有効化される。
+YANG `sonic-snmp.yang` の `SNMP` コンテナが持つのは `CONTACT` / `LOCATION` のみで、`traps` フィールドや `DEVICE_METADATA.hostname` からの `sysName` 自動設定は存在しない。trap 送信先は別テーブル `SNMP_TRAP_CONFIG` 由来の `v1/v2/v3SnmpTrap*` 変数からレンダリングされる（`snmpd.conf.j2:142-173`）。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### テンプレート内の条件分岐
 
-| Handler | 分岐条件 | 効果 | evidence |
-|---|---|---|---|
-| `snmp-config` | `traps==enabled` | snmpd に `trap2sink` 設定を生成 | `snmp_config` |
-| `snmp-config` | `traps==disabled` | `trap2sink` 行を生成しない | `snmp_config` |
-| `snmp-config` | `sysLocation` フィールドあり | `syslocation <value>` を snmpd.conf に追加 | `snmp_config` |
-| `snmp-config` | `sysContact` フィールドあり | `syscontact <value>` を snmpd.conf に追加 | `snmp_config` |
-| `snmp-config` | `SNMP_COMMUNITY` テーブルエントリ変化 | snmpd 設定ファイルを再生成して reload | `snmp_config` |
+handler メソッドではなく `snmpd.conf.j2` のテンプレート式が `SNMP` テーブルの値で出力を分岐させる。
 
-> **スキャン証跡**: `SNMP` テーブルはグローバル SNMP 設定。`traps` フィールドで trap 設定の有無を分岐。`DEVICE_METADATA.hostname` からの `sysName` 自動設定が Phase 6 派生相当。
+| 条件 | 効果 | evidence |
+|---|---|---|
+| `SNMP.LOCATION` 定義あり | `sysLocation <value>` を出力 | `snmpd.conf.j2:88-89` |
+| `SNMP.LOCATION` 未定義 | `sysLocation public`（ハードコードフォールバック） | `snmpd.conf.j2:91` |
+| `SNMP.CONTACT` 定義あり | `sysContact <key> <value>` を出力 | `snmpd.conf.j2:93-94` |
+| `SNMP.CONTACT` 未定義 | `sysContact Azure Cloud Switch vteam ...`（ハードコードフォールバック） | `snmpd.conf.j2:96` |
+
+> **裏取り**: `SNMP` テーブルはグローバル SNMP 設定で、保持するのは `CONTACT` / `LOCATION` のみ。リアルタイム購読 handler は無く、起動時に `snmpd.conf.j2` がレンダリングするだけ。trap 設定は `SNMP_TRAP_CONFIG` 側の責務であり `SNMP` テーブルには `traps` フィールドは無い。
 
 <!-- /handler-branching -->
 
@@ -180,11 +181,11 @@ sonic-snmpagent サービスが有効の場合のみ `SNMP` テーブルを購�
 
 ### 段階 1: Consumer 登録
 
-- **[hostcfgd](../../reference/glossary.md#term-hostcfgd)**: `SNMP` / `SNMP_COMMUNITY` テーブルを `ConfigDBConnector` で購読。
+- **常駐 Consumer なし**: `SNMP` / `SNMP_COMMUNITY` をリアルタイム購読するプロセスは存在しない。`hostcfgd` はこれらのテーブルを購読しない (grep で 0 ヒット)。反映は `docker-snmp` コンテナ起動時のテンプレートレンダリングで行われる。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- [hostcfgd](../../reference/glossary.md#term-hostcfgd) が snmpd の community string / v3 ユーザ設定を `/etc/snmp/snmpd.conf` に書き込み再起動。
+- `docker-snmp` の `start.sh` が `sonic-cfggen -d` で `snmpd.conf.j2` を展開し、community string / sysContact / sysLocation を `/etc/snmp/snmpd.conf` に書き出す。変更反映はコンテナ再起動時。
 
 ### 段階 3: APPL → SAI
 
@@ -197,7 +198,7 @@ sonic-snmpagent サービスが有効の場合のみ `SNMP` テーブルを購�
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 SNMP テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -232,7 +233,7 @@ db_migrator.py での SNMP マイグレーションなし
 <!-- /entry-points -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 `SNMP` テーブルの各フィールドについて、YANG `default` ステートメント外のコード依存デフォルト・ハードコード値・乖離を記録する。
 
@@ -273,7 +274,7 @@ YANG は `container CONTACT { leaf Contact { ... } }` と定義するが、CLI (
 <!-- /defaults -->
 
 <!-- failure -->
-## 失敗挙動・エラー処理 (Phase D)
+## 失敗挙動・エラー処理
 
 ### `snmp.yml` 未存在 / `snmp_location` キー不在
 
@@ -320,7 +321,7 @@ CONFIG_DB 変更後は `sudo systemctl restart snmp` (または `docker restart 
 <!-- /failure -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### コンテナ起動時シーケンス
 
@@ -343,7 +344,7 @@ docker-snmp コンテナは supervisord が以下の依存順序でプログラ�
 
 | 条件 | 動作 |
 |------|------|
-| `/etc/sonic/snmp.yml` に `snmp_location` なし | `snmp_yml_to_configdb.py` が `sys.exit(1)` で終了するが、`start.sh` は終了コードを無視して処理を継続。`SNMP|LOCATION` は CONFIG_DB に登録されず `sysLocation public` (ハードコード) が `snmpd.conf` に出力される (Phase D 参照) |
+| `/etc/sonic/snmp.yml` に `snmp_location` なし | `snmp_yml_to_configdb.py` が `sys.exit(1)` で終了するが、`start.sh` は終了コードを無視して処理を継続。`SNMP|LOCATION` は CONFIG_DB に登録されず `sysLocation public` (ハードコード) が `snmpd.conf` に出力される |
 | CONFIG_DB に `SNMP|LOCATION` が既に存在する | yml からの書き込みをスキップ（**既存エントリが優先**） |
 | `SNMP|CONTACT` | `snmp_yml_to_configdb.py` は一切書き込まない。CLI 経由のみ |
 
@@ -366,7 +367,7 @@ CLI (`config snmp contact/location add/modify/del`) は書き込み後に常に 
 <!-- /ordering -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `SNMP` テーブルおよび `docker-snmp` コンテナに存在する、CONFIG_DB で管理されないハードコード定数の一覧。
 
@@ -425,10 +426,9 @@ CLI (`config snmp contact/location add/modify/del`) は書き込み後に常に 
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
-> **調査根拠**: `snmpd.conf.j2`, `supervisord.conf.j2`, `snmp_yml_to_configdb.py`, `start.sh` 全行精読 (2026-05-15)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-cross-refs.md`
+> **Evidence**: `snmpd.conf.j2`, `supervisord.conf.j2`, `snmp_yml_to_configdb.py`, `start.sh` 全行精読 (2026-05-15)  
 
 `SNMP` テーブルは YANG leafref を持たないが、`docker-snmp` コンテナ起動時テンプレートと [hostcfgd](../../reference/glossary.md#term-hostcfgd) が以下のテーブルを暗黙参照する。
 
@@ -467,10 +467,9 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 <!-- /cross-refs -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `dockers/docker-snmp/snmp_yml_to_configdb.py`, `start.sh`, `snmpd.conf.j2`, `sonic-snmpagent/src/sonic_ax_impl/main.py`, `mibs/__init__.py`, `mibs/ietf/rfc1213.py`, `sonic-utilities/config/main.py` 全行精読 (2026-05-15)
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-pubsub.md`
+> **Evidence**: `dockers/docker-snmp/snmp_yml_to_configdb.py`, `start.sh`, `snmpd.conf.j2`, `sonic-snmpagent/src/sonic_ax_impl/main.py`, `mibs/__init__.py`, `mibs/ietf/rfc1213.py`, `sonic-utilities/config/main.py` 全行精読 (2026-05-15)
 
 `SNMP` テーブル群は **「ランタイム購読なし・コンテナ再起動トリガー型」** で設計されている。`SubscriberStateTable` / `ConfigDBConnector.subscribe()` によるリアルタイム購読は実装されておらず、**起動時一括読み込み + CLI トリガーによる `docker-snmp` 再起動** で設定を反映する。
 
@@ -511,10 +510,9 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
-> **調査根拠**: `supervisord.conf.j2`, `snmpd.conf.j2`, `sysDescription.j2`, `sonic_ax_impl/__main__.py`, `mibs/ietf/rfc4292.py`, `mibs/ietf/rfc1213.py`, `mibs/vendor/cisco/*.py`, `mibs/vendor/dell/force10.py` 全行精読 (2026-05-15)
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-platform.md`
+> **Evidence**: `supervisord.conf.j2`, `snmpd.conf.j2`, `sysDescription.j2`, `sonic_ax_impl/__main__.py`, `mibs/ietf/rfc4292.py`, `mibs/ietf/rfc1213.py`, `mibs/vendor/cisco/*.py`, `mibs/vendor/dell/force10.py` 全行精読 (2026-05-15)
 
 ### 差異 1: switch_type == 'chassis-packet' — snmp-subagent 動的更新周期
 
@@ -592,12 +590,11 @@ MGMT_VRF が有効化されている環境 (`MGMT_VRF_CONFIG.mgmtVrfEnabled = "t
 <!-- /platform -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `SNMP` テーブルへの書き込みが連鎖して発生するファイル書込・systemd 制御・DB 副次書込の一覧。
 
-> **調査根拠**: `dockers/docker-snmp/start.sh` L14,20–24、`snmpd.conf.j2`、`config/main.py` L4189,4399–4400,4488–4489、`snmp_yml_to_configdb.py` L36–53 全行精読 (2026-05-16)
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-side-effects.md`
+> **Evidence**: `dockers/docker-snmp/start.sh` L14,20–24、`snmpd.conf.j2`、`config/main.py` L4189,4399–4400,4488–4489、`snmp_yml_to_configdb.py` L36–53 全行精読 (2026-05-16)
 
 ### ファイル副次書込
 
