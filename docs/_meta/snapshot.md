@@ -100,7 +100,7 @@ sources: []
 | 項目 | 件数 |
 |---|---:|
 | frontmatter-lint (hard) | 0 |
-| frontmatter-lint (warn) | 2 |
+| frontmatter-lint (warn) | 3 |
 | link-density low (<2.0/1k) | 68 |
 | link-density high (>30.0/1k) | 0 |
 | discrepancy-related-yang violations | 0 |
