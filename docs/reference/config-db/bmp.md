@@ -153,7 +153,7 @@ show bmp
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BMP`
 
@@ -183,15 +183,15 @@ show bmp
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | 派生なし（BMP テーブルは CLI / config load のみで書き込む） | — | `sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py` は読み取り専用 |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -202,7 +202,7 @@ show bmp
 - bmpcfgd.py 100 行全行読了、BMP テーブル購読: 1 件（条件なし）
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -211,11 +211,11 @@ show bmp
 | `BMPCfg` | `load()` | `bgp_rib_out_table == 'true'` | `self.bgp_rib_out_table = True`（openbmpd が RIB_OUT を BMP_STATE_DB に書き込む） | `sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py:40` |
 | `BMPCfg` | `load()` | 設定変更時（常に） | `stop_bmp()` → `reset_bmp_table()` → `start_bmp()` の順で openbmpd を再起動し BMP_STATE_DB をクリア | `sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py:44-46` |
 
-> **スキャン証跡**: `BMPCfg.load()` L34-46 全行読了。値による分岐は is_true() による bool 変換のみ。3 フィールドすべて独立して分岐（相互排他ではない）。
+> **裏取り**: `BMPCfg.load()` L34-46 全行読了。値による分岐は is_true() による bool 変換のみ。3 フィールドすべて独立して分岐（相互排他ではない）。
 <!-- /handler-branching -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ソース: `sonic-net/sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py`
 
@@ -246,7 +246,7 @@ show bmp
 
 <!-- /failure -->
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 ### STATE_DB / COUNTERS_DB への書込
 
@@ -276,7 +276,7 @@ show bmp
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### 購読 API
 
@@ -320,7 +320,7 @@ def register_callbacks(self):
 <!-- /pubsub -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### 依存 1: `DEVICE_METADATA.bgp_asn` 先行必須（FRR テンプレート経路）
 
@@ -402,7 +402,7 @@ self.start_bmp()        # supervisorctl start openbmpd
 
 <!-- /ordering -->
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 ### YANG デフォルト vs 実行時 fallback
 
@@ -444,7 +444,7 @@ YANG バリデーションを通った値は常に正しく処理される。た
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 FRR テンプレートおよびデーモンコードに埋め込まれた定数。CONFIG_DB には現れないが、BMP 動作に直接影響する。
 
@@ -503,7 +503,7 @@ multi-asic 構成でも `bmpcfgd` は host CONFIG_DB の `BMP` テーブルの�
 <!-- /platform -->
 
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase C)
+## 暗黙テーブル参照
 
 `BMP` テーブルは `bmpcfgd` が直接参照するテーブル以外にも、openbmpd・FRR テンプレートを通じて以下のテーブルを暗黙的に参照する。
 

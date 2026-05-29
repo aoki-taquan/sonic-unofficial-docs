@@ -167,7 +167,7 @@ show buffer pool
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BUFFER_PORT_EGRESS_PROFILE_LIST`
 
@@ -195,15 +195,15 @@ show buffer pool
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | Dynamic buffer model: `buffermgrd` がポートの egress プロファイルリストを自動生成 | `BUFFER_PORT_EGRESS_PROFILE_LIST` にエントリを書き込む | `sonic-swss/cfgmgr/buffermgrdyn.cpp:447,3571` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -214,17 +214,17 @@ show buffer pool
 - buffermgrdyn.cpp L448: BUFFER_PORT_EGRESS_PROFILE_LIST ハンドラ登録（条件なし）
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
 | `BufferMgrDynamic` | `handleBufferObjectTables()` | キー形式が不正（ポート名空） | `task_invalid_entry` 返却（`keyWithIds=false` のため ids 不要） | `sonic-swss/cfgmgr/buffermgrdyn.cpp:3514` |
 | `BufferMgrDynamic` | `handleBufferObjectTables()` | カンマ区切りポートリスト（複数ポート） | ポートごとにシングルポートハンドラを繰り返し呼び出し | `sonic-swss/cfgmgr/buffermgrdyn.cpp:3536-3547` |
 
-> **スキャン証跡**: `handleBufferPortEgressProfileListTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_PORT_EGRESS_PROFILE_LIST_NAME, false)` に委譲。`keyWithIds=false`（PG/Queue と異なりインデックスなし）。2 件分岐抽出。
+> **裏取り**: `handleBufferPortEgressProfileListTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_PORT_EGRESS_PROFILE_LIST_NAME, false)` に委譲。`keyWithIds=false`（PG/Queue と異なりインデックスなし）。2 件分岐抽出。
 <!-- /handler-branching -->
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 このテーブルには YANG `default` を持つフィールドがない。以下はコードトレースで判明した暗黙挙動。
 
@@ -275,7 +275,7 @@ Static model は `DEVICE_METADATA.buffer_model == "dynamic"` の環境では一�
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### テーブル名・フィールド名定数
 
@@ -328,7 +328,7 @@ evidence: `bufferorch.cpp:1990`
 <!-- /constants -->
 
 <!-- failure -->
-## 失敗挙動・retry 分岐 (Phase D)
+## 失敗挙動・retry 分岐
 
 ### buffermgrd (Dynamic model) 段の失敗分岐
 
@@ -362,7 +362,7 @@ evidence: `bufferorch.cpp:1990`
 
 <!-- /failure -->
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `sonic-swss/cfgmgr/buffermgrdyn.cpp` および `sonic-swss/orchagent/bufferorch.cpp` の egress profile list 処理経路（`handleSingleBufferPortProfileListEntry` / `processEgressBufferProfileList` / `processEgressBufferProfileListBulk`）を調査した結果、以下の副次 DB 書込は**存在しない**。
 
@@ -378,7 +378,7 @@ evidence: `bufferorch.cpp:1990`
 <!-- /side-effects -->
 
 <!-- ordering -->
-## 書込順依存 (Phase B)
+## 書込順依存
 
 このテーブルを有効に設定するには、以下の順序で CONFIG_DB / APPL_DB への書き込みが完了している必要がある。
 
@@ -408,7 +408,7 @@ evidence: `bufferorch.cpp:1990`
 | PORT 未登録 (orchagent) | `task_invalid_entry` | **なし**（エントリ破棄） |
 <!-- /ordering -->
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
 ### Dynamic vs Static バッファモデル
 
@@ -454,7 +454,7 @@ Broadcom・その他ベンダーでは vendor 固有の条件分岐なし。テ�
 <!-- /platform -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `BUFFER_PORT_EGRESS_PROFILE_LIST` のキーおよびフィールドは YANG 上では leafref として宣言されているが、
 `buffermgrdyn.cpp` と `bufferorch.cpp` のランタイム処理においてもコードレベルの暗黙参照が存在する。
@@ -492,7 +492,7 @@ YANG leafref が静的 validation を提供するのに対し、以下の参照�
 | `BUFFER_POOL` | 直接なし（BUFFER_PROFILE 経由） | あり（`m_bufferPoolReady` フラグ） | コードのみで存在する間接依存 |
 <!-- /cross-refs -->
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Producer/Consumer ペア
 

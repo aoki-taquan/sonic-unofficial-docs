@@ -134,7 +134,7 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 `NEIGH_STATE_TABLE` の `state` は `show bgp summary` が表示する `State/PfxRcd` 列の状態と対応する。ただし bgpmon のポーリング間隔は 15 秒であるため、リアルタイムの FRR 状態とは最大 15 秒の遅延が生じる。
 
 <!-- cross-refs -->
-## 暗黙参照 — `BGPPeerMgrBase` が読み出す関連テーブルと FRR 状態 (Phase C)
+## 暗黙参照 — `BGPPeerMgrBase` が読み出す関連テーブルと FRR 状態
 
 `bgpcfgd` の `BGPPeerMgrBase` は CONFIG_DB 上の複数 BGP テーブルを購読し、FRR bgpd へ設定を投入した後に `BGP_PEER_CONFIGURED_TABLE` を更新する。テーブルへの書き込みはこれら暗黙参照が揃って初めて成立する。
 
@@ -187,11 +187,10 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 - **[ASIC_DB](../../reference/glossary.md#term-asic_db) BGP セッション state**: [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) / bgpmon は [ASIC_DB](../../reference/glossary.md#term-asic_db) を参照しない。[ASIC_DB](../../reference/glossary.md#term-asic_db) への BGP 関連書き込みは `routeorch` (SWSS) が担当し、本テーブル群とは独立した経路。
 - **`BGP_PEER_GROUP`** (CONFIG_DB): `BGP_PEER_GROUP|<vrf>|<pg_name>` キーで CONFIG_DB に存在する独立テーブル。frrcfgd が直接購読する。詳細は [BGP_PEER_GROUP ページ](bgp-peer-group.md) を参照。なお bgpcfgd 経路では peer-group **設定コマンド**を Jinja2 テンプレートで生成し FRR に投入するが、これはテーブル自体の不在を意味しない。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-state-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `bgpmon` および `bgpcfgd BGPPeerMgrBase` が `NEIGH_STATE_TABLE` / `BGP_PEER_CONFIGURED_TABLE` へ書き込む際、[STATE_DB](../../reference/glossary.md#term-state_db) 以外の副次 DB への波及は**存在しない**。
 
@@ -205,11 +204,10 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 
 `NEIGH_STATE_TABLE` の下流購読者は SNMP サブエージェント (`sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py`) のみであり、同エージェントはテーブルを **読み取るだけ** で他 DB への書き込みは行わない。`BGP_PEER_CONFIGURED_TABLE` の下流は SDN コントローラ（外部プロセス）であり STATE_DB 側から能動的に他 DB へ書き込む経路は存在しない。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-state-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### テーブル名定数 (schema.h)
 
@@ -269,7 +267,7 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 <!-- /constants -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D — BGPPeerMgrBase)
+## 失敗挙動 (BGPPeerMgrBase)
 
 `bgpcfgd` の `BGPPeerMgrBase` が `BGP_PEER_CONFIGURED_TABLE` を書き込む際の失敗・retry 分岐を示す[^6]。
 
@@ -308,7 +306,7 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 <!-- /failure -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 STATE_DB `NEIGH_STATE_TABLE` および `BGP_PEER_CONFIGURED_TABLE` には対応する [YANG](../../reference/glossary.md#term-yang) schema が存在しない。値はすべてコードレベルで決定される。
 
@@ -334,7 +332,7 @@ STATE_DB `NEIGH_STATE_TABLE` および `BGP_PEER_CONFIGURED_TABLE` には対応�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B — BGP_PEER_CONFIGURED_TABLE)
+## 書込み順依存 (BGP_PEER_CONFIGURED_TABLE)
 
 STATE_DB `BGP_PEER_CONFIGURED_TABLE` への書き込みは `BGPPeerMgrBase.update_state_db()` が担い、**FRR への設定 push が完了した直後にのみ**実行される。これはテーブルを「FRR 設定投入完了」の確認フラグとして利用する SDN コントローラ向けの設計上の制約である。
 
@@ -372,11 +370,10 @@ STATE_DB `BGP_PEER_CONFIGURED_TABLE` への書き込みは `BGPPeerMgrBase.updat
 | 4 | FRR `no listen range` → FRR `no neighbor` → STATE_DB DEL | del_handler (dynamic のみ) | listen range 除去なしに削除すると FRR 10.1 以降はエラー |
 | 5 | config reload → 全削除 → bgpcfgd 再投入 | config reload | reload 中は SDN 向けにエントリが存在しない |
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-state-ordering.md`
 <!-- /ordering -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H — コード由来)
+## プラットフォーム差分 (コード由来)
 
 `BGP_PEER_CONFIGURED_TABLE` を書き込む `BGPPeerMgrBase.update_state_db()`（managers_bgp.py L271–304）
 および `NEIGH_STATE_TABLE` を書き込む `bgpmon.py` には、`switch_type`・`sub_role`・
@@ -419,7 +416,7 @@ STATE_DB `BGP_PEER_CONFIGURED_TABLE` への書き込みは `BGPPeerMgrBase.updat
 <!-- /platform -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### BGP_PEER_CONFIGURED_TABLE — 書き込みのみ / 購読者なし
 
@@ -450,7 +447,6 @@ keyspace notification (`__keyspace@6__:BGP_PEER_CONFIGURED_TABLE|*`) は STATE_D
 
 `bgpmon` が 15 秒周期で FRR から取得した状態を `NEIGH_STATE_TABLE` へ書き込む。SNMP サブエージェントは `NEIGH_STATE_TABLE|*` を **ポーリング読み取り** して CiscoBgp4MIB に変換する。[Redis](../../reference/glossary.md#term-redis) Pub-Sub / keyspace notification は使用しない。
 
-詳細は `meta/_intermediate/cdb-flow/bgp-state-pubsub.md` を参照。
 <!-- /pubsub -->
 
 ## 引用元

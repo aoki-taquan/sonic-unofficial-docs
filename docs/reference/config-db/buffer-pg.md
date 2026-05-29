@@ -72,7 +72,7 @@ BUFFER_PG|<port>|<pg_num>
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-buffer-pg`
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 ### フィールド別デフォルト・fallback 一覧
 
@@ -100,7 +100,6 @@ BUFFER_PG|<port>|<pg_num>
 | **db_migrator silent overwrite** | 動的モード移行時に `profile` を `NULL` に強制書き換え | `db_migrator.py:398` |
 | **admin down 書き込み抑制** | PORT admin down 時は APPL_DB 書き込みをスキップし内部状態のみ保持 | `buffermgrdyn.cpp:3198-3202` |
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-defaults.md`
 
 <!-- /defaults -->
 
@@ -206,7 +205,7 @@ show buffer pg
 <!-- /runtime-trace -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `BUFFER_PG` テーブルの SET/DEL が CONFIG_DB に届くと、`buffermgrdyn` (cfgmgr) と `BufferOrch` ([orchagent](../../reference/glossary.md#term-orchagent)) は APPL_DB 以外に計 3 DB へ副次書き込みを行う。
 
@@ -252,12 +251,11 @@ APPL_DB への書き込みと常に同時に発生する。
 | BUFFER_PG SET 成功（新規 PG） | `PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP:<pg_oid>` | `pg_watermark_manager.setCounterIdList()` | `FlexCounterOrch::getPgWatermarkCountersState()=true` | `portsorch.cpp:9051` |
 | BUFFER_PG DEL 成功 | 上記グループ | `pg_drop_stat_manager.clearCounterIdList()` / `pg_watermark_manager.clearCounterIdList()` | 対応 counter が存在した場合 | `portsorch.cpp:9089,9095` |
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-side.md`
 
 <!-- /side-effects -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BUFFER_PG`
 
@@ -287,16 +285,16 @@ APPL_DB への書き込みと常に同時に発生する。
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | DB 移行: 旧 DB で `profile` が `pg_lossless_<speed>_<cable>_profile` 形式 | `profile = 'NULL'` に変換（Dynamic buffer model 移行） | `sonic-utilities/scripts/db_migrator.py:347-398` |
 | Dynamic buffer model: `buffermgrd` が速度・ケーブル長から headroom を計算 | `BUFFER_PG.profile` を自動生成プロファイル名で書き込む | `sonic-swss/cfgmgr/buffermgrdyn.cpp:1483-1528` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -308,7 +306,7 @@ APPL_DB への書き込みと常に同時に発生する。
 - db_migrator.py L364-398: BUFFER_PG profile='NULL' 移行
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -317,10 +315,10 @@ APPL_DB への書き込みと常に同時に発生する。
 | `BufferMgrDynamic` | BUFFER_PG シングルポートハンドラ | `portPg.dynamic_calculated == true` | headroom を自動計算してプロファイル名を決定 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:1483` |
 | `BufferMgrDynamic` | BUFFER_PG シングルポートハンドラ | `portPg.dynamic_calculated == false` | 静的プロファイル参照として APPL_DB に直接書き込む | `sonic-swss/cfgmgr/buffermgrdyn.cpp:1515` |
 
-> **スキャン証跡**: `handleBufferObjectTables` L3502-3553 全行読了。`handleBufferPgTable` は共通ルーターを経由。4 件分岐抽出。
+> **裏取り**: `handleBufferObjectTables` L3502-3553 全行読了。`handleBufferPgTable` は共通ルーターを経由。4 件分岐抽出。
 <!-- /handler-branching -->
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### PG インデックス範囲
 
@@ -380,11 +378,10 @@ pg_lossless_<speed>_<cable>_8lane_profile         # Mellanox 8-lane ポート
 
 CONFIG_DB `FLEX_COUNTER_TABLE` キー: `PG_WATERMARK` / `PG_DROP` (`flexcounterorch.cpp` L53–54)。
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-constants.md`
 
 <!-- /constants -->
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 ### 1. Dynamic / Static バッファモデル
 
@@ -453,12 +450,11 @@ CONFIG_DB `FLEX_COUNTER_TABLE` キー: `PG_WATERMARK` / `PG_DROP` (`flexcountero
 - ソース: `sonic-buildimage/files/build_templates/buffers_config.j2:263-275`
 - ソース: `sonic-buildimage/device/marvell/*/buffers_config.j2`
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-platform.md`
 
 <!-- /platform -->
 
 <!-- ordering -->
-## 書込順依存 (Phase B)
+## 書込順依存
 
 BUFFER_PG エントリが正常に SAI まで到達するには、以下の順序制約を満たす必要がある。
 
@@ -481,12 +477,11 @@ BUFFER_PG エントリが正常に SAI まで到達するには、以下の順�
 5. sai_set_port_attribute(PORT_UP=true)  ← PORT を up にする (BUFFER_PG 設定後)
 ```
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-ordering.md`
 
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ### buffermgrdyn.cpp — handleSingleBufferPgEntry / refreshPgsForPort
 
@@ -531,12 +526,11 @@ BUFFER_PG エントリが正常に SAI まで到達するには、以下の順�
 | SAI `set_attribute` が非 SUCCESS を返却 | `handleSaiSetStatus()` に委譲（retry 可能か判定） | `SWSS_LOG_ERROR("Failed to set port:%s pg:%zd buffer profile attribute, status:%d")` | `bufferorch.cpp:1507-1512` |
 | DEL 対象が APPL_DB に存在しない | SAI call をスキップして `task_success` | `SWSS_LOG_INFO("...doesn't not exist, don't need to notfiy SAI")` | `bufferorch.cpp:1409-1413` |
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-failure.md`
 
 <!-- /failure -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `BUFFER_PG` テーブルの変更が CONFIG_DB から SAI へ到達するまでに経由する subscribe 方式を示す。
 
@@ -576,11 +570,10 @@ bufferorch.cpp::processPriorityGroup()
 syncd → SAI sai_buffer_api
 ```
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-pubsub.md`
 
 <!-- /pubsub -->
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 YANG leafref は `profile → BUFFER_PROFILE.name` の 1 件のみ定義。以下はすべて実装レベルの暗黙参照。
 
@@ -599,7 +592,6 @@ YANG leafref は `profile → BUFFER_PROFILE.name` の 1 件のみ定義。以�
 !!! note "LOSSLESS_TRAFFIC_PATTERN の適用範囲"
     `buffermgrdyn.cpp` 本体は `LOSSLESS_TRAFFIC_PATTERN` を直接購読しない。参照は `buffer_headroom_mellanox.lua` / `buffer_headroom_barefoot.lua` の Lua スクリプト内のみで行われる。汎用（`buffer_headroom_generic.lua`）では参照しない。
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-cross-refs.md`
 
 <!-- /cross-refs -->
 

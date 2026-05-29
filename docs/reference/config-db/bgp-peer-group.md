@@ -169,7 +169,7 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BGP_PEER_GROUP`
 
@@ -198,16 +198,16 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | minigraph.py は BGP_PEER_GROUP を直接生成しない | — | minigraph.py に代入なし |
 | frrcfgd が FRR running-config の peer-group 設定を読み CONFIG_DB と同期 | BGP_PEER_GROUP フィールドを反映 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2187,2303` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -218,17 +218,17 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 - frrcfgd.py L2303: BGP_PEER_GROUP 購読（条件なし）
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
 | `BGPConfigDaemon` | `bgp_neighbor_handler()` | `data is None`（DELETE） | `del_table=True` → peer-group を FRR から削除 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3918` |
 | `BGPConfigDaemon` | `bgp_neighbor_handler()` | `keepalive` と `holdtime` が共に存在 | `comb_attr_list` 制約: 2 フィールド揃いで FRR タイマーコマンドを生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3942` |
 
-> **スキャン証跡**: `bgp_neighbor_handler` L3942 読了。keepalive/holdtime 組み合わせ制約のみ。
+> **裏取り**: `bgp_neighbor_handler` L3942 読了。keepalive/holdtime 組み合わせ制約のみ。
 <!-- /handler-branching -->
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `BGP_PEER_GROUP` ハンドラが実装レベルで依存する外部テーブルを示す。YANG leafref 宣言のない暗黙依存を含む。
 
@@ -266,6 +266,7 @@ FRR `neighbor <pg> route-map <name> in/out` コマンドの `<name>` として�
 ## プラットフォーム / SAI 差分
 
 `BGP_PEER_GROUP` は FRR (`bgpd`) 止まりで [SAI](../../reference/glossary.md#term-sai) に直接到達しないが、`DEVICE_METADATA` の `type`・`sub_role`・`switch_type`・`subtype` に基づいて Jinja2 テンプレートが切り替わり、FRR へ発行されるコマンドが大きく異なる。frrcfgd 動的更新経路 (`frr_mgmt_framework_config=true`) は Jinja2 を経由しないため platform 差なし。
+
 
 ### general peer-group (`peer_type=external` / ToR・Spine など)
 
@@ -309,11 +310,11 @@ FRR `neighbor <pg> route-map <name> in/out` コマンドの `<name>` として�
 | 非 VoQ・非 chassis-packet | `neighbor BGPMON update-source <Loopback0 IPv4>` |
 | その他 | `update-source` なし、IPv6 AF なし |
 
-> **根拠**: `bgpd/templates/general/peer-group.conf.j2`、`internal/peer-group.conf.j2`、`voq_chassis/peer-group.conf.j2`、`monitors/peer-group.conf.j2`、`general/policies.conf.j2`、`internal/policies.conf.j2` を精読。frrcfgd.py は `BGP_PEER_GROUP` ハンドラ内に `switch_type` / `sub_role` 参照なし（動的更新経路は platform 非依存）。詳細: `meta/_intermediate/cdb-flow/bgp-peer-group-platform.md`
+> **根拠**: `bgpd/templates/general/peer-group.conf.j2`、`internal/peer-group.conf.j2`、`voq_chassis/peer-group.conf.j2`、`monitors/peer-group.conf.j2`、`general/policies.conf.j2`、`internal/policies.conf.j2` を精読。frrcfgd.py は `BGP_PEER_GROUP` ハンドラ内に `switch_type` / `sub_role` 参照なし（動的更新経路は platform 非依存）。
 <!-- /platform -->
 
 <!-- defaults -->
-## 暗黙デフォルトとコード由来 fallback (Phase A)
+## 暗黙デフォルトとコード由来 fallback
 
 ### YANG レベル
 
@@ -349,7 +350,7 @@ SET 受信時、FRR に peer-group が存在しなければ `neighbor <pg_name> 
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込順依存 (Phase B)
+## 書込順依存
 
 ### 必須順序: BGP_GLOBALS → BGP_PEER_GROUP → BGP_NEIGHBOR
 
@@ -383,11 +384,10 @@ SET 受信時、frrcfgd は FRR に peer-group が存在しなければ属性コ
 | BGP_PEER_GROUP 未作成で BGP_NEIGHBOR の `peer_group_name` を参照 | vtysh エラー（peer-group 未存在）。frrcfgd は LOG_ERR → skip | `frrcfgd.py` L2826-2827 |
 | `neighbor <pg> peer-group` の自動発行失敗 | LOG_ERR 出力 + 属性設定全体を skip（`continue`） | `frrcfgd.py` L2800-2801 |
 
-> 詳細分析: `meta/_intermediate/cdb-flow/bgp-peer-group-ordering.md`
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動・retry 分岐 (Phase D)
+## 失敗挙動・retry 分岐
 
 ### frrcfgd 経路
 
@@ -415,11 +415,10 @@ SET 受信時、frrcfgd は FRR に peer-group が存在しなければ属性コ
 - **peer-group 自動作成失敗 → 属性全体 skip**: `neighbor <pg> peer-group` の vtysh 失敗は属性コマンド群の発行を全てブロックする
 - **rollback 未実装**: 部分失敗時 CONFIG_DB エントリは残存し、FRR 側との整合性は保証されない
 
-> 詳細分析: `meta/_intermediate/cdb-flow/bgp-peer-group-failure.md`
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 ### frrcfgd.py BGP_PEER_GROUP ハンドラ直接書込
 
@@ -453,12 +452,11 @@ BGP_PEER_GROUP (asn 変更)
                     └─→ STATE_DB:BGP_PEER_CONFIGURED_TABLE SET/DEL
 ```
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/bgp-peer-group-side.md`
 <!-- /side-effects -->
 
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -520,11 +518,11 @@ CONFIG_DB は永続前提のため TTL は設定されない。
 | `BGP_PEER_GROUP` 変更 (bgpcfgd 経路) | bgpcfgd は BGP_PEER_GROUP を直接購読せず。BGP_NEIGHBOR 変更時に `BGPPeerGroupMgr.update()` 経由で peer-group テンプレが更新される | `managers_bgp.py` L156, L227 |
 | `local_asn` 未設定 VRF | frrcfgd が silent drop (LOG_DEBUG のみ)。bgpcfgd は `DEVICE_METADATA.bgp_asn` deps 充足まで保留 | `frrcfgd.py` L2658-2662, `managers_bgp.py` L119 |
 
-> **Evidence**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1506-1555, 1536-1543, 2187-2191, 2303, 2340, 2344-2357, 2359-2361, 2790-2863, 3942-3943` (keyspace listen / subscribe / peer-group ハンドラ / 起動スナップショット); `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:31-73` (SubscriberStateTable + Select ループ); `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:15-84, 156-157, 227` (BGPPeerGroupMgr / add_peer); 詳細分析 `meta/_intermediate/cdb-flow/bgp-peer-group-pubsub.md`
+> **Evidence**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1506-1555, 1536-1543, 2187-2191, 2303, 2340, 2344-2357, 2359-2361, 2790-2863, 3942-3943` (keyspace listen / subscribe / peer-group ハンドラ / 起動スナップショット); `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:31-73` (SubscriberStateTable + Select ループ); `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:15-84, 156-157, 227` (BGPPeerGroupMgr / add_peer)
 <!-- /pubsub -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 BGP_PEER_GROUP の設定は frrcfgd の `cmn_key_map` (フィールド→FRR コマンドマッピング) 経由で FRR に投入されるが、bgpcfgd が使う Jinja2 テンプレート群（`peer-group.conf.j2` / `policies.conf.j2`）にはいくつかのハードコード定数が存在する。
 
