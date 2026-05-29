@@ -41,6 +41,9 @@ flowchart LR
     CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
+!!! note "SAI 経路の補足"
+    上図の `sai_acl_api` は `PfcWdAclHandler` 経路（barefoot / Broadcom DLR 無効構成）を示す。汎用ソフトウェアプラットフォーム（mellanox / marvell 等）は `sai_port_api` / `sai_queue_api` 経由で PFC deadlock 検出を設定する（[プラットフォーム差](#プラットフォーム差) 参照）。
+
 ## key 構造
 
 ```text
@@ -104,7 +107,7 @@ PFC_WD|GLOBAL           # グローバル設定 (POLL_INTERVAL のみ)
 | 100..5000 かつ >= POLL_INTERVAL | 正常: storm 検出インターバルとして設定 |
 | < POLL_INTERVAL | YANG must 違反: detection_time must be greater than or equal to POLL_INTERVAL |
 | 範囲外 | YANG range 違反 reject |
-| 未設定 | `PFC_WD_DETECTION_TIME missing` SWSS_LOG_ERROR |
+| 未設定 | `detection_time missing` SWSS_LOG_ERROR |
 
 ### PFC_WD.restoration_time (per-port、単位 ms)
 
@@ -134,7 +137,6 @@ PFC_WD|GLOBAL           # グローバル設定 (POLL_INTERVAL のみ)
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/pfc-wd.md -->
 
 ### YANG スキーマ検証
 - `ifname` = `GLOBAL` の場合: `action` / `detection_time` / `restoration_time` は禁止 (`must "../ifname != 'GLOBAL'"`)。違反は YANG validate で reject。
@@ -148,7 +150,7 @@ PFC_WD|GLOBAL           # グローバル設定 (POLL_INTERVAL のみ)
 - 非物理ポートへの適用: `Interface %s is not physical port` → SWSS_LOG_ERROR。
 - platform 非対応 action: `Unsupported action %s for platform %s` → SWSS_LOG_ERROR。
 - switch-level PFC DLR との競合: `Invalid PFC Watchdog action %s as switch level action %s is set` → SWSS_LOG_ERROR。
-- `detection_time` 欠如: `PFC_WD_DETECTION_TIME missing` → SWSS_LOG_ERROR。
+- `detection_time` 欠如: `detection_time missing` → SWSS_LOG_ERROR。
 - queue index 範囲外/不正: `Invalid argument` / `Out of range argument` → SWSS_LOG_ERROR。
 - Lua スクリプトやポーリング間隔の設定失敗: SWSS_LOG_WARN (継続動作するが watch 精度が低下)。
 
@@ -222,7 +224,7 @@ show pfcwd stats
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 PFC_WD テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -256,9 +258,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/pfc-wd-ordering.md`
+## 書込み順依存
 
 ### SET 時の先行必須テーブル
 
@@ -302,10 +302,23 @@ PFC_WD|GLOBAL (POLL_INTERVAL) 投入 → flex counter ポーリング間隔設�
 PFC_WD|<port> 投入 → SAI queue/port 属性設定 + flex counter 登録
 ```
 
+### 検出された順序依存（一覧）
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `PORT` 初期化完了 → `PFC_WD` エントリ処理 | **先行必須**（未完了時は保留・自動再試行） | `doTask()` が `allPortsReady()` で自動再試行 |
+| 2 | `PORT_QOS_MAP` の PFC 有効化 → `PFC_WD` per-port エントリ | **推奨先行**（未設定時 lossless TC なしで WD 無効） | `task_need_retry` で再試行、ただし WD は実質無効 |
+| 3 | `PFC_WD\|GLOBAL` の `POLL_INTERVAL` → per-port エントリ | **推奨先行**（未設定時は 100 ms デフォルト使用） | 後から設定しても次ポーリングサイクルから適用 |
+| 4 | BRCM: 最初の per-port エントリの `action` → 後続エントリ | **同一 action 必須**（不一致で `task_invalid_entry`） | 全ポート同一 `action` を一括設定 |
+| 5 | `PFC_WD` per-port DEL | 即時・順序依存なし | `m_pfcwd_ports` の自動クリーンアップ |
+
+**PORT_QOS_MAP PFC 有効化 (依存 #2)**: `registerInWdDb()` (`pfcwdorch.cpp:533-555`) で `getPortPfcWatchdogStatus()` を呼び lossless TC bitmask を取得。`pfcMask == 0` の場合は `startWdOnPort()` が `task_need_retry` を返すが、PFC WD は実質無効のままとなる。`PORT_QOS_MAP` の PFC 有効化を先に行ってから `PFC_WD` エントリを書くことで中間不整合を防ぐ。
+
+**Broadcom DLR 同一 action 強制 (依存 #4)**: `checkPfcDlrInitEnable()` が true の Broadcom 環境では、最初の `PFC_WD` per-port エントリの `action` が `SAI_SWITCH_ATTR_PFC_DLR_PACKET_ACTION` としてスイッチレベルに設定される。後続エントリで異なる `action` を指定すると `"Invalid PFC Watchdog action %s as switch level action %s is set"` エラーで reject されるため、全ポートを同一 `action` で一括設定すること (`pfcwdorch.cpp:237-266`)。
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
-
-<!-- evidence: meta/_intermediate/cdb-flow/pfc-wd-defaults.md -->
 
 ### `action` — ハードコードデフォルト `drop`
 
@@ -338,9 +351,9 @@ orchagent 起動時は `#define PFC_WD_POLL_MSECS 100` (`orchdaemon.cpp:24`) を
 <!-- /defaults -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -348,7 +361,7 @@ orchagent 起動時は `#define PFC_WD_POLL_MSECS 100` (`orchdaemon.cpp:24`) を
 
 db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ移行を実施 (`db_migrator.py:160-165`)。minigraph.py からの直接派生はなし。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -358,18 +371,10 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 | `platform == BRCM_PLATFORM_SUBSTRING` | `PfcWdSwOrch` で Broadcom 専用 [SAI](../../reference/glossary.md#term-sai) 統計 + `PfcWdDlrHandler` 等を使用 | `orchdaemon.cpp:733-803` |
 | それ以外の platform | `PFC_WD` ハンドラは登録されない (PFC-WD 機能無効) | `orchdaemon.cpp:635-803` |
 
-### グレップカバレッジ
-
-| 項目 | hit 数 | 証跡 |
-|---|---|---|
-| action デフォルト DROP | 1 | `pfcwdorch.cpp:190` |
-| platform 条件分岐 (platform == MLNX) | 1 | `orchdaemon.cpp:635` |
-| db_migrator PFC_WD_TABLE → PFC_WD | 3 | `db_migrator.py:160-165` |
-
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `PfcWdOrch::doTask()` → `createEntry()` の分岐:
 
@@ -383,38 +388,12 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 | `PfcWdOrch` | `createEntry()` | `platform == BRCM && checkPfcDlrInitEnable() && m_pfcwd_ports.empty()` | SAI_SWITCH_ATTR_PFC_DLR_PACKET_ACTION を設定 (最初のポートのみ) | `pfcwdorch.cpp:237-266` |
 | `PfcWdOrch` | `createEntry()` | `platform == BRCM && DLR action 不一致` | `task_invalid_entry` (全ポート同一 action 強制) | `pfcwdorch.cpp:257-263` |
 
-> **スキャン証跡**: `pfcwdorch.cpp:64-278` を全行読了、7 件分岐抽出。PFC-WD の platform 条件付き登録 (MLNX/BFN/BRCM/MRVL等) を実ソースで確認 — 誤読なし。
+> **裏取り**: `pfcwdorch.cpp:64-278`。PFC-WD の platform 条件付き登録 (MLNX/BFN/BRCM/MRVL 等) を実ソースで確認。
 
 <!-- /handler-branching -->
 
-## 書込み順依存 (Phase B) (補足)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pfc-wd-ordering.md -->
-
-### 検出された順序依存
-
-| # | 依存関係 | 方向 | 緩和策 |
-|---|----------|------|--------|
-| 1 | `PORT` 初期化完了 → `PFC_WD` エントリ処理 | **先行必須**（未完了時は保留・自動再試行） | `doTask()` が `allPortsReady()` で自動再試行 |
-| 2 | `PORT_QOS_MAP` の PFC 有効化 → `PFC_WD` per-port エントリ | **推奨先行**（未設定時 lossless TC なしで WD 無効） | `task_need_retry` で再試行、ただし WD は実質無効 |
-| 3 | `PFC_WD\|GLOBAL` の `POLL_INTERVAL` → per-port エントリ | **推奨先行**（未設定時は 100 ms デフォルト使用） | 後から設定しても次ポーリングサイクルから適用 |
-| 4 | BRCM: 最初の per-port エントリの `action` → 後続エントリ | **同一 action 必須**（不一致で `task_invalid_entry`） | 全ポート同一 `action` を一括設定 |
-| 5 | `PFC_WD` per-port DEL | 即時・順序依存なし | `m_pfcwd_ports` の自動クリーンアップ |
-
-### 主要な制約詳細
-
-**PORT 先行必須 (依存 #1)**: `doTask()` 冒頭 (`pfcwdorch.cpp:68-71`) で `gPortsOrch->allPortsReady()` が `false` の場合は即リターン（タスク保留）。`PORT` の SAI 初期化完了後に Consumer イベントが来た時点で自動的に処理再開される。
-
-**PORT_QOS_MAP PFC 有効化 (依存 #2)**: `registerInWdDb()` (`pfcwdorch.cpp:533-555`) で `getPortPfcWatchdogStatus()` を呼び lossless TC bitmask を取得。`pfcMask == 0` の場合は `startWdOnPort()` が `task_need_retry` を返すが、PFC WD は実質無効のままとなる。`PORT_QOS_MAP` の PFC 有効化を先に行ってから `PFC_WD` エントリを書くことで中間不整合を防ぐ。
-
-**GLOBAL POLL_INTERVAL 推奨先行 (依存 #3)**: orchestrator 起動時のデフォルトは `PFC_WD_POLL_MSECS = 100` ms (`orchdaemon.cpp:24`)。`PFC_WD|GLOBAL` の `POLL_INTERVAL` を per-port エントリより先に書けば、初期ポーリングから一貫した間隔が保証される。後から変更しても `updateGroupPollingInterval()` が適用されるため実害は軽微。
-
-**Broadcom DLR 同一 action 強制 (依存 #4)**: `checkPfcDlrInitEnable()` が true の Broadcom 環境では、最初の `PFC_WD` per-port エントリの `action` が `SAI_SWITCH_ATTR_PFC_DLR_PACKET_ACTION` としてスイッチレベルに設定される。後続エントリで異なる `action` を指定すると `"Invalid PFC Watchdog action %s as switch level action %s is set"` エラーで reject されるため、全ポートを同一 `action` で一括設定すること (`pfcwdorch.cpp:237-266`)。
-
-<!-- /ordering -->
-
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `PFC_WD` エントリが [CONFIG_DB](../../reference/glossary.md#term-config_db) に書かれると `PfcWdOrch` が以下のテーブルを暗黙的に参照する。
 `ifname` → `PORT` は YANG leafref として明示されているが、`PORT_QOS_MAP` 経由の PFC bitmask 参照は実装コードのみに現れる暗黙依存。
@@ -439,13 +418,13 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
     YANG leafref は `ifname != 'GLOBAL'` に限定されている。`PFC_WD|GLOBAL` の `POLL_INTERVAL` フィールドは PORT への参照を持たず、
     どの port が存在しなくても書き込み可能。
 
-> **Evidence**: `sonic-swss/orchagent/pfcwdorch.cpp:68-71,193-203,533-555,688,998-1058`; `orchagent/qosorch.cpp:2136-2155,2224`; `orchagent/portsorch.cpp:2482-2514`; `sonic-pfcwd.yang:37-38`; `pfcwd/main.py:409,415`; スキャンノート: `meta/_intermediate/cdb-flow/pfc-wd-cross-refs.md`
+> **Evidence**: `sonic-swss/orchagent/pfcwdorch.cpp:68-71,193-203,533-555,688,998-1058`; `orchagent/qosorch.cpp:2136-2155,2224`; `orchagent/portsorch.cpp:2482-2514`; `sonic-pfcwd.yang:37-38`; `pfcwd/main.py:409,415`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-> 根拠: `pfcwdorch.cpp` L64-338 全行精読。evidence: `meta/_intermediate/cdb-flow/pfc-wd-failure.md`
+> 根拠: `pfcwdorch.cpp` L64-338
 
 ### タスク処理ループの返値マッピング (doTask, pfcwdorch.cpp:99-113)
 
@@ -469,7 +448,7 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 | 未知フィールド名 | `pfcwdorch.cpp:273-277` | `"Failed to parse PFC Watchdog %s configuration. Unknown attribute %s."` | `task_invalid_entry` |
 | フィールド解析例外 (`std::exception`) | `pfcwdorch.cpp:280-287` | `"Failed to parse PFC Watchdog %s attribute %s error: %s."` | `task_invalid_entry` |
 | フィールド解析例外 (不明) | `pfcwdorch.cpp:291-295` | `"Failed to parse PFC Watchdog %s attribute %s. Unknown error has been occurred"` | `task_invalid_entry` |
-| `detection_time` 欠如 (値 0) | `pfcwdorch.cpp:302-303` | `"PFC_WD_DETECTION_TIME missing"` | `task_invalid_entry` |
+| `detection_time` 欠如 (値 0) | `pfcwdorch.cpp:302-303` | `"detection_time missing"`（`"%s missing"` に `PFC_WD_DETECTION_TIME` を展開） | `task_invalid_entry` |
 | `pfc_stat_history` 値不正 | `pfcwdorch.cpp:307-308` | `"%s is invalid value for %s"` | `task_invalid_entry` |
 | `startWdOnPort()` 失敗（PFC mask 取得失敗 / lossless TC なし） | `pfcwdorch.cpp:311-314` | `"Failed to start PFC Watchdog on port %s"` | `task_need_retry` |
 
@@ -494,11 +473,9 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `PfcWdOrch` および `orchdaemon` が使用するフィールド名・数値・テーブル名はほぼすべて `#define` または静的マップで固定されている。CONFIG_DB 入力で変動するのは `<port-name>` の動的部分と `POLL_INTERVAL` / `detection_time` / `restoration_time` の数値のみ。
-
-> evidence: `meta/_intermediate/cdb-flow/pfc-wd-constants.md`
 
 ### フィールド名マクロ（`sonic-swss/orchagent/pfcwdorch.cpp:14-20`）
 
@@ -555,9 +532,7 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/pfc-wd-side-effects.md`
+## 副次 DB 書込
 
 `PFC_WD` エントリの SET/DEL および storm 検出イベントが引き起こす CONFIG_DB 以外の DB への書込みと SAI 呼び出しを示す。
 
@@ -629,9 +604,7 @@ storm 復帰時 (pfcwdorch.cpp:1043-1059):
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pfc-wd-pubsub.md -->
+## Redis 通知メカニズム
 
 `PfcWdSwOrch` は CONFIG_DB の `PFC_WD` テーブル購読に加え、APPL_DB / COUNTERS_DB からも非同期イベントを受け取る多チャネル構成をとる。
 
@@ -667,9 +640,7 @@ Lua スクリプト (`pfc_detect_<platform>.lua`) が FLEX_COUNTER 経由でカ�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pfc-wd-platform.md -->
+## プラットフォーム差
 
 PFC_WD の platform 差は community [SONiC](../../reference/glossary.md#term-sonic) の中でも特に重大なカテゴリ。[ASIC](../../reference/glossary.md#term-asic) ベンダーが識別できない場合は **PFC-WD 機能自体が無効化** され、ベンダーが識別できても Handler クラス・SAI カウンタ種別・Lua 検出スクリプトがすべて異なる。
 

@@ -28,10 +28,7 @@ sources:
     ref: master
 related:
   config_db:
-    - PASS_THROUGH_ROUTE_TABLE
     - VNET_ROUTE_TABLE
-  app_db:
-    - PASS_THROUGH_ROUTE_TABLE
 ---
 
 # PASS_THROUGH_ROUTE_TABLE テーブル（ChassisOrch）
@@ -59,11 +56,14 @@ flowchart LR
 ## key 構造
 
 ```text
-PASS_THROUGH_ROUTE_TABLE|<IP_prefix>
+PASS_THROUGH_ROUTE_TABLE|<IP_address>
 ```
 
-- `<IP_prefix>`: VNet ルートの宛先 IP プレフィックス（例: `10.1.0.0/16`）
-- `IpPrefix` クラスで正規化される
+- `<IP_address>`: VNet nextHop を監視する**裸の IP アドレス**（例: `10.1.0.1` / `2001:db8::1`）。プレフィックス長付き表記（`/16` 等）は受け付けない。
+- `ChassisOrch::doTask()` は key 文字列 `ip` をそのまま `VNetRouteOrch::attach(this, ip)` / `detach(this, ip)`（引数型 `const IpAddress&`）に渡す[^2]。`IpAddress` のコンストラクタ（`sonic-swss-common/common/ipaddress.cpp:14-29`）は `inet_pton` ベースで、`/16` のようなプレフィックス表記を渡すと変換に失敗して `std::invalid_argument` を投げる。そのため CONFIG_DB key には**プレフィックス長を含まない** IP アドレスのみが有効。
+
+!!! warning "key は IP プレフィックスではない"
+    APP_DB 側の書き込み key は `IpPrefix(update.destination.to_string()).to_string()` で正規化されるため、APP_DB `PASS_THROUGH_ROUTE_TABLE` の key はプレフィックス表記（ホストビット切り捨てあり）になる。これは `VNetNextHopUpdate.destination` 経由の APP_DB 書き込み経路のみで起こる正規化であり、**CONFIG_DB の入力 key（裸の IP アドレス）とは別物**。
 
 ## フィールド（CONFIG_DB 側）
 
@@ -139,19 +139,12 @@ ChassisOrch* chassis_frontend_orch = new ChassisOrch(m_configDb, m_applDb, chass
 
 `VNetRouteOrch` (`vnet_rt_orch`) が存在しない場合、ChassisOrch は機能しない（constructor で受け取る依存関係）。
 
-### ハードコード定数一覧
-
-| 定数 | 値 | 場所 |
-|------|-----|------|
-| CONFIG_DB テーブル名 | `"PASS_THROUGH_ROUTE_TABLE"` | `schema.h:371` `CFG_PASS_THROUGH_ROUTE_TABLE_NAME` |
-| APP_DB テーブル名 | `"PASS_THROUGH_ROUTE_TABLE"` | `schema.h:93` `APP_PASS_THROUGH_ROUTE_TABLE_NAME` |
-| `redistribute` | `"true"` | `chassisorch.cpp:34` |
-| `source` | `"CHASSIS_ORCH"` | `chassisorch.cpp:38` |
+> ハードコード定数の網羅一覧は [ハードコード定数](#ハードコード定数) を参照。
 
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存・タイミング依存 (Phase B)
+## 書込み順依存・タイミング依存
 
 `ChassisOrch` (`chassis_frontend_orch`) は `orchdaemon.cpp` の初期化シーケンスと `m_orchList` に特定の順序制約を持つ。
 
@@ -217,7 +210,7 @@ warm-reboot シーケンスでは `OrchDaemon::warmRestoreAndSyncUp()` が `m_or
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ソース: `sonic-net/sonic-swss/orchagent/chassisorch.cpp`、`orchagent/vnetorch.cpp`
 
@@ -257,15 +250,17 @@ void VNetRouteOrch::detach(Observer* observer, const IpAddress& dstAddr)
 | `DEL` 到着時に observer エントリが `next_hop_observers_` に不在 | CONFIG_DB 直接書込 / warm-reboot 再同期ズレ | `SWSS_LOG_ERROR` + `assert(false)` (デバッグビルド: クラッシュ) |
 | observer リストに自身が含まれない | observer 二重 detach | `SWSS_LOG_ERROR` + `assert(false)` |
 
-### VoQ 非環境での silent drop
+### VNet ルート未解決時の silent drop
 
-`ChassisOrch` は `orchdaemon.cpp` で VoQ が有効な場合のみ生成される。VoQ 無効環境では `PASS_THROUGH_ROUTE_TABLE` への書き込みがあっても購読者が存在せず、APP_DB への転送は一切行われない (silent drop)。
+`ChassisOrch` は `OrchDaemon::init()` で switch_type に関わらず**無条件に生成**される（`orchdaemon.cpp:290-294` に VoQ / switch_type ガードはない。詳細は [プラットフォーム差異](#プラットフォーム差異) を参照）。したがって VoQ 専用機能ではなく、`fabric` を除く全 switch_type で `PASS_THROUGH_ROUTE_TABLE` の購読者が存在する。
 
-> **Evidence**: `sonic-swss/orchagent/chassisorch.cpp:50-72`; `sonic-swss/orchagent/vnetorch.cpp:1910-1952`; `sonic-swss/orchagent/orchdaemon.cpp:281-293`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-orch-failure.md`
+ただし `attach()` 呼び出し時に `VNetRouteOrch::syncd_routes_` に対象アドレスを包含する VNet ルートが存在しない場合、即時通知が行われず APP_DB への書き込みは発生しない。VNet ルートが永続的に解決されなければ、CONFIG_DB エントリは登録されたまま APP_DB へ転送されない状態が続く（後から VNet ルートが追加されれば自動的に転送される。[暗黙参照テーブル](#暗黙参照テーブル) の遅延通知を参照）。`fabric` switch_type のみ `ChassisOrch` 自体が生成されず、購読者不在で silent drop となる。
+
+> **Evidence**: `sonic-swss/orchagent/chassisorch.cpp:50-72`; `sonic-swss/orchagent/vnetorch.cpp:1910-1952`; `sonic-swss/orchagent/orchdaemon.cpp:281-293`
 <!-- /failure -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `ChassisOrch` が消費する `PASS_THROUGH_ROUTE_TABLE` はフィールドを持たない key-only テーブルであるため、フィールドベースの leafref は存在しない。ただし key（IP プレフィックス文字列）がコードレベルで複数のオブジェクトと暗黙的な依存を形成する。
 
@@ -291,13 +286,11 @@ for (auto route : syncd_routes_)
 
 **遅延通知（`syncd_routes_` にマッチなし）**: CONFIG_DB に `PASS_THROUGH_ROUTE_TABLE` エントリを書いた時点では `VNetRouteOrch` が対応 VNet ルートを未処理の場合、`routeTable` は空となり即時通知は行われない。後から VNet ルートが追加・解決されると `VNetRouteOrch` が `notifyObservers()` を呼び、登録済み Observer である ChassisOrch に `VNetNextHopUpdate` が届く。
 
-> **Evidence**: `vnetorch.cpp:1861-1905`（`attach()` 実装）; `chassisorch.cpp:14-27`（`update()` 実装）; 詳細分析 `meta/_intermediate/cdb-flow/chassis-orch-cross-refs.md`
+> **Evidence**: `vnetorch.cpp:1861-1905`（`attach()` 実装）; `chassisorch.cpp:14-27`（`update()` 実装）
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/chassis-orch-constants.md`
+## ハードコード定数
 
 ### テーブル名定数 (`schema.h`)
 
@@ -327,25 +320,23 @@ fvVector.emplace_back("source", "CHASSIS_ORCH");
 
 `chassisorch.h` にフィールド名文字列定数は定義されておらず、すべてリテラルとしてソースに直書きされている。
 
-### key 正規化定数
+### APP_DB 書き込み key の正規化
 
-key（IP プレフィックス）は `IpPrefix::to_string()` で正規化される:
+APP_DB へ書き込む際の key は `VNetNextHopUpdate.destination` を `IpPrefix` で正規化したもの:
 
 ```cpp
 // chassisorch.cpp:39,46
 const std::string everflow_route = IpPrefix(update.destination.to_string()).to_string();
 ```
 
-ホストビットが切り捨てられる（例: `10.1.0.1/16` → `10.1.0.0/16`）。この正規化は `IpPrefix` クラス（`sonic-swss-common`）が担い、ChassisOrch 側に数値定数は存在しない。
+ホストビットが切り捨てられる（例: `10.1.0.1/16` → `10.1.0.0/16`）。この正規化は `IpPrefix` クラス（`sonic-swss-common`）が担い、ChassisOrch 側に数値定数は存在しない。なお、これは **APP_DB 書き込み key の正規化**であり、CONFIG_DB 入力 key（裸の IP アドレス）に対する正規化ではない。
 
 !!! note "YANG 未定義"
     本テーブルは YANG スキーマが存在しないため、YANG 側に定数定義は一切ない。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・連鎖更新 (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/chassis-orch-side-effects.md`
+## 副作用・連鎖更新
 
 `ChassisOrch` が CONFIG_DB `PASS_THROUGH_ROUTE_TABLE` を処理する際に発生する主要な副作用を示す。
 
@@ -415,13 +406,11 @@ CONFIG_DB エントリのフィールドへの書き込みは ChassisOrch に対
 | VNetRoute `delRoute()` | `VNetRouteOrch` 通知 | APP_DB エントリ削除（後継なし時） |
 | CONFIG_DB フィールド書き込み | — | 変化なし（無視） |
 
-> **Evidence**: `sonic-swss/orchagent/chassisorch.cpp:14-47`; `sonic-swss/orchagent/vnetorch.cpp:1861-2040`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-orch-side-effects.md`
+> **Evidence**: `sonic-swss/orchagent/chassisorch.cpp:14-47`; `sonic-swss/orchagent/vnetorch.cpp:1861-2040`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/chassis-orch-pubsub.md`
+## 通信メカニズム
 
 `ChassisOrch` は 2 層の通信メカニズムを使用する。(1) CONFIG_DB 変化を `Orch` 基底 Consumer 経由で受け取り、(2) `VNetRouteOrch` の Observer として VNet nextHop 変化通知を受け取る。
 
@@ -516,13 +505,11 @@ orchdaemon select ループ (epoll)
 | `attach()` → `ChassisOrch::update()` | 同期 (0 ms) | `Observer::update()` 直接呼び出し |
 | `update()` → APP_DB 書き込み | 同期 (0 ms) | `swsscommon::Table::set()` |
 
-> **Evidence**: `sonic-swss/orchagent/chassisorch.cpp:4-26`; `sonic-swss/orchagent/observer.h:9-55`; `sonic-swss/orchagent/vnetorch.cpp:1861-2040`; `sonic-swss/orchagent/vnetorch.h:400-418`; `orchdaemon.cpp:290-293`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-orch-pubsub.md`
+> **Evidence**: `sonic-swss/orchagent/chassisorch.cpp:4-26`; `sonic-swss/orchagent/observer.h:9-55`; `sonic-swss/orchagent/vnetorch.cpp:1861-2040`; `sonic-swss/orchagent/vnetorch.h:400-418`; `orchdaemon.cpp:290-293`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/chassis-orch-platform.md`
+## プラットフォーム差異
 
 `ChassisOrch` の生成有無は `DEVICE_METADATA|localhost.switch_type` によって決定される。
 `OrchDaemon::init()` 内に switch_type ガードは存在せず、`OrchDaemon` を使用するすべての switch_type で ChassisOrch が生成される。
@@ -574,12 +561,13 @@ bool DpuOrchDaemon::init()
 `OrchDaemon::init()` の冒頭（`orchdaemon.cpp:190`）で `getenv("platform")` を読み取るが、
 ChassisOrch の生成にこの値は使用されない。ハードウェアベンダー（プラットフォーム ASV 文字列）による分岐は存在しない。
 
-> **Evidence**: `sonic-swss/orchagent/main.cpp:990-1009`（daemon 選択）; `sonic-swss/orchagent/orchdaemon.cpp:290-294`（ChassisOrch 生成）; `orchdaemon.cpp:1292-1325`（FabricOrchDaemon / DpuOrchDaemon init）; 詳細分析 `meta/_intermediate/cdb-flow/chassis-orch-platform.md`
+> **Evidence**: `sonic-swss/orchagent/main.cpp:990-1009`（daemon 選択）; `sonic-swss/orchagent/orchdaemon.cpp:290-294`（ChassisOrch 生成）; `orchdaemon.cpp:1292-1325`（FabricOrchDaemon / DpuOrchDaemon init）
 <!-- /platform -->
 
 ## 制約
 
-- `<IP_prefix>` は `IpPrefix` クラスで正規化される（ホストビットが切り捨てられる）
+- CONFIG_DB key は**プレフィックス長を含まない裸の IP アドレス**（`IpAddress` の `inet_pton` 検証を通る形式）。`/16` 等のプレフィックス表記は `attach()` 内の `IpAddress` 変換で例外となる
+- APP_DB 側の書き込み key は `IpPrefix` で正規化される（ホストビットが切り捨てられる）が、これは CONFIG_DB key とは別の `VNetNextHopUpdate.destination` 経路
 - CONFIG_DB エントリはフィールドを持たないため、値の書き込みは不要
 - [YANG](../../reference/glossary.md#term-yang) モデルが存在しないため、`config load` / `config reload` 時の YANG バリデーション対象外
 
@@ -589,7 +577,7 @@ ChassisOrch の生成にこの値は使用されない。ハードウェアベ�
 
 - 通常は**[BGP](../../reference/glossary.md#term-bgp) / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) / 手動設定**経由で CONFIG_DB に書き込まれる想定
 - CLI コマンドは現時点で存在しない（`config` / `show` サブコマンドなし）
-- `sonic-db-cli CONFIG_DB hset 'PASS_THROUGH_ROUTE_TABLE|10.1.0.0/16' dummy 1` で直接設定可能
+- `sonic-db-cli CONFIG_DB hset 'PASS_THROUGH_ROUTE_TABLE|10.1.0.1' dummy 1` のように**裸の IP アドレス**を key として直接設定する（プレフィックス長を付けると `attach()` 内の `IpAddress` 変換で例外になる）
 
 ## 購読者
 
