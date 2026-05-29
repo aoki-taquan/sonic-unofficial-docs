@@ -158,7 +158,7 @@ enum: `admin_status` = `up`/`down`。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 MGMT_PORT テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -192,9 +192,9 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -202,7 +202,7 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 | `admin_status` | minigraph.py 固定値 | `"up"` (常時) | `minigraph.py:2294` |
 | `speed` | `port_speeds_default` dict にエイリアスが存在する場合のみ | platform 定義のデフォルト速度 (例 `1000`) | `minigraph.py:2295-2296` |
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 `MGMT_PORT` は [orchagent](../../reference/glossary.md#term-orchagent) では処理されない。`portmgrd` 系が [CONFIG_DB](../../reference/glossary.md#term-config_db) の変更を受けてカーネル管理ポートを設定する。条件付き platform 登録なし。
 
@@ -215,9 +215,9 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
-> **訂正 (Phase A 調査)**: `portmgr.cpp` / `portmgrd` は `CFG_PORT_TABLE_NAME`（= `"PORT"`、データポート）のみを購読し、`MGMT_PORT` テーブルは処理しない (`sonic-swss/cfgmgr/portmgrd.cpp:28`)。以下は実際の MGMT_PORT コンシューマ。
+> **訂正**: `portmgr.cpp` / `portmgrd` は `CFG_PORT_TABLE_NAME`（= `"PORT"`、データポート）のみを購読し、`MGMT_PORT` テーブルは処理しない (`sonic-swss/cfgmgr/portmgrd.cpp:28`)。以下は実際の MGMT_PORT コンシューマ。
 
 | Handler | 処理内容 | 効果 | evidence |
 |---|---|---|---|
@@ -225,12 +225,12 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 | `lldpd.conf.j2` | `alias` フィールドを参照 | [LLDP](../../reference/glossary.md#term-lldp) portidsubtype local に alias 値を設定 | `sonic-buildimage/dockers/docker-lldp/lldpd.conf.j2:17-18` |
 | `sonic-snmpagent` | `alias` フィールドを読み取り (`get('alias', if_name)`) | [SNMP](../../reference/glossary.md#term-snmp) MIB インタフェーステーブルに alias を返却、未設定時は if_name (eth0) をフォールバック | `sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py:270` |
 
-> **スキャン証跡**: minigraph.py:2281-2296 確認。admin_status は常時 "up" で固定であることを確認 — 誤読なし。[portmgrd](../../reference/glossary.md#term-portmgrd).cpp:28 確認、CFG_PORT_TABLE_NAME="PORT" のみ購読。
+> **裏取り**: minigraph.py:2281-2296 確認。admin_status は常時 "up" で固定であることを確認 — 誤読なし。[portmgrd](../../reference/glossary.md#term-portmgrd).cpp:28 確認、CFG_PORT_TABLE_NAME="PORT" のみ購読。
 
 <!-- /handler-branching -->
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来フォールバック (Phase A)
+## 暗黙デフォルト・コード由来フォールバック
 
 <!-- evidence: sonic-buildimage/src/sonic-config-engine/minigraph.py / sonic-buildimage/files/image_config/monit/mgmt_oper_status.py / sonic-swss/cfgmgr/portmgr.h / sonic-buildimage/files/image_config/interfaces/interfaces.j2 / sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py -->
 
@@ -251,7 +251,7 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `MGMT_PORT` は [orchagent](../../reference/glossary.md#term-orchagent) / [SAI](../../reference/glossary.md#term-sai) を経由しない。Consumer は `mgmt_oper_status.py`（monit スクリプト）と `lldpd.conf.j2` のみであり、書込み順依存は CONFIG_DB → STATE_DB の一方向で完結する。
 
@@ -273,9 +273,7 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/mgmt-port-cross-refs.md`
+## 暗黙参照テーブル
 
 MGMT_PORT は orchagent / SAI を経由しない。他テーブル・他設定ファイルへの実装上の依存は `lldpd.conf.j2` と `sonic-snmpagent` の 2 系統に集中する。
 
@@ -298,7 +296,7 @@ MGMT_PORT は orchagent / SAI を経由しない。他テーブル・他設定�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 <!-- evidence: sonic-buildimage/files/image_config/monit/mgmt_oper_status.py / sonic-host-services/scripts/hostcfgd MgmtIfaceCfg -->
 
@@ -329,7 +327,7 @@ MGMT_PORT は orchagent / SAI を経由しない。他テーブル・他設定�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mgmt_port.yang / sonic-buildimage/files/image_config/monit/mgmt_oper_status.py / sonic-buildimage/files/image_config/config-setup/config-setup.conf / sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py / sonic-buildimage/dockers/docker-lldp/lldpd.conf.j2 -->
 
@@ -355,7 +353,7 @@ MGMT_PORT は orchagent / SAI を経由しない。他テーブル・他設定�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-buildimage/files/image_config/monit/mgmt_oper_status.py / sonic-host-services/scripts/hostcfgd MgmtIfaceCfg / sonic-swss/cfgmgr/portmgrd.cpp -->
 
@@ -389,12 +387,10 @@ STATE_DB MGMT_PORT_TABLE|eth0
 
 `MGMT_PORT|eth0` が DEL されると `mgmt_oper_status.py` は CONFIG_DB のキーを空と判定して STATE_DB を更新せず終了する。既存の `STATE_DB MGMT_PORT_TABLE|eth0` エントリは削除されず残存する（ゴースト状態）。monit の次回実行でも CONFIG_DB が空のままであれば同様にスキップされるため、手動削除が必要になる（`sonic-db-cli STATE_DB del 'MGMT_PORT_TABLE|eth0'`）。
 
-詳細 grep スキャン結果は `meta/_intermediate/cdb-flow/mgmt-port-side-effects.md` を参照。
-
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Phase G: CONFIG_DB Subscribe 機構 (通信メカニズム)
+## CONFIG_DB Subscribe 機構 (通信メカニズム)
 
 `MGMT_PORT` テーブルに対する CONFIG_DB の通信メカニズムを整理する。結論を先に述べると、**event-driven な subscribe consumer は存在しない**。唯一の変化検知は monit による定期 polling である。
 
@@ -465,9 +461,9 @@ CONFIG_DB MGMT_PORT|eth0 (SET/DEL)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-`MGMT_PORT` の処理は SAI を一切経由しないため、[ASIC](../../reference/glossary.md#term-asic) 種別によるプラットフォーム差はない。ただし `speed` フィールドの有無は **[HwSku](../../reference/glossary.md#term-hwsku)（platform）依存** であり、以下に示す観点でプラットフォーム間に動作差が生じる。詳細根拠は [`meta/_intermediate/cdb-flow/mgmt-port-platform.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/mgmt-port-platform.md) を参照。
+`MGMT_PORT` の処理は SAI を一切経由しないため、[ASIC](../../reference/glossary.md#term-asic) 種別によるプラットフォーム差はない。ただし `speed` フィールドの有無は **[HwSku](../../reference/glossary.md#term-hwsku)（platform）依存** であり、以下に示す観点でプラットフォーム間に動作差が生じる。
 
 ### A. speed フィールドの有無 — HwSku 依存
 

@@ -85,7 +85,7 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-mgmt_interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang>
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `MGMT_INTERFACE` の Consumer は主に `hostcfgd` (`MgmtIfaceCfg`) と `interfaces-config`（`interfaces.j2` テンプレート）。変更検知時に `systemctl restart interfaces-config` を実行して `/etc/network/interfaces` を再生成するため、以下の順序依存が発生する。
 
@@ -106,7 +106,7 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 **[RADIUS](../../reference/glossary.md#term-radius) 送信元 IP 解決 (依存 #3)**: `mgmt_intf_handler()` は `MGMT_INTERFACE` の変更を受け取ると `aaacfg.handle_radius_source_intf_ip_chg(mgmt_intf_name)` を呼び RADIUS の送信元 IP を再解決する（`hostcfgd:2348-2350`）。RADIUS 設定が先に存在し `src_intf=eth0` が設定されている場合、`MGMT_INTERFACE` の IP 変更後に RADIUS 送信元 IP が自動更新される。この依存は `RADIUS_SERVER.src_intf` を使用する構成でのみ顕在化する。
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 <!-- evidence: sonic-buildimage/files/image_config/interfaces/interfaces.j2 / sonic-host-services/scripts/hostcfgd / sonic-utilities/config/main.py / sonic-buildimage/src/sonic-config-engine/minigraph.py -->
 
@@ -236,7 +236,7 @@ enum なし。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `MGMT_INTERFACE`
 
@@ -264,7 +264,7 @@ enum なし。
 <!-- /entry-points -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
 YANG leafref を超えた他テーブル・他設定ファイルへの実装上の依存関係。ソース: `intfmgr`（`sonic-swss/cfgmgr/intfmgr.cpp`）および `interfaces.j2`（`sonic-buildimage/files/image_config/interfaces/interfaces.j2`）。
 
@@ -289,9 +289,9 @@ YANG leafref を超えた他テーブル・他設定ファイルへの実装上�
 <!-- /cross-refs -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -300,7 +300,7 @@ YANG leafref を超えた他テーブル・他設定ファイルへの実装上�
 
 minigraph.py は `eth0` を管理インタフェース名として固定し、`speed` が `port_speeds_default` にある場合のみ `MGMT_PORT.speed` を同時設定する。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 `MGMT_INTERFACE` は [orchagent](../../reference/glossary.md#term-orchagent) では処理されない。`mgmtintfmgrd` (cfgmgr 系) が CONFIG_DB を購読しカーネル netns/vrf を設定する。条件付き platform 登録なし。
 
@@ -313,7 +313,7 @@ minigraph.py は `eth0` を管理インタフェース名として固定し、`s
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `IntfMgr` (`cfgmgr/intfmgr.cpp` 系) の処理分岐:
 
@@ -324,12 +324,12 @@ minigraph.py は `eth0` を管理インタフェース名として固定し、`s
 | `IntfMgr` | `doTask()` | management VRF が有効 (`MGMT_VRF_CONFIG.mgmtVrfEnabled=true`) | `ip route add ... table mgmt` で管理 VRF ルートテーブルへ | `sonic-swss/cfgmgr/intfmgr.cpp` |
 | `IntfMgr` | `doTask()` | USB リセットパス検出 | USB controller リセット分岐で追加処理 | `sonic-swss/cfgmgr/intfmgr.cpp` |
 
-> **スキャン証跡**: minigraph.py:2281-2297,2869-2880 を確認、4 件分岐抽出。MGMT_INTERFACE は [orchagent](../../reference/glossary.md#term-orchagent) 非経由を確認 — 誤読なし。
+> **裏取り**: minigraph.py:2281-2297,2869-2880 を確認、4 件分岐抽出。MGMT_INTERFACE は [orchagent](../../reference/glossary.md#term-orchagent) 非経由を確認 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- pubsub -->
-## Phase G: CONFIG_DB Subscribe 機構 (通信メカニズム)
+## CONFIG_DB Subscribe 機構 (通信メカニズム)
 
 ### hostcfgd — MGMT_INTERFACE Subscribe 登録
 
@@ -408,7 +408,7 @@ CONFIG_DB MGMT_INTERFACE|eth0|<ip_prefix> (SET/DEL)
 <!-- /pubsub -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp -->
 
@@ -441,7 +441,7 @@ CONFIG_DB MGMT_INTERFACE|eth0|<ip_prefix> (SET/DEL)
 
 <!-- /failure -->
 
-## 書込み順依存 (Phase B) (補足)
+## 書込み順依存 (補足)
 
 > 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`
 > 調査日: 2026-05-16
@@ -495,12 +495,10 @@ IPv4 link-local アドレスは [APPL_DB](../../reference/glossary.md#term-appl_
 - orchagent の `allPortsReady()` チェックや `gPortsOrch->getPort()` は適用されない
 - VRF 変更時（`isIntfChangeVrf`、`L308`）は既存 IP を一度削除してから再追加するため、eth0 VRF 変更は一時的なアドレス喪失を伴う
 
-詳細調査ノートは `meta/_intermediate/cdb-flow/mgmt-interface-ordering.md` 参照。
-
 <!-- /ordering -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E / intfmgr)
+## ハードコード定数 (intfmgr)
 
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp L24-29, sonic-buildimage/src/sonic-config-engine/minigraph.py L2874,2880 -->
 
@@ -533,7 +531,7 @@ XML `ManagementIPInterfaces` に記載されたインターフェース名に関
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd L495-525,1626-1643,2345-2350; sonic-buildimage/files/image_config/interfaces/interfaces-config.sh; sonic-swss/cfgmgr/intfmgrd.cpp:28-35 -->
 
@@ -574,12 +572,10 @@ RADIUS 設定を保持しない環境では上記 2 メソッドはいずれも�
 
 eth0 の IP アドレスが変更される場合、`interfaces-config` サービス再起動中に eth0 の IP が一時的に解除される。SSH セッションが eth0 経由であれば接続が切断される点に注意。
 
-詳細調査ノートは `meta/_intermediate/cdb-flow/mgmt-interface-side-effects.md` 参照。
-
 <!-- /side-effects -->
 
 <!-- phase-f -->
-## 副次 DB 書込 (Phase F) — interfaces-config 詳細
+## 副次 DB 書込 — interfaces-config 詳細
 
 `MGMT_INTERFACE` テーブルへの書込が発生すると、以下の副次処理が連鎖して行われる。
 
@@ -623,14 +619,14 @@ CONFIG_DB MGMT_INTERFACE 変化
 
 `MGMT_VRF_CONFIG.mgmtVrfEnabled` が変化した場合も `MgmtIfaceCfg.update_mgmt_vrf()` が `systemctl restart interfaces-config` を発行し、上記と同じ経路でカーネル設定が更新される[^F1]。
 
-> **スキャン証跡**: `sonic-host-services/scripts/hostcfgd:1626-1661, 2345-2350, 2485` および `sonic-buildimage/files/image_config/interfaces/interfaces-config.sh` を確認。`intfmgrd` 非経由を確認 — 誤読なし。
+> **裏取り**: `sonic-host-services/scripts/hostcfgd:1626-1661, 2345-2350, 2485` および `sonic-buildimage/files/image_config/interfaces/interfaces-config.sh` を確認。`intfmgrd` 非経由を確認 — 誤読なし。
 
 [^F1]: `sonic-host-services/scripts/hostcfgd` L1637, L1661. <https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd>
 
 <!-- /phase-f -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `MGMT_INTERFACE` の処理は `interfaces.j2` テンプレート（`sonic-buildimage`）と `IntfMgr` (`sonic-swss/cfgmgr/intfmgr.cpp`) の 2 箇所でプラットフォーム・構成差を持つ。
 

@@ -191,7 +191,7 @@ show ip interfaces | grep Loopback
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `LOOPBACK_INTERFACE`
 
@@ -284,7 +284,7 @@ APP_INTF_TABLE に記録される。
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 > 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`
 > 調査日: 2026-05-16
@@ -338,12 +338,10 @@ IP プレフィクスロウ（`doIntfAddrTask()` SET パス）は属性ロウの
 - `cold restart` 時は `flushLoopbackIntfs()` でカーネルから全 Loopback を削除後に再作成する（`intfmgr.cpp:57`）
 - `warm-start` 時は `buildIntfReplayList()` が CONFIG_DB から Loopback キーを収集し replay する
 
-詳細調査ノートは `meta/_intermediate/cdb-flow/loopback-interface-ordering.md` 参照。
-
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 YANG leafref を超えた他テーブル・他 DB・プラットフォームファイルへの実装上の依存関係。
 
@@ -361,8 +359,6 @@ YANG leafref を超えた他テーブル・他 DB・プラットフォームフ�
     - **`STATE_*TABLE` 依存** は YANG leafref には現れない実行時 readiness ガード。VRF が未 ready なら Consumer がエントリを保持して自動再試行する。
     - **`DEVICE_METADATA.switch_type` 依存** は起動時 1 回読みのため、intfmgrd 起動後に `switch_type` を変更しても反映されない。
     - VRF バインド・IP 削除ガードの詳細は `<!-- implicit-refs -->` セクション参照。
-
-詳細調査ノートは `meta/_intermediate/cdb-flow/loopback-interface-cross-refs.md` 参照。
 
 <!-- /cross-refs -->
 
@@ -428,7 +424,7 @@ VRF 解除後のアドレス競合（グローバル VRF への暗黙フォー�
 <!-- /implicit-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 > 証跡: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
 
@@ -454,14 +450,12 @@ VRF 解除後のアドレス競合（グローバル VRF への暗黙フォー�
 - **SAI 側の失敗はフレームワーク再試行あり**。orchagent は `handleSaiCreateStatus` / `handleSaiSetStatus` で retry / success / failure を判定し、リトライ可能なものはキューに戻す。
 - **DEL の保留はログなし**。IP プレフィクスロウ残存による DEL 保留はサイレントなため、`sonic-db-cli CONFIG_DB hgetall 'LOOPBACK_INTERFACE|Loopback<N>'` で手動確認が必要。
 
-詳細調査ノートは `meta/_intermediate/cdb-flow/loopback-interface-failure.md` 参照。
-
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-swss/cfgmgr/intfmgr.cpp` L22-29, L201 / `sonic-swss/orchagent/intfsorch.cpp` L43-47, L1148-1165, L1210-1228 / `sonic-utilities/config/main.py` L104-108 精読 (2026-05-16)
+> **Evidence**: `sonic-swss/cfgmgr/intfmgr.cpp` L22-29, L201 / `sonic-swss/orchagent/intfsorch.cpp` L43-47, L1148-1165, L1210-1228 / `sonic-utilities/config/main.py` L104-108 精読 (2026-05-16)
 
 ### intfmgrd — ループバック識別・MTU ハードコード
 
@@ -504,12 +498,10 @@ SAI 属性: `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION`
 - **`loopback_action` 未設定時のデフォルト**: CONFIG_DB に `loopback_action` がなければ SAI 属性は設定されず、SAI 実装依存のデフォルト（通常 `forward`）が維持される。
 - **MTU 変更不可**: `LOOPBACK_DEFAULT_MTU_STR = "65536"` はカーネル dummy デバイス作成コマンドにハードコードされており、CONFIG_DB 経由での変更手段は存在しない。
 
-詳細調査ノートは `meta/_intermediate/cdb-flow/loopback-interface-constants.md` 参照。
-
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次書込み (Phase F)
+## 副次書込み
 
 > 証跡: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`  
 > 調査日: 2026-05-16
@@ -562,12 +554,10 @@ SAI 属性: `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION`
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_RIF_NAME_MAP`, `COUNTERS_RIF_TYPE_MAP` | SAI RIF 確定後 ≤1 秒 |
 | CHASSIS_APP_DB | `SYSTEM_INTERFACE_TABLE` | SAI RIF 作成時（VOQ のみ） |
 
-詳細調査ノートは `meta/_intermediate/cdb-flow/loopback-interface-side-effects.md` 参照。
-
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -610,11 +600,11 @@ Redis keyspace: PUBLISH "__keyspace@4__:LOOPBACK_INTERFACE|Loopback0|192.0.2.1/3
 
 `intfmgrd` の Select ループは `SELECT_TIMEOUT = 1000` ミリ秒でタイムアウトし、`intfmgr.doTask()` をフォールバック呼び出しする (`intfmgrd.cpp:17,65-68`)。keyspace 通知が届いていない場合でもペンディングキューを定期的に再処理する。
 
-> **Evidence**: `sonic-swss/cfgmgr/intfmgrd.cpp:19-80`、`sonic-swss/cfgmgr/intfmgr.cpp:31-76,1053,1137`、`sonic-swss/orchagent/orchdaemon.cpp:296`、`sonic-swss/orchagent/intfsorch.cpp:61-108`、`sonic-swss-common/common/subscriberstatetable.cpp:17-43`、`sonic-swss-common/common/producerstatetable.cpp:72-120`、`sonic-swss-common/common/table.h:85-96,164`; 詳細分析 `meta/_intermediate/cdb-flow/loopback-interface-pubsub.md`
+> **Evidence**: `sonic-swss/cfgmgr/intfmgrd.cpp:19-80`、`sonic-swss/cfgmgr/intfmgr.cpp:31-76,1053,1137`、`sonic-swss/orchagent/orchdaemon.cpp:296`、`sonic-swss/orchagent/intfsorch.cpp:61-108`、`sonic-swss-common/common/subscriberstatetable.cpp:17-43`、`sonic-swss-common/common/producerstatetable.cpp:72-120`、`sonic-swss-common/common/table.h:85-96,164`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / 環境差異 (Phase H)
+## プラットフォーム / 環境差異
 
 > 証跡: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`,
 > `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`,
@@ -689,8 +679,6 @@ ip -6 address add 2001:db8::1/128 dev Loopback0 metric 256
 | Cold restart | `flushLoopbackIntfs()` でカーネルの全 Loopback を削除後再作成 | `intfmgr.cpp:55-57` |
 | Warm restart | `buildIntfReplayList()` でリプレイ、dummy デバイス保持 | `intfmgr.cpp:61-67` |
 | VoqInband (Loopback4096 等) | `doIntfGeneralTask` バイパス → APPL_DB 直接リレー | `intfmgr.cpp:1195-1204` |
-
-詳細調査ノートは `meta/_intermediate/cdb-flow/loopback-interface-platform.md` 参照。
 
 <!-- /platform -->
 

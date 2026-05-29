@@ -210,7 +210,7 @@ show macsec
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `PORT` (macsec フィールド)
 
@@ -239,7 +239,7 @@ show macsec
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 順序依存・起動順 (Phase B)
+## 順序依存・起動順
 
 <!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp enableMACsec(), isPortStateOk(), removeProfile() -->
 
@@ -305,13 +305,12 @@ removeProfile() — m_macsec_ports に当該 profile_name 参照ポートが存�
 
 削除は逆順 (SA → SC → Port → Switch) で行われる。
 
-詳細分析: `meta/_intermediate/cdb-flow/macsec-port-ordering.md`
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-`PORT|<ifname>` の `macsec` フィールドを処理する際、`macsecmgrd` および `MACsecOrch` が Direction A 入力以外に暗黙的に参照するテーブル・DB を列挙する。スキャン詳細は `meta/_intermediate/cdb-flow/macsec-port-cross-refs.md` を参照。
+`PORT|<ifname>` の `macsec` フィールドを処理する際、`macsecmgrd` および `MACsecOrch` が Direction A 入力以外に暗黙的に参照するテーブル・DB を列挙する。
 
 ### STATE_DB — PORT_TABLE（ポート ready ゲート）
 
@@ -349,7 +348,7 @@ removeProfile() — m_macsec_ports に当該 profile_name 参照ポートが存�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp enableMACsec(), disableMACsec(), startWPASupplicant() -->
 
@@ -381,11 +380,10 @@ removeProfile() — m_macsec_ports に当該 profile_name 参照ポートが存�
 journalctl -u macsecmgrd | grep -iE "fail|warn|Cannot"
 ```
 
-詳細調査: `meta/_intermediate/cdb-flow/macsec-port-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp L27-49,L853 / sonic-swss/orchagent/macsecorch.cpp L24-42 -->
 
@@ -433,11 +431,11 @@ journalctl -u macsecmgrd | grep -iE "fail|warn|Cannot"
 | `MACSEC_STAT_POLLING_INTERVAL_MS` | `10000` ms (10 秒) | 通常 MACsec 統計カウンタのポーリング間隔 | `macsecorch.cpp:28` |
 | `PFC_MODE_DEFAULT` | `"bypass"` | [PFC](../../reference/glossary.md#term-pfc) モード未指定時のデフォルト。MACsec Port 有効化後も [PFC](../../reference/glossary.md#term-pfc) フレームは暗号化せずバイパスする | `macsecorch.cpp:32,2714` |
 
-> **スキャン証跡**: `macsecmgr.cpp` L27-49, L853 精読。`macsecorch.cpp` L24-42, L646-669, L1330-1331, L1424-1426, L2714 精読。`macsecorch.h` L24 精読。定数 4 (パス) + 3 (ポーリング) + 2 (AES) + 4 (SAI) + 6 ([ACL](../../reference/glossary.md#term-acl)/Ethertype/stat) = 19 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/macsec-port-constants.md`
+> **裏取り**: `macsecmgr.cpp` L27-49, L853 精読。`macsecorch.cpp` L24-42, L646-669, L1330-1331, L1424-1426, L2714 精読。`macsecorch.h` L24 精読。定数 4 (パス) + 3 (ポーリング) + 2 (AES) + 4 (SAI) + 6 ([ACL](../../reference/glossary.md#term-acl)/Ethertype/stat) = 19 件抽出。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-swss/orchagent/macsecorch.cpp createMACsecPort:1532-1535 / deleteMACsecPort:1792 / createMACsecSC:2039-2043 / deleteMACsecSC:2161-2165 / createMACsecSA:2371-2376 / deleteMACsecSA:2433-2437 / installCounter:2584-2593 / uninstallCounter:2613-2622 -->
 
@@ -473,11 +471,11 @@ SC (Security Channel) / SA (Security Association) の作成・削除でも同様
 
 `setCounterIdList()` (`macsecorch.cpp:2584-2593`) で SA/Flow の SAI OID と統計属性リストを登録。削除時は `clearCounterIdList()` (`macsecorch.cpp:2613-2622`) で解除。
 
-> **Evidence**: `sonic-swss/orchagent/macsecorch.cpp` L1535 (`m_state_macsec_port.set`), L1792 (`m_state_macsec_port.del`), L2039-2043 (SC set), L2161-2165 (SC del), L2371-2376 (SA set), L2433-2437 (SA del), L2560-2622 (counter 登録/削除)。中間ファイル: `meta/_intermediate/cdb-flow/macsec-port-side-effects.md`
+> **Evidence**: `sonic-swss/orchagent/macsecorch.cpp` L1535 (`m_state_macsec_port.set`), L1792 (`m_state_macsec_port.del`), L2039-2043 (SC set), L2161-2165 (SC del), L2371-2376 (SA set), L2433-2437 (SA del), L2560-2622 (counter 登録/削除)。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Pub/Sub チャンネル (Phase G)
+## Pub/Sub チャンネル
 
 <!-- evidence: sonic-swss/cfgmgr/macsecmgrd.cpp L62-70,L80-105 / sonic-swss/cfgmgr/macsecmgr.cpp L289-349 / sonic-swss/orchagent/macsecorch.cpp L688-691 / sonic-swss/orchagent/orchdaemon.cpp L480-488 -->
 
@@ -528,11 +526,10 @@ ASIC_DB "NOTIFICATIONS" チャンネル
 | `MACsecOrch` | STATE_DB MACsec 状態テーブル | `Table::set()` / `Table::del()` |
 | `MACsecOrch` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `FlexCounterManager` |
 
-詳細調査: `meta/_intermediate/cdb-flow/macsec-port-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `MACsecOrch` が SAI MACsec オブジェクトを生成する際のバックエンドは、ポートに **Gearbox PHY** が割り当てられているか、かつその PHY が MACsec をサポートするか (`macsec_supported`) によって 2 経路に分岐する。`macsecmgrd` 側 (cfgmgr) にはプラットフォーム分岐なし。
 
@@ -572,7 +569,6 @@ SA / フロー統計の収集先は `phy->macsec_supported` で切り替わる (
 !!! note "プラットフォーム識別は Gearbox 設定依存"
     MACsec のプラットフォーム分岐は `DEVICE_METADATA.platform` 文字列ではなく、`GEARBOX` テーブルの `phy` 定義 (`getGearboxPhy()`) と `macsec_supported` フラグで決まる。Gearbox 非搭載の環境（大多数の NPU 直結ポート）では分岐は発生せず NPU パスのみ。
 
-詳細調査: `meta/_intermediate/cdb-flow/macsec-port-platform.md`
 <!-- /platform -->
 
 <!-- glossary-links-injected: f9445b5b4106 -->

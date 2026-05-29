@@ -266,7 +266,7 @@ configureMACsec() — wpa_cli 経由でインターフェース追加・MKA 設�
 <!-- /cdb-exceptions -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ### 失敗パス一覧
 
@@ -311,7 +311,6 @@ journalctl -u macsecmgrd | grep -iE "fail|warn|error"
 sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 ```
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/macsec-profile-failure.md`
 <!-- /failure -->
 
 <!-- runtime-trace -->
@@ -339,7 +338,7 @@ sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `MACSEC_PROFILE`
 
@@ -367,7 +366,7 @@ sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 <!-- /entry-points -->
 
 <!-- cross-refs -->
-## 暗黙参照（Phase C）
+## 暗黙参照
 
 `MACsecMgr` / `MACsecOrch` が `MACSEC_PROFILE` テーブルを処理する際、以下の外部テーブル・DB を明示的な設定フィールドとしてではなく、**実行時のトリガー条件・ゲート・書き込み先**として暗黙的に参照する。
 
@@ -396,7 +395,7 @@ MACsecOrch が SAI sai_macsec_api でセキュリティチャネル確立
 <!-- /cross-refs -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 <!-- source: sonic-swss/cfgmgr/macsecmgr.cpp, sonic-swss/cfgmgr/macsecmgrd.cpp -->
 
@@ -447,11 +446,10 @@ macsecmgrd::enableMACsec()
        sai_macsec_api → ASIC/HW
 ```
 
-詳細分析: `meta/_intermediate/cdb-flow/macsec-profile-pubsub.md`
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Direction B — orch / mgr が書く先)
+## 副次 DB 書込 (orch / mgr が書く先)
 
 > ソース: `sonic-swss/orchagent/macsecorch.cpp`, `sonic-swss/cfgmgr/macsecmgr.cpp`
 
@@ -503,7 +501,7 @@ macsecmgrd::enableMACsec()
 <!-- /side-effects -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### macsecmgr.cpp 固定値
 
