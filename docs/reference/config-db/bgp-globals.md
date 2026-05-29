@@ -224,7 +224,7 @@ vtysh -c 'show running-config bgpd'
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BGP_GLOBALS`
 
@@ -254,16 +254,16 @@ vtysh -c 'show running-config bgpd'
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | minigraph.py は BGP_GLOBALS を直接生成しない | — | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2273` (BGP_NEIGHBOR のみ) |
 | frrcfgd が FRR running-config を読み込み CONFIG_DB と同期 | BGP_GLOBALS の各フィールドを上書き | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2094-2140` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -275,18 +275,18 @@ vtysh -c 'show running-config bgpd'
 - minigraph.py: BGP_GLOBALS への直接代入: 0 件
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
 | `BGPConfigDaemon` | `bgp_global_handler()` | `data is None`（DELETE） | `del_table=True` → FRR に `no router bgp` 相当を送出 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3918` |
 | `BGPConfigDaemon` | `bgp_global_handler()` | `data` が `keepalive` と `holdtime` を共に含む | `comb_attr_list` 制約により両フィールドがセットでのみ FRR コマンドを生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3937` |
 
-> **スキャン証跡**: `bgp_table_handler_common()` L3910 全行読了。BGP_GLOBALS 固有の追加分岐なし。keepalive/holdtime の組み合わせ制約のみ。
+> **裏取り**: `bgp_table_handler_common()` L3910 全行読了。BGP_GLOBALS 固有の追加分岐なし。keepalive/holdtime の組み合わせ制約のみ。
 <!-- /handler-branching -->
 
 <!-- defaults -->
-## Phase A: コード由来の暗黙デフォルト
+## コード由来の暗黙デフォルト
 
 YANG `sonic-bgp-global.yang` の `BGP_GLOBALS_LIST` 本体には `default` 文を持つリーフが**ゼロ**（全フィールド optional）。以下は frrcfgd (`global_key_map` + Jinja2 テンプレート) のコードから判明した実行時 fallback。
 
@@ -319,10 +319,10 @@ YANG `sonic-bgp-global.yang` の `BGP_GLOBALS_LIST` 本体には `default` 文�
 | `BGP_GLOBALS_AF` | `max_ebgp_paths` | **1** | `sonic-bgp-global.yang:345` |
 | `BGP_GLOBALS_AF` | `max_ibgp_paths` | **1** | `sonic-bgp-global.yang:354` |
 
-> **スキャン証跡**: `frrcfgd.py` `global_key_map` L1784-1821 全行読了、`get_command_cmn()` L374-413 全行読了、`bgpd.conf.db.j2` 全行読了、`sonic-bgp-global.yang` 全行読了。
+> **裏取り**: `frrcfgd.py` `global_key_map` L1784-1821 全行読了、`get_command_cmn()` L374-413 全行読了、`bgpd.conf.db.j2` 全行読了、`sonic-bgp-global.yang` 全行読了。
 <!-- /defaults -->
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 BGP_GLOBALS は `frrcfgd`（`BGPConfigDaemon`）が CONFIG_DB を購読して FRR [vtysh](../../reference/glossary.md#term-vtysh) に反映する。以下の書き込み順序・制約を守ること。
 
@@ -371,7 +371,7 @@ VRF インスタンスを使う場合は `VRF|<vrf>` を CONFIG_DB に書いて�
 
 <!-- /ordering -->
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase C)
+## 暗黙テーブル参照
 
 BGP_GLOBALS ハンドラが実装上参照する、YANG leafref 以外の暗黙依存。
 
@@ -425,11 +425,11 @@ multi-asic 環境では各 [ASIC](../../reference/glossary.md#term-asic) コン�
 
 `BGPPeerMgrBase` は `BGP_VOQ_CHASSIS_NEIGHBOR` を常時登録する（条件なし）。[VOQ](../../reference/glossary.md#term-voq) chassis 以外ではこのテーブルにデータが入らないため実質 no-op。BGP_GLOBALS 本体処理への影響はない。
 
-> **スキャン証跡**: `frrcfgd.py` / `bgpd.conf.db.j2` に `chassis|tsa|switch_role|switch_type|multi_asic|voq` で grep 0 ヒット。`bgpcfgd/` 全体で `is_multi_asic` 0 ヒット（テストファイル除く）。`managers_device_global.py` に `is_chassis` 1 ヒット（TSA status 取得のみ）、`switch_role` 3 ヒット（IDF/AsPath 制御のみ）を確認。
+> **裏取り**: `frrcfgd.py` / `bgpd.conf.db.j2` に `chassis|tsa|switch_role|switch_type|multi_asic|voq` で grep 0 ヒット。`bgpcfgd/` 全体で `is_multi_asic` 0 ヒット（テストファイル除く）。`managers_device_global.py` に `is_chassis` 1 ヒット（TSA status 取得のみ）、`switch_role` 3 ヒット（IDF/AsPath 制御のみ）を確認。
 <!-- /platform -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### FRR コマンド literal (`global_key_map`)
 
@@ -496,11 +496,11 @@ vtysh -c "configure terminal" -c "router bgp <asn> vrf <vrf>" -c "no bgp default
 
 これにより、BGP_GLOBALS に `default_ipv4_unicast` フィールドが設定されていなくても、**デフォルトで IPv4 unicast は無効化**される（`frrcfgd.py:2700`）。
 
-> **スキャン証跡**: `frrcfgd.py` L1784-1821 (`global_key_map` 全行), L2700 (`no bgp default ipv4-unicast`), L2716, L3935-3936 確認。`bgpd.conf.db.j2` 全行確認。`sonic-frr/defaults.h` + `bgpd/bgpd.h` L1397-1434 確認。詳細は `meta/_intermediate/cdb-flow/bgp-globals-constants.md` 参照。
+> **裏取り**: `frrcfgd.py` L1784-1821 (`global_key_map` 全行), L2700 (`no bgp default ipv4-unicast`), L2716, L3935-3936 確認。`bgpd.conf.db.j2` 全行確認。`sonic-frr/defaults.h` + `bgpd/bgpd.h` L1397-1434 確認。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 **[STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への副次書込: なし**
 
@@ -524,11 +524,11 @@ BGP_GLOBALS 以外のテーブルが起因する [STATE_DB](../../reference/glos
 | `BGP_AGGREGATE_ADDRESS` | `BGP_AGGREGATE_ADDRESS` (STATE_DB) | `AggregateAddressMgr` |
 | `BGP_INTERFACE` | `STATE_INTERFACE_TABLE_NAME` | `ZebraSetSrc` |
 
-> **スキャン証跡**: `frrcfgd.py` 全 3000+ 行、`bgpcfgd/` 全 .py を `STATE_DB`, `COUNTERS_DB`, `hset`, `.set(`, `update_state_db` で検索。BGP_GLOBALS handler と STATE_DB の接点ゼロを確認（`meta/_intermediate/cdb-flow/bgp-globals-side.md` 参照）。
+> **裏取り**: `frrcfgd.py` 全 3000+ 行、`bgpcfgd/` 全 .py を `STATE_DB`, `COUNTERS_DB`, `hset`, `.set(`, `update_state_db` で検索。BGP_GLOBALS handler と STATE_DB の接点ゼロを確認。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### 購読構成: 二重購読（frrcfgd + bgpcfgd）
 
@@ -576,11 +576,10 @@ DEL (`data is None`) では `del_table=True` が設定され `no router bgp <asn
 
 `subscribe_all()` 前に `config_db.get_table('BGP_GLOBALS')` で全エントリを一括取得し初期設定を replay する (`frrcfgd.py:2175`)。`config_mode == "unified"` のときのみ vtysh への実際の設定適用が行われる。
 
-> 詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-pubsub.md`
 <!-- /pubsub -->
 
 <!-- failure -->
-## Phase D: 失敗挙動マトリクス
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`
 

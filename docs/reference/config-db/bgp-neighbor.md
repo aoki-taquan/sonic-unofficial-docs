@@ -215,7 +215,7 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BGP_NEIGHBOR`
 
@@ -244,9 +244,9 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
@@ -254,7 +254,7 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 | `type IN [MultiAsicInternalPeer]` | `internal_peers` に分類（loopback 参照） | `sonic-buildimage/src/sonic-config-engine/minigraph.py:1355-1360` |
 | `admin_status` が VoQ chassis 構成時 | `enable_internal_bgp_session()` により `admin_status='up'` に強制設定 | `sonic-buildimage/src/sonic-config-engine/minigraph.py:1888-1901` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -267,7 +267,7 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 - bgpcfgd/main.py L87: 条件なし登録（check_neig_meta=True）
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -280,10 +280,10 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 | `BGPPeerMgrBase` | `change_admin_status()` | `admin_status == 'down'` | FRR に `neighbor X shutdown` | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:335` |
 | `BGPPeerMgrBase` | `change_admin_status()` | `admin_status` が up/down 以外 | `log_err` のみ（処理継続） | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:337-339` |
 
-> **スキャン証跡**: `BGPPeerMgrBase` 597 行全行読了。7 件分岐抽出。
+> **裏取り**: `BGPPeerMgrBase` 597 行全行読了。7 件分岐抽出。
 <!-- /handler-branching -->
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 BGP_NEIGHBOR の処理において YANG の leafref 定義を超えて実装上で参照される他テーブルを示す。
 
@@ -307,7 +307,7 @@ BGP_NEIGHBOR の処理において YANG の leafref 定義を超えて実装上�
 
 <!-- /cross-refs -->
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### BGP タイマー固定値（Jinja2 テンプレート）
 
@@ -360,12 +360,11 @@ BGP_NEIGHBOR の処理において YANG の leafref 定義を超えて実装上�
 | `bmp mirror buffer-limit` | **4294967214** bytes | `bgpd.main.conf.j2:130` |
 
 > **discrepancy**: `timers connect 10` は YANG `conn_retry` フィールドと独立してハードコード発行される。bgpcfgd 経路では `conn_retry` の値は FRR に渡らない（frrcfgd 経路のみ有効）。  
-> **discrepancy**: `internal` / `voq_chassis` peer_type では CONFIG_DB の `keepalive`/`holdtime` 値は完全に無視され、テンプレートの固定値 (3/10、2/7) が強制適用される。  
-> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-constants.md`
+> **discrepancy**: `internal` / `voq_chassis` peer_type では CONFIG_DB の `keepalive`/`holdtime` 値は完全に無視され、テンプレートの固定値 (3/10、2/7) が強制適用される。
 
 <!-- /constants -->
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 YANG には `default` 文が一切ない。フィールドごとのランタイム実効値はテンプレートやコードで決まる。
 
@@ -429,10 +428,9 @@ bgpcfgd は `constants.yml` の `peers.<type>.db_table` でテーブルを区別
 
 YANG の `peer_type` フィールドは bgpcfgd 経路では **参照されない**。frrcfgd 経路でのみ有効。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-defaults.md`
 <!-- /defaults -->
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### DEVICE_METADATA.bgp_asn 先行必須（最上位依存）
 
@@ -484,10 +482,9 @@ warm-reboot 時、`WARM_RESTART.bgp.bgp_eoiu = "true"` が設定されている�
 | 8 | bgpd running → bgpcfgd 起動 | 起動時（supervisord） | bgpcfgd は bgpd 起動前に FRR 操作不可 |
 | 9 | warm-restart EOR 待機 | warm-reboot 時 | [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が経路 reconcile を最大 120 秒保留 |
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-ordering.md`
 <!-- /ordering -->
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
+## 失敗挙動・retry / recovery
 
 ### retry キュー (`set_queue`) の仕組み
 
@@ -527,10 +524,9 @@ deps 変化 (Loopback0 / neigmeta / bgp_asn) → on_deps_change() → replay →
 
 `update_state_db()` ([STATE_DB](../../reference/glossary.md#term-state_db): `BGP_PEER_CONFIGURED_TABLE`) はコマンド発行 **成功後のみ** 呼ばれる。[STATE_DB](../../reference/glossary.md#term-state_db) 更新自体が失敗した場合は `LOG_ERR` を出すが FRR 操作は既に `cfg_mgr.push()` 済みのため **FRR と [STATE_DB](../../reference/glossary.md#term-state_db) の乖離が生じうる**。`ERROR_TABLE` への記録はなし。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-failure.md`
 <!-- /failure -->
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 ### 購読方式: SubscriberStateTable + keyspace PSUBSCRIBE
 
@@ -580,11 +576,10 @@ CONFIG_DB への HSET / HDEL / DEL
 
 CONFIG_DB への書き込みが [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 経由の場合、書き込み側は `BGP_NEIGHBOR_CHANNEL@<db_id>` を PUBLISH する (table.h `getChannelName()`)。[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) はそのチャンネルを SUBSCRIBE するが、bgpcfgd の SubscriberStateTable は **keyspace notification** を使うため、書き込み元が [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) か直接 HSET かを問わずイベントを受信できる。[APPL_DB](../../reference/glossary.md#term-appl_db)・STATE_DB は BGP_NEIGHBOR のパスには介在しない。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-pubsub.md`
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `BGPPeerMgrBase` は CONFIG_DB `BGP_NEIGHBOR` の変化を FRR に反映した後、STATE_DB の `BGP_PEER_CONFIGURED_TABLE` にも書き込む。[APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への書込はない。
 
@@ -610,7 +605,6 @@ CONFIG_DB への書き込みが [ProducerStateTable](../../reference/glossary.md
 - `update_state_db()` 内で Exception が発生すると `LOG_ERR` を出すが FRR 操作は既に完了しているため **FRR と STATE_DB が乖離しうる**。`ERROR_TABLE` への記録はなし。
 - DEL 時に key が STATE_DB に存在しない場合は `LOG_WARN` のみで処理続行（no-op）。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-side.md`
 <!-- /side-effects -->
 
 <!-- platform -->
@@ -678,7 +672,6 @@ BGP_NEIGHBOR は FRR (`bgpd`) 止まりで [SAI](../../reference/glossary.md#ter
 
 ソース: `bgpcfgd/main.py` L112–113; `managers_chassis_app_db.py`
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-platform.md`
 <!-- /platform -->
 
 <!-- glossary-links-injected: 157147be9ccc -->

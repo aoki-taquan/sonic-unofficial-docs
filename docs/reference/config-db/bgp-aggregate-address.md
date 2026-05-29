@@ -109,7 +109,7 @@ BGP_AGGREGATE_ADDRESS|<aggregate-address>
 <!-- /value-behavior -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `BGP_AGGREGATE_ADDRESS` の YANG (`sonic-bgp-aggregate-address.yang`) には leafref 宣言がない。以下はすべて `bgpcfgd` (`managers_aggregate_address.py`) および参考として `frr-mgmt-framework` (`frrcfgd.py`) の実装レベル暗黙参照。
 
@@ -192,7 +192,7 @@ vtysh -c 'show bgp ipv4 unicast'
 <!-- /runtime-trace -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Producer/Consumer ペア
 
@@ -256,7 +256,7 @@ NotificationConsumer: なし
 <!-- /pubsub -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BGP_AGGREGATE_ADDRESS`
 
@@ -284,7 +284,7 @@ NotificationConsumer: なし
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 > 調査対象: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py` / `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`
 > 調査日: 2026-05-16
@@ -324,7 +324,6 @@ aggregate 本体 → prefix-list の順であり、中間状態では aggregate 
 | `BGP_AGGREGATE_ADDRESS` DEL | STATE_DB が `inactive` の場合 FRR 削除コマンドをスキップ。`inactive` の判定が `set_address_state` 経由でしか書かれないため、CONFIG_DB と STATE_DB の整合が崩れていると削除漏れの可能性 | `managers_aggregate_address.py:138-146` |
 | DEL の vtysh 順 | aggregate 本体 (`no aggregate-address ...`) → 関連 prefix-list (`no ip\|ipv6 prefix-list ...`) の順で `push_list` | `managers_aggregate_address.py:148-185` |
 
-詳細根拠とスキャンログは intermediate メモ (`meta/_intermediate/cdb-flow/bgp-aggregate-address-ordering.md`) を参照。
 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:33 -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:73 -->
@@ -334,7 +333,7 @@ aggregate 本体 → prefix-list の順であり、中間状態では aggregate 
 <!-- /ordering -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 YANG `default` 宣言に加えて、`bgpcfgd` (`managers_aggregate_address.py`) と `sonic-utilities` (`config/bgp_cli.py`) が独立して同値を `.get()` / `is_flag` で再定義している。全フィールドで三層 (YANG / bgpcfgd / CLI) が一致しており、フィールド欠落時の挙動は以下のとおり。
 
@@ -367,7 +366,6 @@ YANG `default` 宣言に加えて、`bgpcfgd` (`managers_aggregate_address.py`) 
 | single-asic / multi-asic | なし | `managers_aggregate_address.py` / `frrcfgd.py` を `platform / asic / chassis / multi_npu` で grep しても 0 ヒット |
 | platform-specific j2 / hwsku 上書き | なし | `device/<vendor>/<platform>/` および `files/image_config/` に aggregate-address 差分なし |
 
-詳細根拠は intermediate メモ (`meta/_intermediate/cdb-flow/bgp-aggregate-address-platform.md`) を参照。
 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:105 -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py -->
@@ -375,7 +373,7 @@ YANG `default` 宣言に加えて、`bgpcfgd` (`managers_aggregate_address.py`) 
 <!-- /platform -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ### 失敗パス一覧
 
@@ -424,7 +422,6 @@ sonic-db-cli STATE_DB hgetall 'BGP_AGGREGATE_ADDRESS|10.0.0.0/24'
 journalctl -u bgp | grep -iE 'aggregate|frr daemon'
 ```
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/bgp-aggregate-address-failure.md`
 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:65 -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:46 -->
@@ -434,7 +431,7 @@ journalctl -u bgp | grep -iE 'aggregate|frr daemon'
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `bgpcfgd` (`managers_aggregate_address.py`) と `frr-mgmt-framework` (`frrcfgd.py`) が CONFIG_DB / STATE_DB のフィールド名・FRR vtysh コマンドリテラル・プレフィクス長上限を module-level / 関数内リテラルとしてハードコード保持する。YANG / CONFIG_DB から変更できない値はここに集約される。
 
@@ -522,7 +519,7 @@ journalctl -u bgp | grep -iE 'aggregate|frr daemon'
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `managers_aggregate_address.py` / `frrcfgd.py` に `COUNTERS_DB` / `FlexCounter` 参照なし。BGP 集約はカウンタ統合対象外 |
 | APPL_STATE_DB | なし | 両ファイルに `APPL_STATE_DB` / `APP_STATE_DB` 参照なし。FRR が APPL_DB `ROUTE_TABLE` に集約ルートを注入する経路は `RouteOrch` 配下で扱われ、`BGP_AGGREGATE_ADDRESS` handler とは独立 |
 | [ASIC_DB](../../reference/glossary.md#term-asic_db) | なし (間接のみ) | bgpcfgd は SAI を直接呼ばない。FRR → APPL_DB `ROUTE_TABLE` → `RouteOrch` → `sairedis` 経路で [ASIC_DB](../../reference/glossary.md#term-asic_db) に到達するが、これは `ROUTE_TABLE` の副作用であり本テーブルの handler 由来ではない |
-| ERROR_TABLE | なし | 失敗パス (Phase D 既調査) のいずれも ERROR_TABLE 書込を行わず、syslog 出力に限定 |
+| ERROR_TABLE | なし | 失敗パスのいずれも ERROR_TABLE 書込を行わず、syslog 出力に限定 |
 
 !!! note "frrcfgd 経路との非対称"
     別テーブル `BGP_GLOBALS_AF_AGGREGATE_ADDR` (frr-mgmt-framework 経路) は
@@ -530,7 +527,6 @@ journalctl -u bgp | grep -iE 'aggregate|frr daemon'
     で STATE_DB 反映の有無が**非対称**である点に注意 (本ページ対象は
     bgpcfgd 経路)。
 
-詳細な走査ログは `meta/_intermediate/cdb-flow/bgp-aggregate-address-side.md` を参照。
 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:42 -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:209 -->
