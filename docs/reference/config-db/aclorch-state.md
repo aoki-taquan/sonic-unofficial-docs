@@ -147,7 +147,7 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 - 値はサポートされるアクション名（`PACKET_ACTION`, `REDIRECT_ACTION`, `MIRROR_INGRESS_ACTION` 等）をカンマ区切りで列挙した文字列。
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `AclOrch` は [CONFIG_DB](../../reference/glossary.md#term-config_db) / APP_DB の `ACL_TABLE` / `ACL_RULE` を SAI に反映した後、結果ステータスを [STATE_DB](../../reference/glossary.md#term-state_db) 3 テーブルへ書き込む。SAI 操作の成否と親子関係（テーブル → ルール）に応じて、書込み順は orchagent 内部で自動調停されるが、consumer から観測しうる中間状態がいくつか存在する。
 
@@ -174,7 +174,7 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 <!-- /ordering -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 本ページが扱う STATE_DB 3 テーブルでは、テーブル名・フィールド名・状態文字列・ステージ文字列・真偽デフォルトのほぼ全てがソースコード側の `#define` または静的データに固定されている。CONFIG_DB / [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 等の外部入力で変わるのは `<table_name>` / `<rule_name>` の動的部分と、プラットフォーム分岐される `supported_L3V4V6` / `action_list` の値のみ。
 
@@ -251,7 +251,7 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 | `sonic-mgmt-common` (translib) | `STATE_DB ACL_STAGE_CAPABILITY_TABLE` | REST/[gNMI](../../reference/glossary.md#term-gnmi) 経由の能力情報提供 |
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 本ページの STATE_DB 3 テーブル（`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `ACL_STAGE_CAPABILITY_TABLE`）はいずれも [YANG](../../reference/glossary.md#term-yang) 未モデル化のオペレーショナルテーブルで、`AclOrch` が**書き手 (producer only)** として書き込む。
 ここでの暗黙参照は、これら STATE_DB エントリの**生成トリガ・キー値・フィールド値**が依存する入力側テーブルと前提 Orch / プラットフォーム情報を指す。
@@ -279,7 +279,7 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 本ページの STATE_DB 3 テーブル (`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `ACL_STAGE_CAPABILITY_TABLE`) は `AclOrch` のみが書き手で、`swss::Table::set/del` を直接呼ぶ（戻り値なし）。よって「STATE_DB 書込み自体の失敗」はアプリ層で観測できず、[Redis](../../reference/glossary.md#term-redis) 接続例外時は orchagent プロセスごと abort して systemd 再起動で自己回復する経路に集約される。本節は (A) SAI capability クエリ失敗時のフォールバック、(B/C) `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` ステータス書込みに至る失敗分岐、(D) SAI リソース枯渇時の retry cache 経由経路、(E) `init()` 起動時クリアの例外扱い、の 5 系統を整理する。
 
@@ -329,14 +329,14 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 - **`status` 値は 5 状態** (`"Active"` / `"Inactive"` / `"Pending creation"` / `"Pending removal"` / エントリ削除)。失敗経路では `"Inactive"` が恒久スキップ、`"Pending creation"` / `"Pending removal"` が再試行ループに対応する。
 - **`setAclTableStatus` / `setAclRuleStatus` / `putAclActionCapabilityInDB` の戻り値なし**: `swss::Table::set/del` は void。[Redis](../../reference/glossary.md#term-redis) 失敗は例外として伝播し、orchagent プロセス再起動でのみ回復する。STATE_DB 不整合が永続することは設計上ない（再起動後 CONFIG_DB / APPL_DB 再投入で再構築）。
 - **capability フォールバックの不可逆性**: SAI が後から capability を返せるようになっても再クエリされない。`ACL_STAGE_CAPABILITY_TABLE` の値は orchagent プロセス寿命中固定。
-- **retry cache の解放契機の非自明性**: 「無関係に見えるルール A の DEL がルール B を `Pending creation` → `Active` に遷移させる」順序がある。Phase B（順序依存 #5）と表裏。
+- **retry cache の解放契機の非自明性**: 「無関係に見えるルール A の DEL がルール B を `Pending creation` → `Active` に遷移させる」順序がある。「書込み順依存」（順序依存 #5）と表裏。
 
-> **証跡**: `queryAclActionCapability()` L3975-4054、`initDefaultAclActionCapabilities()` L4104-4118、`putAclActionCapabilityInDB()` L4056-4101、`doAclTableTask()` L5450-5518、`doAclRuleTask()` L5520-5734、`setAclTableStatus()` L6088-6093、`setAclRuleStatus()` L6102-6107、`removeAllAclTableStatus()` / `removeAllAclRuleStatus()` L6116-6135、`isSaiStatusResourceFull` L5673、`notifyRetry` L5720。詳細グレップ証跡は `meta/_intermediate/cdb-flow/aclorch-state-failure.md` を参照。
+> **Evidence**: `queryAclActionCapability()` L3975-4054、`initDefaultAclActionCapabilities()` L4104-4118、`putAclActionCapabilityInDB()` L4056-4101、`doAclTableTask()` L5450-5518、`doAclRuleTask()` L5520-5734、`setAclTableStatus()` L6088-6093、`setAclRuleStatus()` L6102-6107、`removeAllAclTableStatus()` / `removeAllAclRuleStatus()` L6116-6135、`isSaiStatusResourceFull` L5673、`notifyRetry` L5720。
 
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 本ページが扱う STATE_DB 3 テーブル (`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `ACL_STAGE_CAPABILITY_TABLE`) に加え、`AclOrch` は ACL ルールに対する SAI カウンタ統計を有効化する際に **[COUNTERS_DB](../../reference/glossary.md#term-counters_db)** および **[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)** へ副次的なエントリを書き込む。SAI ACL `entry`/`counter` 自体の書込み ([ASIC_DB](../../reference/glossary.md#term-asic_db) 経由) は主作用のため除外する。
 
@@ -347,11 +347,11 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 
 呼出しトリガは ACL ルール作成 (`registerFlexCounter` at L4982, L5153)、`updateAclRule` でのカウンタ有効/無効切替 (L5019, L5157)、テーブル / ルール削除時の deregister 連鎖 (L3001, L3095) など。APPL_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) / CONFIG_DB への直接書込みは検出されなかった (`ProducerStateTable` / `NotificationProducer` メンバは未保有)。
 
-> **Evidence**: `sonic-swss/orchagent/aclorch.cpp` L25-26 (`m_countersDb` / `m_countersTable`), L45 (`COUNTERS_ACL_COUNTER_RULE_MAP`), L4208-4214 (`m_flex_counter_manager` 初期化), L6020-6048 (`registerFlexCounter` / `deregisterFlexCounter`); 詳細スキャンと grep 結果は `meta/_intermediate/cdb-flow/aclorch-state-side.md` を参照。
+> **Evidence**: `sonic-swss/orchagent/aclorch.cpp` L25-26 (`m_countersDb` / `m_countersTable`), L45 (`COUNTERS_ACL_COUNTER_RULE_MAP`), L4208-4214 (`m_flex_counter_manager` 初期化), L6020-6048 (`registerFlexCounter` / `deregisterFlexCounter`)
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 STATE_DB に書き出される 3 テーブル（`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `ACL_STAGE_CAPABILITY_TABLE`）は、[ASIC](../../reference/glossary.md#term-asic) / SAI capability および `platform` / `sub_platform` 環境変数によって書込み内容に差が出る。差は (a) `ACL_STAGE_CAPABILITY_TABLE` のフィールド値に直接現れる差、(b) `ACL_TABLE_TABLE.status` / `ACL_RULE_TABLE.status` の分布に間接的に現れる差、の 2 系統に整理できる。
 
@@ -426,11 +426,11 @@ STATE_DB に書き出される 3 テーブル（`ACL_TABLE_TABLE` / `ACL_RULE_TA
 | vs (virtual) | `"true"` | SAI or フォールバック | **yes** | no | SAI 依存 |
 | 未知 platform | `"false"` | フォールバック (`defaultAclActionsSupported`) | no | **yes** | SAI 依存 |
 
-> **スキャン証跡**: `AclOrch::init()` L3475–3720 / `queryAclActionCapability()` L4017–4054 / `putAclActionCapabilityInDB()` L4056–4101 / `initDefaultAclActionCapabilities()` L4104–4118 / `defaultAclActionsSupported` L168–196 / `removeAllAcl*Status()` L6116, L6128 / `setAcl*Status()` L6088, L6102 / `orch.h:40-50` / `aclorch.h:109-110, 138-148` / `orchdaemon.cpp:502-530` 全行精読。中間ファイル: `meta/_intermediate/cdb-flow/aclorch-state-platform.md`
+> **裏取り**: `AclOrch::init()` L3475–3720 / `queryAclActionCapability()` L4017–4054 / `putAclActionCapabilityInDB()` L4056–4101 / `initDefaultAclActionCapabilities()` L4104–4118 / `defaultAclActionsSupported` L168–196 / `removeAllAcl*Status()` L6116, L6128 / `setAcl*Status()` L6088, L6102 / `orch.h:40-50` / `aclorch.h:109-110, 138-148` / `orchdaemon.cpp:502-530` 全行精読。
 <!-- /platform -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 本ページが扱う STATE_DB 3 テーブル (`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `ACL_STAGE_CAPABILITY_TABLE`) はいずれも `AclOrch` を**唯一の書き手**とする「書き出し専用のステータスレジスタ」であり、`ProducerStateTable` / `NotificationProducer` を介した PUBLISH 通知は発行されない。consumer 側 (`acl-loader` / `show acl table` / `show acl rule` / `sonic-mgmt-common` translib) は keyspace 通知を購読せず、CLI / REST/[gNMI](../../reference/glossary.md#term-gnmi) 起動契機の **オンデマンド polling** (`HGETALL` 相当) で読み出す。
 
@@ -513,7 +513,7 @@ consumer 側 (on-demand polling)
     (keyspace 通知購読なし)
 ```
 
-> **Evidence**: `sonic-swss/orchagent/aclorch.h` L706-709（`Table` メンバ宣言、`ProducerStateTable`/`NotificationProducer` 非保有）、`aclorch.cpp` L4200-4202（STATE_DB Table 初期化）、L4087-4101（`putAclActionCapabilityInDB`）、L6088-6098（`setAclTableStatus`）、L6102-6112（`setAclRuleStatus`）、L6116-6137（`removeAllAcl*Status`）。`sonic-swss/orchagent/orchdaemon.cpp` L408-422（`acl_table_connectors` に STATE_DB 側 connector 不在）。`sonic-utilities/acl_loader/main.py` L88, L533-536（`get_all` polling）。`sonic-swss-common/common/schema.h`（`STATE_ACL_*_TABLE_NAME` 定義）。詳細解析は `meta/_intermediate/cdb-flow/aclorch-state-pubsub.md` を参照。
+> **Evidence**: `sonic-swss/orchagent/aclorch.h` L706-709（`Table` メンバ宣言、`ProducerStateTable`/`NotificationProducer` 非保有）、`aclorch.cpp` L4200-4202（STATE_DB Table 初期化）、L4087-4101（`putAclActionCapabilityInDB`）、L6088-6098（`setAclTableStatus`）、L6102-6112（`setAclRuleStatus`）、L6116-6137（`removeAllAcl*Status`）。`sonic-swss/orchagent/orchdaemon.cpp` L408-422（`acl_table_connectors` に STATE_DB 側 connector 不在）。`sonic-utilities/acl_loader/main.py` L88, L533-536（`get_all` polling）。`sonic-swss-common/common/schema.h`（`STATE_ACL_*_TABLE_NAME` 定義）。
 
 <!-- /pubsub -->
 

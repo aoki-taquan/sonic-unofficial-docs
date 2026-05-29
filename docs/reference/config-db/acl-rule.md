@@ -377,14 +377,12 @@ YANG 未定義テーブルのため、全デフォルトはコード実装が正
 - 訪問ファイル数: 3 (`aclorch.cpp`, `acl_loader/main.py`, `acl_app.go`)
 - 訪問関数数: 17
 - 検出 fallback: 21 件 (mask 系 9 件 + 自動付与 7 件 + 初期値 3 件 + 後方互換 1 件 + SAI 固定 1 件)
-- 中間トレース: `meta/_intermediate/cdb-flow/acl-rule-defaults.md`
-
 <!-- /defaults -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -399,7 +397,7 @@ YANG 未定義テーブルのため、全デフォルトはコード実装が正
 - ports なし (CTRLPLANE) → `type=CTRLPLANE`、`stage` 設定あり
 - それ以外: ACL 名に `v6` を含む → `type=L3V6`、含まない → `type=L3`
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -421,7 +419,7 @@ YANG 未定義テーブルのため、全デフォルトはコード実装が正
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 ACL_RULE は `AclOrch::doAclRuleTask()` が処理する。同メソッド内で ACL_TABLE の `type` / `stage` フィールド値を読み取り、ルールの処理方法を分岐する。
 
@@ -435,12 +433,12 @@ ACL_RULE は `AclOrch::doAclRuleTask()` が処理する。同メソッド内で 
 | `AclOrch` | `doAclRuleTask()` | `bHasTCPFlag && !bHasIPProtocol` かつ `type` が上記以外 | `IP_PROTOCOL` 自動付与: `MATCH_IP_PROTOCOL=6` (IPv4) | `sonic-swss/orchagent/aclorch.cpp:5640-5643` |
 | `AclOrch` | `doAclRuleTask()` | `bHasIPV4 && bHasIPV6 && type == TABLE_TYPE_L3V4V6` | ERROR + `bAllAttributesOk=false` → rule INACTIVE（v4/v6 混在不可） | `sonic-swss/orchagent/aclorch.cpp:5656-5663` |
 
-> **スキャン証跡**: `doAclRuleTask()` L5520-5700 を全行読了、7 件分岐抽出。`type` / `stage` は ACL_RULE 自体のフィールドではなく ACL_TABLE から継承した値を参照。Phase 6/7 derivation ブロックの evidence 再確認: TCP 自動付与・minigraph 派生・DTelOrch 条件起動は実ソースと整合（`aclorch.cpp:5632-5660`、`minigraph.py:1218-1228`、`orchdaemon.cpp:502-530`）— 誤読なし。
+> **裏取り**: `doAclRuleTask()` L5520-5700 を全行読了、7 件分岐抽出。`type` / `stage` は ACL_RULE 自体のフィールドではなく ACL_TABLE から継承した値を参照。自動派生・条件付き登録ブロックの evidence 再確認: TCP 自動付与・minigraph 派生・DTelOrch 条件起動は実ソースと整合（`aclorch.cpp:5632-5660`、`minigraph.py:1218-1228`、`orchdaemon.cpp:502-530`）— 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### aclorch.cpp 数値・mask 定数
 
@@ -449,7 +447,7 @@ ACL_RULE は `AclOrch::doAclRuleTask()` が処理する。同メソッド内で 
 | `ACL_COUNTER_DEFAULT_POLLING_INTERVAL_MS` | `10000` ms (10 秒) | ACL counter [FlexCounter](../../reference/glossary.md#term-flexcounter) ポーリング間隔 | `sonic-swss/orchagent/aclorch.cpp:47` |
 | `ACL_COUNTER_DEFAULT_ENABLED_STATE` | `false` | ACL counter [FlexCounter](../../reference/glossary.md#term-flexcounter) 初期無効状態（起動直後はカウンタ更新されない） | `sonic-swss/orchagent/aclorch.cpp:48` |
 | `MAX_META_DATA_VALUE` | `4095` | `META_DATA` / `META_DATA_ACTION` の最大許容値。SAI `u32range.max` がこれを超えると `4095` にクランプ | `sonic-swss/orchagent/aclorch.cpp:52,3619-3621` |
-| `TCP_PROTOCOL_NUM` | `6` | `TCP_FLAGS` あり + `IP_PROTOCOL` 未指定時に自動付与する TCP プロトコル番号（Phase 6 派生） | `sonic-swss/orchagent/aclorch.cpp:54,5645` |
+| `TCP_PROTOCOL_NUM` | `6` | `TCP_FLAGS` あり + `IP_PROTOCOL` 未指定時に自動付与する TCP プロトコル番号（派生） | `sonic-swss/orchagent/aclorch.cpp:54,5645` |
 | `MAC_EXACT_MATCH` | `"ff:ff:ff:ff:ff:ff"` | `INNER_SRC_MAC` / `INNER_DST_MAC` 完全一致 mask（CONFIG_DB 非保存・C++ 内部固定） | `sonic-swss/orchagent/aclorch.cpp:56,957` |
 | `ACL_COUNTER_FLEX_COUNTER_GROUP` | `"ACL_STAT_COUNTER"` | FLEX_COUNTER グループ名 | `sonic-swss/orchagent/aclorch.cpp:4209` |
 
@@ -499,11 +497,11 @@ ACL_RULE は `AclOrch::doAclRuleTask()` が処理する。同メソッド内で 
 
 `acl_loader` (CLI) と REST/[gNMI](../../reference/glossary.md#term-gnmi) で計算基底値が異なるため、同一 OpenConfig `sequence-id` でも経路により CONFIG_DB に書き込まれる `PRIORITY` 値が変わる点に注意。
 
-> **スキャン証跡**: `aclorch.h` L22-23,321-322,376-377、`aclorch.cpp` L22-23,47-56,166-167,543,924,957,1046-1208,1654-1661,3610-3621,3689-3700,4209-4212,5640-5645 読了。`acl_loader/main.py` L92-93,805-815、`acl_app.go` L56 読了。定数 6 (cpp) + 5 (mask) + 2 (PRIORITY) + 3 (stage) + 4 (loader) + 1 (gNMI) = 21 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/acl-rule-constants.md`
+> **裏取り**: `aclorch.h` L22-23,321-322,376-377、`aclorch.cpp` L22-23,47-56,166-167,543,924,957,1046-1208,1654-1661,3610-3621,3689-3700,4209-4212,5640-5645 読了。`acl_loader/main.py` L92-93,805-815、`acl_app.go` L56 読了。定数 6 (cpp) + 5 (mask) + 2 (PRIORITY) + 3 (stage) + 4 (loader) + 1 (gNMI) = 21 件抽出。
 <!-- /constants -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 ACL_RULE の処理は `AclOrch::init()` が起動時に環境変数 `platform` / `sub_platform` を読み取り、以下の capability を静的に決定する。MIRROR V6 / L3V4V6 / isCombinedMirrorV6 はすべて env var の **静的比較** で確定。META_DATA 系のみ SAI 動的照会 (`sai_query_attribute_capability`) を使う。
 
@@ -607,7 +605,7 @@ SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY  → 最大優先度
 <!-- /platform -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `ACL_RULE` は YANG 未定義のため leafref は存在しない。以下はすべて実装レベルの暗黙参照。
 
@@ -639,7 +637,7 @@ SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY  → 最大優先度
 <!-- /cross-refs -->
 
 <!-- constants-supplement -->
-## ハードコード定数 (Phase E) (補足)
+## ハードコード定数 (補足)
 
 YANG 未定義テーブルのため、全定数はソースコードが正本。以下は `aclorch.h` / `aclorch.cpp` / `acl_loader/main.py` / `acl_app.go` から抽出した硬直定数一覧。
 
@@ -693,7 +691,7 @@ SAI match field に投入される mask は CONFIG_DB には書かれず、C++ �
 <!-- /constants-supplement -->
 
 <!-- ordering-supplement -->
-## 書込み順依存 (Phase B) (補足)
+## 書込み順依存 (補足)
 
 ACL_RULE を CONFIG_DB に書き込む際に守るべき順序制約を実装から導出した。
 
@@ -764,7 +762,7 @@ ACL_TABLE の `stage` フィールド（`INGRESS` / `EGRESS`）が ACL_RULE で�
 
 <!-- /ordering-supplement -->
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ### SET 処理における失敗経路
 
@@ -851,7 +849,7 @@ aclshow -a -t EVERFLOW
 <!-- /ops-hint -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 CONFIG_DB の `ACL_RULE` テーブルを書き込むコードパスを網羅する。
 
@@ -921,7 +919,7 @@ configdb.set_entry(ACL_RULE, key, None)
 <!-- /entry-points -->
 
 <!-- runtime-trace -->
-## 起動経路 (Direction B: CFG → APPL → SAI)
+## 起動経路 (CFG → APPL → SAI)
 
 ### 段階 1: Consumer 登録
 
@@ -957,7 +955,7 @@ configdb.set_entry(ACL_RULE, key, None)
 <!-- /runtime-trace -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `AclOrch` は `ACL_RULE` の SET/DEL 処理後に CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) 以外の 3 つの DB へ書き込む。
 
@@ -1014,7 +1012,7 @@ DB 番号: `FLEX_COUNTER_DB = 5` (`schema.h:18`)。
 
 <!-- /side-effects -->
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -1062,7 +1060,7 @@ SAI: sai_acl_api->create_acl_entry / set_acl_entry_attribute / remove_acl_entry
 
 なし。`AclOrch` は orchagent プロセス内のハンドラであり、`ACL_RULE` の追加・変更・削除は SAI ACL entry のライブ操作 (`sai_acl_api->create_acl_entry` / `set_acl_entry_attribute` / `remove_acl_entry`) のみで反映され、プロセス再起動・サービス restart を伴わない。
 
-> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:22-23,408-422,533,959` (TableConnector / SELECT_TIMEOUT / `new AclOrch(...)` / select ループ)、`sonic-swss/orchagent/orch.cpp:1186-1196` (`Orch::addConsumer()` DB ID 分岐)、`sonic-swss/orchagent/aclorch.cpp:4221-4222,4272-4295` (`createRetryCache(CFG_ACL_RULE_TABLE_NAME)` / `doTask` ディスパッチ)、`sonic-swss-common/common/subscriberstatetable.cpp:17,45-165` (`SubscriberStateTable` の `PSUBSCRIBE` + `HGETALL` 動作)、`sonic-swss-common/common/table.h:164` (`DEFAULT_POP_BATCH_SIZE = 128`)、`sonic-swss-common/common/schema.h` (`CFG_ACL_RULE_TABLE_NAME` 定数); 詳細分析 `meta/_intermediate/cdb-flow/acl-rule-pubsub.md`
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:22-23,408-422,533,959` (TableConnector / SELECT_TIMEOUT / `new AclOrch(...)` / select ループ)、`sonic-swss/orchagent/orch.cpp:1186-1196` (`Orch::addConsumer()` DB ID 分岐)、`sonic-swss/orchagent/aclorch.cpp:4221-4222,4272-4295` (`createRetryCache(CFG_ACL_RULE_TABLE_NAME)` / `doTask` ディスパッチ)、`sonic-swss-common/common/subscriberstatetable.cpp:17,45-165` (`SubscriberStateTable` の `PSUBSCRIBE` + `HGETALL` 動作)、`sonic-swss-common/common/table.h:164` (`DEFAULT_POP_BATCH_SIZE = 128`)、`sonic-swss-common/common/schema.h` (`CFG_ACL_RULE_TABLE_NAME` 定数)
 <!-- /pubsub -->
 
 <!-- glossary-links-injected: 2bebcadadfba -->

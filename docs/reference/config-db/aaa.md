@@ -203,7 +203,7 @@ show aaa
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `AAA`
 
@@ -235,7 +235,7 @@ show aaa
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `hostcfgd` (`AaaCfg`) の `modify_conf_file()` はイベントごとに PAM / NSS / NSLCD 設定を**全部まとめて再生成**する。このため書き込み順序が中間状態の整合性に直結する。
 
@@ -262,7 +262,7 @@ show aaa
 <!-- /ordering -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 YANG default 以外の fallback。`hostcfgd` (`AaaCfg` クラス) の `__init__` リテラルおよび `authentication_default` / `authorization_default` / `accounting_default` dict から導出。
 
@@ -286,7 +286,7 @@ YANG default 以外の fallback。`hostcfgd` (`AaaCfg` クラス) の `__init__`
 <!-- /defaults -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-host-services/scripts/hostcfgd`
 
@@ -323,7 +323,7 @@ YANG default 以外の fallback。`hostcfgd` (`AaaCfg` クラス) の `__init__`
 <!-- /failure -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: AAA は host 単位で適用され、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
 
@@ -335,11 +335,10 @@ YANG default 以外の fallback。`hostcfgd` (`AaaCfg` クラス) の `__init__`
 | ベンダー固有 PAM モジュール | なし | community master の PAM スタックは `pam_unix` / `pam_tacplus` / `pam_radius_auth` / `pam_ldap` の Debian 標準。`files/image_config/` にも `files/build_templates/` にもベンダー hook 注入箇所なし (`ls files/image_config \| grep -iE 'aaa\|tacacs\|radius\|ldap\|pam\|nss'` が 0 ヒット) |
 | テンプレート内分岐 | プラットフォーム条件なし | `common-auth-sonic.j2` / `tacplus_nss.conf.j2` を `platform\|asic\|chassis\|namespace\|vendor` で grep して 0 ヒット。分岐は `AAA.login` / `failthrough` / `debug` / `trace` とサーバリストのみ |
 
-詳細根拠は `meta/_intermediate/cdb-flow/aaa-platform.md` を参照。
 <!-- /platform -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -381,11 +380,11 @@ aaa_handler(key="authentication", op=SET, data={login:"tacacs+,local"})
 | `TACPLUS_SERVER` 変更 | `audisp-tacplus` プロセスに `SIGHUP` (PAM ホット再読込) | `notify_audisp_tacplus_reload_config` — hostcfgd:483-493 |
 | PAM 設定ファイル書き換え | デーモン restart **なし** (PAM は次回ログイン時にファイルを読む) | `modify_conf_file` — hostcfgd:641-648 |
 
-> **Evidence**: `sonic-host-services/scripts/hostcfgd:2454-2466,2468-2476,2528` (subscribe/listen/make_callback)、`hostcfgd:2289-2343` (各 *_handler)、`hostcfgd:399-417` (`AaaCfg.load()` 起動時スナップショット)、`hostcfgd:419-435` (`aaa_update`)、`hostcfgd:230-251` (`restart_service`/`handle_nslcd_service`)、`hostcfgd:483-493` (`notify_audisp_tacplus_reload_config`); 詳細分析 `meta/_intermediate/cdb-flow/aaa-pubsub.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2454-2466,2468-2476,2528` (subscribe/listen/make_callback)、`hostcfgd:2289-2343` (各 *_handler)、`hostcfgd:399-417` (`AaaCfg.load()` 起動時スナップショット)、`hostcfgd:419-435` (`aaa_update`)、`hostcfgd:230-251` (`restart_service`/`handle_nslcd_service`)、`hostcfgd:483-493` (`notify_audisp_tacplus_reload_config`)
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `AAA` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換え (PAM / NSS / nslcd / sssd / radiusd / sshd) に閉じる。
 
@@ -398,11 +397,10 @@ CONFIG_DB `AAA` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハン
 
 主購読者 `AaaCfg.aaa_update()` の副作用は `modify_conf_file()` 経由の PAM テンプレート再生成のみで、`/etc/pam.d/common-auth`・`/etc/nsswitch.conf`・`/etc/tacplus_nss.conf`・`/etc/pam_radius_auth.conf` 等のファイル書換に閉じる (`sonic-host-services/scripts/hostcfgd:641-648`)。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/aaa-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `AAA` / `TACPLUS` / `TACPLUS_SERVER` / `RADIUS` / `RADIUS_SERVER` / `LDAP` / `LDAP_SERVER` テーブル群および `hostcfgd` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-host-services/scripts/hostcfgd` と `sonic-host-services/scripts/ldap.py`。
 
@@ -483,11 +481,10 @@ CONFIG_DB `AAA` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハン
 | `OPENSSL_FIPS_CONFIG_FILE` | `/etc/fips/fips_enable` | OpenSSL FIPS 有効化フラグ | hostcfgd L102 |
 | `DEFAULT_FIPS_RESTART_SERVICES` | `['ssh', 'telemetry.service', 'restapi']` | FIPS 切替時に再起動するサービス固定リスト | hostcfgd L103 |
 
-詳細な定数一覧 (mkhomedir 正規表現、PAM_SESSION_LAST_LINE マーカ、SSH min/max 値、nslcd 制御等) は `meta/_intermediate/cdb-flow/aaa-constants.md` を参照。
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `AaaCfg` が読み出す関連 CONFIG_DB テーブル (Phase C)
+## 暗黙参照 — `AaaCfg` が読み出す関連 CONFIG_DB テーブル
 
 `hostcfgd` の `AaaCfg` ハンドラは `AAA` 単体ではなく、関連 7 テーブルを起動時に一括ロードし (`load_independent_config()` — hostcfgd:2222-2231)、`modify_conf_file()` 内で結合した dict から PAM / NSS テンプレ (`common-auth-sonic.j2` / `tacplus_nss.conf.j2` 等) を再生成する。さらに RADIUS `nas_ip` / `src_ip` / `nas_id` の動的解決のために、関連インタフェーステーブルを都度参照する。
 
@@ -502,7 +499,7 @@ CONFIG_DB `AAA` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハン
 | `LDAP` | load + subscribe | LDAP global (`bind_dn` / `base_dn` / `bind_password`) — `is_ldap_config_complete()` の判定対象 | hostcfgd:2228,2475 |
 | [`LDAP_SERVER`](ldap-server.md) | load + subscribe | LDAP サーバ毎の `port` / `priority` — 空なら `nslcd` を mask | hostcfgd:2229,2476 |
 
-> 1 テーブルの変化でも `modify_conf_file()` は **7 テーブル分** の dict を結合し直して PAM/NSS テンプレを丸ごと再生成する。「中間状態」は事実上避けられないため、変更順序が重要 (Phase B `ordering` 参照)。
+> 1 テーブルの変化でも `modify_conf_file()` は **7 テーブル分** の dict を結合し直して PAM/NSS テンプレを丸ごと再生成する。「中間状態」は事実上避けられないため、変更順序が重要 (「書込み順依存」参照)。
 
 ### RADIUS の動的 IP / hostname 解決 (`get_interface_ip` 経由)
 
@@ -532,7 +529,6 @@ CONFIG_DB `AAA` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハン
 - `FIPS`: 同 `hostcfgd` プロセス内の `FipsCfg` (hostcfgd:1753-1843) が独立購読。`AaaCfg` からの直接参照なし。OpenSSL FIPS フラグと `ssh`/`telemetry`/`restapi` の再起動を司るだけで、CONFIG_DB レベルで AAA と読み合わない。
 - `SSH_SERVER`: `PamLimitsCfg.update_config_file()` (hostcfgd:1422-1430) が `DEVICE_METADATA` と併読するのみ。`AaaCfg` の参照経路には現れない。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/aaa-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- glossary-links-injected: 676f2407ed0a -->
