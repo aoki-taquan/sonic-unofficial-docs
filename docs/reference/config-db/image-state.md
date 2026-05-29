@@ -113,7 +113,7 @@ Built by: johnar@jenkins-worker-8
 ```
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 `/etc/sonic/sonic_version.yml` は [Redis](../../reference/glossary.md#term-redis) [STATE_DB](../../reference/glossary.md#term-state_db) テーブルではなく YAML ファイルとして提供される。[YANG](../../reference/glossary.md#term-yang) schema は存在しない。フィールドとデフォルト値はすべてビルドスクリプトとテンプレートで定義される。
 
@@ -144,7 +144,7 @@ Built by: johnar@jenkins-worker-8
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `/etc/sonic/sonic_version.yml` はビルド時に生成される静的ファイルであり、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [STATE_DB](../../reference/glossary.md#term-state_db) への書込みは行わない。ただし、ビルドパイプライン内の変数確定順序と、ランタイムでの読込みキャッシュ挙動に順序依存が存在する。
 
@@ -168,9 +168,7 @@ Built by: johnar@jenkins-worker-8
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照・共依存コンポーネント (Phase C)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/image-state-cross-refs.md`
+## 暗黙参照・共依存コンポーネント
 
 `/etc/sonic/sonic_version.yml` は [Redis](../../reference/glossary.md#term-redis) テーブルではないため [YANG](../../reference/glossary.md#term-yang) leafref による参照整合性保証は存在しない。しかし複数のコンポーネントがこのファイルを直接読み込んでおり、ファイル不在またはフィールド欠落時の影響は広範囲に及ぶ。
 
@@ -195,7 +193,7 @@ Built by: johnar@jenkins-worker-8
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py:511-525, sonic-utilities/show/main.py:1718-1733, sonic-gnmi/sonic_data_client/non_db_client.go:302-336, sonic-utilities/generic_config_updater/field_operation_validators.py:33 -->
 
@@ -246,7 +244,7 @@ asic_type = device_info.get_sonic_version_info()['asic_type']
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-buildimage/rules/config:291-296,358-359,378-379, sonic-buildimage/functions.sh:60, sonic-buildimage/build_debian.sh:651,653, sonic-buildimage/files/build_templates/sonic_version.yml.j2, sonic-py-common/sonic_py_common/device_info.py:19,60,520-523 -->
 
@@ -287,9 +285,7 @@ asic_type = device_info.get_sonic_version_info()['asic_type']
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込み (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/image-state-side.md`
+## 副次 DB 書込み
 
 <!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:292-306,440, sonic-sairedis/syncd/scripts/syncd_init_common.sh:20-21, sonic-buildimage/files/image_config/rsyslog/rsyslog-config.sh:33, sonic-utilities/generic_config_updater/field_operation_validators.py:33 -->
 
@@ -320,7 +316,7 @@ Kubernetes 環境 (`FEATURE` テーブルで `set_owner=kube` が設定されて
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 <!-- evidence: sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py:511-525, sonic-gnmi/sonic_data_client/non_db_client.go:302-336, sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:292-306 -->
 
@@ -356,7 +352,7 @@ Redis pub/sub が存在しないため、`/etc/sonic/sonic_version.yml` を書�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `/etc/sonic/sonic_version.yml` のフィールド構造・YANG スキーマ・読込み API はプラットフォーム非依存である。ただし、`asic_type` / `asic_subtype` フィールドの**値**がプラットフォームごとに異なり、読み込み後の下流ロジックに分岐を生じさせる。
 
@@ -382,7 +378,6 @@ Redis pub/sub が存在しないため、`/etc/sonic/sonic_version.yml` を書�
 | [VS](../../reference/glossary.md#term-vs) (`x86_64-kvm_x86_64-r0`) | `generate_mac_for_vs(hostname, namespace)` に委譲 (`device_info.py:848`) |
 | その他 (Broadcom 等) | `/sys/class/net/eth0/address` から読む (`device_info.py:918-921`) |
 
-詳細根拠は `meta/_intermediate/cdb-flow/image-state-platform.md` を参照。
 <!-- /platform -->
 
 ## 引用元

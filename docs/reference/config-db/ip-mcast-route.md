@@ -102,7 +102,7 @@ P4RT:FIXED_IPV6_MULTICAST_TABLE:{"match/vrf_id":"<vrf>","match/ipv6_dst":"<ip>"}
 | `controller_metadata` | string | 任意 | コントローラ内部追跡用 |
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 ### `replicas` (REPLICATION_IP_MULTICAST_TABLE)
 
@@ -170,10 +170,9 @@ RPF group は最初の IPMC エントリ追加時に自動作成され (`createD
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存・タイミング依存 (Phase B)
+## 書込み順依存・タイミング依存
 
 > 根拠: `ip_multicast_manager.cpp` `validateSetIpMulticastEntry()` L493-533、`validateIpMulticastEntry()` L471-491、`l3_multicast_manager.cpp` `validateReplicas()` L978-1057 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/ip-mcast-route-ordering.md`
 
 [P4RT](../../reference/glossary.md#term-p4rt) フレームワークは依存オブジェクトが未存在の場合に即座に `SWSS_RC_NOT_FOUND` を返す。**pending キューや自動 retry は存在しない**。コントローラ (`p4rt-app`) が依存関係を守った順序で書き込む必要がある。
 
@@ -237,10 +236,9 @@ IpMulticastManager 内で管理されており、参照が残っているグル�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
 > 根拠: `ip_multicast_manager.cpp:L477-481,L509-514,L775,L886`、`l3_multicast_manager.cpp:L1002-1008,L2196`、`vrforch.h:L58-119`、`orchdaemon.cpp:L283`、`schema.h:L73-80`
-> evidence: `meta/_intermediate/cdb-flow/ip-mcast-route-cross-refs.md`
 
 これらテーブルは APP_DB 上の P4RT ネームスペースに存在するため **[YANG](../../reference/glossary.md#term-yang) leafref は定義されていない**。ただしコード上の実行時参照として以下の暗黙依存が存在する。
 
@@ -260,9 +258,7 @@ IpMulticastManager 内で管理されており、参照が残っているグル�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/ip-mcast-route-failure.md`
+## 失敗挙動
 
 <!-- evidence: sonic-swss/orchagent/p4orch/ip_multicast_manager.cpp:120-195,612-697,741-831,862-876, sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp:430-478,525-596,978-1033 -->
 
@@ -343,10 +339,9 @@ ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 > 根拠: `ip_multicast_manager.cpp:L45,L61,L376,L596,L704,L712,L719`、`l3_multicast_manager.cpp:L53-56,L167,L189,L641,L1415-1416`
-> evidence: `meta/_intermediate/cdb-flow/ip-mcast-route-constants.md`
 
 以下の定数はいずれもコード中にハードコードされており、CONFIG_DB フィールド・[YANG](../../reference/glossary.md#term-yang) スキーマ・環境変数による上書きは不可能。
 
@@ -378,9 +373,8 @@ ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/ip-mcast-route-side-effects.md`
 > 調査対象: `sonic-swss/orchagent/p4orch/ip_multicast_manager.cpp`, `sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp`
 
 `REPLICATION_IP_MULTICAST_TABLE` / `FIXED_IPV4_MULTICAST_TABLE` / `FIXED_IPV6_MULTICAST_TABLE` への SET/DEL が引き起こす CONFIG_DB 以外への書き込みを示す。[STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) への直接書き込みは存在しない。
@@ -429,7 +423,7 @@ ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G) — ZMQ 経由の購読
+## 通信メカニズム — ZMQ 経由の購読
 
 <!-- evidence: sonic-swss/orchagent/p4orch/p4orch.cpp:36-43,51-54,72-79 / orchdaemon.cpp:847-849 / orchdaemon.h:121 / ip_multicast_manager.cpp:84-93,132,147,159,185,230 / l3_multicast_manager.cpp:310-318,329-332,375,433,476,530 -->
 
@@ -503,10 +497,9 @@ gP4Orch = new P4Orch(m_applDb, p4rt_tables, m_p4OrchZmqServer, vrf_orch, gCoppOr
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 > 根拠: `sonic-buildimage/rules/config:206`、`slave.mk:222-241`、`files/build_templates/init_cfg.json.j2:83`、`orchdaemon.cpp:847-849,1292-1310`
-> evidence: `meta/_intermediate/cdb-flow/ip-mcast-route-platform.md`
 
 `IpMulticastManager` / `L3MulticastManager` の処理ロジックに **platform 固有のコードパスは存在しない**。`ip_multicast_manager.cpp` / `l3_multicast_manager.cpp` を `platform|vendor|chassis|multi_asic|is_multi_npu` で grep した結果はすべて 0 ヒット（C++ `namespace` キーワード除く）。SAI 呼び出しは汎用 SAI プリミティブのみ使用する。
 

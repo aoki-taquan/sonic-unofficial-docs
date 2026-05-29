@@ -61,7 +61,7 @@ HEARTBEAT|<name>
 - `sonic-heartbeat`
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 [YANG](../../reference/glossary.md#term-yang) (`sonic-heartbeat.yang`) には `default` 宣言が**存在し**、YANG validator 経由で書き込んだ場合は `heartbeat_interval=10000` ms / `alert_interval=60000` ms が暗黙適用される。`sonic-db-cli` 直接書き込みでは YANG default は注入されない。eventd 側は別経路 (GLOBAL_OPTION_HEARTBEAT JSON RPC) で interval を受け、初期値は `HEARTBEAT_INTERVAL_SECS=2` 秒 (`eventd.cpp:43`)。両者はスキーマ単位 (ms vs 秒) が異なるので混同しないこと。
 
@@ -183,7 +183,7 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 <!-- /runtime-trace -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `HEARTBEAT` テーブルは `supervisor-proc-exit-listener`（Python 版・Rust 版）が起動時に一括読み込みする。エントリ間の順序依存はないが、フィールド書込みタイミングと daemon 起動タイミングに関して以下の制約がある。
 
@@ -212,11 +212,9 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `HEARTBEAT` テーブルは YANG `sonic-heartbeat.yang` に leafref を持たず、他の CONFIG_DB テーブルへの外部キー参照はゼロである。また、他テーブルから `HEARTBEAT|<name>` への被参照も存在しない。
-
-<!-- evidence: meta/_intermediate/cdb-flow/heartbeat-cross-refs.md -->
 
 | 参照方向 | 参照元フィールド / 参照元 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
 |---------|------------------------|--------------|--------------|---------|------|
@@ -235,9 +233,7 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/heartbeat-failure.md`
+## 失敗挙動
 
 ### 失敗パス一覧
 
@@ -269,7 +265,7 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `HEARTBEAT` テーブルのコンシューマ `supervisor-proc-exit-listener`（Python 版・Rust 版）内に存在する、CONFIG_DB / YANG で管理されない固定値の一覧。
 
@@ -303,9 +299,7 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/heartbeat-side.md`
+## 副次 DB 書込
 
 CONFIG_DB `HEARTBEAT` テーブルの変更に伴って副次的に書き込まれる DB エントリは **存在しない**。主消費者 `supervisor-proc-exit-listener`（Python 版・Rust 版）は CONFIG_DB を読み取るのみで他 DB への書込は行わない。eventd は CONFIG_DB の `HEARTBEAT` テーブルを直接購読せず、ZeroMQ RPC 経由でのみ heartbeat interval を受け取る構造であるため、`HEARTBEAT` エントリの変更が他 DB へ伝播する経路はない。
 
@@ -331,10 +325,9 @@ CONFIG_DB `HEARTBEAT` テーブルの変更に伴って副次的に書き込ま�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `sonic-buildimage/src/sonic-supervisord-utilities/scripts/supervisor-proc-exit-listener:124-135` (`load_heartbeat_alert_interval`)、`sonic-buildimage/src/sonic-supervisord-utilities-rs/src/proc_exit_listener.rs:212-233` (Rust 版)、`sonic-buildimage/dockers/docker-orchagent/orchagent.sh:127-130` 精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/heartbeat-pubsub.md`
+> **Evidence**: `sonic-buildimage/src/sonic-supervisord-utilities/scripts/supervisor-proc-exit-listener:124-135` (`load_heartbeat_alert_interval`)、`sonic-buildimage/src/sonic-supervisord-utilities-rs/src/proc_exit_listener.rs:212-233` (Rust 版)、`sonic-buildimage/dockers/docker-orchagent/orchagent.sh:127-130` 精読 (2026-05-19)
 
 ### 購読方式: なし (起動時の一括読み込みのみ — Redis pub/sub 不使用)
 
@@ -365,10 +358,9 @@ Redis keyspace notification は発火するが受信側が存在しないため�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
-> **調査根拠**: `sonic-buildimage/src/sonic-supervisord-utilities/scripts/supervisor-proc-exit-listener` 全文精査（プラットフォーム分岐ゼロ件確認）、`sonic-buildimage/src/sonic-supervisord-utilities-rs/src/proc_exit_listener.rs` 同確認、`sonic-buildimage/dockers/docker-orchagent/orchagent.sh:71-130` (プラットフォーム別引数 vs heartbeat 引数の独立確認)、`sonic-swss/orchagent/main.cpp:75` (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/heartbeat-platform.md`
+> **Evidence**: `sonic-buildimage/src/sonic-supervisord-utilities/scripts/supervisor-proc-exit-listener` 全文精査（プラットフォーム分岐ゼロ件確認）、`sonic-buildimage/src/sonic-supervisord-utilities-rs/src/proc_exit_listener.rs` 同確認、`sonic-buildimage/dockers/docker-orchagent/orchagent.sh:71-130` (プラットフォーム別引数 vs heartbeat 引数の独立確認)、`sonic-swss/orchagent/main.cpp:75` (2026-05-19)
 
 ### SAI Capability 依存なし
 
@@ -398,7 +390,7 @@ vs 環境でも `supervisor-proc-exit-listener` は同一コードで動作す�
 <!-- /platform -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `HEARTBEAT`
 

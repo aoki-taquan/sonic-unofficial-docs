@@ -211,7 +211,7 @@ show lldp neighbors Ethernet0
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `LLDP_ENTRY_TABLE`, `LLDP_LOC_CHASSIS`
 
@@ -234,7 +234,7 @@ show lldp neighbors Ethernet0
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
 > 根拠: `sonic-buildimage/dockers/docker-lldp/supervisord.conf.j2`, `sonic-buildimage/dockers/docker-lldp/lldpmgrd`, `sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py`
 
@@ -275,7 +275,7 @@ APPL_DB: LLDP_ENTRY_TABLE|<ifname> 存在
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` (APPL_DB) の書き手・読み手が参照する他テーブルおよびリソースを整理する。
 本テーブルは lldp-syncd が **producer only** として書き込み、sonic-snmpagent / [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common (lldp_app.go) が読み手として参照する。
@@ -301,7 +301,7 @@ APPL_DB: LLDP_ENTRY_TABLE|<ifname> 存在
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 > 根拠: `sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py`, `sonic-mgmt-common/translib/lldp_app.go`
 
@@ -343,7 +343,7 @@ APPL_DB: LLDP_ENTRY_TABLE|<ifname> 存在
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `lldpmgrd` / `lldpd.conf.j2` / `supervisord.conf.j2` / `sonic-snmpagent` 内に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 出典は `sonic-buildimage/dockers/docker-lldp/lldpmgrd`、`lldpd.conf.j2`、`supervisord.conf.j2`、`sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py`。
@@ -400,9 +400,8 @@ priority 値は supervisord の dependent_startup 起動順序制御に使用。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> 調査証跡: `meta/_intermediate/cdb-flow/lldp-state-side-effects.md`  
 > ソース: `sonic-buildimage/dockers/docker-lldp/supervisord.conf.j2`, `sonic-buildimage/dockers/docker-lldp/lldpmgrd`, `sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py`, `sonic-mgmt-common/translib/lldp_app.go`
 
 ### 副次書込の有無
@@ -432,7 +431,7 @@ priority 値は supervisord の dependent_startup 起動順序制御に使用。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 > 根拠: `sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py` (L75-108, L173, L237-255, L503-573), `sonic-mgmt-common/translib/lldp_app.go` (L141-147), `sonic-buildimage/dockers/docker-lldp/lldpmgrd` (L277-325)
 
@@ -492,9 +491,8 @@ LLDP テーブルへの書き込み自体はサービス再起動を伴わない
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> 調査証跡: `meta/_intermediate/cdb-flow/lldp-state-platform.md`
 > ソース: `sonic-buildimage/dockers/docker-lldp/supervisord.conf.j2`, `sonic-buildimage/dockers/docker-lldp/lldpd.conf.j2`, `sonic-buildimage/dockers/docker-lldp/lldpmgrd`, `sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py`
 
 | 観点 | 結果 | 根拠 |

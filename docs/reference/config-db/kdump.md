@@ -206,7 +206,7 @@ show kdump config
 <!-- /runtime-trace -->
 
 <!-- side-effects -->
-## 副次ファイル書込 (Direction B)
+## 副次ファイル書込
 
 `sonic-kdump-config` スクリプト (`sonic-utilities/scripts/sonic-kdump-config`) が CONFIG_DB 変更を契機に、以下のシステムファイルを書き換える。
 
@@ -239,7 +239,7 @@ show kdump config
 <!-- /side-effects -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `KDUMP`
 
@@ -269,7 +269,7 @@ show kdump config
 <!-- /entry-points -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
 ### DEVICE_METADATA への暗黙参照
 
@@ -305,7 +305,7 @@ KDUMP (CONFIG_DB) 変更
 <!-- /cross-refs -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 ### ブートローダー別 `crashkernel` 書き込みパス
 
@@ -495,7 +495,7 @@ YANG は `range "1 .. 9"` を定義するが、CLI `config kdump num_dumps` は 
 <!-- /constants -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### CONFIG_DB Subscribe (hostcfgd Python)
 
