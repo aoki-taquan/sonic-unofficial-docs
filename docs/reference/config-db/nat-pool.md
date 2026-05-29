@@ -75,7 +75,7 @@ NAT_POOL|<pool_name>
 | `nat_port` | port range string | no | `""` → port 制限なし | pool に含める L4 port 範囲 (`start-end` 形式) |
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) default 以外の実装レベルの fallback。`natmgr.cpp doNatPoolTask` L6482–6866、`config/nat.py add_pool` L673–772 を調査。
 
@@ -212,7 +212,7 @@ show nat translations
 <!-- /runtime-trace -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 <!-- evidence: sonic-swss/cfgmgr/natmgr.cpp addDynamicNatRule L4621-4680 / doNatPoolTask L6482-6866 / isNatEnabled L150 / sonic-swss/orchagent/natorch.cpp enableNatFeature L2534-2581 / addAllDnatPoolEntries L1854-1863 / doDnatPoolTableTask L2968-3031 -->
 
@@ -305,7 +305,7 @@ DEL NAT_POOL|<name>        # pool を後に削除
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `NAT_POOL` エントリが処理される際に `natmgrd` (`natmgr.cpp`) および `NatOrch` (`natorch.cpp`) が
 暗黙的に依存する他テーブルの関係を示す。
@@ -328,11 +328,10 @@ DEL NAT_POOL|<name>        # pool を後に削除
 - **NAT_BINDINGS 双方向依存**: pool 登録時に `isPoolMappedtoBinding()` で全 binding をイテレートし、この pool を参照する binding があれば `addDynamicNatRule()` を即座に再呼び出し。pool の新規追加・更新・削除のいずれでも発火する。
 - **STATIC_NAT 重複チェック**: pool 書き込み時点で `m_staticNatEntry` をメモリ内で走査する同期チェック。STATIC_NAT の追加後に pool を追加した場合のみ検出可能。逆順（pool 後に STATIC_NAT 追加）の重複は検出されない。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `NatMgr::doNatPoolTask(Consumer&)` (`sonic-swss/cfgmgr/natmgr.cpp` L6482–6866) を全行調査した。すべての失敗ケースは `consumer.m_toSync.erase(it)` でエントリを**即座に破棄**する設計（保留/retry なし）。
 
@@ -379,7 +378,7 @@ DEL NAT_POOL|<name>        # pool を後に削除
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `natmgrd` (`cfgmgr/natmgr.h` / `natmgr.cpp`) および `NatOrch` (`orchagent/natorch.h` / `natorch.cpp`) に存在する、CONFIG_DB / YANG で管理されない実装レベルの固定値一覧。
 
@@ -430,11 +429,10 @@ NatOrch 初期化時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を照会して `
 | 対応 L4 プロトコル | TCP / UDP / ICMP | dynamic NAT iptables ルールを生成する 3 プロトコル固定。その他プロトコルは変換対象外 |
 | iptables テーブル | `nat` (POSTROUTING SNAT) + `mangle` (PREROUTING/POSTROUTING zone-mark) | dynamic NAT の 2-table 構成 |
 
-詳細な定数一覧は `meta/_intermediate/cdb-flow/nat-pool-constants.md` を参照。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `NAT_POOL` エントリが処理されると、`natmgrd` → `orchagent / NatOrch` の経路で以下の副次書込が発生する。ソース: `sonic-swss/cfgmgr/natmgr.cpp`[^F1]、`sonic-swss/orchagent/natorch.cpp`[^F2]。
 
@@ -481,11 +479,10 @@ NAT pool エントリ追加・削除に直接連動した [COUNTERS_DB](../../re
 [^F1]: natmgr APPL_DB 書込実装: `sonic-swss/cfgmgr/natmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/natmgr.cpp>
 [^F2]: NatOrch [ASIC](../../reference/glossary.md#term-asic) 書込実装: `sonic-swss/orchagent/natorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/natorch.cpp>
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-side-effects.md`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 <!-- evidence: sonic-swss/cfgmgr/natmgrd.cpp L109-121,L149-153 / sonic-swss/cfgmgr/natmgr.cpp L8163-8165 / sonic-swss/orchagent/orchdaemon.cpp L456-465 / sonic-swss/orchagent/natorch.cpp L84-91,L137 -->
 
@@ -531,11 +528,10 @@ natmgrd が `ProducerStateTable::set("NAT_DNAT_POOL_TABLE", ...)` を呼ぶと `
 | APPL_DB → NatOrch | `ConsumerStateTable("NAT_DNAT_POOL_TABLE")` + [orchagent](../../reference/glossary.md#term-orchagent) 統合ループ | orchdaemon.cpp:457 |
 | NatOrch → SAI | `sai_nat_api->create_nat_entry(SAI_NAT_TYPE_DESTINATION_NAT_POOL)` | natorch.cpp:1805 |
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差・ASIC ベンダー依存 (Phase H)
+## プラットフォーム差・ASIC ベンダー依存
 
 <!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch L107-149 / addHwDnatPoolEntry L1783-1819 / enableNatFeature L2534-2581 / sonic-swss/orchagent/orch.h L43 / sonic-swss/orchagent/main.cpp L935-949 -->
 
@@ -597,7 +593,6 @@ status = sai_nat_api->create_nat_entry(&dnat_pool_entry, attr_count, nat_entry_a
 
 現行 [SONiC](../../reference/glossary.md#term-sonic) コミュニティ実装では **Broadcom ASIC のみが NAT ハードウェアオフロードを実運用レベルでサポートする**。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-platform.md`
 <!-- /platform -->
 
 <!-- topics-back-ref -->

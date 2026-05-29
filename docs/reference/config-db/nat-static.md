@@ -70,7 +70,7 @@ STATIC_NAT|<global_ip>
 | `twice_nat_id` | uint16 1..9999 | no | `""` → Single [NAT](../../reference/glossary.md#term-nat) | Twice NAT 用 ID。省略時は Single NAT |
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) default とコード hardcode の両方を確認した結果。
 
@@ -117,7 +117,7 @@ else
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### 前提 1: NAT_GLOBAL.admin_mode が enabled 必須
 
@@ -174,11 +174,11 @@ DEL STATIC_NAT|<global_ip>     # APPL_DB からも除去
 | SNAT エントリ → インタフェース設定 | 不要 | `getIpEnabledIntf()` チェックなし |
 | STATIC_NAPT との global_ip 重複排除 | 論理制約 | 重複時は後着がスキップ (APPL_DB 反映なし) |
 
-> **スキャン証跡**: `addStaticNatEntry()` L1548-1590、`isNatEnabled()` L150-157、`getIpEnabledIntf()` L236-254、`doNatIpInterfaceTask()` L7377-7640、`addStaticSingleNatEntry()` L1992-2064 精読。
+> **裏取り**: `addStaticNatEntry()` L1548-1590、`isNatEnabled()` L150-157、`getIpEnabledIntf()` L236-254、`doNatIpInterfaceTask()` L7377-7640、`addStaticSingleNatEntry()` L1992-2064 精読。
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `doStaticNatTask()` → `addStaticNatEntry()` の処理において、YANG の leafref 定義を超えて実装上で参照される他テーブル・内部キャッシュを示す。
 
@@ -198,7 +198,7 @@ DEL STATIC_NAT|<global_ip>     # APPL_DB からも除去
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 STATIC_NAT エントリは CONFIG_DB → `natmgrd` → APPL_DB → `NatOrch` → [SAI](../../reference/glossary.md#term-sai) の 2 段階パイプラインで処理される。各段階での失敗パターンを以下に示す。
 
@@ -241,9 +241,7 @@ NAT パスには [STATE_DB](../../reference/glossary.md#term-state_db) へのス
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/nat-static-constants.md -->
+## ハードコード定数
 
 `STATIC_NAT` エントリの処理に関与する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-swss/cfgmgr/natmgr.h`。
 
@@ -289,7 +287,7 @@ STATIC_NAT 自体のフィールドではないが、`addStaticSingleNatEntry()`
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `natmgrd` が CONFIG_DB `STATIC_NAT` エントリを処理する際、[APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みに加え、以下の副次的な書き込み・OS 操作が発生する。下流の `NatOrch` による [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書き込みも含む。
 
@@ -314,11 +312,11 @@ iptables / conntrack への書き込みは `swss::exec()` による OS コマン
 
 STATE_DB、[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)、[LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db)、CONFIG_DB への書き戻しは確認されなかった。
 
-> **Evidence**: `sonic-swss/cfgmgr/natmgr.cpp` `addStaticSingleNatEntry()` L1992-2069, `removeStaticSingleNatEntry()` L2650-2719, `addDnatPoolEntry()` L1502-1524, `addConntrackStaticSingleNatEntry()` L457-489, `setStaticNatIptablesRules()` L930-1000; `sonic-swss/orchagent/natorch.cpp` `updateNatCounters()` L4049-4061, `updateStaticNatCounters()` L4481-4490; 詳細スキャン結果は `meta/_intermediate/cdb-flow/nat-static-side-effects.md` を参照。
+> **Evidence**: `sonic-swss/cfgmgr/natmgr.cpp` `addStaticSingleNatEntry()` L1992-2069, `removeStaticSingleNatEntry()` L2650-2719, `addDnatPoolEntry()` L1502-1524, `addConntrackStaticSingleNatEntry()` L457-489, `setStaticNatIptablesRules()` L930-1000; `sonic-swss/orchagent/natorch.cpp` `updateNatCounters()` L4049-4061, `updateStaticNatCounters()` L4481-4490
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### CONFIG_DB 購読 — `SubscriberStateTable` ベース
 
@@ -380,11 +378,11 @@ m_appNatTableProducer(appDb, APP_NAT_TABLE_NAME)  // "NAT_TABLE"
 
 `isIntfStateOk()` が `m_stateInterfaceTable` (STATE_DB:STATE_INTERFACE_TABLE) をポイントリード (`hget`) で参照するが、keyspace 購読はしない。インタフェース状態変化は `CFG_INTF_TABLE_NAME` の SET イベント経由で間接的に受け取る。
 
-> **Evidence**: `natmgrd.cpp:109-153`; `natmgr.cpp:8147-8175`; `natmgr.h:257`; `schema.h:101`。詳細は `meta/_intermediate/cdb-flow/nat-static-pubsub.md` を参照。
+> **Evidence**: `natmgrd.cpp:109-153`; `natmgr.cpp:8147-8175`; `natmgr.h:257`; `schema.h:101`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 プラットフォーム差は `orchagent/natorch.cpp` の **DNAT エントリの HW 追加経路** にのみ現れる。`natmgrd` (`cfgmgr/natmgr.cpp`) は platform 非依存。
 
@@ -417,7 +415,7 @@ SNAT エントリは `addHwSnatEntry()` を直接呼ぶため platform 非依存
 !!! note "Broadcom 環境での注意"
     ARP が未解決の状態で STATIC_NAT を設定すると `show nat translations` にエントリが表示されるが、実際の SAI オブジェクトは ARP 解決まで作成されない。`ping` などで ARP を解決してから NAT 動作を確認すること。
 
-> **証跡**: `natorch.cpp:44` (`gNhTrackingSupported` 初期値 false)、`natorch.cpp:144-149` (platform 判定)、`natorch.cpp:1920-1934` (DNAT 経路分岐)、`natorch.cpp:390-433` (`addDnatToNhCache`)、`natorch.cpp:2017, 2045` (`clearDnatNhCacheEntry` 分岐)、`orch.h:43` (`BRCM_PLATFORM_SUBSTRING`)。詳細は `meta/_intermediate/cdb-flow/nat-static-platform.md` を参照。
+> **Evidence**: `natorch.cpp:44` (`gNhTrackingSupported` 初期値 false)、`natorch.cpp:144-149` (platform 判定)、`natorch.cpp:1920-1934` (DNAT 経路分岐)、`natorch.cpp:390-433` (`addDnatToNhCache`)、`natorch.cpp:2017, 2045` (`clearDnatNhCacheEntry` 分岐)、`orch.h:43` (`BRCM_PLATFORM_SUBSTRING`)
 <!-- /platform -->
 
 ## silent drop / discrepancy
