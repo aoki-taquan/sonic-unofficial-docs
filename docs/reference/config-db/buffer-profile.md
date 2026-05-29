@@ -208,7 +208,7 @@ show buffer profile
 <!-- /runtime-trace -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `cfgmgr/buffermgr.cpp`, `orchagent/bufferorch.cpp`
 
@@ -252,7 +252,7 @@ COUNTERS_DB `COUNTERS_BUFFER_POOL_NAME_MAP` および FLEX_COUNTER_DB への書�
 <!-- /side-effects -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BUFFER_PROFILE`
 
@@ -280,9 +280,9 @@ COUNTERS_DB `COUNTERS_BUFFER_POOL_NAME_MAP` および FLEX_COUNTER_DB への書�
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
@@ -290,7 +290,7 @@ COUNTERS_DB `COUNTERS_BUFFER_POOL_NAME_MAP` および FLEX_COUNTER_DB への書�
 | DB 移行: 動的計算プロファイル（`pg_lossless_*_profile` 形式）を削除 | `BUFFER_PROFILE` から動的エントリを除去 | `sonic-utilities/scripts/db_migrator.py:351-362` |
 | Dynamic buffer model: `buffermgrd` が速度・ケーブル長から Lossless プロファイルを自動生成 | `BUFFER_PROFILE` に `pg_lossless_<speed>_<cable>_profile` を書き込む | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2692` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -302,7 +302,7 @@ COUNTERS_DB `COUNTERS_BUFFER_POOL_NAME_MAP` および FLEX_COUNTER_DB への書�
 - db_migrator.py L351-362: 動的プロファイル削除
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -312,11 +312,11 @@ COUNTERS_DB `COUNTERS_BUFFER_POOL_NAME_MAP` および FLEX_COUNTER_DB への書�
 | `BufferMgrDynamic` | `handleBufferProfileTable()` | `PROFILE_INITIALIZING == profileApp.state`（新規） | `dynamic_calculated = false`、`lossless = false` で初期化 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2690-2693` |
 | `BufferMgrDynamic` | `handleBufferProfileTable()` | `op == DEL_COMMAND` かつプロファイルが動的計算中 | 動的計算プロファイルは削除せず内部状態をリセット | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2934` |
 
-> **スキャン証跡**: `handleBufferProfileTable` L2671-2935 全行読了。5 件分岐抽出。
+> **裏取り**: `handleBufferProfileTable` L2671-2935 全行読了。5 件分岐抽出。
 <!-- /handler-branching -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### 1. CONFIG_DB → buffermgr/buffermgrdyn: SubscriberStateTable
 
@@ -385,7 +385,7 @@ APPL_STATE_DB:BUFFER_PROFILE_TABLE
 <!-- /pubsub -->
 
 <!-- failure -->
-## 失敗挙動・retry 分岐 (Phase D)
+## 失敗挙動・retry 分岐
 
 ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `cfgmgr/buffermgr.cpp`, `orchagent/bufferorch.cpp`
 
@@ -458,7 +458,7 @@ task_success      → 正常完了
 <!-- /failure -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 YANG 定義のデフォルト値と `buffermgrdyn.cpp` / `bufferorch.cpp` 実装の実際の挙動を突き合わせた結果。
 
@@ -484,7 +484,7 @@ YANG 定義のデフォルト値と `buffermgrdyn.cpp` / `bufferorch.cpp` 実装
 <!-- /defaults -->
 
 <!-- platform -->
-## プラットフォーム差 (Task F Phase H)
+## プラットフォーム差
 
 ### 1. dynamic vs static buffer model
 
@@ -543,7 +543,7 @@ SN5xxx: 8-lane かつ speed != "800000" → xon 2倍 → profile 名に "_8lane"
 <!-- /platform -->
 
 <!-- ordering -->
-## 書込順依存 (Task F Phase B)
+## 書込順依存
 
 BUFFER_PROFILE エントリを正しく APPL_DB へ転送し SAI buffer profile を生成するには、以下のテーブルが先に登録されている必要がある。
 
@@ -594,10 +594,9 @@ JSON ファイル内の順序通りに APPL_DB へ書き込まれ、**zero pool 
 | 削除時 | zero profile を先に DEL → その後 zero pool を DEL | `buffermgrdyn.cpp:239, 408-431` |
 | 適用タイミング | cold/fast reboot: `m_bufferPoolReady` 後に 30 秒デファー（fast reboot 高速化）。warm reboot: 即時適用 | `buffermgrdyn.cpp:156-169` |
 
-詳細スキャンノートは `meta/_intermediate/cdb-flow/buffer-profile-ordering.md` を参照。
 <!-- /ordering -->
 <!-- constants -->
-## ハードコード定数 (Task F Phase E)
+## ハードコード定数
 
 ### threshold_mode フィールド名定数
 
@@ -658,7 +657,7 @@ pool mode と profile の `threshold_mode` の不一致（例: dynamic pool に 
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Task F Phase C)
+## 暗黙テーブル参照
 
 ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `sonic-swss/orchagent/bufferorch.cpp`, `sonic-swss/cfgmgr/buffermgr.cpp`
 
@@ -707,7 +706,6 @@ BUFFER_PROFILE
         buffer_model → dynamic/static モデル選択 (static model)
 ```
 
-詳細スキャンノートは `meta/_intermediate/cdb-flow/buffer-profile-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- glossary-links-injected: b9eaf3c9bfb9 -->

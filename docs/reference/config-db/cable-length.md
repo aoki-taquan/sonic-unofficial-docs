@@ -165,7 +165,7 @@ show buffer information
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 CABLE_LENGTH テーブルへの書き込みが発生するコード経路。
 
@@ -185,11 +185,10 @@ CABLE_LENGTH テーブルへの書き込みが発生するコード経路。
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-> 調査証跡: `meta/_intermediate/cdb-flow/cable-length-derivation.md`
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 `length` 値の変化が引き金となり、`BUFFER_PROFILE` / `BUFFER_PG` が自動生成・更新・削除される。
 
@@ -212,7 +211,7 @@ CABLE_LENGTH テーブルへの書き込みが発生するコード経路。
 | 旧プロファイルの参照ポートがゼロになった | APPL_DB / [STATE_DB](../../reference/glossary.md#term-state_db) `BUFFER_PROFILE_TABLE` から旧プロファイルを del | buffermgrdyn.cpp:1047-1049 |
 | `PORT_INITIALIZING` → 初回 cable_length 設定 | ポート状態を `PORT_READY` に遷移 | buffermgrdyn.cpp:2184 |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -224,7 +223,7 @@ CABLE_LENGTH テーブルへの書き込みが発生するコード経路。
 <!-- /derivation -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 <!-- evidence: sonic-swss/cfgmgr/buffermgrd.cpp:174-203, buffermgrdyn.cpp:450/603-648/2124-2200/3574-3610, buffermgr.h:48-51 -->
 
@@ -302,9 +301,8 @@ SAI buffer API → チップ PG headroom 設定
 <!-- /pubsub -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> 調査証跡: `meta/_intermediate/cdb-flow/cable-length-ordering.md`
 
 ### SET 時の先行必須テーブル
 
@@ -355,9 +353,8 @@ APPL_DB.BUFFER_PROFILE / BUFFER_PG 生成 → bufferorch → SAI buffer API
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動・エラー処理 (Phase D)
+## 失敗挙動・エラー処理
 
-> 調査証跡: `meta/_intermediate/cdb-flow/cable-length-failure.md`
 
 <!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.cpp:978,1106,1117,1541-1548,2155-2159,2189-2219, cfgmgr/buffermgr.cpp:154-155,168-170,240-243,257-258 -->
 
@@ -459,7 +456,7 @@ ERROR: "Unable to create/update PG profile for port %s.
 <!-- /failure -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 YANG default と別に、コード側で「フィールド不在時の fallback」が実装されている field を全列挙する。
 
@@ -483,7 +480,7 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数一覧 (Phase E)
+## ハードコード定数一覧
 
 <!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.h:15, buffermgrdyn.cpp:485,2174,2378, buffermgr.cpp:159,183-184, buffer_headroom_mellanox.lua:42-51,119-120,160, buffer_headroom_barefoot.lua:13, buffer_pool_barefoot.lua:13 -->
 
@@ -521,7 +518,7 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込み (Phase F)
+## 副次 DB 書込み
 
 <!-- evidence: sonic-swss/cfgmgr/buffermgr.cpp, buffermgrdyn.cpp -->
 
@@ -564,7 +561,7 @@ CABLE_LENGTH 更新が引き起こす **他テーブルへの書込み**を示�
 <!-- /side-effects -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 CABLE_LENGTH テーブルの処理中に `buffermgr` / `buffermgrdyn` が暗黙的に参照する CONFIG_DB テーブルを示す。これらは CABLE_LENGTH テーブルの直接フィールドには現れないが、headroom 計算・処理経路・プロファイル生成に必須の依存関係を持つ。
 
@@ -606,7 +603,7 @@ CABLE_LENGTH テーブルの処理中に `buffermgr` / `buffermgrdyn` が暗黙�
 <!-- /cross-refs -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
 <!-- evidence: sonic-swss/cfgmgr/buffermgr.cpp:37,206, cfgmgr/buffermgrdyn.cpp:68-93,504-522 -->
 

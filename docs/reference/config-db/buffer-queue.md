@@ -104,7 +104,7 @@ BUFFER_QUEUE|<hostname>|<asic_name>|<port>|<qindex>
 <!-- /value-behavior -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 YANG (`sonic-buffer-queue.yang`) の `profile` leafref には明示的な default がない。実体の「未指定時挙動」はビルド時テンプレート (`buffers_config.j2`) と [orchagent](../../reference/glossary.md#term-orchagent) ランタイムロジック (`bufferorch.cpp`) に分散している。
 
@@ -142,12 +142,11 @@ YANG (`sonic-buffer-queue.yang`) の `profile` leafref には明示的な defaul
 - [orchagent](../../reference/glossary.md#term-orchagent) には「`profile` が未指定なら自動で `egress_lossy_profile` を当てる」といったランタイムフォールバックは**存在しない**。ビルド時テンプレートで埋まらなかった queue は SAI 側で NULL profile (= 動的バッファ割当なし) となる。
 - scheduler 既定 (`QUEUE.scheduler`) は `BUFFER_QUEUE` テーブルのフィールドではなく `QUEUE` テーブル側で割当される。BUFFER_QUEUE スコープ外のため本ページでは扱わない。
 
-詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-defaults.md` を参照。
 
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込順依存 (Phase B)
+## 書込順依存
 
 BUFFER_QUEUE エントリを正しく適用するには、以下の依存テーブルが先に登録されている必要がある。
 
@@ -169,7 +168,6 @@ key が 4 トークンでない場合は即 `task_invalid_entry`。
 
 - evidence: `sonic-swss/orchagent/bufferorch.cpp:918-940`
 
-詳細スキャンノートは `meta/_intermediate/cdb-flow/buffer-queue-ordering.md` を参照。
 <!-- /ordering -->
 
 ## 購読者
@@ -247,7 +245,7 @@ show buffer queue
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BUFFER_QUEUE`
 
@@ -276,7 +274,7 @@ show buffer queue
 <!-- /entry-points -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 YANG leafref（`profile → BUFFER_PROFILE.name`、`port → PORT.name`）以外に、実装レベルで以下のテーブルを暗黙参照する。
 
@@ -294,19 +292,18 @@ YANG leafref（`profile → BUFFER_PROFILE.name`、`port → PORT.name`）以外
 - **PORT（OID + admin_status）**: `orchagent` は `gPortsOrch->getPort(port_name, port)` で PORT OID を取得し（`bufferorch.cpp:1033`）、失敗時は `task_invalid_entry`。`buffermgrd` は PORT が admin-down のとき SAI 適用を保留し（`buffermgrdyn.cpp:3346`）、admin-up 遷移後に再適用する。
 - **SYSTEM_PORT / VOQ**: `gMySwitchType == "voq"` の場合、`processQueue()` は key を `hostname|asic_name|port|qindex` の 4 トークンとして解析し（`bufferorch.cpp:916`）、`gPortsOrch->getPortVoQIds(port)` で VOQ OID を取得してバッファプロファイルを適用する（`bufferorch.cpp:1051`）。flex counter 管理および PORT ref count 管理は VOQ では実施しない（`bufferorch.cpp:1135–1168`）。
 
-詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | DB 移行: `profile` フィールドの区切り文字を新形式に更新 | `BUFFER_QUEUE.profile` を変換 | `sonic-utilities/scripts/db_migrator.py:450` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -318,18 +315,18 @@ YANG leafref（`profile → BUFFER_PROFILE.name`、`port → PORT.name`）以外
 - db_migrator.py L450: profile フィールド区切り文字変換
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
 | `BufferMgrDynamic` | `handleBufferObjectTables()` | キー形式 `port:ids` が不正 | `task_invalid_entry` 返却（`keyWithIds=true` のためキュー番号必須） | `sonic-swss/cfgmgr/buffermgrdyn.cpp:3521` |
 | `BufferMgrDynamic` | `handleBufferObjectTables()` | カンマ区切りポートリスト（複数ポート） | ポートごとにシングルポートハンドラを繰り返し呼び出し | `sonic-swss/cfgmgr/buffermgrdyn.cpp:3536-3547` |
 
-> **スキャン証跡**: `handleBufferQueueTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_QUEUE_TABLE_NAME, true)` に委譲（`keyWithIds=true`）。[BUFFER_PG](../../reference/glossary.md#term-buffer-pg) と同一パスを共有。2 件分岐抽出。
+> **裏取り**: `handleBufferQueueTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_QUEUE_TABLE_NAME, true)` に委譲（`keyWithIds=true`）。[BUFFER_PG](../../reference/glossary.md#term-buffer-pg) と同一パスを共有。2 件分岐抽出。
 <!-- /handler-branching -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 BUFFER_QUEUE テーブルの変更は以下のチェーンで伝搬する。
 
@@ -375,11 +372,10 @@ BUFFER_QUEUE フローで bufferorch が [ASIC_DB](../../reference/glossary.md#t
 SAI への書き込みは [syncd](../../reference/glossary.md#term-syncd) が [ASIC_DB](../../reference/glossary.md#term-asic_db) に転送し、結果は SAI return code で受け取る通常フロー。
 （BUFFER_POOL_WATERMARK に対する `SubscriberStateTable` は存在するが BUFFER_QUEUE とは無関係: `bufferorch.cpp:290`）
 
-詳細スキャンノートは `meta/_intermediate/cdb-flow/buffer-queue-pubsub.md` を参照。
 <!-- /pubsub -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `sonic-swss/orchagent/bufferorch.cpp`, `sonic-swss/cfgmgr/buffermgrdyn.h`, `sonic-swss/orchagent/bufferorch.h`, `sonic-swss/cfgmgr/buffer_headroom_mellanox.lua`
 
@@ -485,11 +481,10 @@ pause quanta テーブル (IEEE 802.3 31B.3.7 準拠、ハードコード):
 
 xoff（[PFC](../../reference/glossary.md#term-pfc) pause 起動閾値）の繰り上げ粒度: **1024 バイト** (`math.ceil(xoff_value / 1024) * 1024`)。
 
-詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-constants.md` を参照。
 <!-- /constants -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `orchagent/bufferorch.cpp`
 
@@ -530,11 +525,10 @@ xoff（[PFC](../../reference/glossary.md#term-pfc) pause 起動閾値）の繰�
 - **`m_partiallyAppliedQueues`**: queue ロック中に `task_need_retry` を返した key を保持する集合。同一 key で profile 変更がなくても登録があれば SAI 更新を強制する（`bufferorch.cpp:979-986`）。
 - **SAI 呼び出しの 2 段構成**: `processBufferQueue` がキューへバッファし `processQueuePost` で実際の SAI 結果を評価する。SAI 失敗は `processQueuePost` 側で検出される（`bufferorch.cpp:1099-1131`）。
 
-詳細は `meta/_intermediate/cdb-flow/buffer-queue-failure.md` を参照。
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `BUFFER_QUEUE` エントリの SET / DEL 処理は CONFIG_DB および APPL_DB への書き込み以外に、以下の副次的な DB 書き込みを発生させる。
 
@@ -571,11 +565,10 @@ xoff（[PFC](../../reference/glossary.md#term-pfc) pause 起動閾値）の繰�
 
 profile 名に `_zero_` を含む場合 (`counter_needs_to_add = false`)、カウンタ追加は行わない。既存カウンタがあれば削除する。`bufferorch.cpp:1017, 1020`
 
-詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 ### Dynamic / Static バッファモデル
 
@@ -625,7 +618,6 @@ YANG の qindex 正規表現は `(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?` で **0〜1
 | Flex counter 管理 | `BufferOrch` が per-queue 追加・削除 | `flexcounterorch` が全 VOQ を一括登録するためスキップ | `bufferorch.cpp:1134-1136` |
 | ポート参照カウント | SET/DEL 時に increase/decrease | システムポートは動的生成なしのためスキップ | `bufferorch.cpp:1166-1168` |
 
-詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-platform.md` を参照。
 <!-- /platform -->
 
 <!-- glossary-links-injected: c13da27b1272 -->

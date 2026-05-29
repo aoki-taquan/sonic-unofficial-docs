@@ -148,7 +148,7 @@ show interfaces breakout
 <!-- /cdb-exceptions -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-utilities/config/main.py`, `sonic-utilities/config/config_mgmt.py`
 
@@ -220,7 +220,7 @@ show interfaces breakout
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BREAKOUT_CFG`
 
@@ -249,16 +249,16 @@ show interfaces breakout
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | CLI `config interface breakout <port> <mode>` 実行時 | `BREAKOUT_CFG` の `brkout_mode` を更新、`PORT` テーブルの子ポートエントリを生成・削除 | `sonic-utilities/config/main.py:5554` |
 | `cur_brkout_mode != target_brkout_mode` | `PORT` テーブルの子ポートを `del_ports` + `add_ports` で再構成 | `sonic-utilities/config/main.py:5496-5507` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -269,7 +269,7 @@ show interfaces breakout
 - config/main.py L5479-5554: BREAKOUT_CFG 読み取り・更新のみ（条件付き登録なし）
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -278,11 +278,11 @@ show interfaces breakout
 | `config interface breakout` (CLI) | `_validate_interface_mode()` | `target_brkout_mode NOT IN breakout_cfg_file` | バリデーション失敗 → エラー終了 | `sonic-utilities/config/main.py:5491` |
 | `config interface breakout` (CLI) | `interface_breakout()` | `cur_brkout_mode != target_brkout_mode` | PORT テーブルを `del_ports` + `add_ports` で再構成。同一モードの場合はスキップ | `sonic-utilities/config/main.py:5496-5507` |
 
-> **スキャン証跡**: config/main.py L5467-5554 全行読了。ランタイムデーモンによる直接消費なし。分岐はすべて CLI コマンドパス内。4 件抽出。
+> **裏取り**: config/main.py L5467-5554 全行読了。ランタイムデーモンによる直接消費なし。分岐はすべて CLI コマンドパス内。4 件抽出。
 <!-- /handler-branching -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Producer/Consumer ペア
 
@@ -347,10 +347,10 @@ APPL_DB[BREAKOUT_CFG]: なし（BREAKOUT_CFG は CONFIG_DB 専用）
 
 新ポートが `m_pendingPortSet` に保留される条件: `gBufferOrch->isPortReady()` が `false`（[BUFFER_PG](../../reference/glossary.md#term-buffer-pg) / BUFFER_QUEUE 未登録）。BufferOrch のエントリが揃い次第、次回 `doPortTask()` 呼び出し時に再試行される。
 
-> **Evidence**: `sonic-utilities/config/main.py:5465-5554` (CLI 起動経路全体)、`sonic-swss/portsyncd/portsyncd.cpp:71,179-214` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) → APPL_DB)、`sonic-swss/orchagent/orchdaemon.cpp:217-232` (PortsOrch 生成・[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) wiring)、`sonic-swss/orchagent/portsorch.cpp:4555-4604,4779-4788` (doPortTask / isPortReady 保留)、`sonic-swss/orchagent/bufferorch.cpp:254-273` (isPortReady 実装); 詳細分析 `meta/_intermediate/cdb-flow/breakout-cfg-pubsub.md`
+> **Evidence**: `sonic-utilities/config/main.py:5465-5554` (CLI 起動経路全体)、`sonic-swss/portsyncd/portsyncd.cpp:71,179-214` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) → APPL_DB)、`sonic-swss/orchagent/orchdaemon.cpp:217-232` (PortsOrch 生成・[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) wiring)、`sonic-swss/orchagent/portsorch.cpp:4555-4604,4779-4788` (doPortTask / isPortReady 保留)、`sonic-swss/orchagent/bufferorch.cpp:254-273` (isPortReady 実装)
 <!-- /pubsub -->
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 Dynamic Port Breakout (DPB) は **多段フェーズ**で構成され、各ステップの順序が厳守されなければ ASIC エラーや設定乖離が生じる。
 
@@ -383,7 +383,7 @@ Dynamic Port Breakout (DPB) は **多段フェーズ**で構成され、各ス�
 
 <!-- /ordering -->
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 ### `brkout_mode`
 
@@ -414,7 +414,7 @@ Dynamic Port Breakout (DPB) は **多段フェーズ**で構成され、各ス�
 > これらは BREAKOUT_CFG 自身のフィールドではなく、`brkout_mode` 値に依存した **PORT テーブルへの暗黙派生**。YANG に記述なし。
 <!-- /defaults -->
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 breakout 処理コアに埋め込まれた定数。CONFIG_DB フィールドには現れないが、ポート名生成・FEC 付与・モード検証に直接影響する。
 
@@ -462,7 +462,7 @@ breakout 処理コアに埋め込まれた定数。CONFIG_DB フィールドに�
 > **設計上の注意**: `PORT_STR = "Ethernet"` および FEC しきい値 `50000` Mbps はコードにハードコードされており、変更する場合は `portconfig.py` の修正が必要。FEC しきい値は 50 G/lane 以上のすべての速度（100 G/2lane、400 G/4lane 等）に適用される。
 <!-- /constants -->
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `BREAKOUT_CFG` への書込（`config interface breakout`）は CONFIG_DB 内の主テーブル更新にとどまらず、PORT テーブル再構成・[STATE_DB](../../reference/glossary.md#term-state_db) ポート状態初期化・[COUNTERS_DB](../../reference/glossary.md#term-counters_db) キューマップ更新という 3 系統の副次書込を引き起こす。
 
@@ -496,10 +496,9 @@ flex counter が有効な環境では、新子ポートのキュー OID マッ�
 !!! note "flex counter 条件付き"
     COUNTERS_DB へのキューマップ書込は queue flex counter（`FLEX_COUNTER_DB|QUEUE_STAT_COUNTER`）が有効な場合のみ発生する。無効環境では `generateQueueMapPerPort()` は呼ばれない。
 
-詳細分析: `meta/_intermediate/cdb-flow/breakout-cfg-side.md`
 <!-- /side-effects -->
 <!-- cross-refs -->
-## 暗黙参照 — DPB が読み出す関連 CONFIG_DB テーブル (Phase C)
+## 暗黙参照 — DPB が読み出す関連 CONFIG_DB テーブル
 
 Dynamic Port Breakout (DPB) は `BREAKOUT_CFG` 単体ではなく、`CONFIG_DB` 内の関連テーブルを YANG leafref 解析で検出し、削除対象ポートに依存するエントリを **cascade 削除**（`--force-remove-dependencies` 時）またはユーザ警告対象として扱う。依存解決は `ConfigMgmtDPB._deletePorts()` 内の `SonicYang.find_data_dependencies()` が担う (`config_mgmt.py` L488-495)。
 
@@ -550,7 +549,7 @@ YANG モデルが存在しないテーブルは `tablesWithOutYang` に収集さ
 | `BUFFER_PG` / `BUFFER_QUEUE` | `loadDefConfig=True` 時にデフォルトバッファ設定を注入 | `portconfig.py` (デフォルト設定 JSON) |
 <!-- /cross-refs -->
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 ### 概要
 
