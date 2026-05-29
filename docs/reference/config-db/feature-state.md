@@ -139,7 +139,7 @@ Kubernetes (`set_owner = kube`) 使用時の状態遷移:
 | `container_startup.py` | `system_state`, `remote_state`, `container_version` | コンテナ起動判断 |
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) schema が存在しないため、すべてのデフォルトはコードの変数初期化から由来する。
 
@@ -172,7 +172,7 @@ Kubernetes (`set_owner = kube`) 使用時の状態遷移:
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `featured` は CONFIG_DB `FEATURE` テーブルを subscribe し、変化を検知した順に systemctl 操作を行い、その結果を STATE_DB `FEATURE` テーブルに書き込む。`sonic-ctrmgrd` (`container_startup.py`) は各コンテナ起動スクリプト内から独立して STATE_DB に書き込む。両者の書込み順は並行して発生し、以下の依存関係が存在する。
 
@@ -200,7 +200,7 @@ Kubernetes (`set_owner = kube`) 使用時の状態遷移:
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 STATE_DB `FEATURE` テーブルは `featured` と `sonic-ctrmgrd` が書き手であり、書き込み内容の決定に以下のテーブル・リソースを参照する。
 
@@ -239,7 +239,7 @@ STATE_DB `FEATURE` テーブルは `featured` と `sonic-ctrmgrd` が書き手�
 <!-- /cdb-exceptions -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-host-services/scripts/featured`; `sonic-net/sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/container_startup.py`
 
@@ -280,7 +280,7 @@ STATE_DB `FEATURE` テーブルは `featured` と `sonic-ctrmgrd` が書き手�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `featured` / `container_startup.py` / `ctrmgrd.py` に埋め込まれた CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 
@@ -318,13 +318,10 @@ STATE_DB エントリが存在しない場合に `read_data()` が使用する�
 - **`FEATURE_EXCLUSION_LIST` はコード専有**: `telemetry` / `frr_bmp` の除外は CONFIG_DB にも [YANG](../../reference/glossary.md#term-yang) にも設定パスがなく、ソースコード変更なしに追加・削除できない。
 - **delayed feature の 180 秒タイムアウト**: PORT 初期化が 180 秒を超えた場合、タイムアウトで強制 enable されるため、コンテナが不完全な状態で起動しうる。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/feature-state-constants.md`
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/feature-state-side-effects.md`
+## 副次 DB 書込
 
 STATE_DB `FEATURE` テーブルを書き込む 3 デーモン (`featured` / `container_startup.py` / `ctrmgrd.py`) が FEATURE テーブル以外へ副次的に書き込む先を示す。
 
@@ -354,9 +351,7 @@ STATE_DB `FEATURE` テーブルを書き込む 3 デーモン (`featured` / `con
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> 中間調査詳細: `meta/_intermediate/cdb-flow/feature-state-pubsub.md`
+## 通信メカニズム
 
 ### 書き込み側 — swsscommon.Table による直接 set
 
@@ -441,7 +436,7 @@ APPL_DB PORT_TABLE|* 変更 (port ready)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 ### `state` フィールド — FEATURE_EXCLUSION_LIST による例外
 

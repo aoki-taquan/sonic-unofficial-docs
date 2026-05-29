@@ -235,7 +235,7 @@ flowchart LR
 | [fdbsyncd](../../reference/glossary.md#term-fdbsyncd) (自動学習) | APPL_DB 直接 (CONFIG_DB を経由しない) | `"dynamic"` |
 
 <!-- ordering -->
-## 書込み順依存・タイミング依存 (Phase B)
+## 書込み順依存・タイミング依存
 
 `FdbOrch::doTask()` (`fdborch.cpp:707`) と `addFdbEntry()` (`fdborch.cpp:1277`) のコード精読から、以下の順序依存を確認した。
 
@@ -386,7 +386,7 @@ FDB                 (SAI create_fdb_entry)
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `FdbOrch::doTask()` (`fdborch.cpp:707`) と `addFdbEntry()` / `removeFdbEntry()` のコード精読から、以下の失敗パターンを確認した。
 
@@ -443,11 +443,11 @@ assert(type == "dynamic" || type == "dynamic_local" || type == "static");
 - **ERROR_TABLE**: 書き込みなし。
 - **CONFIG_DB `FDB` エントリ**: 失敗後も残存する（orchagent は書き戻さない）。
 
-> **証跡**: `FdbOrch::doTask(Consumer&)` L707-921 精読、`addFdbEntry()` L1277-1582、`removeFdbEntry()` L1631-1715。中間ファイル: `meta/_intermediate/cdb-flow/fdb-failure.md`
+> **証跡**: `FdbOrch::doTask(Consumer&)` L707-921 精読、`addFdbEntry()` L1277-1582、`removeFdbEntry()` L1631-1715。
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込（Phase F）
+## 副次 DB 書込
 
 CONFIG_DB `FDB` エントリが APPL_DB `FDB_TABLE` 経由で `FdbOrch::addFdbEntry()` に処理されると、以下の副次書込が発生する。
 
