@@ -66,7 +66,7 @@ key は JSON 形式でエンコードされる。`<id>` は [P4RT](../../referen
 - 更新時は個別フィールドを部分的に送信できる (`has_*` フラグで管理)。
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 <!-- evidence: sonic-swss/orchagent/p4orch/mirror_session_manager.h L20-21 / mirror_session_manager.cpp prepareSaiAttrs() L120-187 / p4orch_util.h P4MirrorSessionAppDbEntry struct L253-279 -->
 
@@ -97,7 +97,7 @@ APP_DB に gre_type フィールドは存在せず変更できない。[CONFIG_D
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/orchagent/p4orch/mirror_session_manager.h L20-21 / mirror_session_manager.cpp prepareSaiAttrs() L142-188, deserialize L281-313 / sonic-swss-common/common/schema.h L70 / orchagent/mirrororch.cpp L29, L40-45, L57-77 -->
 
@@ -122,7 +122,7 @@ APP_DB に gre_type フィールドは存在せず変更できない。[CONFIG_D
 | CONFIG_DB `MIRROR_SESSION` (`MirrorOrch`) | **`0x8949`** (`mirrororch.cpp:65-68`) | **`0x88be`** (`mirrororch.cpp:69-72`) | CLI で `gre_type` 明示指定すれば任意値で上書き可 |
 | [APPL_DB](../../reference/glossary.md#term-appl_db) `FIXED_MIRROR_SESSION_TABLE` (P4RT) | **`0x88be` (固定)** | **`0x88be` (固定)** | **上書き不可** (APP_DB に `gre_type` フィールドなし、platform 分岐コードなし) |
 
-→ Mellanox Spectrum 上で P4RT 経由 ERSPAN を使うと SAI に `0x88be` が渡り、CONFIG_DB 経路で期待される `0x8949` と乖離する。詳細は本ページ「プラットフォーム差 (Phase H)」と `meta/_intermediate/cdb-flow/appl-mirror-platform.md` を参照。
+→ Mellanox Spectrum 上で P4RT 経由 ERSPAN を使うと SAI に `0x88be` が渡り、CONFIG_DB 経路で期待される `0x8949` と乖離する。詳細は本ページ「プラットフォーム差」を参照。
 
 ### policer 識別子は APPL_DB に存在しない (CONFIG_DB との差異)
 
@@ -161,12 +161,10 @@ CONFIG_DB 経路は `MIRROR_SESSION_POLICER = "policer"` (`mirrororch.cpp:29`) �
 | DSCP / TTL デフォルト | `8` / `255` (省略時適用) | 必須、struct 初期値 `0` / `0` は実質未使用 | クライアントが明示指定必須 |
 | platform env (`getenv("platform")`) 参照 | あり (`mirrororch.cpp:65`) | **なし** | P4RT 経路は platform 非依存だが、その結果 Mellanox 適合性を失う |
 
-詳細スキャンノート: `meta/_intermediate/cdb-flow/appl-mirror-constants.md`
-
 <!-- /constants -->
 
 <!-- ordering -->
-## 書込み順依存・タイミング依存 (Phase B)
+## 書込み順依存・タイミング依存
 
 `FIXED_MIRROR_SESSION_TABLE` は P4RT 経路で `MirrorSessionManager` (`orchagent/p4orch/mirror_session_manager.cpp`) が直接処理する。CONFIG_DB `MIRROR_SESSION` を扱う `MirrorOrch` と異なり、**route/neighbor/fdb の動的解決機構を持たず**、`dst_mac` を APPL_DB フィールドとして直接受け取る fail-fast 設計になっている[^6]。リトライ機構や pending キューがないため、書込み順は P4RT クライアント側で正しく保証する必要がある。
 
@@ -271,12 +269,10 @@ P4RT 経路は `param/dst_mac` を **APPL_DB の必須フィールドとして�
 | 6 | policer 先行依存は**不在** | (CONFIG_DB との差異) | [QoS](../../reference/glossary.md#term-qos) 制御は [ACL](../../reference/glossary.md#term-acl) meter で |
 | 7 | route/neighbor/fdb 動的解決は**不在** | (CONFIG_DB との差異) | クライアント側で `dst_mac` 再解決 |
 
-詳細スキャンノート: `meta/_intermediate/cdb-flow/appl-mirror-ordering.md`
-
 <!-- /ordering -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `FIXED_MIRROR_SESSION_TABLE` を処理する `MirrorSessionManager` は **`getenv("platform")` を一切参照せず**、GRE type / IP header version / encapsulation type / session type をすべて C++ 定数としてハードコードする (`mirror_session_manager.h:20-21`、`mirror_session_manager.cpp::prepareSaiAttrs()`)。
 一方 CONFIG_DB 側 `MirrorOrch` は `mirrororch.cpp:65-72` で `platform == MLNX_PLATFORM_SUBSTRING` のときに GRE type を `0x8949` に切り替える等、複数のプラットフォーム / スイッチタイプ分岐を持つ。
@@ -323,12 +319,10 @@ namespace 間の整合性 (例: 同一 `mirror_session_id` を複数 asic に作
 - **policer 連携の機能差**: CONFIG_DB 経路では `MIRROR_SESSION.policer` で rate limiter を付けられるが、P4RT 経路は policer フィールドそのものが存在せず、ASIC が policer 連携をサポートしていても **P4RT 経由では利用不可**。
 - **VoQ シャーシでの monitor_port 不整合**: `switch_type=voq` 環境では CONFIG_DB 経路は ERSPAN の monitor_port を recirc port に差し替えるが、P4RT 経路は差し替えない。**P4RT FIXED_MIRROR_SESSION_TABLE は VoQ シャーシ向けに設計されていない**。
 
-詳細は `meta/_intermediate/cdb-flow/appl-mirror-platform.md` を参照。
-
 <!-- /platform -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G) — ZMQ 経由の購読
+## 通信メカニズム — ZMQ 経由の購読
 
 <!-- evidence: sonic-swss/orchagent/p4orch/p4orch.h L46 / p4orch.cpp L36-43, L80, L126-200 / orchagent/orchdaemon.cpp L848-849 / p4orch/mirror_session_manager.cpp L82, L111 -->
 
@@ -376,7 +370,7 @@ P4Orch::P4Orch(swss::DBConnector* db, std::vector<std::string> tableNames,
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `APPL_DB FIXED_MIRROR_SESSION_TABLE` の SET / DEL に伴う副次 DB 書込は **APPL_STATE_DB への応答 publish 1 経路のみ**。CONFIG_DB 経路 `MirrorOrch` のような `STATE_DB MIRROR_SESSION_TABLE` への status 書込は **発火しない**[^side-1]。
 
@@ -416,7 +410,7 @@ mirror session 単位の SAI カウンタは P4RT / CONFIG_DB の**どちらの�
 
 DB 書込ではないが、`MirrorSessionManager` ハンドラは以下のプロセス内データ構造を更新する:
 
-- `m_p4OidMapper->setOID(SAI_OBJECT_TYPE_MIRROR_SESSION, key, oid)` / `eraseOID(...)` — P4Orch 内の P4-key→SAI OID マッパ。`AclRuleManager` の mirror action 解決時に参照される (cf. ordering Phase B §4)
+- `m_p4OidMapper->setOID(SAI_OBJECT_TYPE_MIRROR_SESSION, key, oid)` / `eraseOID(...)` — P4Orch 内の P4-key→SAI OID マッパ。`AclRuleManager` の mirror action 解決時に参照される (cf. §4 書込み順依存)
 - `gPortsOrch->increasePortRefCount(port)` / `decreasePortRefCount(port)` — UPDATE で port 切替時は old を decrease → new を increase の順 (`mirror_session_manager.cpp:517-518`)
 
 ### 経路別の副次 DB 書込サマリ
@@ -438,18 +432,18 @@ sonic-db-cli APPL_STATE_DB keys 'FIXED_MIRROR_SESSION_TABLE*'
 sonic-db-cli STATE_DB keys 'MIRROR_SESSION_TABLE*'
 ```
 
-> **証跡**: `P4Orch::m_publisher` 宣言 `orchagent/p4orch/p4orch.cpp:36-43`、`m_publisher->publish(...)` 呼出 `orchagent/p4orch/mirror_session_manager.cpp:82, 111`、[STATE_DB](../../reference/glossary.md#term-state_db) / COUNTERS_DB Table メンバ不在 `orchagent/p4orch/mirror_session_manager.h` 全体、CONFIG_DB 経路 `STATE_DB MIRROR_SESSION_TABLE.status` 書込は `orchagent/mirrororch.cpp` 側の `MirrorOrch::setSessionState()` 経路。詳細分析: `meta/_intermediate/cdb-flow/appl-mirror-side.md`
+> **裏取り**: `P4Orch::m_publisher` 宣言 `orchagent/p4orch/p4orch.cpp:36-43`、`m_publisher->publish(...)` 呼出 `orchagent/p4orch/mirror_session_manager.cpp:82, 111`、[STATE_DB](../../reference/glossary.md#term-state_db) / COUNTERS_DB Table メンバ不在 `orchagent/p4orch/mirror_session_manager.h` 全体、CONFIG_DB 経路 `STATE_DB MIRROR_SESSION_TABLE.status` 書込は `orchagent/mirrororch.cpp` 側の `MirrorOrch::setSessionState()` 経路。
 
 [^side-1]: `MirrorSessionManager` クラス定義 (`orchagent/p4orch/mirror_session_manager.h`) には STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB を扱う `Table` / `DBConnector` メンバが存在せず、`mirror_session_manager.cpp` も該当 API 呼出を行わない。唯一の副次 DB 書込は親 `P4Orch::m_publisher` (`ResponsePublisher`) 経由の APPL_STATE_DB 応答。<https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L82>
 
 <!-- /side-effects -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-swss/orchagent/p4orch/mirror_session_manager.cpp drain() L62-119 / deserializeP4MirrorSessionAppDbEntry() L190-323 / processAddRequest() L339-363 / createMirrorSession() L365-397 / processUpdateRequest() L399-480 / setPort() L482-524 / processDeleteRequest() L733-774 / prepareSaiAttrs() L122-188 -->
 
-APPL_DB `FIXED_MIRROR_SESSION_TABLE` の書込主体である `MirrorSessionManager::drain()` / `processAddRequest()` / `processUpdateRequest()` / `processDeleteRequest()` / `deserializeP4MirrorSessionAppDbEntry()` / `prepareSaiAttrs()` (`sonic-swss/orchagent/p4orch/mirror_session_manager.cpp`) を全行精読し、失敗・retry・CRITICAL 経路を抽出した。中間ノート: `meta/_intermediate/cdb-flow/appl-mirror-failure.md`。
+APPL_DB `FIXED_MIRROR_SESSION_TABLE` の書込主体である `MirrorSessionManager::drain()` / `processAddRequest()` / `processUpdateRequest()` / `processDeleteRequest()` / `deserializeP4MirrorSessionAppDbEntry()` / `prepareSaiAttrs()` (`sonic-swss/orchagent/p4orch/mirror_session_manager.cpp`) を全行精読し、失敗・retry・CRITICAL 経路を抽出した。
 
 CONFIG_DB 側 `MirrorOrch` (`orchagent/mirrororch.cpp`) と比較すると、P4RT 経路は **Orch 共通の `m_toSync` 自動再試行機構を一切使わない fail-fast 設計**であり、port readiness / policer 未準備 / SAI 一時失敗のいずれも自動回復しない。再送責務は P4RT controller 側に集約される[^fail-1]。
 
@@ -545,7 +539,7 @@ redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_MIRROR_SESSION*'
 <!-- /failure -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `FIXED_MIRROR_SESSION_TABLE` は P4RT 専用 APPL_DB テーブルで [YANG](../../reference/glossary.md#term-yang) モデルを持たない。以下はすべて実装レベルの暗黙参照。
 CONFIG_DB 側 `MIRROR_SESSION` (`MirrorOrch`) との **差異 (= P4RT 経路に存在しない依存)** を負の evidence として明示する。
@@ -568,8 +562,6 @@ CONFIG_DB 側 `MIRROR_SESSION` (`MirrorOrch`) との **差異 (= P4RT 経路に�
 !!! warning "ACL_RULE → MIRROR_SESSION の SET 順序"
     P4RT `AclRuleManager` の mirror アクション処理 (`acl_rule_manager.cpp` L1403-1419) は CONFIG_DB `AclRuleMirror` のような遅延 activate 機構を持たない。
     `FIXED_MIRROR_SESSION_TABLE` SET の publish 成功確認 → ACL_RULE SET（mirror action 付き）の順で発行すること。逆順では ACL_RULE 側が `SWSS_RC_NOT_FOUND` で即失敗する。
-
-詳細スキャンノート: `meta/_intermediate/cdb-flow/appl-mirror-cross-refs.md`
 
 <!-- /cross-refs -->
 
@@ -598,6 +590,6 @@ sonic-db-cli APPL_DB hgetall 'FIXED_MIRROR_SESSION_TABLE|{"match/mirror_session_
 [^3]: 物理ポート制約: `orchagent/p4orch/mirror_session_manager.cpp` L124-135. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L124-L135>
 [^4]: `deserializeP4MirrorSessionAppDbEntry()`: `orchagent/p4orch/mirror_session_manager.cpp` L190-323. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L190-L323>
 [^5]: `MirrorEntry::MirrorEntry()` での GRE type platform 分岐: `orchagent/mirrororch.cpp` L57-77. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/mirrororch.cpp#L57-L77>
-[^6]: `MirrorSessionManager::drain()` と `prepareSaiAttrs()` の書込み順依存: `orchagent/p4orch/mirror_session_manager.cpp` L62-188. CONFIG_DB 経路の `MirrorOrch::doTask()` (`orchagent/mirrororch.cpp` L1567-1611) と動的解決機構 (L160-198, L760-808) との対比は `meta/_intermediate/cdb-flow/appl-mirror-ordering.md` を参照。 <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L62-L188>
+[^6]: `MirrorSessionManager::drain()` と `prepareSaiAttrs()` の書込み順依存: `orchagent/p4orch/mirror_session_manager.cpp` L62-188. CONFIG_DB 経路の `MirrorOrch::doTask()` (`orchagent/mirrororch.cpp` L1567-1611) と動的解決機構 (L160-198, L760-808) との対比参照。 <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L62-L188>
 
 <!-- glossary-links-injected: 27618ff2c697 -->

@@ -106,7 +106,7 @@ PORT_TABLE:<port_name>
 - 各種 orchs: IntfsOrch / BufferOrch 等が PORT_TABLE の `oper_status` 変化を受けて副次処理を実行
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 > **注記**: [YANG](../../reference/glossary.md#term-yang) `default` 指定がない APPL_DB フィールドでも、portmgrd / orchagent がコード内でデフォルト値を注入する。以下は実装精読から検出した暗黙デフォルトと挙動。
 
@@ -171,7 +171,7 @@ PORT_TABLE:<port_name>
 <!-- /defaults -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `APPL_DB PORT_TABLE` の **フィールド集合と書き込み挙動** は 3 つの軸でプラットフォーム/構成依存する: (1) SAI `sai_query_attribute_capability` の結果、(2) `device.metadata` の `switch_type` (`gMySwitchType`)、(3) `platform` 環境変数の Mellanox 判定。`speed` / `fec` 等のフィールド値そのものは portsyncd パススルーなので CONFIG_DB と同じだが、**SAI 適用可否・[STATE_DB](../../reference/glossary.md#term-state_db) 派生値・追加フィールド有無** が差分として現れる。
 
@@ -218,7 +218,7 @@ PORT_TABLE:<port_name>
 
 ### Gearbox 専用フィールド
 
-`system_oper_status` / `line_oper_status` は `isGearboxEnabled()` true の環境（line-side PHY 搭載 [ASIC](../../reference/glossary.md#term-asic)）でのみ書かれる。詳細は上記 Phase A 「コード由来の暗黙デフォルト」セクション参照。
+`system_oper_status` / `line_oper_status` は `isGearboxEnabled()` true の環境（line-side PHY 搭載 [ASIC](../../reference/glossary.md#term-asic)）でのみ書かれる。詳細は上記「コード由来の暗黙デフォルト」セクション参照。
 
 !!! warning "DPU では FEC override / oper FEC が照会されない"
     `gMySwitchType == "dpu"` の環境では `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` / `SAI_PORT_ATTR_OPER_PORT_FEC_MODE` を一切照会しない (`portsorch.cpp:987`)。STATE_DB の `oper_fec` は空のまま、CONFIG_DB に `fec` を設定しても autoneg override 経路は動かない。
@@ -235,9 +235,9 @@ PORT_TABLE:<port_name>
 <!-- /platform -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **注記**: APPL_DB `PORT_TABLE` の各フィールドの許容値・デフォルト・範囲は、コード内のマップや `#define` でハードコードされている。[YANG](../../reference/glossary.md#term-yang) / sonic-port.yang の制約と一致するものもあれば、コード固有のもの (gearbox 用の縮小 enum 等) もある。詳細表と参照行は [`meta/_intermediate/cdb-flow/appl-port-table-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-constants.md) を参照。
+> **注記**: APPL_DB `PORT_TABLE` の各フィールドの許容値・デフォルト・範囲は、コード内のマップや `#define` でハードコードされている。[YANG](../../reference/glossary.md#term-yang) / sonic-port.yang の制約と一致するものもあれば、コード固有のもの (gearbox 用の縮小 enum 等) もある。
 
 ### admin_status / oper_status
 
@@ -303,9 +303,9 @@ PORT_TABLE:<port_name>
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> **注記**: PortsOrch は APPL_DB `PORT_TABLE` を購読し、SAI を呼び出すと同時に複数の関連 DB に副次書き込みを行う。以下は `sonic-swss/orchagent/portsorch.cpp` の精読から検出した副次書込[^4]。詳細な操作行・コード行番号は [`meta/_intermediate/cdb-flow/appl-port-table-side.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-side.md) を参照。
+> **注記**: PortsOrch は APPL_DB `PORT_TABLE` を購読し、SAI を呼び出すと同時に複数の関連 DB に副次書き込みを行う。以下は `sonic-swss/orchagent/portsorch.cpp` の精読から検出した副次書込[^4]。
 
 ### 副次書込サマリ
 
@@ -342,7 +342,7 @@ PORT_TABLE:<port_name>
 <!-- /side-effects -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `PortsOrch` は APPL_DB `PORT_TABLE` に対する一連の書込みを「`PortConfigDone` → bulk port create → 個別属性適用 → `PortInitDone`」の段階遷移として処理する。さらに speed / FEC / autoneg / interface_type など SAI が admin-up 中に変更を許さない属性については **admin-down 前置 → 属性適用 → admin-status restore** の 3 ステップを内部で再現する[^portorder]。
 
@@ -432,22 +432,16 @@ oper_status / flap_count は warm 時に既存値を読み戻して継続する 
 
 orchagent 内部では、admin-down 前置・属性適用・admin restore は `PortsOrch::doTask()` が自動再現するので、書込側は「admin_status と速度系属性を同時に書いてよい」「個別 hset で逐次投入してもよい」のいずれでも構わない。
 
-### 詳細
-
-行番号付きの完全スキャンノート・grep カバレッジは中間ファイル参照:
-
-- `meta/_intermediate/cdb-flow/appl-port-table-ordering.md`
-
-> **証跡**: `portsorch.cpp` の `m_portConfigState` / `PORT_CONFIG_DONE` (9 hit)、`m_initDone` / `PortInitDone` (5 hit)、`m_isWarmRestoreStage` / `WarmStart::isWarmStart` (3 hit)、`gBufferOrch->isPortReady` (1 hit)、`setPortAdminStatus(p, false)` を含む `Bring port down before applying` 系コメント (6 hit) を全件確認。
+> **裏取り**: `portsorch.cpp` の `m_portConfigState` / `PORT_CONFIG_DONE` (9 hit)、`m_initDone` / `PortInitDone` (5 hit)、`m_isWarmRestoreStage` / `WarmStart::isWarmStart` (3 hit)、`gBufferOrch->isPortReady` (1 hit)、`setPortAdminStatus(p, false)` を含む `Bring port down before applying` 系コメント (6 hit) を全件確認。
 
 [^portorder]: orchagent [portsorch](../../reference/glossary.md#term-portsorch).cpp (Phase B 順序依存): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp>
 
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-APPL_DB の `PORT_TABLE` を `PortsOrch` が処理する際に、SAI OID 解決・依存ゲート・関連リソース列挙のために間接的に読み出す関連テーブル / Orch / DB を列挙する。`PortsOrch` は CONFIG_DB `PORT` を**直接購読しない**（portsyncd 経由で APPL_DB に転写される）ため、CONFIG_DB 側 `PORT` は Direction A 入力として扱い、本ブロックには含めない。スキャン詳細は [`meta/_intermediate/cdb-flow/appl-port-table-cross-refs.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-cross-refs.md) を参照。
+APPL_DB の `PORT_TABLE` を `PortsOrch` が処理する際に、SAI OID 解決・依存ゲート・関連リソース列挙のために間接的に読み出す関連テーブル / Orch / DB を列挙する。`PortsOrch` は CONFIG_DB `PORT` を**直接購読しない**（portsyncd 経由で APPL_DB に転写される）ため、CONFIG_DB 側 `PORT` は書き込み入り口として扱い、本ブロックには含めない。
 
 ### CONFIG_DB / APPL_DB BUFFER 設定（port-ready ゲート）
 
@@ -485,16 +479,15 @@ APPL_DB の `PORT_TABLE` を `PortsOrch` が処理する際に、SAI OID 解決�
 | portsyncd 由来 `PortConfigDone` / `PortInitDone` notification | 初期化ゲート — 必須 | `m_initDone` / `m_portConfigState` が揃うまで `PORT_TABLE` の SET 通常処理は走らない | `portsorch.cpp` L4620, L1238 (`getPortConfigState`) |
 | CONFIG_DB `DEVICE_METADATA.localhost.switch_type` (`gMySwitchType`) | 分岐条件 (voq / dpu / 通常) | sysport 列挙・queue counter 強制有効化などの分岐 | `portsorch.cpp` L1043-1047, L8505-8515 |
 
-> CONFIG_DB `PORT` 自体・CONFIG_DB `BUFFER_*` 群は **Direction A 入力**（portsyncd / buffermgrd 中継）として扱い、本ブロックには含めない。CONFIG_DB 側の cross-refs は `port.md` / `appl-buffer.md` で扱う。
+> CONFIG_DB `PORT` 自体・CONFIG_DB `BUFFER_*` 群は書き込み入り口（portsyncd / buffermgrd 中継）として扱い、本ブロックには含めない。CONFIG_DB 側の cross-refs は `port.md` / `appl-buffer.md` で扱う。
 
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗・retry 分岐 (Phase D)
+## 失敗・retry 分岐
 
 > **注記**: orchagent (PortsOrch) が APPL_DB `PORT_TABLE` を購読して SAI に反映する際、
-> 入力値の不正や SAI 失敗を 3 系統 (`task_success` / `task_need_retry` / `task_failed`) で扱う。
-> 詳細・コード行は [`meta/_intermediate/cdb-flow/appl-port-table-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-failure.md) を参照[^5]。
+> 入力値の不正や SAI 失敗を 3 系統 (`task_success` / `task_need_retry` / `task_failed`) で扱う[^5]。
 
 ### 永久失敗 (タスクを erase、retry なし)
 
@@ -535,9 +528,9 @@ SET が失敗してもデータ面の運用表示は最新値を反映する。
 <!-- /failure -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **注記**: APPL_DB `PORT_TABLE` は `PortsOrch` が **`ConsumerStateTable`** で購読する（CONFIG_DB / STATE_DB のような keyspace 通知ベースの `SubscriberStateTable` ではない）。producer の `portsyncd` / `portmgrd` が `ProducerStateTable` で KEY_SET に key を push し、Lua スクリプトが [Redis](../../reference/glossary.md#term-redis) `PUBLISH` を叩く。詳細・行番号は [`meta/_intermediate/cdb-flow/appl-port-table-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-pubsub.md) を参照[^pubsub]。
+> **注記**: APPL_DB `PORT_TABLE` は `PortsOrch` が **`ConsumerStateTable`** で購読する（CONFIG_DB / STATE_DB のような keyspace 通知ベースの `SubscriberStateTable` ではない）。producer の `portsyncd` / `portmgrd` が `ProducerStateTable` で KEY_SET に key を push し、Lua スクリプトが [Redis](../../reference/glossary.md#term-redis) `PUBLISH` を叩く[^pubsub]。
 
 ### 購読 API 種別と batch 設定
 
@@ -596,7 +589,7 @@ if (key == "PortInitDone") {
 }
 ```
 
-`PortConfigDone` 受信前に届いた個別 `PORT_TABLE:<alias>` SET は `taskMap` に保留され (`portsorch.cpp:4772-4777`)、`PortConfigDone` 受信時に `it = taskMap.begin()` で先頭から再評価される。これにより「producer (portsyncd) は順不同で `PORT_TABLE:<alias>` を全件書いてから最後に `PortConfigDone` を書く」という契約が成立する（順序詳細は Phase B を参照）。
+`PortConfigDone` 受信前に届いた個別 `PORT_TABLE:<alias>` SET は `taskMap` に保留され (`portsorch.cpp:4772-4777`)、`PortConfigDone` 受信時に `it = taskMap.begin()` で先頭から再評価される。これにより「producer (portsyncd) は順不同で `PORT_TABLE:<alias>` を全件書いてから最後に `PortConfigDone` を書く」という契約が成立する（順序詳細は「書込み順依存」セクションを参照）。
 
 ### orchagent 自書き戻しは PUBLISH しない（自己ループ回避）
 
@@ -626,7 +619,7 @@ m_portTable->hset(port.m_alias, "flap_count", flapCount);
 
 これらは `PORT_TABLE` 本体とは別 consumer。`PortsOrch::doTask(Consumer&)` (`portsorch.cpp:6498-6520`) で `table_name` 別に分岐ディスパッチされる。
 
-[^pubsub]: orchagent [portsorch](../../reference/glossary.md#term-portsorch).cpp (Phase G 通信メカニズム): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp> および orch.cpp `Orch::addConsumer`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orch.cpp> / [sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common): <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/producerstatetable.cpp>
+[^pubsub]: orchagent [portsorch](../../reference/glossary.md#term-portsorch).cpp (通信メカニズム): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp> および orch.cpp `Orch::addConsumer`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orch.cpp> / [sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common): <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/producerstatetable.cpp>
 
 <!-- /pubsub -->
 
