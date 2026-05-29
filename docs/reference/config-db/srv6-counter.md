@@ -194,7 +194,7 @@ sonic-db-cli CONFIG_DB hgetall 'FLEX_COUNTER_TABLE|SRV6'
 <!-- /cdb-exceptions -->
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 <!-- evidence: sonic-swss/orchagent/srv6orch.cpp,
      sonic-swss/orchagent/srv6orch.h,
@@ -248,9 +248,8 @@ MySID 追加後、SAI カウンタ OID は `m_pending_counters` キューに積�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> evidence: `meta/_intermediate/cdb-flow/srv6-counter-ordering.md`
 > 根拠: `sonic-swss/orchagent/srv6orch.cpp` L251-283, L120-142, `sonic-swss/orchagent/flexcounterorch.cpp` L337-340
 
 ### 検出された順序依存
@@ -273,9 +272,8 @@ MySID 追加後、SAI カウンタ OID は `m_pending_counters` キューに積�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-> evidence: `meta/_intermediate/cdb-flow/srv6-counter-cross-refs.md`
 > 根拠: `sonic-swss/orchagent/srv6orch.cpp` L120–142, L199, L223, L251–283, L286–313, L300, `sonic-swss/orchagent/flexcounterorch.cpp` L337–340, `sonic-swss-common/common/schema.h` L257, L313
 
 YANG `sonic-flex_counter.yang` の `SRV6` container には leafref 定義が存在しない。以下はすべて実装レベルの暗黙参照。
@@ -294,9 +292,8 @@ YANG `sonic-flex_counter.yang` の `SRV6` container には leafref 定義が存�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗・エラー処理 (Phase D)
+## 失敗・エラー処理
 
-> evidence: `meta/_intermediate/cdb-flow/srv6-counter-failure.md`
 > 根拠: `sonic-swss/orchagent/srv6orch.cpp` L144–155, L184–210, L212–234, L236–249, L251–284, L286–312
 
 | 失敗ポイント | 挙動 | ログレベル | リトライ |
@@ -322,14 +319,7 @@ YANG `sonic-flex_counter.yang` の `SRV6` container には leafref 定義が存�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence:
-     sonic-swss/orchagent/srv6orch.cpp,
-     sonic-swss/orchagent/srv6orch.h,
-     sonic-swss/orchagent/flexcounterorch.cpp,
-     sonic-swss/orchagent/flex_counter/flow_counter_handler.cpp,
-     sonic-swss-common/common/schema.h -->
+## ハードコード定数
 
 `FLEX_COUNTER_TABLE|SRV6` 周辺で実装に直書きされた定数群。CONFIG_DB / YANG / 環境変数からは変更できず、変更にはソースビルドが必要。
 
@@ -386,14 +376,10 @@ YANG `sonic-flex_counter.yang` の `SRV6` container には leafref 定義が存�
 !!! note "ユーザ可変項目との対比"
     `FLEX_COUNTER_TABLE|SRV6` でユーザが変更できるのは `FLEX_COUNTER_STATUS` と `POLL_INTERVAL` のみ。stats_mode・stat ID リスト・group 名・タイマー周期・COUNTERS_DB キー名・warm-up 遅延はすべてビルド時固定。
 
-詳細根拠は `meta/_intermediate/cdb-flow/srv6-counter-constants.md` を参照。
-
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/srv6-counter-side-effects.md`
+## 副次 DB 書込
 
 `FLEX_COUNTER_TABLE|SRV6` への書込みが引き起こす [CONFIG_DB](../../reference/glossary.md#term-config_db) 以外の DB への書込みと SAI 呼び出しを示す。
 
@@ -436,7 +422,7 @@ FLEX_COUNTER_DB への書込みは `gTraditionalFlexCounter` が有効な場合�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `FLEX_COUNTER_TABLE|SRV6` (CONFIG_DB) は orchagent 内の `FlexCounterOrch` が単一スレッドで消費する。変更検出は **[Redis](../../reference/glossary.md#term-redis) keyspace notification (PSUBSCRIBE)** 経由の `SubscriberStateTable` 経路。`ConsumerStateTable` / `NotificationConsumer` は CONFIG_DB 側では**使用しない**。
 
@@ -523,15 +509,10 @@ MySID 追加時 (enable 状態で APP_DB に MY_SID SET):
 NotificationConsumer: なし  /  ConsumerStateTable: なし  /  TTL/expire: なし
 ```
 
-詳細な PSUBSCRIBE パターン・競合解析は中間メモを参照: `meta/_intermediate/cdb-flow/srv6-counter-pubsub.md`。
-
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム依存挙動 (Phase H)
-
-<!-- evidence: sonic-swss/orchagent/srv6orch.cpp:120-155,251-259,1595
-               sonic-swss/orchagent/main.cpp:84,529-532 -->
+## プラットフォーム依存挙動
 
 ### SAI 能力クエリ（起動時一回限り）
 

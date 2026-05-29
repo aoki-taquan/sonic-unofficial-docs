@@ -180,7 +180,7 @@ show sflow
 [^2]: sflowmgr / sfloworch 実装: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp>
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ### PORT 未解決 → retry
 
@@ -209,20 +209,20 @@ APP_DB に `sample_rate=error` が書き込まれた場合、`sfloworch` の `sf
 <!-- /failure -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 sflowmgrd が `SFLOW.admin_state==up` の場合に hsflowd 設定ファイルを生成して hsflowd を起動する。`agent_id` フィールドがある場合は指定インターフェースの IP を agent IP として自動的に hsflowd 設定に反映する。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 sflowmgrd は常時起動し `SFLOW` / `SFLOW_SESSION` テーブルを無条件購読する。`SFLOW.admin_state==down` の場合は hsflowd を停止する。`agent_id` に指定したインターフェースが存在しない場合はログ警告して agent IP 設定をスキップ。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -233,7 +233,7 @@ sflowmgrd は常時起動し `SFLOW` / `SFLOW_SESSION` テーブルを無条件�
 | `sflowmgrd` SFLOW_SESSION | key が `all` | 全ポートに設定を適用 | `sflowmgrd` |
 | `sflowmgrd` SFLOW_SESSION | `sample_rate` フィールドあり | ポートごとのサンプリングレートを明示設定 | `sflowmgrd` |
 
-> **スキャン証跡**: `SFLOW` テーブルは hsflowd 設定生成のための入力。admin_state による主要分岐あり。[SAI](../../reference/glossary.md#term-sai) 経路はなし (ユーザースペース制御)。
+> **裏取り**: `SFLOW` テーブルは hsflowd 設定生成のための入力。admin_state による主要分岐あり。[SAI](../../reference/glossary.md#term-sai) 経路はなし (ユーザースペース制御)。
 
 <!-- /handler-branching -->
 
@@ -260,7 +260,7 @@ sflowmgrd は常時起動し `SFLOW` / `SFLOW_SESSION` テーブルを無条件�
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 SFLOW / SFLOW_SESSION / SFLOW_COLLECTOR テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -295,7 +295,7 @@ minigraph.py に sFlow テーブル生成なし
 <!-- /entry-points -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F — Direction B)
+## 副次 DB 書込
 
 CONFIG_DB SFLOW / SFLOW_SESSION テーブルへの書込をトリガーとして、他 DB・テーブルへ副次的に書き込まれる経路を `sflowmgr.cpp` / `sfloworch.cpp` から抽出した。
 
@@ -360,7 +360,7 @@ evidence: sflowmgr.cpp:58–62。hsflowd は sFlow パケットをコレクタ�
 
 <!-- /side-effects -->
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `sonic-swss/orchagent/sfloworch.cpp`, `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`
 
@@ -414,7 +414,7 @@ evidence: sflowmgr.cpp:58–62。hsflowd は sFlow パケットをコレクタ�
 <!-- /platform -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 ### SflowMgr コンストラクタのハードコード初期値
 
@@ -449,7 +449,7 @@ SflowOrch は `m_sflowStatus = false` で初期化され、APP_SFLOW_TABLE の S
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 SFLOW テーブル群を CONFIG_DB へ書き込む際の **必須・推奨順序** を実装コードから導出した。
 
@@ -500,10 +500,9 @@ APP_SFLOW_TABLE  SET  →  APP_SFLOW_SESSION_TABLE  SET
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照
 
-> **調査根拠**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp` 全行精読 (2026-05-16)
-> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-cross-refs.md`
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp` 全行精読 (2026-05-16)
 
 `SFLOW` / `SFLOW_SESSION` / `SFLOW_COLLECTOR` テーブルは YANG leafref を最小限しか持たないが、実行時に以下のテーブルを暗黙参照する。
 
@@ -547,7 +546,7 @@ C++ レベルの `sflowmgr.cpp` / `sfloworch.cpp` に `SFLOW_COLLECTOR` を直�
 <!-- /cross-refs -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -592,7 +591,7 @@ PORT oper_speed 変化  →  STATE_DB PORT_TABLE 更新
 
 `sflowmgrd.cpp:46` の `sflowmgr.readPortConfig()` が Subscribe ループ開始前に CONFIG_DB `PORT` テーブルを一括スキャンし `m_sflowPortConfMap` を構築する。これにより起動時のイベント受信順序に依存しない初期状態が保証される。
 
-> **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp:31-46` (テーブル登録・起動スナップショット)、`sonic-swss/cfgmgr/sflowmgr.h:39-40` (`ProducerStateTable` 宣言)、`sonic-swss/cfgmgr/sflowmgr.cpp:403-410` (`doTask` テーブル名ルーティング)、`sonic-swss/orchagent/orchdaemon.cpp:439-444` (`SflowOrch` 登録)、`sonic-swss/orchagent/sfloworch.cpp:359-369` (APPL_DB 振り分け); 詳細分析 `meta/_intermediate/cdb-flow/sflow-pubsub.md`
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp:31-46` (テーブル登録・起動スナップショット)、`sonic-swss/cfgmgr/sflowmgr.h:39-40` (`ProducerStateTable` 宣言)、`sonic-swss/cfgmgr/sflowmgr.cpp:403-410` (`doTask` テーブル名ルーティング)、`sonic-swss/orchagent/orchdaemon.cpp:439-444` (`SflowOrch` 登録)、`sonic-swss/orchagent/sfloworch.cpp:359-369` (APPL_DB 振り分け)
 <!-- /pubsub -->
 
 <!-- glossary-links-injected: be30c0005cb2 -->

@@ -110,10 +110,9 @@ SAI 非対応プラットフォームでは `COUNTERS_SRV6_NAME_MAP` が作成�
 | `sonic-clear srv6stats` | カウンタキャッシュをクリア（ゼロリセット） |
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 > 根拠: `srv6orch.cpp` L21-24, L144-155, L177-199, L251-283, `srv6stat.py` 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-state-defaults.md`
 
 | フィールド / 状態 | 省略・未対応時の実挙動 | 分類 |
 |----------------|----------------------|------|
@@ -149,10 +148,9 @@ MySID エントリを追加してから OID が [FlexCounter](../../reference/gl
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 > 根拠: `srv6orch.cpp` L120-132, L184-210, L251-284, L1591-1601, L1660-1680, L286-313。
-> evidence: `meta/_intermediate/cdb-flow/srv6-state-ordering.md`
 
 [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が内部的に管理するため、
 ユーザが直接書き込む必要はない。ただし以下の順序依存・タイミング依存が存在する。
@@ -189,10 +187,9 @@ MySID エントリを追加してから OID が [FlexCounter](../../reference/gl
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## テーブル間クロスリファレンス (Phase C)
+## テーブル間クロスリファレンス
 
 > 根拠: `srv6orch.cpp` `addMySidCounter()` L184-210、`removeMySidCounter()` L218-232、`getMySidCounterKey()` L177-182、`setCountersState()` L251-283、`schema.h` L257,313、`srv6stat.py` 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-state-cross-refs.md`
 
 | 参照元 | 参照先 | 種別 | 必須条件 |
 |--------|--------|------|----------|
@@ -218,10 +215,9 @@ return mysid_addr + "/" + to_string(block_len + node_len + func_len)
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 > 根拠: `srv6orch.cpp` `initializeCounters()` L120-142、`queryMySidCountersCapability()` L144-155、`addMySidCounter()` L184-210、`setMySidEntryCounter()` L236-248、`setCountersState()` L251-283、`createUpdateMysidEntry()` L1589-1614 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-state-failure.md`
 
 COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が自動管理するため、ユーザが直接失敗操作を行うテーブルではない。ただし以下のエラー経路がある。
 
@@ -244,10 +240,9 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数・上限値 (Phase E)
+## ハードコード定数・上限値
 
 > 根拠: `srv6orch.cpp` L19-27 (#define 群)、`srv6orch.h` L30、`schema.h` L257,313、`srv6orch.cpp` L108,138,201-210 精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-state-constants.md`
 
 | 定数名 | 値 | 利用箇所 | 設定変更可否 |
 |--------|-----|---------|------------|
@@ -292,10 +287,9 @@ MySID 追加から `COUNTERS:<oid>` 初回値が出現するまでの最大待�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 > 根拠: `srv6orch.cpp` `addMySidCounter()` L184-210、`removeMySidCounter()` L212-234、`setMySidEntryCounter()` L236-248、`setCountersState()` L251-283、`doTask(SelectableTimer)` L286-313、`createUpdateMysidEntry()` L1589-1614 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-state-side-effects.md`
 
 COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザが直接書き込むテーブルではない。`Srv6Orch` が `SRV6_MY_SIDS` ([CONFIG_DB](../../reference/glossary.md#term-config_db)) および `FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER` の変化を受けて、以下の副次書込みを実行する。
 
@@ -334,10 +328,9 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザが直�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通信メカニズム (Phase G)
+## Redis 通信メカニズム
 
 > 根拠: `orchdaemon.cpp` L312-324、`orch.cpp` L1186-1196、`flexcounterorch.cpp` L64,96,337-339、`srv6orch.cpp` L98-113,261-283,286-312 精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-state-pubsub.md`
 
 `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` (COUNTERS_DB) は `Srv6Orch` と syncd が書き手となる。
 それぞれの書き込みがどの [Redis](../../reference/glossary.md#term-redis) 通信メカニズムで駆動されるかを以下に示す。
@@ -377,10 +370,9 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザが直�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 > 根拠: `srv6orch.cpp` `initializeCounters()` L120-142、`queryMySidCountersCapability()` L144-155、`doTask(SelectableTimer&)` L286-313、`main.cpp` L84,529-531 精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-state-platform.md`
 
 `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` への書き込みが発生するかどうかは、プラットフォームの SAI 実装と起動構成によって決まる。
 

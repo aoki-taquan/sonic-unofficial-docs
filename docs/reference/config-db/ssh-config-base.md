@@ -1,6 +1,6 @@
 ---
 title: SSH_SERVER テーブル — base フィールドデフォルト
-description: "SSH_SERVER|POLICIES テーブルの base フィールド一覧と YANG / コード由来暗黙デフォルト（Phase A）。hostcfgd の SshServer クラスおよび PamLimitsCfg クラスによる実効値を整理する。"
+description: "SSH_SERVER|POLICIES テーブルの base フィールド一覧と YANG / コード由来暗黙デフォルト。hostcfgd の SshServer クラスおよび PamLimitsCfg クラスによる実効値を整理する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-15
@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`SSH_SERVER|POLICIES` テーブルの全フィールドについて、[YANG](../../reference/glossary.md#term-yang) モデルが宣言する `default` 値と `hostcfgd` コードが適用する暗黙的な fallback 値を整理したリファレンスページ（Phase A）[^1]。
+`SSH_SERVER|POLICIES` テーブルの全フィールドについて、[YANG](../../reference/glossary.md#term-yang) モデルが宣言する `default` 値と `hostcfgd` コードが適用する暗黙的な fallback 値を整理したリファレンスページ[^1]。
 
 テーブル未設定時の挙動: `SshServer.load()` が `self.policies = {}` をセットし `set_policies()` を呼ばないため、`/etc/ssh/sshd_config` は変更されない。実効デフォルトは OS（Debian）の sshd 初期値となる。
 
@@ -51,7 +51,7 @@ SSH_SERVER|POLICIES
 固定キー `POLICIES` のみのシングルトン container。
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) `default` 宣言値と、フィールド不在時にコードまたは sshd が適用する実効デフォルトの対応表。
 
@@ -106,9 +106,8 @@ YANG に `default` 宣言がない。DB に設定しない場合は sshd の組�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-ordering.md`
 
 ### 先行必須テーブル
 
@@ -162,9 +161,8 @@ hostcfgd 起動
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase C)
+## 暗黙テーブル参照
 
-> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-cross-refs.md`
 
 `SSH_SERVER|POLICIES` テーブルは YANG leafref を持たない。ただし `hostcfgd` の `SshServer` クラスおよび `PamLimitsCfg` クラスが以下の暗黙参照を持つ。
 
@@ -205,9 +203,8 @@ if "localhost" not in device_metadata and "POLICIES" not in ssh_server_policies:
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-failure.md`
 
 ### SET 処理における失敗経路（SshServer.set_policies）
 
@@ -252,9 +249,8 @@ PAM limits 例外     → except で吸収・ログのみ・PAM ファイル未�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-constants.md`
 
 `hostcfgd` の `SshServer` クラスおよび `PamLimitsCfg` クラスが参照するモジュールレベル定数の一覧。これらの値はコードに直書きされており、[CONFIG_DB](../../reference/glossary.md#term-config_db) や YANG から変更できない。
 
@@ -327,9 +323,8 @@ SSH_CONFIG_NAMES = {
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-side-effects.md`
 
 CONFIG_DB `SSH_SERVER|POLICIES` の変更に伴って `hostcfgd` の `SshServer` / `PamLimitsCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS のファイル書換とサービス再起動に閉じる。
 
@@ -362,9 +357,8 @@ CONFIG_DB `SSH_SERVER|POLICIES` の変更に伴って `hostcfgd` の `SshServer`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-pubsub.md`
 
 ### Redis 購読方式
 
@@ -421,9 +415,8 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5"})
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-platform.md`
 
 `SSH_SERVER|POLICIES` の処理は **全プラットフォームで同一**。`class SshServer` と `class PamLimitsCfg` を `platform|multi_asic|is_multi_npu|chassis|asic[0-9]|namespace|vendor` で grep しても **0 ヒット** であり、機種依存分岐コードが存在しない。
 

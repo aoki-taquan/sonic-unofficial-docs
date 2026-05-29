@@ -150,20 +150,20 @@ sudo sshd -T | grep -Ei "MaxAuth|LoginGrace|Port|ClientAlive|PasswordAuth|Permit
 <!-- /ops-hint -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 [hostcfgd](../../reference/glossary.md#term-hostcfgd) が `SSH_SERVER|POLICIES` を読み込み、各フィールドを対応する sshd_config ディレクティブに変換して `/etc/ssh/sshd_config` を上書き更新する。`inactivity_timeout` は分単位を秒単位に自動変換（×60）。`ciphers`, `kex_algorithms`, `macs` は leaf-list を comma-delimited 文字列に変換。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 hostcfgd は `SSH_SERVER` テーブルを常時購読（`config_db.subscribe('SSH_SERVER', ...)` L2478）。`DEVICE_METADATA.localhost` の存在確認のみ行う。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -179,7 +179,7 @@ hostcfgd は `SSH_SERVER` テーブルを常時購読（`config_db.subscribe('SS
 <!-- /handler-branching -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 SSH_SERVER テーブルへの書き込みが発生するコード経路を調査した結果。
 
@@ -202,7 +202,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 経由の書き込み経路�
 <!-- /entry-points -->
 
 <!-- defaults -->
-## 暗黙デフォルト (Phase A)
+## 暗黙デフォルト
 
 YANG `default` 宣言値と、フィールド不在時にコードまたは sshd が適用する実効デフォルトの対応表。
 
@@ -244,7 +244,7 @@ OpenSSH の `MaxSessions`（同時チャンネル数の上限）とは別の概�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### hostcfgd 起動時の処理順序
 
@@ -305,7 +305,7 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
+## 暗黙参照マップ
 
 | 参照方向 | このテーブル | 相手テーブル / ページ | 条件 |
 |---------|------------|---------------------|------|
@@ -315,11 +315,11 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 | CLI | `config ssh` / `show ssh-server` | [`config ssh`](../cli/config-ssh.md) | SSH_SERVER テーブルの読み書き CLI |
 | YANG | `SSH_SERVER\|POLICIES` | [`sonic-ssh-server`](../yang/sonic-ssh-server.md) | 全フィールドのスキーマ定義 |
 
-> **Evidence**: `sonic-host-services/scripts/hostcfgd` L1422-1430 (PamLimitsCfg → [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata)); L744-751 (AaaCfg → /etc/pam.d/sshd); L596-606 (get_interface_ip → MGMT_INTERFACE); 詳細分析 `meta/_intermediate/cdb-flow/ssh-server-cross-refs.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` L1422-1430 (PamLimitsCfg → [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata)); L744-751 (AaaCfg → /etc/pam.d/sshd); L596-606 (get_interface_ip → MGMT_INTERFACE)
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-host-services/scripts/hostcfgd` — `SshServer.set_policies()` (L1119-1168)、`PamLimitsCfg.update_config_file()` (L1420-1436)
 
@@ -352,11 +352,10 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 
 `handle_ports_set()` が `return False` を返すと `set_policies()` は直ちに `return` し、`sshd -T` は実行されない。sshd_config.tmp には `Port` 行を削除した状態が残るが、`os.rename(SSH_CONFG_TMP, SSH_CONFG)` が実行されないため /etc/ssh/sshd_config は変更されない。ただし `os.remove(SSH_CONFG_TMP)` も呼ばれないため sshd_config.tmp が残留する可能性がある。
 
-詳細根拠は `meta/_intermediate/cdb-flow/ssh-server-failure.md` を参照。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `SSH_SERVER` テーブルの処理に関わる、[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG で管理されない実装定数の一覧。出典は `sonic-host-services/scripts/hostcfgd`。
 
@@ -408,7 +407,6 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 
 ソース: `hostcfgd` L81-84。`max_sessions = 0` の場合は `self.max_sessions = None` がセットされ、テンプレートで制限なし扱いになる (`hostcfgd` L1439-1440)。
 
-詳細根拠は `meta/_intermediate/cdb-flow/ssh-server-constants.md` を参照。
 <!-- evidence: sonic-host-services/scripts/hostcfgd L32-33 (SSH_CONFG, SSH_CONFG_TMP) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L61-76 (SSH_INT_VALUES, SSH_MIN_VALUES, SSH_MAX_VALUES, SSH_CONFIG_NAMES) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L81-84 (PAM_LIMITS_CONF_TEMPLATE, LIMITS_CONF_TEMPLATE, PAM_LIMITS_CONF, LIMITS_CONF) -->
@@ -416,7 +414,7 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の `SshServer` / `PamLimitsCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換えおよびサービス再起動に閉じる。
 
@@ -438,7 +436,6 @@ CONFIG_DB `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の `SshServ
 - `/etc/pam.d/pam-limits-conf` の Jinja2 テンプレート再生成
 - `/etc/security/limits.conf` の Jinja2 テンプレート再生成 (`max_sessions > 0` のとき `maxsyslogins` 設定を含む)
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ssh-server-side.md` を参照。
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1175 (SshServer — DB 書込なし確認) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1418-1441 (PamLimitsCfg — DB 書込なし確認) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1164-1172 (os.rename + systemctl restart ssh) -->
@@ -446,7 +443,7 @@ CONFIG_DB `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の `SshServ
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -487,14 +484,13 @@ ssh_handler(key="POLICIES", op=SET, data={inactivity_timeout:"10", ...})
 | `SSH_SERVER` フィールド変更（`inactivity_timeout` 等） | `sshd -T` 検証後 `systemctl restart ssh` | `SshServer.set_policies()` — hostcfgd:1150-1172 |
 | `max_sessions` 変更 | `/etc/security/limits.conf` 再生成（sshd 再起動なし） | `PamLimitsCfg.render_conf_file()` — hostcfgd:1456-1476 |
 
-> **Evidence**: `sonic-host-services/scripts/hostcfgd:2454-2466` (make_callback)、`hostcfgd:2478` (subscribe SSH_SERVER)、`hostcfgd:2528` (listen)、`hostcfgd:2297-2300` (ssh_handler)、`hostcfgd:2265` (sshscfg.load); 詳細分析 `meta/_intermediate/cdb-flow/ssh-server-pubsub.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2454-2466` (make_callback)、`hostcfgd:2478` (subscribe SSH_SERVER)、`hostcfgd:2528` (listen)、`hostcfgd:2297-2300` (ssh_handler)、`hostcfgd:2265` (sshscfg.load)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
-> **調査根拠**: `sonic-host-services/scripts/hostcfgd` 全行精読 (FipsCfg, PamLimitsCfg)、`sonic-buildimage/rules/sonic-fips.mk`、`data/templates/limits.conf.j2`、`sonic-ssh-server.yang` L77–132 (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/ssh-server-platform.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` 全行精読 (FipsCfg, PamLimitsCfg)、`sonic-buildimage/rules/sonic-fips.mk`、`data/templates/limits.conf.j2`、`sonic-ssh-server.yang` L77–132 (2026-05-18)
 
 ### 差異 1: FIPS モード — `ssh` サービス強制再起動
 

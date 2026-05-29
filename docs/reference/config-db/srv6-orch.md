@@ -60,10 +60,9 @@ flowchart LR
 <!-- /cdb-mermaid -->
 
 <!-- pubsub -->
-## 通信メカニズム（Phase G 解析）
+## 通信メカニズム
 
 > 根拠: `routesync.cpp` 155-164, 1389, 1424, 1562, 1667, 3389, 3441 / `orchdaemon.cpp` 312-324 / `srv6orch.cpp` 98-140, 2352-2386 / `srv6orch.h` 238-242 / `managers_srv6.py` 14-133 の全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-pubsub.md`
 
 ### 全体データフロー
 
@@ -188,10 +187,9 @@ SRV6_SID_LIST_TABLE|<seg_name>
 | `type` | enum | `encaps.red` | SID リストタイプ。有効値: `insert` / `insert.red` / `encaps` / `encaps.red` |
 
 <!-- defaults -->
-### コード由来のデフォルト（Phase A 解析）
+### コード由来のデフォルト
 
 > 根拠: `srv6orch.cpp` 行 73-79, 1079-1089, 1151-1162 の全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-orch-defaults.md`
 
 | フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード fallback | 実効デフォルト |
 |-----------|-------------|----------------|--------------|
@@ -252,10 +250,9 @@ SRV6_MY_SID_TABLE|<block_len>:<node_len>:<func_len>:<args_len>:<sid_ipv6_addr>
 | `udt4` / `udt6` / `udt46` | uDT (Micro-SID) | **はい** | いいえ |
 
 <!-- defaults -->
-### コード由来のデフォルト（Phase A 解析）
+### コード由来のデフォルト
 
 > 根拠: `srv6orch.cpp` 行 41-71, 1384-1430, 2204-2248 の全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-orch-defaults.md`
 
 | フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード fallback | 実効デフォルト |
 |-----------|-------------|----------------|--------------|
@@ -301,10 +298,9 @@ PIC_CONTEXT_TABLE|<context_id>
 | `vpn_sid` | string (カンマ区切り IPv6 アドレスリスト) | `""` (空) | 各エンドポイントに対応する VPN SID リスト |
 
 <!-- defaults -->
-### コード由来のデフォルト（Phase A 解析）
+### コード由来のデフォルト
 
 > 根拠: `srv6orch.cpp` 行 2272-2343 の全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-orch-defaults.md`
 
 | フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード fallback | 実効デフォルト |
 |-----------|-------------|----------------|--------------|
@@ -341,10 +337,9 @@ MySID の `un` / `udt46` で [IPinIP](../../reference/glossary.md#term-ipinip) �
 | Decap [DSCP](../../reference/glossary.md#term-dscp) mode | CONFIG_DB の `decap_dscp_mode` 値 | `srv6orch.cpp:530-532` |
 
 <!-- ordering -->
-## 処理順序と依存関係（Phase B 解析）
+## 処理順序と依存関係
 
 > 根拠: `srv6orch.cpp` 行 1119–1143, 1384–1543, 2272–2342, `managers_srv6.py` 行 56–115 の全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-ordering.md`
 
 ### 投入（SET）推奨順序
 
@@ -393,10 +388,9 @@ warm-reboot 後は swss 再起動時に APP_DB から全エントリを再読み
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## テーブル間暗黙参照（Phase C 解析）
+## テーブル間暗黙参照
 
 > 根拠: `srv6orch.cpp` 行 98–117, 331–397, 430–480, 871–924, 1129–1132, 1197–1248, 1484–1542, 1639, 1683, 1644, 1689, 1815–1833, 2312, 2384 の全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-orch-cross-refs.md`
 
 ### SRV6_MY_SID_TABLE が参照する外部テーブル・Orch
 
@@ -506,12 +500,10 @@ PIC_CONTEXT_TABLE (APP_DB)
 ---
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `SRV6_MY_SID_TABLE` の SET/DEL 処理後に `Srv6Orch` が書き込む副次テーブル一覧。
 `SRV6_SID_LIST_TABLE` / `PIC_CONTEXT_TABLE` 処理ではカウンタ管理・[CRM](../../reference/glossary.md#term-crm) 更新は行われない。
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/srv6-side-effects.md`
 
 | 副次 DB | テーブル / キー | 操作 | 主要フィールド | evidence |
 |---------|----------------|------|---------------|----------|
@@ -544,7 +536,6 @@ CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（�
 ## 失敗挙動・エラーハンドリング
 
 > 根拠: `srv6orch.cpp` 全体の SWSS_LOG_ERROR / task_process_status 精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-failure.md`
 
 ### SRV6_SID_LIST_TABLE の失敗ケース
 
@@ -620,7 +611,7 @@ CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（�
 - `VRF` (CONFIG_DB) — VRF 定義
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `sonic-swss/orchagent/srv6orch.cpp`、`sonic-swss/orchagent/srv6orch.h`
 
@@ -720,10 +711,9 @@ CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（�
 <!-- /constants -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
 > 根拠: `srv6orch.cpp` (rev 4305596156d70e9797e8a881b3d19b46de0bce0d) 全行精読、`sonic-sairedis/syncd/VendorSai.cpp`、`sonic-sairedis/vslib/vpp/SwitchVppSRv6.cpp`、[SONiC](../../reference/glossary.md#term-sonic) [HLD](../../reference/glossary.md#term-hld) `doc/srv6/srv6_hld.md`、`SRv6_uSID.md`、`srv6_sid_l3adj.md`。
-> evidence: `meta/_intermediate/cdb-flow/srv6-platform.md`
 
 ### SAI capability — MySID カウンタ非対応 ASIC
 
