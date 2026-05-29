@@ -353,15 +353,15 @@ m_cfgVlanInterfaceTable(cfgDb, CFG_VLAN_INTF_TABLE_NAME),
 
 ```mermaid
 flowchart TD
-  CLI["config interface ipv6\n(CLI)"] -->|HSET| CDB[("CONFIG_DB\nINTERFACE / PORTCHANNEL_INTERFACE\n/ VLAN_INTERFACE")]
-  CDB -->|ConsumerStateTable\n(keyspace notification)| IntfMgr["IntfMgrd\n(swss)"]
-  IntfMgr -->|ProducerStateTable| APPL[("APPL_DB\nINTF_TABLE\|<ifname>")]
-  APPL -->|ConsumerStateTable| IntfsOrch["IntfsOrch\n(orchagent)\n※dead consumer"]
+  CLI["config interface ipv6<br/>(CLI)"] -->|HSET| CDB[("CONFIG_DB<br/>INTERFACE / PORTCHANNEL_INTERFACE<br/>/ VLAN_INTERFACE")]
+  CDB -->|"ConsumerStateTable<br/>(keyspace notification)"| IntfMgr["IntfMgrd<br/>(swss)"]
+  IntfMgr -->|ProducerStateTable| APPL[("APPL_DB<br/>INTF_TABLE\|<ifname>")]
+  APPL -->|ConsumerStateTable| IntfsOrch["IntfsOrch<br/>(orchagent)<br/>※dead consumer"]
 
-  kernel["Linux kernel\nnetlink RTM_NEWNEIGH"] -->|rtnetlink socket| neighsyncd["neighsyncd\n(swss)"]
-  CDB -->|Table::get\n(直接参照)| neighsyncd
-  neighsyncd -->|ProducerStateTable\n(link-local enabled 時のみ)| NEIGH[("APPL_DB\nNEIGH_TABLE")]
-  NEIGH -->|ConsumerStateTable| NeighOrch["NeighOrch\n(orchagent)"]
+  kernel["Linux kernel<br/>netlink RTM_NEWNEIGH"] -->|rtnetlink socket| neighsyncd["neighsyncd<br/>(swss)"]
+  CDB -->|"Table::get<br/>(直接参照)"| neighsyncd
+  neighsyncd -->|"ProducerStateTable<br/>(link-local enabled 時のみ)"| NEIGH[("APPL_DB<br/>NEIGH_TABLE")]
+  NEIGH -->|ConsumerStateTable| NeighOrch["NeighOrch<br/>(orchagent)"]
 ```
 
 ### チャンネル種別まとめ
