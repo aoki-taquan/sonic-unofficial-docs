@@ -41,7 +41,7 @@ reload 不要でポート分割モードを変更する機能だが、
 
 ## 1. YANG モデル不整合による DPB 失敗
 
-### 1-1. `PORTCHANNEL_MEMBER` YANG モデル欠落 (#6722)
+### 1-1. `PORTCHANNEL_MEMBER` YANG モデル欠落 (#6722)[^6722]
 
 DPB の依存チェック時に以下のメッセージが出る。
 
@@ -55,12 +55,23 @@ Below Config can not be verified, It may cause harm to the system
 DPB の依存解決ロジックが YANG 検証を経由するため、
 モデルがないテーブルは「未検証」として警告扱いになる。
 
-**対処**: PR #7xxx で `sonic-portchannel.yang` に `PORTCHANNEL_MEMBER` が追加された。
-master の最新版を使用すること。
+**対処**: `sonic-portchannel.yang` に `PORTCHANNEL_MEMBER` コンテナが追加されたため、
+master の最新版では本警告は解消している[^6722]。
+
+<!-- evidence:
+source: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L130-L154 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  container PORTCHANNEL_MEMBER {
+      list PORTCHANNEL_MEMBER_LIST {
+      } /* end of list PORTCHANNEL_MEMBER_LIST */
+reasoning: >
+  現行 master の sonic-portchannel.yang に PORTCHANNEL_MEMBER コンテナが存在することを確認。
+  issue #6722 が報告した「YANG モデル欠落」警告は master では解消済みであることの裏取り。
+-->
 
 ---
 
-### 1-2. `BGP_NEIGHBOR` YANG モデルが DPB エラーを引き起こす (#7959)
+### 1-2. `BGP_NEIGHBOR` YANG モデルが DPB エラーを引き起こす (#7959)[^7959]
 
 ```
 Error: asn key is not matched (uses/grouping keywords not working)
@@ -76,7 +87,7 @@ libyang の特定バージョンで期待通りに動作しない。
 
 ---
 
-### 1-3. `BUFFER_PORT_EGRESS_PROFILE` 設定時の DPB 失敗 (#9801)
+### 1-3. `BUFFER_PORT_EGRESS_PROFILE` 設定時の DPB 失敗 (#9801)[^9801]
 
 ```
 DPB fails when BUFFER_PORT_EGRESS_PROFILE is configured
@@ -93,7 +104,7 @@ redis-cli -n 4 DEL "BUFFER_PORT_EGRESS_PROFILE|Ethernet0"
 
 ---
 
-### 1-4. libyang バックリンク問題 (#9312)
+### 1-4. libyang バックリンク問題 (#9312)[^9312]
 
 ```
 [yang-models] Importing other modules sometimes break libyang backlinks
@@ -109,7 +120,7 @@ YANG モジュール間の `import` が特定の組み合わせでビルドを�
 
 ## 2. `platform.json` 関連
 
-### 2-1. `has_global_scope` 要素の invalid value (#9326)
+### 2-1. `has_global_scope` 要素の invalid value (#9326)[^9326]
 
 ```
 DPB falls due to invalid value in "has_global_scope" element
@@ -131,7 +142,7 @@ print(json.dumps(data.get('interfaces', {}).get('Ethernet0', {}), indent=2))
 
 ---
 
-### 2-2. `None` フィールドの非対応 (#9663)
+### 2-2. `None` フィールドの非対応 (#9663)[^9663]
 
 `platform.json` で `None` 値が記載されている場合に CLI が動作しない。
 
@@ -146,7 +157,7 @@ breakout CLI doesn't work when None is included in platform.json
 
 ## 3. Orchagent / syncd 相互作用
 
-### 3-1. PORT HOST IF 削除失敗 (#7403)
+### 3-1. PORT HOST IF 削除失敗 (#7403)[^7403]
 
 [VS](../reference/glossary.md#term-vs)（Virtual Switch）環境での DPB 中に `sai_remove_hostif` が失敗する。
 
@@ -158,7 +169,7 @@ swss#orchagent: Failed to remove host interface for port
 
 ---
 
-### 3-2. Orchagent クラッシュ（400G → 4x100G）(#9653)
+### 3-2. Orchagent クラッシュ（400G → 4x100G）(#9653)[^9653]
 
 ```
 Orchagent crash after performing port breakout of 400G into 4x100G[50G]
@@ -175,7 +186,7 @@ show techsupport
 
 ---
 
-### 3-3. DPB 中の CONFIG_DB DELETE 欠落 (#10005)
+### 3-3. DPB 中の CONFIG_DB DELETE 欠落 (#10005)[^10005]
 
 ```
 Orchagent missing DELETE update from CONFIG_DB during DPB
@@ -192,7 +203,7 @@ sudo systemctl restart swss
 
 ---
 
-## 4. LLDP との相互作用 (#9802)
+## 4. LLDP との相互作用 (#9802)[^9802]
 
 ```
 LLDP does not have logic to gracefully handle port deletion during DPB
@@ -216,9 +227,9 @@ docker exec lldp supervisorctl restart lldpd
 
 ---
 
-## 5. カウンター関連 (#11190, #11418)
+## 5. カウンター関連 (#11190, #11418)[^11190][^11418]
 
-### 5-1. DPB 時のカウンターエラーログ (#11190)
+### 5-1. DPB 時のカウンターエラーログ (#11190)[^11190]
 
 ```
 Error logs related to Counters seen when a port is broken out
@@ -227,7 +238,7 @@ Error logs related to Counters seen when a port is broken out
 Breakout 操作中に counters docker が古いポート OID を参照してエラーになる。
 プラットフォーム依存ではなく、master 全体で発生しうる。
 
-### 5-2. Breakout ポートのカウンターレート不表示 (#11418)
+### 5-2. Breakout ポートのカウンターレート不表示 (#11418)[^11418]
 
 10G モードにブレイクアウトした後、`show interfaces counters rates` が
 正しく表示されない場合がある。
@@ -236,7 +247,7 @@ Breakout 操作中に counters docker が古いポート OID を参照してエ�
 
 ---
 
-## 6. CONFIG_DB の `BREAKOUT_CFG` 更新 (#7402)
+## 6. CONFIG_DB の `BREAKOUT_CFG` 更新 (#7402)[^7402]
 
 イメージアップグレード時に `config_db.json` の `BREAKOUT_CFG` が
 新しいフォーマットに自動移行されない場合がある。
@@ -252,7 +263,7 @@ redis-cli -n 4 HGETALL "BREAKOUT_CFG|Ethernet0"
 
 ---
 
-## 7. Redis I/O エラー (#6935)
+## 7. Redis I/O エラー (#6935)[^6935]
 
 **現象**: DPB 操作中に [Redis](../reference/glossary.md#term-redis) の I/O エラーが発生する。
 
@@ -293,5 +304,24 @@ flowchart TD
 
 - [動的ポートブレイクアウト HLD](sonic-dynamic-port-breakout-feature-high-level-design.md)
 - [YANG モデルリファレンス](../reference/yang/index.md)
+
+## 引用元
+
+本ページの各項目は sonic-buildimage の issue tracker に記録された実環境報告を一次情報とする。YANG モデルの現況は `sonic-net/sonic-buildimage` (sha `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`) で裏取りした。
+
+[^6722]: [sonic-buildimage #6722](https://github.com/sonic-net/sonic-buildimage/issues/6722) — `PORTCHANNEL_MEMBER` 等のテーブルに YANG モデルが無く DPB 依存チェックで警告になる件。
+[^6935]: [sonic-buildimage #6935](https://github.com/sonic-net/sonic-buildimage/issues/6935) — DPB 操作中の Redis (database) I/O エラー。
+[^7402]: [sonic-buildimage #7402](https://github.com/sonic-net/sonic-buildimage/issues/7402) — イメージアップグレード時の `BREAKOUT_CFG` フォーマット移行漏れ。
+[^7403]: [sonic-buildimage #7403](https://github.com/sonic-net/sonic-buildimage/issues/7403) — VS 環境の DPB で `sai_remove_hostif` が失敗する件。
+[^7959]: [sonic-buildimage #7959](https://github.com/sonic-net/sonic-buildimage/issues/7959) — `BGP_NEIGHBOR` の YANG `uses`/`grouping` が ASN 検証エラーを引き起こす件。
+[^9312]: [sonic-buildimage #9312](https://github.com/sonic-net/sonic-buildimage/issues/9312) — libyang バックリンクのバグで `import` 組み合わせがビルドを壊す件。
+[^9326]: [sonic-buildimage #9326](https://github.com/sonic-net/sonic-buildimage/issues/9326) — `has_global_scope` 要素の invalid value による DPB 失敗。
+[^9653]: [sonic-buildimage #9653](https://github.com/sonic-net/sonic-buildimage/issues/9653) — 400G → 4x100G[50G] breakout 後の orchagent クラッシュ。
+[^9663]: [sonic-buildimage #9663](https://github.com/sonic-net/sonic-buildimage/issues/9663) — `platform.json` に `None` が含まれると breakout CLI が動作しない件。
+[^9801]: [sonic-buildimage #9801](https://github.com/sonic-net/sonic-buildimage/issues/9801) — `BUFFER_PORT_EGRESS_PROFILE` 設定時の DPB 失敗。
+[^9802]: [sonic-buildimage #9802](https://github.com/sonic-net/sonic-buildimage/issues/9802) — DPB 中のポート削除を LLDP が graceful に扱えない件。
+[^10005]: [sonic-buildimage #10005](https://github.com/sonic-net/sonic-buildimage/issues/10005) — DPB 中に orchagent が CONFIG_DB の DELETE 更新を取りこぼす件。
+[^11190]: [sonic-buildimage #11190](https://github.com/sonic-net/sonic-buildimage/issues/11190) — breakout 時に counters 関連のエラーログが出る件。
+[^11418]: [sonic-buildimage #11418](https://github.com/sonic-net/sonic-buildimage/issues/11418) — breakout ポートでカウンターレートが表示されない件。
 
 <!-- glossary-links-injected: 9fb3fca99a59 -->

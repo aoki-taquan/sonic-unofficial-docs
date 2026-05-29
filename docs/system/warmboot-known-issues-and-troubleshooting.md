@@ -40,7 +40,20 @@ related:
 
 ## 1. syncd ウォームスタートエラー
 
-### 1-1. `Invalid sai_api_t passed to sai_api_query` (#6723)
+ウォームリスタートの状態は `WARM_RESTART` CONFIG_DB テーブルで制御され、その
+スキーマは `sonic-warm-restart.yang` に定義されている[^yang]。
+
+<!-- evidence:
+source: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang#L1-L5 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  module sonic-warm-restart  {
+      namespace "http://github.com/sonic-net/sonic-warm-restart";
+reasoning: >
+  現行 master に sonic-warm-restart.yang が存在し WARM_RESTART テーブルのスキーマを
+  定義していることを確認。本ページが扱うウォームリスタート機構の実装裏取り。
+-->
+
+### 1-1. `Invalid sai_api_t passed to sai_api_query` (#6723)[^6723]
 
 **現象**: ウォームブート中に [syncd](../reference/glossary.md#term-syncd) が以下のエラーを出力する。
 
@@ -60,7 +73,7 @@ SAI バージョンを syncd と整合させることで解消する。
 
 ---
 
-### 1-2. `syncd translateVidToRid failures for buffer pools` (#6726)
+### 1-2. `syncd translateVidToRid failures for buffer pools` (#6726)[^6726]
 
 **現象**: ウォームブート後の統計収集時に以下のエラー。
 
@@ -82,7 +95,7 @@ Buffer pool OID の VIDTORID マップが再構築されれば自動解消する
 
 ---
 
-### 1-3. syncd `APPLY_VIEW` エラー: hostif_trap_group (#7071, #7094)
+### 1-3. syncd `APPLY_VIEW` エラー: hostif_trap_group (#7071, #7094)[^7071][^7094]
 
 **現象**: ウォームブートの going-down フェーズで syncd pre-shutdown が失敗し、
 デバイスがハングする。
@@ -101,7 +114,7 @@ hostif_trap_group が [ACL](../reference/glossary.md#term-acl) エントリか�
 
 ---
 
-## 2. LAG フラップ (#6773)
+## 2. LAG フラップ (#6773)[^6773]
 
 **現象**: ウォームブート後（特に 2 回目以降）に [PortChannel](../reference/glossary.md#term-portchannel) が数回 flap する。
 
@@ -119,7 +132,7 @@ PortChannel メンバーの再学習タイミングで競合が発生する。
 
 ---
 
-## 3. SSH セッション切断によるウォームブート失敗 (#7127)
+## 3. SSH セッション切断によるウォームブート失敗 (#7127)[^7127]
 
 **現象**: `warm-reboot` コマンド実行中に SSH セッションが切断されると、
 ウォームブートが中断する。
@@ -140,13 +153,13 @@ tmux new-session -d -s warmboot 'warm-reboot'
 
 ---
 
-## 4. fast-reboot ダウンタイム超過 (#7140)
+## 4. fast-reboot ダウンタイム超過 (#7140)[^7140]
 
 **現象**: fast-reboot のダウンタイムが 30 秒制限を超える。
 
 **主要因**:
 1. orchagent の ASIC プログラミング完了待ちタイムアウト
-2. カーネルの kexec 処理遅延 (#6866)
+2. カーネルの kexec 処理遅延 (#6866)[^6866]
 3. プラットフォーム固有の SAI 初期化時間
 
 **確認方法**:
@@ -159,7 +172,7 @@ grep -E 'fast-reboot|kexec|orchagent' /var/log/syslog | tail -50
 
 ---
 
-## 5. イメージダウングレード失敗 (#7518)
+## 5. イメージダウングレード失敗 (#7518)[^7518]
 
 **現象**: 最新 master から古いイメージへのダウングレードが失敗する。
 
@@ -180,7 +193,7 @@ sonic-installer install --skip-package-migration <image>
 
 ---
 
-## 6. reboot-cause の誤表示 (#12512)
+## 6. reboot-cause の誤表示 (#12512)[^12512]
 
 **現象**: ウォームブート後に reboot-cause が正しい理由を表示しない。
 
@@ -202,7 +215,7 @@ cat /var/log/reboot-cause/REBOOT_CAUSE
 
 ---
 
-## 7. [202012] fast-reboot orchagent タイムアウト (#9899)
+## 7. [202012] fast-reboot orchagent タイムアウト (#9899)[^9899]
 
 **現象**: fast-reboot 中に orchagent が INIT_VIEW 通知の受信を syncd に
 タイムアウトする。
@@ -241,5 +254,22 @@ kernel: igb 0000:0a:00.0 eth0: igb_watchdog_task: Detected Tx Unit Hang
 - [ウォームブートマネージャ](warmboot-manager-hld.md)
 - [swss Docker ウォームリスタート](sonic-swss-docker-warm-restart.md)
 - [multi-ASIC ウォームリブート](multi-asic-warm-reboot.md)
+
+## 引用元
+
+各項目の一次情報は sonic-buildimage の issue tracker。ウォームリスタート機構の実装は `sonic-net/sonic-buildimage` (sha `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`) で裏取りした。
+
+[^yang]: `src/sonic-yang-models/yang-models/sonic-warm-restart.yang`、`sonic-net/sonic-buildimage` (sha `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`)。`WARM_RESTART` テーブルのスキーマ定義。
+[^6723]: [sonic-buildimage #6723](https://github.com/sonic-net/sonic-buildimage/issues/6723) — warmboot 中の syncd `Invalid sai_api_t passed to sai_api_query`。
+[^6726]: [sonic-buildimage #6726](https://github.com/sonic-net/sonic-buildimage/issues/6726) — buffer pool の `translateVidToRid` 失敗。
+[^7071]: [sonic-buildimage #7071](https://github.com/sonic-net/sonic-buildimage/issues/7071) — syncd `APPLY_VIEW` の hostif_trap_group 削除失敗。
+[^7094]: [sonic-buildimage #7094](https://github.com/sonic-net/sonic-buildimage/issues/7094) — 上記 hostif_trap_group 問題の関連報告。
+[^6773]: [sonic-buildimage #6773](https://github.com/sonic-net/sonic-buildimage/issues/6773) — ウォームブート後（2 回目以降）の LAG フラップ。
+[^7127]: [sonic-buildimage #7127](https://github.com/sonic-net/sonic-buildimage/issues/7127) — SSH セッション切断による warm-reboot 中断。
+[^7140]: [sonic-buildimage #7140](https://github.com/sonic-net/sonic-buildimage/issues/7140) — fast-reboot のダウンタイムが 30 秒制限を超える件。
+[^6866]: [sonic-buildimage #6866](https://github.com/sonic-net/sonic-buildimage/issues/6866) — fast-reboot のダウンタイムに寄与するカーネル kexec 処理遅延。
+[^7518]: [sonic-buildimage #7518](https://github.com/sonic-net/sonic-buildimage/issues/7518) — 最新 master から旧イメージへのダウングレード失敗。
+[^12512]: [sonic-buildimage #12512](https://github.com/sonic-net/sonic-buildimage/issues/12512) — ウォームブート後の reboot-cause 誤表示。
+[^9899]: [sonic-buildimage #9899](https://github.com/sonic-net/sonic-buildimage/issues/9899) — [202012] fast-reboot 中の orchagent INIT_VIEW タイムアウト。
 
 <!-- glossary-links-injected: 3b39e50988ab -->

@@ -34,7 +34,7 @@ related:
 
 ## 1. `make configure` 関連
 
-### 1-1. P4 プラットフォームでの `sonic-slave` イメージ取得失敗 (#6804)
+### 1-1. P4 プラットフォームでの `sonic-slave` イメージ取得失敗 (#6804)[^6804]
 
 ```bash
 $ make configure PLATFORM=p4
@@ -57,7 +57,7 @@ make sonic-slave-stretch
 
 ---
 
-### 1-2. `chroot ./fsroot docker info` でのビルド失敗 (#7354)
+### 1-2. `chroot ./fsroot docker info` でのビルド失敗 (#7354)[^7354]
 
 ```
 Build fails with "chroot ./fsroot docker info"
@@ -67,7 +67,8 @@ Build fails with "chroot ./fsroot docker info"
 chroot 環境内の Docker 互換性問題が発生する。
 デフォルトのビルド設定では chroot 内で `docker info` を実行する。
 
-**対処**:
+**対処**: `SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD=y` でネイティブ Docker を使い、
+Docker-in-Docker を回避する。このフラグは `Makefile.work` でビルド経路を分岐する[^nativedockerd]。
 
 ```bash
 # ネイティブ Docker を使用（Docker-in-Docker を回避）
@@ -75,11 +76,21 @@ export SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD=y
 make configure PLATFORM=<platform>
 ```
 
+<!-- evidence:
+source: sonic-net/sonic-buildimage/Makefile.work#L332-L407 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  ifeq ($(strip $(SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD)),y)
+reasoning: >
+  SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD が現行 master の Makefile.work で
+  ビルド経路を分岐する実在の設定変数であることを確認。Docker-in-Docker 回避策の裏取り。
+  デフォルト無効であることは rules/config L60-L65 のコメントアウトされた既定値で確認できる。
+-->
+
 ---
 
 ## 2. Docker / systemd 関連
 
-### 2-1. Aboot 環境での Docker 起動失敗（systemd アップグレード後）(#7372)
+### 2-1. Aboot 環境での Docker 起動失敗（systemd アップグレード後）(#7372)[^7372]
 
 ```
 Docker startup broken in master for aboot due to systemd upgrade
@@ -97,7 +108,7 @@ systemctl status docker
 
 ---
 
-### 2-2. Docker-in-Docker が非 Ubuntu ホストで動作しない (#9919)
+### 2-2. Docker-in-Docker が非 Ubuntu ホストで動作しない (#9919)[^9919]
 
 ```
 Docker in docker builds do not work in build container (Arch linux host)
@@ -119,7 +130,7 @@ make configure PLATFORM=<platform>
 
 ## 3. プラットフォーム固有ビルドエラー
 
-### 3-1. Innovium プラットフォームでの並列ビルド失敗 (#7139)
+### 3-1. Innovium プラットフォームでの並列ビルド失敗 (#7139)[^7139]
 
 ```
 201811 parallel build failure seen with Innovium platform
@@ -139,7 +150,7 @@ make -j1
 
 ---
 
-### 3-2. Marvell ARM アーキテクチャのビルド失敗 (#7465, #11337)
+### 3-2. Marvell ARM アーキテクチャのビルド失敗 (#7465, #11337)[^7465][^11337]
 
 ```
 [202012] Build failure: marvell-armhf
@@ -154,7 +165,7 @@ make -j1
 
 ---
 
-### 3-3. Bullseye (Debian 11) ビルドの無限ループ (#11769)
+### 3-3. Bullseye (Debian 11) ビルドの無限ループ (#11769)[^11769]
 
 ```
 Build fails with only BULLSEYE enabled
@@ -176,7 +187,7 @@ make target/docker-fpm-frr.gz
 
 ## 4. sonic-slave イメージ
 
-### 4-1. `sonic-slave-stretch` の取得失敗 (#9741)
+### 4-1. `sonic-slave-stretch` の取得失敗 (#9741)[^9741]
 
 ```
 Unable to fetch sonic-slave-stretch
@@ -198,7 +209,7 @@ make sonic-slave-bullseye
 
 ## 5. 特定機能のビルドエラー
 
-### 5-1. P4RT コンテナ有効時の VS ビルド失敗 (#9885)
+### 5-1. P4RT コンテナ有効時の VS ビルド失敗 (#9885)[^9885]
 
 ```
 VS image build failed when P4RT container is enabled
@@ -254,5 +265,21 @@ export SONIC_DEBUGGING_ON=y
 
 - [ビルドシステム改善 HLD](../architecture/build-system-improvements.md)
 - [ビルドプロファイル](../architecture/build-profiles.md)
+
+## 引用元
+
+各項目の一次情報は sonic-buildimage の issue tracker。ビルド設定変数は `sonic-net/sonic-buildimage` (sha `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`) の `Makefile.work` / `rules/config` で裏取りした。
+
+[^nativedockerd]: `Makefile.work` L332-L407、`sonic-net/sonic-buildimage` (sha `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`)。`SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD` でビルド経路を分岐。既定値は `rules/config` L60-L65 でコメントアウト（無効）。
+[^6804]: [sonic-buildimage #6804](https://github.com/sonic-net/sonic-buildimage/issues/6804) — P4 プラットフォームでの `sonic-slave-stretch-sonic` イメージ取得失敗。
+[^7354]: [sonic-buildimage #7354](https://github.com/sonic-net/sonic-buildimage/issues/7354) — `chroot ./fsroot docker info` でのビルド失敗。
+[^7372]: [sonic-buildimage #7372](https://github.com/sonic-net/sonic-buildimage/issues/7372) — Arista aboot で systemd アップグレード後に Docker が起動しない件。
+[^9919]: [sonic-buildimage #9919](https://github.com/sonic-net/sonic-buildimage/issues/9919) — 非 Ubuntu ホスト（Arch Linux）で Docker-in-Docker ビルドが動作しない件。
+[^7139]: [sonic-buildimage #7139](https://github.com/sonic-net/sonic-buildimage/issues/7139) — Innovium プラットフォームの並列ビルド失敗。
+[^7465]: [sonic-buildimage #7465](https://github.com/sonic-net/sonic-buildimage/issues/7465) — Marvell ARM（marvell-armhf）のビルド失敗。
+[^11337]: [sonic-buildimage #11337](https://github.com/sonic-net/sonic-buildimage/issues/11337) — Marvell ARM ビルド失敗の継続報告。
+[^11769]: [sonic-buildimage #11769](https://github.com/sonic-net/sonic-buildimage/issues/11769) — BULLSEYE のみ有効時の `libsnmp-dev` インストール無限ループ。
+[^9741]: [sonic-buildimage #9741](https://github.com/sonic-net/sonic-buildimage/issues/9741) — EOL の `sonic-slave-stretch` イメージ取得失敗。
+[^9885]: [sonic-buildimage #9885](https://github.com/sonic-net/sonic-buildimage/issues/9885) — P4RT コンテナ有効時の VS イメージビルド失敗。
 
 <!-- glossary-links-injected: a8f7c59145cf -->
