@@ -137,7 +137,7 @@ show mclag interface
 <!-- /ops-hint -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
 <!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-250 / sonic-swss/mclagsyncd/mclaglink.cpp L814-929 / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang / sonic-utilities/config/mclag.py -->
 
@@ -181,11 +181,10 @@ show mclag interface
 | 4 | MCLAG_DOMAIN 初回 ADD 完了 → mclagsyncd が MCLAG_INTERFACE 購読開始 | mclagsyncd 内部タイミング | MCLAG_DOMAIN SET 完了後に MCLAG_INTERFACE を書く |
 | 5 | MCLAG_INTERFACE DEL → MCLAG_DOMAIN DEL | 推奨（dangling 防止） | CLI del が自動実行 |
 
-> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-ordering.md`
 <!-- /ordering -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/mclagsyncd/mclaglink.h / sonic-swss/mclagsyncd/mclag.h / sonic-utilities/config/mclag.py -->
 
@@ -280,7 +279,7 @@ reasoning: CLI レベルで MCLAG_INTERFACE の if_name に設定できる PortC
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
+## 暗黙参照マップ
 
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang L108-116 / sonic-swss/orchagent/mlagorch.cpp L49-52,193-231 / sonic-swss/orchagent/fdborch.cpp L1209-1212,1665-1670 / sonic-swss/mclagsyncd/mclaglink.cpp L918,938-941,1512-1633,1811 / sonic-swss-common/common/schema.h L379,441-442 -->
 
@@ -315,11 +314,10 @@ MCLAG_INTERFACE の SET/DEL を受けた mclagsyncd → iccpd → mclagsyncd IPC
 !!! note "副次書込みのタイミング"
     `MCLAG_LOCAL_INTF_TABLE` / `MCLAG_REMOTE_INTF_TABLE` / `ISOLATION_GROUP_TABLE` への書込みは MCLAG_INTERFACE SET 直後ではなく、ICCP セッション確立後の iccpd ネゴシエーション完了を待って行われる。CONFIG_DB 書込み後すぐに STATE_DB を確認しても空の場合がある。
 
-> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 <!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-52,136-155,193-234 / sonic-swss/mclagsyncd/mclaglink.cpp L918-960,989-1085 / sonic-swss/mclagsyncd/mclagsyncd.cpp L44-124 -->
 
@@ -374,11 +372,10 @@ docker exec swss grep -i "MLAG" /var/log/swss/orchagent.log
 docker exec iccpd grep -i "mclag iface" /var/log/swss/mclagsyncd.log
 ```
 
-> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-failure.md`
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp L66,L423,L429,L1509-1533,L1538-1633 / sonic-swss/orchagent/mlagorch.cpp L193-234 / sonic-swss-common/common/schema.h L440-443 -->
 
@@ -517,11 +514,10 @@ reasoning: ICCP セッション確立直後に APPL_DB の FLUSHFDBREQUEST チ�
 
 <!-- evidence-rendered:end -->
 
-> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-side.md`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 <!-- evidence: sonic-swss/mclagsyncd/mclagsyncd.cpp L41,57-58,66-110 / sonic-swss/mclagsyncd/mclaglink.cpp L813-818,903-941,989-1085,164-188 / sonic-swss/orchagent/mlagorch.cpp L45-52,193-234 / sonic-swss/orchagent/orchdaemon.cpp L536-540 -->
 
@@ -577,11 +573,10 @@ else if (temps == (Selectable *)mclag.getMclagIntfCfgTable()) {
 | mclagsyncd | 無限（指定なし） | 接続断で即時 `accept()` 再試行 + 全量再 fetch |
 | orchagent (MlagOrch) | 1000 ms (`orchdaemon.cpp:23`) | キュー保留（allPortsReady 完了まで） |
 
-> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差・SAI capability 分岐 (Phase H)
+## プラットフォーム差・SAI capability 分岐
 
 <!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp L190-380 / sonic-swss/mclagsyncd/mclaglink.h L54-59 / sonic-swss/orchagent/mlagorch.cpp L193-234 -->
 
@@ -643,7 +638,6 @@ APPL_DB:ACL_RULE_TABLE:mclag:mclag
 
 `mlagorch.cpp` に `gMySwitchType == "voq"` 等の分岐はなく、`mclaglink.cpp` / `mclagsyncd.cpp` に `CHASSIS_APP_DB` 参照もない。[MCLAG](../../reference/glossary.md#term-mclag) 機能は single-[ASIC](../../reference/glossary.md#term-asic) single-box 構成を前提とし、multi-[ASIC](../../reference/glossary.md#term-asic) / VoQ chassis 環境では動作保証なし。`docker-iccpd` は名前空間引数を取らず、単一の CONFIG_DB / STATE_DB / APPL_DB のみを参照する。
 
-> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-platform.md`
 <!-- /platform -->
 
 <!-- glossary-links-injected: 0af8863862be -->

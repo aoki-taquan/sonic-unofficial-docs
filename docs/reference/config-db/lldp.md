@@ -92,7 +92,7 @@ grouping `lldp_mode_config` を `uses`:
 - 関連 CLI: `config lldp`、`show lldp`
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 > 根拠: `dockers/docker-lldp/lldpmgrd`
 
@@ -129,7 +129,7 @@ grouping `lldp_mode_config` を `uses`:
 <!-- /failure -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `lldpmgrd` が読み出す関連テーブル (Phase C)
+## 暗黙参照 — `lldpmgrd` が読み出す関連テーブル
 
 `lldpmgrd` は `LLDP` / `LLDP_PORT` テーブルを**直接購読しない**。LLDP の実際の動作を制御するのは以下の暗黙参照テーブルである（根拠: `dockers/docker-lldp/lldpmgrd` および `lldpd.conf.j2`）。
 
@@ -278,7 +278,7 @@ show lldp table
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `LLDP`
 
@@ -388,9 +388,7 @@ STATE_DB: PORT_TABLE|<ifname>.netdev_oper_status = "up"
 <!-- /ordering -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 証跡: `meta/_intermediate/cdb-flow/lldp-constants.md`
+## ハードコード定数
 
 ### lldpmgrd Python 定数
 
@@ -434,9 +432,8 @@ CONFIG_DB から制御できないが、[SONiC](../../reference/glossary.md#term
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> 調査証跡: `meta/_intermediate/cdb-flow/lldp-side-effects.md`  
 > ソース: `dockers/docker-lldp/lldpmgrd`, `dockers/docker-lldp/supervisord.conf.j2`
 
 ### lldpmgrd の DB 書込パス
@@ -470,9 +467,9 @@ lldpmgrd が行う唯一の外部副作用は **`lldpcli` サブプロセス呼�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `dockers/docker-lldp/lldpmgrd` 全行精読 (2026-05-18)
+> **Evidence**: `dockers/docker-lldp/lldpmgrd` 全行精読 (2026-05-18)
 
 `LLDP` テーブルおよび `LLDP_PORT` テーブルは **`lldpmgrd` に直接購読されていない**。lldpmgrd が購読するのは以下の 3 テーブルのみであり、`LLDP|GLOBAL` や `LLDP_PORT|<ifname>` への書き込みは lldpmgrd のイベントループに到達しない。
 
@@ -520,10 +517,9 @@ sel.addSelectable(sst_device_confdb)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 > 調査対象: `sonic-buildimage/dockers/docker-lldp/lldpmgrd`, `lldpd.conf.j2`, `supervisord.conf.j2`
-> 詳細根拠: `meta/_intermediate/cdb-flow/lldp-platform.md`
 
 ### ASIC 種別による影響
 

@@ -135,7 +135,7 @@ show mclag unique-ip
 <!-- /ops-hint -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
 <!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp L903-950 / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang L132-152 / sonic-utilities/config/mclag.py L327-378 -->
 
@@ -182,11 +182,10 @@ show mclag unique-ip
 | 4 | `Vlan<id>` パターン → if_name | YANG バリデーション必須 | VLAN IF 名の命名規則を厳守 |
 | 5 | MCLAG_UNIQUE_IP DEL → MCLAG_DOMAIN DEL | 推奨（iccpd 通知保証） | 手動で先に DEL、CLI del は自動化なし |
 
-> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-ordering.md`
 <!-- /ordering -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 <!-- evidence: sonic-swss/mclagsyncd/mclaglink.h L54-59 / sonic-swss/mclagsyncd/mclaglink.cpp L190-378,435-463,1088-1181 / sonic-buildimage/src/iccpd/src/mlacp_link_handler.c L3186-3293 / sonic-buildimage/src/iccpd/src/port.c L382-397 -->
 
@@ -243,11 +242,10 @@ MCLAG_UNIQUE_IP の ConfigDB エントリ自体は全プラットフォームで
 | `setPortIsolate()` (port isolation — UNIQUE_IP とは独立) | `broadcom`/`barefoot`/`centec`/`clounix`/`marvell-*` → `ISOLATION_GROUP_TABLE`、`mellanox`/その他 → [ACL](../../reference/glossary.md#term-acl) fallback |
 | multi-ASIC / VoQ | 動作保証なし (single-ASIC 前提設計) |
 
-> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-platform.md`
 <!-- /platform -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang L132-152 / sonic-utilities/config/mclag.py L328-373 / sonic-swss/mclagsyncd/mclaglink.cpp L910-935 -->
 
@@ -273,11 +271,10 @@ MCLAG_UNIQUE_IP を逆参照するテーブルは YANG モデル上存在しな�
 
 > `if_name` の `VLAN` leafref はコメントアウト中（`sonic-mclag.yang:146-152`）。libyang back-links 問題が解消されれば `VLAN_LIST.name` への参照が有効化される見込み。
 
-> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp L1087-1180 / sonic-swss/mclagsyncd/mclaglink.h L94-99 / sonic-swss/mclagsyncd/mclag.h L62 / sonic-utilities/config/mclag.py L327-378 -->
 
@@ -318,11 +315,10 @@ docker exec iccpd tail -f /var/log/syslog
 
 `mclagsyncd` と iccpd 間の TCP ソケット (`m_connection_socket`) が切断された場合、`mclagsyncdSendMclagUniqueIpCfg()` の `::write()` がエラーを返すが **リトライ機構はなく、メッセージは消失する**。iccpd が再起動すると `accept()` で新規ソケットを受け入れ、`addDomainCfgDependentSelectables()` で `MCLAG_UNIQUE_IP` テーブルの購読を再登録する。ただしその時点での CONFIG_DB スナップショット読み取りは行われないため、iccpd 側の `unique_ip` 状態が CONFIG_DB と不一致になる可能性がある。
 
-> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/mclagsyncd/mclag.h L23,56,61-62,81,91 / sonic-swss/mclagsyncd/mclaglink.h L52,97,292 / sonic-swss/mclagsyncd/mclaglink.cpp L1134,1138,1141,1143,1148,1157,1166,1168 / sonic-buildimage/src/iccpd/include/mlacp_link_handler.h L30,34 / sonic-buildimage/src/iccpd/include/port.h L46 / sonic-buildimage/src/iccpd/src/mlacp_link_handler.c L3197,3222 -->
 
@@ -373,11 +369,10 @@ docker exec iccpd tail -f /var/log/syslog
 
 `CFG_MCLAG_UNIQUE_IP_TABLE_NAME` マクロは `sonic-swss/mclagsyncd/mclaglink.cpp:921` で参照されているが、`sonic-swss-common/common/schema.h`（ref: 4305596）に `#define` が存在しない。`CFG_MCLAG_TABLE_NAME="MCLAG_DOMAIN"` および `CFG_MCLAG_INTF_TABLE_NAME="MCLAG_INTERFACE"` は定義済みであることから、実効値は `"MCLAG_UNIQUE_IP"` と推定される。インストール済み swss-common パッケージかビルド生成ファイルで供給されている可能性がある。
 
-> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-constants.md`
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp L435-460 / sonic-buildimage/src/iccpd/src/mlacp_link_handler.c L3186-3292 / sonic-buildimage/src/iccpd/src/iccp_netlink.c L2245-2365,L460-510 -->
 
@@ -424,11 +419,10 @@ CONFIG_DB MCLAG_UNIQUE_IP SET
 
 `iccp_mclagsyncd_mclag_unique_ip_cfg_handler()` は `syn_local_neigh_mac_info_to_peer()` を呼び出してピア iccpd へネイバー / MAC 情報を ICCP プロトコルで同期するが、これは iccpd ↔ iccpd 間の TCP 通信であり [SONiC](../../reference/glossary.md#term-sonic) [Redis](../../reference/glossary.md#term-redis) DB への直接書込みではない。
 
-> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-side-effects.md`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 <!-- evidence: sonic-swss/mclagsyncd/mclagsyncd.cpp L41,L93-98 / sonic-swss/mclagsyncd/mclaglink.cpp L910-948,L962-967,L1088-1180 / sonic-swss/mclagsyncd/mclag.h L23,L56,L91 / sonic-buildimage/src/iccpd/src/mlacp_link_handler.c L3186-3292 -->
 
@@ -496,7 +490,6 @@ STANDBY ノードかつ L3 モードの場合、iccpd が `MCLAG_MSG_TYPE_SET_IN
 | mclagsyncd | 無限（明示設定なし） | `MclagConnectionClosedException` で即時 `accept()` 再試行 |
 | iccpd | 自前スケジューラ（`select` ベース） | `CONNECT_INTERVAL_SEC = 1` 秒で TCP 再接続 |
 
-> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-pubsub.md`
 <!-- /pubsub -->
 
 <!-- glossary-links-injected: a0d0b9176499 -->

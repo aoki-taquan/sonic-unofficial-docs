@@ -188,7 +188,7 @@ enum なし — `pfc_priority`/`qindex` は数値文字列のみ。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `MAP_PFC_PRIORITY_TO_QUEUE`
 
@@ -216,7 +216,7 @@ enum なし — `pfc_priority`/`qindex` は数値文字列のみ。
 <!-- /entry-points -->
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来デフォルト (Phase A)
+## 暗黙デフォルト・コード由来デフォルト
 
 <!-- evidence: sonic-buildimage/files/build_templates/qos_config.j2:206-221 / sonic-swss/orchagent/qosorch.cpp:991-1009 -->
 
@@ -245,7 +245,7 @@ platform が `generate_pfc_to_queue_map` を定義している場合はそちら
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `QosOrch` (`sonic-swss/orchagent/qosorch.cpp`) が `MAP_PFC_PRIORITY_TO_QUEUE` を処理する際の順序依存。`PORT_QOS_MAP` が PFC→Queue マップ名を参照するため、**マップエントリは参照元より先に作成する必要がある**。
 
@@ -269,9 +269,9 @@ platform が `generate_pfc_to_queue_map` を定義している場合はそちら
 <!-- /ordering -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -279,7 +279,7 @@ platform が `generate_pfc_to_queue_map` を定義している場合はそちら
 
 minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_config.j2` Jinja テンプレートが `MAP_PFC_PRIORITY_TO_QUEUE` を CONFIG_DB に書き込む。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -296,7 +296,7 @@ minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_co
 <!-- /derivation -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
 `MAP_PFC_PRIORITY_TO_QUEUE` が関わる CONFIG_DB テーブル間の暗黙参照を `qosorch.cpp` から抽出した。
 
@@ -310,12 +310,10 @@ minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_co
 - `PORT_QOS_MAP` から参照中に DEL しようとすると `isObjectBeingReferenced()` が true を返し `task_need_retry` で削除保留。
 - `SWITCH` への直接適用は `DSCP_TO_TC_MAP` (`PORT_QOS_MAP|global` 経路) のみで、PFC 系マップは非対象。
 
-> 詳細: `meta/_intermediate/cdb-flow/map-pfc-priority-to-queue-cross-refs.md`
-
 <!-- /cross-refs -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `QosOrch` が `MAP_PFC_PRIORITY_TO_QUEUE` テーブルを処理する。`PfcToQueueHandler::processWorkItem()` 内での分岐:
 
@@ -326,14 +324,12 @@ minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_co
 | `QosOrch` | `PfcToQueueHandler` | SAI object ID が NULL かつ DEL 操作 | `"Object with name not found"` ログ + `task_invalid_entry` | `sonic-swss/orchagent/qosorch.cpp:156-162` |
 | `QosOrch` | `sai_qos_map_api->create_qos_map()` | SAI 返値 ≠ `SAI_STATUS_SUCCESS` | `task_failed` | `sonic-swss/orchagent/qosorch.cpp:977,1032` |
 
-> **スキャン証跡**: `QosOrch::PfcToQueueHandler` を全行読了、4 件分岐抽出。Phase 6/7 derivation ブロックの evidence 再確認: qos_config.j2 からの platform 別マップ書き込みは実ソースと整合 — 誤読なし。
+> **裏取り**: `QosOrch::PfcToQueueHandler` を全行読了、4 件分岐抽出。qos_config.j2 からの platform 別マップ書き込みは実ソースと整合。
 
 <!-- /handler-branching -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/map-pfc-priority-to-queue-failure.md`
+## 失敗挙動
 
 対象テーブル: `MAP_PFC_PRIORITY_TO_QUEUE`。Consumer: `QosOrch::handlePfcToQueueTable()` / `QosOrch::doTask()` (`orchagent/qosorch.cpp`)。
 
@@ -378,7 +374,7 @@ minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_co
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/orchagent/qosorch.h:15 / qosorch.cpp:1001-1004,1020-1021,1029 / sonic-swss-common/common/schema.h:363 -->
 
@@ -427,7 +423,7 @@ YANG バリデーションをバイパスして 8 以上を書き込んだ場合
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-swss/orchagent/qosorch.cpp PfcToQueueHandler::addQosItem (L1011-1035) / QosOrch::handlePortQosMapTable (L2186-2205) -->
 
@@ -444,12 +440,10 @@ YANG バリデーションをバイパスして 8 以上を書き込んだ場合
 
 **補足**: `PORT_QOS_MAP` 側の `handlePortQosMapTable()` が複数ポートをループし、各ポートに `set_port_attribute` を呼ぶ。マップ削除時には OID に `SAI_NULL_OBJECT_ID` を設定して属性をクリアする。
 
-詳細: `meta/_intermediate/cdb-flow/map-pfc-priority-to-queue-side-effects.md`
-
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### 購読 API
 
@@ -490,11 +484,10 @@ ASIC (SAI adapter)
 | `task_failed` | `sai_qos_map_api` 返値 ≠ `SAI_STATUS_SUCCESS` (qosorch.cpp:1032) |
 | `task_need_retry` | DEL 時に `isObjectBeingReferenced()` = true (PORT_QOS_MAP 参照中) |
 
-詳細: `meta/_intermediate/cdb-flow/map-pfc-priority-to-queue-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
 <!-- evidence: sonic-swss/orchagent/qosorch.cpp / sonic-buildimage/files/build_templates/qos_config.j2 / sonic-buildimage/device/**/ -->
 
@@ -529,8 +522,6 @@ YANG `pattern "[0-7]?"` により pfc_priority / qindex は 0..7 (8 値) に固�
 | qos_config.j2 QUEUE 生成対象 | 物理ポート | システムポート (ロスレスキュー 3/4 に `AZURE_LOSSLESS`) |
 
 VOQ chassis でも `MAP_PFC_PRIORITY_TO_QUEUE` マップオブジェクト自体の作成・削除は非 VOQ と同一コードパスで処理される。差異は QUEUE テーブルとの連携（システムポート key 形式）と [WRED](../../reference/glossary.md#term-wred) プロファイル適用先のキュー ID 取得方法のみ。
-
-> 詳細: `meta/_intermediate/cdb-flow/map-pfc-priority-to-queue-platform.md`
 
 <!-- /platform -->
 
