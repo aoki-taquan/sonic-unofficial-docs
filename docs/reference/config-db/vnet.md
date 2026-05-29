@@ -202,7 +202,7 @@ show vnet routes all
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 VNET テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -277,7 +277,7 @@ db_migrator.py での VNET マイグレーションなし
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### VXLAN_TUNNEL が先行必須
 
@@ -317,11 +317,11 @@ DEL VXLAN_TUNNEL|<tunnel_name>   # 他 VNET が残らない場合のみ
 | `VNET` SET → `VNET_ROUTE` SAI 反映 | 論理的先行 | APPL_DB への転記は即時、SAI 反映は遅延 |
 | `VNET_ROUTE` DEL → `VNET` DEL | 推奨 | orchagent が内部で自動削除するが明示削除が安全 |
 
-> **スキャン証跡**: `vxlanmgr.cpp:doVxlanCreateTask()` L287-376、`vnetorch.cpp:addOperation()` L434-558、`vnetorch.cpp:VNetCfgRouteOrch::doTask()` L3577-3611、`orchdaemon.cpp` L265-293, L350-354, L590-593 精読。
+> **裏取り**: `vxlanmgr.cpp:doVxlanCreateTask()` L287-376、`vnetorch.cpp:addOperation()` L434-558、`vnetorch.cpp:VNetCfgRouteOrch::doTask()` L3577-3611、`orchdaemon.cpp` L265-293, L350-354, L590-593 精読。
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## テーブル間参照 (Phase C)
+## テーブル間参照
 
 ### CONFIG_DB 内 leafref
 
@@ -381,11 +381,11 @@ CONFIG_DB: VNET
                     └─→ IntfsOrch (VNET スコープ IF 管理)
 ```
 
-> **スキャン証跡**: `vnetorch.cpp` L40, L392-428, L497-503, L738-748、`vxlanmgr.cpp` L183-213, L738-806、`orchdaemon.cpp` L265-285, L350-358、`sonic-vnet.yang` L57-58, L120-157
+> **裏取り**: `vnetorch.cpp` L40, L392-428, L497-503, L738-748、`vxlanmgr.cpp` L183-213, L738-806、`orchdaemon.cpp` L265-285, L350-358、`sonic-vnet.yang` L57-58, L120-157
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-swss/orchagent/vnetorch.cpp -->
 
@@ -423,11 +423,11 @@ CONFIG_DB: VNET
 | 12 | VNET_ROUTE SAI 失敗 | ERROR | ✅ 自動再試行 | SAI エラー |
 | 13 | NextHop group 上限超過 | ERROR | ✅ 自動再試行（上限解消まで） | リソース枯渇 |
 
-> **スキャン証跡**: `vxlanmgr.cpp:doVxlanCreateTask()` L287-376、`vxlanmgr.cpp:doVxlanDeleteTask()` L437-476、`vnetorch.cpp:VNetVrfObject::createObj()` L91-108、`vnetorch.cpp:VNetOrch::addOperation()` L489-558、`vnetorch.cpp:VNetOrch::delOperation()` L560-600、`vnetorch.cpp:addRoute()/delRoute()` L645-730、`vnetorch.cpp:createNextHopGroup()` L773-774; 詳細分析 `meta/_intermediate/cdb-flow/vnet-failure.md`
+> **裏取り**: `vxlanmgr.cpp:doVxlanCreateTask()` L287-376、`vxlanmgr.cpp:doVxlanDeleteTask()` L437-476、`vnetorch.cpp:VNetVrfObject::createObj()` L91-108、`vnetorch.cpp:VNetOrch::addOperation()` L489-558、`vnetorch.cpp:VNetOrch::delOperation()` L560-600、`vnetorch.cpp:addRoute()/delRoute()` L645-730、`vnetorch.cpp:createNextHopGroup()` L773-774
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `VNET` / `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` テーブルの処理に直接影響する、CONFIG_DB エントリでは制御できないコード内固定値の一覧。
 
@@ -475,11 +475,11 @@ CONFIG_DB の変更を消費するダウンストリーム側のテーブル名�
 | `STATE_VNET_MONITOR_TABLE_NAME` | `"VNET_MONITOR_TABLE"` | `schema.h:500` |
 | `CFG_VNET_RT_TABLE_NAME` | `"VNET_ROUTE"` | `schema.h:369` |
 
-> **スキャン証跡**: `sonic-swss/orchagent/vnetorch.h:20-28`（マクロ定数全件）、`sonic-swss/orchagent/vnetorch.cpp:513,773,786`（定数使用箇所）、`sonic-swss-common/common/schema.h:81-83,133,369,495,500`（テーブル名定数）、`sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2:321-328`（`vnid_type` 型定義）、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vnet.yang:75-92`（scope/guid 制約）
+> **裏取り**: `sonic-swss/orchagent/vnetorch.h:20-28`（マクロ定数全件）、`sonic-swss/orchagent/vnetorch.cpp:513,773,786`（定数使用箇所）、`sonic-swss-common/common/schema.h:81-83,133,369,495,500`（テーブル名定数）、`sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2:321-328`（`vnid_type` 型定義）、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vnet.yang:75-92`（scope/guid 制約）
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `VNET` / `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` テーブルの変更に伴って `VNetOrch` / `VNetRouteOrch` が副次的に書き込む DB エントリを示す。
 
@@ -507,11 +507,10 @@ CONFIG_DB `VNET` / `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` テーブルの変更に�
 - `advertise_prefix: true` かつトンネルルートが active 化すると `addRouteAdvertisement()` → `ADVERTISE_NETWORK_TABLE` 書込 → BGP コンテナが prefix を広告、という連鎖が発生する (`vnetorch.cpp:2590-2600`)。
 - BFD セッション削除 (`removeBfdSession()`) は `bfd_session_producer_.del()` で `BFD_SESSION_TABLE` エントリを消し、BfdOrch 側のセッションが破棄される (`vnetorch.cpp:2117`)。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/vnet-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Producer/Consumer ペア
 
@@ -569,7 +568,7 @@ orchagent / VNetOrch (orchagent/vnetorch.cpp L377)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 ### Ordered ECMP サポート — ASIC Capability 依存
 
@@ -594,7 +593,7 @@ orchagent / VNetOrch (orchagent/vnetorch.cpp L377)
 
 VNET テーブル処理に VoQ / multi-ASIC 分岐は存在しない。VNET は単一 [ASIC](../../reference/glossary.md#term-asic) 構成を前提とした機能。
 
-> **スキャン証跡**: `vnetorch.cpp:804,841,2778`（Ordered ECMP NHG type 分岐）、`vnetorch.h:63-67`（VNET_EXEC enum）、`orchdaemon.cpp:276`（VRF モード固定）、`vxlanmgr.cpp` 全体（ベンダー分岐 0 件確認）
+> **裏取り**: `vnetorch.cpp:804,841,2778`（Ordered ECMP NHG type 分岐）、`vnetorch.h:63-67`（VNET_EXEC enum）、`orchdaemon.cpp:276`（VRF モード固定）、`vxlanmgr.cpp` 全体（ベンダー分岐 0 件確認）
 <!-- /platform -->
 
 <!-- glossary-links-injected: f4980b5d1557 -->

@@ -174,7 +174,7 @@ ip vrf show
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 VRF テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -209,7 +209,7 @@ db_migrator.py での VRF マイグレーションなし
 <!-- /entry-points -->
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 > 調査日 2026-05-14。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/orchagent/vrforch.h`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vrf.yang`
 
@@ -248,7 +248,7 @@ vrfmgrd は VRF ごとに Linux ルーティングテーブル ID を自動割�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 > 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-utilities/config/main.py`
 
@@ -323,7 +323,7 @@ NEIGHBOR（neigh エントリ）は VRF の ref_count を直接操作しない�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 > 調査日 2026-05-16。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vrf.yang`
 
@@ -379,7 +379,7 @@ VNI マッピング設定時、`VRFOrch::updateVrfVNIMap` は `gDirectory.get<Vx
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・リトライ・回復 (Phase D)
+## 失敗挙動・リトライ・回復
 
 > 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/orchagent/saihelper.cpp`
 
@@ -422,7 +422,7 @@ SWSS_LOG_ERROR("Logic error: Unknown attribute: %s", name.c_str());
 continue;   // attrs に push せず次フィールドへ
 ```
 
-- `fallback` フィールドはこのパスに落ちる（Phase A で確認済み）
+- `fallback` フィールドはこのパスに落ちる
 - 不明フィールドがあっても `sai_virtual_router_api->create_virtual_router()` は残りの有効属性で呼ばれる
 
 `VRFOrch::delOperation` で対象 VRF が `vrf_table_` に存在しない場合は `SWSS_LOG_ERROR("VRF '%s' doesn't exist")` を出力して `true` を返す（**成功扱い・no-op**）。リトライなし、エントリ破棄もなし。
@@ -482,7 +482,7 @@ if (vrf_table_[vrf_name].ref_count)
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 > 調査日 2026-05-16。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/orchagent/nexthopkey.h`
 
@@ -542,9 +542,7 @@ MTU に相当する SAI 属性は `vrforch.cpp` / `vrforch.h` に存在しない
 <!-- /constants -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-<!-- evidence: meta/_intermediate/cdb-flow/vrf-pubsub.md -->
+## 通信メカニズム
 
 ### Producer/Consumer ペア
 
@@ -663,7 +661,7 @@ SAI (ハードウェア VRF)
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 > 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss-common/common/schema.h`
 
@@ -728,7 +726,7 @@ sonic-db-cli APPL_DB hgetall 'VXLAN_VRF_TABLE:vtep1:evpn_map_10001_VrfRed'
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 > 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-sairedis/vslib/vpp/SwitchVpp.cpp`, `sonic-sairedis/vslib/vpp/SwitchVppRif.cpp`, `sonic-host-services/scripts/hostcfgd`
 

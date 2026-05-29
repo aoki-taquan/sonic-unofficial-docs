@@ -165,20 +165,20 @@ show tunnel
 <!-- /ops-hint -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 [tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) が `tunnel_type` の値から Linux トンネルインターフェース種別を自動決定する。`IPINIP` → `ipip` / `sit` トンネル、`GRE` → `gre` トンネル。`dscp_mode` の値から encapsulation モードを自動設定する。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 [tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) は常時起動し `TUNNEL` テーブルを無条件購読する。`src_ip` が `LOOPBACK_INTERFACE` に存在しない場合はトンネル local endpoint が解決不能でエラーとなる。[VXLAN](../../reference/glossary.md#term-vxlan) トンネルの場合は `VXLAN_TUNNEL` テーブルが別途使用される。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -190,7 +190,7 @@ show tunnel
 | `tunnelmgrd` | `src_ip` が解決できない | ログエラー + リトライ待ち | `tunnelmgrd` |
 | `tunnelmgrd` | del_handler | Linux トンネル IF を削除 | `tunnelmgrd` |
 
-> **スキャン証跡**: `TUNNEL` はユーザースペースのトンネルインターフェース設定テーブル。`tunnel_type` と `dscp_mode` による分岐が主要。`src_ip` 依存の条件付き登録が Phase 7 に相当。
+> **裏取り**: `TUNNEL` はユーザースペースのトンネルインターフェース設定テーブル。`tunnel_type` と `dscp_mode` による分岐が主要。`src_ip` 依存の条件付き登録あり。
 
 <!-- /handler-branching -->
 
@@ -217,7 +217,7 @@ show tunnel
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 TUNNEL テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -251,7 +251,7 @@ TUNNEL テーブルはレガシー汎用トンネルテーブル; 現行は VXLA
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### SET 操作の推奨順序
 
@@ -299,12 +299,10 @@ DEL TUNNEL|MuxTunnel0  # tunnelmgrd → APPL_DB DEL → tunneldecaporch → SAI 
 DEL PEER_SWITCH|*      # TUNNEL DEL の後
 ```
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-ordering.md`
-
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `TUNNEL` が CONFIG_DB に書かれると `tunnelmgrd`・`tunneldecaporch` が以下のテーブルを暗黙的に参照する。
 `src_ip` → `PEER_SWITCH` は YANG leafref として明示されているが、他は実装コードのみに現れる暗黙依存。
@@ -333,7 +331,7 @@ DEL PEER_SWITCH|*      # TUNNEL DEL の後
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・リトライ・リカバリ (Phase D)
+## 失敗挙動・リトライ・リカバリ
 
 ### tunnelmgr — SET 失敗経路
 
@@ -391,12 +389,10 @@ DEL PEER_SWITCH|*      # TUNNEL DEL の後
 | SAI `create_tunnel` 失敗 | [syncd](../../reference/glossary.md#term-syncd) ログ確認後 再 SET | 手動 |
 | DEL 対象不存在 | 操作なし (確認のみ) | — |
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-failure.md`
-
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 CONFIG_DB の TUNNEL テーブルから読み込まれず、コードに直書きされている定数。`config_db.json` での設定変更は効果なく、変更にはコードのリコンパイルが必要。
 
@@ -415,12 +411,10 @@ CONFIG_DB の TUNNEL テーブルから読み込まれず、コードに直書�
     `MuxOrch` は `MuxTunnel0` をハードコードで参照する。
     トンネル名を `MuxTunnel1` 等にすると MuxOrch が対象を見つけられず Dual-ToR が機能しない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-constants.md`
-
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `tunneldecaporch` が CONFIG_DB → APPL_DB → SAI の経路を処理する際に、以下の副次的な DB 書き込みが発生する。
 
@@ -449,14 +443,10 @@ SAI tunnel に付与される主要属性: `SAI_TUNNEL_ATTR_TYPE=IPINIP`, `SAI_T
 
 `encap_tc_to_dscp_map` / `encap_tc_to_queue_map` は SAI に直接 push **されない**。tunneldecaporch は OID を内部キャッシュ (`tunnelTable`) に保持し、MuxOrch が `MUX_CABLE` 処理時に `TunnelDecapOrch::getQosMapId()` 経由で取得して自身の SAI 書き込みに利用する。
 
-!!! note "詳細スキャンノート"
-    `meta/_intermediate/cdb-flow/tunnel-side-effects.md`  
-    `meta/_intermediate/cdb-flow/tunnel-phaseF-side-effects.md`
-
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Consumer 登録経路
 
@@ -516,12 +506,10 @@ task_process_status handle_status = handleSaiCreateStatus(SAI_API_TUNNEL, status
 
 SAI `create_tunnel()` 成功後、`stateTunnelDecapTable` ([STATE_DB](../../reference/glossary.md#term-state_db) `STATE_TUNNEL_DECAP_TABLE`) と `stateTunnelDecapTermTable` へエントリを書き戻す（`tunneldecaporch.cpp` L287 付近）。これが orchagent → [STATE_DB](../../reference/glossary.md#term-state_db) 方向の出力パス。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-pubsub.md`
-
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 ### H-1. `ecn_mode` / `encap_ecn_mode` — SAI create-only 属性（全プラットフォーム共通）
 
@@ -582,8 +570,6 @@ Overlay loopback ルータインターフェースの MTU は `OVERLAY_RIF_DEFAU
 | 全プラットフォーム共通 | `ttl_mode`, `dscp_mode` | 既存トンネルへの変更は `set_tunnel_attribute()` 経由で可能。SAI 実装依存で失敗することもある | `tunneldecaporch.cpp` L1050 |
 | Dual-ToR 環境のみ | `encap_tc_to_dscp_map`, `encap_tc_to_queue_map` | MuxOrch 経由で SAI push。tunneldecaporch は内部キャッシュ保持のみ | `tunneldecaporch.cpp` L257, L272; `muxorch.cpp` L2367, L2374 |
 | 非対応 SAI 実装 | P2P/P2MP/MP2MP decap term | SAI create_tunnel_term_table_entry 失敗でリトライなし | `tunneldecaporch.cpp` L979 |
-
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/ipinip-tunnel-platform.md`
 
 <!-- /platform -->
 

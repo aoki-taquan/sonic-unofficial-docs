@@ -119,8 +119,6 @@ VLAN_MEMBER|<vlan_name>|<port>
 
 PortChannel は bridge コマンド失敗を `return false` で吸収しリトライするが、Ethernet はハードエラー扱いで `vlanmgrd` 再起動となる非対称設計。
 
-詳細は `meta/_intermediate/cdb-flow/vlan-member-failure.md` を参照。
-
 [^fail]: `sonic-swss/cfgmgr/vlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp>
 
 <!-- /failure -->
@@ -196,7 +194,7 @@ vlanmgr.cpp:672 は CONFIG_DB の raw フィールド列をそのまま APP_DB �
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `vlanmgrd` (`sonic-swss/cfgmgr/vlanmgr.cpp`) および `orchagent/PortsOrch` (`sonic-swss/orchagent/portsorch.cpp`) が強制する順序制約。
 
@@ -422,7 +420,7 @@ PAC 経路では `tagging_mode = "untagged"` が固定で注入され、APP_DB �
 <!-- /pubsub -->
 
 <!-- failure-behavior -->
-## 失敗挙動（Phase D）
+## 失敗挙動
 
 ### VLAN 未解決（isVlanStateOk = false）
 
@@ -521,7 +519,7 @@ VLAN_MEMBER SET/DEL 単体では **[COUNTERS_DB](../../reference/glossary.md#ter
 <!-- /side-effects -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 VLAN_MEMBER テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
