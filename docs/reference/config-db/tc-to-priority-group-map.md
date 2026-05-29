@@ -154,20 +154,20 @@ show qos map tc-pg
 <!-- /ops-hint -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 `qosorch.cpp` の `addQosItem()` で SAI map type `SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP` をコード内にハードコード。テーブル名 `TC_TO_PRIORITY_GROUP_MAP` と SAI type の対応はコード固定であり、[CONFIG_DB](../../reference/glossary.md#term-config_db) フィールドで変更不可。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 `QosOrch` は常時 `TC_TO_PRIORITY_GROUP_MAP` テーブルを購読する。マップ登録は無条件だが、ポートへの **適用** は `PORT_QOS_MAP.<ifname>.tc_to_pg_map` で参照されたときのみ発生する。トンネルへの適用は `TUNNEL_DECAP_TABLE.<name>.decap_tc_to_pg_map` 参照時。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -177,7 +177,7 @@ show qos map tc-pg
 | `QosMapHandler::processWorkItem` | 参照中 + DEL | `m_pendingRemove=true` → `task_need_retry` | `qosorch.cpp` L181-186 |
 | `TunnelDecapOrch` | decap_tc_to_pg_map OID 未解決 | `task_need_retry`（マップ作成待ち） | `tunneldecaporch.cpp` L230-237 |
 
-> **スキャン証跡**: `TC_TO_PRIORITY_GROUP_MAP` は TC から ingress PG へのマッピングテーブル。`QosOrch` が SAI [QoS](../../reference/glossary.md#term-qos) map として管理し、`TunnelDecapOrch` が tunnel decap 経路でも参照する。
+> **裏取り**: `TC_TO_PRIORITY_GROUP_MAP` は TC から ingress PG へのマッピングテーブル。`QosOrch` が SAI [QoS](../../reference/glossary.md#term-qos) map として管理し、`TunnelDecapOrch` が tunnel decap 経路でも参照する。
 
 <!-- /handler-branching -->
 
@@ -208,7 +208,7 @@ show qos map tc-pg
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 TC_TO_PRIORITY_GROUP_MAP テーブルへの書き込みが発生するコード経路を調査した結果。
 
@@ -243,7 +243,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし。
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `TC_TO_PRIORITY_GROUP_MAP` は `PORT_QOS_MAP` および `TUNNEL_DECAP_TABLE` の両方から参照される。`QosOrch` と `TunnelDecapOrch` はそれぞれ参照先マップの存在を確認してから SAI 適用を行い、未登録の場合は `task_need_retry` で自動待機する。
 
@@ -269,7 +269,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし。
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `TC_TO_PRIORITY_GROUP_MAP` は**被参照側**テーブルであり、本テーブル自身が他テーブルへ leafref を持つ構造ではない。`PORT_QOS_MAP` および `TUNNEL_DECAP_TABLE` が本テーブルのマップ名を参照し、`QosOrch` の参照カウント機構（`object_reference_map`）で追跡される。
 
@@ -284,14 +284,11 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし。
 
 PORT_QOS_MAP と TUNNEL_DECAP_TABLE のいずれか一方でも参照が残る限り、本テーブルのマップは SAI から削除されない（`m_pendingRemove = true` で保留）。両参照が解放された後の次回 orchagent イテレーションで `remove_qos_map()` が呼ばれる。
 
-> **詳細証跡**: `meta/_intermediate/cdb-flow/tc-to-priority-group-map-cross-refs.md`
 
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/tc-to-priority-group-map-failure.md`
+## 失敗挙動
 
 対象テーブル: `TC_TO_PRIORITY_GROUP_MAP`。Consumer: `QosOrch::handleTcToPgTable()` / `QosOrch::doTask()` (`orchagent/qosorch.cpp`)。
 
@@ -334,9 +331,7 @@ PORT_QOS_MAP と TUNNEL_DECAP_TABLE のいずれか一方でも参照が残る�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/tc-to-priority-group-map-constants.md -->
+## ハードコード定数
 
 `TC_TO_PRIORITY_GROUP_MAP` の処理でコード内に固定された定数の一覧。
 
@@ -380,9 +375,7 @@ PORT_QOS_MAP と TUNNEL_DECAP_TABLE のいずれか一方でも参照が残る�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・波及効果 (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/tc-to-priority-group-map-side.md`
+## 副作用・波及効果
 
 `TC_TO_PRIORITY_GROUP_MAP` の SET/DEL が引き起こす ASIC・他テーブルへの波及効果。
 
@@ -415,7 +408,7 @@ TC→PG マッピングは PFC の動作に直結する。`BUFFER_PG|<port>|<pg>
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 <!-- evidence: sonic-swss/orchagent/qosorch.cpp L1342 -->
 <!-- evidence: sonic-swss/orchagent/qosorch.cpp L2231-2252 -->
@@ -476,9 +469,8 @@ NotificationConsumer: なし
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
-<!-- evidence: meta/_intermediate/cdb-flow/tc-to-priority-group-map-platform.md -->
 <!-- source: sonic-buildimage/files/build_templates/qos_config.j2 ref:master -->
 <!-- source: sonic-swss/orchagent/qosorch.cpp ref:master -->
 
@@ -545,7 +537,7 @@ YANG の `tc_type` は `uint8 0..15` を許容するが、実用上 TC 8..15 を
 <!-- /platform -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 <!-- evidence: sonic-swss/orchagent/qosorch.cpp L884-934 -->
 <!-- evidence: sonic-swss/orchagent/qosorch.h L18,35 -->

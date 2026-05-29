@@ -155,20 +155,20 @@ systemctl status telemetry
 <!-- /ops-hint -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 telemetry サービスが `server_crt` / `server_key` フィールドの有無から TLS 有効/無効を自動決定する。`client_auth` フィールド値から認証モード（JWT / cert / なし）を自動設定する。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録
 
 telemetry サービスが有効の場合のみ `TELEMETRY` テーブルを消費する sonic-gnmi が動作する。`TELEMETRY|gnmi` エントリのみ処理するシングルトン制約あり（YANG で強制）。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -179,7 +179,7 @@ telemetry サービスが有効の場合のみ `TELEMETRY` テーブルを消費
 | `telemetry` | `allow_no_client_auth==true` | mTLS を強制しない | `telemetry` |
 | `telemetry` | `log_level` 変化 | ランタイムログレベルを変更 | `telemetry` |
 
-> **スキャン証跡**: `TELEMETRY` は gNMI/gRPC サーバー設定のシングルトン。TLS フィールド有無と `client_auth` 値が起動モードを決定する主要分岐。
+> **裏取り**: `TELEMETRY` は gNMI/gRPC サーバー設定のシングルトン。TLS フィールド有無と `client_auth` 値が起動モードを決定する主要分岐。
 
 <!-- /handler-branching -->
 
@@ -205,7 +205,7 @@ telemetry サービスが有効の場合のみ `TELEMETRY` テーブルを消費
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 TELEMETRY テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -268,7 +268,7 @@ db_migrator.py での TELEMETRY マイグレーションなし
 <!-- /defaults -->
 
 <!-- ordering -->
-## 起動順序・順序依存 (Phase B)
+## 起動順序・順序依存
 
 ### 前提: FEATURE テーブル有効化
 
@@ -340,9 +340,9 @@ systemctl restart telemetry
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
-> **調査根拠**: `docker-sonic-telemetry/docker-telemetry-entry.sh`, `telemetry.sh`, `telemetry_vars.j2`, `gnmi_server/server.go` L380-660 精読 (2026-05-17)
+> **Evidence**: `docker-sonic-telemetry/docker-telemetry-entry.sh`, `telemetry.sh`, `telemetry_vars.j2`, `gnmi_server/server.go` L380-660
 
 `TELEMETRY` テーブルは YANG leafref を持たないが、実行時に以下のテーブルを暗黙参照する。
 
@@ -373,9 +373,9 @@ systemctl restart telemetry
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-> **調査根拠**: `docker-sonic-telemetry/telemetry.sh`, `supervisord.conf`, `gnmi_server/server.go` L381-649, `telemetry/telemetry.go` L440-470 精読 (2026-05-17)
+> **Evidence**: `docker-sonic-telemetry/telemetry.sh`, `supervisord.conf`, `gnmi_server/server.go` L381-649, `telemetry/telemetry.go` L440-470
 
 ### autorestart=false — 起動失敗時にプロセスが再起動しない
 
@@ -459,11 +459,11 @@ Saving startup config failed: <err>
 | ポート競合 | `WARNING: Failed to open listener port` | なし (UDS のみで縮退動作) | ポート解放 → `docker restart telemetry` |
 | save_on_set dbus 失敗 | ログのみ (`log.V(0)`) | なし | [hostcfgd](../../reference/glossary.md#term-hostcfgd) / dbus 確認 |
 
-> **Evidence**: `dockers/docker-sonic-telemetry/supervisord.conf:50-62`; `telemetry.sh:83-130`; `gnmi_server/server.go:315-327,400-418,593-649,1054-1061`; `telemetry/telemetry.go:463-470`; 詳細 `meta/_intermediate/cdb-flow/telemetry-failure.md`
+> **Evidence**: `dockers/docker-sonic-telemetry/supervisord.conf:50-62`; `telemetry.sh:83-130`; `gnmi_server/server.go:315-327,400-418,593-649,1054-1061`; `telemetry/telemetry.go:463-470`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `telemetry` プロセス (`sonic-gnmi`) および `telemetry.sh` 起動スクリプトに存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
 
@@ -520,7 +520,7 @@ Saving startup config failed: <err>
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込・副次効果 (Phase F)
+## 副次 DB 書込・副次効果
 
 <!-- evidence: sonic-gnmi/gnmi_server/server.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22 L1051-1068 / gnmi_server/gnsi_certz.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22 L925-990 / dockers/docker-sonic-telemetry/telemetry.sh@9ea932ec2e18f35e58268ec2e4456b1d4afd65cd L3-22 -->
 
@@ -570,11 +570,10 @@ Saving startup config failed: <err>
 | [APPL_DB](../../reference/glossary.md#term-appl_db) 書込 | なし | — |
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書込 | なし | — |
 
-> **詳細**: `meta/_intermediate/cdb-flow/telemetry-side-effects.md`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -610,11 +609,11 @@ HSET "TELEMETRY|gnmi" port 50052
 | TLS 証明書ファイルの内容更新 | inotify で自動再起動 | `telemetry/telemetry.go:340-404` (`iNotifyCertMonitoring`) |
 | GNMI_CLIENT_CERT テーブル変更 | 次回接続認証から即時反映 | `gnmi_server/server.go:792` (接続ごとに HGETALL) |
 
-> **Evidence**: `sonic-buildimage/dockers/docker-sonic-telemetry/telemetry.sh@9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` L40-43; `sonic-gnmi/telemetry/telemetry.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22` L111,L340-404; `gnmi_server/server.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22` L792; 詳細 `meta/_intermediate/cdb-flow/telemetry-pubsub.md`
+> **Evidence**: `sonic-buildimage/dockers/docker-sonic-telemetry/telemetry.sh@9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` L40-43; `sonic-gnmi/telemetry/telemetry.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22` L111,L340-404; `gnmi_server/server.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22` L792
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: `TELEMETRY` テーブルの設定・処理において、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic・[VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダー固有挙動は検出されなかった。
 
@@ -626,7 +625,6 @@ HSET "TELEMETRY|gnmi" port 50052
 | ベンダー固有設定 | なし | `docker-sonic-telemetry/Dockerfile.j2` に platform 条件分岐なし。`telemetry_vars.j2` は `TELEMETRY` / `DEVICE_METADATA` のみ参照 |
 | k8s 起動 (launch_by=k8s) | hwsku シンボリックリンク生成のみ | `docker-telemetry-entry.sh` Part 1 は `/usr/share/sonic/platform` symlink を生成するが `TELEMETRY` テーブル処理とは無関係 |
 
-詳細根拠は `meta/_intermediate/cdb-flow/telemetry-platform.md` を参照。
 <!-- /platform -->
 
 <!-- glossary-links-injected: 4fc3ec8db8e4 -->
