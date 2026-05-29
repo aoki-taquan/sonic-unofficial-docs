@@ -309,7 +309,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
   4. `sonic-buildimage/dockers/docker-orchagent/orchagent.sh` — switch_type/synchronous_mode/async_swss_rec
   5. `sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2` — type/subtype/switch_type
 
-!!! note "Phase 11: bgpd.main.conf.j2 ブロック内 constants 実値"
+!!! note "bgpd.main.conf.j2 ブロック内 constants 実値"
     `bgpd.main.conf.j2` の `{% if %}` ブロック全体を精読した結果、evidence 行外で以下の定数が使用されていることを確認:
 
     | constants 参照 | 実値 (constants.yml) | 効果 |
@@ -329,9 +329,9 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 <!-- /value-behavior -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
@@ -355,7 +355,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `type IN [SpineRouter, UpperSpineRouter, LowerRegionalHub]` かつ `MACSEC_SUPPORTED` | `FEATURE.macsec.state = 'enabled'` | `sonic-buildimage/files/build_templates/init_cfg.json.j2:90` |
 | `type == 'SpineRouter'` | `pmon delayed = False` (pmon を遅延起動しない) | `sonic-buildimage/files/build_templates/init_cfg.json.j2:69` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -364,7 +364,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `type == 'SpineRouter' AND subtype == 'UpstreamLC'` または `type == 'UpperSpineRouter'` | `AsPathMgr`（CONFIG_DB / [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata)） | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:124-130` |
 | `subtype == 'DualToR'` | `ycabled` daemon（pmon コンテナで条件付き起動） | `sonic-buildimage/dockers/docker-platform-monitor/docker-pmon.supervisord.conf.j2:157-175` |
 
-> **注**: `FEATURE` テーブルの `enabled`/`always_disabled` 状態（Phase 6 で `type`/`subtype` から派生）は `featuremgrd` がコンテナ起動/停止の最終判定に使用する。上記 Phase 7 一覧はその上流にある明示的な条件付き manager/daemon 登録のみを記載。
+> **注**: `FEATURE` テーブルの `enabled`/`always_disabled` 状態（`type`/`subtype` から派生）は `featuremgrd` がコンテナ起動/停止の最終判定に使用する。上記一覧はその上流にある明示的な条件付き manager/daemon 登録のみを記載。
 
 ### grep カバレッジ
 
@@ -375,7 +375,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 <!-- /derivation -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 YANG default と別に、コード側で「フィールド不在時の fallback」が実装されている field を全列挙する。
 
@@ -420,11 +420,10 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 - workspaceSymbol で参照した consumer ファイル数: 155+ (grep entry point)、production consumer 精読: 15 ファイル
 - 完全読書した関数・スクリプト区間数: 18
 - 検出した fallback パターン総数: 15
-- 詳細 trace: `meta/_intermediate/cdb-flow/device-metadata-defaults.md`
 <!-- /defaults -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -443,12 +442,12 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 | `rsyslog-config.sh` | — | `syslog_with_osversion` が空の場合 | `"false"` にデフォルト設定 → rsyslog.conf.j2 の `forward_with_osversion` として渡す | `sonic-buildimage/files/image_config/rsyslog/rsyslog-config.sh:28-30` |
 | `rsyslog.conf.j2` | — | `forward_with_osversion == "true"` | `SONiCForwardFormatWithOsVersion` テンプレートを使用 → syslog メッセージに OS バージョン文字列を付加; `"false"` の場合は `SONiCForwardFormat` (バージョンなし) | `sonic-buildimage/files/image_config/rsyslog/rsyslog.conf.j2:65-68,101-104` |
 
-> **スキャン証跡**: `managers_device_global.py` 287 行・public メソッド 9 個（ヒット 6 分岐）、`managers_bgp.py` `apply_op()` は `suppress-fib-pending` を常時適用（値分岐なし）、`hostcfgd` `device_metadata_handler()` は `hostname_update` / `timezone_update` / `rsyslog_config` を委譲（ヒット 6 分岐）。
+> **裏取り**: `managers_device_global.py` 287 行・public メソッド 9 個（ヒット 6 分岐）、`managers_bgp.py` `apply_op()` は `suppress-fib-pending` を常時適用（値分岐なし）、`hostcfgd` `device_metadata_handler()` は `hostname_update` / `timezone_update` / `rsyslog_config` を委譲（ヒット 6 分岐）。
 
 <!-- /handler-branching -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 DEVICE_METADATA フィールド値に基づいて分岐する処理の中で用いられる、起動タイマー・retry カウント・threshold の固定数値。
 
@@ -589,12 +588,12 @@ multi-ASIC 環境では `hash_seed + namespace_id` が実際の設定値にな�
 | `dynamic` | `true` | `buffermgr.cpp:476` の `if (dynamic_buffer_model)` 節に入り、BUFFER_POOL / BUFFER_PROFILE の APPL_DB 転写を **スキップ**（Mellanox/BRCM の dynamic buffer manager が直接 SAI を更新） | `sonic-swss/cfgmgr/buffermgr.cpp:392-394` |
 | `traditional`（またはその他 / 未設定） | `false` | else 節でフラグを `false` に設定し BUFFER_POOL / BUFFER_PROFILE を APPL_DB へ転写 | `sonic-swss/cfgmgr/buffermgr.cpp:397-406` |
 
-> **スキャン証跡**: 対象ファイル `orchagent.sh`, `main.cpp` (sonic-swss), `bgpd.main.conf.j2`, `teamd_increase_retry_count.py`, `fpmsyncd.cpp`, `bgpcfgd/main.py`, `bfdmon.py`, `switch.json.j2`, `constants.yml`, `switchorch.cpp`, `switchorch.h`, `config_samples.py`, `buffermgr.cpp`。確認した定数総数: 約 63 個。
+> **裏取り**: 対象ファイル `orchagent.sh`, `main.cpp` (sonic-swss), `bgpd.main.conf.j2`, `teamd_increase_retry_count.py`, `fpmsyncd.cpp`, `bgpcfgd/main.py`, `bfdmon.py`, `switch.json.j2`, `constants.yml`, `switchorch.cpp`, `switchorch.h`, `config_samples.py`, `buffermgr.cpp`。確認した定数総数: 約 63 個。
 
 <!-- /constants -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G — subscribe 経路)
+## 通信メカニズム (subscribe 経路)
 
 `DEVICE_METADATA` への subscribe は 4 種類の低レベルメカニズムで実装されている。
 
@@ -708,11 +707,10 @@ orchagent 内の orchコンポーネントは `gDirectory` グローバルオブ
 > **注**: `SwitchOrch` 自体は `APP_SWITCH_TABLE`・`CFG_ASIC_SENSORS`・`CFG_SWITCH_HASH` 等を subscribe するが、`DEVICE_METADATA` を直接 subscribe しない。runtime の `DEVICE_METADATA` 変更を [ASIC_DB](../../reference/glossary.md#term-asic_db) に反映するには orchagent 再起動が必要。  
 > evidence: `sonic-swss/orchagent/main.cpp:242,292,658,746`; `orchdaemon.cpp:213,500,766`; `switchorch.cpp:148-175,1493-1527`
 
-詳細トレース: `meta/_intermediate/cdb-flow/device-metadata-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## Phase H: プラットフォーム差分 (ASIC_VENDOR / switch_type / subtype / sub_role)
+## プラットフォーム差分 (ASIC_VENDOR / switch_type / subtype / sub_role)
 
 > **用語**: `ASIC_VENDOR` はビルド時定数 (`sonic_asic_platform`: `mellanox`/`broadcom`/`barefoot`/`cisco-8000` 等)。`DEVICE_METADATA` フィールドではないが、`switch_type`/`subtype`/`sub_role` と組み合わせて J2 テンプレートおよび orchdaemon でベンダ固有分岐を形成する。
 
@@ -873,7 +871,7 @@ evidence: sonic-swss/orchagent/main.cpp:305-363
 <!-- /platform -->
 
 <!-- failure -->
-## 失敗挙動・エラーパス (Phase D)
+## 失敗挙動・エラーパス
 
 ### bgpcfgd retry メカニズム
 
@@ -928,7 +926,7 @@ evidence: sonic-swss/orchagent/main.cpp:305-363
 - hostcfgd は CONFIG_DB への書き戻しなし（読み取り専用）
 - fpmsyncd の `suppress-fib-pending` runtime 変更: 既存ルートを offloaded マークして遷移（`fpmsyncd.cpp:291-300`）
 
-> **調査証跡**: `managers_bgp.py` 600+ 行・失敗パス 10 箇所精読、`managers_device_global.py` 287 行・失敗パス 6 箇所精読、`hostcfgd` `DeviceMetaCfg` クラス全メソッド精読、`orchagent.sh` 146 行全読、`DbInterface.cpp:565-599` 精読、`sonic-swss/orchagent/main.cpp:242-284,877-884` 精読（switch_type バリデーション・MAC SAI 取得失敗パス）、`sonic-swss/cfgmgr/buffermgrdyn.cpp:60-130` 精読（platform 未設定失敗パス）、`sonic-swss/cfgmgr/buffermgr.cpp:390-406` 精読（buffer_model 不整合サイレント挙動）。詳細: `meta/_intermediate/cdb-flow/device-metadata-failure.md`
+> **調査証跡**: `managers_bgp.py` 600+ 行・失敗パス 10 箇所精読、`managers_device_global.py` 287 行・失敗パス 6 箇所精読、`hostcfgd` `DeviceMetaCfg` クラス全メソッド精読、`orchagent.sh` 146 行全読、`DbInterface.cpp:565-599` 精読、`sonic-swss/orchagent/main.cpp:242-284,877-884` 精読（switch_type バリデーション・MAC SAI 取得失敗パス）、`sonic-swss/cfgmgr/buffermgrdyn.cpp:60-130` 精読（platform 未設定失敗パス）、`sonic-swss/cfgmgr/buffermgr.cpp:390-406` 精読（buffer_model 不整合サイレント挙動）
 
 <!-- /failure -->
 ## 購読者
@@ -952,7 +950,7 @@ evidence: sonic-swss/orchagent/main.cpp:305-363
 - 関連 YANG: `sonic-device_metadata`（`hostname`、`hwsku`、`mode-status` などの typedef を当該モジュール内で定義）
 
 <!-- cross-refs -->
-## 暗黙参照 — daemon 起動時の DEVICE_METADATA 読み出し (Phase C)
+## 暗黙参照 — daemon 起動時の DEVICE_METADATA 読み出し
 
 各 daemon は起動時（あるいは subscribe 経由でランタイムに）`DEVICE_METADATA|localhost` を参照する。
 以下は実コードから確認した参照一覧。フィールドが欠如した場合の挙動は「例外条件」セクションも参照。
@@ -1105,7 +1103,7 @@ show platform summary
 <!-- /cdb-exceptions -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 ### CLI 経由
 
@@ -1212,7 +1210,7 @@ orchagent・cfgmgr・hostcfgd はいずれも DEVICE_METADATA を **読み取り
 <!-- /entry-points -->
 
 <!-- runtime-trace -->
-## 起動経路 (Direction B: CFG → APPL → SAI)
+## 起動経路 (CFG → APPL → SAI)
 
 ### 段階 1: Consumer 登録
 
@@ -1269,7 +1267,7 @@ orchagent・cfgmgr・hostcfgd はいずれも DEVICE_METADATA を **読み取り
 <!-- /runtime-trace -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### 起動時一括読み取りフィールド（create-only）
 
@@ -1337,11 +1335,10 @@ evidence: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-143, 1
 | `suppress-fib-pending` | **mutable** — fpmsyncd が再購読 | warm-reboot 中の `enabled → disabled` 遷移でルートが一時的に offloaded にマーク |
 | `hostname` | **mutable** — hostcfgd が再処理 | boot 順序依存なし |
 
-詳細 trace: `meta/_intermediate/cdb-flow/device-metadata-ordering.md`
 <!-- /ordering -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `DEVICE_METADATA|localhost` への SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと Linux システム呼び出しを示す。
 

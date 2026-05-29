@@ -145,7 +145,7 @@ DEVICE_NEIGHBOR は**まったく購読されていない**。lldpmgrd の動作
 - テーブル到着後に directory メカニズムが自動再処理
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 DEVICE_NEIGHBOR テーブルは **consumer が起動時に一括読み出し（`get_table`）する**参照テーブルであり、常時 subscribe する daemon は存在しない（lldpmgrd は TODO 状態で未実装）。このため、書込み順依存は「consumer の起動タイミング vs. DEVICE_NEIGHBOR の書込みタイミング」という起動順序の問題として現れる。
 
@@ -171,7 +171,7 @@ DEVICE_NEIGHBOR テーブルは **consumer が起動時に一括読み出し（`
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 DEVICE_NEIGHBOR は **consumer が `get_table` で一括読み出しする**参照テーブルであり、複数の CONFIG_DB テーブルを横断的に参照する。以下は DEVICE_NEIGHBOR の consumer が暗黙的に依存するテーブル・リソースの一覧である。
 
@@ -192,7 +192,7 @@ DEVICE_NEIGHBOR は **consumer が `get_table` で一括読み出しする**参�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 DEVICE_NEIGHBOR は CONFIG_DB の読み取り専用テーブルとして機能し、各 consumer が起動時にスナップショット取得（`get_table`）する。[orchagent](../../reference/glossary.md#term-orchagent) のような retry/ack ループは存在しないため、失敗は「consumer の動作停止」「サイレントな縮退」「処理延期」のいずれかで現れる。
 
@@ -221,7 +221,7 @@ DEVICE_NEIGHBOR は CONFIG_DB の読み取り専用テーブルとして機能�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 DEVICE_NEIGHBOR テーブルの consumer（主に `pfcwd`・`ecnconfig`）が内部で使用するハードコード定数を整理する。これらの定数は [YANG](../../reference/glossary.md#term-yang) / CONFIG_DB に設定項目として存在せず、コードに直接埋め込まれている。
 
@@ -272,7 +272,7 @@ BGP neighbor 処理において Loopback0 を特別扱いする参照先とし�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 DEVICE_NEIGHBOR テーブルへの SET/DEL が直接引き起こす CONFIG_DB 以外の DB 書込と、DEVICE_NEIGHBOR を読み取った consumer が実行する副次的な DB 書込を示す。
 
@@ -317,7 +317,7 @@ DEVICE_NEIGHBOR テーブルへの SET/DEL が直接引き起こす CONFIG_DB �
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 ### 購読方式の全体像
 
@@ -351,13 +351,12 @@ DEVICE_NEIGHBOR テーブルへの SET/DEL が直接引き起こす CONFIG_DB �
 
 DEVICE_NEIGHBOR は CONFIG_DB に保存される永続テーブルであり TTL なし。[Redis](../../reference/glossary.md#term-redis) への `HSET` 操作は keyspace 通知を発行するが、それを受信する継続的 subscriber は現行実装に存在しない。このため **DEVICE_NEIGHBOR への変更はリアルタイムでは伝搬されない**。各 consumer は起動時または実行時の1回限りのスナップショットで動作し、ランタイムの変更は consumer 再起動（または pfcwd start_default / ecnconfig の再実行）まで反映されない。
 
-> **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:282-293`; `show/interfaces/__init__.py:310-320`; `sonic-buildimage` `dockers/docker-lldp/lldpmgrd:12-14`; `src/sonic-bgpcfgd/bgpcfgd/runner.py:21,49-52`; `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:139-140,219-224`; 中間調査 `meta/_intermediate/cdb-flow/deviceop-state-pubsub.md`
+> **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:282-293`; `show/interfaces/__init__.py:310-320`; `sonic-buildimage` `dockers/docker-lldp/lldpmgrd:12-14`; `src/sonic-bgpcfgd/bgpcfgd/runner.py:21,49-52`; `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:139-140,219-224`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-<!-- evidence: meta/_intermediate/cdb-flow/deviceop-state-platform.md -->
 <!-- source: sonic-utilities scripts/ecnconfig:92-95,264-293 (ref: HEAD);
      sonic-utilities pfcwd/main.py:36-42,111-119,405-444 (ref: HEAD) -->
 
@@ -426,7 +425,7 @@ multi-ASIC 環境では各ネームスペース（`asic0` / `asic1` / ...）に�
 | シングル ASIC | `pfcwd` | `bp_ports = []`。DEVICE_NEIGHBOR のキー集合が `active_ports` の全体 |
 | 全プラットフォーム共通 | `bgpcfgd` / `lldpmgrd` | `platform` 環境変数による分岐なし。プラットフォーム差異は存在しない |
 
-> **Evidence**: `sonic-utilities` `pfcwd/main.py:36-42,111-119,405-444`; `scripts/ecnconfig:92-95,264-293`; 中間調査 `meta/_intermediate/cdb-flow/deviceop-state-platform.md`
+> **Evidence**: `sonic-utilities` `pfcwd/main.py:36-42,111-119,405-444`; `scripts/ecnconfig:92-95,264-293`
 <!-- /platform -->
 
 <!-- value-behavior -->

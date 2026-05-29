@@ -202,7 +202,7 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<ip_prefix>:<priority>
 ---
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `DashRouteOrch` (`dashrouteorch.cpp`) / `DashOrch` (`dashorch.cpp`) は各テーブル間に複数の先行必須依存を持つ。ZMQ / [gNMI](../../reference/glossary.md#term-gnmi) でテーブルを投入する際は以下の順序を守ること。
 
@@ -260,7 +260,7 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<ip_prefix>:<priority>
 <!-- /ordering -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) / proto3 デフォルト以外の実装由来 fallback。`DashOrch::doTaskRoutingTypeTable()` (dashorch.cpp:473-537) および `DashRouteOrch::addOutboundRouting()` / `addInboundRouting()` / `addRouteGroup()` (dashrouteorch.cpp:61-748) から導出。
 
@@ -327,7 +327,7 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<ip_prefix>:<priority>
 <!-- /cdb-exceptions -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DASH_ROUTING_TYPE_TABLE`, `DASH_ROUTE_GROUP_TABLE`, `DASH_ROUTE_TABLE`, `DASH_ROUTE_RULE_TABLE`
 
@@ -347,7 +347,7 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<ip_prefix>:<priority>
 <!-- /entry-points -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 <!-- evidence: dashrouteorch.cpp:70-74 / 78-92 / 171-183 / 425-428 / 430-433 / 803-841 / 220 / 262 / 507 / 546 -->
 
@@ -372,9 +372,8 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<ip_prefix>:<priority>
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/dash-routing-failure.md -->
 
 `DashRouteOrch` / `DashOrch` はハンドラが `bool` を返し、`false` でリトライ、`true` で消費（廃棄）となる。[STATE_DB](../../reference/glossary.md#term-state_db) / ERROR_TABLE への失敗記録は行わない。
 
@@ -426,9 +425,9 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<ip_prefix>:<priority>
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-`dashorch.cpp` / `dashrouteorch.cpp` に存在するハードコード定数を網羅する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/dash-routing-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/dash-routing-constants.md)。
+`dashorch.cpp` / `dashrouteorch.cpp` に存在するハードコード定数を網羅する。
 
 ### APP_DB テーブル名文字列定数 (`schema.h`)
 
@@ -488,11 +487,10 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<ip_prefix>:<priority>
 | `SAI_INBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_OR` | `metering_class_or` |
 | `SAI_INBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_AND` | `metering_class_and` |
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-constants.md`
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用 (Phase F)
+## 副作用
 
 <!-- evidence: dashrouteorch.cpp:56-58 / 220 / 262 / 342 / 354 / 401-403 / 410 / 507 / 546 / 644 / 702-705 / 712 / 745 / 784 / 874 / 881 -->
 
@@ -573,7 +571,7 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<ip_prefix>:<priority>
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Pub/Sub・通知経路 (Phase G)
+## Pub/Sub・通知経路
 
 <!-- evidence: orchdaemon.cpp:1342-1350 / 1362-1368; dashorch.cpp:60-61,73,1346-1348; dashrouteorch.cpp:49-58,896-920 -->
 
@@ -666,11 +664,10 @@ dash_route_orch->unbindRouteGroup(old_group_id);
 !!! note "能動的イベント発行なし"
     `DashOrch` / `DashRouteOrch` は SAI 呼び出しと APP_STATE_DB 書き戻し以外に外部コンポーネントへの能動的なイベント発行を行わない。ログ出力 (`SWSS_LOG_*`) は `rsyslog` / `swssloglevel` ツールで観察可能。
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 **[DPU](../../reference/glossary.md#term-dpu) ([SmartSwitch](../../reference/glossary.md#term-smartswitch)) 専用**: `DashRouteOrch` / `DashOrch` は `gMySwitchType == "dpu"` のときのみ `DpuOrchDaemon` 内で生成される。通常スイッチ・VoQ シャーシ・Fabric モードでは本テーブル群は存在しない。[SAI](../../reference/glossary.md#term-sai) DASH Outbound/Inbound Routing API を経由するため [ASIC](../../reference/glossary.md#term-asic) が当該 API をサポートすることが前提。コード内に [ASIC](../../reference/glossary.md#term-asic) 種別の条件分岐はなく SAI 実装（[syncd](../../reference/glossary.md#term-syncd) 経由のベンダー SAI ライブラリ）に委ねられる。
 
@@ -684,7 +681,7 @@ dash_route_orch->unbindRouteGroup(old_group_id);
 | バルクサイズ上限 | デフォルト 1000、`orchagent -k` で変更可 | `DEFAULT_MAX_BULK_SIZE = 1000` (`orchdaemon.cpp:81`)。`outbound_routing_bulker_` / `inbound_routing_bulker_` 両方に適用 |
 | IPv6 `underlay_sip` | 未サポート（無言スキップ） | `has_ipv4()` ガードのみ (`dashrouteorch.cpp:149`)。IPv6 underlay SIP は ASIC 非依存のコード上の制約 |
 
-> **Evidence**: `sonic-swss/orchagent/main.cpp:990`（`gMySwitchType == "dpu"` 分岐）、`sonic-swss/orchagent/orchdaemon.cpp:81,1313,1329,1362-1368`（`DEFAULT_MAX_BULK_SIZE`、`DpuOrchDaemon`、ZMQ feature flag、`DashRouteOrch` 生成）、`sonic-swss/orchagent/dash/dashrouteorch.cpp:34-35,50-51,149`（SAI extern ポインタ、bulker 初期化、underlay_sip IPv4 ガード）；詳細分析 `meta/_intermediate/cdb-flow/dash-routing-platform.md`
+> **Evidence**: `sonic-swss/orchagent/main.cpp:990`（`gMySwitchType == "dpu"` 分岐）、`sonic-swss/orchagent/orchdaemon.cpp:81,1313,1329,1362-1368`（`DEFAULT_MAX_BULK_SIZE`、`DpuOrchDaemon`、ZMQ feature flag、`DashRouteOrch` 生成）、`sonic-swss/orchagent/dash/dashrouteorch.cpp:34-35,50-51,149`（SAI extern ポインタ、bulker 初期化、underlay_sip IPv4 ガード）
 <!-- /platform -->
 
 ## 関連 CONFIG_DB / APP_DB テーブル

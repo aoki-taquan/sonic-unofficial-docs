@@ -90,7 +90,7 @@ DEVICE_NEIGHBOR_METADATA|<name>
 - 各 IP 系 leaf は `union` でアドレス／プレフィクス両形式を許容
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `DEVICE_NEIGHBOR_METADATA` は `sonic-cfggen -m <minigraph.xml>` の実行時に一括生成される。生成後は複数の consumer が直接参照するが、以下の順序依存が存在する。
 
@@ -114,13 +114,12 @@ DEVICE_NEIGHBOR_METADATA|<name>
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `DEVICE_NEIGHBOR_METADATA` の consumer はいずれも **`DEVICE_NEIGHBOR` テーブルと組み合わせて**参照する。
 `DEVICE_NEIGHBOR[port].name` をキーとして本テーブルの `type` / `hwsku` / `lo_addr` / `mgmt_addr` 等を取得し、
 トポロジ認識・バッファ設定・BGP セッション設定・[PFC](../../reference/glossary.md#term-pfc) watchdog 等に利用する。
 
-<!-- evidence: meta/_intermediate/cdb-flow/device-neighbor-metadata-cross-refs.md -->
 
 | 依存方向 | 参照元 | 参照先テーブル | 参照フィールド | 用途 | 証跡 |
 |---------|--------|--------------|--------------|------|------|
@@ -145,7 +144,7 @@ DEVICE_NEIGHBOR_METADATA|<name>
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 > 根拠: `sonic-utilities/pfcwd/main.py`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`; `sonic-utilities/scripts/db_migrator.py`
 
@@ -210,7 +209,7 @@ pfcwd の起動シーケンス (`start_default`) が中断される。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `DEVICE_NEIGHBOR_METADATA` を参照・生成する consumer コード内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-buildimage/src/sonic-config-engine/minigraph.py`、`sonic-utilities/pfcwd/main.py`、`sonic-utilities/scripts/db_migrator.py`、`sonic-buildimage/files/build_templates/buffers_config.j2`、`sonic-buildimage/files/build_templates/qos_config.j2`。
 
@@ -260,11 +259,10 @@ DEVICE_NEIGHBOR_METADATA にサーバ向けポートが 0 件の場合、`get_se
 
 `qos_config.j2` の `'ToRRouter' in neighbor_info.type` は**大文字小文字感受の部分一致**であり、`'torporouter'` や `'tOrRouter'` では一致しない。`buffers_config.j2` の `neighbor_role | lower` は Jinja2 フィルタで正規化するため大文字小文字に非感受。同じ `type` 文字列を参照しながら比較方式が異なることに注意（詳細は `<!-- defaults -->` セクション参照）。
 
-詳細な定数一覧は `meta/_intermediate/cdb-flow/device-neighbor-metadata-constants.md` を参照。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `DEVICE_NEIGHBOR_METADATA` はオーケストレータを経由しない（[SAI](../../reference/glossary.md#term-sai) 非到達）ため、本テーブルの **直接的な** 副次書き込みはない。ただし consumer として本テーブルを参照するプロセスが他の DB テーブルへ波及書き込みを行う。
 
@@ -308,11 +306,11 @@ DEVICE_NEIGHBOR_METADATA にサーバ向けポートが 0 件の場合、`get_se
 | CABLE_LENGTH テーブルに不均一値なし | db_migrator が冪等判定で終了 → CABLE_LENGTH 変更なし |
 | [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | 本テーブルは [orchagent](../../reference/glossary.md#term-orchagent) に到達しないため [SAI](../../reference/glossary.md#term-sai) レイヤの副次書き込みなし |
 
-> **スキャン証跡**: `managers_bgp.py` L128-243, L271-300 読了。`db_migrator.py` L757-799 読了。`buffers_config.j2` L76-130 読了。`qos_config.j2` L103-154 読了。副次書き込み先は [STATE_DB](../../reference/glossary.md#term-state_db) (`BGP_PEER_CONFIGURED_TABLE`) と CONFIG_DB (`CABLE_LENGTH|AZURE`) の 2 テーブル。詳細は `meta/_intermediate/cdb-flow/device-neighbor-metadata-side-effects.md` 参照。
+> **裏取り**: `managers_bgp.py` L128-243, L271-300 読了。`db_migrator.py` L757-799 読了。`buffers_config.j2` L76-130 読了。`qos_config.j2` L103-154 読了。副次書き込み先は [STATE_DB](../../reference/glossary.md#term-state_db) (`BGP_PEER_CONFIGURED_TABLE`) と CONFIG_DB (`CABLE_LENGTH|AZURE`) の 2 テーブル。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 ### 購読方式の全体像
 
@@ -349,7 +347,7 @@ self.selector.addSelectable(subscriber)
 
 `bgpcfgd Runner` の `SELECT_TIMEOUT = 1000 ms` はイベント待機の最大時間であり、DEVICE_NEIGHBOR_METADATA への変更は keyspace 通知によって即時（≤ 1 秒以内）に `BGPDataBaseMgr` へ届く。`pfcwd` は subscribe しないためポーリング間隔は存在しない。
 
-> **Evidence**: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:21,49-52`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_db.py:4-27`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:76`; `sonic-utilities/pfcwd/main.py:97-107`; 中間調査 `meta/_intermediate/cdb-flow/device-neighbor-metadata-pubsub.md`
+> **Evidence**: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:21,49-52`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_db.py:4-27`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:76`; `sonic-utilities/pfcwd/main.py:97-107`
 <!-- /pubsub -->
 
 ## 購読者
@@ -434,7 +432,7 @@ show lldp table
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DEVICE_NEIGHBOR_METADATA`
 
@@ -517,7 +515,7 @@ bgpcfgd では `constants.bgp.use_neighbors_meta` が True の場合のみ DEVIC
 <!-- /defaults -->
 
 <!-- platform -->
-## プラットフォーム / トポロジ差異 (Phase H)
+## プラットフォーム / トポロジ差異
 
 <!-- evidence:
      sonic-buildimage/src/sonic-config-engine/minigraph.py:2638-2641 (single-ASIC vs multi-ASIC 収録ロジック),

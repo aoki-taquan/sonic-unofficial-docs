@@ -165,7 +165,7 @@ show buffer profile
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DEFAULT_LOSSLESS_BUFFER_PARAMETER`
 
@@ -192,16 +192,16 @@ show buffer profile
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | DB 移行: 新 DB に `DEFAULT_LOSSLESS_BUFFER_PARAMETER|AZURE` が存在しない | `default_dynamic_th` フィールドを補完して生成 | `sonic-utilities/scripts/db_migrator.py:413` |
 | Dynamic buffer model での自動計算: buffermgrd が `default_dynamic_th` を読み取り headroom 計算のデフォルト閾値として使用 | BUFFER_PROFILE の動的計算に影響 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:148-153` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -213,7 +213,7 @@ show buffer profile
 - db_migrator.py L413: AZURE エントリ生成
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -221,10 +221,10 @@ show buffer profile
 | `BufferMgrDynamic` | `doTask()`（DEFAULT_LOSSLESS_BUFFER_PARAMETER） | `field == "default_dynamic_th"` | デフォルト閾値 `m_defaultThreshold` を更新し動的プロファイルを再計算トリガー | `sonic-swss/cfgmgr/buffermgrdyn.cpp:1993-1996` |
 | `BufferMgrDynamic` | `doTask()`（DEFAULT_LOSSLESS_BUFFER_PARAMETER） | `op == DEL_COMMAND` | `log_notice` のみ（削除操作は内部状態をリセットせず継続） | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2005` |
 
-> **スキャン証跡**: `DEFAULT_LOSSLESS_BUFFER_PARAMETER` のハンドラパス L1894-2010 全行読了。3 件分岐抽出。
+> **裏取り**: `DEFAULT_LOSSLESS_BUFFER_PARAMETER` のハンドラパス L1894-2010 全行読了。3 件分岐抽出。
 <!-- /handler-branching -->
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `DEFAULT_LOSSLESS_BUFFER_PARAMETER` の YANG leafref 定義は他テーブルへの直接 leafref を持たないが、`buffermgrdyn` のハンドラ実装では以下の 3 テーブルを暗黙参照している。
 
@@ -236,7 +236,7 @@ show buffer profile
 - **参照元**: `buffermgrdyn.cpp:1985-1988`（`handleDefaultLossLessBufferParam()` の冒頭で `m_bufferPoolLookup.find(INGRESS_LOSSLESS_PG_POOL_NAME)` を実行）
 - **意味**:
   - `BUFFER_POOL|ingress_lossless_pool` が `handleBufferPoolTable()` 経由で内部キャッシュ `m_bufferPoolLookup` に登録されていない場合、`task_need_retry` を返してキュー再処理に戻る。
-  - CONFIG_DB 書き込み順として「`BUFFER_POOL` よりも先に `DEFAULT_LOSSLESS_BUFFER_PARAMETER` が届いても処理が保留される」ことを意味する（詳細は Phase B 参照）。
+  - CONFIG_DB 書き込み順として「`BUFFER_POOL` よりも先に `DEFAULT_LOSSLESS_BUFFER_PARAMETER` が届いても処理が保留される」ことを意味する（詳細は「書込み順依存」参照）。
 
 ### 2. BUFFER_POOL_TABLE (APPL_STATE_DB)
 
@@ -271,10 +271,10 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
                         → default_dynamic_th / SHP 変化時に動的プロファイルを全件再生成
 ```
 
-> **スキャン証跡**: `handleDefaultLossLessBufferParam` L1978-2050 全行読了、`isSharedHeadroomPoolEnabledInSai` L2034-2050 全行読了、`refreshSharedHeadroomPool` L1592-1715 全行読了、`buffer_headroom_mellanox.lua` L100-115 読了、`buffer_pool_mellanox.lua` L255-275 読了。3 件暗黙参照抽出。
+> **裏取り**: `handleDefaultLossLessBufferParam` L1978-2050 全行読了、`isSharedHeadroomPoolEnabledInSai` L2034-2050 全行読了、`refreshSharedHeadroomPool` L1592-1715 全行読了、`buffer_headroom_mellanox.lua` L100-115 読了、`buffer_pool_mellanox.lua` L255-275 読了。3 件暗黙参照抽出。
 <!-- /cross-refs -->
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `buffermgrdyn` は `DEFAULT_LOSSLESS_BUFFER_PARAMETER` を受信した際、内部ルックアップテーブルの準備状況を確認してから処理する。以下の順序制約が存在する。
 
@@ -295,10 +295,10 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
 
 **SHP 有効化の SAI 確認（依存 #3)**: ポート初期化完了後（`m_portInitDone=true`）に SHP を無効→有効へ遷移させる場合（`over_subscribe_ratio` を 0 から非ゼロに変更）、`isSharedHeadroomPoolEnabledInSai()` が `APPL_DB` の `BUFFER_POOL_TABLE|ingress_lossless_pool` の `xoff` フィールドを確認する。SAI への反映が完了していなければ `task_need_retry` を返す（evidence: `buffermgrdyn.cpp:2019-2025`, `buffermgrdyn.cpp:2035-2046`）。
 
-> **スキャン証跡**: `handleDefaultLossLessBufferParam` L1978-2046 全行読了、`isSharedHeadroomPoolEnabledInSai` L2034-2050 全行読了、`buffermgrdyn.cpp` L494-496 読了。4 件依存抽出。
+> **裏取り**: `handleDefaultLossLessBufferParam` L1978-2046 全行読了、`isSharedHeadroomPoolEnabledInSai` L2034-2050 全行読了、`buffermgrdyn.cpp` L494-496 読了。4 件依存抽出。
 <!-- /ordering -->
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `buffermgrdyn` の `handleDefaultLossLessBufferParam()` (L1978-2033) が返す
 `task_process_status` と、ディスパッチャ `doTask()` (L3574-3610) による最終処置。
@@ -344,10 +344,10 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
 
 > **config rollback**: `task_failed` でエントリが drop されても CONFIG_DB のエントリは残る。`m_defaultThreshold` / `m_overSubscribeRatio` の内部状態は変更前のまま保持され、CONFIG_DB との乖離が生じる場合は同じ key を再 SET するか `buffermgrd` を再起動して解消する。
 
-> **スキャン証跡**: `handleDefaultLossLessBufferParam` L1978-2033 全行読了、`isSharedHeadroomPoolEnabledInSai` L2034-2051 全行読了、`doTask(Consumer&)` L3574-3610 全行読了、`refreshSharedHeadroomPool` L1592-1715 全行読了。
+> **裏取り**: `handleDefaultLossLessBufferParam` L1978-2033 全行読了、`isSharedHeadroomPoolEnabledInSai` L2034-2051 全行読了、`doTask(Consumer&)` L3574-3610 全行読了、`refreshSharedHeadroomPool` L1592-1715 全行読了。
 <!-- /failure -->
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 ### `default_dynamic_th`
 
@@ -366,10 +366,10 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
 | **暗黙 reset（DEL コマンド）** | DEL 受信時 `newRatio=""` に強制リセット → SHP 無効化 + `refreshSharedHeadroomPool` トリガー。エントリ削除は過去値を保持せずゼロリセット | `buffermgrdyn.cpp:2005-2008` |
 | **プラットフォーム依存（j2 テンプレート）** | `shp` 変数が Jinja コンテキストで定義されていない場合（通常）、フィールド自体が CONFIG_DB に書き込まれない（SHP デフォルト無効）。`shp` 定義時のみ固定値 `"1"` が書き込まれる | `buffers_config.j2:335-339` |
 
-> **スキャン証跡**: `handleDefaultLossLessBufferParam` L1978-2033 全行読了、コンストラクタ L130-172 全行読了、`buffers_config.j2` L331-349 全行読了、`db_migrator.py` L327-416, L1075-1099 全行読了、`sonic-default-lossless-buffer-parameter.yang` 全行読了。
+> **裏取り**: `handleDefaultLossLessBufferParam` L1978-2033 全行読了、コンストラクタ L130-172 全行読了、`buffers_config.j2` L331-349 全行読了、`db_migrator.py` L327-416, L1075-1099 全行読了、`sonic-default-lossless-buffer-parameter.yang` 全行読了。
 <!-- /defaults -->
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `buffermgrdyn` が `DEFAULT_LOSSLESS_BUFFER_PARAMETER` を処理する際に使用する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-swss/cfgmgr/buffermgrdyn.h` と `buffermgrdyn.cpp`。
 
@@ -409,10 +409,9 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
 
 SHP (Shared [Headroom](../../reference/glossary.md#term-headroom) Pool) が無効化された際、`refreshSharedHeadroomPool()` は ingress_lossless_pool の `xoff` を文字列 `"0"` にハードコードして APPL_DB を更新する (buffermgrdyn.cpp L1701)。ゼロバッファプール生成時の xoff 初期値も `"0"` でハードコード (buffermgrdyn.cpp L773)。
 
-詳細な定数一覧は `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-constants.md` を参照。
 <!-- /constants -->
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`
 
@@ -466,10 +465,9 @@ SHP (Shared [Headroom](../../reference/glossary.md#term-headroom) Pool) が無�
 4. BufferOrch: APPL_DB BUFFER_PROFILE_TABLE / BUFFER_POOL_TABLE イベント受信 → SAI 更新 → ASIC_DB
 ```
 
-詳細は `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-side.md` を参照。
 <!-- /side-effects -->
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式 — SubscriberStateTable (keyspace PSUBSCRIBE)
 
@@ -510,10 +508,10 @@ m_overSubscribeRatio 更新 → refreshSharedHeadroomPool()
 
 `buffermgr` (static-buffer モード) はこのテーブルを subscribe しない。`buffermgrd.cpp L165` の `if (dynamic_buffer)` 分岐で `BufferMgrDynamic` のみが生成されるため、static モード時は完全に無視される。
 
-> **Evidence**: `sonic-swss/cfgmgr/buffermgrd.cpp L22,165-187,225`; `sonic-swss/cfgmgr/buffermgrdyn.h L17`; `sonic-swss/cfgmgr/buffermgrdyn.cpp L127-131,442,1978-2033,3574-3610,3791`; `sonic-swss/orchagent/orch.cpp L127-133,1186-1196`; 詳細調査 `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-pubsub.md`
+> **Evidence**: `sonic-swss/cfgmgr/buffermgrd.cpp L22,165-187,225`; `sonic-swss/cfgmgr/buffermgrdyn.h L17`; `sonic-swss/cfgmgr/buffermgrdyn.cpp L127-131,442,1978-2033,3574-3610,3791`; `sonic-swss/orchagent/orch.cpp L127-133,1186-1196`
 <!-- /pubsub -->
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `DEFAULT_LOSSLESS_BUFFER_PARAMETER` のフィールド仕様・ハンドラ分岐・失敗挙動・副次書込はプラットフォームによらず共通。差異は **ヘッドルーム計算 Lua プラグイン** と **プロファイル命名規則 (`_8lane` サフィックス: Mellanox SPC3/4/5 のみ)** および **SHP を Lua レベルで考慮するか否か (Barefoot は無視)** の 3 点に限定される。
 
@@ -549,13 +547,12 @@ m_overSubscribeRatio 更新 → refreshSharedHeadroomPool()
 
 例: `pg_lossless_100000_40m_8lane_th3_profile`
 
-`DEFAULT_LOSSLESS_BUFFER_PARAMETER.default_dynamic_th` を変更すると、Mellanox SPC3/4/5 で 8-lane ポートの lossless プロファイル名が変わり、既存 APPL_DB エントリとの乖離が生じる可能性がある (Phase A 参照)。
+`DEFAULT_LOSSLESS_BUFFER_PARAMETER.default_dynamic_th` を変更すると、Mellanox SPC3/4/5 で 8-lane ポートの lossless プロファイル名が変わり、既存 APPL_DB エントリとの乖離が生じる可能性がある (「コード由来の暗黙デフォルト」参照)。
 
 ### multi-asic / VOQ chassis 構成
 
 `buffermgrdyn` はスイッチごとに 1 インスタンス起動し、各 [ASIC](../../reference/glossary.md#term-asic) namespace の CONFIG_DB を購読する。`DEFAULT_LOSSLESS_BUFFER_PARAMETER` も namespace ごとに独立して管理される。Lua プラグインは各 namespace の STATE_DB に存在する `ASIC_TABLE` を参照するため、[ASIC](../../reference/glossary.md#term-asic) が異なれば `cell_size` / `pipeline_latency` 等の値が異なり、ヘッドルーム計算結果も namespace ごとに独立する。
 
-詳細根拠は `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-platform.md` を参照。
 <!-- /platform -->
 
 <!-- glossary-links-injected: e2578b3813db -->

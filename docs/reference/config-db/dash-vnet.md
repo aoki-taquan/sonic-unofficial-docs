@@ -102,7 +102,7 @@ DASH_VNET|<name>
 <!-- /value-behavior -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `DashVnetOrch` (`dashvnetorch.cpp`) は SET/DEL 操作の処理中に複数の外部テーブル存在チェックを行う。
 これらが失敗すると当該エントリを消費キューに残してリトライ待ちとなる。
@@ -143,7 +143,7 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `DASH_VNET` 自体は他テーブルへの YANG leafref を持たない（参照元ではなく**参照先**）。
 他テーブルから `DASH_VNET|<name>` への YANG leafref と、実装レベルの暗黙依存を以下に示す。
@@ -177,7 +177,7 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-swss/orchagent/dash/dashvnetorch.cpp`
 
@@ -233,9 +233,9 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-swss/orchagent/dash/dashvnetorch.cpp` 全行 + `dashorch.h:35-36` + `crmorch.h:38,45-48` + `sonic-swss-common/common/schema.h:172,184-185,188` 精読 (2026-05-17)
+> **Evidence**: `sonic-swss/orchagent/dash/dashvnetorch.cpp` 全行 + `dashorch.h:35-36` + `crmorch.h:38,45-48` + `sonic-swss-common/common/schema.h:172,184-185,188` 精読 (2026-05-17)
 
 ### 結果コード定数（dashorch.h）
 
@@ -295,7 +295,7 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `DashVnetOrch` は SAI ([ASIC_DB](../../reference/glossary.md#term-asic_db)) へのバルク書き込みに加えて、以下の DB 副次書込を行う[^orch]。
 
@@ -340,7 +340,7 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### ZMQ チャネル経由の購読 — `ZmqConsumerStateTable`
 
@@ -406,7 +406,7 @@ keyspace 通知による CONFIG_DB 直接購読は存在しない[^orch]。
 `ORCH_NORTHBOND_DASH_ZMQ_ENABLED`（デフォルト `true`）が ZMQ モードを制御する。
 無効時は `ConsumerStateTable`（[Redis](../../reference/glossary.md#term-redis) Pub/Sub）にフォールバックし、テスト環境・後方互換で使用される。
 
-> **Evidence**: `orchdaemon.cpp:1325-1345`（DashVnetOrch 登録・ZMQ フィーチャフラグ）、`zmqorch.cpp` 全行（ZmqConsumer / ZmqOrch 実装）、`dashvnetorch.cpp:42-51`（コンストラクタ）、`dashvnetorch.cpp:869-884`（doTask ディスパッチ）; 詳細分析 `meta/_intermediate/cdb-flow/dash-vnet-pubsub.md`
+> **Evidence**: `orchdaemon.cpp:1325-1345`（DashVnetOrch 登録・ZMQ フィーチャフラグ）、`zmqorch.cpp` 全行（ZmqConsumer / ZmqOrch 実装）、`dashvnetorch.cpp:42-51`（コンストラクタ）、`dashvnetorch.cpp:869-884`（doTask ディスパッチ）
 
 <!-- /pubsub -->
 
@@ -429,7 +429,7 @@ keyspace 通知による CONFIG_DB 直接購読は存在しない[^orch]。
 [^orch]: orchagent 実装: `dashvnetorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/dash/dashvnetorch.cpp>
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `DASH_VNET` / `DASH_VNET_MAPPING_TABLE` の処理は **`switch_type=dpu` のノード専用**であり、伝統的な [ASIC](../../reference/glossary.md#term-asic) ベンダー別分岐（mellanox / broadcom / barefoot 等）は存在しない。
 
@@ -467,7 +467,7 @@ keyspace 通知による CONFIG_DB 直接購読は存在しない[^orch]。
 !!! note "gMaxBulkSize チューニング"
     `vnet_bulker_` / `outbound_ca_to_pa_bulker_` / `pa_validation_bulker_` が使う `gMaxBulkSize` はコマンドライン引数 `--max-bulk-size` で制御するデプロイ時パラメータ。ASIC ベンダー別のデフォルト差はない。
 
-> **Evidence**: `main.cpp:990-994`（DpuOrchDaemon 起動条件）、`orchdaemon.cpp:613, 1335-1339`（DashVnetOrch 登録）、`saihelper.cpp:253-254`（SAI_API_DASH_VNET 初期化）、`dashvnetorch.cpp:42-51, 525, 561, 706`（コンストラクタ・CRM 分岐）; 詳細分析 `meta/_intermediate/cdb-flow/dash-vnet-platform.md`
+> **Evidence**: `main.cpp:990-994`（DpuOrchDaemon 起動条件）、`orchdaemon.cpp:613, 1335-1339`（DashVnetOrch 登録）、`saihelper.cpp:253-254`（SAI_API_DASH_VNET 初期化）、`dashvnetorch.cpp:42-51, 525, 561, 706`（コンストラクタ・CRM 分岐）
 
 <!-- /platform -->
 
