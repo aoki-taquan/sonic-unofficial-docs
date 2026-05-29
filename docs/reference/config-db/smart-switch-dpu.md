@@ -303,7 +303,7 @@ leaf vnet_name {
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `dhcp_cfggen` (`dhcpservd`) は `generate()` 呼び出しごとに [CONFIG_DB](../../reference/glossary.md#term-config_db) を全量読み直してミッドプレーン DHCP 設定を再生成する。このため書き込み順序がミッドプレーンブリッジの DHCP 払い出し動作に直結する。
 
@@ -349,10 +349,9 @@ SET DASH_HA_GLOBAL_CONFIG|global  dpu_vnet=<vnet_name>  ...
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照
 
-> **調査根拠**: `src/sonic-yang-models/yang-models/sonic-smart-switch.yang` 全行精読; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:60-100`; `src/sonic-dhcp-utilities/dhcp_utilities/common/utils.py:153-161`; `src/sonic-config-engine/config_samples.py:80-157`; `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:355,749,1143,1187,1245-1270` (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-dpu-cross-refs.md`
+> **Evidence**: `src/sonic-yang-models/yang-models/sonic-smart-switch.yang` 全行精読; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:60-100`; `src/sonic-dhcp-utilities/dhcp_utilities/common/utils.py:153-161`; `src/sonic-config-engine/config_samples.py:80-157`; `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:355,749,1143,1187,1245-1270` (2026-05-17)
 
 各テーブルは YANG leafref の有無とは独立して、実装レベルで以下のテーブルを暗黙参照する。
 
@@ -405,10 +404,9 @@ SET DASH_HA_GLOBAL_CONFIG|global  dpu_vnet=<vnet_name>  ...
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 異常系・無効入力時の挙動 (Phase D)
+## 異常系・無効入力時の挙動
 
-> **調査根拠**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:82-83,106,718-720,801-840,1075-1105`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:76,84,119`; `src/sonic-yang-models/yang-models/sonic-smart-switch.yang:65,69,90,98,101,160,295-306` (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-dpu-failure.md`
+> **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:82-83,106,718-720,801-840,1075-1105`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:76,84,119`; `src/sonic-yang-models/yang-models/sonic-smart-switch.yang:65,69,90,98,101,160,295-306` (2026-05-17)
 
 ### YANG バリデーション失敗（書き込み拒否）
 
@@ -472,10 +470,9 @@ DPU が online 復帰したとき、同一のリブート原因で `MAX_DPU_REBO
 <!-- /failure -->
 
 <!-- constants -->
-## 数値定数・マジックナンバー (Phase E)
+## 数値定数・マジックナンバー
 
-> **調査根拠**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:82-83,89-90,95,106`; `src/sonic-config-engine/config_samples.py:85-93,103,136`; `src/sonic-yang-models/yang-models/sonic-smart-switch.yang:65,90,117,160,275` (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-dpu-constants.md`
+> **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:82-83,89-90,95,106`; `src/sonic-config-engine/config_samples.py:85-93,103,136`; `src/sonic-yang-models/yang-models/sonic-smart-switch.yang:65,90,117,160,275` (2026-05-17)
 
 ### chassisd 宣言定数
 
@@ -523,10 +520,9 @@ dhcp_ip = '{}.{}'.format(mpbr_prefix, dpu_id + 1)    # "169.254.200.<dpu_id+1>"
 <!-- /constants -->
 
 <!-- side-effects -->
-## 書き込み副作用 (Phase F)
+## 書き込み副作用
 
-> **調査根拠**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:89-90,219-256,315-335,557-562,863-889,1180-1226`; `src/sonic-config-engine/config_samples.py:96-143` (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-dpu-side-effects.md`
+> **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:89-90,219-256,315-335,557-562,863-889,1180-1226`; `src/sonic-config-engine/config_samples.py:96-143` (2026-05-17)
 
 ### MID_PLANE_BRIDGE + DPUS → dhcp_server がミッドプレーン DHCP プールを再構成
 
@@ -559,10 +555,9 @@ dhcp_ip = '{}.{}'.format(mpbr_prefix, dpu_id + 1)    # "169.254.200.<dpu_id+1>"
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:44,95,1147-1175,1180-1226`; `src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:20-80,349-388`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py:14,25,130-148`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:23,95-100`; `SONiC/doc/smart-switch/high-availability/smart-switch-ha-detailed-design.md:100-200` (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-dpu-pubsub.md`
+> **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:44,95,1147-1175,1180-1226`; `src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:20-80,349-388`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py:14,25,130-148`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:23,95-100`; `SONiC/doc/smart-switch/high-availability/smart-switch-ha-detailed-design.md:100-200` (2026-05-17)
 
 ### Producer / Consumer ペア
 
@@ -630,10 +625,9 @@ hamgrd → ZMQ → DPU 側各テーブル
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> **調査根拠**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:82-85,302-311,717-729,1412-1420,1532-1579`; `sonic-buildimage/platform/mellanox/mlnx-platform-api/sonic_platform/module.py:261-514`; `sonic-buildimage/platform/mellanox/mlnx-platform-api/sonic_platform/device_data.py:32-378`; `sonic-buildimage/platform/mellanox/mlnx-platform-api/sonic_platform/dpuctlplat.py:87-134` (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-dpu-platform.md`
+> **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:82-85,302-311,717-729,1412-1420,1532-1579`; `sonic-buildimage/platform/mellanox/mlnx-platform-api/sonic_platform/module.py:261-514`; `sonic-buildimage/platform/mellanox/mlnx-platform-api/sonic_platform/device_data.py:32-378`; `sonic-buildimage/platform/mellanox/mlnx-platform-api/sonic_platform/dpuctlplat.py:87-134` (2026-05-17)
 
 **Mellanox (NVIDIA) 固有実装あり**。CONFIG_DB テーブル構造はプラットフォーム非依存だが、chassisd と platform API の実装レベルで複数の Mellanox 固有依存が存在する。
 

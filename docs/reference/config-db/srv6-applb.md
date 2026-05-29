@@ -63,7 +63,7 @@ key 内の各長さフィールドはロケータのビット長を示し、`Srv
 | `adj` | string | nexthop 隣接 IPv4/IPv6 アドレス。行動によって必要・不要が変わる |
 
 <!-- defaults -->
-### コード由来のデフォルト（Phase A 解析）
+### コード由来のデフォルト
 
 | フィールド | 実効デフォルト | コード根拠 |
 |-----------|--------------|-----------|
@@ -95,10 +95,9 @@ key 内の各長さフィールドはロケータのビット長を示し、`Srv
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 > 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1511-1543、`updateNeighbor()` L1212-1341、`doTaskSidTable()` L1146-1186 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-applb-ordering.md`
 
 [APPL_DB](../../reference/glossary.md#term-appl_db) `SRV6_MY_SID_TABLE` と `SRV6_SID_LIST_TABLE` はそれぞれ独立した Consumer (`m_mysidTable` / `m_sidTable`) で処理されるが、`adj` フィールドを持つ MySID エントリには隣接 (Neighbor) 解決の順序依存がある。
 
@@ -124,10 +123,9 @@ Neighbor ADD 通知が `updateNeighbor()` に届くと、対応する pending �
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 > 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1480-1547、`deleteMysidEntry()` L1651-1700、`createUpdateSidList()` L1020-1117、コンストラクタ L98-115 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-applb-cross-refs.md`
 
 | 参照元 | 参照先 | 種別 | 必須条件 |
 |--------|--------|------|----------|
@@ -151,10 +149,9 @@ Neighbor ADD 通知が `updateNeighbor()` に届くと、対応する pending �
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 > 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1473-1576、`doTaskMySidTable()` L2228-2234、`createUpdateSidList()` L1044-1117、`deleteSidList()` L1119-1143、`doTaskSidTable()` L1146-1186 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-applb-failure.md`
 
 ### SRV6_MY_SID_TABLE の失敗経路
 
@@ -188,10 +185,9 @@ Neighbor ADD 通知が `updateNeighbor()` に届くと、対応する pending �
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数・上限値 (Phase E)
+## ハードコード定数・上限値
 
 > 根拠: `srv6orch.cpp` L19-27 (#define 群)、`createUpdateMysidEntry()` L1515-1519、`createMySidIpInIpTunnel()` L502、`getLocatorCfgFromDb()` L347-350 精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-applb-constants.md`
 
 | 定数名 | 値 | 利用箇所 | 設定変更可否 |
 |--------|-----|---------|------------|
@@ -225,10 +221,9 @@ MTU は `OVERLAY_RIF_DEFAULT_MTU = 9100` bytes に固定される (`srv6orch.cpp
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用マトリクス (Phase F)
+## 副作用マトリクス
 
 > 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1589-1654、`deleteMysidEntry()` L1656-1710、`addMySidCounter()` L184-210、`removeMySidCounter()` L212-234、`deleteSidList()` L1119-1143 全行精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-applb-side-effects.md`
 
 ### SRV6_MY_SID_TABLE の副作用
 
@@ -261,10 +256,9 @@ SRv6 nexthop が SID リストを参照している間は DEL が保留される
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通信メカニズム (Phase G)
+## Redis 通信メカニズム
 
 > 根拠: `orchdaemon.cpp` L312-324、`orch.cpp` L1186-1196、`srv6orch.cpp` L98-113、`fpmsyncd/routesync.cpp` L1169-1182、L1396-1410 精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-applb-pubsub.md`
 
 ### Consumer 構成
 
@@ -305,10 +299,9 @@ CONFIG_DB `SRV6_MY_SID_TABLE` (db_id=4) は `SubscriberStateTable` ブランチ�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 > 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1554-1568、`createMySidIpInIpTunnel()` L577-600、`initIpInIpTunnel()` L486-545、`createUpdateSidList()` L1069-1117、`doTask(SelectableTimer&)` L286-313 精読。
-> evidence: `meta/_intermediate/cdb-flow/srv6-applb-platform.md`
 
 `SRV6_MY_SID_TABLE` / `SRV6_SID_LIST_TABLE` の処理結果は、プラットフォームの SAI 実装に依存する箇所が複数ある。
 
@@ -397,7 +390,7 @@ SRV6_SID_LIST_TABLE|<sid_name>
 | `type` | enum | sidlist タイプ。省略可（デフォルト `encaps.red`） |
 
 <!-- defaults -->
-### コード由来のデフォルト（Phase A 解析）
+### コード由来のデフォルト
 
 | フィールド | 実効デフォルト | コード根拠 |
 |-----------|--------------|-----------|
