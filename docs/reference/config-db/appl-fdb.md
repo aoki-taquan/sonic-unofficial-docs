@@ -164,9 +164,9 @@ flowchart LR
 - **FDB_ORIGIN と type の組み合わせ**: `{"static", FDB_ORIGIN_LEARN}` は無効な組み合わせとしてコメントされている (`fdborch.h:57`)。
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-`FdbOrch::doTask(Consumer&)` / `addFdbEntry()` / `removeFdbEntry()` (`sonic-swss/orchagent/fdborch.cpp`) を全行精読した結果、以下の順序依存・タイミング依存を検出した。中間ノート: `meta/_intermediate/cdb-flow/appl-fdb-ordering.md`。
+`FdbOrch::doTask(Consumer&)` / `addFdbEntry()` / `removeFdbEntry()` (`sonic-swss/orchagent/fdborch.cpp`) を全行精読した結果、以下の順序依存・タイミング依存を検出した。
 
 ### 他テーブル先行必須
 
@@ -213,7 +213,7 @@ SET APPL_DB FDB_TABLE:Vlan100:00:11:22:33:44:55  port=Ethernet0  type=static
 <!-- /ordering -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -297,13 +297,13 @@ channel PUBLISH 以外に、`FdbOrch` は `PortsOrch` の **C++ レベル observ
 
 なし。`FdbOrch` は同一 orchagent プロセス内のハンドラであり、APPL_DB エントリの追加/削除は SAI FDB オブジェクトのライブ操作のみで反映され、プロセス再起動・サービス restart を伴わない。port oper-state / VLAN_MEMBER 変化は PortsOrch observer 経由でハンドラに到達する。
 
-> **Evidence**: `sonic-swss/orchagent/fdborch.cpp:25, 27-49, 51-65, 648-672, 707-727` (優先度・コンストラクタ・bake・observer・doTask)、`sonic-swss/orchagent/orch.cpp:1186-1196` (`Orch::addConsumer()` DB ID 分岐)、`sonic-swss/orchagent/orchdaemon.cpp:226-235` (`app_fdb_tables` bind と `FdbOrch` 生成)、`sonic-swss/orchagent/main.cpp:459, 478` (`DEFAULT_BATCH_SIZE = 128` と `-b` オプション)、`sonic-swss-common/common/schema.h:52, 87, 118` (テーブル名定数); 詳細分析 `meta/_intermediate/cdb-flow/appl-fdb-pubsub.md`
+> **Evidence**: `sonic-swss/orchagent/fdborch.cpp:25, 27-49, 51-65, 648-672, 707-727` (優先度・コンストラクタ・bake・observer・doTask)、`sonic-swss/orchagent/orch.cpp:1186-1196` (`Orch::addConsumer()` DB ID 分岐)、`sonic-swss/orchagent/orchdaemon.cpp:226-235` (`app_fdb_tables` bind と `FdbOrch` 生成)、`sonic-swss/orchagent/main.cpp:459, 478` (`DEFAULT_BATCH_SIZE = 128` と `-b` オプション)、`sonic-swss-common/common/schema.h:52, 87, 118` (テーブル名定数)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-`fdborch.cpp` 全 1802 行を精読し、SAI capability への依存、MCLAG 連動、multi-asic / [VOQ](../../reference/glossary.md#term-voq) の観点でプラットフォーム差を抽出した。中間ノート: `meta/_intermediate/cdb-flow/appl-fdb-platform.md`。
+`fdborch.cpp` 全 1802 行を精読し、SAI capability への依存、MCLAG 連動、multi-asic / [VOQ](../../reference/glossary.md#term-voq) の観点でプラットフォーム差を抽出した。
 
 ### 1. SAI capability への依存（capability query なし）
 
@@ -367,7 +367,7 @@ FDB aging time そのものは **SwitchOrch** が `SAI_SWITCH_ATTR_FDB_AGING_TIM
 <!-- cross-refs -->
 ## 暗黙参照 (cross-table refs)
 
-`APPL_DB FDB_TABLE` は [YANG](../../reference/glossary.md#term-yang) 未定義のため leafref は持たないが、`FdbOrch` (orchagent) が他テーブル / 他 Orch から OID を解決して SAI に渡す**暗黙参照**を多数持つ。コード調査の詳細は `meta/_intermediate/cdb-flow/appl-fdb-cross-refs.md` に記録した。
+`APPL_DB FDB_TABLE` は [YANG](../../reference/glossary.md#term-yang) 未定義のため leafref は持たないが、`FdbOrch` (orchagent) が他テーブル / 他 Orch から OID を解決して SAI に渡す**暗黙参照**を多数持つ。
 
 ### 1. VLAN（key の `<VlanName>` — 必須依存）
 
@@ -437,9 +437,9 @@ APPL_DB FDB_TABLE
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-APPL_DB `FDB_TABLE` の書込主体である `FdbOrch::doTask(Consumer&)` / `addFdbEntry()` / `removeFdbEntry()` (`sonic-swss/orchagent/fdborch.cpp`) を全行精読し、書込失敗・retry・silent-ignore 経路を抽出した。中間ノート: `meta/_intermediate/cdb-flow/appl-fdb-failure.md`。
+APPL_DB `FDB_TABLE` の書込主体である `FdbOrch::doTask(Consumer&)` / `addFdbEntry()` / `removeFdbEntry()` (`sonic-swss/orchagent/fdborch.cpp`) を全行精読し、書込失敗・retry・silent-ignore 経路を抽出した。
 
 ### 失敗パス一覧
 
@@ -521,9 +521,9 @@ docker logs swss 2>&1 | grep -i 'saved.*fdb\|Add warm input FDB State'
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-`APPL_DB FDB_TABLE` の書込主体である `FdbOrch` (`sonic-swss/orchagent/fdborch.cpp` / `fdborch.h`) と、テーブル名マクロが定義された `sonic-swss-common/common/schema.h` に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。中間ノート: `meta/_intermediate/cdb-flow/appl-fdb-constants.md`。
+`APPL_DB FDB_TABLE` の書込主体である `FdbOrch` (`sonic-swss/orchagent/fdborch.cpp` / `fdborch.h`) と、テーブル名マクロが定義された `sonic-swss-common/common/schema.h` に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 
 ### テーブル名マクロの実値
 
@@ -619,10 +619,10 @@ flush 系の `SAI_FDB_FLUSH_ATTR_ENTRY_TYPE` は L949-950 / L1122-1123 / L1161-1
 
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `FdbOrch` が APPL_DB `FDB_TABLE` を購読して SAI FDB を作成・削除する過程で発生する**副次的な DB 書込**を、
-`sonic-swss/orchagent/fdborch.cpp` の全行精読から抽出した。中間ノート: `meta/_intermediate/cdb-flow/appl-fdb-side.md`。
+`sonic-swss/orchagent/fdborch.cpp` の全行精読から抽出した。
 
 ### 書込み先一覧
 

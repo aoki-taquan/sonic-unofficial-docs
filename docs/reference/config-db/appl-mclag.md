@@ -207,7 +207,7 @@ ICCP のロール（active / standby）確定後に iccpd が `MCLAG_MSG_TYPE_SE
 | `mclagsyncd` | `INTF_TABLE` | `intfOrch` |
 
 <!-- defaults -->
-## フィールドの暗黙デフォルト (Phase A)
+## フィールドの暗黙デフォルト
 
 以下はコード精読により判明した APPL_DB [MCLAG](../../reference/glossary.md#term-mclag) 関連フィールドのコード由来デフォルト[^link][^schema]。
 
@@ -278,9 +278,9 @@ csm->session_timeout = HEARTBEAT_TIMEOUT_SEC;  // = 15
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-`mclagsyncd` および `iccpd` のソースコードから抽出した APPL_DB MCLAG/ICCP 経路に関わる主要ハードコード定数[^link][^sched][^csm][^iccpcsm][^mlacphdl][^iccpsys][^iccpcli][^mclagyang]。詳細スキャン結果は `meta/_intermediate/cdb-flow/appl-mclag-constants.md`。
+`mclagsyncd` および `iccpd` のソースコードから抽出した APPL_DB MCLAG/ICCP 経路に関わる主要ハードコード定数[^link][^sched][^csm][^iccpcsm][^mlacphdl][^iccpsys][^iccpcli][^mclagyang]。
 
 ### MCLAG ドメイン ID / タイマー範囲（YANG）
 
@@ -374,11 +374,10 @@ csm->session_timeout = HEARTBEAT_TIMEOUT_SEC;  // = 15
 4. **ポート名長 20 文字制限**: `MAX_L_PORT_NAME=20` を超えるカスタム命名は IPC で truncate されるおそれあり。
 5. **iccpd fallback と YANG default の不一致**: `session_timeout` の YANG default は `30` 秒だが iccpd 内 fallback は `15` 秒。[CONFIG_DB](../../reference/glossary.md#term-config_db) に空値を直書きしたときのみ後者が発火する。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-constants.md`
 <!-- /constants -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 ### 書き込み側 mclagsyncd の通信構造
 
@@ -439,11 +438,10 @@ while (true) {
 
 iccpd 自身は subscribe ではなく自前のスケジューラで動作する。CONFIG_DB の `keepalive_interval` / `session_timeout` が空のときのみ iccpd 内で `CONNECT_INTERVAL_SEC = 1` 秒・`HEARTBEAT_TIMEOUT_SEC = 15` 秒 にフォールバックする[^sched][^csm]（詳細は上記「フィールドの暗黙デフォルト」節を参照）。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-pubsub.md`
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 APPL_DB MCLAG/ICCP 関連テーブル群 (`MCLAG_FDB_TABLE` / `ISOLATION_GROUP_TABLE` /
 `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `LAG_TABLE` / `PORT_TABLE` / `INTF_TABLE`) の
@@ -474,11 +472,10 @@ APPL_DB MCLAG/ICCP 関連テーブル群 (`MCLAG_FDB_TABLE` / `ISOLATION_GROUP_T
 これら STATE_DB エントリは `show mclag brief` / `show mclag interface` などの CLI が
 直接読みに行く参照源となる。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/appl-mclag-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `mclagsyncd` が APPL_DB に書き込む 7 テーブル (`MCLAG_FDB_TABLE` / `ISOLATION_GROUP_TABLE` /
 `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `LAG_TABLE` / `PORT_TABLE` / `INTF_TABLE`) は
@@ -530,11 +527,10 @@ key 構造やフィールド値として CONFIG_DB の他テーブルのオブ�
 - `INTF_TABLE.mac_addr` は `intfOrch` 経由で kernel netlink + SAI router interface に
   反映される。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 APPL_DB MCLAG/ICCP 系テーブルの書込主体である `mclagsyncd` の失敗・retry 分岐を整理する[^link]。
 
@@ -595,7 +591,7 @@ if (write <= 0)
 
 ### SAI 書込失敗 (下流) との分離
 
-`mclagsyncd` 自身は [ASIC_DB](../../reference/glossary.md#term-asic_db) / SAI を直接呼ばず、APPL_DB への一方向 write のみを行う (Phase F 副次 DB 書込節を参照)。
+`mclagsyncd` 自身は [ASIC_DB](../../reference/glossary.md#term-asic_db) / SAI を直接呼ばず、APPL_DB への一方向 write のみを行う（「副次 DB 書込」節を参照）。
 従って SAI 書込失敗は下流 orch (`isolationGroupOrch` / `fdborch` / `aclOrch` / `portsOrch` / `intfsOrch` / `lagOrch`) 側で発生し、
 `mclagsyncd` にはフィードバックされない。APPL_DB エントリは下流が `task_failed` でも削除されず残る。
 
@@ -611,11 +607,10 @@ docker logs mclag 2>&1 | grep -iE 'invalid|failed|exception|reconnecting'
 journalctl -u mclag | grep mclagsyncd
 ```
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-failure.md`
 <!-- /failure -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `mclagsyncd` の APPL_DB 書込経路は **[ASIC](../../reference/glossary.md#term-asic) 種別** によって `ISOLATION_GROUP_TABLE` 経路と `ACL_TABLE_TABLE`/`ACL_RULE_TABLE` フォールバック経路に分岐する[^link]。判定材料は CONFIG_DB の `DEVICE_METADATA|localhost.platform` ではなく **`asic_type`** で、`docker-iccpd/iccpd.sh:3` がコンテナ起動時に環境変数 `platform` として export し、`mclaglink.cpp:201` の `getenv("platform")` で読まれる。
 
@@ -658,11 +653,10 @@ ICCP プロトコル実装 (`sonic-buildimage/src/iccpd/`) には ASIC 識別ロ
 
 `MCLAG_FDB_TABLE` / `LAG_TABLE` (`learn_mode` / `traffic_disable`) / `PORT_TABLE.learn_mode` / `INTF_TABLE.mac_addr` の 4 経路は ASIC 分岐を持たず全プラットフォームで同一の書込ロジックが動く (`mclaglink.cpp:380-461,1296-1318`)。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-platform.md`
 <!-- /platform -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `mclagsyncd` が APPL_DB に書く 7 テーブルは、上流 (CONFIG_DB の PORT/PORTCHANNEL/[VLAN](../../reference/glossary.md#term-vlan)・iccpd ICCP セッション・ロール確定) との順序関係に強く依存する。CONFIG_DB を直接いじる運用や `swssconfig` 経由 replay で順序が乱れると、`fdborch` の retry ループに乗ったり、`INTF_TABLE.mac_addr` の取りこぼし・`LAG_TABLE.learn_mode` の `"disable"` 残留が発生する[^link]。
 
@@ -674,7 +668,7 @@ CONFIG_DB PORT / PORTCHANNEL / VLAN / VLAN_MEMBER  SET  先行
 APPL_DB MCLAG_FDB_TABLE / ISOLATION_GROUP_TABLE / LAG_TABLE / PORT_TABLE / INTF_TABLE  SET
 ```
 
-`mclagsyncd` の APPL_DB エントリは key / フィールド値として PORT・PORTCHANNEL・[VLAN](../../reference/glossary.md#term-vlan) 名を文字列で保持する（Phase C 暗黙参照節を参照）。参照先未登録時は下流 orchagent (`fdborch` / `isolationGroupOrch` / `lagOrch` / `portsOrch` / `intfsOrch`) が `getPort()` 等で解決失敗し `task_need_retry` 扱いになる。`SELECT_TIMEOUT = 1000` ms tick で再試行されるが、`mclagsyncd` 自身にはフィードバックされない[^orch]。
+`mclagsyncd` の APPL_DB エントリは key / フィールド値として PORT・PORTCHANNEL・[VLAN](../../reference/glossary.md#term-vlan) 名を文字列で保持する（「暗黙参照テーブル」節を参照）。参照先未登録時は下流 orchagent (`fdborch` / `isolationGroupOrch` / `lagOrch` / `portsOrch` / `intfsOrch`) が `getPort()` 等で解決失敗し `task_need_retry` 扱いになる。`SELECT_TIMEOUT = 1000` ms tick で再試行されるが、`mclagsyncd` 自身にはフィードバックされない[^orch]。
 
 **違反時**: 下流側で 1 秒周期の retry ループに入り、最終的に PORT 解決後に消費される。ただし `mclagsyncd` 側の APPL_DB エントリは残ったまま。
 
@@ -783,7 +777,6 @@ ICCP セッション開始
 - 依存 2-5（ICCP up / ロール確定）: 自動回復は iccpd の再 EXCHANGE 経由のみ。途中で `mclagsyncd` 再起動が走ると全エントリ再生成。
 - 依存 6-7（DEL 順 / system_mac）: 自動回復なし。手動再起動または明示 SET が必要。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-ordering.md`
 <!-- /ordering -->
 
 ## 引用元

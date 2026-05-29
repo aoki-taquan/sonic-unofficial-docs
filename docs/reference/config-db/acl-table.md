@@ -102,7 +102,7 @@ ACL_TABLE|<table_name>
 - `copporch`: `CTRLPLANE` 系の登録時に連動
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `AclOrch` は `Orch` 基底クラス経由で `ACL_TABLE` を購読する。CONFIG_DB 起源のため `Orch::addConsumer()` の DB 種別分岐で **`SubscriberStateTable`** が選ばれ、[Redis](../../reference/glossary.md#term-redis) の **keyspace 通知** (`__keyspace@<dbId>__:ACL_TABLE:*` の PSUBSCRIBE) を購読する。channel ベースの `PUBLISH` は使用しない。
 
@@ -149,7 +149,7 @@ ACL_TABLE|<table_name>
 <!-- /cdb-exceptions -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ACL_TABLE の処理失敗は `doAclTableTask()` 内の `bAllAttributesOk` フラグと `validate()` の結果で分岐し、[STATE_DB](../../reference/glossary.md#term-state_db) の `ACL_TABLE|<table_name>` テーブルに `status` フィールドで記録される。
 
@@ -256,9 +256,9 @@ lookup map: `aclStageLookUp` (aclorch.cpp:164-167)。マクロ: `STAGE_INGRESS` 
 <!-- /value-behavior -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -273,7 +273,7 @@ lookup map: `aclStageLookUp` (aclorch.cpp:164-167)。マクロ: `STAGE_INGRESS` 
 | 内部 type 変換 | `type=UNDERLAY_SET_DSCP` | 内部で `MARK_META` に変換して SAI 投入 | `acltable.h:41`, `aclorch.cpp` |
 | 内部 type 変換 | `type=UNDERLAY_SET_DSCPV6` | 内部で `MARK_METAV6` に変換して SAI 投入 | `acltable.h:42` |
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -298,7 +298,7 @@ lookup map: `aclStageLookUp` (aclorch.cpp:164-167)。マクロ: `STAGE_INGRESS` 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 ACL_TABLE は `AclOrch::doAclTableTask()` が処理する。`type` / `stage` フィールド値によって SAI テーブルの作成方法や bind point が変わる。
 
@@ -312,12 +312,12 @@ ACL_TABLE は `AclOrch::doAclTableTask()` が処理する。`type` / `stage` フ
 | `AclOrch` | `addAclTable()` | `type IN [MIRROR, MIRRORV6]` | `m_mirrorTableCapabilities[type]` で ASIC capability 確認、非サポート時 reject | `sonic-swss/orchagent/aclorch.cpp:3502-3541` |
 | `AclOrch` | `addEgrSetDscpTable()` | `type == TABLE_TYPE_EGR_SET_DSCP` | 内部で `TABLE_TYPE_MARK_META` / `TABLE_TYPE_MARK_METAV6` へ変換して SAI 投入、stage を EGRESS 固定 | `sonic-swss/orchagent/aclorch.cpp:4444-4539` |
 
-> **スキャン証跡**: `doAclTableTask()` L5346-5520 全行読了 + `addAclTable()` / `addEgrSetDscpTable()` 参照。7 件分岐抽出。Phase 6/7 derivation ブロック再確認: minigraph.py type/stage 派生・UNDERLAY 変換・MIRROR capability check — 実ソースと整合、誤読なし。
+> **裏取り**: `doAclTableTask()` L5346-5520 全行読了 + `addAclTable()` / `addEgrSetDscpTable()` 参照。7 件分岐抽出。自動派生・条件付き登録ブロック再確認: minigraph.py type/stage 派生・UNDERLAY 変換・MIRROR capability check — 実ソースと整合、誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 YANG スキーマに `default` 宣言がない (`ACL_TABLE` は YANG 未定義) 状態で、C++ struct 初期化・Python CLI fallback・実装読み捨てによって実質的に適用されるデフォルト値を列挙する。
 
@@ -402,7 +402,7 @@ aclshow -a
 <!-- /ops-hint -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 CONFIG_DB の `ACL_TABLE` テーブルを書き込むコードパスを網羅する。
 
@@ -465,7 +465,7 @@ XML `<AclInterface>` 要素から `ACL_TABLE` エントリを生成し CONFIG_DB
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### 前提: allPortsReady() ガード
 
@@ -512,11 +512,11 @@ DEL ACL_TABLE_TYPE|<type_name>           # ユーザ定義 type を削除する�
 | type/stage 変更: DEL → SET | 必須 | SET のみでも動作するが配下 ACL_RULE 消失 |
 | ACL_TABLE DEL → ACL_TABLE_TYPE DEL | 推奨 | 強制ではないが論理的に必要 |
 
-> **スキャン証跡**: `doAclTableTask()` L5346-5518 全行精読、`doAclTableTypeTask()` L5738-5774、`removeAclTable()` L4829-4910、`processAclTablePorts()` L5776-5807、`doAclRuleTask()` L5520-5566 参照。
+> **裏取り**: `doAclTableTask()` L5346-5518 全行精読、`doAclTableTypeTask()` L5738-5774、`removeAclTable()` L4829-4910、`processAclTablePorts()` L5776-5807、`doAclRuleTask()` L5520-5566 参照。
 <!-- /ordering -->
 
 <!-- runtime-trace -->
-## 起動経路 (Direction B: CFG → APPL → SAI)
+## 起動経路 (CFG → APPL → SAI)
 
 ### 段階 1: Consumer 登録
 
@@ -548,7 +548,7 @@ DEL ACL_TABLE_TYPE|<type_name>           # ユーザ定義 type を削除する�
 <!-- /runtime-trace -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `ACL_TABLE.ports` フィールドに記載されたインターフェース名は CONFIG_DB 上では文字列だが、
 `AclOrch` が `gPortsOrch->getPort()` と `getAclBindPortId()` を通じて以下のテーブルの
@@ -574,7 +574,7 @@ DEL ACL_TABLE_TYPE|<type_name>           # ユーザ定義 type を削除する�
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 実装コードに直接定義されている文字列定数・enum 値を一覧化する。CONFIG_DB フィールド名やステータス値を正確に把握するための参照用。
 
@@ -680,11 +680,11 @@ ACL_RULE の `PRIORITY` フィールド (`aclorch.h:25`: `#define RULE_PRIORITY 
 
 `AclOrch::init()` 起動時に `sai_switch_api->get_switch_attribute()` で取得 (`aclorch.cpp:3689-3700`)。取得失敗時は min/max ともに 0 のまま（全 priority を reject）。CONFIG_DB に記録されるフィールドキー: `"PRIORITY"` (`aclorch.h:25`)。`setPriority()` で範囲チェックし範囲外は erase (`aclorch.cpp:1656-1662`)。
 
-> **スキャン証跡**: `acltable.h:1-76` 全行精読、`aclorch.h:25,62-63`、`aclorch.cpp:22-23,42-44,105-106,436,448,494,523-526,603,2614-2650,2823-2847,3689-3700,6088-6105`、`schema.h:94-95,514` 確認。全マクロ 17 個 + SAI 属性 7 件 + priority 定数 2 件 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。
+> **裏取り**: `acltable.h:1-76` 全行精読、`aclorch.h:25,62-63`、`aclorch.cpp:22-23,42-44,105-106,436,448,494,523-526,603,2614-2650,2823-2847,3689-3700,6088-6105`、`schema.h:94-95,514` 確認。全マクロ 17 個 + SAI 属性 7 件 + priority 定数 2 件 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。
 <!-- /constants -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `ACL_TABLE` の作成可否・bind point・mandatory フィールドは ASIC ベンダーごとに大きく異なる。`AclOrch::init()` (`aclorch.cpp:3480-3720`) が起動時に環境変数 `platform` / `sub_platform` を読み取り、MIRROR / L3V4V6 / isCombinedMirrorV6 / range 上限を **静的比較で決定** する。META_DATA 系および stage capability (`is_action_list_mandatory` / `supported_L3V4V6`) のみ SAI 動的照会 (`sai_query_attribute_capability`) を用いる。
 
@@ -750,11 +750,11 @@ ACL_RULE の `PRIORITY` フィールド (`aclorch.h:25`: `#define RULE_PRIORITY 
 !!! note "multi-asic 環境"
     multi-asic 構成では `config acl add table` が各 namespace の CONFIG_DB に同一エントリを書き込む。`AclOrch` も namespace ごとに独立起動し、STATE_DB `ACL_STAGE_CAPABILITY_TABLE` も namespace ごとに保存される。通常は同一 ASIC 種別が前提だが、SmartSwitch / heterogeneous Multi-NPU では namespace ごとに `sub_platform` が異なる可能性があり、ACL_TABLE 作成可否が namespace 間で差異を持つことがある。
 
-> **スキャン証跡**: `AclOrch::init()` L3480-3720 / `initDefaultTableTypes()` L3724-3830 / `AclTable::validate()` L2725-2769 / `addStageMandatoryRangeFields()` L2608-2628 / `addMandatoryActions()` L2563 / `putAclActionCapabilityInDB()` L4056-4101 / `orchdaemon.cpp:502-530` / `orch.h:40-50` / `aclorch.h:109-110` 全行精読。中間ファイル: `meta/_intermediate/cdb-flow/acl-table-platform.md`
+> **裏取り**: `AclOrch::init()` L3480-3720 / `initDefaultTableTypes()` L3724-3830 / `AclTable::validate()` L2725-2769 / `addStageMandatoryRangeFields()` L2608-2628 / `addMandatoryActions()` L2563 / `putAclActionCapabilityInDB()` L4056-4101 / `orchdaemon.cpp:502-530` / `orch.h:40-50` / `aclorch.h:109-110` 全行精読。
 <!-- /platform -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `ACL_TABLE` の SET/DEL を受けた `AclOrch` は CONFIG_DB のほか STATE_DB と [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に以下を書き込む。
 

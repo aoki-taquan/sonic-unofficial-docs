@@ -126,7 +126,7 @@ ACL_TABLE_TYPE|<type_name>
 | `MIRROR_EGRESS_ACTION` | Egress mirror |
 
 !!! warning "ACTIONS の有効値"
-    `ACTION_COUNTER` (`"COUNTER"`)、`ACTION_META_DATA` (`"META_DATA_ACTION"`)、`ACTION_DSCP` (`"DSCP_ACTION"`) は orchagent の lookup には含まれず、`ACL_TABLE_TYPE.ACTIONS` の有効値ではない (Phase E 参照)。CONFIG_DB に書いても erase される。
+    `ACTION_COUNTER` (`"COUNTER"`)、`ACTION_META_DATA` (`"META_DATA_ACTION"`)、`ACTION_DSCP` (`"DSCP_ACTION"`) は orchagent の lookup には含まれず、`ACL_TABLE_TYPE.ACTIONS` の有効値ではない (「ハードコード定数」参照)。CONFIG_DB に書いても erase される。
 
 ---
 
@@ -143,7 +143,7 @@ sonic-db-cli CONFIG_DB hmset 'ACL_TABLE_TYPE|MY_CUSTOM_TYPE' \
 ---
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 > 調査対象: `sonic-swss/orchagent/aclorch.cpp`, `orchagent/acltable.h`
 > 調査日: 2026-05-17
@@ -186,7 +186,7 @@ sonic-db-cli CONFIG_DB hmset 'ACL_TABLE_TYPE|MY_CUSTOM_TYPE' \
 ---
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `ACL_TABLE_TYPE` の処理 (`doAclTableTypeTask()`, `aclorch.cpp:5738-5772`) は
 CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) の他テーブルを**一切参照しない**。フィールド値の検証は C++ 静的ルックアップマップのみで行われ、外部 DB クエリは発生しない。
@@ -221,7 +221,7 @@ CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) の他テーブ�
 ---
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 > 調査対象: `sonic-swss/orchagent/aclorch.cpp` L752-897, L4912-4948, L5738-5774
 > 調査日: 2026-05-17
@@ -266,7 +266,7 @@ CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) の他テーブ�
 ---
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 > 調査対象: `sonic-swss/orchagent/aclorch.h` L26-81、`orchagent/acltable.h` L18-20、`orchagent/aclorch.cpp` L58-136
 > 調査日: 2026-05-17
@@ -375,7 +375,7 @@ CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) の他テーブ�
 ---
 
 <!-- side-effects -->
-## 副作用 (Phase F)
+## 副作用
 
 `ACL_TABLE_TYPE` エントリの SET/DEL は **orchagent 内の in-memory マップ `m_AclTableTypes`** のみを変更する。SAI API 呼び出し・[STATE_DB](../../reference/glossary.md#term-state_db) 書き込み・AppDB 書き込みはいずれも発生しない。[^2]
 
@@ -423,7 +423,7 @@ DEL 後に同名 type を参照する新規 `ACL_TABLE` が到着すると `getA
 ---
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 > 調査対象: `sonic-swss/orchagent/aclorch.cpp` L4197-4299、`orchagent/orchdaemon.cpp` L408-422, L533-534、`orchagent/orch.cpp` L1186-1196
 > 調査日: 2026-05-17
@@ -478,7 +478,7 @@ vector<TableConnector> acl_table_connectors = {
 ---
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `ACL_TABLE_TYPE` のプラットフォーム依存性は 2 つの経路で顕在化する: (1) `initDefaultTableTypes()` による **組み込み型の定義差**、(2) SAI capability クエリによる **アクション有効/無効の差**。ユーザ定義型（CONFIG_DB に書き込む型）は `AclTableTypeParser` が解析するが、記述できる match/action の有効性は実行時の [ASIC](../../reference/glossary.md#term-asic) capability に委ねられる。
 
@@ -549,7 +549,7 @@ capability 結果は `STATE_DB` の `ACL_STAGE_CAPABILITY_TABLE|{INGRESS,EGRESS}
 !!! note "range match の上限 (mellanox / clounix)"
     mellanox: `MLNX_MAX_RANGES_COUNT = 16`、clounix: `CLNX_MAX_RANGES_COUNT = 16` (`aclorch.h:109-110`)。`ACL_TABLE_TYPE` 定義で range match (`L4_SRC_PORT_RANGE` / `L4_DST_PORT_RANGE`) を含む型を作っても、配下 ACL_RULE での range オブジェクト累計が上限を超えると SAI エラーになる。ACL_TABLE_TYPE 段では検出されない。
 
-> **スキャン証跡**: `AclOrch::init()` L3480-3720 / `initDefaultTableTypes()` L3724-3830 / `AclTableTypeParser::parseAclTableTypeActions()` L831-879 / `AclTableTypeParser::parseAclTableTypeMatches()` L796-829 / `queryAclActionCapabilities()` L3969-4053 / `putAclActionCapabilityInDB()` L4056-4101 / `orch.h:40-50` / `aclorch.h:109-110` 全行精読。中間ファイル: `meta/_intermediate/cdb-flow/acl-table-type-platform.md`
+> **裏取り**: `AclOrch::init()` L3480-3720 / `initDefaultTableTypes()` L3724-3830 / `AclTableTypeParser::parseAclTableTypeActions()` L831-879 / `AclTableTypeParser::parseAclTableTypeMatches()` L796-829 / `queryAclActionCapabilities()` L3969-4053 / `putAclActionCapabilityInDB()` L4056-4101 / `orch.h:40-50` / `aclorch.h:109-110` 全行精読。
 <!-- /platform -->
 
 ---

@@ -143,7 +143,7 @@ if (!nhg_index.empty() && (!ips.empty() || !aliases.empty()))
 - `nexthop_group` と `nexthop`/`ifname` の同時指定はエラー
 
 <!-- ordering -->
-## 書込み順依存・タイミング依存 (Phase B)
+## 書込み順依存・タイミング依存
 
 [APPL_DB](../../reference/glossary.md#term-appl_db) `ROUTE_TABLE` の主購読者は `RouteOrch::doTask` (`routeorch.cpp:623`)。`nexthop_group` フィールド経路では `NhgOrch::doTask` (`nhgorch.cpp:37`) が先行ハンドラとして関与する。両者とも違反時は基本的に `m_toSync` 残置による polling 型 retry を使い、SRv6 PIC のみ明示的 RetryCache に park する。
 
@@ -299,7 +299,7 @@ if (m_nextHopGroupCount + NhgOrch::getSyncedNhgCount() >= m_maxNextHopGroupCount
 
 `addNextHopGroup` が NHG 上限で false を返した場合、元 ECMP は `m_toSync` 残置のまま **単一 NH のサブセット tempRoute** を [ASIC](../../reference/glossary.md#term-asic) に install。doTask ループ中に bulker 削除待ちがあれば `break` して flush を促す（NHG 解放後の再評価）。
 
-→ タイミング依存: NHG 上限近傍ではフル ECMP install が遅延。`m_maxNextHopGroupCount` は Mellanox 補正で削減され、上限到達確率はプラットフォーム依存（Phase H 参照）。
+→ タイミング依存: NHG 上限近傍ではフル ECMP install が遅延。`m_maxNextHopGroupCount` は Mellanox 補正で削減され、上限到達確率はプラットフォーム依存（「プラットフォーム / SAI Capability 差異」参照）。
 
 ### 8. SAI race: `SAI_STATUS_ITEM_NOT_FOUND` on set (DualToR)
 
@@ -348,11 +348,11 @@ if (status == SAI_STATUS_ITEM_ALREADY_EXISTS)
 | DualToR DEL→SET race | — | `m_syncdRoutes` 補正で次サイクル create |
 | bulker 同一バッチ重複 | — | ERROR + 残置で次サイクル |
 
-`ERROR_TABLE` 等への失敗通知はなく、違反は polling か RetryCache(PIC) で吸収される。詳細根拠は `meta/_intermediate/cdb-flow/app-route-ordering.md` を参照。
+`ERROR_TABLE` 等への失敗通知はなく、違反は polling か RetryCache(PIC) で吸収される。
 <!-- /ordering -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 APPL_DB `ROUTE_TABLE` の書込・購読フロー自体はプラットフォーム共通だが、ECMP 容量・overlay nexthop サポート・multi-asic 分離の 3 軸で差が出る。
 
@@ -403,13 +403,12 @@ if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
 
 `VS_PLATFORM_SUBSTRING="vs"` / `XS_PLATFORM_SUBSTRING="xsight"` (`orch.h` L46/L49) では SAI シム（libsaivs / libsaivpp）が ECMP / SRv6 / overlay の create を SUCCESS で返すが ASIC は無く実機転送はない。Mellanox 補正は走らず、SAI 既定値（多くは 128 〜 1024）が `m_maxNextHopGroupCount` になる。[CRM](../../reference/glossary.md#term-crm) の available 値もダミー。
 
-詳細根拠は `meta/_intermediate/cdb-flow/app-route-platform.md` を参照。
 <!-- /platform -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-`routeorch` / `CrmOrch` のソースから抽出した APPL_DB `ROUTE_TABLE` 経路に関わる主要ハードコード定数。詳細スキャン結果は `meta/_intermediate/cdb-flow/app-route-constants.md`。
+`routeorch` / `CrmOrch` のソースから抽出した APPL_DB `ROUTE_TABLE` 経路に関わる主要ハードコード定数。
 
 ### ECMP 上限デフォルト（`routeorch.cpp`）
 
@@ -476,7 +475,7 @@ STATE_DB `ROUTE_TABLE` の更新対象を以下の prefix 文字列リテラル�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `APPL_DB:ROUTE_TABLE` の SET/DEL に伴い、主購読者 `routeorch` および同居 orch (`CrmOrch`, `FlowCounterRouteOrch`) が以下の副次 DB エントリを書き込む。SAI `route_entry` 自体は本ページのデータフロー図に示した主作用 ([ASIC_DB](../../reference/glossary.md#term-asic_db)) のため除外する。
 
@@ -490,11 +489,11 @@ STATE_DB `ROUTE_TABLE` の更新対象を以下の prefix 文字列リテラル�
 
 それ以外 ([FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db), [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db), CONFIG_DB) への書込みは検出されなかった。
 
-> **Evidence**: `sonic-swss/orchagent/routeorch.cpp` (`publishRouteState` L3185-3201, `updateDefRouteState` L287-295, [CRM](../../reference/glossary.md#term-crm) inc/dec 各所), `orchagent/crmorch.cpp:400-401, 1067-1091`, `orchagent/flex_counter/flowcounterrouteorch.cpp:33-34, 152-178, 921-922`; 詳細スキャンと grep 結果は `meta/_intermediate/cdb-flow/app-route-side.md` を参照。
+> **Evidence**: `sonic-swss/orchagent/routeorch.cpp` (`publishRouteState` L3185-3201, `updateDefRouteState` L287-295, [CRM](../../reference/glossary.md#term-crm) inc/dec 各所), `orchagent/crmorch.cpp:400-401, 1067-1091`, `orchagent/flex_counter/flowcounterrouteorch.cpp:33-34, 152-178, 921-922`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 APPL_DB `ROUTE_TABLE` は CONFIG_DB の `SubscriberStateTable` (keyspace 通知) ではなく、APPL_DB 系の **`ProducerStateTable` / `ConsumerStateTable`** 経路（channel = `ROUTE_TABLE_CHANNEL`）で同期される。`RouteOrch` は `ZmqOrch` を継承しており、CONFIG_DB `FEATURE` の `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` (既定 `false`) が `true` のときのみ [Redis](../../reference/glossary.md#term-redis) を経由せず **ZMQ TCP socket** に切り替わる。応答パスは `ResponsePublisher m_publisher{"APPL_STATE_DB"}` (`orch.h:382`) を介して APPL_STATE_DB へ書き込む。
 
@@ -515,7 +514,7 @@ gRouteOrch = new RouteOrch(m_applDb, route_tables, ..., route_zmq_sever);
 | `nullptr` (既定 / ZMQ off) | `swss::ConsumerStateTable` (`gBatchSize`, pri=`routeorch_pri=5`) | [Redis](../../reference/glossary.md#term-redis) `ROUTE_TABLE_CHANNEL` への明示的 `PUBLISH` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) LUA 由来) |
 | 非 null (ZMQ on) | `swss::ZmqConsumerStateTable` | ZMQ PAIR socket (`tcp://127.0.0.1:8100` 既定) |
 
-writer 側 `fpmsyncd::RouteSync` (`routesync.cpp:156`) も対称に切り替わる (`lib/orch_zmq_config.cpp:117-145` の `createProducerStateTable`)。ZMQ 有効時は `ZmqProducerStateTable` → `ZmqConsumerStateTable` の TCP ピアとなるため Redis LIST/PUBSUB を経由せず、fpmsyncd は空文字フィールドも常に送る（Phase D `<!-- defaults -->` で言及した挙動と一致）。`SubscriberStateTable` / `NotificationConsumer` はこのテーブルでは使われない。
+writer 側 `fpmsyncd::RouteSync` (`routesync.cpp:156`) も対称に切り替わる (`lib/orch_zmq_config.cpp:117-145` の `createProducerStateTable`)。ZMQ 有効時は `ZmqProducerStateTable` → `ZmqConsumerStateTable` の TCP ピアとなるため Redis LIST/PUBSUB を経由せず、fpmsyncd は空文字フィールドも常に送る（「フィールド暗黙デフォルト」節で言及した挙動と一致）。`SubscriberStateTable` / `NotificationConsumer` はこのテーブルでは使われない。
 
 ### 応答 publish: `ResponsePublisher` (APPL_STATE_DB)
 
@@ -549,11 +548,10 @@ m_publisher.publish(APP_ROUTE_TABLE_NAME, ctx.key, fvs, status, /*replace=*/fals
 | 購読 (ZMQ on) | `swss::ZmqConsumerStateTable` | ZMQ socket | `zmqorch.cpp:65-68` |
 | 応答 | `ResponsePublisher` (`APPL_STATE_DB`) `directDbWrite=true` | APPL_STATE_DB 直接 HSET/DEL（応答 channel は無効化） | `orch.h:382`, `routeorch.cpp:57-58, 3185-3201`, `response_publisher.cpp:96-204` |
 
-詳細スキャンと根拠コードは `meta/_intermediate/cdb-flow/app-route-pubsub.md` を参照。
 <!-- /pubsub -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 APPL_DB `ROUTE_TABLE` の主購読者 `routeorch::doRouteTask()` は `ConsumerStateTable` イベントを `m_toSync` に積み、各エントリを SAI route_entry に変換する。失敗時のフロー制御は **`m_toSync.erase()` (恒久スキップ) と `it++` (m_toSync 残置で次サイクル再試行) の 2 値**、および **SAI 呼び出し失敗時の `handleSaiCreateStatus`/`handleSaiSetStatus`/`handleSaiRemoveStatus` → `parseHandleSaiStatusFailure`** (`saihelper.cpp:745-762`) による分岐に集約される。`task_need_retry` なら呼び元が false を返し `m_toSync` 残置、`task_failed` なら true で恒久スキップ。
 
@@ -633,12 +631,12 @@ else if ((utilization <= res.lowThreshold) && (cnt.exceededLogCounter > 0) && ..
 - **`SAI_STATUS_ITEM_ALREADY_EXISTS` in bulker は same-batch 重複の防御**: 通常運用では起きないが起きた場合 ERROR ログを残して retain。bulker は次サイクルで `flush` 後にリセット
 - **CRM threshold 超過時の event publish は sonic-events 経由**: `g_events_handle` に `chk_crm_threshold` イベントを通知し、Telemetry / sonic-eventd で再公開可能
 
-> **証跡**: `routeorch.cpp` 失敗パス 25 件 (L706-715, L810-814, L855-989, L1004-1015, L1109-1112, L1424-1483, L1532-1574, L1629-1635, L2055-2243, L2511-2589, L2657-2660, L2849-2879, L3185-3201)、`nhgorch.cpp` (L100, L142, L177, L211, L433, L784-789, L805, L940-975, L1044-1082)、`crmorch.cpp` (L16, L1145-1147, L1168-1186)、`saihelper.cpp` (L745-770)。詳細グレップは `meta/_intermediate/cdb-flow/app-route-failure.md` を参照。
+> **証跡**: `routeorch.cpp` 失敗パス 25 件 (L706-715, L810-814, L855-989, L1004-1015, L1109-1112, L1424-1483, L1532-1574, L1629-1635, L2055-2243, L2511-2589, L2657-2660, L2849-2879, L3185-3201)、`nhgorch.cpp` (L100, L142, L177, L211, L433, L784-789, L805, L940-975, L1044-1082)、`crmorch.cpp` (L16, L1145-1147, L1168-1186)、`saihelper.cpp` (L745-770)。
 
 <!-- /failure -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `routeorch` が読み解く関連テーブル (Phase C)
+## 暗黙参照 — `routeorch` が読み解く関連テーブル
 
 `APPL_DB:ROUTE_TABLE` は [YANG](../../reference/glossary.md#term-yang) 定義を持たない (APPL_DB は [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 経由の軽量経路で CONFIG_DB ではない) ため、`leafref` での明示参照はゼロ件。代わりに `RouteOrch::doRouteTask()` / `addRoutePost()` / `addNextHopGroup()` から呼ばれる **9 系統の Orch 間参照** が実装レベルの暗黙依存となる。
 
@@ -670,9 +668,7 @@ else if ((utilization <= res.lowThreshold) && (cnt.exceededLogCounter > 0) && ..
 ### 範囲外 (誤解されやすい隣接)
 
 - `STATIC_ROUTE` (CONFIG_DB) → `bgpcfgd` の `StaticRouteMgr` または `staticrouteorch` 経由で別途 APPL_DB `ROUTE_TABLE` に書く側 (`fpmsyncd` 経由でないパス) であり、`routeorch` から見れば本テーブルの同じ key 空間に流れ込むだけで cross-table 参照ではない。詳細は `static-route.md` を参照。
-- `ROUTE_TABLE` (STATE_DB) — `0.0.0.0/0` / `::/0` のデフォルトルート到達性のみが書き込まれる side-effect であり、`routeorch` の読み取り対象ではない (Phase F 参照)。
-
-詳細スキャン手順と行番号一覧は `meta/_intermediate/cdb-flow/app-route-cross-refs.md` を参照。
+- `ROUTE_TABLE` (STATE_DB) — `0.0.0.0/0` / `::/0` のデフォルトルート到達性のみが書き込まれる side-effect であり、`routeorch` の読み取り対象ではない（「副次 DB 書込」参照）。
 <!-- /cross-refs -->
 
 ## 購読者
