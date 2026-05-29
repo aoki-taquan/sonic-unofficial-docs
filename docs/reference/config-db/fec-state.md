@@ -133,11 +133,9 @@ SAI_PORT_ATTR_SUPPORTED_FEC_MODE を取得:
 | `intfutil` (`show interfaces status`) | `APPL_DB PORT_TABLE:<port>` → `fec` | FEC Admin 列（[CONFIG_DB](../../reference/glossary.md#term-config_db) 設定値; STATE_DB ではない） |
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドは `PortsOrch` が書き手となるが、書き込み発生のタイミングと前提条件がフィールドごとに異なる。consumer が読むタイミングによっては中間状態（未書込み・stale 値）を観測しうる。
-
-<!-- evidence: meta/_intermediate/cdb-flow/fec-state-ordering.md -->
 
 ### 検出された順序依存
 
@@ -163,12 +161,10 @@ STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドは `PortsOrch
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `STATE_DB PORT_TABLE` の `fec` / `supported_fecs` フィールドに関する書き手・読み手それぞれの
 暗黙的なテーブル参照をまとめる。
-
-<!-- evidence: meta/_intermediate/cdb-flow/fec-state-cross-refs.md -->
 
 | 依存方向 | 参照元 | 参照先テーブル | 参照先フィールド | 依存内容 | 証跡 |
 |---------|--------|--------------|----------------|---------|------|
@@ -219,7 +215,7 @@ STATE_DB の `fec` (oper) と APPL_DB の `fec` (admin) は別フィールドで
 <!-- /value-behavior -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) default 外の fallback。`PortsOrch::updateDbPortOperFec` と `initPortSupportedFecModes` の実装から導出。
 
@@ -246,8 +242,6 @@ STATE_DB の `fec` (oper) と APPL_DB の `fec` (admin) は別フィールドで
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/fec-state-defaults.md -->
-
 - `getPortOperFec()` (portsorch.cpp:9994) は `port.m_type != Port::PHY` のとき即 `return false` → [LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) ポートでは `fec` は常に `"N/A"`
 - `fecToStr` の失敗は SWSS_LOG_ERROR + `"N/A"` フォールバック。未知の SAI fec mode が返った場合は `"N/A"` と表示されるだけでエラー停止しない
 - `supported_fecs` の `"auto"` 追加は `fecModeList.empty()` でなく かつ `fec_override_sup=true` の両方が必要 (portsorch.cpp:3310–3313)。空集合 (`"N/A"`) の場合は `"auto"` が追加されない
@@ -255,11 +249,9 @@ STATE_DB の `fec` (oper) と APPL_DB の `fec` (admin) は別フィールドで
 <!-- /cdb-exceptions -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `PortsOrch` による FEC モード適用 (`doPortTask` → `setPortFec`) と FEC oper 値取得 (`getPortOperFec`) の失敗経路を整理する。STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドへの書込みは `swss::Table::set()` (void 返却) を使うため、**[Redis](../../reference/glossary.md#term-redis) 書込み自体の失敗はアプリ層では検出不可**。[Redis](../../reference/glossary.md#term-redis) 例外は orchagent プロセス abort → systemd 再起動という経路で回収される。
-
-<!-- evidence: meta/_intermediate/cdb-flow/fec-state-failure.md -->
 
 ### FEC モード SET 時の失敗パターン (`doPortTask`)
 
@@ -303,11 +295,9 @@ FEC SET 成功時のみ `p.m_fec_cfg = true` をセットして `m_portList` を
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `PortsOrch` と `PortHelper` が FEC フィールドの書込み・検証に使うハードコード文字列定数・マップを整理する。
-
-<!-- evidence: meta/_intermediate/cdb-flow/fec-state-constants.md -->
 
 ### FEC モード文字列定数 (portschema.h:38–41)
 
@@ -365,11 +355,9 @@ FEC SET 成功時のみ `p.m_fec_cfg = true` をセットして `m_portList` を
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドへの書込みは `PortsOrch` が行う主作用だが、同一トリガーで他 DB・他フィールドへの副次的な書込みが発生する。consumer がこれらの副次書込みを前提に状態を読む場合、書込み順序と原子性の欠如を考慮する必要がある。
-
-<!-- evidence: meta/_intermediate/cdb-flow/fec-state-side-effects.md -->
 
 ### トリガー A: ポート UP 通知（`fec` フィールドと同時に発生する副次書込）
 
@@ -408,11 +396,9 @@ STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドへの書込�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `STATE_DB PORT_TABLE` の `fec` / `supported_fecs` フィールドは `PortsOrch` を唯一の書き手とする**読み取り専用のステータスレジスタ**であり、`ProducerStateTable` / `NotificationProducer` を介した PUBLISH 通知は発行されない。consumer 側 (`intfutil` / `generic_config_updater`) は keyspace 通知を購読せず、必要時にのみオンデマンドで読み出す。
-
-<!-- evidence: meta/_intermediate/cdb-flow/fec-state-pubsub.md -->
 
 ### 書込み API: 素の `swss::Table`
 
@@ -473,13 +459,11 @@ if value.strip() not in supported_fecs_list:
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドの書込み有無・値は、
 プラットフォームごとの SAI Capability 実装状況によって大きく異なる。
 `PortsOrch` はコンストラクタで 2 つの SAI capability クエリを実行し、その結果をフラグとして保持する。
-
-<!-- evidence: meta/_intermediate/cdb-flow/fec-state-platform.md -->
 
 ### `oper_fec_sup` / `fec_override_sup` フラグの確定
 

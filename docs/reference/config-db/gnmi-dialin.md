@@ -133,7 +133,7 @@ GNMI|certs      # TLS 証明書パス
 <!-- /cdb-exceptions -->
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 > 調査対象: `sonic-net/sonic-gnmi/telemetry/telemetry.go`, `sonic-net/sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh`
 > 調査日: 2026-05-14
@@ -184,7 +184,7 @@ YANG モデル (`sonic-gnmi.yang`) は `save_on_set` フィールドを `boolean
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 > 根拠: `sonic-buildimage/dockers/docker-sonic-gnmi/supervisord.conf`, `sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh`, `sonic-buildimage/dockers/docker-sonic-gnmi/start.sh`, `sonic-gnmi/telemetry/telemetry.go`
 
@@ -220,7 +220,7 @@ rsyslogd 起動 (priority=1)
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `GNMI|gnmi` / `GNMI|certs` の設定読み取りは直接参照であるが、`gnmi-native.sh` 起動スクリプトおよび `telemetry` バイナリは以下のテーブルも**暗黙的に参照**する。参照タイミング（起動時スナップショット vs. runtime 都度読み取り）が異なる点に注意。
 
@@ -281,9 +281,7 @@ rsyslogd 起動 (priority=1)
 <!-- /value-behavior -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/gnmi-dialin-constants.md`
+## ハードコード定数
 
 ### gnmi-native.sh — シェルスクリプト定数
 
@@ -340,7 +338,7 @@ rsyslogd 起動 (priority=1)
 <!-- /constants -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/gnmi-native.sh` (ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd); `sonic-net/sonic-gnmi:telemetry/telemetry.go` (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); `sonic-net/sonic-gnmi:gnmi_server/clientCertAuth.go` (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
 
@@ -399,9 +397,7 @@ rsyslogd 起動 (priority=1)
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/gnmi-dialin-side-effects.md`
+## 副次 DB 書込
 
 `GNMI|gnmi` テーブルを直接起点とする DB 書込ではないが、`telemetry` デーモン（dial-in gNMI サーバ）は Subscribe RPC のセッション状態を [STATE_DB](../../reference/glossary.md#term-state_db) に記録する副次的な書込を行う。
 
@@ -433,7 +429,7 @@ rsyslogd 起動 (priority=1)
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### GNMI|gnmi / GNMI|certs テーブルの読み取り方式
 
@@ -496,7 +492,7 @@ processTelemetryClientConfig(ctx, redisDb, key, op)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `GNMI` テーブルのスキーマとフィールドは **全プラットフォームで同一**。プラットフォーム差は `telemetry` デーモンの起動スクリプト (`gnmi-native.sh`) による引数付与ロジックに局所化されており、CONFIG_DB テーブルのフィールド定義・処理ロジック自体に影響しない。
 
@@ -535,8 +531,6 @@ GNMI テーブルは host namespace の CONFIG_DB にのみ存在する。`gnmi-
 `telemetry/telemetry.go`, `gnmi-native.sh`, `gnmi_server/clientCertAuth.go` を `platform|asic|broadcom|mellanox|marvell|vendor` で grep → **0 ヒット**（無関係なコメントを除く）。gNMI サーバは [SAI](../../reference/glossary.md#term-sai) 非経由であり、[ASIC](../../reference/glossary.md#term-asic) ドライバに依存するコードパスを持たない。
 
 `sonic-gnmi.yang` は単一ファイルであり、platform 固有の if-feature / deviation なし。すべての機種で同一 YANG スキーマが適用される。
-
-詳細解析: `meta/_intermediate/cdb-flow/gnmi-dialin-platform.md`
 
 <!-- evidence:
   gnmi-native.sh:89-92 — SmartSwitch 判定: DEVICE_METADATA|localhost.subtype == "SmartSwitch" → -zmq_port=8100

@@ -152,9 +152,9 @@ show fgnhg active-hops
 <!-- /value-behavior -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-swss/orchagent/fgnhgorch.cpp` L12-13, L265-271, L1154-1165, L1680-1726, L1342, L1369 精読 (2026-05-16)
+> **Evidence**: `sonic-swss/orchagent/fgnhgorch.cpp` L12-13, L265-271, L1154-1165, L1680-1726, L1342, L1369 精読 (2026-05-16)
 
 ### モジュール定数
 
@@ -214,14 +214,12 @@ FGNextHopInfo fg_nh_info = {0, "", LINK_DOWN};  // bank=0, link="", oper=LINK_DO
 !!! note "VS プラットフォームの特例"
     VS（Virtual Switch）では `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` の get を省略し、`configured_bucket_size` をそのまま `real_bucket_size` として使用する（L286-288 の TODO コメント）。実ハードウェアでは SAI が割り当て可能な実際のバケット数を返す。
 
-詳細な調査ログ: `meta/_intermediate/cdb-flow/fg-nhg-constants.md`
-
 <!-- /constants -->
 
 <!-- defaults -->
-## コード由来のデフォルト・暗黙挙動 (Phase A)
+## コード由来のデフォルト・暗黙挙動
 
-> **調査根拠**: `sonic-swss/orchagent/fgnhgorch.cpp` `doTaskFgNhg()` L1673–1744 / `doTaskFgNhgMember()` L1969–2030 精読 + `sonic-fine-grained-ecmp.yang` 照合 (2026-05-15)
+> **Evidence**: `sonic-swss/orchagent/fgnhgorch.cpp` `doTaskFgNhg()` L1673–1744 / `doTaskFgNhgMember()` L1969–2030 精読 + `sonic-fine-grained-ecmp.yang` 照合 (2026-05-15)
 
 ### `FG_NHG` テーブル
 
@@ -287,8 +285,6 @@ if (!link.empty()) {
 
 `sonic-fine-grained-ecmp.yang` には `bucket_size` / `match_mode` / `max_next_hops` / `bank` のいずれにも `default` ステートメントが存在しない。デフォルト値は **全て fgnhgorch のローカル変数初期値** に依存しており、CONFIG_DB の他テーブルのように mgmt-framework / db_migrator から fill されることはない。
 
-詳細な調査ログ: `meta/_intermediate/cdb-flow/fg-nhg-defaults.md`
-
 <!-- /defaults -->
 
 <!-- cdb-exceptions -->
@@ -311,9 +307,9 @@ if (!link.empty()) {
 <!-- /cdb-exceptions -->
 
 <!-- ordering -->
-## 書込み順依存・NEXTHOP 解決順序 (Phase B)
+## 書込み順依存・NEXTHOP 解決順序
 
-> **調査根拠**: `sonic-swss/orchagent/fgnhgorch.cpp` `calculateBankHashBucketStartIndices()` L146–213, `createFineGrainedNextHopGroup()` L257–314, `setActiveBankHashBucketChanges()` L568–820, `sprayBankNhgMembers()` L1113–1198, `doTaskFgNhg()` L1673–1744, `doTaskFgNhgMember()` L1969–2030 精読 (2026-05-16)
+> **Evidence**: `sonic-swss/orchagent/fgnhgorch.cpp` `calculateBankHashBucketStartIndices()` L146–213, `createFineGrainedNextHopGroup()` L257–314, `setActiveBankHashBucketChanges()` L568–820, `sprayBankNhgMembers()` L1113–1198, `doTaskFgNhg()` L1673–1744, `doTaskFgNhgMember()` L1969–2030 精読 (2026-05-16)
 
 ### 3 テーブルの投入順序
 
@@ -378,11 +374,10 @@ FG_NHG|<name>          ← 最後に削除
 | 8 | prefix-based グループへの FG_NHG_MEMBER 投入禁止 | 破棄（再試行なし） | match_mode 確認後に MEMBER 投入 |
 | 9 | DEL 順序: MEMBER → PREFIX → FG_NHG | 推奨（逆順は SAI クリーンアップ後に DB 残留） | 逆順は推奨しない |
 
-詳細な調査ログ: `meta/_intermediate/cdb-flow/fg-nhg-ordering.md`
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-swss/orchagent/fgnhgorch.cpp`
 
@@ -448,7 +443,7 @@ FG_NHG|<name>          ← 最後に削除
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `FG_NHG`
 
@@ -476,10 +471,9 @@ FG_NHG|<name>          ← 最後に削除
 <!-- /entry-points -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
-> **調査根拠**: `sonic-swss/orchagent/fgnhgorch.cpp` 全行精読 (2026-05-16)
-> 詳細証跡: `meta/_intermediate/cdb-flow/fg-nhg-cross-refs.md`
+> **Evidence**: `sonic-swss/orchagent/fgnhgorch.cpp` 全行精読 (2026-05-16)
 
 `FG_NHG` / `FG_NHG_PREFIX` / `FG_NHG_MEMBER` テーブルは YANG leafref を最小限しか持たないが、`FgNhgOrch` の実行時に以下のテーブル・Orch を暗黙参照する。
 
@@ -516,7 +510,7 @@ FG_NHG|<name>          ← 最後に削除
 <!-- /cross-refs -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Producer/Consumer ペア
 
@@ -604,11 +598,11 @@ nexthop が NeighOrch に未登録の場合は `return false` でエントリを
 
 `return true` のエラーパス（`bucket_size==0`、`fg_nhg_name` 空文字など）は再試行なしで破棄される。
 
-> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:301-310` (FgNhgOrch 生成・テーブル登録)、`sonic-swss/orchagent/fgnhgorch.cpp:36` (gPortsOrch->attach)、`fgnhgorch.cpp:40-92` (update/Observer)、`fgnhgorch.cpp:1415,1459,1479,1547` (NeighOrch 呼び出し)、`fgnhgorch.cpp:2126-2160` (doTask ディスパッチ); 詳細分析 `meta/_intermediate/cdb-flow/fg-nhg-pubsub.md`
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:301-310` (FgNhgOrch 生成・テーブル登録)、`sonic-swss/orchagent/fgnhgorch.cpp:36` (gPortsOrch->attach)、`fgnhgorch.cpp:40-92` (update/Observer)、`fgnhgorch.cpp:1415,1459,1479,1547` (NeighOrch 呼び出し)、`fgnhgorch.cpp:2126-2160` (doTask ディスパッチ)
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `FgNhgOrch` は CONFIG_DB の `FG_NHG` / `FG_NHG_PREFIX` / `FG_NHG_MEMBER` を受けて、[ASIC_DB](../../reference/glossary.md#term-asic_db)（SAI 経由）・STATE_DB・APPL_DB の 3 か所に書き込む。
 
@@ -671,14 +665,13 @@ sonic-db-cli STATE_DB hgetall 'FG_ROUTE_TABLE|<ip_prefix>'
 sonic-db-cli APPL_DB hgetall 'ROUTE_TABLE|<ip_prefix>'
 ```
 
-> **証跡**: `setStateDbRouteEntry()` L218–226、`writeHashBucketChange()` L231–253、`setNewNhgMembers()` L1169–1195、`removeFineGrainedNextHopGroup()` L316–342、`modifyRoutesNextHopId()` L356–376、`doTaskFgNhgPrefix()` L1863–1879 / L1929–1951、詳細調査ログ: `meta/_intermediate/cdb-flow/fg-nhg-side-effects.md`
+> **証跡**: `setStateDbRouteEntry()` L218–226、`writeHashBucketChange()` L231–253、`setNewNhgMembers()` L1169–1195、`removeFineGrainedNextHopGroup()` L316–342、`modifyRoutesNextHopId()` L356–376、`doTaskFgNhgPrefix()` L1863–1879 / L1929–1951
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
-> **調査根拠**: `sonic-swss/orchagent/fgnhgorch.cpp` `createFineGrainedNextHopGroup()` L257–315 / `isRouteFineGrained()` L1201–1251 精読 (2026-05-16)
-> 詳細証跡: `meta/_intermediate/cdb-flow/fg-nhg-platform.md`
+> **Evidence**: `sonic-swss/orchagent/fgnhgorch.cpp` `createFineGrainedNextHopGroup()` L257–315 / `isRouteFineGrained()` L1201–1251 精読 (2026-05-16)
 
 ### VS (virtual_switch) プラットフォーム — `real_bucket_size` 省略
 

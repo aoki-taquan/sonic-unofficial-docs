@@ -201,7 +201,7 @@ show feature status
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `FEATURE`
 
@@ -230,7 +230,7 @@ show feature status
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書き込み順依存 (Phase B)
+## 書き込み順依存
 
 FEATURE テーブルへの書き込みは複数経路が重なるため、フィールドごとに「最終書き込み者」が異なる。誤った順序での操作はユーザ設定の消失やサービス誤動作を引き起こす。
 
@@ -328,11 +328,11 @@ has_per_dpu_scope=True  → <feature>@dpu0.service, @dpu1.service, ... (DPU ご�
 5. **`always_enabled` / `always_disabled` は CLI で変更不可** (`config/feature.py:24-25`):
    これらの値は init_cfg.json.j2 または FeatureRegistry.register() が設定する。ユーザ変更が必要な場合は DB 直接操作またはビルド設定変更が必要。
 
-> **Evidence**: `sonic-host-services/data/debian/sonic-host-services-data.featured.service`; `sonic-buildimage/files/build_templates/*.service.j2`; `sonic-buildimage/src/systemd-sonic-generator/systemd-sonic-generator.cpp:985-996`; `sonic-host-services/scripts/featured:182-184,200-217,255-275,408-424,659-661`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:71-80`; `sonic-utilities/config/feature.py:24-25`; 詳細分析 `meta/_intermediate/cdb-flow/feature-ordering.md`
+> **Evidence**: `sonic-host-services/data/debian/sonic-host-services-data.featured.service`; `sonic-buildimage/files/build_templates/*.service.j2`; `sonic-buildimage/src/systemd-sonic-generator/systemd-sonic-generator.cpp:985-996`; `sonic-host-services/scripts/featured:182-184,200-217,255-275,408-424,659-661`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:71-80`; `sonic-utilities/config/feature.py:24-25`
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ### STATE_DB への障害記録
 
@@ -379,7 +379,7 @@ disable 処理は `stop → disable → mask` の順で逐次実行され、最�
 
 `sync_feature_scope()` 内で `has_per_asic_scope` / `has_global_scope` が False に変化した際の stop/disable/mask が失敗すると、`set_feature_state("failed")` 後に即 `return`（`featured:342-345`）。後続の `_conditional_update_scope()` による CONFIG_DB 更新がスキップされ、scope フィールドが古い値のまま残る（DB とシステム実態の乖離）。
 
-> **Evidence**: `sonic-host-services/scripts/featured:75-78,112-113,186-217,429-449,468-548,585-590`; 詳細分析 `meta/_intermediate/cdb-flow/feature-failure.md`
+> **Evidence**: `sonic-host-services/scripts/featured:75-78,112-113,186-217,429-449,468-548,585-590`
 <!-- /failure -->
 
 <!-- defaults -->
@@ -466,7 +466,7 @@ disable 処理は `stop → disable → mask` の順で逐次実行され、最�
 | `DEFAULT_FEATURE_CONFIG['high_mem_alert']` | `'disabled'` | `feature.py:15` | 新規インストール時のデフォルト high_mem_alert |
 | `DEFAULT_FEATURE_CONFIG['set_owner']` | `'local'` | `feature.py:16` | 新規インストール時のデフォルト set_owner |
 
-> **Evidence**: `sonic-host-services/scripts/featured:22-24,81-86,128-135,380,426-427,630,644-648,654-661`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:12-17`; 詳細分析 `meta/_intermediate/cdb-flow/feature-constants.md`
+> **Evidence**: `sonic-host-services/scripts/featured:22-24,81-86,128-135,380,426-427,630,644-648,654-661`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:12-17`
 <!-- /constants -->
 
 <!-- cross-refs -->
@@ -485,7 +485,7 @@ disable 処理は `stop → disable → mask` の順で逐次実行され、最�
 <!-- /cross-refs -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `featured` デーモンは CONFIG_DB の `FEATURE` テーブルを購読して systemd サービスを制御するが、その過程で **STATE_DB・CONFIG_DB・ファイルシステム**の 3 箇所に副次的な書込を行う。
 
@@ -535,11 +535,11 @@ multi-asic では `<feature>@<asic_id>.service.d/auto_restart.conf` も生成。
 
 `set_owner = "kube"` フィールドは `sonic-feature.yang` で定義されているが、**`featured` スクリプト内に kube 制御コードは存在しない**。Kubernetes 管理切替は別のコンポーネント（`hostcfgd` KubeHandler 等）が担う。`featured` の副次書込対象は STATE_DB と CONFIG_DB (resync) およびファイルシステムのみ。
 
-> **Evidence**: `sonic-host-services/scripts/featured:289-355,357-406,508-513,540-547,550-583,585-590`; 詳細分析 `meta/_intermediate/cdb-flow/feature-side-effects.md`
+> **Evidence**: `sonic-host-services/scripts/featured:289-355,357-406,508-513,540-547,550-583,585-590`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -570,10 +570,10 @@ feature_handler.handler(key="bgp", op=SET, data={state:enabled,...})
 - ポーリング間隔: `DEFAULT_SELECT_TIMEOUT = 1000 ms`。TIMEOUT 時に `delayed` フィーチャーの PORT_INIT タイムアウト判定を実施。
 - 起動時は `render_all_feature_states()` が `get_table()` で全エントリをスナップショット処理してから Subscribe ループを開始する。
 
-> **Evidence**: `sonic-host-services/scripts/featured:22-23,600-678`; `sonic-swss-common/common/subscriberstatetable.cpp:17-165`; `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:388-411`; 詳細分析 `meta/_intermediate/cdb-flow/feature-pubsub.md`
+> **Evidence**: `sonic-host-services/scripts/featured:22-23,600-678`; `sonic-swss-common/common/subscriberstatetable.cpp:17-165`; `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:388-411`
 <!-- /pubsub -->
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 ### 概要
 
@@ -643,7 +643,7 @@ else:
 
 `lldp` の `has_global_scope` / `has_per_asic_scope` のみランタイム Jinja2 テンプレートで chassis モジュールタイプに応じて動的決定される（`init_cfg.json.j2:109-110`）。
 
-> **Evidence**: `sonic-host-services/scripts/featured:142,148,151-162,312-355,373-380,408-415,570-591`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:67-130`; 詳細分析 `meta/_intermediate/cdb-flow/feature-platform.md`
+> **Evidence**: `sonic-host-services/scripts/featured:142,148,151-162,312-355,373-380,408-415,570-591`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:67-130`
 <!-- /platform -->
 
 <!-- glossary-links-injected: febd8643d454 -->
