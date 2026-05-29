@@ -1739,11 +1739,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [lldpmgrd](#term-lldpmgrd)
 
-- [LLDP_PORT テーブル](config-db/lldp-port.md) (81)
-- [LLDP / LLDP_PORT テーブル](config-db/lldp.md) (78)
-- [[APPL_DB] LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル](config-db/lldp-state.md) (39)
-- [[STATE_DB] DEVICE_NEIGHBOR 動作状態（device op state）](config-db/deviceop-state.md) (20)
-- [DEVICE_NEIGHBOR テーブル](config-db/device-neighbor.md) (19)
+- [LLDP_PORT テーブル](config-db/lldp-port.md) (84)
+- [LLDP / LLDP_PORT テーブル](config-db/lldp.md) (81)
+- [[APPL_DB] LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル](config-db/lldp-state.md) (42)
+- [[STATE_DB] DEVICE_NEIGHBOR 動作状態（device op state）](config-db/deviceop-state.md) (23)
+- [DEVICE_NEIGHBOR テーブル](config-db/device-neighbor.md) (22)
 
 ### [MPLS](#term-mpls)
 

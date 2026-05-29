@@ -150,7 +150,7 @@ module: sonic-lldp
 
 ### 典型的なデプロイ位置
 
-- LLDP デーモン設定。`LLDP` / `LLDP_PORT|<port>` を lldpmgrd が `lldpcli configure` に反映。
+- LLDP デーモン設定。`LLDP` / `LLDP_PORT|<port>` を [lldpmgrd](../../reference/glossary.md#term-lldpmgrd) が `lldpcli configure` に反映。
 
 ### よくある落とし穴
 
@@ -168,4 +168,4 @@ show lldp table
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-lldp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 0da81fc24635 -->

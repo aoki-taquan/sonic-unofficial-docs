@@ -98,7 +98,7 @@ grouping `lldp_mode_config` を `uses`:
 
 ### 構造的前提
 
-`lldpmgrd` は `LLDP` / `LLDP_PORT` テーブルを**直接購読しない**。購読対象は `APPL_DB PORT`（ポート oper_status）、`CONFIG_DB MGMT_INTERFACE`、`CONFIG_DB DEVICE_METADATA` のみ。したがって `LLDP|GLOBAL` や `LLDP_PORT|<ifname>` への書き込みは lldpmgrd に到達せず、エラーログも生成されない（構造的 no-op）。
+`lldpmgrd` は `LLDP` / `LLDP_PORT` テーブルを**直接購読しない**。購読対象は `APPL_DB PORT`（ポート oper_status）、`CONFIG_DB MGMT_INTERFACE`、`CONFIG_DB DEVICE_METADATA` のみ。したがって `LLDP|GLOBAL` や `LLDP_PORT|<ifname>` への書き込みは [lldpmgrd](../../reference/glossary.md#term-lldpmgrd) に到達せず、エラーログも生成されない（構造的 no-op）。
 
 ### SET 処理における失敗経路
 
@@ -113,7 +113,7 @@ grouping `lldp_mode_config` を `uses`:
 | `lldpcli resume` 失敗 | `run()` | **ERROR ログ → `sys.exit(1)`**。supervisord がプロセス再起動。lldpd は `pause` 状態のまま PDU 送出停止 | なし | `lldpmgrd:340-341` |
 | `PORT_INIT_TIMEOUT`（300 秒）超過 かつフロントエンドポートあり | `check_timeout()` | **ERROR ログ → 強制 `lldpcli resume`**。未設定ポートが誤 portid を広告する可能性あり | なし | `lldpmgrd:363-368` |
 | `PORT_INIT_TIMEOUT` 超過 かつフロントエンドポート不在 | `check_timeout()` | ログなし（silent timeout）→ 強制 resume | なし | `lldpmgrd:365` |
-| `LLDP\|GLOBAL` / `LLDP_PORT\|<ifname>` への書き込み | — | **lldpmgrd はイベントを受信しない（構造的 no-op）**。[CONFIG_DB](../../reference/glossary.md#term-config_db) には書けるが lldpd に一切反映されない | なし | `lldpmgrd:300-325` |
+| `LLDP\|GLOBAL` / `LLDP_PORT\|<ifname>` への書き込み | — | **[lldpmgrd](../../reference/glossary.md#term-lldpmgrd) はイベントを受信しない（構造的 no-op）**。[CONFIG_DB](../../reference/glossary.md#term-config_db) には書けるが lldpd に一切反映されない | なし | `lldpmgrd:300-325` |
 
 ### retry / recovery まとめ
 
@@ -123,7 +123,7 @@ grouping `lldp_mode_config` を `uses`:
 | mgmt IP lldpcli 失敗 | なし | — | — | 次回 MGMT_INTERFACE 変化 |
 | portidsubtype lldpcli 失敗 | あり | 5 回 | 6 秒 | 5 回超過で silent drop |
 | ポート down 待機 | 自動 | なし | 10 秒ループ | ポート up 検知 |
-| `lldpcli resume` 失敗 | supervisord 再起動後に再試行 | — | — | lldpmgrd 再起動 |
+| `lldpcli resume` 失敗 | supervisord 再起動後に再試行 | — | — | [lldpmgrd](../../reference/glossary.md#term-lldpmgrd) 再起動 |
 | LLDP/LLDP_PORT 書き込み | 構造的 no-op | — | — | なし（設計上未購読） |
 
 <!-- /failure -->
@@ -568,4 +568,4 @@ hostname = device_dict.get("chassis_hostname") or device_dict.get("hostname")
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 081fe6ef0b39 -->
+<!-- glossary-links-injected: 236c2b782612 -->
