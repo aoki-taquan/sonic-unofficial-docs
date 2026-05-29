@@ -176,7 +176,7 @@ DEVICE_METADATA|localhost
 - 関連 YANG: `sonic-device_metadata`
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 DPU orchagent が参照する `DEVICE_METADATA|localhost` フィールドのデフォルト値まとめ。
 
@@ -196,7 +196,7 @@ DPU orchagent が参照する `DEVICE_METADATA|localhost` フィールドのデ�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `orchagent` (`DpuOrchDaemon`) が `DEVICE_METADATA|localhost` を読み取るタイミングと、DPU 関連コンポーネントの初期化順序に関する依存関係を示す。
 
@@ -234,9 +234,9 @@ addOrchList(各 Orch)  ← イベントループへの登録
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `DpuOrchDaemon` が読み出す関連 DB テーブル (Phase C)
+## 暗黙参照 — `DpuOrchDaemon` が読み出す関連 DB テーブル
 
-`DpuOrchDaemon` は CONFIG_DB `DEVICE_METADATA|localhost` の 2 フィールド（Phase A/B 記述済み）以外にも、配下の DASH Orch 群を通じて以下の DB テーブルを暗黙的に参照する。
+`DpuOrchDaemon` は CONFIG_DB `DEVICE_METADATA|localhost` の 2 フィールド（「コード由来デフォルト」/「書込み順依存」参照）以外にも、配下の DASH Orch 群を通じて以下の DB テーブルを暗黙的に参照する。
 
 ### DPU_APPL_DB 購読テーブル (DpuOrchDaemon::init() 実行時)
 
@@ -298,7 +298,7 @@ reasoning: DashHaOrch が gBfdOrch を受け取ることで、BFD セッショ�
 
 <!-- evidence-rendered:end -->
 
-`gBfdOrch` は `OrchDaemon::init()`（基底クラス初期化）内で生成されるため (`orchdaemon.cpp:243`)、`DpuOrchDaemon::init()` が先頭で `OrchDaemon::init()` を呼ぶ依存順序（Phase B 依存 #3）と連動している。
+`gBfdOrch` は `OrchDaemon::init()`（基底クラス初期化）内で生成されるため (`orchdaemon.cpp:243`)、`DpuOrchDaemon::init()` が先頭で `OrchDaemon::init()` を呼ぶ依存順序（「書込み順依存」#3）と連動している。
 
 ### CONFIG_DB を直接読まない DASH Orch 群
 
@@ -309,11 +309,10 @@ reasoning: DashHaOrch が gBfdOrch を受け取ることで、BFD セッショ�
 - `DEVICE_METADATA|localhost.synchronous_mode`: orchagent プロセスの同期モードを制御するが、`switch_type = "dpu"` のとき `orchagent.sh` が `-z zmq_sync` を無条件付与するため、このフィールドの値は DPU モードでは無視される。
 - `DPU` / `REMOTE_DPU` / `VDPU` / `ENI` テーブル: SmartSwitch 制御プレーン（`sonic-platform-daemons` 系）が読み取る。`DpuOrchDaemon` は直接参照しない。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dpu-orch-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `DpuOrchDaemon` の起動・動作時に発生しうる失敗を 5 系統に分類する。
 
@@ -374,11 +373,11 @@ if (!orchDaemon->init()) {
 
 SmartSwitch DPU として動作させるためには `switch_type = "dpu"` が正確に設定されていなければならず、typo や欠落は orchagent 起動後にサイレントに NPU モードで動作するため注意が必要。
 
-> **証跡**: `getCfgSwitchType()` `main.cpp:242-265`、`get_feature_status()` `orch_zmq_config.cpp:81-103`、`DpuOrchDaemon::init()` `orchdaemon.cpp:1322-1419`、`doTaskApplianceTable()` `dashorch.cpp:386-438`。詳細グレップ証跡は `meta/_intermediate/cdb-flow/dpu-orch-failure.md` を参照。
+> **証跡**: `getCfgSwitchType()` `main.cpp:242-265`、`get_feature_status()` `orch_zmq_config.cpp:81-103`、`DpuOrchDaemon::init()` `orchdaemon.cpp:1322-1419`、`doTaskApplianceTable()` `dashorch.cpp:386-438`。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `DpuOrchDaemon` および関連コンポーネントに存在する、CONFIG_DB / YANG で管理されない固定値の一覧。
 
@@ -416,11 +415,10 @@ SmartSwitch DPU として動作させるためには `switch_type = "dpu"` が�
 !!! note "上書き不可の定数"
     `-b 65536`・`-z zmq_sync`・`-k 65536` の 3 引数は `orchagent.sh` が `switch_type = "dpu"` のとき無条件に付与し、CONFIG_DB / YANG フィールドで変更する手段は存在しない。これらの値を変更するにはシェルスクリプトの修正と orchagent の再起動が必要。
 
-詳細なソーススキャン証跡は `meta/_intermediate/cdb-flow/dpu-orch-constants.md` を参照。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `DpuOrchDaemon` が起動する DASH Orch 群は、CONFIG_DB `DEVICE_METADATA` を直接の書込先とはしない。各 DASH Orch は `DPU_APPL_DB` から受信した DASH エントリを SAI API で処理した後、**`DPU_APPL_STATE_DB`** へ操作結果 (`result` フィールド) を書き込む。これが DpuOrchDaemon 系の主要な副次 DB 書込である。
 
@@ -464,11 +462,10 @@ SmartSwitch DPU として動作させるためには `switch_type = "dpu"` が�
 |-----------|--------|---------|-----------|-----------|
 | `DashHaFlowOrch` | `DPU_STATE_DB` | `DASH_FLOW_SYNC_SESSION_STATE_TABLE` | `state`, `creation_time_in_ms`, `last_state_start_time_in_ms` | フロー同期セッション状態遷移時 (`FlowApiHandler::updateState()`) |
 
-詳細スキャン証跡は `meta/_intermediate/cdb-flow/dpu-orch-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## ZMQ 購読方式 (Phase G)
+## ZMQ 購読方式
 
 `DpuOrchDaemon` が `DPU_APPL_DB` の DASH テーブル群を受信するための通信メカニズムを示す。ZMQ 有効時と無効時の 2 経路が存在し、`orch_northbond_dash_zmq_enabled` フィールドにより切り替わる。
 
@@ -542,11 +539,10 @@ orchdaemon select ループ (ZmqConsumerStateTable の fd を epoll)
 
 DASH Orch が SAI 完了後に `DPU_APPL_STATE_DB` の結果テーブルへ書き込む際は `swss::Table::set()` / `del()` を使用する（`dashorch.cpp:69-73`）。`ProducerStateTable` ではないため Redis `PUBLISH` は発行されない。結果読み取り側（`dashd` 等）は keyspace 通知を待たずオンデマンド `HGETALL` で参照する。
 
-詳細調査証跡は `meta/_intermediate/cdb-flow/dpu-orch-pubsub.md` を参照。
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
 `DpuOrchDaemon` の動作は `DEVICE_METADATA|localhost` の `switch_type = "dpu"` で固定されるが、[ASIC](../../reference/glossary.md#term-asic) プラットフォーム (`platform` 環境変数 = `asic_type`) および `subtype` フィールドによってさらに細かい分岐が存在する。
 
@@ -572,7 +568,7 @@ elif [ "$platform" == "pensando" ]; then
     ORCHAGENT_ARGS+="-m $MAC_ADDRESS"
 ```
 
-`switch_type = "dpu"` のときの `-b 65536 -z zmq_sync -k 65536` 付与（Phase A / Phase B 記述済み）とは独立して、この MAC 分岐も適用される。
+`switch_type = "dpu"` のときの `-b 65536 -z zmq_sync -k 65536` 付与（「コード由来デフォルト」/「書込み順依存」参照）とは独立して、この MAC 分岐も適用される。
 
 ### `subtype` 分岐: ZMQ アドレス (orchagent.sh)
 
@@ -611,7 +607,7 @@ if (gMySwitchSubType == "SmartSwitch")
 }
 ```
 
-NPU 側の `OrchDaemon::init()` 内で `subtype = "SmartSwitch"` のとき `DashEniFwdOrch` が追加される。`DpuOrchDaemon::init()` は冒頭で `OrchDaemon::init()` を呼ぶ（Phase B 依存 #3）ため、DPU 上でも NPU 上でも `subtype` による分岐が実行される。
+NPU 側の `OrchDaemon::init()` 内で `subtype = "SmartSwitch"` のとき `DashEniFwdOrch` が追加される。`DpuOrchDaemon::init()` は冒頭で `OrchDaemon::init()` を呼ぶ（「書込み順依存」#3）ため、DPU 上でも NPU 上でも `subtype` による分岐が実行される。
 
 ### `switch_type = "dpu"` 分岐: switch.json.j2 — SWITCH_TABLE 初期設定スキップ
 
@@ -666,7 +662,6 @@ if platform_info.get('switch_type') == 'dpu':
 | `switch_type` | `dpu` | IP-in-IP デカプ設定スキップ (`ipinip.json.j2`) | `ipinip.json.j2:1` |
 | `switch_type` | `dpu` | [ENI](../../reference/glossary.md#term-eni) / DASH_METER FLEX カウンタ有効化 | `enable_counters.py:43` |
 
-> **参照**: 詳細スキャン証跡は `meta/_intermediate/cdb-flow/dpu-orch-platform.md` を参照。
 <!-- /platform -->
 
 ## 引用元

@@ -257,7 +257,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 <!-- /ops-hint -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) schema が存在しないため、すべてのデフォルトはコード (`dashenifwdorch.h` / `dashenifwdorch.cpp`) のフィールド定数定義と `request_description_t` の必須指定から由来する。
 
@@ -305,7 +305,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B) — 詳細版
+## 書込み順依存 — 詳細版
 
 `DashEniFwdOrch` は CONFIG_DB の `DPU` / `REMOTE_DPU` / `VDPU` と APPL_DB の `DASH_ENI_FORWARD_TABLE` を組み合わせて ACL ルールを生成する。テーブル間の処理順序と Neighbor 解決状態が ACL 生成タイミングを支配する。
 
@@ -333,7 +333,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `DashEniFwdOrch` は CONFIG_DB の複数テーブルと他 [orchagent](../../reference/glossary.md#term-orchagent) を横断して参照する。以下はコード (`dashenifwdorch.h` / `dashenifwdorch.cpp` / `dashenifwdinfo.cpp`) から抽出した暗黙参照の一覧。
 
@@ -361,7 +361,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `DashEniFwdOrch` / `DpuRegistry` / `EniInfo` の各レイヤで発生する失敗を、影響範囲と回復手段とともに整理する。
 
@@ -419,7 +419,7 @@ APPL_DB の `ACL_RULE_TABLE` に未インストール状態のルールは存在
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `DashEniFwdOrch` / `DpuRegistry` / `EniAclRule` が CONFIG_DB フィールド名・ACL テーブル名・優先度・MAC フォーマットをコード内定数で管理する。YANG 定義が存在しないため、これらの定数がスキーマの正本となる。出典は `sonic-swss/orchagent/dash/dashenifwdorch.h` と `sonic-swss/orchagent/dash/dashenifwdinfo.cpp`。
 
@@ -498,9 +498,8 @@ ENI の MAC アドレス（例: `f4:93:9f:ef:c4:7e`）は `EniInfo::formatMac()`
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/dpu-eni-side-effects.md`
 
 `DashEniFwdOrch` は CONFIG_DB / APPL_DB の DPU / ENI テーブルを読み込み、処理結果を APPL_DB の ACL 関連テーブルへ書き出す。[STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への直接書込はない。
 
@@ -541,9 +540,8 @@ Neighbor が解決されると `NeighOrch` からの Observer 通知 (`DashEniFw
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/dpu-eni-pubsub.md`
 
 ### 書き込み側 — HaMgrd から APPL_DB への ProducerStateTable
 
@@ -615,9 +613,8 @@ ARP/NDP 解決
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> 調査証跡: `meta/_intermediate/cdb-flow/dpu-eni-platform.md`
 
 ### SmartSwitch サブタイプ限定
 

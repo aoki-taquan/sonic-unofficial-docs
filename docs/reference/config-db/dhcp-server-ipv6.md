@@ -50,7 +50,7 @@ flowchart LR
     CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
-## フィールドデフォルト (Phase A 調査)
+## フィールドデフォルト
 
 **調査結果: フィールドなし（テーブル未実装）**
 
@@ -70,7 +70,7 @@ flowchart LR
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B 調査)
+## 書込み順依存
 
 `DHCP_SERVER_IPV6` は未実装だが、[SONiC](../../reference/glossary.md#term-sonic) の DHCPv6 リレー機能（`DHCP_RELAY` テーブル / `dhcp6relay` プロセス）には以下の順序依存が確認されている。将来 `DHCP_SERVER_IPV6` が実装された場合も同等の [VLAN](../../reference/glossary.md#term-vlan) 前提条件が継承される見込み。
 
@@ -124,7 +124,7 @@ After=config-setup.service swss.service syncd.service teamd.service
 <!-- /ordering -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Direction B — dhcp6relay が書く先)
+## 副次 DB 書込
 
 > ソース: `sonic-net/sonic-dhcp-relay dhcp6relay/src/relay.cpp`
 
@@ -174,7 +174,7 @@ VLAN インターフェースの LLA が確認できたタイミングで呼び�
 <!-- /side-effects -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D 調査)
+## 失敗挙動
 
 `DHCP_SERVER_IPV6` テーブルは未実装のため直接の失敗パスは存在しないが、DHCPv6 リレー機能（`DHCP_RELAY` テーブル / `dhcp6relay` プロセス）に以下の失敗挙動が確認されている。将来 `DHCP_SERVER_IPV6` が実装された場合も同等の前提条件・失敗パスが継承される見込み。
 
@@ -259,7 +259,7 @@ CONFIG_DB の `dhcpv6_servers` を変更しても dhcp6relay は無視する。*
 <!-- /failure -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 > `DHCP_SERVER_IPV6` は未実装のため、DHCPv6 エコシステム（`DHCP_RELAY` / `dhcp6relay`）の暗黙参照を代理調査した結果を示す。
 
@@ -274,12 +274,11 @@ CONFIG_DB の `dhcpv6_servers` を変更しても dhcp6relay は無視する。*
 
 **VLAN_MEMBER**: `relay.cpp:856` で `"VLAN_MEMBER|" + vlan + "|*"` を取得し、member interface → VLAN の逆引きマップを構築する。これがないとクライアントパケットの VLAN 判定が不可能。
 
-詳細: `meta/_intermediate/cdb-flow/dhcp-server-ipv6-cross-refs.md`
 
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E — コード由来)
+## ハードコード定数 (コード由来)
 
 `DHCP_SERVER_IPV6` テーブル自体は未実装だが、DHCPv6 プロトコル処理に直接関係する定数は **dhcp6relay**（`sonic-dhcp-relay` リポジトリ）の `relay.h` にハードコードされている。将来の `DHCP_SERVER_IPV6` 実装でも同一ポート・hop 上限が継承される見込みのため記録する。
 
@@ -316,9 +315,9 @@ BPF フィルタは `"udp and port 547"` を使用する。`dhcp6relay` は L2 �
 <!-- /constants -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G 調査)
+## 通信メカニズム
 
-> **調査根拠**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` 全行精読 (2026-05-16)
+> **Evidence**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` 全行精読 (2026-05-16)
 
 ### DHCP_SERVER_IPV6 に関する結論
 
@@ -380,7 +379,7 @@ popen(cmd.c_str(), "r")  // netlink ソケット直接使用なし
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `DHCP_SERVER_IPV6` テーブル自体は未実装だが、DHCPv6 リレー (`dhcp6relay`) には以下のプラットフォーム差が確認された。
 
@@ -414,7 +413,6 @@ DHCPv4 側 (`dhcp4relay`) が [SmartSwitch](../../reference/glossary.md#term-sma
 
 VLAN インターフェースに IPv6 GUA が設定されていても kernel による LLA (`fe80::`) 生成は数ミリ秒〜数秒の遅延がある。`dhcp6relay` は起動直後に `lla_check_callback` を手動実行し (`relay.cpp:1310`)、その後 60 秒ごとにポーリングする。LLA が確認されると `is_lla_ready = true` としてソケット作成・イベント登録を行う。LLA が未生成の VLAN はソケット作成をスキップし、次回タイマーで再試行する。
 
-詳細根拠は `meta/_intermediate/cdb-flow/dhcp-server-ipv6-platform.md` を参照。
 <!-- /platform -->
 
 ## DHCPv6 サポートの現状

@@ -181,9 +181,9 @@ show dhcp_relay destination ipv6
 <!-- /runtime-trace -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト (コード由来)
 
-> **調査根拠**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` 全行精読 (2026-05-14)
+> **Evidence**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` 全行精読 (2026-05-14)
 
 ### `rfc6939_support` — ハードコードデフォルト `true` + YANG-実装 discrepancy
 
@@ -220,9 +220,9 @@ show dhcp_relay destination ipv6
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-dhcp-relay/dhcp6relay/src/relay.h`, `config_interface.cpp`, `relay.cpp`, `wait_for_intf.sh.j2` 全行精読 (2026-05-15)
+> **Evidence**: `sonic-dhcp-relay/dhcp6relay/src/relay.h`, `config_interface.cpp`, `relay.cpp`, `wait_for_intf.sh.j2` 全行精読 (2026-05-15)
 
 ### プロトコル定数 (relay.h)
 
@@ -265,7 +265,7 @@ show dhcp_relay destination ipv6
 <!-- /constants -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DHCP_RELAY`
 
@@ -296,7 +296,7 @@ show dhcp_relay destination ipv6
 <!-- pubsub -->
 ## 通信メカニズム (Redis PUBSUB / keyspace notification)
 
-> **調査根拠**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` 全行精読、`sonic-swss-common/common/subscriberstatetable.cpp` 参照 (2026-05-14)
+> **Evidence**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` 全行精読、`sonic-swss-common/common/subscriberstatetable.cpp` 参照 (2026-05-14)
 
 ### 購読方式
 
@@ -350,7 +350,7 @@ ipHelpersTable.pops(entries)
 
 ### dhcprelayd (Python) — DHCPv4 リレー制御の通信メカニズム
 
-> **調査根拠**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py`、`dhcp_utilities/common/dhcp_db_monitor.py` 全行精読 (2026-05-16)
+> **Evidence**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py`、`dhcp_utilities/common/dhcp_db_monitor.py` 全行精読 (2026-05-16)
 
 `dhcprelayd` は DHCPv4 向け Python デーモンで、CONFIG_DB の複数テーブルを `swss::SubscriberStateTable` 経由で購読し、`isc-dhcp-relay` (`dhcrelay`) プロセスを supervisord / subprocess 経由で制御する。`dhcp6relay` (C++) とは独立した別実装。
 
@@ -440,7 +440,7 @@ refresh_dhcrelay(force_kill)
 <!-- /pubsub -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### 概要
 
@@ -534,7 +534,7 @@ main.cpp:38          loop_relay(vlans)  ← 取り込んだ vlans でリレー�
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ### 概要
 
@@ -642,7 +642,7 @@ VLAN 単位の server listen event 生成失敗は **プロセスを停止させ
 
 ### dhcprelayd (IPv4 リレー管理デーモン) の失敗挙動
 
-> **調査根拠**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py` 全行精読 (2026-05-16)
+> **Evidence**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py` 全行精読 (2026-05-16)
 
 `dhcprelayd` は `DHCP_SERVER_IPV4` 機能が有効な場合に `isc-dhcp-relay` (`dhcrelay`) プロセスの起動・停止を管理する Python デーモン。`dhcp6relay` とは独立した失敗経路を持つ。
 
@@ -690,9 +690,9 @@ VLAN 単位の server listen event 生成失敗は **プロセスを停止させ
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込・プロセス制御 (Phase F)
+## 副次 DB 書込・プロセス制御
 
-> **調査根拠**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py` 全行精読、`sonic-dhcp-relay/dhcp6relay/src/relay.cpp:264-304, 1342-1401` (2026-05-16)
+> **Evidence**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py` 全行精読、`sonic-dhcp-relay/dhcp6relay/src/relay.cpp:264-304, 1342-1401` (2026-05-16)
 
 ### 概要
 
@@ -794,9 +794,9 @@ res = subprocess.run(cmds, check=True)
 <!-- /side-effects -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
-> **調査根拠**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp`, `relay.cpp`, `main.cpp`, `dhcpv6-relay.agents.j2`, `minigraph.py` 全行精読 (2026-05-14)
+> **Evidence**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp`, `relay.cpp`, `main.cpp`, `dhcpv6-relay.agents.j2`, `minigraph.py` 全行精読 (2026-05-14)
 
 `DHCP_RELAY` テーブルは YANG leafref を持たないが、実行時に以下のテーブルを暗黙参照する。
 
@@ -834,9 +834,9 @@ DualToR 環境でのみ、クライアントパケット受信時に `STATE_DB::
 <!-- /cross-refs -->
 
 <!-- platform -->
-## プラットフォーム差 (Task F Phase H)
+## プラットフォーム差
 
-> **調査根拠**: `dhcprelayd.py`, `utils.py`, `dhcp_db_monitor.py`, `dhcpv4-relay.agents.j2`, `dhcpv6-relay.agents.j2`, `docker-dhcp-relay.supervisord.conf.j2` 全行精読 (2026-05-16)
+> **Evidence**: `dhcprelayd.py`, `utils.py`, `dhcp_db_monitor.py`, `dhcpv4-relay.agents.j2`, `dhcpv6-relay.agents.j2`, `docker-dhcp-relay.supervisord.conf.j2` 全行精読 (2026-05-16)
 
 ### 1. SmartSwitch DPU — mid-plane bridge 対応
 

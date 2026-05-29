@@ -104,9 +104,7 @@ BREAKOUT_CFG|<port-name>
 - `.json` 形式の port config（`platform.json` + `hwsku.json`）が必要。`port_config.ini` 形式の場合、[DPB](../../reference/glossary.md#term-dpb) は無効（`portconfig.py:464`: `return None`）
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
-
-<!-- evidence: meta/_intermediate/cdb-flow/dpb-defaults.md -->
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) (`sonic-breakout_cfg.yang`) は `brkout_mode` に `default` 文を持たない。
 
@@ -141,9 +139,7 @@ YANG レイヤーは補完しない。[CONFIG_DB](../../reference/glossary.md#te
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/dpb-ordering.md -->
+## 書込み順依存
 
 `BREAKOUT_CFG` テーブルは `config interface breakout` CLI → `ConfigMgmtDPB.breakOutPort()` の多段シーケンスによって書き込まれる。各ステップに厳密な先行条件が存在する。
 
@@ -178,9 +174,7 @@ YANG レイヤーは補完しない。[CONFIG_DB](../../reference/glossary.md#te
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/dpb-cross-refs.md -->
+## 暗黙参照テーブル
 
 `BREAKOUT_CFG` テーブルは単独で機能せず、`config interface breakout` CLI および `show interfaces breakout` コマンドがプラットフォームファイルと複数の CONFIG_DB テーブルを暗黙的に参照する。
 
@@ -202,9 +196,7 @@ YANG レイヤーは補完しない。[CONFIG_DB](../../reference/glossary.md#te
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗時の挙動 (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/dpb-failure.md -->
+## 失敗時の挙動
 
 `config interface breakout` が途中で失敗した場合、CONFIG_DB / `BREAKOUT_CFG` への影響はシーケンスのどの段階で失敗したかによって大きく異なる。
 
@@ -238,9 +230,7 @@ YANG レイヤーは補完しない。[CONFIG_DB](../../reference/glossary.md#te
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/dpb-constants.md -->
+## ハードコード定数
 
 `BREAKOUT_CFG` テーブルおよびその書込みシーケンスに存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `config/config_mgmt.py` および `src/sonic-config-engine/portconfig.py`。
 
@@ -273,9 +263,7 @@ YANG レイヤーは補完しない。[CONFIG_DB](../../reference/glossary.md#te
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/dpb-side-effects.md -->
+## 副次 DB 書込
 
 `config interface breakout` コマンドが `BREAKOUT_CFG` を更新する際、CONFIG_DB の複数テーブルおよび [APPL_DB](../../reference/glossary.md#term-appl_db) / ASIC_DB に以下の副次書込みが発生する。
 
@@ -325,9 +313,7 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_PORT:*'
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
-
-<!-- evidence: meta/_intermediate/cdb-flow/dpb-pubsub.md -->
+## Redis 通知メカニズム
 
 `BREAKOUT_CFG` テーブル自体を [Redis](../../reference/glossary.md#term-redis) keyspace notification で購読するデーモンは **存在しない**。DPB フローにおける通知の核心は `PORT` テーブルへの書込みであり、`portmgrd` がそれを受け取って `APPL_DB` へ伝播する。
 
@@ -364,9 +350,7 @@ DPB シーケンスで `PORT` テーブルが変更されると、`portmgrd` が
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/dpb-platform.md -->
+## プラットフォーム差
 
 `BREAKOUT_CFG` / DPB フローにはプラットフォーム依存の制約が 3 件存在する。
 
