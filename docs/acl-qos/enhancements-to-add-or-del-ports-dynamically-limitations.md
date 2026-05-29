@@ -91,7 +91,7 @@ $ grep -rn "addBufferRefCount\|m_portBufferRef\|port_ref_count" \
   - `SAI_STATUS_OBJECT_IN_USE`（VLAN_MEMBER / ACL_TABLE / [BUFFER_PG](../reference/glossary.md#term-buffer-pg) が参照中）
   - `SAI_STATUS_INVALID_OBJECT_ID`（既に部分削除された下流 SAI オブジェクト）
   - 最悪は orchagent 自体が `abort()` し [syncd](../reference/glossary.md#term-syncd) / swss コンテナが crash loop に入る。`fast-reboot` / `warm-reboot` が必要になる。
-- chassis line card 投入で「init 時に空 → 後から PORT を投入」フローを使うと、buffermgrd / lldpmgrd の起動順次第で `pending_cmds` が滞留し、lldp neighbor 表に古い情報が残る。
+- chassis line card 投入で「init 時に空 → 後から PORT を投入」フローを使うと、buffermgrd / [lldpmgrd](../reference/glossary.md#term-lldpmgrd) の起動順次第で `pending_cmds` が滞留し、lldp neighbor 表に古い情報が残る。
 - HLD で「ref counter で守られているから順序気にせず消してよい」と読んで自動化スクリプトを書くと、上記 race を踏む。
 
 ### 関連 GitHub Issue / PR
@@ -129,4 +129,4 @@ $ grep -rn "addBufferRefCount\|m_portBufferRef\|port_ref_count" \
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 0640f7ac8c6f -->
+<!-- glossary-links-injected: 0da81fc24635 -->

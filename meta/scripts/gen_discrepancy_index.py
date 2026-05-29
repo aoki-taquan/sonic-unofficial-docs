@@ -296,7 +296,7 @@ def render(entries: list[dict]) -> str:
         section_entries = by_monitor[tag]
         # subtype 見出し (HTML anchor を明示)
         anchor = f"monitor-{tag.replace('_', '-')}"
-        out.append(f"### `{tag}` — {label} ({len(section_entries)} 件) {{ #{anchor} }}")
+        out.append(f"### `{tag}` — {label} ({len(section_entries)} 件) {{#{anchor}}}")
         out.append("")
         out.append(f'!!! {admon} "{label}"')
         out.append("")
@@ -312,7 +312,7 @@ def render(entries: list[dict]) -> str:
     out.append("area 横断で機能を探したい読み手向けの索引。各エントリは monitor subtype の見出しからもリンクされています。")
     out.append("")
     for area in sorted(by_area.keys()):
-        out.append(f"### {area} {{ #area-{area} }}")
+        out.append(f"### {area} {{#area-{area}}}")
         out.append("")
         for e in sorted(by_area[area], key=lambda x: x["title"]):
             out.extend(_render_entry_lines(e))

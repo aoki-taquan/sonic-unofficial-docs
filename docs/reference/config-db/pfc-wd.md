@@ -42,7 +42,7 @@ flowchart LR
 <!-- /cdb-mermaid -->
 
 !!! note "SAI 経路の補足"
-    上図の `sai_acl_api` は `PfcWdAclHandler` 経路（barefoot / Broadcom DLR 無効構成）を示す。汎用ソフトウェアプラットフォーム（mellanox / marvell 等）は `sai_port_api` / `sai_queue_api` 経由で PFC deadlock 検出を設定する（[プラットフォーム差](#プラットフォーム差) 参照）。
+    上図の `sai_acl_api` は `PfcWdAclHandler` 経路（barefoot / Broadcom DLR 無効構成）を示す。汎用ソフトウェアプラットフォーム（mellanox / marvell 等）は `sai_port_api` / `sai_queue_api` 経由で PFC deadlock 検出を設定する（[プラットフォーム差](#platform-differences) 参照）。
 
 ## key 構造
 
@@ -640,7 +640,7 @@ Lua スクリプト (`pfc_detect_<platform>.lua`) が FLEX_COUNTER 経由でカ�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差
+## プラットフォーム差 {#platform-differences}
 
 PFC_WD の platform 差は community [SONiC](../../reference/glossary.md#term-sonic) の中でも特に重大なカテゴリ。[ASIC](../../reference/glossary.md#term-asic) ベンダーが識別できない場合は **PFC-WD 機能自体が無効化** され、ベンダーが識別できても Handler クラス・SAI カウンタ種別・Lua 検出スクリプトがすべて異なる。
 

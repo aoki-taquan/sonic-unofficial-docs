@@ -23,6 +23,8 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-29 #5084 fix(links): resolve 21 broken intra-doc anchors across 6 pages
+- 2026-05-29 #5083 fix(config-db): neutralize residual inline Phase cross-references (8 files)
 - 2026-05-29 #5082 ci: promote image-alt + mermaid-syntax checks to strict
 - 2026-05-29 #5081 ci: run CI on push to main (gate post-merge drift)
 - 2026-05-29 #5080 fix: benchmark-driven quality sweep (QA-metadata leak removal + factual fixes)
@@ -519,8 +521,6 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3888 docs(config-db): add Phase E hardcoded-constants block to STP page
 - 2026-05-19 #3885 docs(config-db): add Phase D failure-behavior block to zmq page
 - 2026-05-19 #3886 docs(config-db): add Phase F side-effects block to gnmi-state page
-- 2026-05-19 #3879 docs(config-db): add Phase E hardcoded-constants block to WARM_RESTART page
 - 2026-05-19 #3882 docs(config-db): add Phase E hardcoded-constants block to LOGGER page
 - 2026-05-19 #3880 docs(config-db): add Phase G pubsub block to FIPS page
-- 2026-05-19 #3878 docs(config-db): add Phase F side-effects block to vrrp-track page
 

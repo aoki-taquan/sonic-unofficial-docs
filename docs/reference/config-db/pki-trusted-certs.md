@@ -414,7 +414,7 @@ Rotate RPC が証明書を差し替えると、以下のシンボリックリン
 
 ### gNSI Certz — CONFIG_DB を購読しない
 
-gNSI Certz (`gnsi_certz.go`) はプロファイル管理に CONFIG_DB を使用しない。証明書バンドル情報は `/keys/grpc-version.json` (CertzMetaFile) とファイルシステムシンボリックリンクで管理される。STATE_DB (`CREDENTIALS|CERT|<profileID>`) への書込みは発生するが（Phase F 参照）、これは購読通知ではなく直接 HSET による**書込み**である。
+gNSI Certz (`gnsi_certz.go`) はプロファイル管理に CONFIG_DB を使用しない。証明書バンドル情報は `/keys/grpc-version.json` (CertzMetaFile) とファイルシステムシンボリックリンクで管理される。STATE_DB (`CREDENTIALS|CERT|<profileID>`) への書込みは発生するが（副次 DB 書込の節を参照）、これは購読通知ではなく直接 HSET による**書込み**である。
 
 ### 将来の実装が想定される購読経路
 
