@@ -90,10 +90,9 @@ SAG 機能は `VLAN_INTERFACE` テーブルに `static_anycast_gateway` フィ�
 <!-- /cdb-exceptions -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
-> **調査根拠**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) の Architecture / DB section 精読 + `sonic-swss-common/common/schema.h:127,393` 定数確認 (2026-05-16)
-> 詳細証跡: `meta/_intermediate/cdb-flow/sag-ordering.md`
+> **Evidence**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) の Architecture / DB section 精読 + `sonic-swss-common/common/schema.h:127,393` 定数確認 (2026-05-16)
 
 ### 検出された順序依存
 
@@ -112,15 +111,13 @@ SAG 機能は `VLAN_INTERFACE` テーブルに `static_anycast_gateway` フィ�
 
 **IPv6 link-local route の 2 段更新 (依存 #4)**: [HLD](../../reference/glossary.md#term-hld) に記載のとおり、MAC 変更時は旧 MAC 由来の IPv6 link-local to-me route をまず削除し、新 MAC 由来の route を追加する。この操作は `intfsorch` が `RouteOrch` の API を通じて実行し、ユーザが意識する必要はない。ただし切替期間中は IPv6 通信が一時的に断となるリスクがある[^1]。
 
-詳細は `meta/_intermediate/cdb-flow/sag-ordering.md` を参照。
 
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-> **調査根拠**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) + `sonic-swss-common/common/schema.h` (sha=158de8d)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/sag-cross-refs.md`
+> **Evidence**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) + `sonic-swss-common/common/schema.h` (sha=158de8d)  
 
 `SAG|GLOBAL` エントリを処理する `intfmgrd` / `IntfsOrch` は、以下のテーブルを明示的な設定フィールドとしてではなく実行時のトリガー条件・参照先として暗黙的に参照する。
 
@@ -153,10 +150,9 @@ APPL_DB: SAG_TABLE|GLOBAL (SET)
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-> **調査根拠**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) アーキテクチャ記述 + `sonic-swss-common/common/schema.h:127,393` 定数確認 (2026-05-18)。[sonic-swss](../../reference/glossary.md#term-sonic-swss) master に SAG 専用実装ファイル (`sagmgr.cpp` / `sagorch.cpp`) は存在しないため、本節は HLD 記載設計 + [intfmgrd](../../reference/glossary.md#term-intfmgrd) / IntfsOrch の [SONiC](../../reference/glossary.md#term-sonic) 共通失敗挙動モデルに基づく推定。  
-> 詳細証跡: `meta/_intermediate/cdb-flow/sag-failure.md`
+> **Evidence**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) アーキテクチャ記述 + `sonic-swss-common/common/schema.h:127,393` 定数確認 (2026-05-18)。[sonic-swss](../../reference/glossary.md#term-sonic-swss) master に SAG 専用実装ファイル (`sagmgr.cpp` / `sagorch.cpp`) は存在しないため、本節は HLD 記載設計 + [intfmgrd](../../reference/glossary.md#term-intfmgrd) / IntfsOrch の [SONiC](../../reference/glossary.md#term-sonic) 共通失敗挙動モデルに基づく推定。  
 
 !!! warning "HLD-only 推定"
     現行 sonic-swss master への SAG 実装コードが確認できないため、以下はアーキテクチャ設計に基づく推定。SAI 失敗時の retry/恒久スキップ分岐などコードレベルの詳細は未確認。
@@ -200,10 +196,9 @@ APPL_DB: SAG_TABLE|GLOBAL (SET)
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-swss-common/common/schema.h:127,393` 定数確認 + `SONiC/doc/sag/sag-HLD.md` §DB / §YANG 精読 (2026-05-18)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/sag-constants.md`
+> **Evidence**: `sonic-swss-common/common/schema.h:127,393` 定数確認 + `SONiC/doc/sag/sag-HLD.md` §DB / §YANG 精読 (2026-05-18)  
 
 !!! warning "HLD-only 推定"
     sonic-swss master に SAG 専用実装ファイル (`sagmgr.cpp` / `sagorch.cpp`) が確認できないため、コードレベルの定数は `schema.h` の 2 定数のみ確認済み。以下の一部は HLD 記載設計に基づく。
@@ -238,10 +233,9 @@ APPL_DB: SAG_TABLE|GLOBAL (SET)
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次処理 (Phase F)
+## 副次処理
 
-> **調査根拠**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) §High-Level Design + §Testing System Test Cases 精読 (2026-05-18)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/sag-side-effects.md`
+> **Evidence**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) §High-Level Design + §Testing System Test Cases 精読 (2026-05-18)  
 
 !!! warning "HLD-only 推定"
     sonic-swss master に SAG 専用実装ファイル (`sagmgr.cpp` / `sagorch.cpp`) が確認できないため、以下は HLD 記載設計に基づく。`IntfsOrch` / `IntfMgr` 内で SAG ハンドラが統合される設計。
@@ -281,10 +275,9 @@ HLD §Testing: *"Verify that VLAN interface can be created with SAG MAC address 
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) §[sonic-swss](../../reference/glossary.md#term-sonic-swss) / §DB + `sonic-swss/cfgmgr/intfmgrd.cpp` / `intfmgr.cpp` / `orchagent/intfsorch.cpp` 実コード確認 (2026-05-18)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/sag-pubsub.md`
+> **Evidence**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) §[sonic-swss](../../reference/glossary.md#term-sonic-swss) / §DB + `sonic-swss/cfgmgr/intfmgrd.cpp` / `intfmgr.cpp` / `orchagent/intfsorch.cpp` 実コード確認 (2026-05-18)  
 
 !!! warning "HLD-only 推定 — 実装未マージ"
     sonic-swss master の `intfmgrd.cpp` に `CFG_SAG_TABLE_NAME` の登録がなく、`intfmgr.cpp` / `intfsorch.cpp` にも SAG/SAG_TABLE への参照は存在しない。以下は HLD §sonic-swss に記載された **設計上の** pubsub 経路であり、実際の動作は `verification: hld-only`。
@@ -385,9 +378,8 @@ sonic-db-cli CONFIG_DB hgetall 'VLAN_INTERFACE|Vlan201'
 <!-- /ops-hint -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
-> 証跡: `meta/_intermediate/cdb-flow/sag-platform.md`
 
 SAG のコードパスにはプラットフォーム固有の分岐は**存在しない**。
 
