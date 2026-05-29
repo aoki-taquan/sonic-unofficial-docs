@@ -186,7 +186,7 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 <!-- /value-behavior -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `COUNTERS_DB` NAT カウンタテーブル群は `NatOrch` が**書き手専用 (producer only)** として書き込む。カウンタエントリの生成・更新・削除は以下の CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / SAI リソースへの依存によって決まる。
 
@@ -207,7 +207,7 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 <!-- /cross-refs -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) 定義外の [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 実行時テーブルのためコード hardcode 値のみ。
 
@@ -239,7 +239,7 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `NatOrch` が [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の 5 つのカウンタテーブルを書き込む際の順序依存を示す。書き込みは「コンストラクタ初期化 → エントリ追加時のゼロ初期化 → タイマー周期ポーリング」という 3 段階で行われ、各段階の前提条件が成立しない場合にカウンタが更新されない状態が発生する。
 
@@ -267,7 +267,7 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `NatOrch` が COUNTERS_DB の NAT カウンタテーブルを書き込む際の失敗経路を示す。基本パターンは「SAI エントリ登録失敗 → カウンタエントリ不在」「SAI カウンタ取得失敗 → 0 上書き」の 2 種類。
 
@@ -302,7 +302,7 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `NatOrch` が COUNTERS_DB NAT カウンタテーブル群を書き込む際に使用する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。出典は `sonic-swss/orchagent/natorch.h` および `sonic-swss/orchagent/natorch.cpp`。
 
@@ -360,7 +360,7 @@ NatOrch が消費する APPL_DB テーブルの優先度（小さい値 = 高優
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・波及挙動 (Phase F)
+## 副作用・波及挙動
 
 `NatOrch` が 5 秒タイマーで `COUNTERS_DB` を更新する処理には、カウンタ書き込み以外の副次的な挙動が含まれる。以下はコードから確認できる主要な副作用。
 
@@ -389,10 +389,9 @@ NatOrch が消費する APPL_DB テーブルの優先度（小さい値 = 高優
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> 調査対象: `sonic-swss/orchagent/natorch.cpp`, `sonic-swss/cfgmgr/natmgr.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`
-> 詳細証跡: `meta/_intermediate/cdb-flow/nat-pubsub.md`
+<!-- evidence: sonic-swss/orchagent/natorch.cpp / sonic-swss/cfgmgr/natmgr.cpp / sonic-swss/orchagent/orchdaemon.cpp -->
 
 `COUNTERS_DB` NAT カウンタテーブル群は `NatOrch` のみが書き手となる特殊なランタイムステータスレジスタである。通常の CONFIG_DB → APPL_DB → [orchagent](../../reference/glossary.md#term-orchagent) パスとは異なり、**SAI タイマーポーリング**と**APPL_DB 非同期通知チャンネル**の 2 つの経路で COUNTERS_DB が更新される。
 
@@ -488,12 +487,12 @@ NAT データパスには `NotificationConsumer / NotificationProducer` によ�
 | `STATIC_NAT_ENTRIES` 等のエントリ数カウンタ | `addHwSnatEntry()` / `removeHwSnatEntry()` 成功時 | APPL_DB [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) イベント |
 | `SNAT_ENTRIES` / `DNAT_ENTRIES` | SAI エントリ追加/削除ごとに即時 | 同上 |
 
-> **Evidence**: `natorch.cpp:84-91` (NotificationConsumer 登録), `natorch.cpp:137` (NotificationProducer), `natorch.cpp:3095-3117` (SelectableTimer doTask), `orchdaemon.cpp:457-462` ([ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) 優先度), `natmgr.cpp:43-49` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 群), `natmgrd.cpp:109-121` (SubscriberStateTable 購読テーブル一覧), `natorch.cpp:4450-4490` (NotificationConsumer doTask); 詳細分析 `meta/_intermediate/cdb-flow/nat-pubsub.md`
+> **Evidence**: `natorch.cpp:84-91` (NotificationConsumer 登録), `natorch.cpp:137` (NotificationProducer), `natorch.cpp:3095-3117` (SelectableTimer doTask), `orchdaemon.cpp:457-462` ([ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) 優先度), `natmgr.cpp:43-49` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 群), `natmgrd.cpp:109-121` (SubscriberStateTable 購読テーブル一覧), `natorch.cpp:4450-4490` (NotificationConsumer doTask)
 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 `COUNTERS_DB` NAT カウンタテーブル群の書き込み有無・更新挙動はプラットフォームの NAT ハードウェアサポートと DNAT ネクストホップ追跡能力に強く依存する。
 
@@ -540,7 +539,7 @@ if (platform && strstr(platform, BRCM_PLATFORM_SUBSTRING))  // "broadcom"
 
 SNAT / NAPT / Twice NAT エントリおよび `COUNTERS_GLOBAL_NAT` の書き込みは `gNhTrackingSupported` に関わらず共通動作。
 
-> **Evidence**: `natorch.cpp:144-149` (gNhTrackingSupported 設定), `main.cpp:936-948` (gIsNatSupported 設定), `natorch.cpp:2541-2544` (gIsNatSupported ガード), `natorch.cpp:1923,1959` (gNhTrackingSupported 分岐); 詳細分析 `meta/_intermediate/cdb-flow/nat-app-platform.md`
+> **Evidence**: `natorch.cpp:144-149` (gNhTrackingSupported 設定), `main.cpp:936-948` (gIsNatSupported 設定), `natorch.cpp:2541-2544` (gIsNatSupported ガード), `natorch.cpp:1923,1959` (gNhTrackingSupported 分岐)
 
 <!-- /platform -->
 

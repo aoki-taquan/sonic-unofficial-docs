@@ -175,7 +175,7 @@ show mux config
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 MUX_CABLE テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -209,9 +209,9 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -220,7 +220,7 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 
 `get_mux_cable_entries()` は `mux_cable_ports`、`active_active_ports`、`neighbors`、`devices`、`redundancy_type` を元に各ポートの `cable_type`、`state`、`server_ipv4`、`server_ipv6` 等を決定する。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -237,7 +237,7 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `MuxOrch` の `MUX_CABLE` 処理分岐:
 
@@ -248,12 +248,12 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 | `MuxOrch` | `addOperation()` | エントリが存在しない (`!gPortsOrch->getPort()`) | linkmgrd が MUX_CABLE エントリを無視 (ポート未登録) | `sonic-swss/orchagent/muxorch.cpp:457-460` |
 | `MuxOrch` | `addOperation()` | `server_ipv4` が未設定 | スキップ (IPv4 アドレスは必須) | `sonic-swss/orchagent/muxorch.cpp` |
 
-> **スキャン証跡**: `muxorch.cpp` および `minigraph.py:2617-2622` を確認、4 件分岐抽出 — 誤読なし。
+> **裏取り**: `muxorch.cpp` および `minigraph.py:2617-2622` を確認、4 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence:
   sonic-swss/orchagent/muxorch.h:15-43
@@ -334,7 +334,7 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 <!-- /constants -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 <!-- evidence:
   sonic-swss/orchagent/muxorch.cpp:2206-2207,2240,2192,2260-2265
@@ -365,7 +365,7 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 <!-- /defaults -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 <!-- evidence: sonic-swss/orchagent/muxorch.cpp:468,493,1490,1619,1861,2290,2348,2359,2367,2374,2462 -->
 
@@ -389,7 +389,7 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 <!-- /cross-refs -->
 
 <!-- ordering -->
-## 順序依存 (Phase B)
+## 順序依存
 
 <!-- evidence: sonic-swss/orchagent/muxorch.cpp:2271-2275,2348-2353,2380,2445-2447,432-435,445-448,463-483,488-508,2256-2266 -->
 
@@ -425,7 +425,7 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 <!-- /ordering -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
 <!-- evidence: sonic-swss/orchagent/muxorch.cpp:625-628,1094-1100,2192-2193,2218-2228,2240-2246,2281,2327 -->
 
@@ -462,7 +462,7 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 <!-- /platform -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `MUX_CABLE` エントリの処理に伴い `orchagent` / `MuxOrch` / `MuxCableOrch` / `MuxStateOrch` が書き込む副次テーブル。
 
@@ -490,7 +490,7 @@ CONFIG_DB `MUX_CABLE` エントリの処理に伴い `orchagent` / `MuxOrch` / `
 <!-- /side-effects -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-swss/orchagent/muxorch.cpp -->
 
@@ -529,7 +529,7 @@ CONFIG_DB `MUX_CABLE` エントリの処理に伴い `orchagent` / `MuxOrch` / `
 <!-- /failure -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 MUX_CABLE テーブル周辺の Pub/Sub・通知経路を `muxorch.cpp` / `orchdaemon.cpp` から抽出した結果。
 

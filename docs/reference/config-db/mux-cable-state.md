@@ -161,7 +161,7 @@ show mux hwmode muxdirection Ethernet0
 <!-- /ops-hint -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 <!-- evidence:
   sonic-swss/orchagent/muxorch.cpp:50-51,68-74,441,447,2283-2285,2640,2676-2691
@@ -197,7 +197,7 @@ show mux hwmode muxdirection Ethernet0
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) への書き込みは、複数の先行条件が
 満たされなければ処理が進まない強制順序依存を持つ。本ページは CONFIG_DB エントリを持たない
@@ -245,11 +245,9 @@ orchagent が APP_DB から実際の [MUX](../../reference/glossary.md#term-mux)
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の内容は、複数の CONFIG_DB テーブル・[APPL_DB](../../reference/glossary.md#term-appl_db) テーブル・外部コンポーネントが連携して決定される。[YANG](../../reference/glossary.md#term-yang) 定義に leafref は存在しないが、実装レベルで以下の暗黙依存がある。
-
-> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-cross-refs.md`
 
 ### MUX_CABLE_TABLE (STATE_DB) への暗黙参照
 
@@ -282,11 +280,9 @@ orchagent が APP_DB から実際の [MUX](../../reference/glossary.md#term-mux)
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 `MUX_CABLE_TABLE` (STATE_DB) への書き込みは `MuxStateOrch::updateMuxState()` → `mux_state_table_.hset()` を経由する。`HW_MUX_CABLE_TABLE` は ycabled が直接 `swsscommon` Table API で書き込む。どちらも `swss::Table` の set 系 API は戻り値なし (void) で、[Redis](../../reference/glossary.md#term-redis) I/O エラーは例外として伝播する。
-
-> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-failure.md`
 
 ### 状態遷移失敗 → rollback → STATE_DB 反映
 
@@ -327,7 +323,7 @@ orchagent が APP_DB から実際の [MUX](../../reference/glossary.md#term-mux)
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence:
      sonic-swss/orchagent/muxorch.cpp:48-95
@@ -339,8 +335,6 @@ orchagent が APP_DB から実際の [MUX](../../reference/glossary.md#term-mux)
 -->
 
 `MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の書き込みロジックにはいくつかの文字列定数・数値定数がコードに直書きされており、CONFIG_DB・環境変数いずれからも変更できない。変更にはソースビルドが必要。
-
-> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-constants.md`
 
 ### STATE 文字列定数 (muxorch.cpp)
 
@@ -407,11 +401,9 @@ const std::string loopback3 = "Loopback3|";
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の状態遷移は STATE_DB 本体への書き込み以外に、[APPL_DB](../../reference/glossary.md#term-appl_db) の複数テーブル・STATE_DB 内のメトリクステーブル・[SAI](../../reference/glossary.md#term-sai) ([ASIC](../../reference/glossary.md#term-asic)) への副次操作を引き起こす。
-
-> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-side-effects.md`
 
 ### APPL_DB への副次書込み
 
@@ -454,7 +446,7 @@ SAI 操作が途中で失敗すると rollback が実行され、`MUX_CABLE_TABL
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Pub/Sub・イベント駆動フロー (Phase G)
+## Pub/Sub・イベント駆動フロー
 
 `MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) は [Redis](../../reference/glossary.md#term-redis) keyspace notification ではなく `swsscommon.SubscriberStateTable` / `swss::SubscriberStateTable` による **table-level pub/sub** で変更を配送する。本セクションでは各コンポーネントの購読登録・通知受信・処理フローを整理する。
 
@@ -523,11 +515,11 @@ ycabled は `HW_MUX_CABLE_TABLE` の **書き込み側** であり、このテ�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 `MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の動作は **`getenv("platform")` 参照なし**で設計されているが、(1) `neighbor_mode = "prefix-route"` の有効化は SAI capability クエリでゲートされ、(2) `cable_type` によって gRPC 経路とレガシー経路で ycabled の動作が大きく変わり、(3) [VS](../../reference/glossary.md#term-vs) (virtual switch) プラットフォームは専用フォールバックパスを持つ。
 
-> 調査証跡: muxorch.cpp — platform 環境変数なし。neighorch.cpp:78-104、y_cable_helper.py:42-44,178,222
+> **Evidence**: muxorch.cpp — platform 環境変数なし。neighorch.cpp:78-104、y_cable_helper.py:42-44,178,222
 
 ### MuxOrch / MuxStateOrch のプラットフォーム非依存性
 

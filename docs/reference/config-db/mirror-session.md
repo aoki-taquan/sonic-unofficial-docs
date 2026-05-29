@@ -128,7 +128,7 @@ show mirror_session
 <!-- /ops-hint -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 <!-- evidence: sonic-swss/orchagent/mirrororch.cpp MirrorEntry constructor (L57-77) / mirrororch.cpp activateSession / sonic-mirror-session.yang -->
 
@@ -224,7 +224,7 @@ YANG の `dscp` leaf に `default` 文はない。しかし C++ コンストラ�
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 MIRROR_SESSION テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -258,13 +258,13 @@ minigraph 経路は実質デッドコード (コメントアウト)
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 minigraph.py からの `MIRROR_SESSION` 自動派生はなし (minigraph.py の該当行はコメントアウト済: `minigraph.py:2721`)。init_cfg.json.j2 からの自動設定もなし。CLI (`config mirror_session`) による手動設定のみ。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -283,7 +283,7 @@ minigraph.py からの `MIRROR_SESSION` 自動派生はなし (minigraph.py の�
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `MirrorOrch::createEntry()` の分岐:
 
@@ -298,12 +298,12 @@ minigraph.py からの `MIRROR_SESSION` 自動派生はなし (minigraph.py の�
 | `MirrorOrch` | `createEntry()` | `type == MIRROR_SESSION_SPAN && !dst_port.empty()` | 即時 `activateSession()` (SPAN は dst_port があれば即アクティブ化) | `sonic-swss/orchagent/mirrororch.cpp:509-513` |
 | `MirrorOrch` | `createEntry()` | それ以外 (ERSPAN) | `m_routeOrch->attach()` で dst IP を RouteOrch に登録して非同期アクティブ化 | `sonic-swss/orchagent/mirrororch.cpp:517` |
 
-> **スキャン証跡**: `mirrororch.cpp:381-523` を全行読了、8 件分岐抽出。MIRROR_SESSION の minigraph.py 派生がコメントアウトされていることを実ソースで確認 — 誤読なし。
+> **裏取り**: `mirrororch.cpp:381-523` を全行読了、8 件分岐抽出。MIRROR_SESSION の minigraph.py 派生がコメントアウトされていることを実ソースで確認 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 > 調査対象: `sonic-swss/orchagent/mirrororch.cpp`
 > 調査日: 2026-05-16
@@ -368,7 +368,7 @@ ACL_RULE が `MIRROR_ACTION` または `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `MIRROR_SESSION` が CONFIG_DB に書かれたとき、`MirrorOrch` が暗黙的に参照・依存する他テーブルを示す。YANG に leafref として明示されない依存も含む。
 
@@ -398,7 +398,7 @@ ACL_RULE が `MIRROR_ACTION` または `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 <!-- evidence: sonic-swss/orchagent/mirrororch.cpp createEntry / deleteEntry / activateSession / setUnsetPortMirror -->
 
@@ -462,7 +462,7 @@ ACL_RULE が `MIRROR_ACTION` または `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_
 <!-- /failure -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 <!-- evidence: sonic-swss/orchagent/mirrororch.cpp MirrorEntry::MirrorEntry() L57-77 / activateSession() L921-1067 / setUnsetPortMirror() L811-826 / isHwResourcesAvailable() L357-379 -->
 
@@ -542,7 +542,7 @@ SPAN セッションには VoQ 分岐なし。recirc port 取得失敗時は `ac
 <!-- /platform -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/orchagent/mirrororch.cpp MirrorEntry constructor (L57-77) / mirrororch.h (L21-25) / mirrororch.cpp (L35-45) -->
 
@@ -581,7 +581,7 @@ SPAN セッションには VoQ 分岐なし。recirc port 取得失敗時は `ac
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込み (Phase F)
+## 副次 DB 書込み
 
 <!-- evidence: sonic-swss/orchagent/mirrororch.cpp setSessionState / removeSessionState / activateSession / deactivateSession / sai_mirror_api; sonic-swss-common/common/schema.h STATE_MIRROR_SESSION_TABLE_NAME -->
 
@@ -650,7 +650,7 @@ MirrorOrch は APP_DB / APPL_STATE_DB への書き込みを行わない。CONFIG
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 <!-- evidence: sonic-swss/orchagent/mirrororch.cpp MirrorOrch constructor (L79-110) / orchdaemon.cpp (L403-406) / mirrororch.cpp update() (L160-200) / mirrororch.cpp notify() (L1095-1111) -->
 

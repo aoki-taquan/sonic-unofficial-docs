@@ -78,7 +78,7 @@ MUX_CABLE|<ifname>
 - **[orchagent](../../reference/glossary.md#term-orchagent)** (`MuxOrch`): `CFG_MUX_CABLE_TABLE_NAME` を購読し [SAI](../../reference/glossary.md#term-sai) nexthop を操作。
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 <!-- evidence:
   sonic-platform-daemons/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py:295-320,660-718
@@ -109,7 +109,7 @@ MUX_CABLE|<ifname>
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 <!-- evidence: sonic-swss/orchagent/muxorch.cpp handleMuxCfg:2202 / handlePeerSwitch:2336 / addOperation:2394; sonic-linkmgrd/src/DbInterface.cpp:1843-1849 -->
 
@@ -167,9 +167,7 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照・共依存コンポーネント (Phase C)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-port-cross-refs.md`
+## 暗黙参照・共依存コンポーネント
 
 `MUX_CABLE|<ifname>` エントリは orchagent (`MuxOrch`)、`linkmgrd`、`ycabled` の 3 コンポーネントが参照する。YANG leafref により `ifname` は `PORT` テーブルとの整合性が保証され、`orchagent` は `PEER_SWITCH` と `TUNNEL` の存在を処理前提として要求する。
 
@@ -231,9 +229,7 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-port-failure.md`
+## 失敗挙動
 
 `MUX_CABLE|<ifname>` エントリは `MuxOrch::handleMuxCfg()` → `addOperation()` 経路で処理される。orchagent・ycabled・linkmgrd の 3 コンポーネントそれぞれに固有の失敗経路がある。
 
@@ -288,9 +284,7 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-port-constants.md`
+## ハードコード定数
 
 <!-- evidence: sonic-swss/orchagent/muxorch.cpp:48-51, sonic-swss/orchagent/tunneldecaporch.h:21, sonic-linkmgrd/src/DbInterface.cpp:48,827,880-881 -->
 
@@ -329,9 +323,7 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-port-side.md`
+## 副次 DB 書込
 
 <!-- evidence:
   sonic-swss/orchagent/muxorch.cpp:2199,2285,2503-2513,2544,2559,2570,2633-2640
@@ -404,9 +396,7 @@ CONFIG_DB MUX_CABLE|<ifname>  (SET)
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-port-pubsub.md`
+## Redis 通知メカニズム
 
 <!-- evidence:
   sonic-swss/orchagent/orchdaemon.cpp:23,467-471,477,959
@@ -478,9 +468,7 @@ CONFIG_DB `MUX_CABLE` の SET が orchagent で処理された後、APPL_DB を�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-port-platform.md`
+## プラットフォーム差分
 
 <!-- evidence:
   sonic-swss/orchagent/muxorch.cpp:625-628,2192-2193,2233-2246
@@ -538,7 +526,7 @@ CONFIG_DB `MUX_CABLE` の SET が orchagent で処理された後、APPL_DB を�
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 上位ページ: [`MUX_CABLE`](mux-cable.md) — テーブル全体の概要・値依存挙動・Phase 6/7/8 分析
+- 上位ページ: [`MUX_CABLE`](mux-cable.md) — テーブル全体の概要・値依存挙動
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PEER_SWITCH`、`TUNNEL` (DualToR の MuxTunnel0)
 - 関連 CLI: `config muxcable mode`、`show mux status`、`show mux config`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-mux-cable`

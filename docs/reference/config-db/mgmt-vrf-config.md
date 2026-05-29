@@ -102,7 +102,7 @@ show mgmt-vrf
 <!-- /ops-hint -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp VrfMgr::doTask / sonic-host-services/scripts/hostcfgd MgmtIfaceCfg::update_mgmt_vrf -->
 
@@ -197,7 +197,7 @@ enum なし (boolean)。`NTP.vrf=mgmt` は本フィールドが `true` の場合
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 MGMT_VRF_CONFIG テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -231,9 +231,9 @@ db_migrator.py での MGMT_VRF_CONFIG マイグレーションなし
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -241,7 +241,7 @@ db_migrator.py での MGMT_VRF_CONFIG マイグレーションなし
 
 `results['MGMT_VRF_CONFIG'] = mvrf` の `mvrf` は XML `MgmtVrf` ノードの有無で決まる。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 `MGMT_VRF_CONFIG` は [orchagent](../../reference/glossary.md#term-orchagent) では処理されない。`vrfmgrd` (`cfgmgr/vrfmgr.cpp`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読しカーネル VRF を設定する。条件付き platform 登録なし。
 
@@ -254,7 +254,7 @@ db_migrator.py での MGMT_VRF_CONFIG マイグレーションなし
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `vrfmgr.cpp` が `MGMT_VRF_CONFIG` を処理する:
 
@@ -264,12 +264,12 @@ db_migrator.py での MGMT_VRF_CONFIG マイグレーションなし
 | `VrfMgr` | `doTask()` | `mgmtVrfEnabled == "false"` または未設定 | VRF 削除処理 (`ip link del mgmt`) または スキップ | `sonic-swss/cfgmgr/vrfmgr.cpp` |
 | `VrfMgr` | `doTask()` | 値が `"false"` → DEL として強制変換 | `mgmtVrfEnabled=false` の SET は DEL 相当として処理 | `sonic-swss/cfgmgr/vrfmgr.cpp:257` |
 
-> **スキャン証跡**: minigraph.py:2308 および vrfmgr.cpp:257 を確認、3 件分岐抽出 — 誤読なし。
+> **裏取り**: minigraph.py:2308 および vrfmgr.cpp:257 を確認、3 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 <!-- evidence: sonic-swss/cfgmgr/vrfmgrd.cpp / sonic-swss/cfgmgr/vrfmgr.cpp / sonic-host-services/scripts/hostcfgd -->
 
@@ -348,7 +348,7 @@ self.mgmtifacecfg.load(mgmt_ifc, mgmt_vrf)
 <!-- /pubsub -->
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 <!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp / sonic-host-services/scripts/hostcfgd / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang / sonic-buildimage/src/sonic-config-engine/minigraph.py -->
 
@@ -384,7 +384,7 @@ YANG (`sonic-mgmt_vrf.yang`) に定義がないが `vrfmgr.cpp` と `vrforch.h` 
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp L12-16 -->
 
@@ -406,7 +406,7 @@ YANG (`sonic-mgmt_vrf.yang`) に定義がないが `vrfmgr.cpp` と `vrforch.h` 
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込・ファイルシステム副作用 (Phase F)
+## 副次 DB 書込・ファイルシステム副作用
 
 <!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp:289,303,338-339 / sonic-host-services/scripts/hostcfgd:1660-1662,1693 / sonic-buildimage/files/image_config/interfaces/interfaces.j2:9-15,88-90 / sonic-buildimage/files/image_config/interfaces/interfaces-config.sh:69 -->
 
@@ -464,7 +464,7 @@ orchestrator が `STATE_DB.VRF_OBJECT_TABLE|mgmt` を保持する間、`isVrfObj
 <!-- /side-effects -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `hostcfgd` が連動して読む関連テーブル (Phase C)
+## 暗黙参照 — `hostcfgd` が連動して読む関連テーブル
 
 `hostcfgd` の `MgmtIfaceCfg` クラスは `MGMT_VRF_CONFIG` と `MGMT_INTERFACE` を一体として購読し、mgmt VRF の有効化と eth0 アドレス設定を協調して管理する。また `DEVICE_METADATA` は mgmt VRF 有効化に伴うサービス再起動を通じて間接的に関与する。
 
@@ -488,7 +488,7 @@ vrfmgr も MgmtIfaceCfg も `DEVICE_METADATA` を直接 subscribe して MGMT_VR
 <!-- /cross-refs -->
 
 <!-- ordering -->
-## 書込み順序依存・タイミング依存 (Phase B)
+## 書込み順序依存・タイミング依存
 
 <!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp / sonic-host-services/scripts/hostcfgd MgmtIfaceCfg.update_mgmt_vrf() -->
 
@@ -526,7 +526,7 @@ DEL 処理は `STATE_VRF_OBJECT_TABLE` に [orchagent](../../reference/glossary.
 <!-- /ordering -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 <!-- evidence: sonic-buildimage/files/image_config/interfaces/interfaces.j2:8-20,143-158 / sonic-buildimage/dockers/docker-orchagent/supervisord.conf.j2:33-37,247-262 / sonic-swss/cfgmgr/vrfmgr.cpp:15 / sonic-host-services/scripts/hostcfgd:2249,2268 -->
 
