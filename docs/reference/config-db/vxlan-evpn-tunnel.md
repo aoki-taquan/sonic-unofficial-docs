@@ -76,7 +76,7 @@ flowchart LR
 - `EvpnNvoOrch`: EVPN [VTEP](../../reference/glossary.md#term-vtep) ポインタを管理し `getEVPNVtep()` で参照提供
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 | 属性 / 挙動 | デフォルト / 実挙動 | 分類 | 根拠 |
 |------------|-------------------|------|------|
@@ -106,7 +106,7 @@ EVPN DIP トンネルの `VxlanTunnel` コンストラクタ呼び出し (`vxlan
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 EVPN DIP トンネルは CONFIG_DB の直接エントリを持たないが、APP_DB 経由の動的生成フローにおいて
 複数の「先行条件が満たされなければ処理が進まない」強制順序依存が存在する。
@@ -151,7 +151,7 @@ CONFIG_DB 削除が SAI に反映されない（`vxlanorch.cpp:2803-2807`, `vxla
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
 EVPN DIP トンネルは CONFIG_DB に直接テーブルを持たないため [YANG](../../reference/glossary.md#term-yang) `leafref` 制約は存在しない。
 しかし DIP トンネルを生成・VLAN flood domain に参加させるまでの処理チェーンに複数の暗黙参照が存在する。
@@ -192,13 +192,11 @@ fpmsyncd (BGP EVPN type-2/3)
                     └─→ STATE_DB VXLAN_TUNNEL_TABLE (tnl_src="EVPN", operstatus="down"→"up")
 ```
 
-詳細解析: `meta/_intermediate/cdb-flow/vxlan-evpn-tunnel-cross-refs.md`
-
 <!-- evidence: vxlanorch.cpp:1685-1699 (addTunnelUser VTEP ガード); vxlanorch.cpp:2483-2494 (VLAN + VNI-VLAN マップ確認); vxlanorch.cpp:2516 (addTunnelUser 呼び出し); vxlanorch.cpp:1910,1928-1953 (STATE_DB 書き込み); sonic-vxlan.yang:75-76,89-90,123-124 (leafref) -->
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 EVPN DIP トンネルは CONFIG_DB エントリを持たず、`APP_DB EVPN_REMOTE_VNI_TABLE` への書き込みを
 `EvpnRemoteVnip2pOrch` が処理する形で動的に生成される。失敗経路は大別して
@@ -241,13 +239,11 @@ EVPN DIP トンネルは CONFIG_DB エントリを持たず、`APP_DB EVPN_REMOT
 | getTunnelPort / VLAN 未存在 での DEL スキップ | `true` | **リトライなし**（エントリが残存しないため実害は少ない） |
 | `isDipTunnelsSupported()` = false | `true` | リトライなし — 縮退動作として設計上許容 |
 
-詳細解析: `meta/_intermediate/cdb-flow/vxlan-evpn-tunnel-failure.md`
-
 <!-- evidence: vxlanorch.cpp:1133 (ref decrement error); vxlanorch.cpp:1213,1222,1235 (deleteDynamicDIPTunnel); vxlanorch.cpp:1689,1696,1701-1704 (addTunnelUser guards); vxlanorch.cpp:2483-2494 (VLAN+VNI checks); vxlanorch.cpp:2499 (L3 VNI ignore); vxlanorch.cpp:2513,2520 (tunnelPort checks); vxlanorch.cpp:2567,2575,2582,2593 (delOperation) -->
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `sonic-swss/orchagent/vxlanorch.h`、`sonic-swss/orchagent/vxlanorch.cpp`、`sonic-swss-common/common/schema.h`
 
@@ -295,13 +291,11 @@ DIP トンネルの生成・oper status 変更はすべて `STATE_VXLAN_TUNNEL_T
 | `operstatus` | `"up"` | up 遷移 | `vxlanorch.cpp:1901` |
 | VLAN メンバ `tagging_mode` | `"untagged"` | flood domain 追加時 (設計上の注記あり) | `vxlanorch.cpp:2525`, `2685` |
 
-詳細解析: `meta/_intermediate/cdb-flow/vxlan-evpn-tunnel-constants.md`
-
 <!-- evidence: vxlanorch.h:42-49 (prefix/bounds defines); vxlanorch.h:52-55 (tunnel_creation_src_t); vxlanorch.cpp:903,1160,1169 (enum 参照); vxlanorch.cpp:1901,1905,1934-1942 (STATE_DB ハードコード値); vxlanorch.cpp:2037,2461,2621 (VNI/VLAN 境界チェック); schema.h:88,435 (テーブル名定数) -->
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込・副作用 (Phase F)
+## 副次 DB 書込・副作用
 
 EVPN DIP トンネルは APP_DB `EVPN_REMOTE_VNI_TABLE` の処理を起点に **SAI・STATE_DB・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)** の 3 系統に副次書込を行う。CONFIG_DB への直接書込はない。
 
@@ -368,7 +362,7 @@ DIP トンネル用 SAI OID が生成されると [FlexCounter](../../reference/
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 EVPN DIP トンネルは CONFIG_DB エントリを持たず、カーネル [Netlink](../../reference/glossary.md#term-netlink) → `fdbsyncd` → APP_DB → `orchagent` という非同期パイプラインで動作する。
 
@@ -424,13 +418,11 @@ DIP トンネル生成・oper status 変化・削除のたびに orchagent が S
 | `EvpnRemoteVnip2pOrch` → SAI | 直接 API 呼び出し (同期) | `sai_tunnel_api`, `sai_vlan_api` |
 | orchagent → STATE_DB | `Table::set/del` | `VXLAN_TUNNEL_TABLE` |
 
-詳細解析: `meta/_intermediate/cdb-flow/vxlan-evpn-tunnel-pubsub.md`
-
 <!-- evidence: fdbsyncd/fdbsyncd.cpp:26-28,79,91 (netlink登録・selectループ); fdbsyncd/fdbsync.cpp:26,561-615,692,804-817 (imetAddRoute/delRoute・RTM判定); orchdaemon.cpp:23,579-586,959 (EvpnRemoteVniOrch生成・SELECT_TIMEOUT); vxlanorch.h:499-502 (EvpnRemoteVnip2pOrch Orch2基底); vxlanorch.cpp:1930-1953 (STATE_DB書き込み) -->
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 EVPN DIP トンネルの動作はプラットフォームの SAI ケーパビリティによって 2 つのモードに分岐する。
 分岐の起点は `VxlanTunnelOrch` 初期化時に 1 回だけ実行される `isDipTunnelsSupported()` の結果である。

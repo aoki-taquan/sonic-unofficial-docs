@@ -161,7 +161,7 @@ YANG 定義 8 値 (sonic-wred-profile.yang)、default `ecn_none`。
 <!-- /ecn-values -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 YANG `default` 宣言、C++ runtime fallback、Jinja テンプレート生成の 3 層を per-field で整理する。
 
@@ -193,9 +193,9 @@ YANG に `default` 宣言がなく、[orchagent](../../reference/glossary.md#ter
 <!-- /defaults -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -211,7 +211,7 @@ YANG に `default` 宣言がなく、[orchagent](../../reference/glossary.md#ter
 - 旧バージョンの CONFIG_DB では `wred_profile` の値が `|AZURE_LOSSLESS|` ABNF 形式で格納。
 - `db_migrator.py:574-585` のマイグレーションステップでプレーン文字列 `AZURE_LOSSLESS` に変換。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -233,7 +233,7 @@ YANG に `default` 宣言がなく、[orchagent](../../reference/glossary.md#ter
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 WRED_PROFILE は `WredMapHandler::convertFieldValuesToAttributes()` がフィールド値を解釈し SAI 属性リストに変換する。
 
@@ -246,12 +246,12 @@ WRED_PROFILE は `WredMapHandler::convertFieldValuesToAttributes()` がフィー
 | `WredMapHandler` | `addQosItem()` | `wred_enable_set & GREEN_WRED_ENABLED` かつ `drop_prob_set` に green なし | `SAI_WRED_ATTR_GREEN_DROP_PROBABILITY = 100` を自動補完 | `sonic-swss/orchagent/qosorch.cpp:836-840` |
 | `WredMapHandler` | `addQosItem()` | 同上 yellow / red 各色 | `SAI_WRED_ATTR_YELLOW/RED_DROP_PROBABILITY = 100` を自動補完 | `sonic-swss/orchagent/qosorch.cpp:842-850` |
 
-> **スキャン証跡**: `convertFieldValuesToAttributes()` L585-762 全行読了（34 フィールド if-elif 連鎖）、`addQosItem()` L784-860 読了。6 件分岐抽出。`ecn` 値の dispatch は `ecn_map.at()` ルックアップテーブル形式。Phase 6/7 derivation ブロック再確認: YANG default / qos_config.j2 AZURE_LOSSLESS 生成 / VoQ applyWredProfileToQueue — 実ソースと整合、誤読なし。
+> **裏取り**: `convertFieldValuesToAttributes()` L585-762 全行読了（34 フィールド if-elif 連鎖）、`addQosItem()` L784-860 読了。6 件分岐抽出。`ecn` 値の dispatch は `ecn_map.at()` ルックアップテーブル形式。derivation ブロック再確認: YANG default / qos_config.j2 AZURE_LOSSLESS 生成 / VoQ applyWredProfileToQueue — 実ソースと整合、誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### 購読 API
 
@@ -305,7 +305,7 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 WRED_PROFILE の処理において、プラットフォーム識別文字列（`broadcom` / `mellanox` / `cisco-8000` 等）による静的分岐は存在しない。SAI capability の動的照会（`querySwitchCapability` / `sai_query_attribute_capability`）も WRED 属性に対しては実施されない。確認されるプラットフォーム差は以下の通り。
 
@@ -358,7 +358,7 @@ runtime の orchagent 側にはプラットフォーム別の分岐なし。差�
 <!-- /platform -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `WredMapHandler` が CONFIG_DB エントリを処理する際の失敗パターンを網羅する。ソース: `sonic-swss/orchagent/qosorch.cpp`。
 
@@ -392,7 +392,7 @@ runtime 更新時は `set_wred_attribute()` が属性ループを途中で中断
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `WRED_PROFILE` の SET/DEL を受けた `QosOrch` (`WredMapHandler`) は、SAI 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) に書き込む。[STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への直接書込はない。
 
@@ -423,11 +423,11 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_WRED:*'
 sonic-db-cli ASIC_DB hget 'ASIC_STATE:SAI_OBJECT_TYPE_QUEUE:<queue_oid>' SAI_QUEUE_ATTR_WRED_PROFILE_ID
 ```
 
-> **証跡**: `create_wred()` L855、`set_wred_attribute()` L774、`remove_wred()` L868、`set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)` L1735-1738。`qosorch.cpp` 全 WRED 処理経路読了。[STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込なし確認済み。
+> **裏取り**: `create_wred()` L855、`set_wred_attribute()` L774、`remove_wred()` L868、`set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)` L1735-1738。`qosorch.cpp` 全 WRED 処理経路読了。[STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込なし確認済み。
 <!-- /side-effects -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### ECN enum — `ecn_map` (qosorch.cpp:37-44 / qosorch.h:56-63)
 
@@ -524,7 +524,7 @@ show wred
 <!-- /ops-hint -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 CONFIG_DB の `WRED_PROFILE` テーブルを書き込むコードパスを網羅する。
 
@@ -594,7 +594,7 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 <!-- /entry-points -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C: このテーブルを参照するテーブル)
+## 暗黙参照 (このテーブルを参照するテーブル)
 
 `WRED_PROFILE` テーブルは他テーブルから名前で参照される被参照テーブル。参照元と解決フローを以下に示す。
 
@@ -629,7 +629,7 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 <!-- /cross-refs -->
 
 <!-- runtime-trace -->
-## 起動経路 (Direction B: CFG → APPL → SAI)
+## 起動経路 (CFG → APPL → SAI)
 
 ### 段階 1: Consumer 登録
 
@@ -664,7 +664,7 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 <!-- /runtime-trace -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `QosOrch` / `WredMapHandler` (`sonic-swss/orchagent/qosorch.cpp`) の処理において、WRED_PROFILE の SAI 作成順・QUEUE からの参照順・SAI bind 順に明確な順序制約が存在する。
 

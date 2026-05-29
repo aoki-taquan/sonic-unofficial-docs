@@ -75,7 +75,7 @@ VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2
 - 関連 CLI: `show vxlan remotemac all`、`show vxlan remotemac <vtep-ip>`
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 | フィールド | 省略/条件 | 実挙動 | 分類 | 根拠 |
 |-----------|---------|--------|------|------|
@@ -112,9 +112,9 @@ else
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-`FdbOrch::doTask(Consumer&)` (`sonic-swss/orchagent/fdborch.cpp`) を全行精読した結果、以下の順序依存・タイミング依存を検出した。中間ノート: `meta/_intermediate/cdb-flow/vxlan-fdb-ordering.md`。
+`FdbOrch::doTask(Consumer&)` (`sonic-swss/orchagent/fdborch.cpp`) を全行精読した結果、以下の順序依存・タイミング依存を検出した。
 
 ### 他テーブル先行必須
 
@@ -153,9 +153,9 @@ SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-`orchagent/fdborch.cpp` の静的解析から抽出した、`VXLAN_FDB_TABLE` 処理が暗黙的に依存するテーブル・オブジェクト一覧。中間ノート: `meta/_intermediate/cdb-flow/vxlan-fdb-cross-refs.md`。
+`orchagent/fdborch.cpp` の静的解析から抽出した、`VXLAN_FDB_TABLE` 処理が暗黙的に依存するテーブル・オブジェクト一覧。
 
 | 参照先テーブル/オブジェクト | 参照種別 | 依存方向 | コード根拠 |
 |---------------------------|---------|---------|-----------|
@@ -177,9 +177,7 @@ SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/vxlan-fdb-failure.md`
+## 失敗挙動
 
 `VXLAN_FDB_TABLE` は APP_DB テーブルであり、書き込みは `fdbsyncd` が行い、消費は `orchagent/FdbOrch::doTask()` が行う。失敗経路は **[fdbsyncd](../../reference/glossary.md#term-fdbsyncd) 側**（netlink イベント処理・warm-restart）と **[orchagent](../../reference/glossary.md#term-orchagent) 側**（APP_DB エントリ処理・SAI 操作）の 2 層に分かれる。
 
@@ -225,9 +223,7 @@ SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/vxlan-fdb-constants.md -->
+## ハードコード定数
 
 ### テーブル名 (schema.h)
 
@@ -282,9 +278,7 @@ FDB_ORIGIN_MCLAG_ADVERTIZED = 8
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/vxlan-fdb-side-effects.md`
+## 副次 DB 書込
 
 `VXLAN_FDB_TABLE` エントリは `FDB_ORIGIN_VXLAN_ADVERTIZED` として orchagent に処理される。このオリジン値が副次 DB 書込みの有無を決定する。
 
@@ -347,9 +341,7 @@ VXLAN_FDB_TABLE エントリ削除によって当該トンネルポートの FDB
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通信メカニズム (Phase G)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/vxlan-fdb-pubsub.md`
+## Redis 通信メカニズム
 
 `VXLAN_FDB_TABLE` は APP_DB (dbId=0) に存在し、**書き込みは fdbsyncd の [ProducerStateTable](../../reference/glossary.md#term-producerstatetable)**、**消費は orchagent/FdbOrch の [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** という非対称な構造を持つ。[CONFIG_DB](../../reference/glossary.md#term-config_db) ベースのテーブルと異なり keyspace notification (PSUBSCRIBE) ではなく **PUBLISH/SUBSCRIBE チャネル**で通知される。
 
@@ -392,9 +384,7 @@ FdbOrch はローカル MAC 学習・エージングイベントを [ASIC_DB](..
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/vxlan-fdb-platform.md`
+## プラットフォーム差
 
 `VXLAN_FDB_TABLE` エントリの SAI プログラム方法は、ASIC の VTEP トンネルモデルによって分岐する。`VxlanTunnelOrch::isDipTunnelsSupported()` が ASIC capability を保持し、初期化時に `sai_query_attribute_enum_values_capability()` で P2P/P2MP サポートを問い合わせる（`vxlanorch.cpp:1256-1274`）。
 

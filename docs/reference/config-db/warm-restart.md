@@ -182,7 +182,7 @@ show warm_restart state
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 WARM_RESTART テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -250,7 +250,7 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 順序依存 (Phase B)
+## 順序依存
 
 ### CONFIG_DB 読み取りタイミング
 
@@ -323,7 +323,7 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
+## 暗黙参照マップ
 
 `WARM_RESTART` テーブルは YANG 内で他テーブルへの leafref を持たないが、ランタイムコードに以下の暗黙参照が存在する。
 
@@ -342,7 +342,7 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `WARM_RESTART` テーブルは `task_process_status` ベースの retry ループとは異なる経路で参照される。
 `WarmStart::checkWarmStart()` と `WarmStart::getWarmStartTimer()` が
@@ -389,13 +389,11 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
     `WARM_RESTART` テーブルの読み取りは各プロセスの**起動時一回**のみ。
     テーブル内容を変更しても実行中プロセスには反映されない。次回プロセス再起動時に有効になる。
 
-> 詳細スキャンノートは `meta/_intermediate/cdb-flow/warm-restart-failure.md` を参照。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-<!-- evidence: meta/_intermediate/cdb-flow/warm-restart-constants.md -->
 <!-- source: sonic-swss-common/common/warm_restart.h; sonic-swss/fpmsyncd/fpmsyncd.cpp; sonic-swss/neighsyncd/neighsync.h; sonic-swss/warmrestart/warmRestartAssist.h -->
 
 `WARM_RESTART` テーブルのタイマー処理に関わるハードコード定数を示す。CONFIG_DB に対応フィールドを設定することで実行時に上書きできる「デフォルト値定数」と、CONFIG_DB からは変更できない「固定定数」の 2 種類が存在する。
@@ -446,7 +444,7 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・波及効果 (Phase F)
+## 副作用・波及効果
 
 `WARM_RESTART` テーブルは直接 [ASIC](../../reference/glossary.md#term-asic) に波及しない設定テーブルだが、プロセス起動時の読み取りを通じて **STATE_DB への複数の書き込み** を副次的に発生させる。[APPL_DB](../../reference/glossary.md#term-appl_db)、ERROR_TABLE への書き込みはない。
 
@@ -493,7 +491,7 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 ### WARM_RESTART テーブルの読み取り方式
 
@@ -545,7 +543,7 @@ Redis チャネルへの明示的 `PUBLISH` を発行しない。
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 **`WARM_RESTART` テーブルの読み書きロジック自体はプラットフォーム非依存**。`warm_restart.cpp` には ASIC 種別・multi-asic・[VOQ](../../reference/glossary.md#term-voq) chassis に関する条件分岐が存在しない。
 
@@ -580,7 +578,6 @@ done
 
 これらはいずれも `WARM_RESTART` テーブルのスキーマ・値の意味・読み書き方式には影響しない。
 
-詳細根拠は `meta/_intermediate/cdb-flow/warm-restart-platform.md` を参照。
 <!-- evidence: sonic-swss-common/common/warm_restart.cpp L35-62 (initialize — DBConnector 名前指定、namespace 引数なし) -->
 <!-- evidence: sonic-swss-common/common/warm_restart.cpp L149-172 (getWarmStartTimer — platform 分岐なし) -->
 <!-- evidence: sonic-buildimage/files/image_config/warmboot-finalizer/finalize-warmboot.sh L270-291 (multi-asic parallel subshell) -->
