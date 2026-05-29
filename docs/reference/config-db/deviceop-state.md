@@ -37,19 +37,6 @@ related:
 [`DEVICE_NEIGHBOR`](./device-neighbor.md) テーブルは **直接接続される隣接機器と自スイッチポートの対応表** として [CONFIG_DB](../../reference/glossary.md#term-config_db) に永続化される。  
 設定テーブルとしての役割に加え、複数のランタイム daemon が DEVICE_NEIGHBOR の **key 集合**（= ローカルポート名の集合）を「外部ポート一覧」として動的に参照する。このページでは、各 consumer がどのようなコード由来デフォルト・副作用を持つかを整理する。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>DEVICE_NEIGHBOR")]
-  DM["lldpmgrd"]
-  CDB --> DM
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## 外部ポート一覧としての機能
 

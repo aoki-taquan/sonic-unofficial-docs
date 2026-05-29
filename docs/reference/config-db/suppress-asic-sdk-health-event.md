@@ -129,7 +129,6 @@ sonic-db-cli STATE_DB keys 'ASIC_SDK_HEALTH_EVENT_TABLE|*'
 <!-- defaults -->
 ## 暗黙デフォルトとハードコード挙動
 
-
 ### 1. `categories` 未設定 → 全カテゴリ購読 (= 抑制なし)
 
 `switchorch.cpp:101-107` で「興味のあるカテゴリ集合」の初期値を全 4 カテゴリ (`software` / `firmware` / `cpu_hw` / `asic_hw`) で定義し、`registerAsicSdkHealthEventCategories` (`switchorch.cpp:1366-1408`) は `suppressed_category_list` が空の場合この `universal_set` をそのまま [SAI](../../reference/glossary.md#term-sai) へ登録する。
@@ -220,7 +219,6 @@ end
 <!-- ordering -->
 ## 書込み順依存
 
-
 ### 1. orchagent 起動時の初期化順序
 
 `orchdaemon.cpp:212` で `SwitchOrch` が生成されると、コンストラクタ内で即座に `initAsicSdkHealthEventNotification()` が呼ばれる。この関数が **[CONFIG_DB](../../reference/glossary.md#term-config_db) を起動時スナップショット** として読み取り、SAI に初期登録する。
@@ -283,7 +281,6 @@ SET / DEL ともに `registerAsicSdkHealthEventCategories` が唯一の SAI 書�
 <!-- cross-refs -->
 ## 暗黙参照テーブル
 
-
 `SUPPRESS_ASIC_SDK_HEALTH_EVENT` の処理において、SwitchOrch が参照・生成する他テーブル / リソースを網羅した。
 このテーブルは [APPL_DB](../../reference/glossary.md#term-appl_db) 中継なしで CONFIG_DB → SAI の直接経路を取る点が特徴である。
 
@@ -313,7 +310,6 @@ SET / DEL ともに `registerAsicSdkHealthEventCategories` が唯一の SAI 書�
 
 <!-- failure -->
 ## 失敗挙動
-
 
 Consumer: `SwitchOrch::doCfgSuppressAsicSdkHealthEventTableTask()` (`orchagent/switchorch.cpp:1410-1491`)
 
@@ -413,7 +409,6 @@ Consumer: `SwitchOrch::doCfgSuppressAsicSdkHealthEventTableTask()` (`orchagent/s
 
 <!-- side-effects -->
 ## 副次 DB 書込
-
 
 `SUPPRESS_ASIC_SDK_HEALTH_EVENT` の処理で `SwitchOrch` が書き込む副次 DB は次の通り。
 
@@ -517,7 +512,6 @@ APPL_DB への書き込みはない。
 
 <!-- platform -->
 ## プラットフォーム差
-
 
 `SUPPRESS_ASIC_SDK_HEALTH_EVENT` の処理は `SwitchOrch` が持つ `platform` / `sub_platform` 環境変数を直接参照しない。すべてのプラットフォーム差は `querySwitchCapability()` による **SAI 動的照会** で決定され、静的な文字列比較は存在しない。
 

@@ -324,7 +324,6 @@ aggregate 本体 → prefix-list の順であり、中間状態では aggregate 
 | `BGP_AGGREGATE_ADDRESS` DEL | STATE_DB が `inactive` の場合 FRR 削除コマンドをスキップ。`inactive` の判定が `set_address_state` 経由でしか書かれないため、CONFIG_DB と STATE_DB の整合が崩れていると削除漏れの可能性 | `managers_aggregate_address.py:138-146` |
 | DEL の vtysh 順 | aggregate 本体 (`no aggregate-address ...`) → 関連 prefix-list (`no ip\|ipv6 prefix-list ...`) の順で `push_list` | `managers_aggregate_address.py:148-185` |
 
-
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:33 -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:73 -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:104 -->
@@ -365,7 +364,6 @@ YANG `default` 宣言に加えて、`bgpcfgd` (`managers_aggregate_address.py`) 
 | T0 / T1 / T2 / [VOQ](../../reference/glossary.md#term-voq) chassis | なし | `main.py` L105-106 の `AggregateAddressMgr` 登録は無条件 (`is_chassis()` 分岐は別マネージャ `ChassisAppDbMgr` のため) |
 | single-asic / multi-asic | なし | `managers_aggregate_address.py` / `frrcfgd.py` を `platform / asic / chassis / multi_npu` で grep しても 0 ヒット |
 | platform-specific j2 / hwsku 上書き | なし | `device/<vendor>/<platform>/` および `files/image_config/` に aggregate-address 差分なし |
-
 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:105 -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py -->
@@ -421,7 +419,6 @@ sonic-db-cli STATE_DB hgetall 'BGP_AGGREGATE_ADDRESS|10.0.0.0/24'
 # 失敗ログ
 journalctl -u bgp | grep -iE 'aggregate|frr daemon'
 ```
-
 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:65 -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:46 -->
@@ -526,7 +523,6 @@ journalctl -u bgp | grep -iE 'aggregate|frr daemon'
     vtysh push のみで STATE_DB ミラーを持たない。bgpcfgd 経路と frrcfgd 経路
     で STATE_DB 反映の有無が**非対称**である点に注意 (本ページ対象は
     bgpcfgd 経路)。
-
 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:42 -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:209 -->

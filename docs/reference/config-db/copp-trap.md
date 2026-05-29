@@ -226,7 +226,6 @@ show copp config
 <!-- constants -->
 ## ハードコード定数
 
-
 ### フィールド名定数 (copporch.h)
 
 | 定数 | 値 | 定義ファイル | 用途 |
@@ -407,7 +406,6 @@ show copp config
 <!-- pubsub -->
 ## 通信メカニズム (Redis PUBSUB / keyspace notification)
 
-
 ### CONFIG_DB → CoppMgr (SubscriberStateTable / keyspace notification)
 
 `coppmgrd` は `Orch` 基底クラス経由で CONFIG_DB の `COPP_TRAP`・`COPP_GROUP`・`FEATURE` テーブルに対して `SubscriberStateTable` を登録し、[Redis](../../reference/glossary.md#term-redis) keyspace notification を PSUBSCRIBE する。
@@ -480,7 +478,6 @@ CoppOrch::doTask(Consumer&) → processCoppRule() → SAI sai_hostif_api
 
 <!-- side-effects -->
 ## 副次 DB 書き込み
-
 
 `COPP_TRAP` の SET/DEL 処理は CONFIG_DB 以外の以下 DB・テーブルへも書き込みを行う。
 

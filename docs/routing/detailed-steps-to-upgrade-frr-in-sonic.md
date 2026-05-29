@@ -30,12 +30,12 @@ related:
 
 ## 概要
 
-本 [HLD](../reference/glossary.md#term-hld) は SONiC における [FRR](../reference/glossary.md#term-frr) upgrade の実作業 runbook で、**FRR 10.3 → 10.4.1** への upgrade（Alibaba が実施）を具体例として手順を時系列で記録したもの[^1]。upgrade は 4 つの局面で構成される:
+本 [HLD](../reference/glossary.md#term-hld) は [SONiC](../reference/glossary.md#term-sonic) における [FRR](../reference/glossary.md#term-frr) upgrade の実作業 runbook で、**FRR 10.3 → 10.4.1** への upgrade（Alibaba が実施）を具体例として手順を時系列で記録したもの[^1]。upgrade は 4 つの局面で構成される:
 
 1. **Branch 管理** — `sonic-frr` リポジトリに新 FRR tag ベースの branch を作る
 2. **Patch 適用** — 既存 patch を port、`dplane_fpm_sonic.c` を sync、stable branch から新 patch を追加
 3. **PR 準備** — `sonic-buildimage` への submodule pin 更新 PR と、レビュー用の summary table 整備
-4. **Building / Testing** — local VS build → PR sanity test → longevity test
+4. **Building / Testing** — local [VS](../reference/glossary.md#term-vs) build → PR sanity test → longevity test
 
 upgrade 全体を通じて **Routing Working Group との密な調整** が強く推奨される[^1]。
 
@@ -106,7 +106,7 @@ stg import -S ../patch/series
 
 ### 2.2 `dplane_fpm_sonic.c` の sync
 
-patch とは別に、FRR mainline の `dplane_fpm_nl.c` の 10.3 → 10.4.1 差分を確認し、必要な FPM 修正を `dplane_fpm_sonic.c` に反映する（commit message に copyright を明記）[^1]。各 commit の取り込み状況は **Table 3**（PR description に再掲）で管理する。SONiC では一部 commit が「NOT applicable」「既に別 PR で merged」「本 PR で commit」に分類される。
+patch とは別に、FRR mainline の `dplane_fpm_nl.c` の 10.3 → 10.4.1 差分を確認し、必要な [FPM](../reference/glossary.md#term-fpm) 修正を `dplane_fpm_sonic.c` に反映する（commit message に copyright を明記）[^1]。各 commit の取り込み状況は **Table 3**（PR description に再掲）で管理する。SONiC では一部 commit が「NOT applicable」「既に別 PR で merged」「本 PR で commit」に分類される。
 
 ### 2.3 `stable/10.4` からの新 patch 追加
 
@@ -194,4 +194,4 @@ docker exec bgp dpkg -l | grep -i frr
 - 文書自体（HLD）の改訂日・現行 master FRR version との乖離リスク確認
 -->
 
-<!-- glossary-links-injected: 7ac8e66e1af3 -->
+<!-- glossary-links-injected: a6dd26e9a980 -->

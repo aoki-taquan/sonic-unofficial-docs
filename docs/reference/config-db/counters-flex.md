@@ -31,22 +31,6 @@ related:
 
 これらのフィールドは [CONFIG_DB](../../reference/glossary.md#term-config_db) 経由でユーザが設定する手段はなく、[orchagent](../../reference/glossary.md#term-orchagent) が内部的にハードコードした stat リストから自動生成する。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
-  DM["FlexCounterOrch"]
-  CDB --> DM
-  SAI["SAI<br/>sai_counter_api"]
-  DM --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
-
 ## FLEX_COUNTER_DB エントリ構造
 
 ```text
@@ -185,7 +169,6 @@ VoQ 対応時は `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が追加される�
 <!-- ordering -->
 ## 書込み順依存
 
-
 ### doTask 処理ガード順序
 
 `FlexCounterOrch::doTask()` は以下の条件を **順番に** チェックし、いずれかが成立すると即リターンする (`flexcounterorch.cpp`):
@@ -275,7 +258,6 @@ disable 受信時に FLEX_COUNTER_DB の per-OID エントリを **削除する�
 <!-- cross-refs -->
 ## 暗黙参照マップ
 
-
 `FlexCounterOrch` は [YANG](../../reference/glossary.md#term-yang) leafref として定義されていない以下のテーブル・グローバル Orch を暗黙参照して、個別カウンタフィールドの生成範囲を決定する。
 
 | 参照先 | DB | 参照タイミング | YANG leafref | 実装上の必須度 | 証拠 |
@@ -309,7 +291,6 @@ disable 受信時に FLEX_COUNTER_DB の per-OID エントリを **削除する�
 
 <!-- failure -->
 ## 失敗挙動・retry / recovery
-
 
 ### retry パターン概要
 
@@ -382,7 +363,6 @@ return;  // FLEX_COUNTER_DB へ書き込まずリターン
 <!-- constants -->
 ## ハードコード定数
 
-
 ### Warm-reboot 遅延タイマー
 
 | 定数名 | 値 | 定義箇所 | 用途 |
@@ -450,7 +430,6 @@ CONFIG_DB の `FLEX_COUNTER_TABLE|<group>` キー名と、FLEX_COUNTER_DB で使
 <!-- side-effects -->
 ## 副次 DB 書込
 
-
 `FLEX_COUNTER_TABLE|<group>` への `FLEX_COUNTER_STATUS = enable/disable` 処理に伴い
 `FlexCounterOrch::doTask()` が各 Orch の `generateXxxMap()` を呼び出す際に生じる副次 DB 書き込み。
 
@@ -488,7 +467,6 @@ evidence: `flexcounterorch.cpp:287-340`
 
 <!-- pubsub -->
 ## 通信メカニズム
-
 
 ### orchagent → FLEX_COUNTER_DB 書き込み方式
 
@@ -546,7 +524,6 @@ consumer 側はすべて on-demand polling で読み出す必要がある。
 
 <!-- platform -->
 ## プラットフォーム / SAI Capability 差異
-
 
 ### プラットフォーム識別
 

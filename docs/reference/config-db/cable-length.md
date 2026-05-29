@@ -187,7 +187,6 @@ CABLE_LENGTH テーブルへの書き込みが発生するコード経路。
 <!-- derivation -->
 ## 派生・条件付き登録
 
-
 ### 値による他フィールド自動派生
 
 `length` 値の変化が引き金となり、`BUFFER_PROFILE` / `BUFFER_PG` が自動生成・更新・削除される。
@@ -303,7 +302,6 @@ SAI buffer API → チップ PG headroom 設定
 <!-- ordering -->
 ## 書込み順依存
 
-
 ### SET 時の先行必須テーブル
 
 | 先行テーブル | 理由 | ソース |
@@ -354,7 +352,6 @@ APPL_DB.BUFFER_PROFILE / BUFFER_PG 生成 → bufferorch → SAI buffer API
 
 <!-- failure -->
 ## 失敗挙動・エラー処理
-
 
 <!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.cpp:978,1106,1117,1541-1548,2155-2159,2189-2219, cfgmgr/buffermgr.cpp:154-155,168-170,240-243,257-258 -->
 

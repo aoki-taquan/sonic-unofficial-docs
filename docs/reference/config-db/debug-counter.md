@@ -307,7 +307,6 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 <!-- failure -->
 ## 失敗挙動・retry / recovery
 
-
 ### retry パターン概要
 
 `DebugCounterOrch::doTask()` は `task_need_retry` を**一切返さない**。依存解決の失敗はすべて `task_success`（pending）か `task_failed` で処理される。orchagent 再起動時は CONFIG_DB の全エントリを replay し `reconcileFreeDropCounters()` で自動復元する。

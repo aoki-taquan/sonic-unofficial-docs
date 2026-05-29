@@ -120,7 +120,6 @@ DEVICE_NEIGHBOR_METADATA|<name>
 `DEVICE_NEIGHBOR[port].name` をキーとして本テーブルの `type` / `hwsku` / `lo_addr` / `mgmt_addr` 等を取得し、
 トポロジ認識・バッファ設定・BGP セッション設定・[PFC](../../reference/glossary.md#term-pfc) watchdog 等に利用する。
 
-
 | 依存方向 | 参照元 | 参照先テーブル | 参照フィールド | 用途 | 証跡 |
 |---------|--------|--------------|--------------|------|------|
 | 読み手 (BGP) | `bgpcfgd BGPPeerMgrBase.set_handler` | `CONFIG_DB BGP_NEIGHBOR` (キー), `CONFIG_DB DEVICE_METADATA\|localhost` | `type`, `hwsku`, `deployment_id` | BGP セッション Jinja2 テンプレートへの渡し — `kwargs['CONFIG_DB__DEVICE_NEIGHBOR_METADATA']` として全 meta を転送 | `managers_bgp.py:218-224` |

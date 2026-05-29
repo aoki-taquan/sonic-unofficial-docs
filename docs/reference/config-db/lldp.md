@@ -113,7 +113,7 @@ grouping `lldp_mode_config` を `uses`:
 | `lldpcli resume` 失敗 | `run()` | **ERROR ログ → `sys.exit(1)`**。supervisord がプロセス再起動。lldpd は `pause` 状態のまま PDU 送出停止 | なし | `lldpmgrd:340-341` |
 | `PORT_INIT_TIMEOUT`（300 秒）超過 かつフロントエンドポートあり | `check_timeout()` | **ERROR ログ → 強制 `lldpcli resume`**。未設定ポートが誤 portid を広告する可能性あり | なし | `lldpmgrd:363-368` |
 | `PORT_INIT_TIMEOUT` 超過 かつフロントエンドポート不在 | `check_timeout()` | ログなし（silent timeout）→ 強制 resume | なし | `lldpmgrd:365` |
-| `LLDP\|GLOBAL` / `LLDP_PORT\|<ifname>` への書き込み | — | **lldpmgrd はイベントを受信しない（構造的 no-op）**。CONFIG_DB には書けるが lldpd に一切反映されない | なし | `lldpmgrd:300-325` |
+| `LLDP\|GLOBAL` / `LLDP_PORT\|<ifname>` への書き込み | — | **lldpmgrd はイベントを受信しない（構造的 no-op）**。[CONFIG_DB](../../reference/glossary.md#term-config_db) には書けるが lldpd に一切反映されない | なし | `lldpmgrd:300-325` |
 
 ### retry / recovery まとめ
 
@@ -259,7 +259,7 @@ show lldp table
 ### 段階 1 — Consumer 登録
 
 `lldpmgrd` は CONFIG_DB の `LLDP` / `LLDP_PORT` テーブルを**直接購読しない**（構造的 no-op）。
-実際に購読するのは APPL_DB: PORT_TABLE、CONFIG_DB: DEVICE_METADATA、CONFIG_DB: MGMT_INTERFACE の 3 テーブル。
+実際に購読するのは [APPL_DB](../../reference/glossary.md#term-appl_db): PORT_TABLE、CONFIG_DB: DEVICE_METADATA、CONFIG_DB: MGMT_INTERFACE の 3 テーブル。
 `LLDP|GLOBAL` への書き込みは lldpd に到達しない（各フィールドの dead field 詳細は `<!-- defaults -->` ブロック参照）。
 
 ### 段階 2 — CFG→APPL 翻訳
@@ -442,7 +442,7 @@ CONFIG_DB から制御できないが、[SONiC](../../reference/glossary.md#term
 
 | アクセス対象 | DB | 用途 | evidence |
 |---|---|---|---|
-| `STATE_PORT_TABLE_NAME` | STATE_DB | `is_port_up()` — ポートの `netdev_oper_status` を読取 | `lldpmgrd:78,122-134` |
+| `STATE_PORT_TABLE_NAME` | [STATE_DB](../../reference/glossary.md#term-state_db) | `is_port_up()` — ポートの `netdev_oper_status` を読取 | `lldpmgrd:78,122-134` |
 | `CFG_DEVICE_METADATA_TABLE_NAME` | CONFIG_DB | `hostname` / `chassis_hostname` を読取 | `lldpmgrd:74,253` |
 | `CFG_PORT_TABLE_NAME` | CONFIG_DB | ポートの `alias` / `description` を読取 | `lldpmgrd:75,148-164` |
 | `CFG_MGMT_INTERFACE_TABLE_NAME` | CONFIG_DB | 管理 IP を読取 | `lldpmgrd:76,206-226` |
@@ -568,4 +568,4 @@ hostname = device_dict.get("chassis_hostname") or device_dict.get("hostname")
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: a76b0e2c7b9d -->
+<!-- glossary-links-injected: 081fe6ef0b39 -->

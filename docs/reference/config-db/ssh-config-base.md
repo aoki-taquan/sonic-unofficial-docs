@@ -108,7 +108,6 @@ YANG に `default` 宣言がない。DB に設定しない場合は sshd の組�
 <!-- ordering -->
 ## 書込み順依存
 
-
 ### 先行必須テーブル
 
 `SSH_SERVER|POLICIES` は他 [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルへの leafref を持たないため、書き込み前に先行必須テーブルは存在しない。
@@ -163,7 +162,6 @@ hostcfgd 起動
 <!-- cross-refs -->
 ## 暗黙テーブル参照
 
-
 `SSH_SERVER|POLICIES` テーブルは YANG leafref を持たない。ただし `hostcfgd` の `SshServer` クラスおよび `PamLimitsCfg` クラスが以下の暗黙参照を持つ。
 
 | 参照先 | 方向 | 条件 | 根拠 |
@@ -204,7 +202,6 @@ if "localhost" not in device_metadata and "POLICIES" not in ssh_server_policies:
 
 <!-- failure -->
 ## 失敗挙動
-
 
 ### SET 処理における失敗経路（SshServer.set_policies）
 
@@ -250,7 +247,6 @@ PAM limits 例外     → except で吸収・ログのみ・PAM ファイル未�
 
 <!-- constants -->
 ## ハードコード定数
-
 
 `hostcfgd` の `SshServer` クラスおよび `PamLimitsCfg` クラスが参照するモジュールレベル定数の一覧。これらの値はコードに直書きされており、[CONFIG_DB](../../reference/glossary.md#term-config_db) や YANG から変更できない。
 
@@ -325,7 +321,6 @@ SSH_CONFIG_NAMES = {
 <!-- side-effects -->
 ## 副次 DB 書込
 
-
 CONFIG_DB `SSH_SERVER|POLICIES` の変更に伴って `hostcfgd` の `SshServer` / `PamLimitsCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS のファイル書換とサービス再起動に閉じる。
 
 | 副次 DB | 書込有無 | 根拠 |
@@ -358,7 +353,6 @@ CONFIG_DB `SSH_SERVER|POLICIES` の変更に伴って `hostcfgd` の `SshServer`
 
 <!-- pubsub -->
 ## 通信メカニズム
-
 
 ### Redis 購読方式
 
@@ -416,7 +410,6 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5"})
 
 <!-- platform -->
 ## プラットフォーム差
-
 
 `SSH_SERVER|POLICIES` の処理は **全プラットフォームで同一**。`class SshServer` と `class PamLimitsCfg` を `platform|multi_asic|is_multi_npu|chassis|asic[0-9]|namespace|vendor` で grep しても **0 ヒット** であり、機種依存分岐コードが存在しない。
 

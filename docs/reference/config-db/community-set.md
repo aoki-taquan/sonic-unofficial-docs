@@ -233,7 +233,6 @@ vtysh -c 'show bgp community-list'
 
 **set_community_ref の先行必須 (依存 #4)**: `CommandArgument.__format__` の `com-ref` 分岐は `daemon.comm_set_list.get(name)` で COMMUNITY_SET を引き当て、`is_configurable()` が `True` の場合のみメンバー列を返す。未登録の場合は `None` が返り FRR コマンドが生成されない（`frrcfgd.py:831-834`）。
 
-
 <!-- /ordering -->
 
 <!-- derivation -->

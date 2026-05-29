@@ -248,7 +248,6 @@ evidence: `containercfgd.py:155-159`
 | `queue.size` | `"20000"` | 転送キューサイズ（メッセージ数） |
 | OMRELP ポート | `"2514"` | `$SYSLOG_TARGET_IP` 宛転送ポート |
 
-
 <!-- /constants -->
 
 <!-- side-effects -->
@@ -369,7 +368,6 @@ CONFIG_DB に書き込む際も `SYSLOG_CONFIG_FEATURE|swss` 形式（asic suffi
 
 !!! warning "`rstrip` による予期しない除去"
     Python の `str.rstrip(chars)` は引数を **文字集合**として扱うため、`NAMESPACE_ID="10"` のとき `"syncd10".rstrip("10")` は `"syncd"` ではなく `"sync"` になる場合がある（末尾の `'1'` と `'0'` を個別に除去）。これはコード上の既知の制約であり、実運用では単一数字の namespace id (`0`..`9`) が前提となっている。
-
 
 <!-- evidence: containercfgd/containercfgd.py:190-195, syslog_util/common.py:92-104, config/syslog.py:469-501 -->
 <!-- /platform -->

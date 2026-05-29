@@ -2,7 +2,7 @@
 title: 変更履歴
 description: "変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。"
 verification: meta
-last_verified: 2026-05-26
+last_verified: 2026-05-29
 tags:
   - changelog
   - meta
@@ -23,6 +23,39 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-29 #5056 fix(ci): resolve pre-existing lint/textlint failures on main
+- 2026-05-28 #5050 fix(platform): repair thermalctld-speed-tolerance frontmatter + API description
+- 2026-05-28 #5049 chore(frontmatter): strip dead 'hard' field from 250 pages
+- 2026-05-28 #5048 fix(topics): reduce unrelated related-meta on orientation pages
+- 2026-05-28 #5047 fix(config-db): correct dot1x mermaid daemon name (pacd -> pacmgrd)
+- 2026-05-28 #5046 fix(citations): populate empty 引用元 sections (batch 1)
+- 2026-05-28 #5045 fix(citations): populate empty 引用元 sections (batch 2)
+- 2026-05-28 #5044 fix(citations): populate empty 引用元 sections (batch 0)
+- 2026-05-28 #5043 fix(config-db): dedupe marker blocks (batch 4)
+- 2026-05-28 #5042 fix(config-db): dedupe marker blocks (batch 3)
+- 2026-05-28 #5041 fix(config-db): dedupe marker blocks (batch 5)
+- 2026-05-28 #5040 fix(config-db): dedupe marker blocks (batch 2)
+- 2026-05-28 #5039 fix(config-db): dedupe marker blocks (batch 0)
+- 2026-05-28 #5038 fix(config-db): dedupe marker blocks (batch 1)
+- 2026-05-27 #5037 fix(frontmatter): repair truncated descriptions (batch 0)
+- 2026-05-27 #5036 fix(frontmatter): repair truncated descriptions (batch 6)
+- 2026-05-27 #5035 fix(frontmatter): repair truncated descriptions (batch 7)
+- 2026-05-27 #5034 fix(frontmatter): repair truncated descriptions (batch 1)
+- 2026-05-27 #5033 fix(frontmatter): repair truncated descriptions (batch 3)
+- 2026-05-27 #5032 fix(frontmatter): repair truncated descriptions (batch 2)
+- 2026-05-27 #5031 fix(frontmatter): repair truncated descriptions (batch 4)
+- 2026-05-27 #5030 fix(frontmatter): repair truncated descriptions (batch 5)
+- 2026-05-27 #5029 chore(readme): strip project self-version notation
+- 2026-05-27 #5028 fix(deviation-section): remove redundant boilerplate from 5 pages
+- 2026-05-27 #5027 fix(scripts): add check_footnote_orphans.py with correct inline-ref detection
+- 2026-05-27 #5026 fix(glossary): integrate unused terms or remove unused definitions
+- 2026-05-27 #5025 fix(scripts): correct STATIC_ROUTE daemon mapping in gen_cdb_mermaid + regen affected pages
+- 2026-05-27 #5024 fix(nav): group reference pages by DB class (CONFIG_DB/APPL_DB/COUNTERS_DB/STATE_DB)
+- 2026-05-27 #5023 fix(ci): resolve fnref/footnote INFO causing mkdocs --strict abort
+- 2026-05-27 #5022 fix(scripts): make glossary-links injector idempotent + remove duplicate markers from 67 pages
+- 2026-05-27 #5021 fix(frontmatter): add missing 実装との乖離 section to discrepancy-found pages
+- 2026-05-26 #5020 revert: undo master-sync (PR #5019, unintended action)
+- 2026-05-26 #5017 fix(frontmatter): resolve remaining hld-only and monitor field misuse
 - 2026-05-26 #5019 feat(master-sync): index 10 new HLDs and clean up 8 removed from upstream master
 - 2026-05-26 #5015 fix(links): resolve 5 broken internal links
 - 2026-05-26 #5018 fix(ux): RSS plugin registration + Japanese tab labels + index repair card cleanup
@@ -490,37 +523,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3877 docs(config-db): add Phase H platform block to vlan-state
 - 2026-05-19 #3876 docs(config-db): add Phase E constants tag to vlan-state
 - 2026-05-19 #3875 docs(config-db): add Phase D failure-behavior block to PBH_TABLE
-- 2026-05-19 #3874 docs(config-db): add Phase C cross-refs block to mux-cable-state
-- 2026-05-19 #3873 docs(config-db): add Phase E hardcoded-constants block to VNET_ROUTE
-- 2026-05-19 #3872 docs(config-db): add Phase F side-effects block to pbh-rule
-- 2026-05-19 #3858 docs(config-db): add Phase F side-effects block to gnmi-server
-- 2026-05-19 #3871 docs(config-db): add Phase F side-effects block to vxlan-evpn-tunnel
-- 2026-05-19 #3870 docs(config-db): add Phase C cross-refs block to TAM page
-- 2026-05-19 #3868 docs(config-db): add Phase E hardcoded-constants block to gnmi-state
-- 2026-05-19 #3867 docs(config-db): add Phase G pubsub block to ROUTE_MAP_SET page
-- 2026-05-19 #3864 docs(config-db): add Phase C cross-refs block to VXLAN_FDB_TABLE
-- 2026-05-19 #3863 docs(config-db): add Phase E hardcoded-constants block to lossless-traffic-pattern
-- 2026-05-19 #3862 docs(config-db): add Phase D failure-behavior block to WARM_RESTART
-- 2026-05-19 #3861 docs(config-db): add Phase C cross-refs block to switch-trimming
-- 2026-05-19 #3860 docs(config-db): add Phase G pubsub block to pbh-state
-- 2026-05-19 #3854 docs(config-db): add Phase F side-effects block to SUBNET_DECAP
-- 2026-05-19 #3859 docs(config-db): add Phase G pubsub block to pin-config
-- 2026-05-19 #3857 docs(config-db): add Phase D failure-behavior block to KUBERNETES_MASTER
-- 2026-05-19 #3856 docs(config-db): add Phase E hardcoded-constants block to vxlan-evpn-tunnel
-- 2026-05-19 #3855 docs(config-db): add Phase C cross-refs block to stp-state
-- 2026-05-19 #3853 docs(config-db): add Phase H platform block to vlan-sub-interface
-- 2026-05-19 #3851 docs(config-db): add Phase F side-effects block to stp-port
-- 2026-05-19 #3850 docs(config-db): add Phase F side-effects block to NTP_SERVER page
-- 2026-05-19 #3849 docs(config-db): add Phase D failure-behavior block to ssh-config-base
-- 2026-05-19 #3848 docs(config-db): add Phase F side-effects block to subnet-decap
-- 2026-05-19 #3845 docs(config-db): add Phase G pubsub block to vxlan-tunnel-map
-- 2026-05-19 #3844 docs(config-db): add Phase E hardcoded-constants block to pbh-rule
-- 2026-05-19 #3843 docs(config-db): add Phase D failure-behavior block to vxlan-evpn-tunnel
-- 2026-05-19 #3841 docs(config-db): add Phase E hardcoded-constants block to SUBNET_DECAP
-- 2026-05-19 #3838 docs(config-db): add Phase F side-effects block to FIPS page
-- 2026-05-19 #3839 docs(config-db): add Phase C cross-refs block to PBH_TABLE page
-- 2026-05-19 #3837 docs(config-db): add Phase C cross-refs block to RESTAPI page
-- 2026-05-19 #3835 docs(config-db): add Phase F side-effects block to FIPS table page
-- 2026-05-19 #3834 docs(config-db): add Phase D failure-behavior block to lossless-traffic-pattern
-- 2026-05-19 #3833 docs(config-db): add Phase G pubsub block to FABRIC_PORT
 

@@ -313,7 +313,6 @@ config qos reload
 - `PORT_QOS_MAP` から参照中に DEL しようとすると `isObjectBeingReferenced()` が true を返し `task_need_retry` で削除保留。
 - `SWITCH` への直接適用は `DSCP_TO_TC_MAP` (`PORT_QOS_MAP|global` 経路) のみで、PFC 系マップは非対象。
 
-
 <!-- /cross-refs -->
 
 <!-- handler-branching -->

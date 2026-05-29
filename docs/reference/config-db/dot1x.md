@@ -343,7 +343,6 @@ docker logs pac 2>&1 | grep -E "ERROR|WARN" | grep -i authmgr
 <!-- constants -->
 ## ハードコード定数
 
-
 ### インタフェース名プレフィックス定数
 
 `pacmgrd` / `hostapdmgrd` は `PAC_PORT_CONFIG_TABLE` のキー（ポート名）が `"E"` で始まるかを文字列比較でチェックする。
@@ -397,7 +396,6 @@ hostapd 起動後の PID ファイル (`/etc/hostapd/hostapdPid`) 存在確認�
 <!-- side-effects -->
 ## 副次 DB 書込
 
-
 `pacmgrd` および `hostapdmgrd` は CONFIG_DB `PAC_PORT_CONFIG_TABLE` / `HOSTAPD_GLOBAL_CONFIG_TABLE` の変更を受け取り、**[APPL_DB](../../reference/glossary.md#term-appl_db) / STATE_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書き込みは行わない**。副作用は authmgr ライブラリ API 呼び出しおよびファイルシステム操作（hostapd conf 生成/削除）に閉じる。
 
 | 副次 DB | 書込有無 | 根拠 |
@@ -428,7 +426,6 @@ hostapd 起動後の PID ファイル (`/etc/hostapd/hostapdPid`) 存在確認�
 
 <!-- pubsub -->
 ## 通信メカニズム
-
 
 ### Redis 購読方式
 
@@ -488,7 +485,6 @@ processHostapdConfigGlobalTblEvent()
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立動作 | PAC テーブルは host scope。chassis 全体での集中適用機構はなく、各 line card ホストで `pacmgrd` が独立に処理する |
 | ベンダー固有 PAC モジュール | なし | community master の `sonic-pac` に hook ポイント存在せず。`device/` 配下に PAC 固有設定ファイルなし (`device/` を `dot1x|PAC_PORT|hostapd` でgrep → 0 ヒット) |
 | プラットフォーム別 j2 テンプレート | なし | `files/build_templates/` / `files/image_config/` に PAC 関連テンプレートなし |
-
 
 <!-- /platform -->
 

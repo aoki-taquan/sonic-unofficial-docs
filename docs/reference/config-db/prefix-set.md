@@ -167,7 +167,7 @@ frrcfgd は常時起動し `PrefixSetMgr` を無条件登録する。[sonic-mgmt
 | `PrefixSetMgr` | `ip_prefix` に `.` 含む (IPv4) | `ip prefix-list` コマンド生成 | frrcfgd prefix_set manager |
 | `PrefixSetMgr` | del_handler | FRR に `no ip prefix-list` 発行 | frrcfgd prefix_set manager |
 
-> **裏取り**: PREFIX_SET は BGP 汎用ルーティングポリシーセット用。frrcfgd 経由で FRR に設定。CONFIG_DB 内の自動派生なし。
+> **裏取り**: PREFIX_SET は [BGP](../../reference/glossary.md#term-bgp) 汎用ルーティングポリシーセット用。frrcfgd 経由で FRR に設定。CONFIG_DB 内の自動派生なし。
 
 <!-- /handler-branching -->
 
@@ -565,4 +565,4 @@ PREFIX テーブルのエントリ処理では `PREFIX_SET.mode` の AF に応�
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: e6bce8d842ac -->
+<!-- glossary-links-injected: 1c59d90c07b4 -->

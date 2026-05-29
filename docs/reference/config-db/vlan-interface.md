@@ -446,7 +446,7 @@ CLI / minigraph
 
 ### 段階 3: APPL → SAI
 
-- IntfsOrch が `sai_router_interface_api->create_router_interface()` で VLAN に対する SAI RIF を作成。
+- IntfsOrch が `sai_router_interface_api->create_router_interface()` で VLAN に対する SAI [RIF](../../reference/glossary.md#term-rif) を作成。
 - IP プレフィックスに対して `sai_route_api` でコネクテッドルートを作成。
 
 ### 段階 4: タイミング + 副作用
@@ -782,4 +782,4 @@ VLAN IF へ IPv6 アドレスを付与する場合、VOQ 構成では `ip -6 add
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 9d36d7b4722f -->
+<!-- glossary-links-injected: d8d75455adfd -->

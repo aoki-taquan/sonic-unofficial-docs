@@ -138,7 +138,6 @@ ALARM テーブルは **EVENT_DB ([Redis](../../reference/glossary.md#term-redis
 - capability 公開順序という概念は ALARM 領域には存在しない (eventd 側で動的 capability ネゴシエーションをしないため)。代わりに event profile JSON の **image build 時静的解決** が同等の役割を果たす。
 - healthd と eventd は互いに購読しない独立サブシステムであり、ALARM フロー上は「healthd が publisher として一方向に流す」関係のみ。failure 伝播は systemd / supervisord 側の再起動経路で吸収される。
 
-
 <!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp:46-47,77-107,177-184,205-210,265-294,291,518-526; sonic-swss-common/common/events.cpp:97-109,103; sonic-buildimage/src/system-health/health_checker/sysmonitor.py:39-41,152,217-219; sonic-buildimage/src/system-health/health_checker/service_checker.py:15-16,321-323,380-384; sonic-buildimage/dockers/docker-eventd/supervisord.conf:47-57; SONiC/doc/event-alarm-framework/event-alarm-framework.md:Section 3.1.2,3.1.3,3.1.4,3.1.4.2 -->
 <!-- /ordering -->
 
@@ -215,7 +214,6 @@ ALARM テーブルへ作用する 4 操作 (HLD §3.1.4 / §3.1.5):
 - `UNACK_ALARM` — `acknowledged=false` に更新
 
 ALARM テーブル内の `action` フィールドは常に `"RAISE"` (CLEAR は行削除なのでテーブル上に残らない)。
-
 
 <!-- evidence: sonic-swss-common/common/schema.h:551-554, SONiC/doc/event-alarm-framework/event-alarm-framework.md:136-144,346-348,480-499 -->
 <!-- /constants -->
@@ -305,7 +303,6 @@ App (pmon/swss/bgp 等) ─ events_publish(RAISE_ALARM) ─▶ ZMQ ─▶ zmqpro
 | Redis 通知 | keyspace 通知は非使用 (購読者が居ないため) |
 | エントリ ID | `<32bit time_t><5桁連番>` を eventd Alarm Consumer が採番 |
 
-
 <!-- /pubsub -->
 
 <!-- cross-refs -->
@@ -348,7 +345,6 @@ ALARM の `resource` フィールド (optional) は publisher アプリケーシ
 !!! note "AlarmConsumer 本体は master HEAD に未収載"
     現スナップショット (`sonic-buildimage` SHA `9ea932ec...`) の `src/sonic-eventd/src/` は XPUB/XSUB proxy + heartbeat + stats のみで、HLD §3.1.x が言及する Alarm Consumer (RAISE/CLEAR/ACK/UNACK を ALARM テーブルへ反映する側) の実装ソースは未存在。`type-id` → event profile, `resource` → リソーステーブル の **書き込み側コード** からの参照確認は将来コミット待ち。本セクションは publisher 側 + healthd 側 + 連動書込先の 3 軸で構成している。
 
-
 <!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp:46-47,50-53,187,205-210,291; src/system-health/health_checker/service_checker.py:15-16,321-323,380-384; src/system-health/health_checker/hardware_checker.py:7-8,298-302; src/system-health/health_checker/sysmonitor.py:39-41,152,217-219 -->
 <!-- /cross-refs -->
 
@@ -389,7 +385,6 @@ ALARM 行が立つ「条件」は機種依存だが、立った瞬間の書込�
 ### ベンダー固有 ALARM publisher hook なし
 
 community master 内にベンダー固有 alarm publisher SDK や「platform plugin が ALARM テーブルへ直接書く」経路は存在しない。すべての RAISE_ALARM は `swsscommon.event_publish()` API → ZMQ → eventd 経由で集中処理される。ベンダー版 [SONiC](../../reference/glossary.md#term-sonic) (NVIDIA / Edgecore / Cisco / [AsterNOS](../../reference/glossary.md#term-asternos) 等) は本リポジトリのスコープ外。
-
 
 <!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp (grep platform/asic/chassis = 0 hits); files/build_templates/init_cfg.json.j2:95-97; files/build_templates/eventd.service.j2; src/system-health/health_checker/service_checker.py:130-138,144-146; src/system-health/health_checker/hardware_checker.py:7-8,15,46-71,298-302; src/system-health/health_checker/manager.py:75-79; sonic-swss-common/common/schema.h:551-554 -->
 <!-- /platform -->
@@ -439,7 +434,6 @@ eventd の supervisord 設定は `autorestart=false` だが、`critical_processe
 ### healthd (system-health) との独立性
 
 `src/system-health/health_checker/sysmonitor.py` の healthd は購読対象が `STATE_DB:FEATURE` と systemd D-Bus のみで、**ALARM テーブルを購読しない**。従って ALARM 書込失敗・eventd 落ちは healthd の `SYSTEM_READY` / `ALL_SERVICE_STATUS` に直接の影響を与えない (コンテナ単位の検出は別経路)。
-
 
 [^d1]: `sonic-buildimage/dockers/docker-eventd/supervisord.conf:47-57` および `dockers/docker-eventd/critical_processes:1`。`autorestart=false` + `critical_processes` 登録の組み合わせは「単体再起動はしないが、致命プロセスとして検出されたらコンテナ全体を再起動する」SONiC 共通パターン。
 

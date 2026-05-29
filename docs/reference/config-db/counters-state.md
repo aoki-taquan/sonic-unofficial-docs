@@ -228,7 +228,6 @@ orchdaemon.cpp:452  gDebugCounterOrch = new DebugCounterOrch(...)
 <!-- cross-refs -->
 ## 暗黙参照テーブル
 
-
 `PORT_COUNTER_CAPABILITIES` / `QUEUE_COUNTER_CAPABILITIES` / `DEBUG_COUNTER_CAPABILITIES` はいずれも [YANG](../../reference/glossary.md#term-yang) 未モデル化のオペレーショナルテーブルであり、orchagent が **書き手 (producer only)** として書き込む。ここでの暗黙参照は、生成側（portsorch / debugcounterorch）が依存する SAI / DB リソースと、消費側（portstat / dropconfig）が参照するテーブルを指す。
 
 ### 生成側 (producer) の暗黙依存
@@ -269,7 +268,6 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 <!-- failure -->
 ## 失敗挙動マトリクス
 
-
 <!-- evidence: sonic-swss/orchagent/portsorch.cpp:1850-1968,
      sonic-swss/orchagent/debugcounterorch.cpp:315-363,
      sonic-swss/orchagent/debug_counter/drop_counter.cpp:298-446 -->
@@ -299,7 +297,6 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 
 <!-- constants -->
 ## ハードコード定数
-
 
 <!-- evidence: sonic-swss/orchagent/portsorch.cpp:421-435,1866-1879,
      sonic-swss/orchagent/debugcounterorch.cpp:357-358,
@@ -363,7 +360,6 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 <!-- side-effects -->
 ## 副作用
 
-
 <!-- evidence: sonic-swss/orchagent/portsorch.cpp:9476-9494,
      sonic-swss/orchagent/flexcounterorch.cpp:271-279,
      sonic-utilities/utilities_common/portstat.py:295-331 -->
@@ -417,7 +413,6 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 <!-- pubsub -->
 ## 通信メカニズム
 
-
 これらの STATE_DB テーブルは CONFIG_DB テーブルとは根本的に異なる通信パターンを持つ。書き込み側は `Table::set()` による **スナップショット書き込み** (起動時 1 回限り) であり、読み取り側は `db.get()` / `db.get_all()` による **on-demand polling** である。keyspace 通知や `SubscriberStateTable` は使用しない。
 
 ### 書き込みパス（Producer 側）
@@ -467,7 +462,6 @@ STATE_DB
 
 <!-- platform -->
 ## プラットフォーム / SAI Capability 差異
-
 
 これらの STATE_DB テーブルの内容は CONFIG_DB 設定ではなく **[ASIC](../../reference/glossary.md#term-asic) が SAI を通じて公開する能力** によって決まる。プラットフォームによって書き込まれる値が根本的に異なる。
 

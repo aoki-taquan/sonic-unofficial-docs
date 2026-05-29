@@ -192,7 +192,6 @@ vtysh -c "configure terminal"
 | 購読テーブル | `ROUTE_REDISTRIBUTE` | `STATIC_ROUTE` |
 | FRR 送出 | `vtysh -c <cmd>` (逐次) | `vtysh -f <tmpfile>` (バッチ) |
 
-
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2316L (table_handler_list ROUTE_REDISTRIBUTE) -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3149-3168L (ROUTE_REDISTRIBUTE イベント処理) -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1979-1980L (route_redist_key_map) -->

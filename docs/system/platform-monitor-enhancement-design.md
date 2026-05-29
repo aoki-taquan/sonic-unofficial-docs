@@ -174,7 +174,7 @@ BMC (Baseboard Management Controller) 経由でファン・センサー制御が
 
 ### 最新 SONiC イメージで PMON コンテナがクラッシュする問題（sonic-buildimage#5986）
 
-最新 SONiC イメージで PMON コンテナがクラッシュする問題。プラットフォーム固有の Python プラグインが Python 3 に対応していない場合に発生
+最新 [SONiC](../reference/glossary.md#term-sonic) イメージで PMON コンテナがクラッシュする問題。プラットフォーム固有の Python プラグインが Python 3 に対応していない場合に発生
 
 - 参照: [sonic-net/sonic-buildimage#5986](https://github.com/sonic-net/sonic-buildimage/issues/5986)
 
@@ -191,4 +191,4 @@ BMC (Baseboard Management Controller) 経由でファン・センサー制御が
 - ledd / xcvrd と新 daemon の責務境界の更新版 HLD 有無確認
 -->
 
-<!-- glossary-links-injected: f1ac8bca4a1f -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

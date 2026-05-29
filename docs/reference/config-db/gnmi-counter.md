@@ -38,24 +38,6 @@ related:
 
 本ページは、このカウンタ群の種別・初期値・リセット挙動をコードから導出したリファレンスである。
 
-<!-- cdb-mermaid -->
-### データフロー (概略)
-
-```mermaid
-flowchart LR
-  CLI["gNMI / gNOI / gNSI\nクライアント"]
-  TELEMETRYD["telemetryd\n(sonic-gnmi)"]
-  SHM[("共有メモリ\nkey=7749")]
-  DUMP["gnmi_dump"]
-  CLI -->|gRPC RPC| TELEMETRYD
-  TELEMETRYD -->|IncCounter| SHM
-  DUMP -->|GetMemCounters| SHM
-```
-
-!!! note "凡例"
-    カウンタは CONFIG_DB ではなく SysV 共有メモリに格納される。`gnmi_dump` が読み出す。
-<!-- /cdb-mermaid -->
-
 ## 共有メモリ仕様
 
 | パラメータ | 値 | 出典 |

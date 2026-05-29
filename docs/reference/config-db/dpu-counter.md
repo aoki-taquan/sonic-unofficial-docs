@@ -33,22 +33,6 @@ related:
 
 `FLEX_COUNTER_TABLE|ENI` および `FLEX_COUNTER_TABLE|DASH_METER` は、[DASH](../../reference/glossary.md#term-dash) (Disaggregated API for [SONiC](../../reference/glossary.md#term-sonic) Hosts) の [ENI](../../reference/glossary.md#term-eni) (Elastic Network Interface) カウンタと [DASH](../../reference/glossary.md#term-dash) メータカウンタのポーリング設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するエントリ[^1]。これらは [DPU](../../reference/glossary.md#term-dpu) (Data Processing Unit) ノード専用であり、`switch_type == 'dpu'` の場合のみ `enable_counters.py` が自動的に有効化する[^2]。通常の ToR / Spine では `init_cfg.json.j2` に記載がなく、デフォルトで無効状態となる。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
-  DM["FlexCounterOrch"]
-  CDB --> DM
-  SAI["SAI<br/>sai_counter_api"]
-  DM --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
-
 ## key 構造
 
 ```text

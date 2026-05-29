@@ -151,7 +151,6 @@ BFD_SESSION|<vrf>|<interface>|<peer_ip>
 <!-- pubsub -->
 ## 通信メカニズム
 
-
 | 項目 | 値 |
 |------|-----|
 | 購読クラス (設定経路) | `ConsumerStateTable` (APPL_DB / `Orch::addConsumer` の `else` 分岐) |
@@ -165,7 +164,7 @@ BFD_SESSION|<vrf>|<interface>|<peer_ip>
 | 2nd Executor (state 通知) | `NotificationConsumer` on [ASIC_DB](../../reference/glossary.md#term-asic_db) channel `NOTIFICATIONS`、op `"bfd_session_state_change"` → `doTask(NotificationConsumer&)` → STATE_DB `BFD_SESSION_TABLE.state` 更新 |
 | 失敗時挙動 | `create_bfd_session()` false → `it++` で次イベントループ周回で**自動再試行** |
 
-注意: APPL_DB `BFD_SESSION_TABLE` を直接書き込むのが hardware 経路への正規ルート。CONFIG_DB `BFD_SESSION` を `sonic-db-cli` で直書きしても `BfdOrch` には届かない (`sonic-cfggen` 等の橋渡しが必要)。
+注意: APPL_DB `BFD_SESSION_TABLE` を直接書き込むのが hardware 経路への正規ルート。[CONFIG_DB](../../reference/glossary.md#term-config_db) `BFD_SESSION` を `sonic-db-cli` で直書きしても `BfdOrch` には届かない (`sonic-cfggen` 等の橋渡しが必要)。
 
 <!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:243L (gBfdOrch = new BfdOrch(m_applDb, APP_BFD_SESSION_TABLE_NAME, ...)) -->
 <!-- evidence: sonic-net/sonic-swss/orchagent/bfdorch.cpp:58L (BfdOrch::BfdOrch — Orch(db, tableName) 継承) -->
@@ -273,7 +272,6 @@ show bfd peers details
 <!-- constants -->
 ## ハードコード定数
 
-
 ### `#define` マクロ定数
 
 | 定数名 | 値 | 単位 | 用途 | ソース |
@@ -322,7 +320,6 @@ STATE_DB へ書き戻される `state` 値も固定 (`session_state_lookup`, `bf
 <!-- ordering -->
 ## 書込み順依存
 
-
 | # | 依存関係 | 方向 | 緩和策 / 備考 |
 |---|----------|------|--------------|
 | 1 | `PORT|<interface>` 初期化完了 → BFD_SESSION SET (`interface != "default"`) | 強制先行 | `gPortsOrch->getPort()` 失敗時 `doTask` が `it++` で次イベントループ周回で**自動再試行**。`bfdorch.cpp:485-488, 173-177` |
@@ -352,7 +349,7 @@ CONFIG_DB `BFD_SESSION` の SET/DEL を起点に `bfdorch` (`sonic-swss/orchagen
 | APPL_DB | — | なし | — | `bfdorch` は `BFD_SESSION_TABLE` を **subscribe** するのみで、APPL_DB へ Producer/Table の書込呼出は `bfdorch.cpp` に 0 件 (`grep -nE "APPL_DB\|m_app\|appDb" bfdorch.cpp` で no match) |
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | — | なし | — | `bfdorch.cpp` 全体で `COUNTERS_DB` / `FlexCounter` / `m_counters` への参照が 0 件。SAI には `SAI_BFD_SESSION_STAT_*` enum が存在するが、`bfdorch` には FlexCounterManager 登録呼出が無く `COUNTERS:BFD_SESSION:` キーは master では生成されない |
 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | — | なし | — | 同上。BFD カウンタの polling 登録は実装されていない |
-| [ASIC_DB](../../reference/glossary.md#term-asic_db) | — | 間接 (SAI 経由) | — | `sai_bfd_api->create_bfd_session()` 経由で [syncd](../../reference/glossary.md#term-syncd) が ASIC_DB を更新するが、`bfdorch` は ASIC_DB を直接書かない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | — | 間接 (SAI 経由) | — | `sai_bfd_api->create_bfd_session()` 経由で [syncd](../../reference/glossary.md#term-syncd) が [ASIC_DB](../../reference/glossary.md#term-asic_db) を更新するが、`bfdorch` は ASIC_DB を直接書かない |
 
 ### キー / 値の要点
 
@@ -367,7 +364,6 @@ CONFIG_DB `BFD_SESSION` の SET/DEL を起点に `bfdorch` (`sonic-swss/orchagen
 
 <!-- platform -->
 ## プラットフォーム差
-
 
 ### 動的に照会される SAI capability
 
@@ -437,7 +433,6 @@ CONFIG_DB `BFD_SESSION` の SET/DEL を起点に `bfdorch` (`sonic-swss/orchagen
 <!-- failure -->
 ## 失敗挙動
 
-
 ### SET 処理 (`create_bfd_session()`)
 
 | 失敗条件 | 結果 | 再試行 | evidence |
@@ -490,4 +485,4 @@ CONFIG_DB `BFD_SESSION` の SET/DEL を起点に `bfdorch` (`sonic-swss/orchagen
 
 <!-- /failure -->
 
-<!-- glossary-links-injected: 7071347b3cf9 -->
+<!-- glossary-links-injected: 88c94b841369 -->

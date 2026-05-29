@@ -451,7 +451,6 @@ keyspace notification (`__keyspace@6__:BGP_PEER_CONFIGURED_TABLE|*`) は STATE_D
 
 ## 引用元
 
-
 [^6]: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py` (L229–243 add_peer テンプレート失敗分岐, L271–304 update_state_db 例外処理, L446–492 del_handler 失敗・順序乖離, L494–508 apply_op 常時 True). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py>
 
 ## 確認コマンド

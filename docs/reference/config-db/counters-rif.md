@@ -629,7 +629,6 @@ NotificationConsumer: なし（カウンタ配信に使用せず）
 
 ## プラットフォーム / SAI Capability 差異
 
-
 ### VoQ シャーシ vs 非 VoQ — リモートシステムポートの扱い
 
 VoQ シャーシ環境 (`gMySwitchType == "voq"` かつ `isChassisDbInUse()`) では `IntfsOrch` コンストラクタ起動時に `CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME` の追加 subscriber が登録される[^20]。

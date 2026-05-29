@@ -242,7 +242,6 @@ Warm-reboot 時のみ `m_delayTimerExpired` フラグが false のままタイ�
 <!-- failure -->
 ## 失敗挙動・retry / recovery
 
-
 ### retry / failure パターン概要
 
 キュー / PG カウンタ経路における失敗は「orchagent クラッシュ」「silent スキップ（エントリ欠落）」「保留（自動再開）」の 3 パターンに分類される。
@@ -299,7 +298,6 @@ supervisor による orchagent 自動再起動後に再試行される。SAI ド
 
 <!-- constants -->
 ## ハードコード定数
-
 
 ### FlexCounter グループ名（ソースコードハードコード）
 
@@ -369,7 +367,6 @@ Cold boot では `m_delayTimerExpired = true` に即初期化され（`flexcount
 <!-- side-effects -->
 ## COUNTERS_DB 書き込みの副作用
 
-
 ### CounterNameMapUpdater → HFTelOrch 連鎖（高周波テレメトリ有効時）
 
 `COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_PG_NAME_MAP` へのキー追加・削除は `CounterNameMapUpdater::setCounterNameMap()` / `delCounterNameMap()` 経由で行われる。高周波テレメトリ（HFT）機能が有効な場合（`gHFTOrch != null`）、Redis への `hset` の前に `HFTelOrch::locallyNotify()` が**同期**呼び出しされる[^5]。
@@ -405,7 +402,6 @@ Queue / PG マッピング書き込み関数は COUNTERS_DB 更新と同時に `
 
 <!-- pubsub -->
 ## 通信メカニズム
-
 
 ### Producer/Consumer ペア
 
@@ -505,7 +501,6 @@ CLI: queuestat / watermarkstat / pg-drop
 <!-- platform -->
 ## プラットフォーム固有挙動
 
-
 キュー / PG カウンタの収集挙動はプラットフォーム（`platform` 環境変数）およびスイッチタイプ（`gMySwitchType`）によって以下の点が異なる。
 
 ### DPU モード — キュー / PG 初期化を完全スキップ
@@ -566,7 +561,6 @@ Broadcom の `PFC_DLR_INIT_ENABLE` 環境変数は `gSwitchOrch->checkPfcDlrInit
 
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来挙動
-
 
 ### カウンタフィールドセットはコードハードコード
 

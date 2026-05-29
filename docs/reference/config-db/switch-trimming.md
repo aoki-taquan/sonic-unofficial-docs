@@ -302,7 +302,6 @@ db_migrator.py での SWITCH_TRIMMING マイグレーションなし
 <!-- ordering -->
 ## 書込み順序依存
 
-
 `SwitchOrch::doCfgSwitchTrimmingTableTask()` (`sonic-swss/orchagent/switchorch.cpp`) と
 `SwitchTrimmingCapabilities` (`orchagent/switch/trimming/capabilities.cpp`) の実装から導出した順序制約。
 
@@ -477,7 +476,6 @@ CONFIG_DB フィールド名文字列および `dscp_value` / `queue_index` の�
 
 `SWITCH_TRIMMING` への SET 操作 (`doCfgSwitchTrimmingTableTask()` → `setSwitchTrimming()`) は SAI API を直接呼ぶのみであり、**通常の CONFIG_DB 書込に伴う他 [Redis](../../reference/glossary.md#term-redis) DB への副次書込は発生しない**。
 
-
 ### 副次 DB 書込サマリ
 
 | 書込先 DB | CONFIG_DB SET 時の書込 | 根拠 |
@@ -519,7 +517,6 @@ CONFIG_DB フィールド名文字列および `dscp_value` / `queue_index` の�
 
 <!-- pubsub -->
 ## 通信メカニズム
-
 
 ### Redis 購読方式
 
@@ -579,7 +576,6 @@ SwitchOrch::doTask() → tableName == CFG_SWITCH_TRIMMING_TABLE_NAME
 <!-- platform -->
 ## プラットフォーム差
 
-
 `SWITCH_TRIMMING` の SET 処理本体にコード上のプラットフォーム分岐は存在しない。
 機能の可用性は **実行時 SAI capability クエリ**によって決まる。また、トリミング関連カウンタの計算は NVIDIA/Mellanox プラットフォームでのみ追加処理が入る。
 
@@ -628,7 +624,6 @@ if (isMlnxPlatform() &&
 
 !!! note "SWITCH_TRIMMING 設定自体の挙動はプラットフォーム不問"
     Packet trimming の有効化・フィールド値の適用は `SwitchTrimmingCapabilities` が SAI に問い合わせた capability の有無のみに依存する。コード上のプラットフォーム文字列比較は存在しない。
-
 
 <!-- /platform -->
 

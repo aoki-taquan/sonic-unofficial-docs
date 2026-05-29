@@ -147,7 +147,6 @@ DEL 時: `removeDecapTunnel()` は TERM エントリを自動削除しない。T
     `SUBNET_DECAP` テーブルで `enable=true` かつ `src_ip`/`src_ip_v6` が設定済みでないと
     エントリが消費されてスキップされる（リトライなし）。SUBNET_DECAP を先に SET すること。
 
-
 <!-- /ordering -->
 
 <!-- cross-refs -->
@@ -208,7 +207,6 @@ DEL 時: `removeDecapTunnel()` は TERM エントリを自動削除しない。T
 - **subnet decap 有効化後の手動再投入**: `SUBNET_DECAP` の `enable` が後から変更されてもスキップ済みエントリは自動再処理されない。SUBNET_DECAP 変更後に term を再 SET すること。
 - **親トンネル不在が唯一の自動リトライ**: 他の失敗条件はすべてエントリ消費（恒久スキップ）。親トンネル不在のみ `unhandledDecapTerms` 経由で自動回復する。
 
-
 <!-- /failure -->
 
 <!-- constants -->
@@ -249,7 +247,6 @@ TUNNEL_DECAP_TERM_TABLE のフィールドで上書きできない、または�
 
 `subnet_type` の許可値は `"vlan"` と `"vip"` のみ (L428-434)。[YANG](../../reference/glossary.md#term-yang) 定義は存在せず、コードに直書きされている。
 
-
 <!-- /constants -->
 
 <!-- side-effects -->
@@ -282,7 +279,6 @@ TERM が先着した場合 (`tunnel_exists == false`)、`unhandledDecapTerms` �
 ### SUBNET_DECAP 更新時の連鎖
 
 `SUBNET_DECAP` フィールド変更 (src_ip / src_ip_v6 の更新) が発生すると、`updateUnhandledDecapTunnelTermsSrcIp()` (L1483-1494) により未処理 TERM の src_ip フィールドが上書き更新される。
-
 
 <!-- /side-effects -->
 
@@ -343,7 +339,6 @@ CONFIG_DB:SUBNET_DECAP
 RouteOrch / VNetRouteOrch
   ──ProducerStateTable──→ APPL_DB:TUNNEL_DECAP_TERM_TABLE (VIP subnet decap term)
 ```
-
 
 <!-- /pubsub -->
 

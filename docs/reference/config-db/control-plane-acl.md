@@ -448,7 +448,6 @@ caclmgrd は `ACL_RULE.PACKET_ACTION` を `iptables -j <値>` に **そのまま
 
 > **注意**: orchagent 側の `PACKET_ACTION_FORWARD` 等のマクロ (`aclorch.h:83-88`) は CTRLPLANE では参照されない。caclmgrd が直接文字列を iptables に渡すため、`ACCEPT` / `DROP` 以外は iptables コマンド失敗になる。
 
-
 <!-- /constants -->
 
 <!-- side-effects -->
@@ -519,7 +518,6 @@ caclmgrd 起動時、全 namespace に対して無条件で `update_control_plan
 
 evidence: `caclmgrd:1169-1171`
 
-
 <!-- /side-effects -->
 
 <!-- pubsub -->
@@ -565,7 +563,6 @@ CONFIG_DB ACL_TABLE / ACL_RULE 変更
 
 BFD セッションの最初の SET を検出後、caclmgrd は `sel.removeSelectable(subscribe_bfd_session)` で購読を解除する (caclmgrd:1224)。BFD ルールは `self.bfdAllowed == True` フラグで管理され、以降の iptables 全フラッシュ時に再追加される。
 
-
 <!-- /pubsub -->
 
 <!-- platform -->
@@ -598,7 +595,6 @@ BFD セッションの最初の SET を検出後、caclmgrd は `sel.removeSelec
 | `SSH` | True | PREROUTING DNAT + POSTROUTING SNAT |
 | `EXTERNAL_CLIENT` | False | 非対象 |
 | `ANY` | False | 非対象 |
-
 
 <!-- /platform -->
 

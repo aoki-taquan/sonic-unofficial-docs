@@ -132,6 +132,31 @@ excerpt: |
       return speed * 100 > target_speed * (100 + tolerance)
 reasoning: is_under_speed / is_over_speed は Fan(FanBase) のメソッド。FanDrawer ではない。get_speed_tolerance は既定実装が内部利用するため残存。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-platform-common/sonic_platform_base/fan_base.py#L69-L113 (sha: 64beade8cddecdbc154531bc84bed2fa86581ea8)"
+
+    **出典**:
+
+    `sonic-platform-common/sonic_platform_base/fan_base.py#L69-L113 (sha: 64beade8cddecdbc154531bc84bed2fa86581ea8)`
+
+    **抜粋**:
+
+    ```text
+    def is_under_speed(self):
+        speed = self.get_speed()
+        target_speed = self.get_target_speed()
+        tolerance = self.get_speed_tolerance()
+        return speed * 100 < target_speed * (100 - tolerance)
+    def is_over_speed(self):
+        ...
+        return speed * 100 > target_speed * (100 + tolerance)
+    ```
+
+    **判断根拠**: is_under_speed / is_over_speed は Fan(FanBase) のメソッド。FanDrawer ではない。get_speed_tolerance は既定実装が内部利用するため残存。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld#L399-L463 (sha: 4ba9612cb7756651062d37f977e3df17d57f740d)
 excerpt: |
@@ -145,5 +170,29 @@ excerpt: |
        ('is_over_speed', str(is_over_speed)), ...])
 reasoning: thermalctld は fan.is_under_speed/is_over_speed を呼び FAN_INFO に書き込む。DB のフィールド名は speed_target (target_speed ではない)。speed_tolerance は書き込み対象外。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld#L399-L463 (sha: 4ba9612cb7756651062d37f977e3df17d57f740d)"
+
+    **出典**:
+
+    `sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld#L399-L463 (sha: 4ba9612cb7756651062d37f977e3df17d57f740d)`
+
+    **抜粋**:
+
+    ```text
+    is_under_speed = try_get(fan.is_under_speed)
+    is_over_speed = try_get(fan.is_over_speed)
+    ...
+    fvs = swsscommon.FieldValuePairs(
+        [('speed', str(speed)),
+         ('speed_target', str(speed_target)),
+         ('is_under_speed', str(is_under_speed)),
+         ('is_over_speed', str(is_over_speed)), ...])
+    ```
+
+    **判断根拠**: thermalctld は fan.is_under_speed/is_over_speed を呼び FAN_INFO に書き込む。DB のフィールド名は speed_target (target_speed ではない)。speed_tolerance は書き込み対象外。
+
+<!-- evidence-rendered:end -->
 
 <!-- glossary-links-injected: 0f594312e2b7 -->

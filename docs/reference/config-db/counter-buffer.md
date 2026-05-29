@@ -371,7 +371,6 @@ buffer pool
 <!-- cross-refs -->
 ## 暗黙参照テーブル
 
-
 以下はすべて実装レベルの暗黙参照（[YANG](../../reference/glossary.md#term-yang) leafref なし）。
 
 | 参照元処理 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
@@ -396,7 +395,6 @@ buffer pool
 
 <!-- failure -->
 ## 失敗挙動・retry / recovery
-
 
 ### retry パターン概要
 
@@ -458,7 +456,6 @@ SAI `create_buffer_pool` 失敗時は `handleSaiCreateStatus(SAI_API_BUFFER, sai
 
 <!-- constants -->
 ## 定数・マジックナンバー
-
 
 ### FlexCounter グループ名文字列
 
@@ -580,7 +577,6 @@ CONFIG_DB の BUFFER_POOL / BUFFER_PROFILE テーブルのフィールド名と�
 <!-- side-effects -->
 ## 副次 DB 書き込み
 
-
 バッファカウンタに関連する処理が [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / APPL_STATE_DB / syncd FLEX_COUNTER_TABLE へ
 行う副次書き込みの全体像。YANG / [HLD](../../reference/glossary.md#term-hld) には明示されていない。
 
@@ -644,7 +640,6 @@ Gearbox PHY が有効な環境では、`COUNTERS_PORT_NAME_MAP` が
 
 <!-- pubsub -->
 ## 通信メカニズム
-
 
 バッファ / ウォーターマークカウンタ周辺で使われる通知経路は 3 種類存在する。
 すべて [HLD](../../reference/glossary.md#term-hld) には明示されていない。
@@ -730,7 +725,6 @@ TTL なし・永続コネクション・fan-out なしの 1:1 通知。[HLD](../
 
 <!-- platform -->
 ## プラットフォーム差
-
 
 ### VoQ (Virtual Output Queue) システム
 

@@ -107,11 +107,11 @@ related:
 
 - [NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離](../../routing/routing-and-next-hop-table-enhancement.md)
 - [BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）](../../routing/bgp-loading-optimization-for-sonic.md)
-- [SONiC における FRR upgrade の手順とパッチ管理](../../routing/detailed-steps-to-upgrade-frr-in-sonic.md)
 - [IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）](../../routing/ipv6-link-local-enhancements.md)
 - [Fine Grained ECMP（FG_NHG / fgnhgorch）](../../routing/sonic-fine-grained-ecmp.md)
 - [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../../routing/srv6-vpn-hld.md)
 - [BGP PIC（Prefix Independent Convergence / NHG 階層）](../../routing/bgp-prefix-independent-convergence-architecture-document.md)
+- [BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）](../../routing/bgp-route-install-error-handling.md)
 
 **関連トラブルシュート 5 件**
 

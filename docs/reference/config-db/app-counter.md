@@ -356,7 +356,6 @@ CONFIG_DB key から [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_cou
 !!! note "ユーザ可変項目との対比"
     `FLEX_COUNTER_TABLE|FLOW_CNT_TRAP|FLOW_CNT_ROUTE` でユーザが変更できるのは `FLEX_COUNTER_STATUS` と `POLL_INTERVAL` のみ。stats_mode・stat ID リスト・group 名・warm-up 遅延・1 秒タイマー周期・capability キー文字列はすべてビルド時固定。
 
-
 <!-- /constants -->
 
 <!-- pubsub -->
@@ -469,7 +468,6 @@ FLEX_COUNTER_DB → syncd → COUNTERS_DB
 ```
 
 ### 詳細ノート
-
 
 <!-- /pubsub -->
 
@@ -619,7 +617,6 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 
 !!! note "PORT_TABLE / ACL_RULE は参照しない"
     flow counter は port 単位でも ACL 単位でもないため `PORT_TABLE` / `ACL_RULE` / `ACL_TABLE` への暗黙参照は無い。port counter は `PORT` group、ACL counter は `ACL` group が別系統で扱う。
-
 
 <!-- /cross-refs -->
 

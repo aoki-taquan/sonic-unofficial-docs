@@ -215,7 +215,6 @@ type_map QosOrch::m_qos_maps = {
 <!-- constants -->
 ## ハードコード定数
 
-
 `DOT1P_TO_PG_MAP` テーブルは存在しないため、2 段マッピングパイプライン (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) を構成するハードコード定数を記述する。出典は `qosorch.h`、`qosorch.cpp`、および各 [YANG](../../reference/glossary.md#term-yang) モジュール。
 
 ### CONFIG_DB フィールド名定数 (qosorch.h)
@@ -274,7 +273,6 @@ type_map QosOrch::m_qos_maps = {
 
 <!-- side-effects -->
 ## 副次 DB 書込み
-
 
 `DOT1P_TO_PG_MAP` テーブルは存在しないため、副次 DB 書込みは 2 段マッピングパイプライン (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP`) および `PORT_QOS_MAP` の処理に由来する。
 
@@ -412,7 +410,6 @@ NotificationConsumer: なし
 
 <!-- platform -->
 ## プラットフォーム差異
-
 
 `DOT1P_TO_PG_MAP` テーブルは存在しないが、等価な 2 段マッピング経路
 (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) を処理する

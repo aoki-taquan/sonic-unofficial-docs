@@ -103,7 +103,6 @@ COUNTERS_RIF_NAME_MAP  (hash、key = "")
 <!-- defaults -->
 ## コード由来暗黙デフォルト
 
-
 [COUNTERS_DB](../../reference/glossary.md#term-counters_db) は書き込み元がコードのみであり、ユーザが直接フィールドを設定することはない。以下は [orchagent](../../reference/glossary.md#term-orchagent) / [FlexCounter](../../reference/glossary.md#term-flexcounter) がどのような初期値・条件でフィールドを登録するかを示す。
 
 ### フィールド別ハードコードデフォルト・初期挙動
@@ -144,7 +143,6 @@ COUNTERS_RIF_NAME_MAP  (hash、key = "")
 
 <!-- ordering -->
 ## 書込み順依存
-
 
 ### COUNTERS_LAG_NAME_MAP の書込み順序
 
@@ -229,7 +227,6 @@ FlexCounter (RIF_STAT_COUNTER_FLEX_COUNTER_GROUP)  → COUNTERS:<rif_oid>
 <!-- cross-refs -->
 ## 暗黙参照テーブル
 
-
 `portsorch` / `intfsorch` が `COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` を書き込む際に
 [YANG](../../reference/glossary.md#term-yang) leafref として宣言されていない以下の DB / テーブルを暗黙的に参照する。
 
@@ -256,7 +253,6 @@ FlexCounter (RIF_STAT_COUNTER_FLEX_COUNTER_GROUP)  → COUNTERS:<rif_oid>
 
 <!-- failure -->
 ## 障害挙動
-
 
 ### SAI LAG 作成失敗（`addLag`）
 
@@ -302,7 +298,6 @@ RIF が `m_rifsToAdd` にキューイング後、タイマーループ（`intfso
 <!-- constants -->
 ## ハードコード定数
 
-
 `portsorch` / `intfsorch` が COUNTERS_DB に書き込む際に使用する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG で管理されないハードコード定数の一覧。
 
 ### FlexCounter グループパラメータ (RIF カウンタ)
@@ -344,7 +339,6 @@ RIF が `m_rifsToAdd` にキューイング後、タイマーループ（`intfso
 
 <!-- side-effects -->
 ## 副次 DB 書込
-
 
 `portsorch` / `intfsorch` が `COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` を書き込む際に、
 CONFIG_DB とは別の DB（FLEX_COUNTER_DB / COUNTERS_DB 内の他テーブル）に以下を副次的に書き込む。
@@ -411,7 +405,6 @@ sonic-db-cli COUNTERS_DB hgetall COUNTERS_RIF_TYPE_MAP
 <!-- pubsub -->
 ## Redis 通知メカニズム
 
-
 ### 書き込み方式 — ProducerStateTable を使わない直接 HSET
 
 `portsorch` の `m_counterLagTable` および `intfsorch` の `m_rifNameTable` / `m_rifTypeTable` はいずれも **`swsscommon::Table`** インスタンスであり、`ProducerStateTable` ではない (`portsorch.cpp:762`, `intfsorch.cpp:70-71`)。
@@ -452,7 +445,6 @@ COUNTERS_DB COUNTERS:<rif_oid>  ← SAI 収集値が書き込まれる
 
 <!-- platform -->
 ## プラットフォーム / SAI Capability 差異
-
 
 `COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` の書き込み自体はプラットフォームを問わず同じコードパスを通るが、以下のプラットフォーム固有の差異が存在する。
 

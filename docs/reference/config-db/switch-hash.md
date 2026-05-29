@@ -147,7 +147,6 @@ show switch-hash global
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
-
 ### `ecmp_hash` / `lag_hash` field set — コード側デフォルトなし（SAI/ASIC 依存）
 
 `SwitchHash` 構造体 (`sonic-swss/orchagent/switch/switch_container.h:18-26`) は `ecmp_hash` / `lag_hash` をいずれも `is_set = false` で初期化する。CONFIG_DB の `SWITCH_HASH|GLOBAL` エントリにフィールドが含まれない場合、`setSwitchHash()` (`switchorch.cpp:789-822`) は SAI への書き込みを行わず、**有効な hash field 集合は SAI ベンダー実装 / ASIC のデフォルト**（`SAI_SWITCH_ATTR_ECMP_HASH` / `SAI_SWITCH_ATTR_LAG_HASH` が指す hash オブジェクトの初期 `NATIVE_HASH_FIELD_LIST`）に従う。
@@ -214,7 +213,6 @@ SwitchOrch は常時登録し `SWITCH_HASH` テーブルを無条件購読する
 <!-- ordering -->
 ## 書込み順序依存・タイミング依存
 
-
 ### SAI 初期化 → OID キャッシュ → SWITCH_HASH SET（先行必須）
 
 `SwitchOrch` コンストラクタ (`switchorch.cpp:169`) は起動直後に `querySwitchHashDefaults()` (`switchorch.cpp:2030-2043`) を呼び、`SAI_SWITCH_ATTR_ECMP_HASH` / `SAI_SWITCH_ATTR_LAG_HASH` の OID を `m_switchHashDefaults` にキャッシュする。`setSwitchHashFieldListSai()` (`switchorch.cpp:750-769`) はこの OID を使って `sai_hash_api->set_hash_attribute()` を呼ぶため、OID キャッシュが取得できていない状態で CONFIG_DB に `SWITCH_HASH|GLOBAL` を書き込むと SAI の field-list SET が失敗する。OID 取得失敗時は `LOG_WARN` のみで起動継続するため、エラーが静かに握りつぶされる点に注意。
@@ -245,7 +243,6 @@ SwitchOrch は常時登録し `SWITCH_HASH` テーブルを無条件購読する
 <!-- cross-refs -->
 ## 暗黙テーブル参照
 
-
 ### YANG 明示 leafref
 
 `sonic-hash.yang` の `SWITCH_HASH.GLOBAL` コンテナには他テーブルへの `leafref` が存在しない。フィールドはすべて自己完結した `hash-field` enum / `hash-algorithm` enum で定義される。
@@ -264,7 +261,6 @@ SwitchOrch は常時登録し `SWITCH_HASH` テーブルを無条件購読する
 
 <!-- failure -->
 ## 失敗挙動
-
 
 `SWITCH_HASH` の処理失敗は `doCfgSwitchHashTableTask()` / `setSwitchHash()` / `setSwitchHashFieldListSai()` 内で検出される。[STATE_DB](../../reference/glossary.md#term-state_db) へのステータス書き込みはなく、エラー記録は syslog (`SWSS_LOG_ERROR` / `SWSS_LOG_WARN`) のみ。
 
@@ -409,7 +405,6 @@ DEL 操作は `SWSS_LOG_ERROR` を出力して erase するだけで SAI API も
 <!-- pubsub -->
 ## 通信メカニズム
 
-
 ### Redis 購読方式
 
 `SwitchOrch` は `Orch(connectors)` 基底クラスコンストラクタに `TableConnector` ベクタを渡す (`orchdaemon.cpp:204-213`)。`Orch::addConsumer()` (`orch.cpp:1186-1196`) は DB ID が `CONFIG_DB` である場合に **`SubscriberStateTable`** を選択する:
@@ -452,7 +447,6 @@ else
 
 <!-- platform -->
 ## プラットフォーム差
-
 
 `SwitchOrch` の SWITCH_HASH 処理経路には `BRCM_PLATFORM_SUBSTRING` / `MLNX_PLATFORM_SUBSTRING` などの **platform 文字列分岐が存在しない**。プラットフォーム差異はすべて **SAI capability クエリ** 経由で実行時に動的決定される。
 

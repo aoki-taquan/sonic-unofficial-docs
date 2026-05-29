@@ -199,7 +199,7 @@ bgpcfgd は platform 非依存で常時起動し `PrefixListMgr` を無条件登
 | `PrefixListMgr` | `netaddr.IPNetwork()` 解析失敗 | `log_warn` + return True (エントリスキップ) | `managers_prefix_list.py` |
 | `PrefixListMgr` | `ANCHOR_PREFIX` + SpineRouter 以外 | `log_warn` + スキップ | `managers_prefix_list.py` |
 
-> **裏取り**: `managers_prefix_list.py` 全体読了。CONFIG_DB 内フィールド間の自動派生なし（FRR テキスト変換のみ）。
+> **裏取り**: `managers_prefix_list.py` 全体読了。[CONFIG_DB](../../reference/glossary.md#term-config_db) 内フィールド間の自動派生なし（FRR テキスト変換のみ）。
 
 <!-- /handler-branching -->
 
@@ -526,4 +526,4 @@ ANCHOR_PREFIX の場合は IPv4/IPv6 とも prefix list 名は `ANCHOR_CONTRIBUT
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 5c6ada0d82e5 -->
+<!-- glossary-links-injected: 896d391185a9 -->

@@ -366,7 +366,6 @@ YANG 宣言デフォルトに加え、Python コードが持つ fallback を per
 - install 時の自動生成は `init_cfg.json` の **build-time 静的設定** に依存しており、custom image で `AUTO_TECHSUPPORT|GLOBAL` を削ると後追い不能で feature override が消える (#3)。
 - cleanup と invocation の責任分界が GLOBAL/FEATURE で**非対称** (#7) という設計トレードオフを認識しておくと運用判断が容易。
 
-
 <!-- evidence: sonic-utilities/scripts/coredump_gen_handler.py:14-82; sonic-utilities/scripts/techsupport_cleanup.py:13-55; sonic-utilities/sonic_package_manager/service_creator/feature.py:60-200; sonic-utilities/utilities_common/auto_techsupport_helper.py:60,69,300-338; sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45 -->
 <!-- /ordering -->
 

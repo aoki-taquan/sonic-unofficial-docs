@@ -263,7 +263,6 @@ hostcfgd 起動
 !!! note "スキャン証跡"
     `sonic-host-services/scripts/hostcfgd L1110-1168` (`set_policies()` 全体) を確認。`copy2` 後の `rename` / `remove` 分岐と `sshd -T` ゲートを追跡。`Subsystem sftp` 行が変更対象に含まれないことを確認 — 誤読なし。
 
-
 <!-- /failure -->
 
 <!-- side-effects -->

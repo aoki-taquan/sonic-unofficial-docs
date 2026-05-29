@@ -548,7 +548,6 @@ SAI 操作の失敗のうち、`create_router_interface`・`remove_router_interf
 
 `buildIntfReplayList()` で CONFIG_DB の `PORTCHANNEL_INTERFACE` キーが `m_pendingReplayIntfList` に収集され（`intfmgr.cpp:276`）、warm-start 時に replay される。replay 完了後 `RECONCILED` に遷移。
 
-
 ### teammgr が STATE_LAG_TABLE に書くまでの経路（補完）
 
 上記テーブルの "lagmgrd" は実装上は `TeamMgr` (`sonic-swss/cfgmgr/teammgr.cpp`) が担う。具体的な経路:

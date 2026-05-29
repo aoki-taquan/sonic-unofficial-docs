@@ -295,7 +295,6 @@ SET 完了後に `writeResultToDB(dash_routing_type_result_table_, routing_type_
 <!-- side-effects -->
 ## 副次 DB 書込
 
-
 `DASH_ROUTING_TYPE_TABLE` の SET/DEL が引き起こす副次書込は **DPU_APPL_STATE_DB への結果書込のみ**。SAI API 呼び出しは一切発生せず、`routing_type_entries_` in-memory マップへの格納で処理が完結するため、[ASIC_DB](../../reference/glossary.md#term-asic_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書込もない。
 
 ### SET 時 — DPU_APPL_STATE_DB 結果書込
@@ -455,7 +454,6 @@ SAI API が呼び出されるのは、この routing type を参照する `DashV
 ## 引用元
 
 [^1]: `sonic-swss/orchagent/dash/dashorch.cpp` — `doTaskRoutingTypeTable()` (L473-537), `addRoutingTypeEntry()` (L441-455), `getRouteTypeActions()` (L82-94). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashorch.cpp>
-
 
 <!-- ops-hint -->
 ## 運用ヒント

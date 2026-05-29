@@ -142,7 +142,6 @@ YANG (`sonic-buffer-queue.yang`) の `profile` leafref には明示的な defaul
 - [orchagent](../../reference/glossary.md#term-orchagent) には「`profile` が未指定なら自動で `egress_lossy_profile` を当てる」といったランタイムフォールバックは**存在しない**。ビルド時テンプレートで埋まらなかった queue は SAI 側で NULL profile (= 動的バッファ割当なし) となる。
 - scheduler 既定 (`QUEUE.scheduler`) は `BUFFER_QUEUE` テーブルのフィールドではなく `QUEUE` テーブル側で割当される。BUFFER_QUEUE スコープ外のため本ページでは扱わない。
 
-
 <!-- /defaults -->
 
 <!-- ordering -->

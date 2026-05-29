@@ -101,7 +101,7 @@ flowchart LR
   CLI --> SC
   CDB0[("CONFIG_DB<br/>STATIC_ROUTE")]
   SC --> CDB0
-  DM0["fpmsyncd"]
+  DM0["bgpcfgd"]
   CDB0 --> DM0
   CDB1[("CONFIG_DB<br/>MGMT_INTERFACE")]
   SC --> CDB1

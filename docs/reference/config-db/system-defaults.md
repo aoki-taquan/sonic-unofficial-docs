@@ -444,7 +444,6 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 <!-- platform -->
 ## プラットフォーム / SAI Capability 差異
 
-
 `SYSTEM_DEFAULTS` はビルド時テンプレート (`init_cfg.json.j2`) とランタイムコード (`muxorch.cpp`) の両方でプラットフォーム分岐を持つ。YANG スキーマ自体はプラットフォーム非依存だが、エントリの有無・値の初期値がプラットフォームによって異なる。
 
 ### mux_tunnel_egress_acl — ASIC プラットフォームによる初期値差異

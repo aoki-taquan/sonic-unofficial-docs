@@ -61,7 +61,7 @@ container `SNMP` の下に 2 つのシングルトン container (`CONTACT`/`LOCA
 
 | フィールド | 型 | 説明 |
 |-----------|----|------|
-| `Location` | string (1..255 chars, 改行不可) | SNMP `sysLocation` |
+| `Location` | string (1..255 chars, 改行不可) | [SNMP](../../reference/glossary.md#term-snmp) `sysLocation` |
 
 ## 制約
 
@@ -632,4 +632,4 @@ CONFIG_DB に書き込まれた値はこのファイル生成を経て初めて 
 
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 88a11b84726d -->
+<!-- glossary-links-injected: 16f9ee1c5f80 -->

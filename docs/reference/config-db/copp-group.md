@@ -531,7 +531,6 @@ journalctl -u swss | grep -i copp
 
 ## 副次 DB 書き込み
 
-
 `COPP_GROUP` の SET/DEL 処理は CONFIG_DB 以外の以下 DB・テーブルへも書き込みを行う。
 
 ### APPL_DB — COPP_TABLE

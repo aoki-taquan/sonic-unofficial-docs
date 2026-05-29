@@ -364,7 +364,6 @@ AUTO_TECHSUPPORT (GLOBAL) の挙動は [ASIC](../../reference/glossary.md#term-a
 <!-- ordering -->
 ## 書込み順依存
 
-
 ### 起動順 (kernel core_pattern → handler)
 
 `kernel.core_pattern=|/usr/local/bin/coredump-compress %e %t %p %P` (`90-sonic.conf:45`) が `systemd-sysctl.service` で適用された後にのみ、coredump → `coredump-compress` → `coredump_gen_handler.py` のパイプが成立する。sysctl 適用前に critical process がクラッシュした場合 kernel は default pattern を使い、AUTO_TECHSUPPORT 設定は一切評価されない。

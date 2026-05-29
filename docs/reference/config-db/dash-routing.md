@@ -374,7 +374,6 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<ip_prefix>:<priority>
 <!-- failure -->
 ## 失敗挙動
 
-
 `DashRouteOrch` / `DashOrch` はハンドラが `bool` を返し、`false` でリトライ、`true` で消費（廃棄）となる。[STATE_DB](../../reference/glossary.md#term-state_db) / ERROR_TABLE への失敗記録は行わない。
 
 ### DASH_ROUTING_TYPE_TABLE

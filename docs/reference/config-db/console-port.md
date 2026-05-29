@@ -177,7 +177,6 @@ CONSOLE_SWITCH|console_mgmt
 
 ソース: `sonic-utilities/config/console.py`、`sonic-utilities/consutil/main.py`、`sonic-utilities/consutil/lib.py`
 
-
 ### CLI 書き込み時の失敗経路
 
 | 失敗条件 | 検出箇所 | 結果 | evidence |
@@ -212,7 +211,6 @@ CONSOLE_SWITCH|console_mgmt
 ## ハードコード定数
 
 `consutil/lib.py` および `config/console.py` 内に存在する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG で管理されないハードコード定数の一覧。
-
 
 ### エラーコード定数 (consutil/lib.py L17–21)
 

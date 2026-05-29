@@ -284,7 +284,6 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし。
 
 PORT_QOS_MAP と TUNNEL_DECAP_TABLE のいずれか一方でも参照が残る限り、本テーブルのマップは SAI から削除されない（`m_pendingRemove = true` で保留）。両参照が解放された後の次回 orchagent イテレーションで `remove_qos_map()` が呼ばれる。
 
-
 <!-- /cross-refs -->
 
 <!-- failure -->
