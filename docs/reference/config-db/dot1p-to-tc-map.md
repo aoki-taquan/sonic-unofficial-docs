@@ -178,7 +178,7 @@ show qos map dot1p-tc
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DOT1P_TO_TC_MAP`
 
@@ -246,9 +246,8 @@ show qos map dot1p-tc
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-ordering.md`
 
 対象テーブル: `DOT1P_TO_TC_MAP`。Consumer: `QosOrch::handleDot1pToTcTable()` / `QosOrch::handlePortQosMapTable()` (`qosorch.cpp`)。
 
@@ -274,7 +273,7 @@ show qos map dot1p-tc
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
 `DOT1P_TO_TC_MAP` が関わる CONFIG_DB テーブル間の暗黙参照を `qosorch.cpp` / `qosorch.h` から抽出した。
 
@@ -288,16 +287,13 @@ show qos map dot1p-tc
 - `PORT_QOS_MAP.dot1p_to_tc_map` から参照中に DEL しようとすると `isObjectBeingReferenced()` が true を返し `task_need_retry` で削除保留。
 - SWITCH レベルへの直接適用（`PORT_QOS_MAP|global` 経路）は `DSCP_TO_TC_MAP` のみ。`DOT1P_TO_TC_MAP` は SWITCH 直接適用なし（`querySwitchCapability` 判定対象外）。
 
-> 詳細: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-cross-refs.md`
-
+> 
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 `Dot1pToTcMapHandler::processWorkItem()` / `QosMapHandler::processWorkItem()`（`sonic-swss/orchagent/qosorch.cpp`）における SET / DEL 失敗条件と結果を網羅する。
-
-<!-- evidence: meta/_intermediate/cdb-flow/dot1p-to-tc-map-failure.md -->
 
 ### SET 失敗マトリクス
 
@@ -327,11 +323,10 @@ show qos map dot1p-tc
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/qosorch.h`
 
-> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-constants.md`
 
 ### フィールド名定数
 
@@ -369,11 +364,10 @@ show qos map dot1p-tc
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 ソース: `sonic-swss/orchagent/qosorch.cpp`
 
-> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-side-effects.md`
 
 `DOT1P_TO_TC_MAP` を SET/DEL した際に [orchagent](../../reference/glossary.md#term-orchagent) が書き込む副次 DB を示す。cfgmgr ステージは存在しない（[CONFIG_DB](../../reference/glossary.md#term-config_db) → orchagent 直結）。[STATE_DB](../../reference/glossary.md#term-state_db) / APPL_STATE_DB への書き込みはない。
 
@@ -419,9 +413,8 @@ show qos map dot1p-tc
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-pubsub.md`
 
 ### 購読方式
 
@@ -466,9 +459,8 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
-> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-platform.md`
 
 ### スイッチレベル適用なし
 

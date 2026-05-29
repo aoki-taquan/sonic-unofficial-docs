@@ -196,7 +196,7 @@ show dhcp_server ipv4 info
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DHCP_SERVER_IPV4`
 
@@ -227,9 +227,8 @@ show dhcp_server ipv4 info
 <!-- pubsub -->
 ## 通信メカニズム (Redis PUBSUB / keyspace notification)
 
-> **調査根拠**: `dhcp_utilities/common/dhcp_db_monitor.py` + `dhcp_utilities/dhcpservd/dhcpservd.py` 全行精読、`sonic-swss-common/common/subscriberstatetable.cpp` 参照 (2026-05-15)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-pubsub.md`
-
+> **Evidence**: `dhcp_utilities/common/dhcp_db_monitor.py` + `dhcp_utilities/dhcpservd/dhcpservd.py` 全行精読、`sonic-swss-common/common/subscriberstatetable.cpp` 参照 (2026-05-15)  
+> 
 ### 購読方式
 
 `dhcpservd` は `swss::SubscriberStateTable` を通じて CONFIG_DB の複数テーブルを購読する。`dhcp_db_monitor.py` が各テーブルに対応する `ConfigDbEventChecker` サブクラスを定義し、`DhcpServdDbMonitor` が `swsscommon.Select`（5000 ms タイムアウト）で束ねる。[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) / NotificationConsumer / [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) は使用しない。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継もなく、kea-dhcp4.conf ファイル経由で設定を反映する。
@@ -333,7 +332,7 @@ YANG は `mandatory true` だが、dhcp_cfggen が kea-dhcp4 の subnet を計�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### 他テーブル先行必須
 
@@ -387,10 +386,9 @@ dhcpservd は stateless（CONFIG_DB から毎回全量 generate）。再起動�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
-> **調査根拠**: `dhcp_cfggen.py`, `dhcprelayd.py`, `dhcp_server.py` 全行精読 (2026-05-15)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-cross-refs.md`
+> **Evidence**: `dhcp_cfggen.py`, `dhcprelayd.py`, `dhcp_server.py` 全行精読 (2026-05-15)  
 
 `DHCP_SERVER_IPV4` テーブルは YANG leafref を最小限しか持たないが、実行時に以下のテーブルを暗黙参照する。
 
@@ -430,10 +428,9 @@ CLI `config dhcp_server` グループ入口で `FEATURE|dhcp_server.state` を�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・エラーパス (Phase D)
+## 失敗挙動・エラーパス
 
-> **調査根拠**: `dhcp_cfggen.py`, `dhcpservd.py`, `dhcprelayd.py`, `dhcp_server.py` 全行精読 (2026-05-15)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-failure.md`
+> **Evidence**: `dhcp_cfggen.py`, `dhcpservd.py`, `dhcprelayd.py`, `dhcp_server.py` 全行精読 (2026-05-15)  
 
 ### dhcpservd プロセス起動失敗 (即時 exit)
 
@@ -483,10 +480,9 @@ CLI `config dhcp_server` グループ入口で `FEATURE|dhcp_server.state` を�
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> **調査根拠**: `dhcp_lease.py`, `dhcpservd.py`, `dhcp_cfggen.py` 全行精読 (2026-05-16)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-side-effects.md`
+> **Evidence**: `dhcp_lease.py`, `dhcpservd.py`, `dhcp_cfggen.py` 全行精読 (2026-05-16)  
 
 CONFIG_DB の `DHCP_SERVER_IPV4` を書き込むと、`dhcpservd` が以下の副次書き込みを行う。
 
@@ -542,10 +538,9 @@ CONFIG_DB 変更を検知するたびに `dump_dhcp4_config()` が `/etc/kea/kea
 <!-- /side-effects -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py`, `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py`, `dockers/docker-dhcp-server/kea-dhcp4.conf.j2`, `src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang` (2026-05-16)
-> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-constants.md`
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py`, `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py`, `dockers/docker-dhcp-server/kea-dhcp4.conf.j2`, `src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang` (2026-05-16)
 
 ### `state` フィールド — `admin_mode` enum 値
 
@@ -599,10 +594,9 @@ YANG 未定義の `binary` / `boolean` は直接 DB 書込みによる拡張型�
 <!-- /constants -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
-> **調査根拠**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py`、`common/utils.py` 全行精読 (2026-05-16)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-platform.md`
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py`、`common/utils.py` 全行精読 (2026-05-16)  
 
 ### kea-dhcp4 vs dnsmasq
 

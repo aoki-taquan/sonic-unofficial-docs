@@ -36,7 +36,7 @@ related:
 ---
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 このテーブルは [YANG](../../reference/glossary.md#term-yang) `default` 文を持たない。以下はソースコードから読み取った
 実効デフォルト / fallback の一覧。
@@ -283,7 +283,7 @@ else:                   oper_status = "Partial Online"
 ---
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `CHASSIS_STATE_DB` の `DPU_STATE` テーブルへの書込みは 2 つの独立したパスから行われ、フィールド間に観測可能な中間状態が生じる。
 
@@ -323,7 +323,7 @@ for field, value in updates.items():
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 このページが対象とする各フィールドのデフォルト値算出パスで参照される外部テーブル / リソースの一覧。
 `DPU_STATE` は CHASSIS_STATE_DB への書き出し専用テーブルであり、他テーブルから **読み取り** を行う側となる。
@@ -349,7 +349,7 @@ for field, value in updates.items():
 ---
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `DPU_STATE` テーブルへの書き込みは `chassisd` 内 2 クラスで行われる。各クラスの失敗分岐を以下にまとめる。
 
@@ -401,7 +401,7 @@ sonic-db-cli CHASSIS_STATE_DB hgetall 'DPU_STATE|DPU0'
 ---
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `chassisd` に埋め込まれた、[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG で管理されない定数の一覧。
 出典は `sonic-platform-daemons/sonic-chassisd/scripts/chassisd`。
@@ -454,9 +454,8 @@ sonic-db-cli CHASSIS_STATE_DB hgetall 'DPU_STATE|DPU0'
 ---
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> 調査証跡: `meta/_intermediate/cdb-flow/dpu-state-detail-side-effects.md`
 
 `DPU_STATE` (`CHASSIS_STATE_DB`) は `chassisd` が書き込む**状態専用テーブル**である。このテーブルへの書き込みが副次的に引き起こす動作を以下に示す。
 
@@ -499,9 +498,8 @@ if not "DPU_STATE" in key and not "REBOOT_CAUSE" in key:
 ---
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/dpu-state-detail-pubsub.md`
 
 ### Producer/Consumer ペア
 
@@ -578,9 +576,8 @@ NotificationProducer: なし
 ---
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> 調査証跡: `meta/_intermediate/cdb-flow/dpu-state-detail-platform.md`
 
 ### 前提: SmartSwitch 専用ページ
 
