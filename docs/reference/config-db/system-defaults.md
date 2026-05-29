@@ -130,20 +130,20 @@ sonic-db-cli CONFIG_DB keys 'SYSTEM_DEFAULTS|*'
 <!-- /ops-hint -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 各サービスが `SYSTEM_DEFAULTS` を参照して起動時のデフォルト動作を決定する。`synchronous_mode==enabled` → [orchagent](../../reference/glossary.md#term-orchagent) が [SAI](../../reference/glossary.md#term-sai) call を synchronous モードで実行。`interface_naming_mode==alias` → [portsyncd](../../reference/glossary.md#term-portsyncd) / [intfmgrd](../../reference/glossary.md#term-intfmgrd) がエイリアス名を使用。`frr_mgmt_framework_config==true` → [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework が [FRR](../../reference/glossary.md#term-frr) 設定を管理。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 db_migrator が起動時に `SYSTEM_DEFAULTS` テーブルを初期化・マイグレーションする。orchagent は起動時に `synchronous_mode` を読み取って起動モードを決定する（起動後の変更は無効）。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -153,7 +153,7 @@ db_migrator が起動時に `SYSTEM_DEFAULTS` テーブルを初期化・マイ�
 | `portsyncd` / `intfmgrd` | `interface_naming_mode==alias` | インターフェース alias 名を使用 | `portsyncd` |
 | `portsyncd` / `intfmgrd` | `interface_naming_mode==default` | 標準 IF 名を使用 | `portsyncd` |
 
-> **スキャン証跡**: `SYSTEM_DEFAULTS` は複数のシステム全体設定を束ねるシングルトンテーブル。`synchronous_mode` の分岐が orchagent 起動時の動作に直結する主要な Phase 8 分岐。
+> **裏取り**: `SYSTEM_DEFAULTS` は複数のシステム全体設定を束ねるシングルトンテーブル。`synchronous_mode` の分岐が orchagent 起動時の動作に直結する主要な分岐。
 
 <!-- /handler-branching -->
 
@@ -209,11 +209,11 @@ db_migrator が起動時に `SYSTEM_DEFAULTS` テーブルを初期化・マイ�
 
 `sonic-system-defaults.yang` の `status` leaf は `admin_mode` enum 制約のみで `default` 宣言を持たない。各 daemon (`muxorch`、`orchagent` 等) は該当 `<name>` エントリ不在を `disabled` として扱い `KeyError` を出さない設計。
 
-> **Evidence**: `sonic-buildimage/files/build_templates/init_cfg.json.j2:5, 77, 188-197` および `src/sonic-config-engine/config_samples.py:160-188`、SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`。`sonic-utilities/scripts/db_migrator.py:670-677` (`synchronous_mode` の [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 側補完)、SHA `39732bceb8bdefe706518ab40623bbbba6ff33b9`。詳細は `meta/_intermediate/cdb-flow/system-defaults-defaults.md` を参照。
+> **Evidence**: `sonic-buildimage/files/build_templates/init_cfg.json.j2:5, 77, 188-197` および `src/sonic-config-engine/config_samples.py:160-188`、SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`。`sonic-utilities/scripts/db_migrator.py:670-677` (`synchronous_mode` の [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 側補完)、SHA `39732bceb8bdefe706518ab40623bbbba6ff33b9`。 を参照。
 <!-- /defaults -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 SYSTEM_DEFAULTS テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -247,7 +247,7 @@ db_migrator.py での SYSTEM_DEFAULTS マイグレーションなし
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 処理順・起動順 (Phase B)
+## 処理順・起動順
 
 ### ステージ 0: ビルド時テンプレート展開
 
@@ -266,19 +266,19 @@ docker-orchagent 内の `supervisord.conf.j2` は `dependent_startup` プラグ�
 | 5 | `swssconfig` | `orchagent:running` | なし（[FDB](../../reference/glossary.md#term-fdb)/[ARP](../../reference/glossary.md#term-arp)/ports/switch.json 適用） |
 | 6–18 | `coppmgrd` / `neighsyncd` / `vlanmgrd` / `intfmgrd` / `buffermgrd` 等 | `swssconfig:exited` | なし（[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 経由で `interface_naming_mode` 等を読む） |
 
-> **証跡**: `sonic-buildimage/dockers/docker-orchagent/supervisord.conf.j2` および `orchagent.sh`、SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+> **裏取り**: `sonic-buildimage/dockers/docker-orchagent/supervisord.conf.j2` および `orchagent.sh`、SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
 ### ステージ 2: ランタイム参照（orchagent 内 MuxAclHandler）
 
 `MuxAclHandler::MuxAclHandler()` のコンストラクタ（`sonic-swss/orchagent/muxorch.cpp:1388`）が [MuxPort](../../reference/glossary.md#term-mux) 初期化のたびに `CONFIG_DB` の `SYSTEM_DEFAULTS|mux_tunnel_egress_acl` を `hget` で読む。これは orchagent が起動済みの状態（ランタイム）でポート追加イベント処理時に逐次発生する。
 
-> **証跡**: `sonic-swss/orchagent/muxorch.cpp` L1388–1390、SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`
+> **裏取り**: `sonic-swss/orchagent/muxorch.cpp` L1388–1390、SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`
 
 ### ステージ 3: docker-fpm-frr コンテナ
 
 `docker-fpm-frr/frr/supervisord/supervisord.conf.j2` の Jinja2 展開時（コンテナ起動前のテンプレート生成時）に `SYSTEM_DEFAULTS.software_bfd.status == "enabled"` を評価し、`bfdmon` を supervisord に登録するかを決定する。登録された場合は `bgpd:running` を待機してから `bfdmon` が起動する。
 
-> **証跡**: `sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2` L213、SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+> **裏取り**: `sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2` L213、SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
 ### まとめ
 
@@ -291,7 +291,7 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
+## 暗黙参照マップ
 
 | 参照方向 | このテーブル / キー | 相手テーブル / ページ | 条件 |
 |---------|-------------------|---------------------|------|
@@ -303,11 +303,11 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 | 概念的 | `synchronous_mode` | [`DEVICE_METADATA`](./device-metadata.md) — 実体は `DEVICE_METADATA\|localhost.synchronous_mode` | SYSTEM_DEFAULTS には格納されない (よくある誤解) |
 | 概念的 | `dhcp_server` | [`FEATURE`](./feature.md) — 実体は `FEATURE\|dhcp_server.state` | SYSTEM_DEFAULTS には格納されない (よくある誤解) |
 
-> **Evidence**: `sonic-buildimage/files/build_templates/swss_vars.j2:14`; `buffers_config.j2:208`; `qos_config.j2:143`; `sonic-buildimage/src/sonic-config-engine/minigraph.py:2212-2215`; `sonic-buildimage/src/sonic-config-engine/config_samples.py:179-188`; `sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2:213`; `sonic-swss/orchagent/muxorch.cpp:1388-1390`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:188-197`; 詳細分析 `meta/_intermediate/cdb-flow/system-defaults-cross-refs.md`
+> **Evidence**: `sonic-buildimage/files/build_templates/swss_vars.j2:14`; `buffers_config.j2:208`; `qos_config.j2:143`; `sonic-buildimage/src/sonic-config-engine/minigraph.py:2212-2215`; `sonic-buildimage/src/sonic-config-engine/config_samples.py:179-188`; `sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2:213`; `sonic-swss/orchagent/muxorch.cpp:1388-1390`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:188-197`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 `SYSTEM_DEFAULTS` はイベント駆動のハンドラを持たず、起動時に読み取られるだけのテーブルである。そのため「書き込みに失敗する」より「読み取り側が不正値・エントリ不在を受け取ったとき」の挙動が主要な障害パターンとなる。
 
@@ -340,11 +340,11 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 - **YANG バリデーション層のブロック**: `status` フィールドへの不正値書き込みは YANG で拒否されるため、不正値が CONFIG_DB に残存するシナリオは正規経路では発生しない。
 - **`polaris` / `software_bfd`**: `config_samples.py` が [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) プロファイル生成時に無条件で上書き注入する (L179-188)。不在時はコード参照先が存在しないため、影響なし。
 
-> Evidence: `sonic-swss/orchagent/muxorch.cpp:1388-1390`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:117-119`; `sonic-buildimage/src/sonic-config-engine/config_samples.py:160-188`; `sonic-buildimage/files/build_templates/swss_vars.j2:9,14`; `sonic-buildimage/dockers/docker-orchagent/orchagent.sh:8,37-42`; SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` / `4305596156d70e9797e8a881b3d19b46de0bce0d`。詳細分析 `meta/_intermediate/cdb-flow/system-defaults-failure.md`
+> Evidence: `sonic-swss/orchagent/muxorch.cpp:1388-1390`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:117-119`; `sonic-buildimage/src/sonic-config-engine/config_samples.py:160-188`; `sonic-buildimage/files/build_templates/swss_vars.j2:9,14`; `sonic-buildimage/dockers/docker-orchagent/orchagent.sh:8,37-42`; SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` / `4305596156d70e9797e8a881b3d19b46de0bce0d`。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `SYSTEM_DEFAULTS` テーブルを参照・生成するコード内に存在する、CONFIG_DB / YANG で管理されないハードコード文字列・数値の一覧。出典は `sonic-buildimage` および `sonic-swss` の各ファイル。
 
@@ -387,11 +387,11 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 
 > **注意**: `swss_vars.j2` が orchagent.sh に渡す `dscp_remapping` 値は `"enable"`/`"disable"` (末尾 d なし) であり、CONFIG_DB の `status` フィールド値 `"enabled"`/`"disabled"` とスペルが異なる。これはビルド時テンプレートと orchagent 引数の慣例差によるもので、混同しないよう注意が必要。
 
-> **Evidence**: `sonic-buildimage/files/build_templates/swss_vars.j2:14`; `src/sonic-config-engine/config_samples.py:179-188`; `dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2:213-220`; `sonic-swss/orchagent/muxorch.cpp:1388-1393`; `sonic-swss/orchagent/aclorch.h:111-112`; `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-defaults.yang:27-35`; SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` (buildimage) / `4305596156d70e9797e8a881b3d19b46de0bce0d` (swss)。詳細は `meta/_intermediate/cdb-flow/system-defaults-constants.md` を参照。
+> **Evidence**: `sonic-buildimage/files/build_templates/swss_vars.j2:14`; `src/sonic-config-engine/config_samples.py:179-188`; `dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2:213-220`; `sonic-swss/orchagent/muxorch.cpp:1388-1393`; `sonic-swss/orchagent/aclorch.h:111-112`; `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-defaults.yang:27-35`; SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` (buildimage) / `4305596156d70e9797e8a881b3d19b46de0bce0d` (swss)。 を参照。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `SYSTEM_DEFAULTS` はイベント駆動ハンドラを持たず、`ConsumerStateTable` / `SubscriberStateTable` による pub/sub 購読を行わない。そのため CONFIG_DB の `SYSTEM_DEFAULTS` 変更に直接反応して副次 DB を書き込む処理は存在しない。
 
@@ -405,11 +405,11 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 
 主な副作用は DB ではなくコンテナ起動引数（`orchagent.sh` が `swss_vars.j2` をレンダリングして `dscp_remapping` を `-s` フラグ等として orchagent に渡す）と、[MuxPort](../../reference/glossary.md#term-mux) 初期化時の SAI ACL オブジェクト生成に閉じる。
 
-> **Evidence**: `sonic-swss/orchagent/muxorch.cpp:1388-1416`（SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`）; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:117-121`; `sonic-buildimage/dockers/docker-orchagent/orchagent.sh:8-42`; 詳細スキャン結果は `meta/_intermediate/cdb-flow/system-defaults-side.md` を参照。
+> **Evidence**: `sonic-swss/orchagent/muxorch.cpp:1388-1416`（SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`）; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:117-121`; `sonic-buildimage/dockers/docker-orchagent/orchagent.sh:8-42` を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 `SYSTEM_DEFAULTS` は `ConsumerStateTable` / `SubscriberStateTable` による pub/sub 駆動のハンドラを持たない。各サービスは**起動時に一度だけ**スナップショット読み取りを行い、その後は再購読しない。
 
@@ -438,13 +438,12 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 
 これらの制約は pub/sub を意図的に使わない設計上の選択であり、バグではない。
 
-> **Evidence**: `sonic-swss/orchagent/muxorch.cpp:1388-1390`（SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`）; `sonic-buildimage/files/build_templates/swss_vars.j2:14`; `sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2:213`（SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`）; 詳細は `meta/_intermediate/cdb-flow/system-defaults-pubsub.md` を参照。
+> **Evidence**: `sonic-swss/orchagent/muxorch.cpp:1388-1390`（SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`）; `sonic-buildimage/files/build_templates/swss_vars.j2:14`; `sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2:213`（SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`） を参照。
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
-<!-- evidence: meta/_intermediate/cdb-flow/system-defaults-platform.md -->
 
 `SYSTEM_DEFAULTS` はビルド時テンプレート (`init_cfg.json.j2`) とランタイムコード (`muxorch.cpp`) の両方でプラットフォーム分岐を持つ。YANG スキーマ自体はプラットフォーム非依存だが、エントリの有無・値の初期値がプラットフォームによって異なる。
 
@@ -480,7 +479,7 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 | `software_bfd` | 通常不在 | 通常不在 | 通常不在 | **`enabled` 強制注入** (`config_samples.py:186`) |
 | `polaris` | 不在 | 不在 | 不在 | **`enabled` 強制注入** (hwsku に `"pensando"` 含む時) |
 
-> **Evidence**: `sonic-buildimage/files/build_templates/init_cfg.json.j2:188-197`（SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`）; `sonic-buildimage/src/sonic-config-engine/minigraph.py:2202-2215`; `sonic-buildimage/src/sonic-config-engine/config_samples.py:179-188`; `sonic-swss/orchagent/muxorch.cpp:1389-1393`; `sonic-swss/orchagent/aclorch.h:111-112`（SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`）。詳細は `meta/_intermediate/cdb-flow/system-defaults-platform.md` を参照。
+> **Evidence**: `sonic-buildimage/files/build_templates/init_cfg.json.j2:188-197`（SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`）; `sonic-buildimage/src/sonic-config-engine/minigraph.py:2202-2215`; `sonic-buildimage/src/sonic-config-engine/config_samples.py:179-188`; `sonic-swss/orchagent/muxorch.cpp:1389-1393`; `sonic-swss/orchagent/aclorch.h:111-112`（SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`）。 を参照。
 <!-- /platform -->
 
 <!-- glossary-links-injected: 9fb3fca99a59 -->

@@ -1,6 +1,6 @@
 ---
 title: STP / STP_VLAN / STP_PORT テーブル — 暗黙デフォルト詳細
-description: "CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説。PVST / MSTP Phase A–C 分析（暗黙参照テーブル含む）。"
+description: "CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説（暗黙参照テーブル含む）。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-14
@@ -30,7 +30,7 @@ related:
 # STP / STP_VLAN / STP_PORT テーブル — 暗黙デフォルト詳細
 
 !!! info "ページの位置付け"
-    このページは `STP`・`STP_VLAN`・`STP_PORT`・`STP_VLAN_PORT` テーブルの **コード由来デフォルト値・ハードコード挙動・モード別差異** を詳述する Phase A 分析ページ。
+    このページは `STP`・`STP_VLAN`・`STP_PORT`・`STP_VLAN_PORT` テーブルの **コード由来デフォルト値・ハードコード挙動・モード別差異** を詳述する。
     SONiC は PVST (Per-VLAN Spanning Tree) と MSTP (Multiple Spanning Tree Protocol) の 2 モードをサポートする。
 
 ## 概要
@@ -69,8 +69,6 @@ flowchart LR
 <!-- /cdb-mermaid -->
 
 ## 暗黙デフォルトとハードコード挙動
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-defaults.md -->
 
 ### 1. STP|GLOBAL — PVST 有効化時の書き込みデフォルト
 
@@ -318,8 +316,6 @@ stpmgrd 側の `STP_DEFAULT_MAX_INSTANCES = 255` (`stpmgr.h:38`) と整合して
 <!-- ordering -->
 ## 処理順序・依存関係・warm-reboot 挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/stp-ordering.md -->
-
 ### 1. 起動前提条件 — PORT_INIT_DONE 待機
 
 `stpmgrd` は起動直後に `isPortInitDone()` (`stpmgr.cpp:1257-1273`) を呼び出し、
@@ -425,12 +421,10 @@ stpmgrd 自身の warm-reboot reconcile フェーズは **事実上スタブ** �
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `stpmgrd` が CONFIG_DB の STP テーブル群を購読・処理する際に参照する外部テーブルを示す。
 これらは CONFIG_DB への書き込み有無に関わらず、**ガード条件・フィールド値解決・処理可否判定**に影響する。
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-cross-refs.md -->
 
 | 参照先テーブル / リソース | DB | 参照方向 | 条件 | 参照元 evidence |
 |---|---|---|---|---|
@@ -453,11 +447,9 @@ stpmgrd 自身の warm-reboot reconcile フェーズは **事実上スタブ** �
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `stpmgrd` は CONFIG_DB を購読して stpd デーモンへ UDS (Unix Domain Socket) 経由で IPC メッセージを送信する設計であり、失敗は (A) IPC ソケット初期化失敗、(B) IPC 送信失敗 (silent discard)、(C) PVST インスタンス枯渇、(D) メモリ割り当て失敗、(E) ebtables / 不正フィールド、(F) 前提条件未達による defer の 6 系統に整理される。
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-failure.md -->
 
 ### A. IPC ソケット初期化失敗 (`ipcInitStpd`)
 
@@ -546,16 +538,14 @@ IPC 送信失敗後もエントリは `consumer.m_toSync.erase(it)` で消費さ
 !!! note "defer と discard の非対称性"
     SET 操作の多くは `it++` による defer（次回 SELECT で再試行）だが、DEL 操作の多くは `erase(it)` による silent discard となる。STP 無効化・削除操作は前提条件が揃っていない場合に黙って捨てられる設計であり、実際に stpd 側に削除が届かない可能性がある。
 
-> **証跡**: `stpmgr.cpp:116-119, 136, 164-165, 210-214, 246-250, 263-283, 319-324, 448-449, 477-479, 486-498, 502-507, 534-539, 634-635, 648-670, 784-795, 824, 859-884, 1218-1255`。詳細 grep 証跡は `meta/_intermediate/cdb-flow/stp-failure.md` を参照。
+> **裏取り**: `stpmgr.cpp:116-119, 136, 164-165, 210-214, 246-250, 263-283, 319-324, 448-449, 477-479, 486-498, 502-507, 534-539, 634-635, 648-670, 784-795, 824, 859-884, 1218-1255`
 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `stpmgrd` / `config/stp.py` が設定・運用で使う固定値の一覧。CONFIG_DB・[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 等の外部入力では変更不能。
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-constants.md -->
 
 ### 1. PVST タイマーデフォルト定数（`config/stp.py`）
 
@@ -650,9 +640,8 @@ ebtables -A FORWARD -d 01:00:0c:cc:cc:cd -j DROP
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込・システム副作用 (Phase F)
+## 副次 DB 書込・システム副作用
 
-<!-- evidence: meta/_intermediate/cdb-flow/stp-side-effects.md -->
 <!-- source: sonic-swss/cfgmgr/stpmgr.cpp, sonic-swss/orchagent/stporch.cpp -->
 
 STP CONFIG_DB テーブルへの書き込みは、DB への副次書き込みよりも **Unix ドメインソケット IPC** と **カーネル ebtables** を主な副作用経路として使用する。
@@ -703,11 +692,9 @@ CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。[S
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通知メカニズム (Phase G)
+## 通知メカニズム
 
 `STP` / `STP_VLAN` / `STP_PORT` / `STP_VLAN_PORT` (CONFIG_DB) への変更は、**keyspace 通知** ベースの `SubscriberStateTable` で `stpmgrd` に配送され、さらに Unix Domain Socket (UDS) 経由で STP デーモン (`stpd`) に転送される。その後 `stpd` が [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込んだエントリを [orchagent](../../reference/glossary.md#term-orchagent) の `StpOrch` が **[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** (channel PUBLISH/SUBSCRIBE) で消費する。
-
-> 調査証跡: `meta/_intermediate/cdb-flow/stp-pubsub.md`
 
 ### 全体フロー
 
@@ -797,11 +784,9 @@ orchdaemon の select timeout: `SELECT_TIMEOUT = 1000` ms (orchdaemon.cpp:23,959
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `stpmgrd` は SAI / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) を一切経由しない純粋なソフトウェア STP 実装。プラットフォーム依存の挙動は以下の 2 点に集約される。
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-platform.md -->
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
@@ -814,8 +799,6 @@ orchdaemon の select timeout: `SELECT_TIMEOUT = 1000` ms (orchdaemon.cpp:23,959
 
 !!! note "max_stp_instances の実効上限"
     CLI の `PVST_MAX_INSTANCES = 255` チェックより ASIC 能力値が小さい場合、ASIC 側の値が実効上限となる。たとえば ASIC が 64 インスタンスしかサポートしない場合、65 番目の VLAN への STP 適用は `allocL2Instance()` 内の `IS_INST_ID_AVAILABLE()` チェックで失敗し、`SWSS_LOG_ERROR` + 恒久スキップとなる。この値は `stporch.cpp:612` が SAI から取得して `STATE_STP_TABLE|GLOBAL.max_stp_inst` に書き込む。
-
-詳細根拠は `meta/_intermediate/cdb-flow/stp-platform.md` を参照。
 
 <!-- /platform -->
 
