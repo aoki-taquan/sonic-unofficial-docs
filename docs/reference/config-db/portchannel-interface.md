@@ -1,6 +1,6 @@
 ---
 title: PORTCHANNEL_INTERFACE テーブル
-description: "PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。Phase A–H 分析。"
+description: "PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-19
@@ -130,11 +130,9 @@ PORTCHANNEL_INTERFACE|<name>|<ip_prefix>          # IP プレフィクス
 <!-- /value-behavior -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp / sonic-swss/cfgmgr/intfmgr.h -->
-
-> **詳細**: `meta/_intermediate/cdb-flow/portchannel-interface-defaults.md`
 
 `PORTCHANNEL_INTERFACE` は `IntfMgr::doIntfGeneralTask()` が `INTERFACE` / `LOOPBACK_INTERFACE` / `VLAN_INTERFACE` と共通処理する。intfmgr.cpp 冒頭のハードコード定数は以下:
 
@@ -180,8 +178,6 @@ intfmgr.cpp:825-828,893-898 は `loopback_action` フィールドが空なら AP
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
-
-<!-- evidence: meta/_intermediate/cdb-flow/portchannel-interface.md -->
 
 ### YANG スキーマ検証
 - `PORTCHANNEL_INTERFACE` の `nat_zone` は range 0..3: `error-message "Invalid nat zone for the portchannel interface."`。
@@ -257,7 +253,7 @@ show ip interfaces
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 PORTCHANNEL_INTERFACE テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -291,9 +287,9 @@ db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -301,7 +297,7 @@ db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし
 
 `pc_intfs` の不整合 (PORTCHANNEL に存在しないインタフェース参照) があれば minigraph.py が削除して警告を出す (`minigraph.py:2550-2561`)。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 `PORTCHANNEL_INTERFACE` は `IntfMgr` (cfgmgr) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、カーネル side の LAG インタフェースに IP アドレスを付与する。orchagent の条件付き platform 登録はなし。
 
@@ -314,7 +310,7 @@ db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `IntfMgr` の `PORTCHANNEL_INTERFACE` 処理分岐:
 
@@ -326,12 +322,12 @@ db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし
 | `IntfMgr` | `doTask()` | key がポートチャネル名のみ (IP prefix なし) | インタフェース属性のみ設定 (IP アドレス設定スキップ) | `sonic-swss/cfgmgr/intfmgr.cpp` |
 | `IntfMgr` | `doTask()` | key が `(PortChannel, prefix)` 形式 | `ip addr add <prefix> dev <portchannel>` でアドレス付与 | `sonic-swss/cfgmgr/intfmgr.cpp` |
 
-> **スキャン証跡**: `minigraph.py:2546-2561` + `intfmgr.cpp` を確認、5 件分岐抽出 — 誤読なし。
+> **裏取り**: `minigraph.py:2546-2561` + `intfmgr.cpp` を確認、5 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- implicit-ref -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp -->
 
@@ -378,9 +374,7 @@ PORTCHANNEL_INTERFACE (intfmgr SET処理)
 <!-- /implicit-ref -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/portchannel-interface-cross-refs.md`
+## 暗黙参照マップ
 
 ### PORTCHANNEL_INTERFACE が参照するテーブル（→ 方向）
 
@@ -415,11 +409,9 @@ PORTCHANNEL_INTERFACE (intfmgr SET処理)
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・エラーハンドリング (Phase D)
+## 失敗挙動・エラーハンドリング
 
 > 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
-> 調査日: 2026-05-16
-> 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-interface-failure.md`
 
 ### intfmgrd (IntfMgr) の失敗・retry パターン
 
@@ -461,10 +453,9 @@ SAI 操作の失敗のうち、`create_router_interface`・`remove_router_interf
 <!-- /failure -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 > **調査対象**: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
-> **調査日**: 2026-05-16
 
 ### VOQ chassis (`switch_type == "voq"`)
 
@@ -487,7 +478,7 @@ SAI 操作の失敗のうち、`create_router_interface`・`remove_router_interf
 <!-- /platform -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 以下の定数は `sonic-swss/cfgmgr/intfmgr.cpp` および `orchagent/intfsorch.cpp` から検出したマジックナンバー・閾値。PORTCHANNEL_INTERFACE に直接影響する定数を優先して記載する。
 
@@ -510,10 +501,9 @@ SAI 操作の失敗のうち、`create_router_interface`・`remove_router_interf
 <!-- /constants -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 > 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
-> 調査日: 2026-05-16
 
 ### 他テーブル先行必須
 
@@ -558,7 +548,6 @@ SAI 操作の失敗のうち、`create_router_interface`・`remove_router_interf
 
 `buildIntfReplayList()` で CONFIG_DB の `PORTCHANNEL_INTERFACE` キーが `m_pendingReplayIntfList` に収集され（`intfmgr.cpp:276`）、warm-start 時に replay される。replay 完了後 `RECONCILED` に遷移。
 
-詳細調査ノートは `meta/_intermediate/cdb-flow/portchannel-interface-ordering.md` 参照。
 
 ### teammgr が STATE_LAG_TABLE に書くまでの経路（補完）
 
@@ -585,9 +574,8 @@ PORTCHANNEL (CONFIG_DB)
 <!-- /ordering -->
 
 <!-- pubsub -->
-## PUBSUB / Keyspace 通知メカニズム (Phase G)
+## PUBSUB / Keyspace 通知メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/interface-pubsub.md`
 > ソース: `sonic-swss/cfgmgr/intfmgrd.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`, `sonic-swss-common/common/subscriberstatetable.cpp`, `sonic-swss-common/common/producerstatetable.cpp`, `sonic-swss-common/common/consumerstatetable.cpp`
 
 ### 通知チャネル一覧
@@ -712,9 +700,9 @@ STATE_DB INTERFACE_TABLE|PortChannelN  vrf=<vrf_name>
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> 詳細証跡: `sonic-swss/cfgmgr/intfmgr.cpp` / `sonic-swss/orchagent/intfsorch.cpp`
+> 調査ソース: `sonic-swss/cfgmgr/intfmgr.cpp` / `sonic-swss/orchagent/intfsorch.cpp`
 
 `PORTCHANNEL_INTERFACE` エントリの SET/DEL が引き起こす CONFIG_DB 以外への書込みと SAI 呼び出しを示す。
 
@@ -767,7 +755,7 @@ RIF 削除時は上記エントリを `hdel` / `stopFlexCounterPolling` でク�
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H) — 補足: カーネル依存
+## プラットフォーム差 — 補足: カーネル依存
 
 `PORTCHANNEL_INTERFACE` テーブルを処理する `intfmgrd` (`cfgmgr/intfmgr.cpp`) および `IntfsOrch` (`orchagent/intfsorch.cpp`) には `getenv("platform")` 呼び出しも `#ifdef` プラットフォーム分岐も存在しない。SAI RIF 生成ロジックはすべてのプラットフォームで同一パスを通る。
 

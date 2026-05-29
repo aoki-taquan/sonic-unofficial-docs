@@ -134,8 +134,6 @@ PORTCHANNEL|<name>
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/portchannel.md -->
-
 ### YANG スキーマ検証
 - `name` pattern: `PortChannel[0-9]{1,4}` — 名前形式不正は reject。
 - `admin_status` は mandatory。`min_links` range: 1..1024。`mtu` range: 1..9216。
@@ -223,7 +221,7 @@ teamdctl PortChannel0001 state
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 PORTCHANNEL テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -258,9 +256,9 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -268,7 +266,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 | `admin_status` | minigraph.py デフォルト | `"up"` | `minigraph.py` [PortChannel](../../reference/glossary.md#term-portchannel) 生成ロジック |
 | `lacp_key` (tpid 等) | db_migrator.py が既存 PORTCHANNEL エントリを更新 | `lacp_key` フィールドを付与 / tpid を標準化 | `sonic-utilities/scripts/db_migrator.py:1154-1157` |
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 `PORTCHANNEL` は `TeamMgr` (`cfgmgr/teammgr.cpp`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し `teamd` プロセスを起動/停止する。`orchdaemon.cpp` の条件付き platform 登録なし。
 
@@ -282,7 +280,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `TeamMgr::doLagTask()` の分岐:
 
@@ -296,14 +294,12 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 | `TeamMgr` | `doLagTask()` | `tpid` フィールドあり | `setLagTpid()` で TPID を設定 | `teammgr.cpp:321-323` |
 | `TeamMgr` | `doLagTask()` | DEL 操作 | `teamd` プロセスを停止 + LAG インタフェースを削除 | `teammgr.cpp` |
 
-> **スキャン証跡**: `teammgr.cpp:149-330` を全行読了、7 件分岐抽出。minigraph.py からの admin_status="up" 自動付与および db_migrator.py による lacp_key 付与を確認 — 誤読なし。
+> **裏取り**: `teammgr.cpp:149-330` を全行読了、7 件分岐抽出。minigraph.py からの admin_status="up" 自動付与および db_migrator.py による lacp_key 付与を確認 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- defaults -->
-## コード由来暗黙デフォルト (Phase A)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-defaults.md`
+## コード由来暗黙デフォルト
 
 YANG スキーマに `default` 文が存在しないフィールドでも、consumer コードが独自の fallback 値を持つ。以下はコードベースから検出した暗黙デフォルト・dead field・discrepancy の一覧。
 
@@ -361,9 +357,7 @@ YANG スキーマに `default` 文が存在しないフィールドでも、cons
 <!-- /defaults -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-cross-refs.md`
+## 暗黙参照マップ
 
 ### PORTCHANNEL が参照するテーブル（→ 方向）
 
@@ -397,9 +391,7 @@ YANG スキーマに `default` 文が存在しないフィールドでも、cons
 <!-- /cross-refs -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-ordering.md`
+## 書込み順依存
 
 ### SET 時の先行必須テーブル
 
@@ -458,10 +450,9 @@ TeamMgr が PORTCHANNEL_MEMBER SET → addLagMember() → SAI add_ports_to_lag()
 <!-- /ordering -->
 
 <!-- pubsub -->
-## PUBSUB / Keyspace 通知メカニズム (Phase G)
+## PUBSUB / Keyspace 通知メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-pubsub.md`
-> ソース: `sonic-swss-common/common/subscriberstatetable.cpp`, `producerstatetable.cpp`, `consumerstatetable.cpp`, `sonic-swss/cfgmgr/teammgrd.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`
+> 調査対象: `sonic-swss-common/common/subscriberstatetable.cpp`, `producerstatetable.cpp`, `consumerstatetable.cpp`, `sonic-swss/cfgmgr/teammgrd.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`
 
 ### 通知チャネル一覧
 
@@ -565,10 +556,9 @@ TeamMgr::isLagStateOk() = true → addLagMember() 可能
 <!-- /pubsub -->
 
 <!-- failure -->
-## 失敗挙動・リトライ・リカバリ (Phase D)
+## 失敗挙動・リトライ・リカバリ
 
-> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-failure.md`
-> ソース: `sonic-swss/cfgmgr/teammgr.cpp`
+> 調査対象: `sonic-swss/cfgmgr/teammgr.cpp`
 
 ### task_need_retry シナリオ
 
@@ -630,10 +620,9 @@ TeamMgr::isLagStateOk() = true → addLagMember() 可能
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-side-effects.md`
-> ソース: `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/teamsyncd/teamsync.cpp`, `sonic-swss/orchagent/portsorch.cpp`
+> 調査対象: `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/teamsyncd/teamsync.cpp`, `sonic-swss/orchagent/portsorch.cpp`
 
 PORTCHANNEL テーブルへの SET/DEL は CONFIG_DB 内に留まらず、複数 DB へ連鎖的に書き込みを引き起こす。
 
@@ -676,10 +665,9 @@ PORTCHANNEL テーブルへの SET/DEL は CONFIG_DB 内に留まらず、複数
 <!-- /side-effects -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-constants.md`
-> ソース: `sonic-swss/cfgmgr/portmgr.h`, `sonic-swss/cfgmgr/shellcmd.h`, `sonic-swss/cfgmgr/teammgr.cpp`
+> 調査対象: `sonic-swss/cfgmgr/portmgr.h`, `sonic-swss/cfgmgr/shellcmd.h`, `sonic-swss/cfgmgr/teammgr.cpp`
 
 ### MTU デフォルト値
 
@@ -750,9 +738,7 @@ PORTCHANNEL テーブルへの SET/DEL は CONFIG_DB 内に留まらず、複数
 <!-- /constants -->
 
 <!-- platform -->
-## プラットフォーム差・SAI capability 分岐 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-platform.md`
+## プラットフォーム差・SAI capability 分岐
 
 ### Mellanox — distribution-only モード非対応
 

@@ -77,7 +77,7 @@ PORT_QOS_MAP|<PORT.name>
 - `orchagent` の `QosOrch` (`sonic-swss/orchagent/qosorch.cpp`): [CONFIG_DB](../../reference/glossary.md#term-config_db) の [QoS](../../reference/glossary.md#term-qos) map binding を直接 subscribe し、[SAI](../../reference/glossary.md#term-sai) QoS map、scheduler、PFC 設定として port に反映する（master には独立した `qosmgrd` プロセスは存在せず、[CONFIG_DB](../../reference/glossary.md#term-config_db) → [APPL_DB](../../reference/glossary.md#term-appl_db) の中間段は無い）。
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### 購読 API
 
@@ -179,8 +179,6 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map.md -->
-
 ### YANG スキーマ検証
 - `sonic-port-qos-map.yang` に `must` / `mandatory` 制約なし。各 `*_map` フィールドは optional。
 
@@ -193,9 +191,7 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 
 <!-- /cdb-exceptions -->
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-failure.md -->
+## 失敗挙動
 
 ### 未解決 MAP → task_need_retry
 
@@ -234,9 +230,7 @@ port エントリは `handleSaiSetStatus(SAI_API_PORT, ...)` 経由で `task_inv
 <!-- /failure -->
 
 <!-- defaults -->
-## 暗黙デフォルト (Phase A)
-
-<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-defaults.md -->
+## 暗黙デフォルト
 
 ### 共通前提
 
@@ -346,7 +340,7 @@ show qos map
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 PORT_QOS_MAP テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -381,16 +375,16 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
 | `PORT_QOS_MAP` エントリ (ポートへのマップバインド) | `qos_config.j2` から platform 別 QoS ポリシーが読み込まれたとき | 各ポートへの dscp_to_tc_map / pfc_to_queue_map 等の参照名 | `sonic-buildimage/files/build_templates/qos_config.j2:414-423` |
 | `dscp_to_tc_map` のグローバルバインド | db_migrator.py が PORT_QOS_MAP テーブルを更新したとき | 既存 [DSCP](../../reference/glossary.md#term-dscp)→TC マップ名から `global` エントリを生成 | `sonic-utilities/scripts/db_migrator.py:711-714` |
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -407,7 +401,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `QosOrch::PortQosMapHandler` の分岐:
 
@@ -418,14 +412,12 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 | `QosOrch` | `PortQosMapHandler` | ポートが `gPortsOrch->getPort()` で取得できない | `task_invalid_entry` または `task_need_retry` | `sonic-swss/orchagent/qosorch.cpp` |
 | `QosOrch` | `PortQosMapHandler` | SAI ポート属性設定失敗 | `task_failed` | `sonic-swss/orchagent/qosorch.cpp` |
 
-> **スキャン証跡**: `qosorch.cpp` PortQosMapHandler + `db_migrator.py:576,711-714` + `qos_config.j2:414-423` を確認、4 件分岐抽出 — 誤読なし。
+> **裏取り**: `qosorch.cpp` PortQosMapHandler + `db_migrator.py:576,711-714` + `qos_config.j2:414-423` を確認、4 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- ordering -->
-## 適用順序依存 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-ordering.md -->
+## 適用順序依存
 
 ### 1. MAP 先行必須
 
@@ -484,9 +476,7 @@ SET パス内でまず全 map 属性を `sai_port_api->set_port_attribute()` で
 <!-- /ordering -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-platform.md -->
+## プラットフォーム差分
 
 ### SAI capability チェック
 
@@ -533,9 +523,7 @@ if self.asic_type not in asics_require_global_dscp_to_tc_map:
 <!-- /platform -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-constants.md -->
+## ハードコード定数
 
 ### global キー定数
 
@@ -574,9 +562,7 @@ if self.asic_type not in asics_require_global_dscp_to_tc_map:
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-cross-refs.md -->
+## 暗黙参照テーブル
 
 `QosOrch` は `PORT_QOS_MAP` の各フィールドを処理する際、以下のテーブルを **暗黙的に参照** する（`m_qos_maps` 参照カウントマップへ登録、OID 未解決時は `task_need_retry`）。
 
@@ -599,9 +585,7 @@ if self.asic_type not in asics_require_global_dscp_to_tc_map:
 <!-- /cross-refs -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-side-effects.md -->
+## 副次 DB 書込
 
 `QosOrch` が `PORT_QOS_MAP` エントリを処理する際に発生する副次的な DB 書込・SAI 操作。
 

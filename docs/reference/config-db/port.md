@@ -177,8 +177,6 @@ PORT|<name>
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/port.md -->
-
 ### YANG スキーマ検証
 - `lanes` は mandatory (chassis 以外)、length 1..128。
 - `speed` は mandatory、range 1..1600000 (Kbps)。
@@ -271,7 +269,7 @@ show interfaces transceiver eeprom Ethernet0
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 PORT テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -305,7 +303,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし (POR
 <!-- /entry-points -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 > **注記**: YANG `default` 指定がない場合でも、portmgr / [portsorch](../../reference/glossary.md#term-portsorch) がコード内でデフォルト値を注入する。以下は実装精読から検出した暗黙デフォルトと挙動。
 
@@ -361,9 +359,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし (POR
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 証跡: `meta/_intermediate/cdb-flow/port-constants.md`
+## ハードコード定数
 
 ### portmgr / PortsOrch 定義定数
 
@@ -418,9 +414,9 @@ MACsec ポートではさらに `MAX_MACSEC_SECTAG_SIZE = 32 bytes` を追加。
 <!-- /constants -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -429,7 +425,7 @@ MACsec ポートではさらに `MAX_MACSEC_SECTAG_SIZE = 32 bytes` を追加。
 | `mux_cable` | 対応 MUX_CABLE エントリが存在する場合 | `"true"` | `minigraph.py:2621-2622` |
 | init_cfg.json.j2 | 全 PORT エントリのデフォルト | `"admin_status": "up"` など最小限の属性 | `sonic-buildimage/files/build_templates/init_cfg.json.j2:29` |
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -446,9 +442,7 @@ MACsec ポートではさらに `MAX_MACSEC_SECTAG_SIZE = 32 bytes` を追加。
 <!-- /derivation -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/port-ordering.md -->
+## 書込み順依存
 
 ### SET 時の先行必須テーブル
 
@@ -574,9 +568,7 @@ SAI から `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` コールバック（`on_
 <!-- /ordering -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-<!-- evidence: meta/_intermediate/cdb-flow/port-pubsub.md -->
+## 通信メカニズム
 
 ### CONFIG_DB → portmgrd (SubscriberStateTable / keyspace notification)
 
@@ -652,7 +644,7 @@ PortsOrch::handleNotification() → STATE_DB[PORT_TABLE|Ethernet*]
 <!-- /pubsub -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `PortsOrch` の PORT 処理分岐 (主要分岐のみ):
 
@@ -665,15 +657,14 @@ PortsOrch::handleNotification() → STATE_DB[PORT_TABLE|Ethernet*]
 | `PortsOrch` | `doTask()` | `mux_cable == "true"` | ポートの [MUX](../../reference/glossary.md#term-mux) cable フラグを設定し MuxOrch に通知 | `portsorch.cpp` |
 | `PortsOrch` | `doTask()` | SET でポートが `allPortsReady()` を完成させた場合 | `allPortsReady` = true、他 orch の doTask() をアンブロック | `portsorch.cpp:allPortsReady()` |
 
-> **スキャン証跡**: `portsorch.cpp` PORT 処理ロジックおよび `init_cfg.json.j2:29`、`minigraph.py:2621-2622` を確認、6 件分岐抽出 — 誤読なし。
+> **裏取り**: `portsorch.cpp` PORT 処理ロジックおよび `init_cfg.json.j2:29`、`minigraph.py:2621-2622` を確認、6 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
+## 暗黙参照マップ
 
 > leafref として YANG スキーマで強制される参照に加え、orchagent コード上の `m_port_ref_count` 機構・macsecmgrd 直接購読・runtime orch ゲートとして PORT が関与する暗黙参照を網羅する。
-> 詳細証跡: `meta/_intermediate/cdb-flow/port-cross-refs.md`
 
 ### PORT.name を leafref で参照するテーブル (27+)
 
@@ -726,9 +717,7 @@ PORT エントリが存在しない状態でこれらのテーブルに書き込
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/port-failure.md -->
+## 失敗挙動・retry / recovery
 
 ### retry パターン概要
 
@@ -857,9 +846,7 @@ if (!gBufferOrch->isPortReady(pCfg.key))
 <!-- /failure -->
 
 <!-- side-effects -->
-## PORT SET/DEL 副次 DB 書込 (Phase F)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/port-side-effects.md`
+## PORT SET/DEL 副次 DB 書込
 
 CONFIG_DB の PORT テーブルへの SET/DEL は複数の DB に副次的な書き込みを引き起こす。以下は portmgrd・PortsOrch・[portsyncd](../../reference/glossary.md#term-portsyncd) の実装精読から抽出した全副次書き込み。
 
@@ -950,9 +937,7 @@ SAI 呼び出し → [ASIC_DB](../../reference/glossary.md#term-asic_db): `sai_p
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/port-platform.md -->
+## プラットフォーム / SAI Capability 差異
 
 ### ベンダー識別とプラットフォーム文字列
 
