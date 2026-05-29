@@ -68,6 +68,27 @@ reasoning: >
   typedef は sonic-buildimage の sonic-types.yang.j2 L244 に定義されている。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/switchport.py#L16-L20 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/switchport.py#L16-L20 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @switchport.command("mode")
+    @click.argument("type", metavar="<mode_type>", required=True, type=click.Choice(["access", "trunk", "routed"]))
+    @click.argument("port", metavar="port", required=True)
+    @clicommon.pass_db
+    def switchport_mode(db, type, port):
+    ```
+
+    **判断根拠**: >
+
+<!-- evidence-rendered:end -->
+
 引数は `<mode_type>` + `<port>` の 2 個のみ。HLD の `config switchport mode access <port> <vlan>` / `config switchport mode trunk <port> [<native-vlan>] [<vlan-list>]` のような第 3 引数（VLAN リスト）は **無い**。VLAN メンバ追加は別コマンド `config vlan member add <vid> <port> [--untagged]` (`sonic-utilities/config/vlan.py`)。
 
 ## 3. 読者への影響

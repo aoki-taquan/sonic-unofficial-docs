@@ -40,7 +40,7 @@ related:
 
 ## 1. syncd ウォームスタートエラー
 
-ウォームリスタートの状態は `WARM_RESTART` CONFIG_DB テーブルで制御され、その
+ウォームリスタートの状態は `WARM_RESTART` [CONFIG_DB](../reference/glossary.md#term-config_db) テーブルで制御され、その
 スキーマは `sonic-warm-restart.yang` に定義されている[^yang]。
 
 <!-- evidence:
@@ -52,6 +52,24 @@ reasoning: >
   現行 master に sonic-warm-restart.yang が存在し WARM_RESTART テーブルのスキーマを
   定義していることを確認。本ページが扱うウォームリスタート機構の実装裏取り。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang#L1-L5 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang#L1-L5 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)`
+
+    **抜粋**:
+
+    ```text
+    module sonic-warm-restart  {
+        namespace "http://github.com/sonic-net/sonic-warm-restart";
+    ```
+
+    **判断根拠**: >
+
+<!-- evidence-rendered:end -->
 
 ### 1-1. `Invalid sai_api_t passed to sai_api_query` (#6723)[^6723]
 
@@ -272,4 +290,4 @@ kernel: igb 0000:0a:00.0 eth0: igb_watchdog_task: Detected Tx Unit Hang
 [^12512]: [sonic-buildimage #12512](https://github.com/sonic-net/sonic-buildimage/issues/12512) — ウォームブート後の reboot-cause 誤表示。
 [^9899]: [sonic-buildimage #9899](https://github.com/sonic-net/sonic-buildimage/issues/9899) — [202012] fast-reboot 中の orchagent INIT_VIEW タイムアウト。
 
-<!-- glossary-links-injected: 3b39e50988ab -->
+<!-- glossary-links-injected: 896d391185a9 -->

@@ -86,6 +86,23 @@ reasoning: >
   デフォルト無効であることは rules/config L60-L65 のコメントアウトされた既定値で確認できる。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/Makefile.work#L332-L407 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/Makefile.work#L332-L407 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)`
+
+    **抜粋**:
+
+    ```text
+    ifeq ($(strip $(SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD)),y)
+    ```
+
+    **判断根拠**: >
+
+<!-- evidence-rendered:end -->
+
 ---
 
 ## 2. Docker / systemd 関連
@@ -280,6 +297,6 @@ export SONIC_DEBUGGING_ON=y
 [^11337]: [sonic-buildimage #11337](https://github.com/sonic-net/sonic-buildimage/issues/11337) — Marvell ARM ビルド失敗の継続報告。
 [^11769]: [sonic-buildimage #11769](https://github.com/sonic-net/sonic-buildimage/issues/11769) — BULLSEYE のみ有効時の `libsnmp-dev` インストール無限ループ。
 [^9741]: [sonic-buildimage #9741](https://github.com/sonic-net/sonic-buildimage/issues/9741) — EOL の `sonic-slave-stretch` イメージ取得失敗。
-[^9885]: [sonic-buildimage #9885](https://github.com/sonic-net/sonic-buildimage/issues/9885) — P4RT コンテナ有効時の VS イメージビルド失敗。
+[^9885]: [sonic-buildimage #9885](https://github.com/sonic-net/sonic-buildimage/issues/9885) — P4RT コンテナ有効時の [VS](../reference/glossary.md#term-vs) イメージビルド失敗。
 
-<!-- glossary-links-injected: a8f7c59145cf -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

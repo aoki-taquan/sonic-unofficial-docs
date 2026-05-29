@@ -69,6 +69,25 @@ reasoning: >
   issue #6722 が報告した「YANG モデル欠落」警告は master では解消済みであることの裏取り。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L130-L154 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L130-L154 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)`
+
+    **抜粋**:
+
+    ```text
+    container PORTCHANNEL_MEMBER {
+        list PORTCHANNEL_MEMBER_LIST {
+        } /* end of list PORTCHANNEL_MEMBER_LIST */
+    ```
+
+    **判断根拠**: >
+
+<!-- evidence-rendered:end -->
+
 ---
 
 ### 1-2. `BGP_NEIGHBOR` YANG モデルが DPB エラーを引き起こす (#7959)[^7959]
@@ -307,7 +326,7 @@ flowchart TD
 
 ## 引用元
 
-本ページの各項目は sonic-buildimage の issue tracker に記録された実環境報告を一次情報とする。YANG モデルの現況は `sonic-net/sonic-buildimage` (sha `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`) で裏取りした。
+本ページの各項目は [sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) の issue tracker に記録された実環境報告を一次情報とする。YANG モデルの現況は `sonic-net/sonic-buildimage` (sha `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`) で裏取りした。
 
 [^6722]: [sonic-buildimage #6722](https://github.com/sonic-net/sonic-buildimage/issues/6722) — `PORTCHANNEL_MEMBER` 等のテーブルに YANG モデルが無く DPB 依存チェックで警告になる件。
 [^6935]: [sonic-buildimage #6935](https://github.com/sonic-net/sonic-buildimage/issues/6935) — DPB 操作中の Redis (database) I/O エラー。
@@ -324,4 +343,4 @@ flowchart TD
 [^11190]: [sonic-buildimage #11190](https://github.com/sonic-net/sonic-buildimage/issues/11190) — breakout 時に counters 関連のエラーログが出る件。
 [^11418]: [sonic-buildimage #11418](https://github.com/sonic-net/sonic-buildimage/issues/11418) — breakout ポートでカウンターレートが表示されない件。
 
-<!-- glossary-links-injected: 9fb3fca99a59 -->
+<!-- glossary-links-injected: 75921d013977 -->

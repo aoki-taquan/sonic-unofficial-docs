@@ -23,6 +23,9 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-29 #5082 ci: promote image-alt + mermaid-syntax checks to strict
+- 2026-05-29 #5081 ci: run CI on push to main (gate post-merge drift)
+- 2026-05-29 #5080 fix: benchmark-driven quality sweep (QA-metadata leak removal + factual fixes)
 - 2026-05-29 #5056 fix(ci): resolve pre-existing lint/textlint failures on main
 - 2026-05-28 #5050 fix(platform): repair thermalctld-speed-tolerance frontmatter + API description
 - 2026-05-28 #5049 chore(frontmatter): strip dead 'hard' field from 250 pages
@@ -520,7 +523,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3882 docs(config-db): add Phase E hardcoded-constants block to LOGGER page
 - 2026-05-19 #3880 docs(config-db): add Phase G pubsub block to FIPS page
 - 2026-05-19 #3878 docs(config-db): add Phase F side-effects block to vrrp-track page
-- 2026-05-19 #3877 docs(config-db): add Phase H platform block to vlan-state
-- 2026-05-19 #3876 docs(config-db): add Phase E constants tag to vlan-state
-- 2026-05-19 #3875 docs(config-db): add Phase D failure-behavior block to PBH_TABLE
 

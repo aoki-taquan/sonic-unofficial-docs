@@ -120,6 +120,25 @@ reasoning: >
   issue #9638 が報告した「ACCEPT 欠落」は master では修正済みであることの裏取り。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2#L81-L84 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2#L81-L84 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)`
+
+    **抜粋**:
+
+    ```text
+    enum DROP;
+    enum ACCEPT;
+    enum FORWARD;
+    ```
+
+    **判断根拠**: >
+
+<!-- evidence-rendered:end -->
+
 ---
 
 ### 2-3. ACL の `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` 欠落 (#9929)[^9929]
@@ -141,6 +160,24 @@ reasoning: >
   現行 master の sonic-acl.yang.j2 に MIRROR_INGRESS_ACTION / MIRROR_EGRESS_ACTION の
   両 leaf が定義されていることを確認。issue #9929 の欠落は master で解消済み。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-acl.yang.j2#L80-L94 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-acl.yang.j2#L80-L94 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)`
+
+    **抜粋**:
+
+    ```text
+    leaf MIRROR_INGRESS_ACTION {
+    leaf MIRROR_EGRESS_ACTION {
+    ```
+
+    **判断根拠**: >
+
+<!-- evidence-rendered:end -->
 
 ---
 
@@ -310,7 +347,7 @@ docker logs mgmt-framework | grep -E 'xDbSpecMap|xpath' | tail -20
 
 ## 引用元
 
-各項目の一次情報は sonic-buildimage の issue tracker。YANG モデルの現況は `sonic-net/sonic-buildimage` (sha `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`) の `src/sonic-yang-models/` で裏取りした。
+各項目の一次情報は [sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) の issue tracker。YANG モデルの現況は `sonic-net/sonic-buildimage` (sha `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`) の `src/sonic-yang-models/` で裏取りした。
 
 [^7076]: [sonic-buildimage #7076](https://github.com/sonic-net/sonic-buildimage/issues/7076) — `sonic_yang_tree` 生成ステップ skip によるビルドエラー。
 [^9312]: [sonic-buildimage #9312](https://github.com/sonic-net/sonic-buildimage/issues/9312) — libyang バックリンクのバグで `import` がビルドを壊す件。
@@ -327,4 +364,4 @@ docker logs mgmt-framework | grep -E 'xDbSpecMap|xpath' | tail -20
 [^9623]: [sonic-buildimage #9623](https://github.com/sonic-net/sonic-buildimage/issues/9623) — PORT テーブルの `lanes` 一意性を YANG validation extension で検証する件。
 [^10668]: [sonic-buildimage #10668](https://github.com/sonic-net/sonic-buildimage/issues/10668) — Annotation YANG の xDbSpecMap xpath 解決エラー。
 
-<!-- glossary-links-injected: 7c25258ad0ca -->
+<!-- glossary-links-injected: 75921d013977 -->
