@@ -73,9 +73,7 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 | `report_type` | enum `periodic`/`stream`/`once` | なし (省略時サイレント無効) | 報告モード |
 
 <!-- defaults -->
-## コード由来デフォルト (Phase A)
-
-> **調査対象**: `sonic-gnmi/dialout/dialout_client/dialout_client.go` (processTelemetryClientConfig / clientSubscription struct)、`sonic-telemetry_client.yang`
+## コード由来デフォルト
 
 | フィールド | スコープ | コード由来デフォルト | YANG デフォルト | 根拠 |
 |-----------|--------|-------------------|----------------|------|
@@ -92,9 +90,9 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B — コード由来)
+## 書込み順依存
 
-`dialout_client_cli` (`sonic-gnmi/dialout/dialout_client/dialout_client.go`) の `DialOutRun()` / `processTelemetryClientConfig()` を精読して検出した順序依存・タイミング依存。詳細スキャンノート: [`meta/_intermediate/cdb-flow/telemetry-client-ordering.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/telemetry-client-ordering.md)。
+`dialout_client_cli` (`sonic-gnmi/dialout/dialout_client/dialout_client.go`) の `DialOutRun()` / `processTelemetryClientConfig()` を精読して検出した順序依存・タイミング依存。
 
 | # | 依存関係 | 方向 | 緩和策 / 備考 |
 |---|----------|------|--------------|
@@ -111,9 +109,9 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase C)
+## 暗黙テーブル参照
 
-`TELEMETRY_CLIENT` テーブルは `dialout_client.go` が直接購読するが、`dialout` プロセスの起動は `gnmi-native` プロセス経由で以下のテーブルに間接依存する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/telemetry-client-cross-refs.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/telemetry-client-cross-refs.md)。
+`TELEMETRY_CLIENT` テーブルは `dialout_client.go` が直接購読するが、`dialout` プロセスの起動は `gnmi-native` プロセス経由で以下のテーブルに間接依存する。
 
 | 参照先テーブル | 参照フィールド | 方向 | 直接/間接 | 証跡 |
 |--------------|-------------|------|-----------|------|
@@ -131,10 +129,9 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ソース: `sonic-net/sonic-gnmi/dialout/dialout_client/dialout_client.go` @ eb635b7679b260c3fd0786a6d0734fc8e82c9a22
-詳細スキャンノート: [`meta/_intermediate/cdb-flow/telemetry-client-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/telemetry-client-failure.md)
 
 ### SET 処理における失敗経路
 
@@ -176,7 +173,7 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `sonic-gnmi/dialout/dialout_client/dialout_client.go` に埋め込まれた数値・文字列定数で、CONFIG_DB の値では上書きできないもの。
 
@@ -215,10 +212,9 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 ソース: `sonic-net/sonic-gnmi/dialout/dialout_client/dialout_client.go` @ eb635b7679b260c3fd0786a6d0734fc8e82c9a22
-詳細スキャンノート: `meta/_intermediate/cdb-flow/telemetry-client-side-effects.md`
 
 `dialout_client.go` を全行スキャンした結果、**副次 DB 書込は存在しない**。
 
@@ -242,10 +238,9 @@ fv, err := redisDb.HGetAll(context.Background(), tableKey).Result()
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ソース: `sonic-net/sonic-gnmi/dialout/dialout_client/dialout_client.go` @ eb635b7679b260c3fd0786a6d0734fc8e82c9a22
-詳細スキャンノート: [`meta/_intermediate/cdb-flow/telemetry-client-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/telemetry-client-pubsub.md)
 
 ### 購読 API
 
@@ -292,9 +287,7 @@ pubsub := redisDb.PSubscribe(context.Background(), pattern)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-詳細スキャンノート: [`meta/_intermediate/cdb-flow/telemetry-client-platform.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/telemetry-client-platform.md)
+## プラットフォーム差
 
 **プラットフォーム差なし。** `TELEMETRY_CLIENT` テーブルを消費する dial-out クライアントは全プラットフォームで同一動作する。
 
@@ -402,20 +395,20 @@ docker logs gnmi | grep -i dial-out
 <!-- /ops-hint -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 `dialout_client.go` が `DestinationGroup` の `dst_addr` を解決し、`Subscription` の `report_type` (`stream` / `once` / `poll`) と `report_interval` から送信モードを自動決定する。`unidirectional` (Global) が `true` の場合は片方向ストリーミング、`false` で双方向 RPC。`encoding` (デフォルト `JSON_IETF`) によって payload エンコーディングを切り替える。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録
 
 dialout クライアントは `gnmi-native` プロセス (supervisord 管理) が稼働している場合にのみ起動する。`TELEMETRY_CLIENT` テーブルに `Subscription` エントリが存在し、対応する `DestinationGroup` が解決可能なときに dial-out セッションを開始する。エントリ未定義時はセッション未起動。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -426,7 +419,7 @@ dialout クライアントは `gnmi-native` プロセス (supervisord 管理) �
 | `dialout_client` | `report_type=once` | 単発取得後に切断 | `dialout_client.go` |
 | `dialout_client` | `unidirectional=true` (Global) | 片方向ストリーミング (応答チャネルなし) | `dialout_client.go` |
 
-> **スキャン証跡**: `TELEMETRY_CLIENT` は [gNMI](../../reference/glossary.md#term-gnmi) dial-out のクライアント設定。スキーマには `tls_cert` / `tls_key` / `enabled` フィールドは存在せず、TLS 設定は `TELEMETRY` テーブル側で管理される。主要分岐は `report_type` と `DestinationGroup` 解決状態。
+> **裏取り**: `TELEMETRY_CLIENT` は [gNMI](../../reference/glossary.md#term-gnmi) dial-out のクライアント設定。スキーマには `tls_cert` / `tls_key` / `enabled` フィールドは存在せず、TLS 設定は `TELEMETRY` テーブル側で管理される。主要分岐は `report_type` と `DestinationGroup` 解決状態。
 
 <!-- /handler-branching -->
 
@@ -451,7 +444,7 @@ dialout クライアントは `gnmi-native` プロセス (supervisord 管理) �
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 TELEMETRY_CLIENT テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 

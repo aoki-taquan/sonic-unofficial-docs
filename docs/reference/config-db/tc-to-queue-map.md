@@ -135,20 +135,20 @@ show qos map tc-queue
 <!-- /ops-hint -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
-QosOrch が `TC_TO_QUEUE_MAP` テーブル名から SAI map type `SAI_QOS_MAP_TYPE_TC_TO_QUEUE` を自動決定する。テーブル名による種別自動解決が Phase 6 相当。Config-DB 内フィールド間の自動付与なし。
+QosOrch が `TC_TO_QUEUE_MAP` テーブル名から SAI map type `SAI_QOS_MAP_TYPE_TC_TO_QUEUE` を自動決定する。テーブル名による種別自動解決。Config-DB 内フィールド間の自動付与なし。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録
 
 QosOrch は常時登録し `TC_TO_QUEUE_MAP` テーブルを無条件購読する。`PORT.tc_to_queue_map` から参照されている場合のみ SAI port [QoS](../../reference/glossary.md#term-qos) map として bind される。未参照の場合は map オブジェクトが作成されるが port に適用されない。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -157,7 +157,7 @@ QosOrch は常時登録し `TC_TO_QUEUE_MAP` テーブルを無条件購読す�
 | `QosOrch` | del_handler | SAI qos map 削除、port 参照を解除してから削除 | `qosorch.cpp` |
 | `QosOrch` | TC 値が範囲外 (0-7 以外) | ログエラー + スキップ | `qosorch.cpp` |
 
-> **スキャン証跡**: `TC_TO_QUEUE_MAP` は Traffic Class からキュー番号へのマッピングテーブル。QosOrch が SAI [QoS](../../reference/glossary.md#term-qos) map として管理。テーブル名からの map type 自動解決が Phase 6 相当。
+> **裏取り**: `TC_TO_QUEUE_MAP` は Traffic Class からキュー番号へのマッピングテーブル。QosOrch が SAI [QoS](../../reference/glossary.md#term-qos) map として管理。
 
 <!-- /handler-branching -->
 
@@ -184,7 +184,7 @@ QosOrch は常時登録し `TC_TO_QUEUE_MAP` テーブルを無条件購読す�
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 TC_TO_QUEUE_MAP テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -218,7 +218,7 @@ db_migrator.py での TC_TO_QUEUE_MAP マイグレーションなし
 <!-- /entry-points -->
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 ### ビルド時デフォルト
 
@@ -262,7 +262,7 @@ uplink ポート + different_tc_to_queue_map + tunnel_qos_remap_enable → AZURE
 <!-- /defaults -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `QosOrch` が TC_TO_QUEUE_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)
+## 暗黙参照 — `QosOrch` が TC_TO_QUEUE_MAP を基点に連鎖参照する CONFIG_DB テーブル
 
 `QosOrch` は `TC_TO_QUEUE_MAP` を `SAI_QOS_MAP_TYPE_TC_TO_QUEUE` として作成した後、`PORT_QOS_MAP` ハンドラを通じてポートに bind する。`qos_to_ref_table_map` (qosorch.cpp:L100-116) および `m_qos_maps` 参照カウンタ管理 (qosorch.cpp:L81-87) により、以下のテーブルとの連鎖参照が発生する。
 
@@ -296,11 +296,10 @@ uplink ポート + different_tc_to_queue_map + tunnel_qos_remap_enable → AZURE
 - `QUEUE`: `TC_TO_QUEUE_MAP` が解決した queue index が対象 queue を指定するが、`QosOrch` の `TC_TO_QUEUE_MAP` ハンドラが `QUEUE` テーブルを直接参照するわけではない。`QUEUE` は別途 `handleQueueTable()` が購読する独立テーブル。
 - `WRED_PROFILE`: queue に適用される drop profile だが、`TC_TO_QUEUE_MAP` ハンドラからの直接参照はない。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/tc-to-queue-map-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/qosorch.h`
 
@@ -353,7 +352,7 @@ TC 7 → queue 7
 <!-- /constants -->
 
 <!-- ordering -->
-## 適用順序依存 (Phase B)
+## 適用順序依存
 
 <!-- evidence: sonic-swss/orchagent/qosorch.cpp L103 L116 L136-139 L181-191 L433-469 L2118-2129 L2231-2251 -->
 
@@ -407,7 +406,7 @@ PORT_QOS_MAP から参照中の状態で TC_TO_QUEUE_MAP を DEL しようとす
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-swss/orchagent/qosorch.cpp L124-200 L429-479 -->
 
@@ -429,7 +428,7 @@ PORT_QOS_MAP から参照中の状態で TC_TO_QUEUE_MAP を DEL しようとす
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-swss/orchagent/qosorch.cpp L64 L103 L116 L204-230 L449-473 L2115-2204 -->
 
@@ -470,7 +469,7 @@ sai_port_api->set_port_attribute(port.m_port_id, &attr);  // qosorch.cpp L2193
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 ### ASIC キャパビリティ
 
@@ -505,7 +504,7 @@ sai_port_api->set_port_attribute(port.m_port_id, &attr);  // qosorch.cpp L2193
 <!-- /platform -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### 購読 API
 

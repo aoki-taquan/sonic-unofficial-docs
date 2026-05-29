@@ -90,7 +90,7 @@ APPL_DB:   P4RT_TABLE:FIXED_NEXTHOP_TABLE:<json_key>
 - `NextHopManager` ([orchagent](../../reference/glossary.md#term-orchagent)): [SAI](../../reference/glossary.md#term-sai) `SAI_OBJECT_TYPE_NEXT_HOP` (TUNNEL_ENCAP タイプ) 作成/削除
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `NextHopManager` (`validateAppDbEntry()`) は SET コマンド受信時に参照先オブジェクトの存在を即時チェックするため、書き込み順序が直結する。
 
@@ -121,7 +121,7 @@ RIF (2位) → Neighbor (3位) → GRE Tunnel (4位) → NextHop (5位) → WCMP
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `set_p2p_tunnel_encap_nexthop` エントリが [APPL_DB](../../reference/glossary.md#term-appl_db) に書かれると `NextHopManager` が以下のテーブル・リソースを暗黙的に参照する。[YANG](../../reference/glossary.md#term-yang) 未定義テーブルのため、すべての依存はコードのみに現れる。
 
@@ -145,12 +145,11 @@ RIF (2位) → Neighbor (3位) → GRE Tunnel (4位) → NextHop (5位) → WCMP
     GRE Tunnel 作成が正常に完了しているならば Neighbor も存在するはずだが、
     手動で APPL_DB を操作する場合は注意が必要。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-action-cross-refs.md`
 
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `NextHopManager` (`next_hop_manager.cpp`) は失敗を即時 P4RT gRPC レスポンスに返す。自動リトライ機構はなく、失敗エントリは `Consumer::m_toSync` に残留しない。
 
@@ -184,12 +183,11 @@ RIF (2位) → Neighbor (3位) → GRE Tunnel (4位) → NextHop (5位) → WCMP
 !!! warning "自動リトライなし"
     P4Orch は失敗エントリを `Consumer::m_toSync` に残さない。P4RT controller 側で再試行を実装する必要がある。依存先 (`FIXED_TUNNEL_TABLE` / Neighbor) が未作成の状態でエントリを書いた場合は、依存先の作成後に controller が nexthop を再 SET しなければならない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-action-failure.md`
 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `FIXED_NEXTHOP_TABLE` の処理に使われる、DB フィールドではなくコード中にハードコードされた文字列定数・SAI 定数の一覧。
 
@@ -242,12 +240,11 @@ RIF (2位) → Neighbor (3位) → GRE Tunnel (4位) → NextHop (5位) → WCMP
     これらは `set_ip_nexthop` / `set_ip_nexthop_and_disable_rewrites` / `set_nexthop` アクション専用定数であり、
     `set_p2p_tunnel_encap_nexthop` の SAI 属性リストには含まれない (`next_hop_manager.cpp:206-260`)。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-action-constants.md`
 
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・他オブジェクトへの波及 (Phase F)
+## 副作用・他オブジェクトへの波及
 
 `NextHopManager` が `set_p2p_tunnel_encap_nexthop` エントリを **SET / DEL** した際に、nexthop 本体以外で変化するシステム状態を記す。
 
@@ -279,12 +276,11 @@ nexthop を作成すると GRE Tunnel の ref_count が増加し、nexthop を�
 
 nexthop DEL が成功するまで、[CRM](../../reference/glossary.md#term-crm) カウンタは nexthop 1 件分の消費として計上され続ける。CRM しきい値超過アラートは nexthop が解放されるまでクリアされない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-action-side.md`
 
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### 購読方式 — ZMQ ベース
 
@@ -350,7 +346,6 @@ DEL 成功時は当該エントリが APPL_STATE_DB から削除される。
 
 なし。`NextHopManager` は orchagent プロセス内のハンドラであり、エントリの追加/削除は SAI nexthop オブジェクトのライブ操作のみで反映され、プロセス再起動を伴わない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-action-pubsub.md`
 
 <!-- /pubsub -->
 
@@ -407,7 +402,7 @@ GRE トンネル ID を変更する UPDATE は禁止されている。`validateA
 <!-- /defaults -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 `FIXED_NEXTHOP_TABLE` の `set_p2p_tunnel_encap_nexthop` アクションは P4RT gRPC サービスを持つプラットフォームでのみ機能する。`next_hop_manager.cpp` にはプラットフォーム分岐コード（`getenv("platform")` / `MLNX_PLATFORM_SUBSTRING` 等）は存在せず、差異は SAI 実装レベルで生じる。
 
@@ -445,7 +440,6 @@ SET 成功時に `gCrmOrch->incCrmResUsedCounter()` が呼ばれる（`next_hop_
 
 `create_next_hops` / `remove_next_hops` は `SAI_BULK_OP_ERROR_MODE_STOP_ON_ERROR` 固定で呼ばれる（`next_hop_manager.cpp:527-530`）。部分成功モードは使用されない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-action-platform.md`
 
 <!-- /platform -->
 

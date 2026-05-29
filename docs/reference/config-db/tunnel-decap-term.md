@@ -61,7 +61,7 @@ STATE_DB:  TUNNEL_DECAP_TERM_TABLE|<tunnel_name>|<dst_ip_prefix>
 - subnet decap tunnel (`IPINIP_SUBNET`/`IPINIP_V6_SUBNET`) に対しては `MP2MP` のみ許可
 
 <!-- defaults -->
-## フィールドのコード由来デフォルト (Phase A)
+## フィールドのコード由来デフォルト
 
 ### term_type
 
@@ -106,7 +106,7 @@ STATE_DB:  TUNNEL_DECAP_TERM_TABLE|<tunnel_name>|<dst_ip_prefix>
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 TUNNEL_DECAP_TERM_TABLE エントリを書き込む際に守るべき順序制約を実装から導出した。
 
@@ -147,12 +147,11 @@ DEL 時: `removeDecapTunnel()` は TERM エントリを自動削除しない。T
     `SUBNET_DECAP` テーブルで `enable=true` かつ `src_ip`/`src_ip_v6` が設定済みでないと
     エントリが消費されてスキップされる（リトライなし）。SUBNET_DECAP を先に SET すること。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-term-ordering.md`
 
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `tunneldecaporch` / `routeorch` / `vnetorch` が TUNNEL_DECAP_TERM_TABLE の処理に際してコードレベルで参照・操作するテーブル一覧（[YANG](../../reference/glossary.md#term-yang) leafref 非対象、[APPL_DB](../../reference/glossary.md#term-appl_db) テーブルのため）。
 
@@ -168,11 +167,10 @@ DEL 時: `removeDecapTunnel()` は TERM エントリを自動削除しない。T
     VIP subnet decap を有効化すると、RouteOrch または VNetRouteOrch が `SUBNET_DECAP.enable=true` を確認し、VIP prefix のルート追加時に TUNNEL_DECAP_TERM_TABLE へ `subnet_type=vip` の `MP2MP` term を自動的に書き込む。これらの term は `tunnelmgrd` や `swssconfig` ではなく orchagent 側から生成されるため、APPL_DB を直接監視しない限りトレースが難しい。
 
 > **Evidence**: `tunneldecaporch.cpp:35,392-521,998,1539-1567`; `routeorch.cpp:53,3220-3251`; `vnetorch.cpp:734,1563-1594`
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-term-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・リトライ・リカバリ (Phase D)
+## 失敗挙動・リトライ・リカバリ
 
 <!-- evidence: sonic-swss/orchagent/tunneldecaporch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d L338-545, L886-1000, L1131-1262 -->
 
@@ -210,12 +208,11 @@ DEL 時: `removeDecapTunnel()` は TERM エントリを自動削除しない。T
 - **subnet decap 有効化後の手動再投入**: `SUBNET_DECAP` の `enable` が後から変更されてもスキップ済みエントリは自動再処理されない。SUBNET_DECAP 変更後に term を再 SET すること。
 - **親トンネル不在が唯一の自動リトライ**: 他の失敗条件はすべてエントリ消費（恒久スキップ）。親トンネル不在のみ `unhandledDecapTerms` 経由で自動回復する。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-term-failure.md`
 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 TUNNEL_DECAP_TERM_TABLE のフィールドで上書きできない、またはコードに直書きされていて APPL_DB 値から独立している定数。変更にはコードのリコンパイルが必要。
 
@@ -252,12 +249,11 @@ TUNNEL_DECAP_TERM_TABLE のフィールドで上書きできない、または�
 
 `subnet_type` の許可値は `"vlan"` と `"vip"` のみ (L428-434)。[YANG](../../reference/glossary.md#term-yang) 定義は存在せず、コードに直書きされている。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-term-constants.md`
 
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・連鎖変更 (Phase F)
+## 副作用・連鎖変更
 
 TUNNEL_DECAP_TERM_TABLE エントリの SET / DEL が引き起こす、当該テーブル以外への波及変更。
 
@@ -287,12 +283,11 @@ TERM が先着した場合 (`tunnel_exists == false`)、`unhandledDecapTerms` �
 
 `SUBNET_DECAP` フィールド変更 (src_ip / src_ip_v6 の更新) が発生すると、`updateUnhandledDecapTunnelTermsSrcIp()` (L1483-1494) により未処理 TERM の src_ip フィールドが上書き更新される。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-term-side-effects.md`
 
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 TUNNEL_DECAP_TERM_TABLE に関わる全 Publisher/Subscriber ペアを実装から導出した。
 
@@ -349,12 +344,11 @@ RouteOrch / VNetRouteOrch
   ──ProducerStateTable──→ APPL_DB:TUNNEL_DECAP_TERM_TABLE (VIP subnet decap term)
 ```
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-term-pubsub.md`
 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 TUNNEL_DECAP_TERM_TABLE エントリを **処理する `tunneldecaporch`** にはプラットフォーム差なし。差異は **書き込み側**（`ipinip.json.j2` テンプレート）で生じ、`switch_type`・[ASIC](../../reference/glossary.md#term-asic) ベンダー・デバイスタイプ・ルーティング IF 数の組み合わせによって生成エントリ数が変わる。
 
@@ -370,7 +364,6 @@ TUNNEL_DECAP_TERM_TABLE エントリを **処理する `tunneldecaporch`** に�
 | multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis | 各 asic-namespace の orchagent が独立処理。ロジック差なし | orchagent は namespace ごとに分離起動 |
 | Dual-ToR (MuxTunnel0) | MuxTunnel0 向け term エントリが追加されるが処理ロジックは通常 term と同一 | `tunneldecaporch.h` L21; `muxorch.cpp` 呼び出し |
 
-詳細根拠は `meta/_intermediate/cdb-flow/tunnel-decap-term-platform.md` を参照。
 <!-- /platform -->
 
 ## 購読者

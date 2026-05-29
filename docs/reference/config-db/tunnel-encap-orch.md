@@ -130,7 +130,7 @@ flowchart TD
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `VxlanTunnelOrch` / `VxlanTunnelMapOrch` / `VxlanVrfMapOrch` が処理を行う際に
 CONFIG_DB フィールドとして公開されずコード内で暗黙的に参照されるリソース・テーブル。
@@ -154,7 +154,6 @@ CONFIG_DB フィールドとして公開されずコード内で暗黙的に参�
     `VXLAN_TUNNEL` エントリを検索する。エントリが存在しない場合は処理失敗となる。
     `VXLAN_TUNNEL` → `VXLAN_TUNNEL_MAP` の順序で投入すること。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-orch-cross-refs.md`
 
 <!-- /cross-refs -->
 
@@ -203,7 +202,7 @@ CLI (`config vxlan add`) で作成されたトンネルは `TNL_CREATION_SRC_CLI
 <!-- /defaults -->
 
 <!-- failure -->
-## 失敗時の挙動 (Phase D)
+## 失敗時の挙動
 
 | 失敗ケース | 挙動 | リトライ | evidence |
 |-----------|------|---------|----------|
@@ -226,7 +225,7 @@ CLI (`config vxlan add`) で作成されたトンネルは `TNL_CREATION_SRC_CLI
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 CONFIG_DB フィールドとして公開されず `vxlanorch.h` / `vxlanorch.cpp` にハードコードされている定数。`config_db.json` での設定変更は効果なく、変更にはコードのリコンパイルが必要。
 
@@ -265,12 +264,11 @@ CONFIG_DB フィールドとして公開されず `vxlanorch.h` / `vxlanorch.cpp
 | `TUNNEL_MAP_USE_COMMON_ENCAP_DECAP` | EVPN DIP トンネル (`addTunnelUser`) | `vxlanorch.cpp:1169` |
 | `TUNNEL_MAP_USE_DECAP_ONLY` | [VLAN](../../reference/glossary.md#term-vlan) MAP で L3VNI フラグなし（decap のみ許可） | `vxlanorch.cpp:2060-2066` のコメント |
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-orch-ordering.md`
 
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `VxlanTunnelOrch` / `VxlanTunnel` がトンネル生成・削除時に引き起こす副次的な DB 書込とシステム副作用[^4]。
 
@@ -313,12 +311,11 @@ SAI `create_tunnel()` 成功 (`vxlanorch.cpp:911`) → `addTunnelToFlexCounter(o
 この in-memory マップは `EvpnRemoteVnip2pOrch` / `EvpnRemoteVnip2mpOrch` が EVPN
 リモート VNI 解決時に参照する。**DB への書込はない**。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-orch-side-effects.md`
 
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Consumer 登録経路 — 二段階パイプライン
 
@@ -376,12 +373,11 @@ EvpnNvoOrch* evpn_nvo_orch =
 
 `m_stateVxlanTable`（`STATE_DB:VXLAN_TUNNEL_TABLE`）への書き込みは `Table` 型（非 [ProducerStateTable](../../reference/glossary.md#term-producerstatetable)）のため [Redis](../../reference/glossary.md#term-redis) `hset`/`del` を直接発行する。NotificationProducer / Consumer 型のチャンネル通知は使用しない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-orch-pubsub.md`
 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差・SAI capability 分岐 (Phase H)
+## プラットフォーム差・SAI capability 分岐
 
 ### isDipTunnelsSupported() — P2P peer mode capability 分岐
 
@@ -415,7 +411,6 @@ sai_query_attribute_enum_values_capability(
 | `encap_ttl == 0` | `SAI_TUNNEL_ATTR_ENCAP_TTL_MODE` を未設定 | SAI プラットフォームデフォルト（ベンダー依存） |
 | `ttl_mode == NOT_SET` | `SAI_TUNNEL_ATTR_DECAP_TTL_MODE` を未設定 | SAI プラットフォームデフォルト（ベンダー依存） |
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-orch-platform.md`
 
 <!-- /platform -->
 
