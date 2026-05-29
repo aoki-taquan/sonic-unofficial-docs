@@ -63,10 +63,9 @@ NTP_KEY|<id>
 - `NTP.global.authentication = enabled` のときに鍵が実際に検証で使われる
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> **調査根拠**: `sonic-ntp.yang` L199–203、`hostcfgd` L2511–2517、`chrony.keys.j2` L8–17 精読 (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/ntp-key-ordering.md`
+> **Evidence**: `sonic-ntp.yang` L199–203、`hostcfgd` L2511–2517、`chrony.keys.j2` L8–17 精読 (2026-05-18)
 
 ### NTP_KEY は被参照側 — DEL 順序制約
 
@@ -101,9 +100,7 @@ NTP_KEY|<id>
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/ntp-key-cross-refs.md`
+## 暗黙参照テーブル
 
 `NTP_KEY` 自体は他テーブルへの leafref を持たない（被参照側）が、`chrony.keys.j2` テンプレートと `hostcfgd` の共通ハンドラを通じて以下のテーブルを暗黙的に参照する。
 
@@ -224,7 +221,7 @@ enum: `type`=md5/sha1/sha256/sha384/sha512、`trusted`=yes/no。変更は `syste
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 NTP_KEY テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -258,13 +255,13 @@ db_migrator.py での NTP_KEY マイグレーションなし
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 minigraph.py および init_cfg.json.j2 からの `NTP_KEY` 自動派生はなし。CLI (`config ntp authentication-key`) による手動設定のみ。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 `NTP_KEY` は [orchagent](../../reference/glossary.md#term-orchagent) では処理されない。`hostcfgd` が `NTP`, `NTP_SERVER`, `NTP_KEY` を一括購読し `ntp.conf` テンプレートを再生成する (`hostcfgd:1285-1309`)。条件付き platform 登録なし。
 
@@ -277,7 +274,7 @@ minigraph.py および init_cfg.json.j2 からの `NTP_KEY` 自動派生はな�
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `hostcfgd` の NTP_KEY 処理分岐:
 
@@ -288,12 +285,12 @@ minigraph.py および init_cfg.json.j2 からの `NTP_KEY` 自動派生はな�
 | YANG validation | — | `NTP_SERVER.trusted_key` が存在しない `NTP_KEY` を leafref 参照 | leafref 整合性チェックで拒否 | `sonic-ntp.yang` |
 | YANG validation | — | DEL で `NTP_SERVER` から参照中の `NTP_KEY` を削除 | leafref 整合性チェックで拒否 | `sonic-ntp.yang` |
 
-> **スキャン証跡**: hostcfgd:1285-1389 確認。NTP_KEY は YANG leafref による参照整合性チェックが主な制約であることを確認 — 誤読なし。
+> **裏取り**: hostcfgd:1285-1389 確認。NTP_KEY は YANG leafref による参照整合性チェックが主な制約であることを確認 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 YANG default 宣言 (`type` = `md5` / `trusted` = `no`) に加えて、`hostcfgd` および `chrony.keys.j2` テンプレートでの取り扱いを整理する。NTP_KEY は Python 側 (`hostcfgd`) でフィールド単位の default 補完ロジックを持たず、テンプレート (`chrony.keys.j2`) の `if` フィルタが暗黙デフォルトを担う。
 
@@ -327,12 +324,10 @@ YANG default `md5` により、CONFIG_DB に正規化された値は常に non-e
 
 `NtpCfg` クラス (`hostcfgd:1278-1406`) は [AAA](../../reference/glossary.md#term-aaa) 系のような `*_default` dict を持たず、DB の dict をそのまま Jinja2 context に渡す。`ntp_srv_key_update()` (`hostcfgd:1366-1406`) はキャッシュ比較で同一エントリの再生成をスキップするのみで、フィールド単位の補完は行わない。暗黙デフォルトは YANG (`md5` / `no`) とテンプレートの falsy フィルタが二重に担保している。
 
-詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-defaults.md`。
-
 <!-- /defaults -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd NtpCfg.ntp_srv_key_update() / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang -->
 
@@ -362,11 +357,10 @@ CLI / [gNMI](../../reference/glossary.md#term-gnmi) 経由の CONFIG_DB 書き�
 
 `chrony.keys.j2` は `NTP_KEY[keyid].type` または `NTP_KEY[keyid].value` が falsy の場合、その鍵エントリを keyfile から**無警告で除外**する。エラーは発生せず、次回 DB 変更で再生成されるまで chrony は当該鍵 ID を未登録として扱う。
 
-詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-failure.md`。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `NTP_KEY` テーブルの処理に関わるコード中のハードコード定数。CONFIG_DB / YANG で管理されない固定値のみを対象とする。出典は `sonic-host-services/scripts/hostcfgd`、`sonic-buildimage/files/image_config/chrony/` 以下のスクリプト・テンプレート群、および `sonic-ntp.yang`。
 
@@ -406,11 +400,10 @@ CLI / [gNMI](../../reference/glossary.md#term-gnmi) 経由の CONFIG_DB 書き�
 !!! note "value の base64 デコードはテンプレートに固定"
     `NTP_KEY.value` が base64 以外の形式で格納された場合、Jinja2 の `b64decode` フィルタがエラーを発生させ `chrony.keys` 生成が失敗する。YANG スキーマは `length 1..64` のみ検証し、エンコード形式は検証しない。
 
-詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-constants.md`。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次ファイル書込 (Phase F)
+## 副次ファイル書込
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd NtpCfg.ntp_srv_key_update() / sonic-buildimage/files/image_config/chrony/chrony.keys.j2 -->
 
@@ -452,11 +445,10 @@ CONFIG_DB 変更 (NTP_KEY)
 
 `NTP_KEY.trusted` フィールドは `chrony.keys.j2` で参照されない（dead field）。chrony の trustedkey 設定は `NTP_SERVER.trusted == 'yes'` を集約した `trusted_str` (`chrony.keys.j2:8-13`) で制御されており、`NTP_KEY.trusted` の値は生成ファイルに影響を与えない。
 
-詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-side-effects.md`。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -501,14 +493,13 @@ ntp_srv_key_handler(key="1", op="SET", data={...})
 | `NTP_KEY` または `NTP_SERVER` 変更でキャッシュ差分あり | `systemctl restart chrony` (ExecStartPre で `chrony.keys` + `chrony.conf` 再生成) | `NtpCfg.ntp_srv_key_update()` — `hostcfgd:1396-1402` |
 | キャッシュ差分なし (同値更新) | chrony 再起動スキップ | `hostcfgd:1383-1386` |
 
-> **Evidence**: `sonic-host-services/scripts/hostcfgd:2458-2466` (`make_callback`)、`hostcfgd:2511-2517` (`subscribe` 登録)、`hostcfgd:2527-2528` (`listen`)、`hostcfgd:2387-2391` (`ntp_srv_key_handler`)、`hostcfgd:2255-2272` (起動時スナップショット)、`hostcfgd:1366-1406` (`ntp_srv_key_update`)。詳細分析 `meta/_intermediate/cdb-flow/ntp-key-pubsub.md`。
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2458-2466` (`make_callback`)、`hostcfgd:2511-2517` (`subscribe` 登録)、`hostcfgd:2527-2528` (`listen`)、`hostcfgd:2387-2391` (`ntp_srv_key_handler`)、`hostcfgd:2255-2272` (起動時スナップショット)、`hostcfgd:1366-1406` (`ntp_srv_key_update`)。
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> **調査根拠**: `sonic-host-services/scripts/hostcfgd` L1272–1406 (`NtpCfg` 全行)、`chrony.keys.j2` L1–18、`chrony.conf.j2` L57–63、`chronyd-starter.sh`、`ntp_smartswitch_dpu_interfaces.json` 精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/ntp-key-platform.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` L1272–1406 (`NtpCfg` 全行)、`chrony.keys.j2` L1–18、`chrony.conf.j2` L57–63、`chronyd-starter.sh`、`ntp_smartswitch_dpu_interfaces.json` 精読 (2026-05-19)
 
 ### 結論: NTP_KEY 処理はプラットフォーム非依存
 

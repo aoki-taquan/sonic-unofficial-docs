@@ -173,7 +173,7 @@ show nat translations
 | `nat_tcp_timeout` | 86400 (default) | TCP セッションを 24時間でタイムアウト |
 | `nat_udp_timeout` | 300 (default) | UDP セッションを 5分でタイムアウト |
 | `nat_type` (BINDINGS) | `snat` (default) | 送信元 IP を変換 (内→外方向)。YANG `default snat` (`sonic-nat.yang L280`)、`natmgr.cpp:7056` で `SNAT_NAT_TYPE` にフォールバック |
-| `nat_type` (BINDINGS) | `dnat` | 宛先 IP を変換 (外→内方向)。なお `natmgr.cpp:6986` は `snat` 以外を ERROR で拒否する実装ギャップあり (本ページ Phase A 参照) |
+| `nat_type` (BINDINGS) | `dnat` | 宛先 IP を変換 (外→内方向)。なお `natmgr.cpp:6986` は `snat` 以外を ERROR で拒否する実装ギャップあり (「コード由来デフォルト」セクション参照) |
 | `twice_nat_id` | 1..9999 | 同 ID の snat/dnat エントリをペアとして twice NAT 処理 |
 | NAT_POOL エントリ数 | 17件目以上 | YANG max-elements=16 でバリデーション拒否 |
 
@@ -206,7 +206,7 @@ enum: `admin_mode`=enabled/disabled、`nat_type`=snat/dnat。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 NAT_GLOBAL / NAT_POOL / NAT_BINDINGS / NAT_STATIC テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -240,7 +240,7 @@ db_migrator.py での NAT マイグレーションなし
 <!-- /entry-points -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 YANG default 以外の実装 hardcode fallback。`NatOrch` コンストラクタ (`natorch.cpp:63-73`) と `NatMgr` コンストラクタ (`natmgr.cpp:55-65`) の両方が独立してデフォルト値を保持する。
 
@@ -315,9 +315,9 @@ YANG default 以外の実装 hardcode fallback。`NatOrch` コンストラクタ
 <!-- /defaults -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -325,7 +325,7 @@ YANG default 以外の実装 hardcode fallback。`NatOrch` コンストラクタ
 
 init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / `NAT_POOL` の自動書き込みはなし。CLI (`config nat enable/disable`) での手動設定のみ。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -343,7 +343,7 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 <!-- /derivation -->
 
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase C)
+## 暗黙テーブル参照
 
 `natmgrd` は `NAT_GLOBAL` / `NAT_POOL` / `NAT_BINDINGS` / `STATIC_NAT` / `STATIC_NAPT` に加え、以下のテーブルを購読または参照する。これらは frontmatter の `related:` には記載されていない暗黙依存である。
 
@@ -373,7 +373,7 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 <!-- /cross-refs -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `NatOrch::doTask()` → `doNatGlobalTableTask()` の分岐:
 
@@ -386,12 +386,12 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 | `NatOrch` | `doNatGlobalTableTask()` | `admin_mode` が現状と同じ値 | no-op (変化なし) | `natorch.cpp:2940` |
 | `NatMgr` | `doNatGlobalTask()` | `admin_mode` が `"enabled"`/`"disabled"` 以外 | ERROR ログ + スキップ | `sonic-swss/cfgmgr/natmgr.cpp:7250-7253` |
 
-> **スキャン証跡**: `natorch.cpp:2904-2966` + `natmgr.cpp:7115-7260` を全行読了、6 件分岐抽出 — 誤読なし。
+> **裏取り**: `natorch.cpp:2904-2966` + `natmgr.cpp:7115-7260` を全行読了、6 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch() L46-135 / addHwDnatPoolEntry L1783-1820 / addHwSnatEntry L1274-1340 / enableNatFeature L2534-2581 / disableNatFeature L2583-2625 / updateNatCounters L4050-4060 / updateNaptCounters L4077-4089 / updateTwiceNatCounters L4108-4119 / updateTwiceNaptCounters L4122-4134 / updateStaticNatCounters L4481-4489 / updateSnatCounters L4569-4577 / sonic-swss/cfgmgr/natmgr.cpp enableNatFeature L5667-5733 / disableNatFeature L5736-5767 / doNatGlobalTask L7300-7374 / addStaticNatEntry L2052-2053 / addDnatPoolEntry L1517-1521 / addConntrackStaticSingleNatEntry L456-490 / addConntrackStaticTwiceNatEntry L491-514 / addConntrackStaticSingleNaptEntry L516-565 -->
 
@@ -461,7 +461,7 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 ### 購読方式: 2 層構造 (SubscriberStateTable + ConsumerStateTable)
 
@@ -529,11 +529,10 @@ CLI / REST が CONFIG_DB に HSET / HDEL / DEL
 
 これらはすべて `swss::Select` の `Selectable` として登録され、通常の Consumer 処理と同じ select ループ内で処理される。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pubsub.md`
 <!-- /pubsub -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doNatGlobalTask L7105-7374 / sonic-swss/orchagent/natorch.cpp doNatGlobalTableTask L2904-2966, enableNatFeature L2534-2581, disableNatFeature L2583-2625 -->
 
@@ -576,7 +575,7 @@ grep -E "natorch|natmgr" /var/log/syslog | grep -E "ERROR|WARN|Invalid|failed"
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/cfgmgr/natmgr.h L62-73,L110-111 / sonic-swss/orchagent/natorch.h L37-39 / sonic-swss/orchagent/natorch.cpp L63-73,L2541-2544 / sonic-swss/orchagent/main.cpp L936-948 -->
 
@@ -628,7 +627,7 @@ YANG default と独立してコンストラクタ内でハードコードされ�
 <!-- /constants -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 <!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::addNatEntry L1866-1935 / enableNatFeature L2534-2581 / addAllDnatPoolEntries L1854-1863 / addAllNatEntries L3178-3258 / doDnatPoolTableTask L2968-3031 / doNatGlobalTableTask L2904-2966 -->
 
@@ -686,7 +685,7 @@ DEL NAT_POOL|<name>        # pool を後に削除
 <!-- /ordering -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 > 調査対象: `sonic-swss/orchagent/natorch.cpp`, `sonic-swss/orchagent/main.cpp`, `sonic-swss/cfgmgr/natmgr.cpp`, `sonic-swss/orchagent/orch.h`
 > 調査日: 2026-05-16
@@ -745,7 +744,6 @@ SWSS_LOG_NOTICE("DNAT nexthop tracking is %s",
 
 `natorch.cpp:111-121`: `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` の返り値を `maxAllowedSNatEntries` として保持する。現状のコードではエントリ追加時に上限チェックは行っておらず、HW 容量超過時は SAI 実装がエラーを返す形になっている。ログには上限値が出力される (`natorch.cpp:2549`)。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-platform.md`
 <!-- /platform -->
 
 <!-- glossary-links-injected: 9fb3fca99a59 -->

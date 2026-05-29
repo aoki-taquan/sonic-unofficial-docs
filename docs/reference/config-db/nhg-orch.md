@@ -158,7 +158,7 @@ NHG 数が上限 (`getMaxNhgCount()`) に達した場合、1 メンバーをラ�
 - 関連テーブル: `FG_NHG` (FG ECMP、別オーケストレータ `FgNhgOrch`)
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 <!-- evidence: sonic-net/sonic-swss orchagent/nhgorch.cpp NhgOrch::doTask:41-44 / NhgOrch::addNhg(sync):775-808 / syncMembers:913-964 / NhgOrch::update:988-1087 / recursive-member-check:128-153 / NH-resolve-check:936-944 -->
 
@@ -211,7 +211,7 @@ NHG 更新時は ①`removeMembers()`（旧メンバー削除）→ ②`syncMemb
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
 `NhgOrch` / `CbfNhgOrch` / `NhgMapOrch` は以下の他オーケストレータ・テーブルへ暗黙的に依存する。
 [YANG](../../reference/glossary.md#term-yang) / [CONFIG_DB](../../reference/glossary.md#term-config_db) には現れないコード上の直接参照。
@@ -224,11 +224,10 @@ NHG 更新時は ①`removeMembers()`（旧メンバー削除）→ ②`syncMemb
 | RouteOrch — refcount API | `RouteOrch` → `NhgOrch` / `CbfNhgOrch` | `incNhgRefCount` / `decNhgRefCount`：ルートが NHG を参照している間は DEL ガード | ref_count > 0 の NHG を DEL しようとすると `SWSS_LOG_ERROR` + 保留 |
 | NhgOrch (NEXTHOP_GROUP_TABLE) | `CbfNhgOrch` | `members` に指定した NHG インデックスが `m_syncdNextHopGroups` に存在し `sync=true` であること | メンバー NHG 未 sync → CBF NHG 作成が `return false` で再試行ループ |
 
-詳細証跡: `meta/_intermediate/cdb-flow/nhg-orch-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ### NhgOrch — SET 処理における失敗経路
 
@@ -298,13 +297,10 @@ NHG 数が上限 (`getMaxNhgCount()`) に達した場合、非 SRv6 NHG は `cre
 
 SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時はルート解決そのものが保留される。
 
-詳細証跡: `meta/_intermediate/cdb-flow/nhg-orch-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/nhg-orch-constants.md -->
+## ハードコード定数
 
 `NhgOrch` / `CbfNhgOrch` / `NhgMapOrch` に存在する、CONFIG\_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数・ランタイム取得上限の一覧。
 
@@ -342,11 +338,10 @@ SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時は�
 
 有効な FC 値は `[0, max_num_fcs)` 範囲のみ受け付ける (`nhgmaporch.cpp` L356–362)。
 
-詳細証跡: `meta/_intermediate/cdb-flow/nhg-orch-constants.md`
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `NhgOrch` / `CbfNhgOrch` / `NhgMapOrch` が APPL_DB テーブルを処理する際に、SAI 操作の成否に応じて以下の副次 DB エントリを書き込む。[ASIC_DB](../../reference/glossary.md#term-asic_db) への書込みは sai_next_hop_group_api 経由 ([syncd](../../reference/glossary.md#term-syncd)) で行われる主作用のため本表から除外する。
 
@@ -365,11 +360,10 @@ SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時は�
 
 [STATE_DB](../../reference/glossary.md#term-state_db) / APPL_STATE_DB への直接書込み・`ResponsePublisher` の使用・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書込みは、3 オーケストレータのいずれでも検出されなかった。
 
-詳細証跡: `meta/_intermediate/cdb-flow/nhg-orch-side-effects.md`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `NhgOrch` / `CbfNhgOrch` / `NhgMapOrch` は純粋な Consumer であり、`NotificationConsumer` / `ResponsePublisher` は使用しない。Producer → APPL_DB → Consumer ([orchagent](../../reference/glossary.md#term-orchagent)) という一方向 Pub/Sub 経路のみで動作する。
 
@@ -405,11 +399,10 @@ SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時は�
 | 上位制御プレーン → APPL_DB | `FC_TO_NHG_INDEX_MAP_TABLE_CHANNEL@0` | ProducerStateTable | NhgMapOrch |
 | NhgOrch → SAI | `sai_next_hop_group_api` ([syncd](../../reference/glossary.md#term-syncd) 経由) | orchagent | ASIC |
 
-詳細証跡: `meta/_intermediate/cdb-flow/nhg-orch-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 `NhgOrch` / `CbfNhgOrch` / `NhgMapOrch` の動作は、プラットフォームが提供する SAI Capability によって以下の軸で分岐する。
 
@@ -461,7 +454,6 @@ NHG 上限到達時、`nhg_key.is_srv6_nexthop()` が真のエントリは temp 
 
 [VS](../../reference/glossary.md#term-vs) プラットフォームでは SAI シムが ECMP / CBF / NHG Map の create を SUCCESS で返すが実 ASIC 転送はない。[CRM](../../reference/glossary.md#term-crm) 統計もダミー値。multi-asic 環境では NhgOrch は名前空間ごとに独立して起動し、NHG インデックス空間は ASIC 間で交わらない。
 
-詳細根拠: `meta/_intermediate/cdb-flow/nhg-orch-platform.md`
 <!-- /platform -->
 
 <!-- ref-triangle:start -->
