@@ -1415,7 +1415,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [DPB](#term-dpb)
 
-- [動的ポートブレイクアウト（DPB）既知問題と YANG モデル](../system/dynamic-port-breakout-known-issues.md) (22)
+- [動的ポートブレイクアウト（DPB）既知問題と YANG モデル](../system/dynamic-port-breakout-known-issues.md) (29)
 - [BREAKOUT_CFG テーブル](config-db/breakout-cfg.md) (20)
 - [BREAKOUT_CFG テーブル (DPB)](config-db/dpb.md) (14)
 - [ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）](../architecture/build-system-improvements.md) (8)
@@ -2089,7 +2089,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [Fast-reboot Flow Improvements（finalizer / reconciliation）](../system/fast-reboot-flow-improvements-hld.md) (78)
 - [ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）](../architecture/build-system-improvements.md) (63)
 - [FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）](../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md) (49)
-- [BGP_AGGREGATE_ADDRESS テーブル](config-db/bgp-aggregate-address.md) (31)
+- [YANG モデル既知問題と検証](../system/yang-model-issues-and-validation.md) (39)
 
 ### [sonic-cfggen](#term-sonic-cfggen)
 
@@ -2134,10 +2134,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [sonic-utilities](#term-sonic-utilities)
 
 - [AUTO_TECHSUPPORT_FEATURE テーブル](config-db/auto-techsupport-feature.md) (37)
+- [Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離](../switching/switch-port-modes-and-vlan-cli-discrepancy.md) (15)
 - [BREAKOUT_CFG テーブル](config-db/breakout-cfg.md) (14)
 - [[STATE_DB] DEVICE_NEIGHBOR 動作状態（device op state）](config-db/deviceop-state.md) (13)
 - [config bgp サブコマンド](cli/config-bgp.md) (12)
-- [DEVICE_METADATA テーブル](config-db/device-metadata.md) (12)
 
 ### [Scheduler](#term-scheduler)
 

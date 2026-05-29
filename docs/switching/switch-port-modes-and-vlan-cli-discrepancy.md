@@ -42,7 +42,7 @@ related:
 
 HLD は `config switchport mode access <port> <vlan>` や `config switchport mode trunk <port> [<native-vlan>] [<vlan-list>]` のようにモード切替と [VLAN](../reference/glossary.md#term-vlan) メンバ割当を 1 コマンドで行う仕様を提示している。現行実装は `@click.argument("type", ..., type=click.Choice(["access", "trunk", "routed"]))` と `@click.argument("port", ...)` の 2 引数のみで、VLAN メンバ割当は **依然として別コマンド** `config vlan member add <vlan> <port>` を呼ぶ必要がある。
 
-実コード（`sonic-utilities/config/switchport.py` L17-L22）:
+実コード（`sonic-utilities/config/switchport.py` L16-L20）[^impl]:
 
 ```python
 @switchport.command("mode")
@@ -53,6 +53,41 @@ HLD は `config switchport mode access <port> <vlan>` や `config switchport mod
 def switchport_mode(db, type, port):
     """switchport mode help commands.Mode_type can be access or trunk or routed"""
 ```
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/switchport.py#L16-L20 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @switchport.command("mode")
+  @click.argument("type", metavar="<mode_type>", required=True, type=click.Choice(["access", "trunk", "routed"]))
+  @click.argument("port", metavar="port", required=True)
+  @clicommon.pass_db
+  def switchport_mode(db, type, port):
+reasoning: >
+  現行 master の switchport_mode コマンドは引数が <mode_type> と <port> の 2 個のみで、
+  HLD が要求する第 3 引数 <vlan-list> が存在しないことを直接確認できる。switchport_mode
+  typedef は sonic-buildimage の sonic-types.yang.j2 L244 に定義されている。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/switchport.py#L16-L20 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/switchport.py#L16-L20 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @switchport.command("mode")
+    @click.argument("type", metavar="<mode_type>", required=True, type=click.Choice(["access", "trunk", "routed"]))
+    @click.argument("port", metavar="port", required=True)
+    @clicommon.pass_db
+    def switchport_mode(db, type, port):
+    ```
+
+    **判断根拠**: >
+
+<!-- evidence-rendered:end -->
 
 引数は `<mode_type>` + `<port>` の 2 個のみ。HLD の `config switchport mode access <port> <vlan>` / `config switchport mode trunk <port> [<native-vlan>] [<vlan-list>]` のような第 3 引数（VLAN リスト）は **無い**。VLAN メンバ追加は別コマンド `config vlan member add <vid> <port> [--untagged]` (`sonic-utilities/config/vlan.py`)。
 
@@ -100,9 +135,9 @@ show interfaces status  # PR #3788 取込後は switchport mode 列が出る
 
 ## 関連 GitHub Issue / PR
 
-- [sonic-utilities #3247: Switchport Mode & CLI Modified Fix (merged)](https://github.com/sonic-net/sonic-utilities/pull/3247) — 現行 `switchport mode` の確定実装
-- [sonic-utilities #3788: Switchport mode update for 'show interfaces status' (merged, 202505)](https://github.com/sonic-net/sonic-utilities/pull/3788) — `show interfaces status` で switchport mode を表示
-- [SONiC #1136: Switchport Mode Hybrid Support (open)](https://github.com/sonic-net/SONiC/issues/1136) — HLD で謳う追加機能（hybrid 等）の future work が未着手
+- [sonic-utilities #3247: Switchport Mode & CLI Modified Fix (merged)](https://github.com/sonic-net/sonic-utilities/pull/3247) — 現行 `switchport mode` の確定実装[^pr3247]
+- [sonic-utilities #3788: Switchport mode update for 'show interfaces status' (merged, 202505)](https://github.com/sonic-net/sonic-utilities/pull/3788) — `show interfaces status` で switchport mode を表示[^pr3788]
+- [SONiC #1136: Switchport Mode Hybrid Support (open)](https://github.com/sonic-net/SONiC/issues/1136) — HLD で謳う追加機能（hybrid 等）の future work が未着手[^issue1136]
 
 ## 関連ページ
 
@@ -133,5 +168,12 @@ show interfaces status  # PR #3788 取込後は switchport mode 列が出る
 ## 実装との乖離
 
 `monitor: partially_implemented` — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child。差分の根拠 / 影響 / 回避策は親ページの同セクションを参照のこと。
+
+## 引用元
+
+[^impl]: 実装の確定形。`config/switchport.py` L16-L20、`sonic-net/sonic-utilities` (sha `39732bceb8bdefe706518ab40623bbbba6ff33b9`)。引数は `<mode_type>` / `<port>` の 2 個のみで、HLD の `<vlan-list>` 第 3 引数は存在しない。
+[^pr3247]: [sonic-utilities PR #3247 "Switchport Mode & CLI Modified Fix"](https://github.com/sonic-net/sonic-utilities/pull/3247) — 現行 `config switchport mode` の確定実装をマージした PR。
+[^pr3788]: [sonic-utilities PR #3788 "Switchport mode update for 'show interfaces status'"](https://github.com/sonic-net/sonic-utilities/pull/3788) — `show interfaces status` に switchport mode 列を追加（202505 取り込み）。
+[^issue1136]: [SONiC issue #1136 "Switchport Mode Hybrid Support"](https://github.com/sonic-net/SONiC/issues/1136) — HLD が掲げる hybrid 等の追加機能の future work。現行 master では未着手。
 
 <!-- glossary-links-injected: 97c0d8538677 -->

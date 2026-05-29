@@ -46,7 +46,7 @@ related:
 
 ## 1. ビルド時エラー
 
-### 1-1. `yang-models/sonic_yang_tree` が存在しない (#7076)
+### 1-1. `yang-models/sonic_yang_tree` が存在しない (#7076)[^7076]
 
 ```
 [build] error: can't copy './yang-models/sonic_yang_tree': doesn't exist or not a regular file
@@ -67,7 +67,7 @@ make clean && make configure PLATFORM=<target> && make
 
 ---
 
-### 1-2. libyang バックリンク問題でビルド失敗 (#9312)
+### 1-2. libyang バックリンク問題でビルド失敗 (#9312)[^9312]
 
 複数の YANG モジュールを `import` すると libyang のバックリンクコードが
 メモリアクセス違反を起こす場合がある。
@@ -86,7 +86,7 @@ python3 -c "import libyang; print(libyang.__version__)"
 
 ## 2. パターン / 型定義の問題
 
-### 2-1. `sonic-scheduler.yang` パターン問題 (#9611)
+### 2-1. `sonic-scheduler.yang` パターン問題 (#9611)[^9611]
 
 ```
 [yang-models] sonic-scheduler.yang pattern issue
@@ -97,7 +97,7 @@ python3 -c "import libyang; print(libyang.__version__)"
 
 ---
 
-### 2-2. `sonic-types.yang` の ACL `ACCEPT` 欠落 (#9638)
+### 2-2. `sonic-types.yang` の ACL `ACCEPT` 欠落 (#9638)[^9638]
 
 ```
 [yang-models] missing ACCEPT in sonic-types.yang which used in ACL
@@ -106,12 +106,42 @@ python3 -c "import libyang; print(libyang.__version__)"
 `sonic-types.yang` の [ACL](../reference/glossary.md#term-acl) アクション定義に `ACCEPT` が含まれておらず、
 `ACCEPT` を指定した ACL ルールが YANG 検証で拒否される。
 
-**対処**: `sonic-acl.yang` と `sonic-types.yang` の最新版を確認。
-master では修正済みの可能性が高い。
+**対処**: master の `sonic-types.yang.j2` には `ACCEPT` が定義済みのため、
+最新版では本問題は解消している[^9638]。
+
+<!-- evidence:
+source: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2#L81-L84 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  enum DROP;
+  enum ACCEPT;
+  enum FORWARD;
+reasoning: >
+  現行 master の sonic-types.yang.j2 の packet action enum に ACCEPT が含まれることを確認。
+  issue #9638 が報告した「ACCEPT 欠落」は master では修正済みであることの裏取り。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2#L81-L84 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2#L81-L84 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)`
+
+    **抜粋**:
+
+    ```text
+    enum DROP;
+    enum ACCEPT;
+    enum FORWARD;
+    ```
+
+    **判断根拠**: >
+
+<!-- evidence-rendered:end -->
 
 ---
 
-### 2-3. ACL の `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` 欠落 (#9929)
+### 2-3. ACL の `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` 欠落 (#9929)[^9929]
 
 ```
 [yang] missing MIRROR_INGRESS_ACTION and MIRROR_EGRESS_ACTION in sonic-acl.yang
@@ -119,13 +149,41 @@ master では修正済みの可能性が高い。
 
 ACL ルールの `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` が
 YANG モデルに定義されていないため、mgmt-framework 経由での設定時に
-検証エラーが発生する。
+検証エラーが発生する。master では `sonic-acl.yang.j2` に両 leaf が追加され解消している[^9929]。
+
+<!-- evidence:
+source: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-acl.yang.j2#L80-L94 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  leaf MIRROR_INGRESS_ACTION {
+  leaf MIRROR_EGRESS_ACTION {
+reasoning: >
+  現行 master の sonic-acl.yang.j2 に MIRROR_INGRESS_ACTION / MIRROR_EGRESS_ACTION の
+  両 leaf が定義されていることを確認。issue #9929 の欠落は master で解消済み。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-acl.yang.j2#L80-L94 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-acl.yang.j2#L80-L94 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)`
+
+    **抜粋**:
+
+    ```text
+    leaf MIRROR_INGRESS_ACTION {
+    leaf MIRROR_EGRESS_ACTION {
+    ```
+
+    **判断根拠**: >
+
+<!-- evidence-rendered:end -->
 
 ---
 
 ## 3. テーブル YANG モデル欠落
 
-### 3-1. `BGP_PEER_RANGE` テーブル (#9794)
+### 3-1. `BGP_PEER_RANGE` テーブル (#9794)[^9794]
 
 ```
 Need YANG for BGP_PEER_RANGE table
@@ -136,7 +194,7 @@ DPB の依存チェックや CONFIG_DB 検証で「未検証テーブル」と�
 
 ---
 
-### 3-2. `MIRROR_SESSION` と CONFIG_DB の不整合 (#12397)
+### 3-2. `MIRROR_SESSION` と CONFIG_DB の不整合 (#12397)[^12397]
 
 ```
 [yang] sonic-mirror-session.yang does not align with ConfigDb
@@ -160,7 +218,7 @@ redis-cli -n 4 HMSET "MIRROR_SESSION|mirror1" \
 
 ---
 
-### 3-3. SNMP 関連テーブルの YANG 欠落 (#12573)
+### 3-3. SNMP 関連テーブルの YANG 欠落 (#12573)[^12573]
 
 ```
 Need Yang for SNMP_AGENT_ADDRESS_CONFIG, SNMP_USER, SNMP_TRAP_CONFIG tables
@@ -173,7 +231,7 @@ mgmt-framework 経由での [SNMP](../reference/glossary.md#term-snmp) 設定に
 
 ## 4. 制約・バリデーション問題
 
-### 4-1. TACPLUS 空の `global` セクション (#9746)
+### 4-1. TACPLUS 空の `global` セクション (#9746)[^9746]
 
 ```
 [yang] validating TACPLUS with empty "global" fails, while non-empty "global" does not fail
@@ -190,7 +248,7 @@ config tacacs global timeout 5
 
 ---
 
-### 4-2. BGP peer-range 重複 IP チェック (#10376)
+### 4-2. BGP peer-range 重複 IP チェック (#10376)[^10376]
 
 ```
 [yang] sonic-bgp-peerrange.yang same ip_range is not allowed - sonic yang extension
@@ -201,7 +259,7 @@ sonic-yang extension で BGP ピア範囲の重複チェックが実装されて
 
 ---
 
-### 4-3. VLAN / VLAN_INTERFACE の制約欠落 (#12256)
+### 4-3. VLAN / VLAN_INTERFACE の制約欠落 (#12256)[^12256]
 
 ```
 [yang-models] Missing constraints in VLAN, VLAN_INTERFACE yang models
@@ -213,7 +271,7 @@ YANG モデルに反映されていないケースがある。
 
 ---
 
-### 4-4. dot1p-tc-map YANG と mgmt-framework (#10386)
+### 4-4. dot1p-tc-map YANG と mgmt-framework (#10386)[^10386]
 
 ```
 [YANG] sonic-dot1p-tc-map.yang would cause failed deployment via mgmt-framework
@@ -224,7 +282,7 @@ OpenAPI スキーマ生成と競合する場合がある。
 
 ---
 
-## 5. PORT の lanes 一意性検証 (#9623)
+## 5. PORT の lanes 一意性検証 (#9623)[^9623]
 
 ```
 [yang-models] Verify 'lanes' are unique per entry in 'PORT' table by yang validation extension
@@ -253,7 +311,7 @@ print('Lane check complete')
 
 ---
 
-## 6. Annotation YANG の xpath 解決エラー (#10668)
+## 6. Annotation YANG の xpath 解決エラー (#10668)[^10668]
 
 ```
 [Yang] Failed to find the xDbSpecMap: xpath for Annotation yang with field-name and table-name
@@ -287,4 +345,23 @@ docker logs mgmt-framework | grep -E 'xDbSpecMap|xpath' | tail -20
 - [動的ポートブレイクアウト DPB 既知問題](dynamic-port-breakout-known-issues.md)
 - [CONFIG_DB リファレンス](../reference/config-db/index.md)
 
-<!-- glossary-links-injected: 7c25258ad0ca -->
+## 引用元
+
+各項目の一次情報は [sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) の issue tracker。YANG モデルの現況は `sonic-net/sonic-buildimage` (sha `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`) の `src/sonic-yang-models/` で裏取りした。
+
+[^7076]: [sonic-buildimage #7076](https://github.com/sonic-net/sonic-buildimage/issues/7076) — `sonic_yang_tree` 生成ステップ skip によるビルドエラー。
+[^9312]: [sonic-buildimage #9312](https://github.com/sonic-net/sonic-buildimage/issues/9312) — libyang バックリンクのバグで `import` がビルドを壊す件。
+[^9611]: [sonic-buildimage #9611](https://github.com/sonic-net/sonic-buildimage/issues/9611) — `sonic-scheduler.yang` のパターン正規表現の不整合。
+[^9638]: [sonic-buildimage #9638](https://github.com/sonic-net/sonic-buildimage/issues/9638) — `sonic-types.yang` の ACL アクションに `ACCEPT` が欠落していた件（master で解消）。
+[^9794]: [sonic-buildimage #9794](https://github.com/sonic-net/sonic-buildimage/issues/9794) — `BGP_PEER_RANGE` テーブルの YANG モデル追加要望。
+[^9929]: [sonic-buildimage #9929](https://github.com/sonic-net/sonic-buildimage/issues/9929) — `sonic-acl.yang` の `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` 欠落（master で解消）。
+[^12397]: [sonic-buildimage #12397](https://github.com/sonic-net/sonic-buildimage/issues/12397) — `sonic-mirror-session.yang` と CONFIG_DB スキーマの不整合。
+[^12573]: [sonic-buildimage #12573](https://github.com/sonic-net/sonic-buildimage/issues/12573) — `SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` / `SNMP_TRAP_CONFIG` の YANG モデル追加要望。
+[^9746]: [sonic-buildimage #9746](https://github.com/sonic-net/sonic-buildimage/issues/9746) — 空の `global` セクションを持つ TACPLUS の YANG 検証が失敗する非対称挙動。
+[^10376]: [sonic-buildimage #10376](https://github.com/sonic-net/sonic-buildimage/issues/10376) — `sonic-bgp-peerrange.yang` の同一 ip_range 重複チェック拡張。
+[^12256]: [sonic-buildimage #12256](https://github.com/sonic-net/sonic-buildimage/issues/12256) — VLAN / VLAN_INTERFACE の制約欠落。
+[^10386]: [sonic-buildimage #10386](https://github.com/sonic-net/sonic-buildimage/issues/10386) — `sonic-dot1p-tc-map.yang` が mgmt-framework デプロイを失敗させる件。
+[^9623]: [sonic-buildimage #9623](https://github.com/sonic-net/sonic-buildimage/issues/9623) — PORT テーブルの `lanes` 一意性を YANG validation extension で検証する件。
+[^10668]: [sonic-buildimage #10668](https://github.com/sonic-net/sonic-buildimage/issues/10668) — Annotation YANG の xDbSpecMap xpath 解決エラー。
+
+<!-- glossary-links-injected: 75921d013977 -->
