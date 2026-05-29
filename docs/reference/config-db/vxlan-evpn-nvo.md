@@ -74,9 +74,9 @@ VXLAN_EVPN_NVO|<name>
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
-<!-- evidence: meta/_intermediate/cdb-flow/vxlan-evpn-nvo-ordering.md; sonic-swss/orchagent/vxlanorch.cpp -->
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
 
 ### 作成順序
 
@@ -231,7 +231,7 @@ show vxlan tunnel
 <!-- /runtime-trace -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -267,11 +267,11 @@ APPL_DB 書込 → orchagent EvpnNvoOrch ConsumerStateTable 検出
 
 `vxlanorch.cpp:28` で `extern sai_tunnel_api_t *sai_tunnel_api` を宣言。EVPN NVO フロー自体では tunnel_map_api を直接使用しないが、VXLAN_TUNNEL_MAP テーブル処理 (`VxlanTunnelMapOrch`) が同じ `sai_tunnel_api` を利用して MAP_T → SAI_TUNNEL_MAP_TYPE_* のマッピングオブジェクトを作成する。EVPN NVO は作成済み VTEP ポインタを参照するだけで SAI 呼び出しは行わない。
 
-> **Evidence**: `sonic-swss/cfgmgr/vxlanmgrd.cpp:26-123`、`sonic-swss/cfgmgr/vxlanmgr.cpp:213-285,672-735`、`sonic-swss/orchagent/orchdaemon.cpp:358`、`sonic-swss/orchagent/vxlanorch.h:541-557`、`sonic-swss/orchagent/vxlanorch.cpp:28,124-165,2773-2814`; 詳細分析 `meta/_intermediate/cdb-flow/vxlan-evpn-nvo-pubsub.md`
+> **Evidence**: `sonic-swss/cfgmgr/vxlanmgrd.cpp:26-123`、`sonic-swss/cfgmgr/vxlanmgr.cpp:213-285,672-735`、`sonic-swss/orchagent/orchdaemon.cpp:358`、`sonic-swss/orchagent/vxlanorch.h:541-557`、`sonic-swss/orchagent/vxlanorch.cpp:28,124-165,2773-2814`
 <!-- /pubsub -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 VXLAN_EVPN_NVO テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -305,7 +305,7 @@ db_migrator.py での VXLAN_EVPN_NVO マイグレーションなし
 <!-- /entry-points -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ソース: `sonic-net/sonic-swss/orchagent/vxlanorch.cpp`
 
@@ -340,13 +340,11 @@ db_migrator.py での VXLAN_EVPN_NVO マイグレーションなし
 
 > `EvpnNvoOrch::addOperation()` は `source_vtep_ptr` 解決失敗でも `true` を返す。後続の Remote VNI 処理が `getEVPNVtep()` null チェックで `return false` し続けることが実質的なリトライ機構となる。
 
-詳細解析: `meta/_intermediate/cdb-flow/vxlan-evpn-nvo-failure.md`
-
 <!-- evidence: sonic-swss/orchagent/vxlanorch.cpp:147-155,403-411,846-848,1430-1436,1638,1656,1663,1689,1696,2779-2811 -->
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 実装コードに直接定義されている文字列定数・enum 値を一覧化する。
 
@@ -386,7 +384,7 @@ EVPN NVO が source_vtep 経由で間接参照する tunnel_map_type の定数�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込（Phase F）
+## 副次 DB 書込
 
 `EvpnNvoOrch::addOperation()` 自体は `source_vtep_ptr` の格納のみで DB・SAI への直接書込を行わない。副次書込は後続の EVPN ルート処理で VTEP トンネルが生成される際に連鎖的に発生する。
 
@@ -435,7 +433,7 @@ m_stateVxlanTable.set(tunnel_name, fvVector);
 <!-- /side-effects -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C / vxlanorch.cpp)
+## 暗黙参照 (vxlanorch.cpp)
 
 <!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
 

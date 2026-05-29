@@ -178,7 +178,7 @@ show vxlan remotevtep
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 VXLAN_TUNNEL テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -212,7 +212,7 @@ db_migrator.py での VXLAN_TUNNEL マイグレーションなし
 <!-- /entry-points -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 | フィールド | 省略/条件 | 実挙動 | 分類 | 根拠 |
 |-----------|---------|--------|------|------|
@@ -232,7 +232,7 @@ db_migrator.py での VXLAN_TUNNEL マイグレーションなし
 <!-- /defaults -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -293,7 +293,7 @@ SAI: sai_tunnel_api->create_tunnel(&tunnel_id, ...) [vxlanorch.cpp:397]
 
 なし。`VxlanTunnelOrch` は orchagent 内インメモリハンドラであり、`VXLAN_TUNNEL` の追加・削除は `sai_tunnel_api->create_tunnel()` / `remove_tunnel()` のライブ SAI 操作で反映される。プロセス再起動・サービス restart を伴わない。`vxlanmgrd` 側も netlink（`ip link add/del`）のライブ操作のみ。
 
-> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:22-23,350-351,573` (SELECT_TIMEOUT / VxlanTunnelOrch 生成)、`sonic-swss/orchagent/vxlanorch.cpp:1245-1308,1591-1672,291-400,1678,1733` (Orch2 コンストラクタ / addOperation / create_tunnel / EvpnNvoOrch 連携)、`sonic-swss/cfgmgr/vxlanmgrd.cpp:44-58` (CFG_VXLAN_TUNNEL_TABLE_NAME 購読)、`sonic-swss/cfgmgr/vxlanmgr.cpp:183-260` (VxlanMgr::doTask ディスパッチ); 詳細分析 `meta/_intermediate/cdb-flow/vxlan-tunnel-pubsub.md`
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:22-23,350-351,573` (SELECT_TIMEOUT / VxlanTunnelOrch 生成)、`sonic-swss/orchagent/vxlanorch.cpp:1245-1308,1591-1672,291-400,1678,1733` (Orch2 コンストラクタ / addOperation / create_tunnel / EvpnNvoOrch 連携)、`sonic-swss/cfgmgr/vxlanmgrd.cpp:44-58` (CFG_VXLAN_TUNNEL_TABLE_NAME 購読)、`sonic-swss/cfgmgr/vxlanmgr.cpp:183-260` (VxlanMgr::doTask ディスパッチ)
 <!-- /pubsub -->
 
 <!-- platform -->
@@ -332,7 +332,7 @@ EVPN 動的 DIP トンネル (`TNL_CREATION_SRC_EVPN`, dst_ip 非ゼロ) は `SA
 <!-- /platform -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `sonic-swss/orchagent/vxlanorch.cpp`, `sonic-swss/orchagent/vxlanorch.h`, `sonic-swss/cfgmgr/vxlanmgr.cpp`
 
@@ -397,7 +397,7 @@ enum class VxlanTunnelTTLMode {
 <!-- /constants -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
 
@@ -461,7 +461,7 @@ return true;
 <!-- /failure -->
 
 <!-- ordering -->
-## 書込み順依存・タイミング依存 (Phase B)
+## 書込み順依存・タイミング依存
 
 <!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
 
@@ -516,7 +516,7 @@ DIP トンネル（動的 EVPN remote）が残存している間は SIP トン�
 <!-- /ordering -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-swss/orchagent/vxlanorch.cpp; sonic-swss/cfgmgr/vxlanmgr.cpp -->
 
@@ -570,7 +570,7 @@ SAI OID が VIDTORID に登録された後、`VxlanTunnelOrch::doTask(timer)` �
 <!-- /side-effects -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `orchagent/vxlanorch.cpp` の静的解析から抽出した、`VXLAN_TUNNEL` が暗黙的に依存するテーブル・オブジェクト一覧。
 
