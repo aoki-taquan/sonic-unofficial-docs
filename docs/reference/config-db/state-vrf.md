@@ -136,10 +136,7 @@ VRF 削除時の正常な順序:
 <!-- /value-behavior -->
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
-
-> 調査日 2026-05-14。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/orchagent/vrforch.h`
-> 中間調査: `meta/_intermediate/cdb-flow/state-vrf-defaults.md`
+## 暗黙デフォルト・コード由来挙動
 
 ### state フィールドの値はハードコード
 
@@ -177,10 +174,7 @@ m_stateVrfObjectTable.hset(vrf_name, "state", "ok");
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-> 調査日 2026-05-17。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/vxlanmgr.cpp`
-> 中間調査: `meta/_intermediate/cdb-flow/state-vrf-ordering.md`
+## 書込み順依存
 
 ### SET 方向の書込み順序
 
@@ -233,10 +227,7 @@ vrfmgrd: STATE_DB VRF_TABLE|<name> DEL
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-> 調査日 2026-05-18。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/vxlanmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`
-> 中間調査: `meta/_intermediate/cdb-flow/state-vrf-cross-refs.md`
+## 暗黙参照テーブル
 
 本ページの 2 テーブルはいずれも **[YANG](../../reference/glossary.md#term-yang) 未モデル化のオペレーショナルテーブル**。
 `VRF_TABLE` の書き手は `vrfmgrd`、`VRF_OBJECT_TABLE` の書き手は `VRFOrch` のみである。
@@ -271,10 +262,9 @@ vrfmgrd: STATE_DB VRF_TABLE|<name> DEL
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`
-中間調査: `meta/_intermediate/cdb-flow/state-vrf-failure.md`
 
 ### `VRF_TABLE` — 書込み失敗経路
 
@@ -307,10 +297,7 @@ vrfmgrd: STATE_DB VRF_TABLE|<name> DEL
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査日 2026-05-18。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`
-> 中間調査: `meta/_intermediate/cdb-flow/state-vrf-constants.md`
+## ハードコード定数
 
 `vrfmgrd` に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 
@@ -344,10 +331,7 @@ vrfmgrd: STATE_DB VRF_TABLE|<name> DEL
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 調査日 2026-05-18。ソース: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/vxlanmgr.cpp`, `sonic-swss/cfgmgr/vrfmgr.cpp`
-> 中間調査: `meta/_intermediate/cdb-flow/state-vrf-side-effects.md`
+## 副次 DB 書込
 
 `VRF_TABLE` / `VRF_OBJECT_TABLE` への書込は、他プロセスが次の doTask() イテレーションでポーリング（`get()` 成否判定）し、条件が満たされた場合に下流 DB へ書き込む。書込の瞬間に同期的な副次書込は発生しない。
 
@@ -366,7 +350,7 @@ vrfmgrd: STATE_DB VRF_TABLE|<name> DEL
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `VRF_TABLE` / `VRF_OBJECT_TABLE` はいずれも書き手・読み手ともに **`swss::Table`（素の HSET / HDEL / DEL）** を使用する。`ProducerStateTable` や `NotificationProducer` は一切用いられず、[Redis](../../reference/glossary.md#term-redis) PUBLISH は発行されない。consumer 側はいずれも keyspace 通知を購読せず、`doTask()` イテレーション内の **オンデマンド polling（`Table::get()`）** で状態を確認する。
 
@@ -428,7 +412,7 @@ consumer 側（on-demand polling、doTask() イテレーション内）
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 <!-- evidence: sonic-buildimage/dockers/docker-orchagent/supervisord.conf.j2 L247-262 / sonic-swss/cfgmgr/vrfmgr.cpp L148,176-183,289 / sonic-swss/orchagent/vrforch.cpp L74-78,93-120 / sonic-swss/orchagent/orchdaemon.cpp L283 -->
 
@@ -475,13 +459,10 @@ VRF 名が `"mgmt"` の場合、コードが特殊扱いするためテーブル
 | `VRF_TABLE\|mgmt` は存在するが `VRF_OBJECT_TABLE\|mgmt` は存在しない | `MGMT_VRF_CONFIG.mgmtVrfEnabled = "true"` の mgmt VRF | `VRF_TABLE` のみ書き込まれる |
 | ASIC 種別（Broadcom / Mellanox / Marvell 等）による挙動差 | なし | コード上の分岐なし |
 
-詳細根拠は `meta/_intermediate/cdb-flow/state-vrf-platform.md` を参照。
 <!-- /platform -->
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
-
-<!-- evidence: meta/_intermediate/cdb-flow/state-vrf-defaults.md -->
 
 - **orchagent クラッシュ後の stale エントリ**: orchagent が VRF 削除の途中で落ちた場合、`VRF_OBJECT_TABLE|<name>` が残留し vrfmgrd の削除ループが永続的にブロックされる。再起動 (warm start なし) で解消。
 - **VRF_TABLE の DEL タイミング**: `isVrfObjExist()` が false になった瞬間に `m_stateVrfTable.del()` と `delLink()` が連続して実行される。この間に `intfmgrd` や `vxlanmgr` が `VRF_TABLE` を参照すると "VRF not ready" として処理を遅延させる可能性がある。

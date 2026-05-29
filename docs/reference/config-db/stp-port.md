@@ -57,8 +57,6 @@ flowchart LR
 
 ## 暗黙デフォルトとハードコード挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/stp-port-defaults.md -->
-
 ### 1. PVST 有効化時の STP_PORT 初期書き込み
 
 `interface_enable_stp()` (`config/stp.py:292-301`) および `enable_stp_for_interfaces()` (`config/stp.py:361-379`) で、[VLAN](../../reference/glossary.md#term-vlan) メンバのインタフェースに対して以下が一括書き込まれる:
@@ -204,9 +202,7 @@ else if (field == "link_type" && l2ProtoEnabled == L2_MSTP)
 <!-- /defaults -->
 
 <!-- ordering -->
-## 処理順序・依存関係 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-port-ordering.md -->
+## 処理順序・依存関係
 
 `stpmgrd` (`sonic-swss/cfgmgr/stpmgr.cpp`) は `STP_PORT` テーブルの処理に対してガード条件を実装しており、前提テーブルが受信済みでなければ SET を **silent defer** または **silent skip** する。
 
@@ -302,8 +298,6 @@ DEL イベントは `L2_NONE` であっても即座に消費される（適用�
 <!-- cross-refs -->
 ## 暗黙参照（テーブル間依存）
 
-<!-- evidence: meta/_intermediate/cdb-flow/stp-port-cross-refs.md -->
-
 `doStpPortTask()` / `processStpPortAttr()` (`stpmgr.cpp`) が `STP_PORT` SET を処理する際に暗黙的に参照するテーブル・Orch 内状態。
 
 ### 1. STP|GLOBAL — stpGlobalTask フラグ + l2ProtoEnabled（必須依存）
@@ -356,9 +350,7 @@ STP_PORT テーブル処理
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-port-failure.md -->
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-swss/cfgmgr/stpmgr.cpp`
 
@@ -388,9 +380,7 @@ STP_PORT テーブル処理
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-port-constants.md -->
+## ハードコード定数
 
 `STP_PORT` テーブルのフィールド値バリデーションおよび MST 初期化時に使用される、コードに直接埋め込まれた定数の一覧。
 出典は `sonic-net/sonic-utilities/config/stp.py` および `sonic-net/sonic-swss/cfgmgr/stpmgr.h`。
@@ -443,9 +433,7 @@ STP_PORT テーブル処理
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-port-side-effects.md -->
+## 副次 DB 書込
 
 `stpmgrd` (`sonic-swss/cfgmgr/stpmgr.cpp`) は `STP_PORT` SET/DEL イベントを `doStpPortTask()` → `processStpPortAttr()` で処理する。
 CONFIG_DB 以外の永続ストレージ（[STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db)）への直接書き込みは発生しない。
@@ -585,13 +573,10 @@ CONFIG_DB: CLI が STP_PORT|<interface> を書き込む
 | SELECT_TIMEOUT | `1000` ms | `stpmgrd.cpp:17` |
 | DEFAULT_POP_BATCH_SIZE | `128` | `common/table.h:164` |
 
-> 調査証跡: `meta/_intermediate/cdb-flow/stp-port-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-port-platform.md -->
+## プラットフォーム差異
 
 `STP_PORT` テーブルの処理に [ASIC](../../reference/glossary.md#term-asic) ベンダー固有のコード分岐は存在しない。
 stpmgrd は [SAI](../../reference/glossary.md#term-sai) を直接呼ばず、Unix Domain Socket 経由で stpd に IPC を送信する設計であり、
