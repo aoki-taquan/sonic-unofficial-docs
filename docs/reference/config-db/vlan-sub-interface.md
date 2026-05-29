@@ -118,12 +118,10 @@ long-name 形式 (`Ethernet0.100` / `PortChannel10.100`) では `subIntf::subInt
 | `vlan` (long-name) | 名前のドット後 ID を自動採用 | intfmgr.cpp:763-767 |
 | `loopback_action` / `vrf_name` / `vnet_name` | なし (省略時 APP_DB に書かない) | intfmgr.cpp:789-828 |
 
-詳細な調査メモは `meta/_intermediate/cdb-flow/vlan-sub-interface-defaults.md` 参照。
-
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数（Phase E）
+## ハードコード定数
 
 `intfmgr.cpp` および `intfsorch.cpp` に直接埋め込まれた定数・[SAI](../../reference/glossary.md#term-sai) 属性をまとめる。
 
@@ -327,7 +325,7 @@ show subinterface status
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 VLAN_SUB_INTERFACE テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -361,7 +359,7 @@ db_migrator.py での VLAN_SUB_INTERFACE マイグレーションなし
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `intfmgrd` (`intfmgr.cpp`) と `orchagent` (`intfsorch.cpp`) は複数の先行条件を順番にチェックし、未充足の場合はリトライ待ちとなる。
 
@@ -382,8 +380,6 @@ db_migrator.py での VLAN_SUB_INTERFACE マイグレーションなし
 **VLAN tag 順序 (依存 #2)**: short-name 形式で `vlan` フィールドが省略または `"0"` のまま VLAN_SUB_INTERFACE が書き込まれると、`ip link add ... type vlan id` コマンドが実行されずリトライ待ちになる。long-name 形式（`Ethernet0.100` 等）ではキー名からドット後 ID を自動採用するため `vlan` フィールド省略可能。
 
 **SAI sub-port 属性順序 (依存 #4)**: `intfsorch.cpp:1250-1258` で sub-port RIF 生成時に `SAI_ROUTER_INTERFACE_ATTR_PORT_ID`（親ポート OID）と `SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID`（VLAN tag）を対で push する。`SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID`（VRF OID）は全 RIF タイプで先頭に push される固定順序（`intfsorch.cpp:1183`）。
-
-詳細調査ノートは `meta/_intermediate/cdb-flow/vlan-sub-interface-ordering.md` 参照。
 
 <!-- /ordering -->
 
@@ -469,7 +465,7 @@ VLAN_SUB_INTERFACE は `ip link add <alias> link <parent> type vlan id <vid>` �
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動（Phase D）
+## 失敗挙動
 
 `intfmgrd`（`intfmgr.cpp`）が sub-interface を設定する際に発生しうる 3 種類の失敗パターンを整理する。
 
@@ -532,10 +528,9 @@ SAI sub-port の属性として `SAI_ROUTER_INTERFACE_ATTR_PORT_ID`（親ポー�
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次効果 (Phase F)
+## 副次効果
 
-> コード精読（`intfmgr.cpp` / `intfsorch.cpp`）から導出した CONFIG_DB 以外への書込みと SAI 副作用。  
-> 詳細証跡: `meta/_intermediate/cdb-flow/vlan-sub-interface-side-effects.md`
+> コード精読（`intfmgr.cpp` / `intfsorch.cpp`）から導出した CONFIG_DB 以外への書込みと SAI 副作用。
 
 ### SET — 属性ロウ (`VLAN_SUB_INTERFACE|<alias>`)
 
@@ -592,8 +587,7 @@ SAI 呼び出し:
 <!-- pubsub -->
 ## 通信メカニズム (Redis Pub/Sub)
 
-> 調査根拠: `intfmgrd.cpp`、`intfmgr.cpp`、`intfsorch.cpp`、`orch.cpp` 全行精読 (2026-05-18)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/vlan-sub-interface-pubsub.md`
+> 根拠: `intfmgrd.cpp`、`intfmgr.cpp`、`intfsorch.cpp`、`orch.cpp` 全行精読 (2026-05-18)
 
 VLAN_SUB_INTERFACE テーブルは **3 段の異なる購読方式** で CONFIG_DB → SAI まで伝搬する。
 
@@ -662,7 +656,7 @@ PUBLISH ペイロードは固定文字列 `"G"`。IP prefix 行（`doIntfAddrTas
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 VLAN_SUB_INTERFACE の実挙動はプラットフォームタイプによって以下の点で異なる。
 
@@ -723,7 +717,7 @@ Broadcom SAI も `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` をサポートする。�
 
 <!-- /platform -->
 <!-- secondary-db-writes -->
-## 副次 DB 書込（Phase F）
+## 副次 DB 書込
 
 `intfmgrd` が VLAN_SUB_INTERFACE エントリを処理する際、CONFIG_DB 以外の複数の DB に書込む。以下はそれぞれの書込経路と証跡。
 
@@ -872,7 +866,7 @@ APPL_DB INTF_TABLE[<alias>] 消費
 <!-- /secondary-db-writes -->
 
 <!-- comm-mechanism -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Producer/Consumer ペア
 
