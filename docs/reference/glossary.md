@@ -533,6 +533,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: LLDP
 - **説明**: 隣接装置発見プロトコル (IEEE 802.1AB)。SONiC は `lldpd` を `docker-lldp` で動かす。
 
+### lldpmgrd {#term-lldpmgrd}
+
+- **略称**: lldpmgrd
+- **日本語訳**: LLDP マネージャ
+- **説明**: `docker-lldp` 内で動く LLDP 管理デーモン。CONFIG_DB の `LLDP` / `LLDP_PORT` テーブルを購読し、`hello_timer` / `mode` 等の設定を `lldpcli configure` コマンドへ変換して `lldpd` に反映する。`sonic-buildimage/dockers/docker-lldp/lldpmgrd` で実装。
+- **関連**: [LLDP](#term-lldp)
+
 ## M
 
 ### MAC Table {#term-mac-table}
@@ -1729,6 +1736,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [LLDP_PORT テーブル](config-db/lldp-port.md) (86)
 - [sonic-lldp YANG](yang/sonic-lldp.md) (46)
 - [サイトマップ](../_meta/sitemap.md) (22)
+
+### [lldpmgrd](#term-lldpmgrd)
+
+- [LLDP_PORT テーブル](config-db/lldp-port.md) (81)
+- [LLDP / LLDP_PORT テーブル](config-db/lldp.md) (78)
+- [[APPL_DB] LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル](config-db/lldp-state.md) (39)
+- [[STATE_DB] DEVICE_NEIGHBOR 動作状態（device op state）](config-db/deviceop-state.md) (20)
+- [DEVICE_NEIGHBOR テーブル](config-db/device-neighbor.md) (19)
 
 ### [MPLS](#term-mpls)
 

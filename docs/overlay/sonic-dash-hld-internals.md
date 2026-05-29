@@ -242,7 +242,7 @@ HLD §1.8 で規定される **「キャッシュされない子オブジェク�
 
 また、**全 ENI から unbind された route group は [orchagent](../reference/glossary.md#term-orchagent) と SAI で自動削除** され、route 情報がキャッシュされていないため再 bind 不可となる。再利用するには `DASH_ROUTE_GROUP_TABLE` から作り直す必要がある[^1]。
 
-## 6. SWSS Lite と Underlay
+## 6. SWSS Lite と Underlay {#swss-lite-underlay}
 
 [SONiC](../reference/glossary.md#term-sonic) for DPU は **`switch_type=dpu`** で起動し、通常の switch 向け Orch の大半（[teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd), nat, sflow, dhcp_relay, radv, macsec, resttapi）を無効化する。**有効** な container は database / swss / [syncd](../reference/glossary.md#term-syncd) / bgp / snmp / telemetry / lldp / pmon / gnmi のみ[^1]。
 

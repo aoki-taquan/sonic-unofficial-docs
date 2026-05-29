@@ -52,7 +52,7 @@ DASH が目標とするスケール（[HLD](../reference/glossary.md#term-hld) �
 
 通常の SONiC スイッチでは扱わない桁のオブジェクト数で、HLD §1.6 の "Design Considerations" は **bulk update**、**メモリのフレキシブル割り当て**（最大スケールを事前確保しない）、**API の冪等性**、**silent failure 禁止** 等を必須要件として明記している[^1]。
 
-## 2. オブジェクトモデル
+## 2. オブジェクトモデル {#vnet-mapping}
 
 ```text
 APPLIANCE (sip / vm_vni / local_region_id)
@@ -183,8 +183,6 @@ flowchart LR
 - [SONiC-DASH 概観](sonic-dash-hld.md) — 元 HLD ページ
 - [sonic-dash-hld-internals.md](sonic-dash-hld-internals.md) — DASH APP DB スキーマ、SAI mapping、Orch 内部実装
 - [sonic-dash-hld-operations.md](sonic-dash-hld-operations.md) — CLI / 設定例 / トラブルシュート
-
-<a id="vnet-mapping"></a>
 
 ## 引用元
 
