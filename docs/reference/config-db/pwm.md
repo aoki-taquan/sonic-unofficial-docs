@@ -71,8 +71,6 @@ WATERMARK_TABLE|TELEMETRY_INTERVAL
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
-<!-- evidence: meta/_intermediate/cdb-flow/pwm-defaults.md -->
-
 ### `interval` — ハードコードデフォルト 120 秒
 
 `WatermarkOrch` コンストラクタ (`watermarkorch.cpp:9,41`) で `#define DEFAULT_TELEMETRY_INTERVAL 120` をタイマー初期値として使用する。
@@ -97,9 +95,7 @@ m_telemetryTimer = new SelectableTimer(intervT);
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pwm-ordering.md -->
+## 書込み順序依存
 
 ### 依存関係マップ
 
@@ -132,9 +128,7 @@ WATERMARK_TABLE|TELEMETRY_INTERVAL (interval フィールド)
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pwm-cross-refs.md -->
+## 暗黙参照マップ
 
 | 参照方向 | このテーブル | 相手テーブル / ページ | 条件 |
 |---------|------------|---------------------|------|
@@ -149,10 +143,9 @@ WATERMARK_TABLE|TELEMETRY_INTERVAL (interval フィールド)
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・エラーパス (Phase D)
+## 失敗挙動・エラーパス
 
-> **調査根拠**: `watermarkorch.cpp` 全行精読、`converter.h` `to_uint` 実装、`orch.cpp` `Consumer::drain()` 例外ハンドリング確認 (2026-05-18)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/pwm-failure.md`
+> **Evidence**: `watermarkorch.cpp` 全行精読、`converter.h` `to_uint` 実装、`orch.cpp` `Consumer::drain()` 例外ハンドリング確認 (2026-05-18)
 
 ### `interval` 値が不正な場合 — 繰り返しエラーログ + タイマー未変更
 
@@ -198,9 +191,9 @@ DEL 後もタイマーは直前の周期（またはデフォルト 120 秒）�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-swss/orchagent/watermarkorch.cpp` 全行精読 (2026-05-18)
+> **Evidence**: `sonic-swss/orchagent/watermarkorch.cpp` 全行精読 (2026-05-18)
 
 ### タイマー定数 (watermarkorch.cpp)
 
@@ -237,10 +230,9 @@ DEL 後もタイマーは直前の周期（またはデフォルト 120 秒）�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> **調査根拠**: `sonic-swss/orchagent/watermarkorch.cpp` 全行精読 (2026-05-18)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/pwm-side-effects.md`
+> **Evidence**: `sonic-swss/orchagent/watermarkorch.cpp` 全行精読 (2026-05-18)
 
 `WATERMARK_TABLE|TELEMETRY_INTERVAL` および `FLEX_COUNTER_TABLE` への書込みが引き起こす、CONFIG_DB 以外の DB への副次的な書込みと [SAI](../../reference/glossary.md#term-sai) 呼び出しを示す。
 
@@ -281,9 +273,9 @@ telemetry タイマーが満了するたびに `clearSingleWm()` が呼ばれ、
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `sonic-swss/orchagent/watermarkorch.cpp`、`sonic-swss/orchagent/orchdaemon.cpp`、`sonic-utilities/scripts/watermarkstat` を精読 (2026-05-19)
+> **Evidence**: `sonic-swss/orchagent/watermarkorch.cpp`、`sonic-swss/orchagent/orchdaemon.cpp`、`sonic-utilities/scripts/watermarkstat` を精読 (2026-05-19)
 
 ### Producer/Consumer ペア
 
@@ -367,9 +359,8 @@ APPL_DB 書き込み: なし（WATERMARK_CLEAR_REQUEST はキーなし通知チ�
 ---
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/pwm-platform.md`
 > スキャン範囲: `sonic-swss/orchagent/watermarkorch.cpp` 全行, `sonic-swss/orchagent/orchdaemon.cpp:432-437`, `sonic-swss/orchagent/main.cpp:997`
 
 `watermarkorch.cpp` に `getenv("platform")` による [ASIC](../../reference/glossary.md#term-asic) 種別分岐は存在しない。`WATERMARK_TABLE|TELEMETRY_INTERVAL` の処理ロジック自体はプラットフォーム非依存だが、以下の構成・スイッチタイプ起因の差異がある。
