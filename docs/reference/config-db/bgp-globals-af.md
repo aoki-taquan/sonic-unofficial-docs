@@ -131,7 +131,7 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 [^2]: テーブル名定数参照: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 ### 概要
 
@@ -280,7 +280,7 @@ vtysh -c 'show bgp l2vpn evpn summary'
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BGP_GLOBALS_AF`
 
@@ -309,16 +309,16 @@ vtysh -c 'show bgp l2vpn evpn summary'
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | minigraph.py は BGP_GLOBALS_AF を生成しない | — | `sonic-buildimage/src/sonic-config-engine/minigraph.py` に代入なし |
 | `ebgp_route_distance` / `ibgp_route_distance` / `local_route_distance` が揃う | FRR `distance bgp` コマンドを生成（組み合わせ制約） | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3940` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -329,7 +329,7 @@ vtysh -c 'show bgp l2vpn evpn summary'
 - frrcfgd.py: BGP_GLOBALS_AF 登録 1 件（条件なし）
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -337,10 +337,10 @@ vtysh -c 'show bgp l2vpn evpn summary'
 | `BGPConfigDaemon` | `bgp_af_handler()` | `ebgp_route_distance` / `ibgp_route_distance` / `local_route_distance` の 3 フィールド揃い | `comb_attr_list` 制約: 3 フィールドが揃った場合のみ FRR `distance bgp` コマンド生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3939-3941` |
 | `BGPConfigDaemon` | `bgp_af_handler()` | `route_flap_dampen_*` 3 フィールド揃い | 同様に組み合わせ制約: 揃った場合のみ FRR `bgp dampening` コマンドを生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3940` |
 
-> **スキャン証跡**: `bgp_af_handler` L3938 全行読了。2 組の comb_attr_list 制約のみ。
+> **裏取り**: `bgp_af_handler` L3938 全行読了。2 組の comb_attr_list 制約のみ。
 <!-- /handler-branching -->
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **結論: プラットフォーム差なし。**
 
@@ -358,11 +358,10 @@ vtysh -c 'show bgp l2vpn evpn summary'
 
 `max_ebgp_paths` / `max_ibgp_paths` の YANG 上限 (1..256) は制御プレーン上の multipath 計算上限であり、[ASIC](../../reference/glossary.md#term-asic) の [ECMP](../../reference/glossary.md#term-ecmp) group 容量との突き合わせは本テーブル外 (別経路で扱う)。
 
-詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-af-platform.md`。
 <!-- /platform -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### 依存サマリ
 
@@ -427,8 +426,6 @@ address-family <af> <safi>
 
 片方だけ後から追加 SET しても補完されない（comb_attr_list は同一操作内のみ検査）。
 
-詳細: `meta/_intermediate/cdb-flow/bgp-globals-af-ordering.md`
-
 [^ord1]: VRF based table ガード: `frrcfgd.py:2136-2140, 2658-2662`.
 [^ord2]: default VRF 代替パス: `frrcfgd.py:2162-2166, 2442-2447`.
 [^ord3]: bgpd 接続待ち: `frrcfgd.py:183-204, 3970-3981`.
@@ -437,7 +434,7 @@ address-family <af> <safi>
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `frrcfgd.py` の `BGP_GLOBALS_AF` ハンドラ (`bgp_af_handler`) が実行時に参照する暗黙依存テーブル。
 
@@ -449,11 +446,10 @@ address-family <af> <safi>
 | `BGP_GLOBALS_AF_NETWORK` | 従属（本テーブルが先行） | network statement を保持する派生テーブル。同上 |
 | `DEVICE_METADATA` | 前提フラグ | `frr_mgmt_framework_config = true` の場合のみ frrcfgd が有効化される（`frrcfgd.py:2162-2168`） |
 
-> 詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-af-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `frrcfgd.py` の `bgp_af_handler` → `bgp_table_handler_common` → `__update_bgp` 呼び出しチェーンを全行スキャンした結果、**[STATE_DB](../../reference/glossary.md#term-state_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[APPL_DB](../../reference/glossary.md#term-appl_db) への副次書込は存在しない**。
 
@@ -465,11 +461,11 @@ address-family <af> <safi>
 
 `bgp_af_handler` が行う唯一の外部書込は **FRR vtysh への設定投入**のみ。`key_map.run_command()` が `configure terminal` → `router bgp <asn> vrf <vrf>` → `address-family <af> <ip_type>` の vtysh コマンド列を発行し、FRR running-config（BGP デーモン内部状態）を変更する。CONFIG_DB 以外の [Redis](../../reference/glossary.md#term-redis) DB には一切書き込まない。
 
-> **スキャン証跡**: `frrcfgd.py` L2771-2782（BGP_GLOBALS_AF 分岐）/ L3910-3933（common handler）/ L3938-3940（bgp_af_handler）読了。中間ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-side.md`
+> **裏取り**: `frrcfgd.py` L2771-2782（BGP_GLOBALS_AF 分岐）/ L3910-3933（common handler）/ L3938-3940（bgp_af_handler）読了。
 <!-- /side-effects -->
 
 <!-- failure -->
-## 失敗挙動・リトライ分岐 (Phase D)
+## 失敗挙動・リトライ分岐
 
 `frrcfgd.py` の `bgp_af_handler` → `bgp_table_handler_common` → `__update_bgp` → `g_run_command` パスで検出される失敗パターンと挙動を示す。
 
@@ -494,11 +490,10 @@ address-family <af> <safi>
 - **bgpd ソケットリトライ**: 起動時のみ実施。稼働中のソケット切断に対するリコネクト機構は存在しない。
 - **comb_attr_list スキップ** は失敗ではなく設計上の「部分設定ガード」。distance や dampening は 3 フィールドが揃うまで FRR コマンドを発行しない。
 
-> 詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-af-failure.md`
 <!-- /failure -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### 購読方式: Redis keyspace 通知 (`ExtConfigDBConnector`)
 
@@ -543,11 +538,10 @@ CONFIG_DB hset 'BGP_GLOBALS_AF|default|ipv4_unicast' max_ebgp_paths 8
 
 DEL (`data is None`) では `del_table=True` が設定され AF 設定全体を FRR から削除 (`frrcfgd.py:3918`)。プロセス再起動は発生しない。
 
-詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-af-pubsub.md`。
 <!-- /pubsub -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### FRR コマンド literal (`global_af_key_map`)
 
@@ -613,7 +607,7 @@ DEL (`data is None`) では `del_table=True` が設定され AF 設定全体を 
 |-----|-----|------|---------|
 | enum 置換文字 | `_` → `-` | `autort` フィールド値の `_` を `-` に置換して FRR コマンドに渡す (例: `rfc8365_compatible` → `rfc8365-compatible`) | `frrcfgd.py:1393` |
 
-> **スキャン証跡**: `frrcfgd.py` L82 / L813 / L1389-1396 / L1824-1864 / L2107 / L2136-2140 / L2297 / L2771-2782 / L3938-3941 を確認。FRR コマンド literal 27 件 + vtysh prefix 3 件 + AF 文字列 3 件 + FRR デフォルト値 6 件 + enum 変換 1 件 + comb_attr_list 2 件 = 計 42 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-constants.md`
+> **裏取り**: `frrcfgd.py` L82 / L813 / L1389-1396 / L1824-1864 / L2107 / L2136-2140 / L2297 / L2771-2782 / L3938-3941 を確認。FRR コマンド literal 27 件 + vtysh prefix 3 件 + AF 文字列 3 件 + FRR デフォルト値 6 件 + enum 変換 1 件 + comb_attr_list 2 件 = 計 42 件抽出。
 <!-- /constants -->
 
 <!-- glossary-links-injected: 758aafff1fd5 -->

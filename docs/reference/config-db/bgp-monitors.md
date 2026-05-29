@@ -174,7 +174,7 @@ vtysh -c 'show bgp summary'
 <!-- /runtime-trace -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `BGPPeerMgrBase` は `BGP_MONITORS` の SET/DEL 処理後に FRR ([vtysh](../../reference/glossary.md#term-vtysh)) への適用が成功するたびに **[STATE_DB](../../reference/glossary.md#term-state_db) / `BGP_PEER_CONFIGURED_TABLE`** へ副次書き込みを行う。`update_state_db()` が各ハンドラから直接呼ばれる設計であり、[APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書き込みは発生しない。
 
@@ -202,7 +202,7 @@ key 形式: default [VRF](../../reference/glossary.md#term-vrf) の場合 `<nbr_
 <!-- /side-effects -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BGP_MONITORS`
 
@@ -231,16 +231,16 @@ key 形式: default [VRF](../../reference/glossary.md#term-vrf) の場合 `<nbr_
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | minigraph XML に `<BGPPeer name="BGPMonitor">` エントリが存在する | `BGP_MONITORS` テーブルに peer エントリを生成 | `sonic-buildimage/src/sonic-config-engine/minigraph.py:1423,2274` |
 | bgp_sessions の `name == 'BGPMonitor'` かつ `asn` が存在する | BGP_MONITORS へフィルタリング | `sonic-buildimage/src/sonic-config-engine/minigraph.py:1423` |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -252,7 +252,7 @@ key 形式: default [VRF](../../reference/glossary.md#term-vrf) の場合 `<nbr_
 - [bgpcfgd](../../reference/glossary.md#term-bgpcfgd)/main.py L89: 条件なし登録
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -263,10 +263,10 @@ key 形式: default [VRF](../../reference/glossary.md#term-vrf) の場合 `<nbr_
 | `BGPPeerMgrBase` | `add_peer()` | `interface = self.get_local_interface(data["local_addr"])` が None | 早期 `return False`（インターフェース未設定ガード） | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:199-202` |
 | `BGPPeerMgrBase` | `update_peer()` | `"admin_status" in data` | `change_admin_status()` へ委譲 | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:314` |
 
-> **スキャン証跡**: `BGPPeerMgrBase` 597 行・public メソッド set_handler/add_peer/update_peer/change_admin_status 読了。monitors は peer_type="monitors"（内部 BGP セッション向け）、loopback 依存ガードが核心分岐。
+> **裏取り**: `BGPPeerMgrBase` 597 行・public メソッド set_handler/add_peer/update_peer/change_admin_status 読了。monitors は peer_type="monitors"（内部 BGP セッション向け）、loopback 依存ガードが核心分岐。
 <!-- /handler-branching -->
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `bgpcfgd/managers_bgp.py`, `frrcfgd/frrcfgd.py`, `bgpd/templates/monitors/policies.conf.j2`
 
@@ -312,7 +312,7 @@ key 形式: default [VRF](../../reference/glossary.md#term-vrf) の場合 `<nbr_
 
 <!-- /failure -->
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 ### 概要
 
@@ -361,7 +361,7 @@ key 形式: default [VRF](../../reference/glossary.md#term-vrf) の場合 `<nbr_
 
 <!-- /platform -->
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase C)
+## 暗黙テーブル参照
 
 `BGP_MONITORS` は YANG leafref を持たないが、`bgpcfgd` / `frrcfgd` 実装レベルで以下のテーブルを暗黙参照する。
 
@@ -403,7 +403,7 @@ BGP_MONITORS (bgpcfgd)
 
 <!-- /cross-refs -->
 <!-- defaults -->
-## 暗黙デフォルト・コード由来の固定値 (Phase A)
+## 暗黙デフォルト・コード由来の固定値
 
 ### フィールドごとの YANG default と実装 fallback
 
@@ -448,7 +448,7 @@ BGP_MONITORS (bgpcfgd)
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `BGP_MONITORS` エントリを CONFIG_DB に書き込む際は、以下の先行条件を満たすこと。`bgpcfgd` の `BGPPeerMgrBase` は依存未解決時に `return False` で再試行するが、一部の欠如は silent に副作用を生む。
 
@@ -496,7 +496,7 @@ CONFIG_DB SET BGP_MONITORS|192.0.2.2 name=BGPMonitor asn=65001 local_addr=192.0.
 <!-- /ordering -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 以下の定数は CONFIG_DB フィールドから取得されず、bgpcfgd テンプレートまたは YANG 制約にハードコードされている。
 
@@ -531,7 +531,7 @@ BGP_MONITORS エントリは常に `BGPMON` peer-group に所属する。CONFIG_
 
 <!-- /constants -->
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### 購読方式: `swsscommon.SubscriberStateTable` + `bgpcfgd Runner`
 
@@ -565,7 +565,6 @@ self.callbacks["CONFIG_DB"]["BGP_MONITORS"].append(manager.handler)
 
 `wait_for_all_deps=False` のため SET は即座に処理試行される。Loopback0 / bgp_router_id 依存が未解決なら `add_peer()` が `return False` し、`set_queue` に退避。依存が揃い次第 `on_deps_change()` が再処理する (`manager.py:55-63`)。
 
-> 詳細解析: `meta/_intermediate/cdb-flow/bgp-monitors-pubsub.md`
 <!-- /pubsub -->
 
 <!-- glossary-links-injected: 288b7830f4a0 -->

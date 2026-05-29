@@ -96,7 +96,7 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 <!-- /cdb-exceptions -->
 
 <!-- failure -->
-## Phase D: 失敗挙動マトリクス
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`
 
@@ -276,7 +276,7 @@ vtysh -c "show ip bgp"
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `BGP_GLOBALS_AF_NETWORK`
 
@@ -304,7 +304,7 @@ vtysh -c "show ip bgp"
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `BGP_GLOBALS_AF_NETWORK` の Consumer は `frrcfgd`。共通ハンドラ `bgp_table_handler_common` を経由し、`bgp_message_handler` ループ内の `BGP_GLOBALS_AF_NETWORK` 専用分岐 (`frrcfgd.py:3169-3186`) で `vtysh -c "router bgp <asn> vrf <vrf>" -c "address-family <af> <ip_type>" -c "network <prefix> [route-map <name>] [backdoor]"` を発行する。**前提テーブル不在時は silent drop、再試行・deferred queue なし**。
 
@@ -424,7 +424,7 @@ while self.__listen_thread_running:
 <!-- /pubsub -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `frrcfgd.py` が `BGP_GLOBALS_AF_NETWORK` ハンドラで固定的に使用する
 FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドリテラル、フォーマッタ文字列、syslog メッセージの一覧[^frrcfgd_const]。
@@ -482,14 +482,12 @@ FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドリテラル、�
 | `LOG_INFO` | `'Set address family for IP prefix {} to {} {}'` | 正常処理時の進捗ログ |
 | `LOG_ERR` | `'failed running BGP IP prefix AF config command'` | `run_command()` が `False` を返した場合 |
 
-> 詳細スキャン証跡: `meta/_intermediate/cdb-flow/bgp-globals-af-network-constants.md`
-
 [^frrcfgd_const]: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` L99, L811-814, L827-828, L922-924, L1985, L3172-3185。
 
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `frrcfgd` の `BGP_GLOBALS_AF_NETWORK` ハンドラが直接・間接に参照する他テーブルの一覧。
 
@@ -500,13 +498,11 @@ FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドリテラル、�
 | `ROUTE_MAP` | 推奨（`policy` 参照時） | `frrcfgd.py:2113, 922-924` | `policy` フィールドで route-map 名を参照。未存在の場合 frrcfgd は検証せず FRR に投入 → FRR は permit-any として全プレフィックスを広告（意図しない漏洩リスク） |
 | `DEVICE_METADATA` | 前提フラグ | `frrcfgd.py:2162-2168` | 起動時に `frr_mgmt_framework_config` / `docker_routing_config_mode` を読み取る。`frr_mgmt_framework_config` が未設定または `false` の環境ではハンドラ自体が有効化されない |
 
-> 詳細スキャン証跡: `meta/_intermediate/cdb-flow/bgp-globals-af-network-cross-refs.md`
-
 <!-- evidence: frrcfgd.py:99,2107,2113,2136-2140,2162-2168,2297,2318,2659,2771,922-924,3169-3186 -->
 <!-- /cross-refs -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `BGP_GLOBALS_AF_NETWORK` テーブルの変更に伴って `frrcfgd` の `bgp_table_handler_common` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて FRR `bgpd` への `vtysh` コマンド送信に閉じる。
 
@@ -518,8 +514,6 @@ CONFIG_DB `BGP_GLOBALS_AF_NETWORK` テーブルの変更に伴って `frrcfgd` �
 | [ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由。`TABLE_DAEMON` マッピングは `bgpd` のみ (`frrcfgd.py:99`) |
 
 `bgp_table_handler_common` の `BGP_GLOBALS_AF_NETWORK` 分岐 (`frrcfgd.py:3169-3186`) は `key_map.run_command()` → `vtysh -c "router bgp <asn> vrf <vrf>" -c "address-family <af> <safi>" -c "network <prefix> [route-map <name>] [backdoor]"` のみを実行する。`af_aggr_list` 更新ブロック (`frrcfgd.py:3187-3196`) は `BGP_GLOBALS_AF_AGGREGATE_ADDR` 専用であり本テーブルには適用されない。
-
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-globals-af-network-side.md` を参照。
 
 <!-- evidence: frrcfgd.py:99,3169-3196 -->
 <!-- /side-effects -->
