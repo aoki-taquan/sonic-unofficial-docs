@@ -15762,6 +15762,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36323,6 +36334,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36359,7 +36381,7 @@
 本ページは issue tracker で報告された YANG モデルの既知問題を整理する。</p>
 <hr />
 <h2 id="1">1. ビルド時エラー<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
-<h3 id="1-1-yang-modelssonic_yang_tree-7076">1-1. <code>yang-models/sonic_yang_tree</code> が存在しない (#7076)<a class="headerlink" href="#1-1-yang-modelssonic_yang_tree-7076" title="Permanent link">&para;</a></h3>
+<h3 id="1-1-yang-modelssonic_yang_tree-7076">1-1. <code>yang-models/sonic_yang_tree</code> が存在しない (#7076)<sup id="fnref:7076"><a class="footnote-ref" href="#fn:7076">1</a></sup><a class="headerlink" href="#1-1-yang-modelssonic_yang_tree-7076" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>[build] error: can&#39;t copy &#39;./yang-models/sonic_yang_tree&#39;: doesn&#39;t exist or not a regular file
 </span></code></pre></div>
 <p><strong>原因</strong>: YANG ツリーファイルの生成ステップが並列ビルドで skip されることがある。
@@ -36372,7 +36394,7 @@
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>make<span class="w"> </span>clean<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>&lt;target&gt;<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>make
 </span></code></pre></div>
 <hr />
-<h3 id="1-2-libyang-9312">1-2. libyang バックリンク問題でビルド失敗 (#9312)<a class="headerlink" href="#1-2-libyang-9312" title="Permanent link">&para;</a></h3>
+<h3 id="1-2-libyang-9312">1-2. libyang バックリンク問題でビルド失敗 (#9312)<sup id="fnref:9312"><a class="footnote-ref" href="#fn:9312">2</a></sup><a class="headerlink" href="#1-2-libyang-9312" title="Permanent link">&para;</a></h3>
 <p>複数の YANG モジュールを <code>import</code> すると libyang のバックリンクコードが
 メモリアクセス違反を起こす場合がある。</p>
 <p><strong>歴史的背景</strong>: この問題の回避策として一部の YANG フィールドが
@@ -36383,113 +36405,161 @@
 </span></code></pre></div>
 <hr />
 <h2 id="2">2. パターン / 型定義の問題<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
-<h3 id="2-1-sonic-scheduleryang-9611">2-1. <code>sonic-scheduler.yang</code> パターン問題 (#9611)<a class="headerlink" href="#2-1-sonic-scheduleryang-9611" title="Permanent link">&para;</a></h3>
+<h3 id="2-1-sonic-scheduleryang-9611">2-1. <code>sonic-scheduler.yang</code> パターン問題 (#9611)<sup id="fnref:9611"><a class="footnote-ref" href="#fn:9611">3</a></sup><a class="headerlink" href="#2-1-sonic-scheduleryang-9611" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>[yang-models] sonic-scheduler.yang pattern issue
 </span></code></pre></div>
 <p>スケジューラー名のパターン正規表現が実際の CLI で許容される値と
 一致しないケースがある。</p>
 <hr />
-<h3 id="2-2-sonic-typesyang-acl-accept-9638">2-2. <code>sonic-types.yang</code> の ACL <code>ACCEPT</code> 欠落 (#9638)<a class="headerlink" href="#2-2-sonic-typesyang-acl-accept-9638" title="Permanent link">&para;</a></h3>
+<h3 id="2-2-sonic-typesyang-acl-accept-9638">2-2. <code>sonic-types.yang</code> の ACL <code>ACCEPT</code> 欠落 (#9638)<sup id="fnref:9638"><a class="footnote-ref" href="#fn:9638">4</a></sup><a class="headerlink" href="#2-2-sonic-typesyang-acl-accept-9638" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>[yang-models] missing ACCEPT in sonic-types.yang which used in ACL
 </span></code></pre></div>
 <p><code>sonic-types.yang</code> の <a href="../../reference/glossary/#term-acl">ACL</a> アクション定義に <code>ACCEPT</code> が含まれておらず、
 <code>ACCEPT</code> を指定した ACL ルールが YANG 検証で拒否される。</p>
-<p><strong>対処</strong>: <code>sonic-acl.yang</code> と <code>sonic-types.yang</code> の最新版を確認。
-master では修正済みの可能性が高い。</p>
+<p><strong>対処</strong>: master の <code>sonic-types.yang.j2</code> には <code>ACCEPT</code> が定義済みのため、
+最新版では本問題は解消している<sup id="fnref2:9638"><a class="footnote-ref" href="#fn:9638">4</a></sup>。</p>
+<!-- evidence:
+source: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2#L81-L84 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  enum DROP;
+  enum ACCEPT;
+  enum FORWARD;
+reasoning: >
+  現行 master の sonic-types.yang.j2 の packet action enum に ACCEPT が含まれることを確認。
+  issue #9638 が報告した「ACCEPT 欠落」は master では修正済みであることの裏取り。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2#L81-L84 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2#L81-L84 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>enum DROP;
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>enum ACCEPT;
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>enum FORWARD;
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: &gt;</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <hr />
-<h3 id="2-3-acl-mirror_ingress_action-mirror_egress_action-9929">2-3. ACL の <code>MIRROR_INGRESS_ACTION</code> / <code>MIRROR_EGRESS_ACTION</code> 欠落 (#9929)<a class="headerlink" href="#2-3-acl-mirror_ingress_action-mirror_egress_action-9929" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>[yang] missing MIRROR_INGRESS_ACTION and MIRROR_EGRESS_ACTION in sonic-acl.yang
+<h3 id="2-3-acl-mirror_ingress_action-mirror_egress_action-9929">2-3. ACL の <code>MIRROR_INGRESS_ACTION</code> / <code>MIRROR_EGRESS_ACTION</code> 欠落 (#9929)<sup id="fnref:9929"><a class="footnote-ref" href="#fn:9929">6</a></sup><a class="headerlink" href="#2-3-acl-mirror_ingress_action-mirror_egress_action-9929" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>[yang] missing MIRROR_INGRESS_ACTION and MIRROR_EGRESS_ACTION in sonic-acl.yang
 </span></code></pre></div>
 <p>ACL ルールの <code>MIRROR_INGRESS_ACTION</code> / <code>MIRROR_EGRESS_ACTION</code> が
 YANG モデルに定義されていないため、mgmt-framework 経由での設定時に
-検証エラーが発生する。</p>
+検証エラーが発生する。master では <code>sonic-acl.yang.j2</code> に両 leaf が追加され解消している<sup id="fnref2:9929"><a class="footnote-ref" href="#fn:9929">6</a></sup>。</p>
+<!-- evidence:
+source: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-acl.yang.j2#L80-L94 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  leaf MIRROR_INGRESS_ACTION {
+  leaf MIRROR_EGRESS_ACTION {
+reasoning: >
+  現行 master の sonic-acl.yang.j2 に MIRROR_INGRESS_ACTION / MIRROR_EGRESS_ACTION の
+  両 leaf が定義されていることを確認。issue #9929 の欠落は master で解消済み。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-acl.yang.j2#L80-L94 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-acl.yang.j2#L80-L94 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>leaf MIRROR_INGRESS_ACTION {
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>leaf MIRROR_EGRESS_ACTION {
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: &gt;</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <hr />
 <h2 id="3-yang">3. テーブル YANG モデル欠落<a class="headerlink" href="#3-yang" title="Permanent link">&para;</a></h2>
-<h3 id="3-1-bgp_peer_range-9794">3-1. <code>BGP_PEER_RANGE</code> テーブル (#9794)<a class="headerlink" href="#3-1-bgp_peer_range-9794" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Need YANG for BGP_PEER_RANGE table
+<h3 id="3-1-bgp_peer_range-9794">3-1. <code>BGP_PEER_RANGE</code> テーブル (#9794)<sup id="fnref:9794"><a class="footnote-ref" href="#fn:9794">5</a></sup><a class="headerlink" href="#3-1-bgp_peer_range-9794" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Need YANG for BGP_PEER_RANGE table
 </span></code></pre></div>
 <p><a href="../../reference/glossary/#term-bgp">BGP</a> 動的ピア（peer-range）のテーブルに YANG モデルがない。
 DPB の依存チェックや CONFIG_DB 検証で「未検証テーブル」として警告になる。</p>
 <hr />
-<h3 id="3-2-mirror_session-config_db-12397">3-2. <code>MIRROR_SESSION</code> と CONFIG_DB の不整合 (#12397)<a class="headerlink" href="#3-2-mirror_session-config_db-12397" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>[yang] sonic-mirror-session.yang does not align with ConfigDb
+<h3 id="3-2-mirror_session-config_db-12397">3-2. <code>MIRROR_SESSION</code> と CONFIG_DB の不整合 (#12397)<sup id="fnref:12397"><a class="footnote-ref" href="#fn:12397">7</a></sup><a class="headerlink" href="#3-2-mirror_session-config_db-12397" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>[yang] sonic-mirror-session.yang does not align with ConfigDb
 </span></code></pre></div>
 <p><code>MIRROR_SESSION</code> テーブルのフィールド定義が
 実際の CONFIG_DB スキーマと乖離している。</p>
 <p><strong>影響</strong>: mgmt-framework 経由でミラーセッションを設定すると
 検証エラーになる場合がある。</p>
 <p><strong>ワークアラウンド</strong>: <code>redis-cli</code> で直接 CONFIG_DB に書き込む。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HMSET<span class="w"> </span><span class="s2">&quot;MIRROR_SESSION|mirror1&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span>src_ip<span class="w"> </span><span class="m">192</span>.0.2.1<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span>dst_ip<span class="w"> </span><span class="m">192</span>.0.2.2<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span>ttl<span class="w"> </span><span class="m">255</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span>queue<span class="w"> </span><span class="m">0</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HMSET<span class="w"> </span><span class="s2">&quot;MIRROR_SESSION|mirror1&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span>src_ip<span class="w"> </span><span class="m">192</span>.0.2.1<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span>dst_ip<span class="w"> </span><span class="m">192</span>.0.2.2<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span>ttl<span class="w"> </span><span class="m">255</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span>queue<span class="w"> </span><span class="m">0</span>
 </span></code></pre></div>
 <hr />
-<h3 id="3-3-snmp-yang-12573">3-3. SNMP 関連テーブルの YANG 欠落 (#12573)<a class="headerlink" href="#3-3-snmp-yang-12573" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Need Yang for SNMP_AGENT_ADDRESS_CONFIG, SNMP_USER, SNMP_TRAP_CONFIG tables
+<h3 id="3-3-snmp-yang-12573">3-3. SNMP 関連テーブルの YANG 欠落 (#12573)<sup id="fnref:12573"><a class="footnote-ref" href="#fn:12573">8</a></sup><a class="headerlink" href="#3-3-snmp-yang-12573" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Need Yang for SNMP_AGENT_ADDRESS_CONFIG, SNMP_USER, SNMP_TRAP_CONFIG tables
 </span></code></pre></div>
 <p>これらのテーブルに YANG モデルが存在しないため、
 mgmt-framework 経由での <a href="../../reference/glossary/#term-snmp">SNMP</a> 設定に制限がある。</p>
 <hr />
 <h2 id="4">4. 制約・バリデーション問題<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
-<h3 id="4-1-tacplus-global-9746">4-1. TACPLUS 空の <code>global</code> セクション (#9746)<a class="headerlink" href="#4-1-tacplus-global-9746" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>[yang] validating TACPLUS with empty &quot;global&quot; fails, while non-empty &quot;global&quot; does not fail
+<h3 id="4-1-tacplus-global-9746">4-1. TACPLUS 空の <code>global</code> セクション (#9746)<sup id="fnref:9746"><a class="footnote-ref" href="#fn:9746">9</a></sup><a class="headerlink" href="#4-1-tacplus-global-9746" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>[yang] validating TACPLUS with empty &quot;global&quot; fails, while non-empty &quot;global&quot; does not fail
 </span></code></pre></div>
 <p>TACPLUS の <code>global</code> セクションが空（<code>{}</code>）の場合に YANG 検証が失敗する。
 非空の場合は検証が通る非対称な挙動。</p>
 <p><strong>ワークアラウンド</strong>: <code>global</code> セクションに最低 1 つのフィールドを設定する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>config<span class="w"> </span>tacacs<span class="w"> </span>global<span class="w"> </span>timeout<span class="w"> </span><span class="m">5</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>config<span class="w"> </span>tacacs<span class="w"> </span>global<span class="w"> </span>timeout<span class="w"> </span><span class="m">5</span>
 </span></code></pre></div>
 <hr />
-<h3 id="4-2-bgp-peer-range-ip-10376">4-2. BGP peer-range 重複 IP チェック (#10376)<a class="headerlink" href="#4-2-bgp-peer-range-ip-10376" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>[yang] sonic-bgp-peerrange.yang same ip_range is not allowed - sonic yang extension
+<h3 id="4-2-bgp-peer-range-ip-10376">4-2. BGP peer-range 重複 IP チェック (#10376)<sup id="fnref:10376"><a class="footnote-ref" href="#fn:10376">10</a></sup><a class="headerlink" href="#4-2-bgp-peer-range-ip-10376" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>[yang] sonic-bgp-peerrange.yang same ip_range is not allowed - sonic yang extension
 </span></code></pre></div>
 <p>sonic-yang extension で BGP ピア範囲の重複チェックが実装されているが、
 エラーメッセージが不明瞭な場合がある。</p>
 <hr />
-<h3 id="4-3-vlan-vlan_interface-12256">4-3. VLAN / VLAN_INTERFACE の制約欠落 (#12256)<a class="headerlink" href="#4-3-vlan-vlan_interface-12256" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>[yang-models] Missing constraints in VLAN, VLAN_INTERFACE yang models
+<h3 id="4-3-vlan-vlan_interface-12256">4-3. VLAN / VLAN_INTERFACE の制約欠落 (#12256)<sup id="fnref:12256"><a class="footnote-ref" href="#fn:12256">11</a></sup><a class="headerlink" href="#4-3-vlan-vlan_interface-12256" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>[yang-models] Missing constraints in VLAN, VLAN_INTERFACE yang models
 </span></code></pre></div>
 <p><a href="../../reference/glossary/#term-vlan">VLAN</a> ID の範囲制約（1-4094）や
 VLAN インターフェースの必須フィールドチェックが
 YANG モデルに反映されていないケースがある。</p>
 <hr />
-<h3 id="4-4-dot1p-tc-map-yang-mgmt-framework-10386">4-4. dot1p-tc-map YANG と mgmt-framework (#10386)<a class="headerlink" href="#4-4-dot1p-tc-map-yang-mgmt-framework-10386" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>[YANG] sonic-dot1p-tc-map.yang would cause failed deployment via mgmt-framework
+<h3 id="4-4-dot1p-tc-map-yang-mgmt-framework-10386">4-4. dot1p-tc-map YANG と mgmt-framework (#10386)<sup id="fnref:10386"><a class="footnote-ref" href="#fn:10386">12</a></sup><a class="headerlink" href="#4-4-dot1p-tc-map-yang-mgmt-framework-10386" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>[YANG] sonic-dot1p-tc-map.yang would cause failed deployment via mgmt-framework
 </span></code></pre></div>
 <p><code>sonic-dot1p-tc-map.yang</code> の定義が mgmt-framework の
 OpenAPI スキーマ生成と競合する場合がある。</p>
 <hr />
-<h2 id="5-port-lanes-9623">5. PORT の lanes 一意性検証 (#9623)<a class="headerlink" href="#5-port-lanes-9623" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>[yang-models] Verify &#39;lanes&#39; are unique per entry in &#39;PORT&#39; table by yang validation extension
+<h2 id="5-port-lanes-9623">5. PORT の lanes 一意性検証 (#9623)<sup id="fnref:9623"><a class="footnote-ref" href="#fn:9623">13</a></sup><a class="headerlink" href="#5-port-lanes-9623" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>[yang-models] Verify &#39;lanes&#39; are unique per entry in &#39;PORT&#39; table by yang validation extension
 </span></code></pre></div>
 <p>PORT テーブルで同一の lane 番号を複数ポートに割り当てることを
 YANG バリデーションで拒否する拡張が追加された。</p>
 <p><strong>確認</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>sonic-cfggen<span class="w"> </span>-d<span class="w"> </span>--print-data<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="s2">import json, sys</span>
-</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="s2">data = json.load(sys.stdin)</span>
-</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="s2">port_data = data.get(&#39;PORT&#39;, {})</span>
-</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="s2">lanes_set = set()</span>
-</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="s2">for port, cfg in port_data.items():</span>
-</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="s2">    for lane in cfg.get(&#39;lanes&#39;, &#39;&#39;).split(&#39;,&#39;):</span>
-</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="s2">        lane = lane.strip()</span>
-</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="s2">        if lane in lanes_set:</span>
-</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="s2">            print(f&#39;Duplicate lane {lane} in {port}&#39;)</span>
-</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="s2">        lanes_set.add(lane)</span>
-</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="s2">print(&#39;Lane check complete&#39;)</span>
-</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="s2">&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>sonic-cfggen<span class="w"> </span>-d<span class="w"> </span>--print-data<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="s2">import json, sys</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="s2">data = json.load(sys.stdin)</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="s2">port_data = data.get(&#39;PORT&#39;, {})</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="s2">lanes_set = set()</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="s2">for port, cfg in port_data.items():</span>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="s2">    for lane in cfg.get(&#39;lanes&#39;, &#39;&#39;).split(&#39;,&#39;):</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="s2">        lane = lane.strip()</span>
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="s2">        if lane in lanes_set:</span>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="s2">            print(f&#39;Duplicate lane {lane} in {port}&#39;)</span>
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="s2">        lanes_set.add(lane)</span>
+</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="s2">print(&#39;Lane check complete&#39;)</span>
+</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="s2">&quot;</span>
 </span></code></pre></div>
 <hr />
-<h2 id="6-annotation-yang-xpath-10668">6. Annotation YANG の xpath 解決エラー (#10668)<a class="headerlink" href="#6-annotation-yang-xpath-10668" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>[Yang] Failed to find the xDbSpecMap: xpath for Annotation yang with field-name and table-name
+<h2 id="6-annotation-yang-xpath-10668">6. Annotation YANG の xpath 解決エラー (#10668)<sup id="fnref:10668"><a class="footnote-ref" href="#fn:10668">14</a></sup><a class="headerlink" href="#6-annotation-yang-xpath-10668" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>[Yang] Failed to find the xDbSpecMap: xpath for Annotation yang with field-name and table-name
 </span></code></pre></div>
 <p>mgmt-framework の YANG annotation ファイルで、
 フィールド名とテーブル名の xpath が解決できない場合がある。</p>
 <p><strong>確認</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>mgmt-framework<span class="w"> </span>supervisorctl<span class="w"> </span>status
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>mgmt-framework<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;xDbSpecMap|xpath&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>mgmt-framework<span class="w"> </span>supervisorctl<span class="w"> </span>status
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>mgmt-framework<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;xDbSpecMap|xpath&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
 </span></code></pre></div>
 <hr />
 <h2 id="yang_1">YANG モデル管理のベストプラクティス<a class="headerlink" href="#yang_1" title="Permanent link">&para;</a></h2>
@@ -36525,7 +36595,57 @@ YANG バリデーションで拒否する拡張が追加された。</p>
 <li><a href="../dynamic-port-breakout-known-issues/">動的ポートブレイクアウト DPB 既知問題</a></li>
 <li><a href="../../reference/config-db/">CONFIG_DB リファレンス</a></li>
 </ul>
-<!-- glossary-links-injected: 7c25258ad0ca -->
+<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>各項目の一次情報は <a href="../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> の issue tracker。YANG モデルの現況は <code>sonic-net/sonic-buildimage</code> (sha <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>) の <code>src/sonic-yang-models/</code> で裏取りした。</p>
+<!-- glossary-links-injected: 75921d013977 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:7076">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/7076">sonic-buildimage #7076</a> — <code>sonic_yang_tree</code> 生成ステップ skip によるビルドエラー。&#160;<a class="footnote-backref" href="#fnref:7076" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9312">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9312">sonic-buildimage #9312</a> — libyang バックリンクのバグで <code>import</code> がビルドを壊す件。&#160;<a class="footnote-backref" href="#fnref:9312" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9611">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9611">sonic-buildimage #9611</a> — <code>sonic-scheduler.yang</code> のパターン正規表現の不整合。&#160;<a class="footnote-backref" href="#fnref:9611" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9638">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9638">sonic-buildimage #9638</a> — <code>sonic-types.yang</code> の ACL アクションに <code>ACCEPT</code> が欠落していた件（master で解消）。&#160;<a class="footnote-backref" href="#fnref:9638" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:9638" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9794">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9794">sonic-buildimage #9794</a> — <code>BGP_PEER_RANGE</code> テーブルの YANG モデル追加要望。&#160;<a class="footnote-backref" href="#fnref:9794" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9929">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9929">sonic-buildimage #9929</a> — <code>sonic-acl.yang</code> の <code>MIRROR_INGRESS_ACTION</code> / <code>MIRROR_EGRESS_ACTION</code> 欠落（master で解消）。&#160;<a class="footnote-backref" href="#fnref:9929" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:9929" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:12397">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/12397">sonic-buildimage #12397</a> — <code>sonic-mirror-session.yang</code> と CONFIG_DB スキーマの不整合。&#160;<a class="footnote-backref" href="#fnref:12397" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:12573">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/12573">sonic-buildimage #12573</a> — <code>SNMP_AGENT_ADDRESS_CONFIG</code> / <code>SNMP_USER</code> / <code>SNMP_TRAP_CONFIG</code> の YANG モデル追加要望。&#160;<a class="footnote-backref" href="#fnref:12573" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9746">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9746">sonic-buildimage #9746</a> — 空の <code>global</code> セクションを持つ TACPLUS の YANG 検証が失敗する非対称挙動。&#160;<a class="footnote-backref" href="#fnref:9746" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:10376">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/10376">sonic-buildimage #10376</a> — <code>sonic-bgp-peerrange.yang</code> の同一 ip_range 重複チェック拡張。&#160;<a class="footnote-backref" href="#fnref:10376" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:12256">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/12256">sonic-buildimage #12256</a> — VLAN / VLAN_INTERFACE の制約欠落。&#160;<a class="footnote-backref" href="#fnref:12256" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+</li>
+<li id="fn:10386">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/10386">sonic-buildimage #10386</a> — <code>sonic-dot1p-tc-map.yang</code> が mgmt-framework デプロイを失敗させる件。&#160;<a class="footnote-backref" href="#fnref:10386" title="Jump back to footnote 12 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9623">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9623">sonic-buildimage #9623</a> — PORT テーブルの <code>lanes</code> 一意性を YANG validation extension で検証する件。&#160;<a class="footnote-backref" href="#fnref:9623" title="Jump back to footnote 13 in the text">&#8617;</a></p>
+</li>
+<li id="fn:10668">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/10668">sonic-buildimage #10668</a> — Annotation YANG の xDbSpecMap xpath 解決エラー。&#160;<a class="footnote-backref" href="#fnref:10668" title="Jump back to footnote 14 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

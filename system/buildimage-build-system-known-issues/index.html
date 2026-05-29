@@ -15623,6 +15623,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36269,6 +36280,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36305,7 +36327,7 @@
 様々なビルドエラーが発生することが報告されている。</p>
 <hr />
 <h2 id="1-make-configure">1. <code>make configure</code> 関連<a class="headerlink" href="#1-make-configure" title="Permanent link">&para;</a></h2>
-<h3 id="1-1-p4-sonic-slave-6804">1-1. P4 プラットフォームでの <code>sonic-slave</code> イメージ取得失敗 (#6804)<a class="headerlink" href="#1-1-p4-sonic-slave-6804" title="Permanent link">&para;</a></h3>
+<h3 id="1-1-p4-sonic-slave-6804">1-1. P4 プラットフォームでの <code>sonic-slave</code> イメージ取得失敗 (#6804)<sup id="fnref:6804"><a class="footnote-ref" href="#fn:6804">2</a></sup><a class="headerlink" href="#1-1-p4-sonic-slave-6804" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$<span class="w"> </span>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>p4
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># → docker: Error response from daemon: pull access denied for sonic-slave-stretch-sonic</span>
 </span></code></pre></div>
@@ -36320,56 +36342,79 @@
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>make<span class="w"> </span>sonic-slave-stretch
 </span></code></pre></div>
 <hr />
-<h3 id="1-2-chroot-fsroot-docker-info-7354">1-2. <code>chroot ./fsroot docker info</code> でのビルド失敗 (#7354)<a class="headerlink" href="#1-2-chroot-fsroot-docker-info-7354" title="Permanent link">&para;</a></h3>
+<h3 id="1-2-chroot-fsroot-docker-info-7354">1-2. <code>chroot ./fsroot docker info</code> でのビルド失敗 (#7354)<sup id="fnref:7354"><a class="footnote-ref" href="#fn:7354">3</a></sup><a class="headerlink" href="#1-2-chroot-fsroot-docker-info-7354" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Build fails with &quot;chroot ./fsroot docker info&quot;
 </span></code></pre></div>
 <p><strong>原因</strong>: Ubuntu 20.10 などの新しいホスト OS で
 chroot 環境内の Docker 互換性問題が発生する。
 デフォルトのビルド設定では chroot 内で <code>docker info</code> を実行する。</p>
-<p><strong>対処</strong>:</p>
+<p><strong>対処</strong>: <code>SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD=y</code> でネイティブ Docker を使い、
+Docker-in-Docker を回避する。このフラグは <code>Makefile.work</code> でビルド経路を分岐する<sup id="fnref:nativedockerd"><a class="footnote-ref" href="#fn:nativedockerd">1</a></sup>。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># ネイティブ Docker を使用（Docker-in-Docker を回避）</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD</span><span class="o">=</span>y
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>&lt;platform&gt;
 </span></code></pre></div>
+<!-- evidence:
+source: sonic-net/sonic-buildimage/Makefile.work#L332-L407 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  ifeq ($(strip $(SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD)),y)
+reasoning: >
+  SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD が現行 master の Makefile.work で
+  ビルド経路を分岐する実在の設定変数であることを確認。Docker-in-Docker 回避策の裏取り。
+  デフォルト無効であることは rules/config L60-L65 のコメントアウトされた既定値で確認できる。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-buildimage/Makefile.work#L332-L407 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-buildimage/Makefile.work#L332-L407 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ifeq ($(strip $(SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD)),y)
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: &gt;</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <hr />
 <h2 id="2-docker-systemd">2. Docker / systemd 関連<a class="headerlink" href="#2-docker-systemd" title="Permanent link">&para;</a></h2>
-<h3 id="2-1-aboot-docker-systemd-7372">2-1. Aboot 環境での Docker 起動失敗（systemd アップグレード後）(#7372)<a class="headerlink" href="#2-1-aboot-docker-systemd-7372" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Docker startup broken in master for aboot due to systemd upgrade
+<h3 id="2-1-aboot-docker-systemd-7372">2-1. Aboot 環境での Docker 起動失敗（systemd アップグレード後）(#7372)<sup id="fnref:7372"><a class="footnote-ref" href="#fn:7372">4</a></sup><a class="headerlink" href="#2-1-aboot-docker-systemd-7372" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Docker startup broken in master for aboot due to systemd upgrade
 </span></code></pre></div>
 <p><strong>現象</strong>: 特定の Arista aboot 環境で systemd のバージョンアップ後に
 Docker が起動しなくなる。</p>
 <p><strong>確認</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>docker<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>systemctl<span class="w"> </span>status<span class="w"> </span>docker
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>docker<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>systemctl<span class="w"> </span>status<span class="w"> </span>docker
 </span></code></pre></div>
 <hr />
-<h3 id="2-2-docker-in-docker-ubuntu-9919">2-2. Docker-in-Docker が非 Ubuntu ホストで動作しない (#9919)<a class="headerlink" href="#2-2-docker-in-docker-ubuntu-9919" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Docker in docker builds do not work in build container (Arch linux host)
+<h3 id="2-2-docker-in-docker-ubuntu-9919">2-2. Docker-in-Docker が非 Ubuntu ホストで動作しない (#9919)<sup id="fnref:9919"><a class="footnote-ref" href="#fn:9919">5</a></sup><a class="headerlink" href="#2-2-docker-in-docker-ubuntu-9919" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Docker in docker builds do not work in build container (Arch linux host)
 </span></code></pre></div>
 <p><strong>原因</strong>: <a href="../../reference/glossary/#term-sonic">SONiC</a> のビルドコンテナ（sonic-slave）は Ubuntu ベースで
 設計されており、Arch Linux などの非 Ubuntu ホストでは
 カーネルパラメータや cgroup の設定が異なる。</p>
 <p><strong>対処</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># ネイティブ Docker ソケットを使用</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD</span><span class="o">=</span>y
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>&lt;platform&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># ネイティブ Docker ソケットを使用</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD</span><span class="o">=</span>y
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>&lt;platform&gt;
 </span></code></pre></div>
 <hr />
 <h2 id="3">3. プラットフォーム固有ビルドエラー<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
-<h3 id="3-1-innovium-7139">3-1. Innovium プラットフォームでの並列ビルド失敗 (#7139)<a class="headerlink" href="#3-1-innovium-7139" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>201811 parallel build failure seen with Innovium platform
+<h3 id="3-1-innovium-7139">3-1. Innovium プラットフォームでの並列ビルド失敗 (#7139)<sup id="fnref:7139"><a class="footnote-ref" href="#fn:7139">6</a></sup><a class="headerlink" href="#3-1-innovium-7139" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>201811 parallel build failure seen with Innovium platform
 </span></code></pre></div>
 <p><strong>原因</strong>: Innovium プラットフォームの一部のビルドターゲットが
 並列ビルド時に競合する。</p>
 <p><strong>回避策</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># ジョブ数を制限</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>make<span class="w"> </span><span class="nv">SONIC_BUILD_JOBS</span><span class="o">=</span><span class="m">1</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># または</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>make<span class="w"> </span>-j1
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># ジョブ数を制限</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>make<span class="w"> </span><span class="nv">SONIC_BUILD_JOBS</span><span class="o">=</span><span class="m">1</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c1"># または</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>make<span class="w"> </span>-j1
 </span></code></pre></div>
 <hr />
-<h3 id="3-2-marvell-arm-7465-11337">3-2. Marvell ARM アーキテクチャのビルド失敗 (#7465, #11337)<a class="headerlink" href="#3-2-marvell-arm-7465-11337" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>[202012] Build failure: marvell-armhf
+<h3 id="3-2-marvell-arm-7465-11337">3-2. Marvell ARM アーキテクチャのビルド失敗 (#7465, #11337)<sup id="fnref:7465"><a class="footnote-ref" href="#fn:7465">7</a></sup><sup id="fnref:11337"><a class="footnote-ref" href="#fn:11337">8</a></sup><a class="headerlink" href="#3-2-marvell-arm-7465-11337" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>[202012] Build failure: marvell-armhf
 </span></code></pre></div>
 <p><strong>対象</strong>: Azure Pipelines（AzP）の CI 環境で特有のエラーが発生。
 プライベートビルド環境では再現しない場合がある。</p>
@@ -36377,21 +36422,21 @@ Docker が起動しなくなる。</p>
 - クロスコンパイルツールチェーンのバージョン
 - ARM エミュレーション（QEMU）の設定</p>
 <hr />
-<h3 id="3-3-bullseye-debian-11-11769">3-3. Bullseye (Debian 11) ビルドの無限ループ (#11769)<a class="headerlink" href="#3-3-bullseye-debian-11-11769" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Build fails with only BULLSEYE enabled
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a># endless loop during libsnmp-dev install
+<h3 id="3-3-bullseye-debian-11-11769">3-3. Bullseye (Debian 11) ビルドの無限ループ (#11769)<sup id="fnref:11769"><a class="footnote-ref" href="#fn:11769">9</a></sup><a class="headerlink" href="#3-3-bullseye-debian-11-11769" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>Build fails with only BULLSEYE enabled
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a># endless loop during libsnmp-dev install
 </span></code></pre></div>
 <p><strong>現象</strong>: <code>docker-fpm-frr.gz</code> のビルド中に
 <code>libsnmp-dev</code> のインストールが無限ループする。</p>
 <p><strong>対処</strong>: キャッシュをクリアして再ビルドを試みる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>make<span class="w"> </span>reset
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>&lt;platform&gt;
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>make<span class="w"> </span>target/docker-fpm-frr.gz
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>make<span class="w"> </span>reset
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>&lt;platform&gt;
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>make<span class="w"> </span>target/docker-fpm-frr.gz
 </span></code></pre></div>
 <hr />
 <h2 id="4-sonic-slave">4. sonic-slave イメージ<a class="headerlink" href="#4-sonic-slave" title="Permanent link">&para;</a></h2>
-<h3 id="4-1-sonic-slave-stretch-9741">4-1. <code>sonic-slave-stretch</code> の取得失敗 (#9741)<a class="headerlink" href="#4-1-sonic-slave-stretch-9741" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Unable to fetch sonic-slave-stretch
+<h3 id="4-1-sonic-slave-stretch-9741">4-1. <code>sonic-slave-stretch</code> の取得失敗 (#9741)<sup id="fnref:9741"><a class="footnote-ref" href="#fn:9741">10</a></sup><a class="headerlink" href="#4-1-sonic-slave-stretch-9741" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>Unable to fetch sonic-slave-stretch
 </span></code></pre></div>
 <p><strong>背景</strong>: Debian Stretch（9）は EOL となり、
 公式パッケージリポジトリが更新されなくなっている。
@@ -36399,19 +36444,19 @@ Docker が起動しなくなる。</p>
 <p><strong>対処</strong>:
 1. Buster（Debian 10）または Bullseye（Debian 11）ベースに移行
 2. ローカルでイメージをビルドする</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>make<span class="w"> </span>sonic-slave-bullseye
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>make<span class="w"> </span>sonic-slave-bullseye
 </span></code></pre></div>
 <hr />
 <h2 id="5">5. 特定機能のビルドエラー<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
-<h3 id="5-1-p4rt-vs-9885">5-1. P4RT コンテナ有効時の VS ビルド失敗 (#9885)<a class="headerlink" href="#5-1-p4rt-vs-9885" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>VS image build failed when P4RT container is enabled
+<h3 id="5-1-p4rt-vs-9885">5-1. P4RT コンテナ有効時の VS ビルド失敗 (#9885)<sup id="fnref:9885"><a class="footnote-ref" href="#fn:9885">11</a></sup><a class="headerlink" href="#5-1-p4rt-vs-9885" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>VS image build failed when P4RT container is enabled
 </span></code></pre></div>
 <p><strong>背景</strong>: <a href="../../reference/glossary/#term-p4rt">P4RT</a>（P4 Runtime）は <a href="../../reference/glossary/#term-pins">PINS</a> プロジェクトの opt-in 機能。
 デフォルト設定では無効のため、通常のビルドには影響しない。</p>
 <p><strong>対処</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># P4RT を無効化してビルド</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">INCLUDE_P4RT</span><span class="o">=</span>n
-</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>&lt;platform&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># P4RT を無効化してビルド</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">INCLUDE_P4RT</span><span class="o">=</span>n
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>&lt;platform&gt;
 </span></code></pre></div>
 <hr />
 <h2 id="_2">ビルド環境要件<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -36447,20 +36492,20 @@ Docker が起動しなくなる。</p>
 </table>
 <hr />
 <h2 id="_3">よく使うビルドオプション<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># 並列ビルドジョブ数</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SONIC_BUILD_JOBS</span><span class="o">=</span><span class="m">4</span>
-</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
-</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># キャッシュ有効化</span>
-</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SONIC_DPKG_CACHE_METHOD</span><span class="o">=</span>rcache
-</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
-</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="c1"># ネイティブ Docker 使用</span>
-</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD</span><span class="o">=</span>y
-</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>
-</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="c1"># BuildKit 有効化（互換性確認後）</span>
-</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="nb">export</span><span class="w"> </span><span class="nv">DOCKER_BUILDKIT</span><span class="o">=</span><span class="m">1</span>
-</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>
-</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a><span class="c1"># デバッグ出力</span>
-</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SONIC_DEBUGGING_ON</span><span class="o">=</span>y
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># 並列ビルドジョブ数</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SONIC_BUILD_JOBS</span><span class="o">=</span><span class="m">4</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1"># キャッシュ有効化</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SONIC_DPKG_CACHE_METHOD</span><span class="o">=</span>rcache
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="c1"># ネイティブ Docker 使用</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD</span><span class="o">=</span>y
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="c1"># BuildKit 有効化（互換性確認後）</span>
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="nb">export</span><span class="w"> </span><span class="nv">DOCKER_BUILDKIT</span><span class="o">=</span><span class="m">1</span>
+</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>
+</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="c1"># デバッグ出力</span>
+</span><span id="__span-18-14"><a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SONIC_DEBUGGING_ON</span><span class="o">=</span>y
 </span></code></pre></div>
 <hr />
 <h2 id="_4">参照<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -36468,7 +36513,48 @@ Docker が起動しなくなる。</p>
 <li><a href="../../architecture/build-system-improvements/">ビルドシステム改善 HLD</a></li>
 <li><a href="../../architecture/build-profiles/">ビルドプロファイル</a></li>
 </ul>
-<!-- glossary-links-injected: a8f7c59145cf -->
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>各項目の一次情報は sonic-buildimage の issue tracker。ビルド設定変数は <code>sonic-net/sonic-buildimage</code> (sha <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>) の <code>Makefile.work</code> / <code>rules/config</code> で裏取りした。</p>
+<!-- glossary-links-injected: 9fb3fca99a59 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:nativedockerd">
+<p><code>Makefile.work</code> L332-L407、<code>sonic-net/sonic-buildimage</code> (sha <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>)。<code>SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD</code> でビルド経路を分岐。既定値は <code>rules/config</code> L60-L65 でコメントアウト（無効）。&#160;<a class="footnote-backref" href="#fnref:nativedockerd" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6804">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/6804">sonic-buildimage #6804</a> — P4 プラットフォームでの <code>sonic-slave-stretch-sonic</code> イメージ取得失敗。&#160;<a class="footnote-backref" href="#fnref:6804" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7354">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/7354">sonic-buildimage #7354</a> — <code>chroot ./fsroot docker info</code> でのビルド失敗。&#160;<a class="footnote-backref" href="#fnref:7354" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7372">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/7372">sonic-buildimage #7372</a> — Arista aboot で systemd アップグレード後に Docker が起動しない件。&#160;<a class="footnote-backref" href="#fnref:7372" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9919">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9919">sonic-buildimage #9919</a> — 非 Ubuntu ホスト（Arch Linux）で Docker-in-Docker ビルドが動作しない件。&#160;<a class="footnote-backref" href="#fnref:9919" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7139">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/7139">sonic-buildimage #7139</a> — Innovium プラットフォームの並列ビルド失敗。&#160;<a class="footnote-backref" href="#fnref:7139" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7465">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/7465">sonic-buildimage #7465</a> — Marvell ARM（marvell-armhf）のビルド失敗。&#160;<a class="footnote-backref" href="#fnref:7465" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:11337">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/11337">sonic-buildimage #11337</a> — Marvell ARM ビルド失敗の継続報告。&#160;<a class="footnote-backref" href="#fnref:11337" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:11769">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/11769">sonic-buildimage #11769</a> — BULLSEYE のみ有効時の <code>libsnmp-dev</code> インストール無限ループ。&#160;<a class="footnote-backref" href="#fnref:11769" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9741">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9741">sonic-buildimage #9741</a> — EOL の <code>sonic-slave-stretch</code> イメージ取得失敗。&#160;<a class="footnote-backref" href="#fnref:9741" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9885">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9885">sonic-buildimage #9885</a> — P4RT コンテナ有効時の <a href="../../reference/glossary/#term-vs">VS</a> イメージビルド失敗。&#160;<a class="footnote-backref" href="#fnref:9885" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

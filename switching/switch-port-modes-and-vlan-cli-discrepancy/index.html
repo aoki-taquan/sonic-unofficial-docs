@@ -10896,6 +10896,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35986,6 +35997,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36026,7 +36048,7 @@
 </ul>
 <h2 id="2">2. 差分の中身<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
 <p>HLD は <code>config switchport mode access &lt;port&gt; &lt;vlan&gt;</code> や <code>config switchport mode trunk &lt;port&gt; [&lt;native-vlan&gt;] [&lt;vlan-list&gt;]</code> のようにモード切替と <a href="../../reference/glossary/#term-vlan">VLAN</a> メンバ割当を 1 コマンドで行う仕様を提示している。現行実装は <code>@click.argument("type", ..., type=click.Choice(["access", "trunk", "routed"]))</code> と <code>@click.argument("port", ...)</code> の 2 引数のみで、VLAN メンバ割当は <strong>依然として別コマンド</strong> <code>config vlan member add &lt;vlan&gt; &lt;port&gt;</code> を呼ぶ必要がある。</p>
-<p>実コード（<code>sonic-utilities/config/switchport.py</code> L17-L22）:</p>
+<p>実コード（<code>sonic-utilities/config/switchport.py</code> L16-L20）<sup id="fnref:impl"><a class="footnote-ref" href="#fn:impl">1</a></sup>:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@switchport</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;mode_type&gt;&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">([</span><span class="s2">&quot;access&quot;</span><span class="p">,</span> <span class="s2">&quot;trunk&quot;</span><span class="p">,</span> <span class="s2">&quot;routed&quot;</span><span class="p">]))</span>
@@ -36035,6 +36057,36 @@
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">def</span><span class="w"> </span><span class="nf">switchport_mode</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;switchport mode help commands.Mode_type can be access or trunk or routed&quot;&quot;&quot;</span>
 </span></code></pre></div>
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/switchport.py#L16-L20 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @switchport.command("mode")
+  @click.argument("type", metavar="<mode_type>", required=True, type=click.Choice(["access", "trunk", "routed"]))
+  @click.argument("port", metavar="port", required=True)
+  @clicommon.pass_db
+  def switchport_mode(db, type, port):
+reasoning: >
+  現行 master の switchport_mode コマンドは引数が <mode_type> と <port> の 2 個のみで、
+  HLD が要求する第 3 引数 <vlan-list> が存在しないことを直接確認できる。switchport_mode
+  typedef は sonic-buildimage の sonic-types.yang.j2 L244 に定義されている。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/config/switchport.py#L16-L20 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/config/switchport.py#L16-L20 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>@switchport.command(&quot;mode&quot;)
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>@click.argument(&quot;type&quot;, metavar=&quot;&lt;mode_type&gt;&quot;, required=True, type=click.Choice([&quot;access&quot;, &quot;trunk&quot;, &quot;routed&quot;]))
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>@click.argument(&quot;port&quot;, metavar=&quot;port&quot;, required=True)
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>@clicommon.pass_db
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>def switchport_mode(db, type, port):
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: &gt;</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <p>引数は <code>&lt;mode_type&gt;</code> + <code>&lt;port&gt;</code> の 2 個のみ。HLD の <code>config switchport mode access &lt;port&gt; &lt;vlan&gt;</code> / <code>config switchport mode trunk &lt;port&gt; [&lt;native-vlan&gt;] [&lt;vlan-list&gt;]</code> のような第 3 引数（VLAN リスト）は <strong>無い</strong>。VLAN メンバ追加は別コマンド <code>config vlan member add &lt;vid&gt; &lt;port&gt; [--untagged]</code> (<code>sonic-utilities/config/vlan.py</code>)。</p>
 <h2 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36044,31 +36096,31 @@
 </ul>
 <h2 id="4">4. 回避策<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <p>access ポート（VLAN 10 untagged）:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>access<span class="w"> </span>Ethernet0
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">10</span><span class="w"> </span>Ethernet0<span class="w"> </span>--untagged
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>access<span class="w"> </span>Ethernet0
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">10</span><span class="w"> </span>Ethernet0<span class="w"> </span>--untagged
 </span></code></pre></div>
 <p>trunk ポート（native=10, tagged=20,21）:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>trunk<span class="w"> </span>PortChannel1
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">10</span><span class="w"> </span>PortChannel1<span class="w"> </span>--untagged<span class="w">   </span><span class="c1"># native (untagged)</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">20</span><span class="w"> </span>PortChannel1<span class="w">              </span><span class="c1"># tagged</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">21</span><span class="w"> </span>PortChannel1
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>trunk<span class="w"> </span>PortChannel1
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">10</span><span class="w"> </span>PortChannel1<span class="w"> </span>--untagged<span class="w">   </span><span class="c1"># native (untagged)</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">20</span><span class="w"> </span>PortChannel1<span class="w">              </span><span class="c1"># tagged</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">21</span><span class="w"> </span>PortChannel1
 </span></code></pre></div>
 <p>連続適用（同 VLAN を複数ポートに）:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">for</span><span class="w"> </span>p<span class="w"> </span><span class="k">in</span><span class="w"> </span>Ethernet0<span class="w"> </span>Ethernet4<span class="w"> </span>Ethernet8<span class="p">;</span><span class="w"> </span><span class="k">do</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>access<span class="w"> </span><span class="nv">$p</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="nv">$p</span><span class="w"> </span>--untagged
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="k">done</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">for</span><span class="w"> </span>p<span class="w"> </span><span class="k">in</span><span class="w"> </span>Ethernet0<span class="w"> </span>Ethernet4<span class="w"> </span>Ethernet8<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>access<span class="w"> </span><span class="nv">$p</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="nv">$p</span><span class="w"> </span>--untagged
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="k">done</span>
 </span></code></pre></div>
 <p>確認:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>vlan<span class="w"> </span>brief
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status<span class="w">  </span><span class="c1"># PR #3788 取込後は switchport mode 列が出る</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>show<span class="w"> </span>vlan<span class="w"> </span>brief
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status<span class="w">  </span><span class="c1"># PR #3788 取込後は switchport mode 列が出る</span>
 </span></code></pre></div>
 <p><code>config vlan member add</code> の <code>--untagged</code> フラグで native VLAN を、無印で tagged VLAN を表現する。VLAN range の一括指定（<code>20-22</code>）は <code>config vlan add/del</code> 側でサポート（<code>config/vlan.py</code>）。</p>
 <h2 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="https://github.com/sonic-net/sonic-utilities/pull/3247">sonic-utilities #3247: Switchport Mode &amp; CLI Modified Fix (merged)</a> — 現行 <code>switchport mode</code> の確定実装</li>
-<li><a href="https://github.com/sonic-net/sonic-utilities/pull/3788">sonic-utilities #3788: Switchport mode update for 'show interfaces status' (merged, 202505)</a> — <code>show interfaces status</code> で switchport mode を表示</li>
-<li><a href="https://github.com/sonic-net/SONiC/issues/1136">SONiC #1136: Switchport Mode Hybrid Support (open)</a> — HLD で謳う追加機能（hybrid 等）の future work が未着手</li>
+<li><a href="https://github.com/sonic-net/sonic-utilities/pull/3247">sonic-utilities #3247: Switchport Mode &amp; CLI Modified Fix (merged)</a> — 現行 <code>switchport mode</code> の確定実装<sup id="fnref:pr3247"><a class="footnote-ref" href="#fn:pr3247">2</a></sup></li>
+<li><a href="https://github.com/sonic-net/sonic-utilities/pull/3788">sonic-utilities #3788: Switchport mode update for 'show interfaces status' (merged, 202505)</a> — <code>show interfaces status</code> で switchport mode を表示<sup id="fnref:pr3788"><a class="footnote-ref" href="#fn:pr3788">3</a></sup></li>
+<li><a href="https://github.com/sonic-net/SONiC/issues/1136">SONiC #1136: Switchport Mode Hybrid Support (open)</a> — HLD で謳う追加機能（hybrid 等）の future work が未着手<sup id="fnref:issue1136"><a class="footnote-ref" href="#fn:issue1136">4</a></sup></li>
 </ul>
 <h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36122,7 +36174,26 @@
 
 <h2 id="_3">実装との乖離<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child。差分の根拠 / 影響 / 回避策は親ページの同セクションを参照のこと。</p>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 97c0d8538677 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:impl">
+<p>実装の確定形。<code>config/switchport.py</code> L16-L20、<code>sonic-net/sonic-utilities</code> (sha <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>)。引数は <code>&lt;mode_type&gt;</code> / <code>&lt;port&gt;</code> の 2 個のみで、HLD の <code>&lt;vlan-list&gt;</code> 第 3 引数は存在しない。&#160;<a class="footnote-backref" href="#fnref:impl" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:pr3247">
+<p><a href="https://github.com/sonic-net/sonic-utilities/pull/3247">sonic-utilities PR #3247 "Switchport Mode &amp; CLI Modified Fix"</a> — 現行 <code>config switchport mode</code> の確定実装をマージした PR。&#160;<a class="footnote-backref" href="#fnref:pr3247" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:pr3788">
+<p><a href="https://github.com/sonic-net/sonic-utilities/pull/3788">sonic-utilities PR #3788 "Switchport mode update for 'show interfaces status'"</a> — <code>show interfaces status</code> に switchport mode 列を追加（202505 取り込み）。&#160;<a class="footnote-backref" href="#fnref:pr3788" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:issue1136">
+<p><a href="https://github.com/sonic-net/SONiC/issues/1136">SONiC issue #1136 "Switchport Mode Hybrid Support"</a> — HLD が掲げる hybrid 等の追加機能の future work。現行 master では未着手。&#160;<a class="footnote-backref" href="#fnref:issue1136" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

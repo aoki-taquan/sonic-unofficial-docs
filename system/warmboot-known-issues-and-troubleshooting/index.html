@@ -15628,6 +15628,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36111,6 +36122,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36148,9 +36170,34 @@
 実環境での既知問題と対処法をまとめる。</p>
 <hr />
 <h2 id="1-syncd">1. syncd ウォームスタートエラー<a class="headerlink" href="#1-syncd" title="Permanent link">&para;</a></h2>
-<h3 id="1-1-invalid-sai_api_t-passed-to-sai_api_query-6723">1-1. <code>Invalid sai_api_t passed to sai_api_query</code> (#6723)<a class="headerlink" href="#1-1-invalid-sai_api_t-passed-to-sai_api_query-6723" title="Permanent link">&para;</a></h3>
+<p>ウォームリスタートの状態は <code>WARM_RESTART</code> <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> テーブルで制御され、その
+スキーマは <code>sonic-warm-restart.yang</code> に定義されている<sup id="fnref:yang"><a class="footnote-ref" href="#fn:yang">1</a></sup>。</p>
+<!-- evidence:
+source: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang#L1-L5 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  module sonic-warm-restart  {
+      namespace "http://github.com/sonic-net/sonic-warm-restart";
+reasoning: >
+  現行 master に sonic-warm-restart.yang が存在し WARM_RESTART テーブルのスキーマを
+  定義していることを確認。本ページが扱うウォームリスタート機構の実装裏取り。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang#L1-L5 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang#L1-L5 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>module sonic-warm-restart  {
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    namespace &quot;http://github.com/sonic-net/sonic-warm-restart&quot;;
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: &gt;</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<h3 id="1-1-invalid-sai_api_t-passed-to-sai_api_query-6723">1-1. <code>Invalid sai_api_t passed to sai_api_query</code> (#6723)<sup id="fnref:6723"><a class="footnote-ref" href="#fn:6723">2</a></sup><a class="headerlink" href="#1-1-invalid-sai_api_t-passed-to-sai_api_query-6723" title="Permanent link">&para;</a></h3>
 <p><strong>現象</strong>: ウォームブート中に <a href="../../reference/glossary/#term-syncd">syncd</a> が以下のエラーを出力する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>SAI_API_UNSPECIFIED:sai_api_initialize: Invalid sai_api_t passed to sai_api_query
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>SAI_API_UNSPECIFIED:sai_api_initialize: Invalid sai_api_t passed to sai_api_query
 </span></code></pre></div>
 <p><strong>原因</strong>: 新しい <a href="../../reference/glossary/#term-sai">SAI</a> バージョン移行時に旧 <code>sai_api_t</code> 値が
 <code>sai_api_query()</code> に渡されるケース。</p>
@@ -36160,24 +36207,24 @@ syncd の init は正常に完了し、warmboot シーケンスは継続する�
 <p><strong>対処</strong>: エラーログを確認しつつ warmboot シーケンスが完了すれば問題なし。
 SAI バージョンを syncd と整合させることで解消する。</p>
 <hr />
-<h3 id="1-2-syncd-translatevidtorid-failures-for-buffer-pools-6726">1-2. <code>syncd translateVidToRid failures for buffer pools</code> (#6726)<a class="headerlink" href="#1-2-syncd-translatevidtorid-failures-for-buffer-pools-6726" title="Permanent link">&para;</a></h3>
+<h3 id="1-2-syncd-translatevidtorid-failures-for-buffer-pools-6726">1-2. <code>syncd translateVidToRid failures for buffer pools</code> (#6726)<sup id="fnref:6726"><a class="footnote-ref" href="#fn:6726">3</a></sup><a class="headerlink" href="#1-2-syncd-translatevidtorid-failures-for-buffer-pools-6726" title="Permanent link">&para;</a></h3>
 <p><strong>現象</strong>: ウォームブート後の統計収集時に以下のエラー。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>syncd: translateVidToRid: failed to translate VID &lt;oid&gt; to RID
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>syncd: translateVidToRid: failed to translate VID &lt;oid&gt; to RID
 </span></code></pre></div>
 <p><strong>原因</strong>: syncd がウォームブート後の新 <a href="../../reference/glossary/#term-asic">ASIC</a> VIEW への変換を
 まだ完了していない段階で統計クエリが走ることで、
 ingress/egress buffer pool OID が一時的に無効になる。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>syncd: executeOperationsOnAsic: operations to execute on ASIC: 56
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a># ← この時点で orchagent が生成した新 VIEW への変換が未完了
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>syncd: executeOperationsOnAsic: operations to execute on ASIC: 56
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a># ← この時点で orchagent が生成した新 VIEW への変換が未完了
 </span></code></pre></div>
 <p><strong>対処</strong>: 変換が完了するまで待機。ウォームブート完了後に統計収集を再試行する。
 Buffer pool OID の VIDTORID マップが再構築されれば自動解消する。</p>
 <hr />
-<h3 id="1-3-syncd-apply_view-hostif_trap_group-7071-7094">1-3. syncd <code>APPLY_VIEW</code> エラー: hostif_trap_group (#7071, #7094)<a class="headerlink" href="#1-3-syncd-apply_view-hostif_trap_group-7071-7094" title="Permanent link">&para;</a></h3>
+<h3 id="1-3-syncd-apply_view-hostif_trap_group-7071-7094">1-3. syncd <code>APPLY_VIEW</code> エラー: hostif_trap_group (#7071, #7094)<sup id="fnref:7071"><a class="footnote-ref" href="#fn:7071">4</a></sup><sup id="fnref:7094"><a class="footnote-ref" href="#fn:7094">5</a></sup><a class="headerlink" href="#1-3-syncd-apply_view-hostif_trap_group-7071-7094" title="Permanent link">&para;</a></h3>
 <p><strong>現象</strong>: ウォームブートの going-down フェーズで syncd pre-shutdown が失敗し、
 デバイスがハングする。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>SAI_API_ACL:_brcm_sai_free_hostif:10237 field range destroy failed with error Entry not found
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>syncd: APPLY_VIEW error: brcm_sai_remove_hostif_trap_group in use
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>SAI_API_ACL:_brcm_sai_free_hostif:10237 field range destroy failed with error Entry not found
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>syncd: APPLY_VIEW error: brcm_sai_remove_hostif_trap_group in use
 </span></code></pre></div>
 <p><strong>原因</strong>: BRCM SAI の特定バージョン（4.3.3.x）でのバグ。
 hostif_trap_group が <a href="../../reference/glossary/#term-acl">ACL</a> エントリから参照されたまま削除しようとする。</p>
@@ -36185,7 +36232,7 @@ hostif_trap_group が <a href="../../reference/glossary/#term-acl">ACL</a> エ�
 - SAI バージョンを <code>4.3.0.13-1</code> 以前（またはバグ修正版）に変更
 - <code>4.3.3.1</code> および <code>4.3.3.1-1</code> でこの問題が確認されている</p>
 <hr />
-<h2 id="2-lag-6773">2. LAG フラップ (#6773)<a class="headerlink" href="#2-lag-6773" title="Permanent link">&para;</a></h2>
+<h2 id="2-lag-6773">2. LAG フラップ (#6773)<sup id="fnref:6773"><a class="footnote-ref" href="#fn:6773">6</a></sup><a class="headerlink" href="#2-lag-6773" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: ウォームブート後（特に 2 回目以降）に <a href="../../reference/glossary/#term-portchannel">PortChannel</a> が数回 flap する。</p>
 <p><strong>対象プラットフォーム</strong>: Broadcom TD3 ベースプラットフォーム、202012 ブランチを含む。</p>
 <p><strong>パターン</strong>:
@@ -36196,64 +36243,64 @@ PortChannel メンバーの再学習タイミングで競合が発生する。</
 <p><strong>対処</strong>: 2 回目以降のウォームブート後に LAG が安定するまで待機（通常 30 秒以内）。
 本番環境では連続ウォームブート間に十分なインターバルを設ける。</p>
 <hr />
-<h2 id="3-ssh-7127">3. SSH セッション切断によるウォームブート失敗 (#7127)<a class="headerlink" href="#3-ssh-7127" title="Permanent link">&para;</a></h2>
+<h2 id="3-ssh-7127">3. SSH セッション切断によるウォームブート失敗 (#7127)<sup id="fnref:7127"><a class="footnote-ref" href="#fn:7127">7</a></sup><a class="headerlink" href="#3-ssh-7127" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: <code>warm-reboot</code> コマンド実行中に SSH セッションが切断されると、
 ウォームブートが中断する。</p>
 <p><strong>原因</strong>: <code>warm-reboot</code> スクリプトが起動した端末セッションに attach された状態で動作する。
 SSH 切断でプロセスツリーが SIGHUP を受けて終了する。</p>
 <p><strong>解決策</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># バックグラウンド実行でセッション切断に対応</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>nohup<span class="w"> </span>warm-reboot<span class="w"> </span><span class="p">&amp;</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># または</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>screen<span class="w"> </span>-d<span class="w"> </span>-m<span class="w"> </span>warm-reboot
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># または</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>tmux<span class="w"> </span>new-session<span class="w"> </span>-d<span class="w"> </span>-s<span class="w"> </span>warmboot<span class="w"> </span><span class="s1">&#39;warm-reboot&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># バックグラウンド実行でセッション切断に対応</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>nohup<span class="w"> </span>warm-reboot<span class="w"> </span><span class="p">&amp;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># または</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>screen<span class="w"> </span>-d<span class="w"> </span>-m<span class="w"> </span>warm-reboot
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># または</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>tmux<span class="w"> </span>new-session<span class="w"> </span>-d<span class="w"> </span>-s<span class="w"> </span>warmboot<span class="w"> </span><span class="s1">&#39;warm-reboot&#39;</span>
 </span></code></pre></div>
 <hr />
-<h2 id="4-fast-reboot-7140">4. fast-reboot ダウンタイム超過 (#7140)<a class="headerlink" href="#4-fast-reboot-7140" title="Permanent link">&para;</a></h2>
+<h2 id="4-fast-reboot-7140">4. fast-reboot ダウンタイム超過 (#7140)<sup id="fnref:7140"><a class="footnote-ref" href="#fn:7140">8</a></sup><a class="headerlink" href="#4-fast-reboot-7140" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: fast-reboot のダウンタイムが 30 秒制限を超える。</p>
 <p><strong>主要因</strong>:
 1. orchagent の ASIC プログラミング完了待ちタイムアウト
-2. カーネルの kexec 処理遅延 (#6866)
+2. カーネルの kexec 処理遅延 (#6866)<sup id="fnref:6866"><a class="footnote-ref" href="#fn:6866">9</a></sup>
 3. プラットフォーム固有の SAI 初期化時間</p>
 <p><strong>確認方法</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>show<span class="w"> </span>reboot-cause
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># /var/log/syslog で fast-reboot の各フェーズのタイムスタンプを確認</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;fast-reboot|kexec|orchagent&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>show<span class="w"> </span>reboot-cause
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># /var/log/syslog で fast-reboot の各フェーズのタイムスタンプを確認</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;fast-reboot|kexec|orchagent&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
 </span></code></pre></div>
 <hr />
-<h2 id="5-7518">5. イメージダウングレード失敗 (#7518)<a class="headerlink" href="#5-7518" title="Permanent link">&para;</a></h2>
+<h2 id="5-7518">5. イメージダウングレード失敗 (#7518)<sup id="fnref:7518"><a class="footnote-ref" href="#fn:7518">10</a></sup><a class="headerlink" href="#5-7518" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: 最新 master から古いイメージへのダウングレードが失敗する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sonic-installer: package migration failed
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sonic-installer: package migration failed
 </span></code></pre></div>
 <p><strong>背景</strong>: SONiC は公式にはダウングレードを保証しない。
 master ブランチでインストールされたパッケージが
 古いイメージのパッケージと非互換になる場合がある。</p>
 <p><strong>回避策</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># パッケージ移行をスキップ</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sonic-installer<span class="w"> </span>install<span class="w"> </span>--skip-package-migration<span class="w"> </span>&lt;image&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># パッケージ移行をスキップ</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sonic-installer<span class="w"> </span>install<span class="w"> </span>--skip-package-migration<span class="w"> </span>&lt;image&gt;
 </span></code></pre></div>
 <hr />
-<h2 id="6-reboot-cause-12512">6. reboot-cause の誤表示 (#12512)<a class="headerlink" href="#6-reboot-cause-12512" title="Permanent link">&para;</a></h2>
+<h2 id="6-reboot-cause-12512">6. reboot-cause の誤表示 (#12512)<sup id="fnref:12512"><a class="footnote-ref" href="#fn:12512">11</a></sup><a class="headerlink" href="#6-reboot-cause-12512" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: ウォームブート後に reboot-cause が正しい理由を表示しない。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>show<span class="w"> </span>reboot-cause
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># 期待: warm-reboot</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># 実際: Unknown</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>show<span class="w"> </span>reboot-cause
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="c1"># 期待: warm-reboot</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># 実際: Unknown</span>
 </span></code></pre></div>
 <p><strong>原因</strong>: <code>/host/reboot-cause/reboot-cause-file</code> の書き込みタイミングが
 カーネル kexec より後になる競合条件。</p>
 <p><strong>確認</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>cat<span class="w"> </span>/host/reboot-cause/previous-reboot-cause
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>cat<span class="w"> </span>/var/log/reboot-cause/REBOOT_CAUSE
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>cat<span class="w"> </span>/host/reboot-cause/previous-reboot-cause
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>cat<span class="w"> </span>/var/log/reboot-cause/REBOOT_CAUSE
 </span></code></pre></div>
 <hr />
-<h2 id="7-202012-fast-reboot-orchagent-9899">7. [202012] fast-reboot orchagent タイムアウト (#9899)<a class="headerlink" href="#7-202012-fast-reboot-orchagent-9899" title="Permanent link">&para;</a></h2>
+<h2 id="7-202012-fast-reboot-orchagent-9899">7. [202012] fast-reboot orchagent タイムアウト (#9899)<sup id="fnref:9899"><a class="footnote-ref" href="#fn:9899">12</a></sup><a class="headerlink" href="#7-202012-fast-reboot-orchagent-9899" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: fast-reboot 中に orchagent が INIT_VIEW 通知の受信を syncd に
 タイムアウトする。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>orchagent: timeout to notify syncd to begin INIT_VIEW
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>orchagent: timeout to notify syncd to begin INIT_VIEW
 </span></code></pre></div>
 <p><strong>関連する可能性があるログ</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>kernel: igb 0000:0a:00.0 eth0: igb_watchdog_task: Detected Tx Unit Hang
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>kernel: igb 0000:0a:00.0 eth0: igb_watchdog_task: Detected Tx Unit Hang
 </span></code></pre></div>
 <p><strong>対処</strong>: NIC の TX ハング（ management port）が原因の場合がある。
 ドライバのリセットが完了してから再試行。</p>
@@ -36301,7 +36348,51 @@ master ブランチでインストールされたパッケージが
 <li><a href="../sonic-swss-docker-warm-restart/">swss Docker ウォームリスタート</a></li>
 <li><a href="../multi-asic-warm-reboot/">multi-ASIC ウォームリブート</a></li>
 </ul>
-<!-- glossary-links-injected: 3b39e50988ab -->
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>各項目の一次情報は sonic-buildimage の issue tracker。ウォームリスタート機構の実装は <code>sonic-net/sonic-buildimage</code> (sha <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>) で裏取りした。</p>
+<!-- glossary-links-injected: 896d391185a9 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:yang">
+<p><code>src/sonic-yang-models/yang-models/sonic-warm-restart.yang</code>、<code>sonic-net/sonic-buildimage</code> (sha <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>)。<code>WARM_RESTART</code> テーブルのスキーマ定義。&#160;<a class="footnote-backref" href="#fnref:yang" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6723">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/6723">sonic-buildimage #6723</a> — warmboot 中の syncd <code>Invalid sai_api_t passed to sai_api_query</code>。&#160;<a class="footnote-backref" href="#fnref:6723" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6726">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/6726">sonic-buildimage #6726</a> — buffer pool の <code>translateVidToRid</code> 失敗。&#160;<a class="footnote-backref" href="#fnref:6726" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7071">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/7071">sonic-buildimage #7071</a> — syncd <code>APPLY_VIEW</code> の hostif_trap_group 削除失敗。&#160;<a class="footnote-backref" href="#fnref:7071" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7094">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/7094">sonic-buildimage #7094</a> — 上記 hostif_trap_group 問題の関連報告。&#160;<a class="footnote-backref" href="#fnref:7094" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6773">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/6773">sonic-buildimage #6773</a> — ウォームブート後（2 回目以降）の LAG フラップ。&#160;<a class="footnote-backref" href="#fnref:6773" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7127">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/7127">sonic-buildimage #7127</a> — SSH セッション切断による warm-reboot 中断。&#160;<a class="footnote-backref" href="#fnref:7127" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7140">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/7140">sonic-buildimage #7140</a> — fast-reboot のダウンタイムが 30 秒制限を超える件。&#160;<a class="footnote-backref" href="#fnref:7140" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6866">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/6866">sonic-buildimage #6866</a> — fast-reboot のダウンタイムに寄与するカーネル kexec 処理遅延。&#160;<a class="footnote-backref" href="#fnref:6866" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7518">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/7518">sonic-buildimage #7518</a> — 最新 master から旧イメージへのダウングレード失敗。&#160;<a class="footnote-backref" href="#fnref:7518" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:12512">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/12512">sonic-buildimage #12512</a> — ウォームブート後の reboot-cause 誤表示。&#160;<a class="footnote-backref" href="#fnref:12512" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9899">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9899">sonic-buildimage #9899</a> — [202012] fast-reboot 中の orchagent INIT_VIEW タイムアウト。&#160;<a class="footnote-backref" href="#fnref:9899" title="Jump back to footnote 12 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

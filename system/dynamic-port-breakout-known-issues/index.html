@@ -15678,6 +15678,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36323,6 +36334,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36360,7 +36382,7 @@ reload 不要でポート分割モードを変更する機能だが、
 実装上のエッジケースが多い。本ページは issue tracker の報告を整理する。</p>
 <hr />
 <h2 id="1-yang-dpb">1. YANG モデル不整合による DPB 失敗<a class="headerlink" href="#1-yang-dpb" title="Permanent link">&para;</a></h2>
-<h3 id="1-1-portchannel_member-yang-6722">1-1. <code>PORTCHANNEL_MEMBER</code> YANG モデル欠落 (#6722)<a class="headerlink" href="#1-1-portchannel_member-yang-6722" title="Permanent link">&para;</a></h3>
+<h3 id="1-1-portchannel_member-yang-6722">1-1. <code>PORTCHANNEL_MEMBER</code> YANG モデル欠落 (#6722)<sup id="fnref:6722"><a class="footnote-ref" href="#fn:6722">1</a></sup><a class="headerlink" href="#1-1-portchannel_member-yang-6722" title="Permanent link">&para;</a></h3>
 <p>DPB の依存チェック時に以下のメッセージが出る。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Note: Below table(s) have no YANG models:
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>FEATURE, SNMP_COMMUNITY, SNMP, PORTCHANNEL_MEMBER, TELEMETRY,
@@ -36369,11 +36391,36 @@ reload 不要でポート分割モードを変更する機能だが、
 <p><strong>原因</strong>: <code>PORTCHANNEL_MEMBER</code> テーブルに YANG モデルが存在しない。
 DPB の依存解決ロジックが YANG 検証を経由するため、
 モデルがないテーブルは「未検証」として警告扱いになる。</p>
-<p><strong>対処</strong>: PR #7xxx で <code>sonic-portchannel.yang</code> に <code>PORTCHANNEL_MEMBER</code> が追加された。
-master の最新版を使用すること。</p>
+<p><strong>対処</strong>: <code>sonic-portchannel.yang</code> に <code>PORTCHANNEL_MEMBER</code> コンテナが追加されたため、
+master の最新版では本警告は解消している<sup id="fnref2:6722"><a class="footnote-ref" href="#fn:6722">1</a></sup>。</p>
+<!-- evidence:
+source: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L130-L154 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  container PORTCHANNEL_MEMBER {
+      list PORTCHANNEL_MEMBER_LIST {
+      } /* end of list PORTCHANNEL_MEMBER_LIST */
+reasoning: >
+  現行 master の sonic-portchannel.yang に PORTCHANNEL_MEMBER コンテナが存在することを確認。
+  issue #6722 が報告した「YANG モデル欠落」警告は master では解消済みであることの裏取り。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L130-L154 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L130-L154 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>container PORTCHANNEL_MEMBER {
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    list PORTCHANNEL_MEMBER_LIST {
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    } /* end of list PORTCHANNEL_MEMBER_LIST */
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: &gt;</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <hr />
-<h3 id="1-2-bgp_neighbor-yang-dpb-7959">1-2. <code>BGP_NEIGHBOR</code> YANG モデルが DPB エラーを引き起こす (#7959)<a class="headerlink" href="#1-2-bgp_neighbor-yang-dpb-7959" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Error: asn key is not matched (uses/grouping keywords not working)
+<h3 id="1-2-bgp_neighbor-yang-dpb-7959">1-2. <code>BGP_NEIGHBOR</code> YANG モデルが DPB エラーを引き起こす (#7959)<sup id="fnref:7959"><a class="footnote-ref" href="#fn:7959">5</a></sup><a class="headerlink" href="#1-2-bgp_neighbor-yang-dpb-7959" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Error: asn key is not matched (uses/grouping keywords not working)
 </span></code></pre></div>
 <p><strong>原因</strong>: YANG の <code>uses</code> / <code>grouping</code> キーワードが
 libyang の特定バージョンで期待通りに動作しない。
@@ -36381,17 +36428,17 @@ libyang の特定バージョンで期待通りに動作しない。
 <p><strong>影響</strong>: <a href="../../reference/glossary/#term-bgp">BGP</a> neighbor が設定されている port を breakout しようとすると失敗する。</p>
 <p><strong>回避策</strong>: Breakout 前に BGP neighbor 設定を一時削除する。</p>
 <hr />
-<h3 id="1-3-buffer_port_egress_profile-dpb-9801">1-3. <code>BUFFER_PORT_EGRESS_PROFILE</code> 設定時の DPB 失敗 (#9801)<a class="headerlink" href="#1-3-buffer_port_egress_profile-dpb-9801" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>DPB fails when BUFFER_PORT_EGRESS_PROFILE is configured
+<h3 id="1-3-buffer_port_egress_profile-dpb-9801">1-3. <code>BUFFER_PORT_EGRESS_PROFILE</code> 設定時の DPB 失敗 (#9801)<sup id="fnref:9801"><a class="footnote-ref" href="#fn:9801">10</a></sup><a class="headerlink" href="#1-3-buffer_port_egress_profile-dpb-9801" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>DPB fails when BUFFER_PORT_EGRESS_PROFILE is configured
 </span></code></pre></div>
 <p><strong>原因</strong>: <code>BUFFER_PORT_EGRESS_PROFILE</code> テーブルに YANG モデルが存在しないか、
 DPB の依存解決ロジックがこのテーブルを認識しない。</p>
 <p><strong>対処</strong>: Breakout 前に <code>BUFFER_PORT_EGRESS_PROFILE</code> エントリを削除する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>DEL<span class="w"> </span><span class="s2">&quot;BUFFER_PORT_EGRESS_PROFILE|Ethernet0&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>DEL<span class="w"> </span><span class="s2">&quot;BUFFER_PORT_EGRESS_PROFILE|Ethernet0&quot;</span>
 </span></code></pre></div>
 <hr />
-<h3 id="1-4-libyang-9312">1-4. libyang バックリンク問題 (#9312)<a class="headerlink" href="#1-4-libyang-9312" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>[yang-models] Importing other modules sometimes break libyang backlinks
+<h3 id="1-4-libyang-9312">1-4. libyang バックリンク問題 (#9312)<sup id="fnref:9312"><a class="footnote-ref" href="#fn:9312">6</a></sup><a class="headerlink" href="#1-4-libyang-9312" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>[yang-models] Importing other modules sometimes break libyang backlinks
 </span></code></pre></div>
 <p><strong>背景</strong>: libyang のバックリンクコードのバグにより、
 YANG モジュール間の <code>import</code> が特定の組み合わせでビルドを壊す。
@@ -36399,94 +36446,94 @@ YANG モジュール間の <code>import</code> が特定の組み合わせでビ
 <p><strong>現状</strong>: libyang のバージョンアップとパッチで概ね解消。</p>
 <hr />
 <h2 id="2-platformjson">2. <code>platform.json</code> 関連<a class="headerlink" href="#2-platformjson" title="Permanent link">&para;</a></h2>
-<h3 id="2-1-has_global_scope-invalid-value-9326">2-1. <code>has_global_scope</code> 要素の invalid value (#9326)<a class="headerlink" href="#2-1-has_global_scope-invalid-value-9326" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>DPB falls due to invalid value in &quot;has_global_scope&quot; element
+<h3 id="2-1-has_global_scope-invalid-value-9326">2-1. <code>has_global_scope</code> 要素の invalid value (#9326)<sup id="fnref:9326"><a class="footnote-ref" href="#fn:9326">7</a></sup><a class="headerlink" href="#2-1-has_global_scope-invalid-value-9326" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>DPB falls due to invalid value in &quot;has_global_scope&quot; element
 </span></code></pre></div>
 <p><strong>原因</strong>: <code>sonic-feature.yang</code> の <code>has_global_scope</code> リーフの型定義が
 <code>boolean</code> ではなく <code>string</code> になっているなど不整合。</p>
 <p><strong>確認</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="s2">import json</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="s2">with open(&#39;/etc/sonic/platform.json&#39;) as f:</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="s2">    data = json.load(f)</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="s2">print(json.dumps(data.get(&#39;interfaces&#39;, {}).get(&#39;Ethernet0&#39;, {}), indent=2))</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="s2">&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="s2">import json</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="s2">with open(&#39;/etc/sonic/platform.json&#39;) as f:</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="s2">    data = json.load(f)</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="s2">print(json.dumps(data.get(&#39;interfaces&#39;, {}).get(&#39;Ethernet0&#39;, {}), indent=2))</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="s2">&quot;</span>
 </span></code></pre></div>
 <hr />
-<h3 id="2-2-none-9663">2-2. <code>None</code> フィールドの非対応 (#9663)<a class="headerlink" href="#2-2-none-9663" title="Permanent link">&para;</a></h3>
+<h3 id="2-2-none-9663">2-2. <code>None</code> フィールドの非対応 (#9663)<sup id="fnref:9663"><a class="footnote-ref" href="#fn:9663">9</a></sup><a class="headerlink" href="#2-2-none-9663" title="Permanent link">&para;</a></h3>
 <p><code>platform.json</code> で <code>None</code> 値が記載されている場合に CLI が動作しない。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>breakout CLI doesn&#39;t work when None is included in platform.json
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>breakout CLI doesn&#39;t work when None is included in platform.json
 </span></code></pre></div>
 <p><strong>対処</strong>: <code>platform.json</code> の breakout モードリストに <code>null</code> ではなく
 有効なモード文字列のみを記載する。</p>
 <hr />
 <h2 id="3-orchagent-syncd">3. Orchagent / syncd 相互作用<a class="headerlink" href="#3-orchagent-syncd" title="Permanent link">&para;</a></h2>
-<h3 id="3-1-port-host-if-7403">3-1. PORT HOST IF 削除失敗 (#7403)<a class="headerlink" href="#3-1-port-host-if-7403" title="Permanent link">&para;</a></h3>
+<h3 id="3-1-port-host-if-7403">3-1. PORT HOST IF 削除失敗 (#7403)<sup id="fnref:7403"><a class="footnote-ref" href="#fn:7403">4</a></sup><a class="headerlink" href="#3-1-port-host-if-7403" title="Permanent link">&para;</a></h3>
 <p><a href="../../reference/glossary/#term-vs">VS</a>（Virtual Switch）環境での DPB 中に <code>sai_remove_hostif</code> が失敗する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>swss#orchagent: Failed to remove host interface for port
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>swss#orchagent: Failed to remove host interface for port
 </span></code></pre></div>
 <p><strong>原因</strong>: VS <a href="../../reference/glossary/#term-sai">SAI</a> が HIF 削除シーケンスの順序を正しく処理しない。</p>
 <hr />
-<h3 id="3-2-orchagent-400g-4x100g9653">3-2. Orchagent クラッシュ（400G → 4x100G）(#9653)<a class="headerlink" href="#3-2-orchagent-400g-4x100g9653" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Orchagent crash after performing port breakout of 400G into 4x100G[50G]
+<h3 id="3-2-orchagent-400g-4x100g9653">3-2. Orchagent クラッシュ（400G → 4x100G）(#9653)<sup id="fnref:9653"><a class="footnote-ref" href="#fn:9653">8</a></sup><a class="headerlink" href="#3-2-orchagent-400g-4x100g9653" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>Orchagent crash after performing port breakout of 400G into 4x100G[50G]
 </span></code></pre></div>
 <p><strong>影響プラットフォーム</strong>: 一部の Broadcom ベース 400G NIC。</p>
 <p><strong>確認</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;crash|SIGSEGV|abort&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>show<span class="w"> </span>techsupport
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;crash|SIGSEGV|abort&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>show<span class="w"> </span>techsupport
 </span></code></pre></div>
 <hr />
-<h3 id="3-3-dpb-config_db-delete-10005">3-3. DPB 中の CONFIG_DB DELETE 欠落 (#10005)<a class="headerlink" href="#3-3-dpb-config_db-delete-10005" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Orchagent missing DELETE update from CONFIG_DB during DPB
+<h3 id="3-3-dpb-config_db-delete-10005">3-3. DPB 中の CONFIG_DB DELETE 欠落 (#10005)<sup id="fnref:10005"><a class="footnote-ref" href="#fn:10005">12</a></sup><a class="headerlink" href="#3-3-dpb-config_db-delete-10005" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>Orchagent missing DELETE update from CONFIG_DB during DPB
 </span></code></pre></div>
 <p><strong>現象</strong>: DPB 時に一部の <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> エントリが orchagent に伝達されず、
 ポートが部分的な状態のまま残る。</p>
 <p><strong>対処</strong>: <code>swss</code> サービスを再起動して状態を再同期する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>swss
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>swss
 </span></code></pre></div>
 <hr />
-<h2 id="4-lldp-9802">4. LLDP との相互作用 (#9802)<a class="headerlink" href="#4-lldp-9802" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>LLDP does not have logic to gracefully handle port deletion during DPB
+<h2 id="4-lldp-9802">4. LLDP との相互作用 (#9802)<sup id="fnref:9802"><a class="footnote-ref" href="#fn:9802">11</a></sup><a class="headerlink" href="#4-lldp-9802" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>LLDP does not have logic to gracefully handle port deletion during DPB
 </span></code></pre></div>
 <p><strong>現象</strong>: DPB でポートを削除する際に <code>lldpd</code> がエラーを記録し、
 LLDP neighbor テーブルに古いエントリが残る。</p>
 <p><strong>確認</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>show<span class="w"> </span>lldp<span class="w"> </span>neighbors
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>lldp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;error|warn&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>show<span class="w"> </span>lldp<span class="w"> </span>neighbors
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>lldp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;error|warn&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
 </span></code></pre></div>
 <p><strong>対処</strong>: DPB 完了後に <code>lldpd</code> を再起動する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>lldp<span class="w"> </span>supervisorctl<span class="w"> </span>restart<span class="w"> </span>lldpd
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>lldp<span class="w"> </span>supervisorctl<span class="w"> </span>restart<span class="w"> </span>lldpd
 </span></code></pre></div>
 <hr />
-<h2 id="5-11190-11418">5. カウンター関連 (#11190, #11418)<a class="headerlink" href="#5-11190-11418" title="Permanent link">&para;</a></h2>
-<h3 id="5-1-dpb-11190">5-1. DPB 時のカウンターエラーログ (#11190)<a class="headerlink" href="#5-1-dpb-11190" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>Error logs related to Counters seen when a port is broken out
+<h2 id="5-11190-11418">5. カウンター関連 (#11190, #11418)<sup id="fnref:11190"><a class="footnote-ref" href="#fn:11190">13</a></sup><sup id="fnref:11418"><a class="footnote-ref" href="#fn:11418">14</a></sup><a class="headerlink" href="#5-11190-11418" title="Permanent link">&para;</a></h2>
+<h3 id="5-1-dpb-11190">5-1. DPB 時のカウンターエラーログ (#11190)<sup id="fnref2:11190"><a class="footnote-ref" href="#fn:11190">13</a></sup><a class="headerlink" href="#5-1-dpb-11190" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>Error logs related to Counters seen when a port is broken out
 </span></code></pre></div>
 <p>Breakout 操作中に counters docker が古いポート OID を参照してエラーになる。
 プラットフォーム依存ではなく、master 全体で発生しうる。</p>
-<h3 id="5-2-breakout-11418">5-2. Breakout ポートのカウンターレート不表示 (#11418)<a class="headerlink" href="#5-2-breakout-11418" title="Permanent link">&para;</a></h3>
+<h3 id="5-2-breakout-11418">5-2. Breakout ポートのカウンターレート不表示 (#11418)<sup id="fnref2:11418"><a class="footnote-ref" href="#fn:11418">14</a></sup><a class="headerlink" href="#5-2-breakout-11418" title="Permanent link">&para;</a></h3>
 <p>10G モードにブレイクアウトした後、<code>show interfaces counters rates</code> が
 正しく表示されない場合がある。</p>
 <p><strong>条件</strong>: プラットフォームが該当速度をサポートしていない場合は表示異常が出ることがある。</p>
 <hr />
-<h2 id="6-config_db-breakout_cfg-7402">6. CONFIG_DB の <code>BREAKOUT_CFG</code> 更新 (#7402)<a class="headerlink" href="#6-config_db-breakout_cfg-7402" title="Permanent link">&para;</a></h2>
+<h2 id="6-config_db-breakout_cfg-7402">6. CONFIG_DB の <code>BREAKOUT_CFG</code> 更新 (#7402)<sup id="fnref:7402"><a class="footnote-ref" href="#fn:7402">3</a></sup><a class="headerlink" href="#6-config_db-breakout_cfg-7402" title="Permanent link">&para;</a></h2>
 <p>イメージアップグレード時に <code>config_db.json</code> の <code>BREAKOUT_CFG</code> が
 新しいフォーマットに自動移行されない場合がある。</p>
 <p><strong>確認</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;BREAKOUT_CFG|Ethernet0&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;BREAKOUT_CFG|Ethernet0&quot;</span>
 </span></code></pre></div>
 <p><strong>対処</strong>: 必要に応じて手動で <code>BREAKOUT_CFG</code> を更新するか、
 <code>config migrate</code> コマンドを実行する。</p>
 <hr />
-<h2 id="7-redis-io-6935">7. Redis I/O エラー (#6935)<a class="headerlink" href="#7-redis-io-6935" title="Permanent link">&para;</a></h2>
+<h2 id="7-redis-io-6935">7. Redis I/O エラー (#6935)<sup id="fnref:6935"><a class="footnote-ref" href="#fn:6935">2</a></sup><a class="headerlink" href="#7-redis-io-6935" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: DPB 操作中に <a href="../../reference/glossary/#term-redis">Redis</a> の I/O エラーが発生する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>[DPB] redis (database) input/output errors
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>[DPB] redis (database) input/output errors
 </span></code></pre></div>
 <p><strong>原因</strong>: 大規模な CONFIG_DB 変更（多数のポート削除・追加）が
 Redis のパイプライン処理を圧迫する場合がある。</p>
 <p><strong>対処</strong>: <code>database</code> サービスのログを確認し、Redis の状態を診断する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>database<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
-</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>INFO<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;used_memory|rdb_|aof_&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>database<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>INFO<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;used_memory|rdb_|aof_&#39;</span>
 </span></code></pre></div>
 <hr />
 <h2 id="dpb">DPB トラブルシューティングフロー<a class="headerlink" href="#dpb" title="Permanent link">&para;</a></h2>
@@ -36506,7 +36553,57 @@ Redis のパイプライン処理を圧迫する場合がある。</p>
 <li><a href="../sonic-dynamic-port-breakout-feature-high-level-design/">動的ポートブレイクアウト HLD</a></li>
 <li><a href="../../reference/yang/">YANG モデルリファレンス</a></li>
 </ul>
-<!-- glossary-links-injected: 9fb3fca99a59 -->
+<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>本ページの各項目は <a href="../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> の issue tracker に記録された実環境報告を一次情報とする。YANG モデルの現況は <code>sonic-net/sonic-buildimage</code> (sha <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>) で裏取りした。</p>
+<!-- glossary-links-injected: 75921d013977 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:6722">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/6722">sonic-buildimage #6722</a> — <code>PORTCHANNEL_MEMBER</code> 等のテーブルに YANG モデルが無く DPB 依存チェックで警告になる件。&#160;<a class="footnote-backref" href="#fnref:6722" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:6722" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6935">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/6935">sonic-buildimage #6935</a> — DPB 操作中の Redis (database) I/O エラー。&#160;<a class="footnote-backref" href="#fnref:6935" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7402">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/7402">sonic-buildimage #7402</a> — イメージアップグレード時の <code>BREAKOUT_CFG</code> フォーマット移行漏れ。&#160;<a class="footnote-backref" href="#fnref:7402" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7403">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/7403">sonic-buildimage #7403</a> — VS 環境の DPB で <code>sai_remove_hostif</code> が失敗する件。&#160;<a class="footnote-backref" href="#fnref:7403" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7959">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/7959">sonic-buildimage #7959</a> — <code>BGP_NEIGHBOR</code> の YANG <code>uses</code>/<code>grouping</code> が ASN 検証エラーを引き起こす件。&#160;<a class="footnote-backref" href="#fnref:7959" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9312">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9312">sonic-buildimage #9312</a> — libyang バックリンクのバグで <code>import</code> 組み合わせがビルドを壊す件。&#160;<a class="footnote-backref" href="#fnref:9312" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9326">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9326">sonic-buildimage #9326</a> — <code>has_global_scope</code> 要素の invalid value による DPB 失敗。&#160;<a class="footnote-backref" href="#fnref:9326" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9653">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9653">sonic-buildimage #9653</a> — 400G → 4x100G[50G] breakout 後の orchagent クラッシュ。&#160;<a class="footnote-backref" href="#fnref:9653" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9663">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9663">sonic-buildimage #9663</a> — <code>platform.json</code> に <code>None</code> が含まれると breakout CLI が動作しない件。&#160;<a class="footnote-backref" href="#fnref:9663" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9801">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9801">sonic-buildimage #9801</a> — <code>BUFFER_PORT_EGRESS_PROFILE</code> 設定時の DPB 失敗。&#160;<a class="footnote-backref" href="#fnref:9801" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9802">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9802">sonic-buildimage #9802</a> — DPB 中のポート削除を LLDP が graceful に扱えない件。&#160;<a class="footnote-backref" href="#fnref:9802" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+</li>
+<li id="fn:10005">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/10005">sonic-buildimage #10005</a> — DPB 中に orchagent が CONFIG_DB の DELETE 更新を取りこぼす件。&#160;<a class="footnote-backref" href="#fnref:10005" title="Jump back to footnote 12 in the text">&#8617;</a></p>
+</li>
+<li id="fn:11190">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/11190">sonic-buildimage #11190</a> — breakout 時に counters 関連のエラーログが出る件。&#160;<a class="footnote-backref" href="#fnref:11190" title="Jump back to footnote 13 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:11190" title="Jump back to footnote 13 in the text">&#8617;</a></p>
+</li>
+<li id="fn:11418">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/issues/11418">sonic-buildimage #11418</a> — breakout ポートでカウンターレートが表示されない件。&#160;<a class="footnote-backref" href="#fnref:11418" title="Jump back to footnote 14 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:11418" title="Jump back to footnote 14 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
