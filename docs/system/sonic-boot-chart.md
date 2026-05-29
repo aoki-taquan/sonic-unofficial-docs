@@ -10,26 +10,10 @@ sources:
   path: doc/profiling/sonic_bootchart.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - SYSLOG_SERVER
-  - SYSLOG_CONFIG
-  - SYSLOG_CONFIG_FEATURE
-  - PORT
-  - PORTCHANNEL
-  - BREAKOUT_CFG
-  - INTERFACE
+  _no_related_config_db: true
+  _no_related_yang: true
   cli:
   - sonic-bootchart
-  - show version
-  - show uptime
-  - show services
-  - show interfaces
-  - show ip
-  - config syslog
-  yang:
-  - sonic-feature
-  - sonic-system-defaults
-  - sonic-syslog
 ---
 
 <!-- topics-tip -->
@@ -122,19 +106,22 @@ enable は **永続的**。`config save` / `config reload` の影響を受けず
 #### config
 
 ```bash
-admin@sonic:~$ sudo sonic-bootchart config --time-span 50 --frequency 10
+admin@sonic:~$ sudo sonic-bootchart config --time 50 --frequency 10
 ```
 
 このコマンドが `/etc/systemd/bootchart.conf` を直接更新する。**次回 boot から** 新値が使われる。
 
-`samples = frequency × time-span` で換算される。
+`Samples = frequency × time` で換算される。
+
+!!! warning "HLD と master 実装の option 名差"
+    HLD 原文は `--time-span` と記すが、master 実装（`sonic-utilities` `scripts/sonic-bootchart` の `config` サブコマンド）の option は **`--time`**（`@click.option('--time', ...)`）。`show` の出力ヘッダも HLD の `Time Span (sec)` に対し実装は **`Time (sec)`**（`field_values` の key が `"Time (sec)"`）。本ページは master 実装に合わせて記述している。
 
 #### show
 
 ```text
 admin@sonic:~$ sudo sonic-bootchart show
-Status     Operational Status   Frequency  Time Span (sec)  Output
-enabled    inactive            10         50               /run/log/bootchart-20220504-1325.svg
+Status     Operational Status   Frequency  Time (sec)  Output
+enabled    inactive            10         50          /run/log/bootchart-20220504-1325.svg
 ```
 
 | フィールド | 意味 |
@@ -142,7 +129,7 @@ enabled    inactive            10         50               /run/log/bootchart-20
 | `Status` | `systemctl is-enabled systemd-bootchart` 出力（boot 時に走るか） |
 | `Operational Status` | `systemctl is-active systemd-bootchart` 出力（現在 sample 収集中か） |
 | `Frequency` | sample/sec |
-| `Time Span` | 起動後何秒間 sampling するか |
+| `Time (sec)` | 起動後何秒間 sampling するか（`Samples ÷ Frequency` で算出） |
 | `Output` | 完了している場合に SVG パスを表示。未完了なら空 |
 
 ### 出力先
@@ -180,7 +167,7 @@ sequenceDiagram
 |---------|------|
 | `sudo sonic-bootchart enable` | 次回起動以降の sampling を有効化 |
 | `sudo sonic-bootchart disable` | 無効化 |
-| `sudo sonic-bootchart config --time-span <s> --frequency <hz>` | 収集パラメータ更新 |
+| `sudo sonic-bootchart config --time <s> --frequency <hz>` | 収集パラメータ更新 |
 | `sudo sonic-bootchart show` | 状態 / 出力 SVG を表示 |
 
 ### 設定例
@@ -190,7 +177,7 @@ sequenceDiagram
 sudo sonic-bootchart enable
 
 # 50 秒 × 10 Hz = 500 samples に縮小
-sudo sonic-bootchart config --time-span 50 --frequency 10
+sudo sonic-bootchart config --time 50 --frequency 10
 
 # reboot して計測
 sudo reboot
@@ -224,15 +211,15 @@ sudo sonic-bootchart show
 - 設定を変えても反映されない → `config` 後に **必ず reboot** が必要、`/etc/systemd/bootchart.conf` の現在値を直接確認
 
 
-### コマンド例
+### 補足: `systemd-analyze`（別ツール）
 
-boot 所要時間の breakdown を確認する。
+`systemd-analyze` は `sonic-bootchart` とは別の **systemd 標準ツール**で、本 HLD のスコープ外。SVG sampling profile（`sonic-bootchart`）を取る前段で、boot 全体の所要時間や unit 単位の遅延を素早く把握したい場合に併用できる。
 
 ```bash
-systemd-analyze
-systemd-analyze blame | head -20
-systemd-analyze critical-chain
-ls /run/log/bootchart-*.svg
+systemd-analyze                       # 全体の起動所要時間
+systemd-analyze blame | head -20      # unit ごとの起動時間 (降順)
+systemd-analyze critical-chain        # critical path
+ls /run/log/bootchart-*.svg           # sonic-bootchart の出力 SVG 一覧
 ```
 
 ## 関連リファレンス

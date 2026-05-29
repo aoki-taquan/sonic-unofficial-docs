@@ -1,7 +1,8 @@
 ---
 title: pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）
-description: pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） — pmon container には既に ledd（LED）/
-  xcvrd（SFP）の daemon があるが、PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは pl…
+description: PSU / FAN / chassis / syseeprom データを daemon が周期収集 (PSU/FAN) または boot 時 1 回 dump
+  (syseeprom) して STATE_DB に集約し、CLI / SNMP は DB のみを read する pmon 強化 HLD。platform plugin
+  の直接アクセスを pmon container 内に閉じ込め、高速化と container 跨ぎの一貫性を実現する。
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,12 +13,7 @@ sources:
 related:
   config_db:
   - SNMP
-  - SNMP_AGENT_ADDRESS_CONFIG
   - PORT
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - DPU
-  - SNMP_COMMUNITY
   cli:
   - show platform fan
   - show platform psustatus
@@ -162,23 +158,13 @@ reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
 
 ## 既知の問題
 
+本 HLD のスコープ（PSU / FAN / syseeprom の STATE_DB 集約と pmon daemon 化）に関連する既知の問題のみ挙げる。
+
 ### BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフォーム（sonic-buildimage#633）
 
 BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフォームでは、platform API で BMC インターフェースを使う設計が必要
 
 - 参照: [sonic-net/sonic-buildimage#633](https://github.com/sonic-net/sonic-buildimage/issues/633)
-
-### ポートのステータス変更が SONiC に反映されない問題（sonic-buildimage#4646）
-
-ポートのステータス変更が [SONiC](../reference/glossary.md#term-sonic) に反映されない問題。xcvrd または [portsyncd](../reference/glossary.md#term-portsyncd) がポートの物理状態変更を正しく検知できていない場合に発生。`sudo systemctl restart pmon` で回復できることがある
-
-- 参照: [sonic-net/sonic-buildimage#4646](https://github.com/sonic-net/sonic-buildimage/issues/4646)
-
-### 最新ビルドで `show interface transceiver` コマンドが壊れている問題（sonic-buildimage#5001）
-
-最新ビルドで `show interface transceiver` コマンドが壊れている問題。xcvrd の Python 3 移行後にインターフェース取得ロジックが変更されたため、パッケージのバージョン整合性を確認すること
-
-- 参照: [sonic-net/sonic-buildimage#5001](https://github.com/sonic-net/sonic-buildimage/issues/5001)
 
 ### 最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題（sonic-buildimage#5759）
 
@@ -191,30 +177,6 @@ BMC (Baseboard Management Controller) 経由でファン・センサー制御が
 最新 SONiC イメージで PMON コンテナがクラッシュする問題。プラットフォーム固有の Python プラグインが Python 3 に対応していない場合に発生
 
 - 参照: [sonic-net/sonic-buildimage#5986](https://github.com/sonic-net/sonic-buildimage/issues/5986)
-
-### multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュする問題（sonic-buildimage#6097）
-
-multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュする問題。xcvrd は FrontEnd ASIC の存在を前提としており、全 BackEnd 構成では初期化に失敗する
-
-- 参照: [sonic-net/sonic-buildimage#6097](https://github.com/sonic-net/sonic-buildimage/issues/6097)
-
-### hwsku.json から FEC パラメータがデフォルト設定できない問題（sonic-buildimage#6495）
-
-hwsku.json から FEC パラメータがデフォルト設定できない問題。FEC の設定は `config interface fec` コマンドで明示的に行う必要がある
-
-- 参照: [sonic-net/sonic-buildimage#6495](https://github.com/sonic-net/sonic-buildimage/issues/6495)
-
-### DPB 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題（sonic-buildimage#6499）
-
-[DPB](../reference/glossary.md#term-dpb) 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題。DPB 実行後に xcvrd の再起動が必要な場合がある
-
-- 参照: [sonic-net/sonic-buildimage#6499](https://github.com/sonic-net/sonic-buildimage/issues/6499)
-
-### CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題（sonic-buildimage#6516）
-
-CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題。CMIS 4.0 対応の xcvrd バージョンが必要
-
-- 参照: [sonic-net/sonic-buildimage#6516](https://github.com/sonic-net/sonic-buildimage/issues/6516)
 
 ## 引用元
 
