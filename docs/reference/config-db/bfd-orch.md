@@ -81,7 +81,7 @@ BFD_SESSION_TABLE:<vrf>:<interface>:<peer_ip>
 <!-- /cdb-exceptions -->
 
 <!-- ordering -->
-## 書込み順依存・タイミング依存 (Phase B)
+## 書込み順依存・タイミング依存
 
 [APPL_DB](../../reference/glossary.md#term-appl_db) `BFD_SESSION_TABLE` を購読する `BfdOrch::doTask(Consumer&)` (`bfdorch.cpp:111-218`) は `aclorch` 等とは異なり `gPortsOrch->allPortsReady()` の早期 return ガードを**持たない**。代わりに `create_bfd_session()` 内で個別に PORT / [VRF](../../reference/glossary.md#term-vrf) / SAI capability を解決し、失敗時に `return false` で `it++` 待機する設計になっている。
 
@@ -276,7 +276,7 @@ else
 [^1]: `sonic-swss/orchagent/bfdorch.cpp` (L15-20 マクロ定義、L305-574 `create_bfd_session()`、L111-217 `doTask()`). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp>
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -347,7 +347,7 @@ Orch::addExecutor(bfdStateNotificatier);
 
 `BfdOrch::register_bfd_state_change_notification()` (`bfdorch.cpp:270-303`) は **初回 `create_bfd_session()` 内** (`bfdorch.cpp:307-314`) で 1 回だけ呼ばれる。`register_state_change_notif` フラグで以後抑止される。
 
-`sai_query_attribute_capability(SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY)` で `set_implemented == true` を確認した上で `sai_switch_api->set_switch_attribute()` でコールバック `on_bfd_session_state_change` を登録する。capability が false の場合は **セッション作成自体を reject** する (詳細は Phase H プラットフォーム差を参照)。
+`sai_query_attribute_capability(SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY)` で `set_implemented == true` を確認した上で `sai_switch_api->set_switch_attribute()` でコールバック `on_bfd_session_state_change` を登録する。capability が false の場合は **セッション作成自体を reject** する (詳細は プラットフォーム差を参照)。
 
 ### STATE_DB Table (購読しない / 書き込みのみ)
 
@@ -370,11 +370,10 @@ Orch::addExecutor(bfdStateNotificatier);
 | BfdOrch → STATE_DB | `swss::Table::hset()` | `BFD_SESSION_TABLE\|<vrf>\|<intf>\|<peer>` |
 | BfdOrch → in-process observers | `Subject::notify()` | `SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE` |
 
-CONFIG_DB は購読しない。keyspace 通知も使わない。詳細解析は `meta/_intermediate/cdb-flow/bfd-orch-pubsub.md` を参照。
 <!-- /pubsub -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 本ページが扱う主作用テーブルは **APPL_DB `BFD_SESSION_TABLE`** (bfdorch が consumer として購読) であり、`BfdOrch` の主作用は SAI BFD セッションの作成・削除 (ASIC_DB 経由) である。これに加え、`BfdOrch` は **STATE_DB の 2 テーブル** へ副次的にエントリを書き込む。SAI BFD セッション自体の書込み (ASIC_DB 経由) は主作用のため除外する。
 
@@ -387,11 +386,10 @@ CONFIG_DB は購読しない。keyspace 通知も使わない。詳細解析は 
 
 `BfdOrch` は **[COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / APPL_DB / CONFIG_DB に対する書込みを一切行わない** (BFD は SAI counter 統計の対象外であり、`ProducerStateTable` / `NotificationProducer` メンバも未保有)。プロセス内 observer pattern (`notify(SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE, ...)` L260 / L572 / L680) は [orchagent](../../reference/glossary.md#term-orchagent) 内の `NhgOrch` / `RouteOrch` 等への通知であり DB 書込ではない。
 
-> **Evidence**: `sonic-swss/orchagent/bfdorch.cpp` L59-86 (DB ハンドル構築 + 起動時 cleanup), L136 / L185 (software 経路 set/del), L252 (state hset), L565 (create 後の初期化 set), L629 (remove 時 del), L706-714 (`createSoftwareBfdSession()` / `removeSoftwareBfdSession()`); 詳細スキャンと grep 結果は `meta/_intermediate/cdb-flow/bfd-orch-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `bfdorch` は環境変数 `platform` / `sub_platform` を参照しない。プラットフォーム差はすべて **SAI capability 動的照会** (`sai_query_attribute_capability`) で決定される。経路選択は起動時 1 回のみ評価される。
 
@@ -446,7 +444,7 @@ CONFIG_DB は購読しない。keyspace 通知も使わない。詳細解析は 
 <!-- /platform -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト
 
 APPL_DB `BFD_SESSION_TABLE` に対応する [YANG](../../reference/glossary.md#term-yang) schema は存在しない。すべてのデフォルトは `bfdorch.cpp` の変数初期化またはマクロ定義から由来する。
 
@@ -470,7 +468,7 @@ APPL_DB `BFD_SESSION_TABLE` に対応する [YANG](../../reference/glossary.md#t
 <!-- /defaults -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-swss/orchagent/bfdorch.cpp`
 
@@ -518,11 +516,10 @@ APPL_DB `BFD_SESSION_TABLE` に対応する [YANG](../../reference/glossary.md#t
 - **capability 不在は再起動が必要**: `register_bfd_state_change_notification()` の評価は `BfdOrch` コンストラクタで 1 回のみ。capability 不在のまま swss 起動した場合、SAI 実装が後で更新されても **swss コンテナ再起動なしには hardware BFD は動かない**。
 - **`use_software_bfd` 経路では SAI 失敗は発生しない**: SAI API を呼ばず STATE_DB `SOFTWARE_BFD_SESSION_TABLE` に転記するのみ (`bfdorch.cpp:133-139, 182-188`)。失敗経路は事前検証 (`local_addr` 未指定など) のみに縮小される。
 
-詳細根拠は `meta/_intermediate/cdb-flow/bfd-orch-failure.md` を参照。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### bfdorch.cpp マクロ定義 (L15-23)
 
@@ -576,11 +573,10 @@ STATE_DB 書込み時の `state` 文字列 (`session_state_lookup`):
 | Remote discriminator 初期値 | `0` | SAI `REMOTE_DISCRIMINATOR` 属性 (ピア発見前) | `bfdorch.cpp:430` |
 | VRF/Interface 既定値 | `"default"` | hardware lookup 有効モード判定 | `bfdorch.cpp:471, 520-528` |
 
-> **スキャン証跡**: `bfdorch.cpp` L1-60, L33-54, L340-475, L505-530, L580-655, L780-800 を読了。マクロ 8 件、SAI 列挙文字列マップ 4+4=8 件、初期値リテラル 5 件を抽出。中間ファイル: `meta/_intermediate/cdb-flow/bfd-orch-constants.md`
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `BFD_SESSION` (CONFIG_DB → APPL_DB `BFD_SESSION_TABLE`) は YANG 未定義のため leafref は存在しない。以下はすべて `bfdorch.cpp` 実装レベルの暗黙参照。
 
@@ -604,7 +600,6 @@ STATE_DB 書込み時の `state` 文字列 (`session_state_lookup`):
     → **PORT テーブルのみ参照**（VRF は `default` 限定、`dst_mac` 必須）。
     両経路の同時使用は不可（`bfdorch.cpp` L498–503）。
 
-> **中間ファイル**: `meta/_intermediate/cdb-flow/bfd-orch-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- glossary-links-injected: 27618ff2c697 -->

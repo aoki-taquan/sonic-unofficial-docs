@@ -125,7 +125,7 @@ YANG `default` 文が存在しないフィールドでもコードが暗黙の�
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `bgpcfgd` (`AsPathMgr`) と `frrcfgd` (sonic-frr-mgmt-framework) の両経路を全行精読して抽出した、AS_PATH_SET 処理に埋め込まれた固定リテラル・定数。[SONiC](../../reference/glossary.md#term-sonic) レイヤには **regex 長やエントリ数の上限値は一切定義されていない**（FRR `bgpd` 内部の天井に委譲）。
 
@@ -190,11 +190,10 @@ YANG `default` 文が存在しないフィールドでもコードが暗黙の�
 
 <!-- evidence: managers_as_path.py:7,31,35,40,43,52,56,61,65; frrcfgd.py:96,1009-1020,1977,2251; bgpd.conf.db.j2:11-20; sonic-routing-policy-sets.yang:28-39,217-240 -->
 
-> **スキャン証跡**: `managers_as_path.py` 全 67 行、`frrcfgd.py` AS_PATH_SET 関連箇所、`bgpd.conf.db.j2`、`sonic-routing-policy-sets.yang` action enum 定義部すべて読了。中間ファイル: `meta/_intermediate/cdb-flow/as-path-set-constants.md`
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `AS_PATH_SET` 経路が前提・連動する関連 CONFIG_DB テーブル (Phase C)
+## 暗黙参照 — `AS_PATH_SET` 経路が前提・連動する関連 CONFIG_DB テーブル
 
 `AS_PATH_SET` には 2 つの独立した consumer 経路 (`frrcfgd` 本体 / `bgpcfgd` の `AsPathMgr`) があり、それぞれ別テーブルを入り口・前提として利用する。`AS_PATH_SET` を単体で見ると見えない依存関係を以下に列挙する。
 
@@ -230,15 +229,14 @@ YANG `default` 文が存在しないフィールドでもコードが暗黙の�
 
 ### 範囲外 (誤解されやすい隣接テーブル)
 
-- [`COMMUNITY_SET`](./community-set.md) / [`PREFIX_SET`](./prefix-set.md) / `AS_PATH_LIST` (= `BGP_COMMUNITY_LIST`): いずれも `sonic-routing-policy-sets.yang` 配下の兄弟テーブル。`ROUTE_MAP` から並列に参照されるが、`AS_PATH_SET` ハンドラ (`hdl_aspath_set` — frrcfgd.py:1009-1020) からは読み出さない。本ページ冒頭の `関連 CONFIG_DB` に留め、Phase C には含めない。
+- [`COMMUNITY_SET`](./community-set.md) / [`PREFIX_SET`](./prefix-set.md) / `AS_PATH_LIST` (= `BGP_COMMUNITY_LIST`): いずれも `sonic-routing-policy-sets.yang` 配下の兄弟テーブル。`ROUTE_MAP` から並列に参照されるが、`AS_PATH_SET` ハンドラ (`hdl_aspath_set` — frrcfgd.py:1009-1020) からは読み出さない。本ページ冒頭の `関連 CONFIG_DB` に留め、には含めない。
 - `BGP_GLOBALS_AF` / `BGP_GLOBALS_LISTEN_PREFIX` / `BGP_NEIGHBOR` などの BGP 派生テーブル: `tbl_to_key_map` を共有するが `AS_PATH_SET` 経路は触らない。`BGP_GLOBALS` で代表させ個別記載しない。
 - `DEVICE_METADATA.localhost.hostname` / `localhost.bgp_asn`: 同じ `DEVICE_METADATA` テーブルだが `AsPathMgr` は `t2_group_asns` のみ参照 (`managers_as_path.py:35`)。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/as-path-set-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-bgpcfgd/bgpcfgd/managers_as_path.py` (AsPathMgr, `DEVICE_METADATA.localhost.t2_group_asns` 経路) と `sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` (AS_PATH_SET テーブル経路) の 2 経路を全行精読。retry セマンティクスは `bgpcfgd/manager.py` と `frrcfgd.py` ループに依存。
 
@@ -281,17 +279,16 @@ YANG `default` 文が存在しないフィールドでもコードが暗黙の�
 | 種別 | 該当ケース | 影響 |
 |---|---|---|
 | silent drop (ログなし・無反映) | 非 `localhost` key, OP_DELETE で未登録名, member 欠落 entry, 再同期 regex 非マッチによる残骸 | CONFIG_DB と FRR 状態の乖離 |
-| silent override | `action: deny` → `permit` に変換 (Phase E DISCREPANCY 再掲) | YANG 上の意味と動作が乖離 |
+| silent override | `action: deny` → `permit` に変換 (DISCREPANCY 再掲) | YANG 上の意味と動作が乖離 |
 | LOG_ERR + 後段 skip | `args` 不足, FRR コマンド rc != 0, socket send/recv 失敗, enable ret_code != 0, regex 不正 | syslog 監視必須 |
 | LOG_CRIT | `vtysh show running-config` 失敗 (`FRR.get_config`) | bgpcfgd 全 Manager に波及 |
 
 <!-- evidence: managers_as_path.py:7,30-66; config.py:17-63; frr.py:33-55; manager.py:34-65; frrcfgd.py:47-60,185-198,263-271,354-365,1009-1020,2251,746,753-773 -->
 
-> **スキャン証跡**: `managers_as_path.py` 全 67 行、`config.py` ConfigMgr 全体、`frr.py` get_config/write、`manager.py` handler/on_deps_change、`frrcfgd.py` の `g_run_command` / bgpd socket client / `run_command` / `hdl_aspath_set` / startup スキャン箇所すべて読了。中間ファイル: `meta/_intermediate/cdb-flow/as-path-set-failure.md`
 <!-- /failure -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: AS_PATH_SET は FRR (`bgpd`) 制御プレーン上の AS path access-list で [SAI](../../reference/glossary.md#term-sai) 非経由。[ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium / VPP)・[VOQ](../../reference/glossary.md#term-voq) chassis / chassis-packet・multi-asic namespace・ベンダー image_config のいずれにも分岐コードは存在しない。
 
@@ -307,17 +304,16 @@ YANG `default` 文が存在しないフィールドでもコードが暗黙の�
 
 注意: `DEVICE_METADATA.type` / `subtype` は HW プラットフォームではなく **論理トポロジー role** で、`AsPathMgr` (T2_GROUP_ASNS 経路) の起動可否のみを左右する。ユーザが `AS_PATH_SET|<name>` を CONFIG_DB に直接入れる経路は role に関わらず常時 `frrcfgd` 経由で FRR に反映される。
 
-詳細根拠は `meta/_intermediate/cdb-flow/as-path-set-platform.md` を参照。
 <!-- /platform -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
 `AS_PATH_SET` テーブルへの変更通知は **`frrcfgd` (sonic-frr-mgmt-framework) のみ** が受信する。`frrcfgd` は `ConfigDBConnector` を継承した独自 `ExtConfigDBConnector.subscribe()` + `listen()` で **[Redis](../../reference/glossary.md#term-redis) keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:*`)** を購読する。`swsscommon.SubscriberStateTable` (channel ベース PUBLISH/SUBSCRIBE) は frrcfgd 経路では使用しない。CONFIG_DB は永続前提のため TTL は設定されない。
 
-補助経路として `bgpcfgd` の `AsPathMgr` が存在するが、こちらは `AS_PATH_SET` ではなく `DEVICE_METADATA` を **`swsscommon.SubscriberStateTable`** (channel ベース) 経由で購読し、`localhost.t2_group_asns` の値を読んで固定名 `T2_GROUP_ASNS` の access-list を生成する別経路 (Phase E `<!-- constants -->` 参照)。
+補助経路として `bgpcfgd` の `AsPathMgr` が存在するが、こちらは `AS_PATH_SET` ではなく `DEVICE_METADATA` を **`swsscommon.SubscriberStateTable`** (channel ベース) 経由で購読し、`localhost.t2_group_asns` の値を読んで固定名 `T2_GROUP_ASNS` の access-list を生成する別経路 。
 
 | 購読者 | 対象テーブル | 購読 API | 通信方式 | ハンドラ |
 |--------|------------|---------|---------|---------|
@@ -374,7 +370,6 @@ subscriber.pop() → (key="localhost", op=SET, fvs={t2_group_asns:"65001,65002"}
 
 vtysh コマンド送出のみで BGP セッション自体は再起動されない。既存セッションへの反映は次回 UPDATE 送信時または `clear bgp ... soft in/out` 実施時。
 
-> **Evidence**: `sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:96, 1009-1020, 1506-1555, 1977, 2116, 2249-2253, 2315, 2359-2361` (keyspace listen / subscribe / hdl_aspath_set / 起動スナップショット)、`sonic-bgpcfgd/bgpcfgd/runner.py:23-73` (`SubscriberStateTable` ループ)、`sonic-bgpcfgd/bgpcfgd/main.py:122-130` (`AsPathMgr` 登録 gate)、`sonic-bgpcfgd/bgpcfgd/managers_as_path.py:30-66` (`set_handler`/`del_handler`); 詳細分析 `meta/_intermediate/cdb-flow/as-path-set-pubsub.md`
 <!-- /pubsub -->
 
 <!-- ref-triangle:start -->
@@ -412,7 +407,7 @@ vtysh -c "show ip as-path-access-list"
 <!-- /ops-hint -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `AS_PATH_SET` テーブルは leafref 参照元 (`ROUTE_MAP.match_as_path`)・bgpd デーモン起動順・別経路 (`AsPathMgr`) の固定名予約という 3 系統の順序依存を持つ。`bgpcfgd` (`AsPathMgr` / `managers_as_path.py:7-66`) と `frrcfgd` (`frrcfgd.py:96, 1009-1020, 2248-2253, 3005-3011`) の全行精読と `bgpd.conf.db.j2:6-20`、`sonic-route-map.yang:263-268` のクロス読みで抽出。
 
@@ -459,7 +454,6 @@ vtysh -c "show ip as-path-access-list"
 
 <!-- evidence: managers_as_path.py:7,30-66; main.py:122-130; frrcfgd.py:96,1009-1020,1940,2248-2253,3005-3011; bgpd.conf.db.j2:6-20; sonic-route-map.yang:263-268 -->
 
-> 詳細根拠は `meta/_intermediate/cdb-flow/as-path-set-ordering.md` を参照
 <!-- /ordering -->
 
 <!-- runtime-trace -->
@@ -485,7 +479,7 @@ vtysh -c "show ip as-path-access-list"
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `AS_PATH_SET`
 
@@ -514,7 +508,7 @@ vtysh -c "show ip as-path-access-list"
 <!-- /entry-points -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `AS_PATH_SET` テーブルの変更に伴って主購読者 `frrcfgd` (`sonic-frr-mgmt-framework`) および補助購読経路 `AsPathMgr` (`sonic-bgpcfgd`) が副次的に書き込む DB エントリは **存在しない**。副作用はすべて [FRR](../../reference/glossary.md#term-frr) `bgpd` プロセスへの vtysh コマンド送出に閉じる。
 
@@ -527,7 +521,6 @@ CONFIG_DB `AS_PATH_SET` テーブルの変更に伴って主購読者 `frrcfgd` 
 
 主購読者 2 経路の主作用はいずれも FRR デーモンへの `bgp as-path access-list <name> permit <regex>` / `no bgp as-path access-list <name>` の vtysh 送出のみ (`frrcfgd.py:1015-1019` / `managers_as_path.py:52,56,65`)。`AsPathMgr.set_handler` は `cfg_mgr.update()` で FRR running-config を読み戻すが (`managers_as_path.py:45-49`)、これは FRR テキスト config の読み出しであって DB 書込ではない。起動時 Jinja2 (`bgpd.conf.db.j2:11-20`) も `/etc/frr/bgpd.conf` 系のテキストファイルを生成するのみ。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/as-path-set-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- glossary-links-injected: 3ffabd92da21 -->

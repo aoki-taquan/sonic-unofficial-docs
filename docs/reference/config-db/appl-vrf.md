@@ -66,10 +66,9 @@ VRF_TABLE|<vrfName>
 - `orchagent` / `VRFOrch`: `VRF_TABLE` を `SubscriberStateTable` で購読。`sai_virtual_router_api->create_virtual_router()` または `set_virtual_router_attribute()` を呼ぶ。成功後 `STATE_VRF_OBJECT_TABLE|<vrfName>` に `state=ok` を書き込む[^vrforch]。
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 > 調査日 2026-05-15。ソース: `sonic-swss/orchagent/vrforch.cpp`、`vrforch.h`、`orch.cpp`、`orchdaemon.cpp`
-> 中間メモ: `meta/_intermediate/cdb-flow/appl-vrf-pubsub.md`
 
 ### 購読方式: `ConsumerStateTable` + `gBatchSize`
 
@@ -88,7 +87,7 @@ if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == 
 
 ### Orch2 inheritance と Request パーサ
 
-`vrforch.h:49` 時点で `class VRFOrch : public Orch2`。`Orch2` は `doTask(Consumer&)` を override し、`request_parser.h` の `Request` で field/value を型付きパースして `addOperation(const Request&)` / `delOperation(const Request&)` へ dispatch する。Phase 6 で抽出した [SAI](../../reference/glossary.md#term-sai) 属性マッピング (`v4` / `v6` / `src_mac` / `vni` ほか) はすべてこの `addOperation` から呼ばれる。
+`vrforch.h:49` 時点で `class VRFOrch : public Orch2`。`Orch2` は `doTask(Consumer&)` を override し、`request_parser.h` の `Request` で field/value を型付きパースして `addOperation(const Request&)` / `delOperation(const Request&)` へ dispatch する。[SAI](../../reference/glossary.md#term-sai) 属性マッピング (`v4` / `v6` / `src_mac` / `vni` ほか) はすべてこの `addOperation` から呼ばれる。
 
 ### `VxlanTunnelOrch` との `gDirectory` 同期
 
@@ -118,7 +117,7 @@ VxlanTunnelOrch* tunnel_orch = gDirectory.get<VxlanTunnelOrch*>();
 [^schema]: `sonic-swss-common/common/schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
 
 <!-- defaults -->
-## フィールドの暗黙デフォルト・コード由来挙動 (Phase A)
+## フィールドの暗黙デフォルト・コード由来挙動
 
 > 調査日 2026-05-15。ソース: `sonic-swss/orchagent/vrforch.cpp`、`vrforch.h`、`cfgmgr/vrfmgr.cpp`、`sonic-swss-common/common/schema.h`
 
@@ -196,9 +195,7 @@ else if ((name == "mgmtVrfEnabled") || (name == "in_band_mgmt_enabled"))
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/appl-vrf-ordering.md`
+## 書込み順依存
 
 ### SET 時の先行必須テーブル / 状態
 
@@ -257,9 +254,7 @@ VRFOrch が SAI Virtual Router create → updateVrfVNIMap → STATE_VRF_OBJECT_T
 <!-- /ordering -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/appl-vrf-failure.md -->
+## 失敗挙動・retry / recovery
 
 ### 共通機構
 
@@ -314,7 +309,7 @@ if(!evpn_vtep_ptr)
 <!-- /failure -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 APPL_DB `VRF_TABLE` への SET/DEL は、`orchagent` 内の `VRFOrch` (`vrforch.cpp`) を経由して以下の副次書込みを発火させる。`VRFOrch` 自身が保持する swss `Table` ハンドルは `m_stateVrfObjectTable` ただ 1 つで (`vrforch.h:54, 182`)、それ以外の DB 直接書込は存在しない。
 
@@ -358,11 +353,10 @@ APPL_DB `VRF_TABLE` への SET/DEL は、`orchagent` 内の `VRFOrch` (`vrforch.
 
 本ページは APPL_DB `VRF_TABLE` スコープ。同じ APPL_DB 上の `VNET_TABLE` は `VnetOrch` (`vnetorch.cpp`) が処理し、`STATE_VNET_RT_TUNNEL_TABLE` / `STATE_ADVERTISE_NETWORK_TABLE` 等への副次書込みを発火させるが、これは別ハンドラの責務のため本ページの対象外。
 
-詳細スキャン手順・grep 結果は `meta/_intermediate/cdb-flow/appl-vrf-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 APPL_DB `VRF_TABLE` のスキーマ自体はプラットフォーム共通だが、`VRFOrch::addOperation` が SAI Virtual Router に渡す拡張属性 4 種 (`src_mac` / `ttl_action` / `ip_opt_action` / `l3_mc_action`) は SAI 任意属性であり、[ASIC](../../reference/glossary.md#term-asic) SAI 実装と [VS](../../reference/glossary.md#term-vs)/VPP シムで挙動が異なる。さらに `vni != 0` の L3 VNI マッピングは [EVPN](../../reference/glossary.md#term-evpn) VTEP 事前作成を必須とする。
 
@@ -428,11 +422,10 @@ VTEP 未設定で `vni > 0` の VRF エントリを APPL_DB に書くと VRFOrch
 | EVPN VTEP 事前作成必須 | あり | あり | あり | あり (受理のみ) | あり (受理のみ) |
 | VRF 削除時の外部同期 | 不要 | 不要 | 不要 | 不要 | `m_useTapDevice=true` のみ VPP に伝搬 |
 
-詳細根拠は `meta/_intermediate/cdb-flow/appl-vrf-platform.md` を参照。
 <!-- /platform -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 APPL_DB `VRF_TABLE` は YANG 未モデル化のオペレーショナルテーブルで、`vrfmgrd` が書き手・`VRFOrch` が読み手。`leafref` は存在しないため、エントリ生成タイミング・SAI Virtual Router 属性・L3 VNI マッピング成立・`ref_count` による削除防御は、すべて他テーブル / 他 Orch を実装レベルで暗黙に参照することで成立する。`sonic-swss/orchagent/vrforch.cpp` を精読し、依存先を以下に整理した。
 
@@ -456,11 +449,10 @@ APPL_DB `VRF_TABLE` は YANG 未モデル化のオペレーショナルテーブ
 !!! note "`ref_count > 0` の VRF 削除はブロックされる"
     `VRFOrch::delOperation()` (`vrforch.cpp:169–170`) は `vrf_table_[vrf_name].ref_count` が 0 でない限り `task_need_retry` を返す。インタフェース・各種ルート・SRv6 DT / TWAMP / P4 / FG_NHG のいずれかが当該 VRF を参照していると `config vrf del` 完了は保留される。BGP 学習ルートが残っているケースも同じ経路でブロックされる。
 
-詳細根拠は `meta/_intermediate/cdb-flow/appl-vrf-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `vrfmgrd` (`cfgmgr/vrfmgr.cpp`) と `VRFOrch` (`orchagent/vrforch.cpp`) には CONFIG_DB / YANG から変更できないソース直書きの定数・固定識別子が複数ある。APPL_DB `VRF_TABLE` 経由で運用上の上限・例外名を理解するために重要。
 
@@ -512,7 +504,6 @@ APPL_DB `VRF_TABLE` は YANG 未モデル化のオペレーショナルテーブ
 | `MGMT_VRF="mgmt"` | 不可 (VRF 名 rename 不能) |
 | STATE フィールド `"state"="ok"` | 不可 (orchagent と [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) の双方で同じ literal) |
 
-詳細な grep 履歴と派生事実は `meta/_intermediate/cdb-flow/appl-vrf-constants.md` を参照。
 <!-- /constants -->
 
 ## 関連ページ

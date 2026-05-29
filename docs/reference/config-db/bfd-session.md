@@ -149,9 +149,8 @@ BFD_SESSION|<vrf>|<interface>|<peer_ip>
 <!-- /value-behavior -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-`BfdOrch` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BFD_SESSION` を **直接購読しない**。`orchdaemon.cpp:243` で APPL_DB + `APP_BFD_SESSION_TABLE_NAME = "BFD_SESSION_TABLE"` を渡して生成されるため、`Orch::addConsumer()` の DB 種別分岐で **`ConsumerStateTable`** (channel ベースの Producer/Consumer 方式) が選ばれる。CONFIG_DB → APPL_DB の橋渡しは別コンポーネント (`bgpcfgd`、`staticroutebfd`、`DashHaOrch` 等) が担う。さらに `BfdOrch` は **2 つ目の Executor** として [ASIC_DB](../../reference/glossary.md#term-asic_db) 上の `NotificationConsumer` (channel `NOTIFICATIONS`、op `bfd_session_state_change`) を持ち、SAI からの state 通知を受ける。詳細スキャンノート: [`meta/_intermediate/cdb-flow/bfd-session-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-pubsub.md)。
 
 | 項目 | 値 |
 |------|-----|
@@ -215,7 +214,7 @@ show bfd peers details
 <!-- /ops-hint -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `bfdorch` が他テーブル由来の状態を直接参照する経路 (Phase C)
+## 暗黙参照 — `bfdorch` が他テーブル由来の状態を直接参照する経路
 
 `BFD_SESSION` は [YANG](../../reference/glossary.md#term-yang) schema を持たず leafref / subscribe 経由の明示参照を宣言しない。しかし `bfdorch` (`sonic-swss/orchagent/bfdorch.cpp`) は SAI 投入時に **他 CONFIG_DB テーブル由来の [orchagent](../../reference/glossary.md#term-orchagent) 内オブジェクト** を直接参照しており、暗黙的な前提依存が発生する。本ブロックではコード経路ベースで観測される暗黙参照をまとめる。
 
@@ -228,7 +227,7 @@ show bfd peers details
 | [`BGP_DEVICE_GLOBAL`](bgp-device-global.md) (`STATE.use_software_bfd` / `STATE.tsa_enabled`) | `doTask()` 毎周回 + TSA state change 通知時 | `BgpGlobalStateOrch::getSoftwareBfd()` / `getTsaState()` で hardware/software 経路 と TSA shutdown 挙動を決定 | 制御依存 | `bfdorch.cpp:114-138, 683-748` |
 | `STATIC_ROUTE` (`STATIC_ROUTE|<vrf>|<prefix>`) | `staticroutebfd` プロセス (別プロセス) が CONFIG_DB を subscribe し、BFD 監視対象の next-hop に対応する BFD セッションを APPL_DB `BFD_SESSION_TABLE` に push する | static route の BFD 監視は `staticroutebfd` 経由で **逆方向に `BFD_SESSION_TABLE` を生成** する (`tx/rx_interval=50ms` 既定上書き) | **逆方向** (STATIC_ROUTE → BFD_SESSION) | `staticroutebfd/main.py:23-24, 118-120, 283-288, 366-559, 720-730` |
 
-> 上記は `bfdorch` が CONFIG_DB を直接 subscribe するわけではない点に注意。`PORT` / `VRF` は [orchagent](../../reference/glossary.md#term-orchagent) 内 in-memory state (`gPortsOrch` / `VRFOrch`) 経由、`BGP_DEVICE_GLOBAL` は `BgpGlobalStateOrch` 経由で参照される。順序依存は 書込み順依存 (Phase B) を参照。
+> 上記は `bfdorch` が CONFIG_DB を直接 subscribe するわけではない点に注意。`PORT` / `VRF` は [orchagent](../../reference/glossary.md#term-orchagent) 内 in-memory state (`gPortsOrch` / `VRFOrch`) 経由、`BGP_DEVICE_GLOBAL` は `BgpGlobalStateOrch` 経由で参照される。順序依存は「書込み順依存」セクションを参照。
 
 ### STATE_DB / APPL_DB レベル — 経路別の中継
 
@@ -245,11 +244,10 @@ show bfd peers details
 - **`BGP_NEIGHBOR` / `BGP_PEER_RANGE`**: [BGP](../../reference/glossary.md#term-bgp) セッションで BFD を有効化する設定はこちらにあるが、`BFD_SESSION` テーブルへの投入は `bgpcfgd` / FRR が担当し `bfdorch` のスコープ外
 - **`DEVICE_METADATA` / `SWITCH`**: `gSwitchId` / `gVirtualRouterId` は SwitchOrch 起動時に確定済みのグローバル変数として参照される (`bfdorch.cpp:27, 533`)。`bfdorch` が `DEVICE_METADATA` を直接読むことはない
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bfd-session-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト
 
 [YANG](../../reference/glossary.md#term-yang) schema が存在しないため、すべてのデフォルトはコード (`bfdorch.cpp`) の変数初期化またはマクロ定義から由来する。
 
@@ -273,9 +271,8 @@ show bfd peers details
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E — コード由来)
+## ハードコード定数
 
-`bfdorch` (`sonic-swss/orchagent/bfdorch.cpp`) の `#define` マクロおよび `const` マップから抽出した、BFD_SESSION 処理に直接影響する定数群。詳細スキャンノート: [`meta/_intermediate/cdb-flow/bfd-session-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-constants.md)。
 
 ### `#define` マクロ定数
 
@@ -323,9 +320,8 @@ STATE_DB へ書き戻される `state` 値も固定 (`session_state_lookup`, `bf
 <!-- /constants -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B — コード由来)
+## 書込み順依存
 
-`bfdorch` (`sonic-swss/orchagent/bfdorch.cpp`) の `doTask()` / `create_bfd_session()` を精読して検出した順序依存・タイミング依存。詳細スキャンノート: [`meta/_intermediate/cdb-flow/bfd-session-ordering.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-ordering.md)。
 
 | # | 依存関係 | 方向 | 緩和策 / 備考 |
 |---|----------|------|--------------|
@@ -345,7 +341,7 @@ STATE_DB へ書き戻される `state` 値も固定 (`session_state_lookup`, `bf
 <!-- /ordering -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `BFD_SESSION` の SET/DEL を起点に `bfdorch` (`sonic-swss/orchagent/bfdorch.cpp`) が副次的に書き込む DB は **STATE_DB の 2 テーブル** に閉じる。APPL_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書込は `bfdorch` 起点では存在しない。
 
@@ -367,13 +363,11 @@ CONFIG_DB `BFD_SESSION` の SET/DEL を起点に `bfdorch` (`sonic-swss/orchagen
 
 - software BFD 経路の `state` 反映は `bgpcfgd` `BfdMgr` の責務であり、本ページの主購読者 `bfdorch` の副次書込からは外れる (読出側)。
 - hardware/software の経路判定は起動時の SAI capability 照会で固定される (`bfdorch.cpp:735` / プラットフォーム差)。
-- 詳細スキャン手順と grep 結果は [`meta/_intermediate/cdb-flow/bfd-session-side.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-side.md) を参照。
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-BFD_SESSION の処理は **SAI 動的 capability 照会** で hardware/software 経路を起動時に決定する。[ACL](../../reference/glossary.md#term-acl) 系のように `platform` / `sub_platform` 環境変数を静的比較する分岐は `bfdorch.cpp` には存在しない。差異の決定は SAI 実装 (`libsai*.so`) 側の `set_implemented` / `get_implemented` プロパティに完全依存する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/bfd-session-platform.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-platform.md)。
 
 ### 動的に照会される SAI capability
 
@@ -441,9 +435,8 @@ BFD_SESSION の処理は **SAI 動的 capability 照会** で hardware/software 
 <!-- /platform -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D — `bfdorch.cpp` 由来)
+## 失敗挙動
 
-`create_bfd_session()` / `remove_bfd_session()` / `register_bfd_state_change_notification()` / `checkBfdSwOrchHwSupport()` の精読で検出した失敗経路。詳細スキャンノート: [`meta/_intermediate/cdb-flow/bfd-session-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-failure.md)。
 
 ### SET 処理 (`create_bfd_session()`)
 
