@@ -65,9 +65,7 @@ ROUTE_TABLE|<prefix>
 - `add=false` → `state = "na"`（デフォルト経路を削除）
 
 <!-- defaults -->
-## コード由来デフォルト詳細 (Phase A)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-state-defaults.md -->
+## コード由来デフォルト詳細
 
 ### STATE_DB `state` フィールド
 
@@ -140,9 +138,7 @@ intent_attrs_copy.insert(intent_attrs_copy.begin(), err_str);
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-> 証跡: `meta/_intermediate/cdb-flow/route-state-ordering.md`
+## 書込み順依存
 
 [STATE_DB](../../reference/glossary.md#term-state_db) / APPL_STATE_DB への `ROUTE_TABLE` 書き込みは `RouteOrch` が SAI 操作を完了させた後に行われる。以下に強制先行条件と推奨順序を示す。
 
@@ -169,9 +165,7 @@ intent_attrs_copy.insert(intent_attrs_copy.begin(), err_str);
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 他コンポーネントとの参照関係 (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-state-cross-refs.md -->
+## 他コンポーネントとの参照関係
 
 STATE_DB / APPL_STATE_DB の `ROUTE_TABLE` は **書き込み専用**（`RouteOrch` のみが書き込む）。読み取り側は以下の通り。
 
@@ -226,9 +220,7 @@ routeResponseChannel = std::make_unique<NotificationConsumer>(&applStateDb, rout
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗時の挙動 (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-state-failure.md -->
+## 失敗時の挙動
 
 `RouteOrch` が SAI 操作に失敗した場合、STATE_DB と APPL_STATE_DB への書き込みは異なる挙動を示す。
 
@@ -295,9 +287,7 @@ parseHandleSaiStatusFailure(task_failed) → return true
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-state-constants.md -->
+## ハードコード定数
 
 STATE_DB / APPL_STATE_DB への `ROUTE_TABLE` 書き込みで使用される定数はすべてソースコードにハードコードされており、設定ファイル・環境変数・`DEVICE_METADATA` 等での上書き手段は提供されていない。
 
@@ -346,9 +336,7 @@ constexpr char *kSaiComponent = "[SAI] ";
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-state-side.md -->
+## 副作用
 
 STATE_DB / APPL_STATE_DB への `ROUTE_TABLE` 書き込みは、以下のコンポーネントに連鎖的な副作用をもたらす。
 
@@ -389,9 +377,7 @@ RouteOrch は 1 回の `doTask()` イテレーションで複数 [ROUTE_TABLE](.
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-state-pubsub.md -->
+## Redis 通知メカニズム
 
 STATE_DB / APPL_STATE_DB の `ROUTE_TABLE` への書き込みには、それぞれ異なる通知経路が用いられる。
 
@@ -462,9 +448,7 @@ sync.onRouteResponse(key, fieldValues);
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-state-platform.md -->
+## プラットフォーム差分
 
 STATE_DB / APPL_STATE_DB への `ROUTE_TABLE` 書き込みロジック自体はプラットフォーム非依存だが、RouteOrch の初期化時とフロウカウンタ機能でプラットフォーム固有の挙動が存在する。
 

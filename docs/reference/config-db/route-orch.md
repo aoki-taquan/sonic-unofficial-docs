@@ -194,7 +194,7 @@ bool is_match(sai_object_id_t vrf, IpPrefix prefix) const
 - 関連 [YANG](../../reference/glossary.md#term-yang): 未定義（スキーマの正本は `flowcounterrouteorch.cpp` / `flow_counter_util/route.py`）
 
 <!-- ordering -->
-## 処理順序 — `FlowCounterRouteOrch` の初期化・タスク処理の順序制約 (Phase B)
+## 処理順序 — `FlowCounterRouteOrch` の初期化・タスク処理の順序制約
 
 ### orchagent 起動時の初期化順序
 
@@ -245,11 +245,10 @@ pending キューが空になると `mFlexCounterUpdTimer->stop()` でタイマ�
 | `isRouteFlowCounterEnabled() == false` | counter バインドのみスキップ（パターン登録は保持） |
 | `ASIC_DB:VIDTORID` に VID 未登録 | バインド保留 → pending キューへ |
 
-詳細スキャン手順と行番号一覧は `meta/_intermediate/cdb-flow/route-orch-ordering.md` を参照。
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `FlowCounterRouteOrch` が依存する関連テーブル (Phase C)
+## 暗黙参照 — `FlowCounterRouteOrch` が依存する関連テーブル
 
 `FLOW_COUNTER_ROUTE_PATTERN` は [YANG](../../reference/glossary.md#term-yang) 定義を持たない（[YANG](../../reference/glossary.md#term-yang) 未カバー）ため leafref による明示参照はゼロ件。
 代わりに `flowcounterrouteorch.cpp` の全 997 行から抽出した **8 系統の暗黙依存** が実装レベルの cross-table 参照となる。
@@ -279,11 +278,10 @@ pending キューが空になると `mFlexCounterUpdTimer->stop()` でタイマ�
 - `ROUTE_TABLE (STATE_DB)` — デフォルトルート到達性の side-effect 書き込み先であり、FlowCounterRouteOrch は参照しない。
 - `NEIGH_TABLE` / `INTF_TABLE` — RouteOrch が参照するが FlowCounterRouteOrch は直接参照しない。
 
-詳細スキャン手順と行番号一覧は `meta/_intermediate/cdb-flow/route-orch-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ### 設計上の特徴: task_failed / task_need_retry を使わない
 
@@ -340,11 +338,10 @@ journalctl -u swss | grep -i "flow counter\|route pattern"
 sudo tail -f /var/log/syslog | grep -i flowcounter
 ```
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/route-orch-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `FlowCounterRouteOrch` および `RouteOrch` には CONFIG_DB から変更できないハードコード定数が複数存在する。
 
@@ -399,11 +396,10 @@ sudo tail -f /var/log/syslog | grep -i flowcounter
 - `ROUTE_FLOW_COUNTER_POLLING_INTERVAL_MS`（10 秒）と `FLEX_COUNTER_UPD_INTERVAL`（1 秒）は変更手段が存在しない。ポーリング遅延が問題になる環境ではソース修正が必要。
 - `DEFAULT_NUMBER_OF_ECMP_GROUPS` / `DEFAULT_MAX_ECMP_GROUP_SIZE` は SAI `sai_switch_api->get_switch_attribute` の応答で上書きされるため、プラットフォームによっては実効値が異なる。
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/route-orch-constants.md`
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用テーブル書き込み (Phase F)
+## 副作用テーブル書き込み
 
 `FlowCounterRouteOrch` が `FLOW_COUNTER_ROUTE_PATTERN` への SET / DEL を処理するとき、CONFIG_DB 以外の複数のテーブルへ副作用として書き込む。以下はその一覧である。
 
@@ -506,7 +502,7 @@ reasoning: STATE_DB FLOW_COUNTER_CAPABILITY_TABLE|route への起動時 1 回書
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Producer/Consumer ペア
 
@@ -584,7 +580,7 @@ NotificationConsumer: なし
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `FLOW_COUNTER_ROUTE_PATTERN` テーブルへの応答動作はプラットフォームによって大きく異なる。差の起点は `FlowCounterRouteOrch::initRouteFlowCounterCapability()` が orchagent 起動時に実行する **SAI 動的照会** の成否である。
 
@@ -644,7 +640,7 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 - 異種 ASIC が混在する [SmartSwitch](../../reference/glossary.md#term-smartswitch) 環境では namespace 間で `mRouteFlowCounterSupported` の値が異なる場合があり、一部 namespace のみルートフローカウンターが有効になることがある。
 - `STATE_DB FLOW_COUNTER_CAPABILITY_TABLE|route` は namespace ごとに独立するため、参照側（CLI / monitoring）は対象 namespace を明示する必要がある。
 
-> **スキャン証跡**: `flow_counter_handler.cpp:51-62` (`queryRouteFlowCounterCapability`) / `flowcounterrouteorch.cpp:166-179` (`initRouteFlowCounterCapability`) / `flowcounterrouteorch.cpp:55-61` (doTask guard) / `flowcounterrouteorch.cpp:305-366` (`onAddMiscRouteEntry`/`onRemoveMiscRouteEntry` guards) / `flowcounterrouteorch.cpp:401-451` (`onAddVR`/`onRemoveVR` guards)。中間ファイル: `meta/_intermediate/cdb-flow/route-orch-platform.md`
+> **裏取り**: `flow_counter_handler.cpp:51-62` (`queryRouteFlowCounterCapability`) / `flowcounterrouteorch.cpp:166-179` (`initRouteFlowCounterCapability`) / `flowcounterrouteorch.cpp:55-61` (doTask guard) / `flowcounterrouteorch.cpp:305-366` (`onAddMiscRouteEntry`/`onRemoveMiscRouteEntry` guards) / `flowcounterrouteorch.cpp:401-451` (`onAddVR`/`onRemoveVR` guards)。
 <!-- /platform -->
 
 <!-- ref-triangle:start -->
