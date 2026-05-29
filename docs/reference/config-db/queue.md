@@ -169,20 +169,20 @@ show queue counters
 [^2]: qosorch 実装: `sonic-swss/orchagent/qosorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp>
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 QosOrch が `QUEUE.wred_profile` / `QUEUE.scheduler` フィールドを参照して各テーブルの OID を解決し、SAI キューオブジェクトに bind する。参照先テーブルが未作成の場合は設定がペンディング状態になる（待機派生）。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 QosOrch は常時登録し `QUEUE` テーブルを無条件購読する。ただし `SCHEDULER` / `WRED_PROFILE` が未作成の場合は対応 OID が未解決でペンディングとなる。port が未初期化の場合はエラーログ + スキップ。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -191,7 +191,7 @@ QosOrch は常時登録し `QUEUE` テーブルを無条件購読する。ただ
 | `QosOrch` | port のキュー番号が範囲外 | ERROR ログ + スキップ | `qosorch.cpp` |
 | `QosOrch` | del_handler: `wred_profile` あり | SAI attribute を NULL OID に設定して解除 | `qosorch.cpp` |
 
-> **スキャン証跡**: QUEUE は SAI キューオブジェクトの属性 (scheduler, wred_profile) を束ねる。Phase 6 派生はフィールドから OID 解決への変換。自動付与はなし。
+> **裏取り**: QUEUE は SAI キューオブジェクトの属性 (scheduler, wred_profile) を束ねる。自動派生はフィールドから OID 解決への変換。自動付与はなし。
 
 <!-- /handler-branching -->
 
@@ -219,7 +219,7 @@ QosOrch は常時登録し `QUEUE` テーブルを無条件購読する。ただ
 <!-- /runtime-trace -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Producer/Consumer ペア
 
@@ -277,7 +277,7 @@ NotificationConsumer: なし
 <!-- /pubsub -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 QUEUE テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -311,7 +311,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /entry-points -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 | フィールド | 省略/未設定時の実装動作 | コードロケーション |
 |-----------|----------------------|------------------|
@@ -338,9 +338,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 <!-- /defaults -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/queue-failure.md -->
+## 失敗挙動・retry / recovery
 
 ### retry パターン概要
 
@@ -395,9 +393,7 @@ QUEUE テーブルの SET 処理は `QosOrch::handleQueueTable()` が `task_proc
 <!-- /failure -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/queue-ordering.md`
+## 書込み順依存
 
 ### SET 時の先行必須テーブル
 
@@ -478,9 +474,7 @@ SCHEDULER / WRED_PROFILE / QUEUE を一括生成するため、順序は [sonic-
 <!-- /ordering -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/queue-platform.md -->
+## プラットフォーム / SAI Capability 差異
 
 ### VoQ シャーシ vs 非 VoQ — 処理パスの違い
 
@@ -543,9 +537,7 @@ DPC (Direct Port Connect) ポートは q3/q4 の lossless 設定を省略する�
 <!-- /platform -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/queue-side-effects.md`
+## 副次 DB 書込
 
 QUEUE テーブルへの SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと SAI 呼び出しを示す。
 
@@ -609,9 +601,7 @@ VoQ モードでは `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が自動追加�
 <!-- /side-effects -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-> 証跡: `meta/_intermediate/cdb-flow/queue-cross-refs.md`
+## 暗黙参照テーブル
 
 YANG leafref に加え、`qosorch.cpp` の実装レベルで依存する他テーブルを示す。
 
@@ -637,7 +627,7 @@ PORT が PortInitDone 済みでない状態で QUEUE エントリを書いても
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 QUEUE テーブル処理でコード内に固定された定数の一覧。`scheduler` / `wred_profile` 以外のフィールドは存在せず、フィールド数は最少クラスに属する。
 
@@ -691,7 +681,6 @@ YANG 型は `string` のため YANG バリデーションでは弾かれない�
 
 DPC ポートは q3/q4 も `"scheduler.0"` (lossless なし)。VOQ remote port には scheduler 未適用。`SELECT_TIMEOUT` = `1000` ms（`orchdaemon.cpp:23`）。
 
-> 詳細スキャン証跡: `meta/_intermediate/cdb-flow/queue-constants.md`
 
 <!-- /constants -->
 

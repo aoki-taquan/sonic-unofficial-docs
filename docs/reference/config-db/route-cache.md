@@ -1,6 +1,6 @@
 ---
 title: APPL_STATE_DB ROUTE_TABLE (route offload cache)
-description: "APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズム・Mellanox ECMP グループ数補正・VOQ ECMP メンバー数制限を含む Phase A+B+C+D+E+F+G+H 分析。"
+description: "APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズム・Mellanox ECMP グループ数補正・VOQ ECMP メンバー数制限を含む分析。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-18
@@ -170,9 +170,7 @@ void RouteSync::markRoutesOffloaded(swss::DBConnector& db)
 APPL_STATE_DB の全 [ROUTE_TABLE](../../reference/glossary.md#term-route_table) エントリを読み取り、[zebra](../../reference/glossary.md#term-zebra) に offload 通知を一括送信する。これにより warm restart 後に [FRR](../../reference/glossary.md#term-frr) が持つ経路の offload フラグが復元される。
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-ordering.md -->
+## 書込み順依存
 
 `RouteOrch::publishRouteState()` が `ResponsePublisher` 経由で APPL_STATE_DB [ROUTE_TABLE](../../reference/glossary.md#term-route_table) へ書き込む際の順序依存を示す。
 
@@ -210,9 +208,7 @@ if (m_enable_db_write_and_notify &&
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-cross-refs.md -->
+## 暗黙参照テーブル
 
 APPL_STATE_DB `ROUTE_TABLE` は [YANG](../../reference/glossary.md#term-yang) 未定義のオペレーショナルテーブルで、`RouteOrch` が**書き手 (producer)**、`fpmsyncd` と `route_check.py` が**読み手 (consumer)** となる。以下は `ResponsePublisher`・`routeorch.cpp`・`fpmsyncd.cpp`・`routesync.cpp`・`route_check.py` を横断したコード調査で検出した暗黙参照の一覧。
 
@@ -265,9 +261,7 @@ APPL_STATE_DB `ROUTE_TABLE` は [YANG](../../reference/glossary.md#term-yang) �
 <!-- /cross-refs -->
 
 <!-- defaults -->
-## フィールドのコード由来デフォルト (Phase A)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-defaults.md -->
+## フィールドのコード由来デフォルト
 
 ### `protocol` フィールドのデフォルト
 
@@ -341,9 +335,7 @@ if (status.ok())
 <!-- /defaults -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-failure.md -->
+## 失敗挙動
 
 APPL_STATE_DB `ROUTE_TABLE` への書き込みは `publishRouteState()` → `ResponsePublisher::publish()` 経由で行われる。SAI 操作の成否によって APPL_STATE_DB への書き込みが制御される。
 
@@ -425,9 +417,7 @@ SAI 失敗経路は FRR zebra への offload 通知が行われず、FRR 側で 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-constants.md -->
+## ハードコード定数
 
 `orchagent/routeorch.cpp`・`orchagent/response_publisher.cpp`・`fpmsyncd/fpmsyncd.cpp`・`fpmsyncd/routesync.cpp`・`common/schema.h` から抽出した APPL_STATE_DB `ROUTE_TABLE` 経路オフロードキャッシュに関わる主要ハードコード定数。
 
@@ -526,9 +516,7 @@ fieldValues.emplace_back("err_str", "SWSS_RC_SUCCESS");
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・連鎖変更 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-side-effects.md -->
+## 副作用・連鎖変更
 
 APPL_STATE_DB `ROUTE_TABLE` への書き込みは、[orchagent](../../reference/glossary.md#term-orchagent) の内部処理で終結せず、`fpmsyncd` を経由して FRR zebra への外向き副作用を持つ。また `route_check.py` による recovery パスも存在する。
 
@@ -615,9 +603,7 @@ for prefix in routes:
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-pubsub.md -->
+## Redis 通知メカニズム
 
 ### 書き込み側: ResponsePublisher の通知チャネル
 
@@ -682,9 +668,7 @@ APPL_DB への書き込みパイプライン（`pipeline` = `RedisPipeline`、�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-cache-platform.md -->
+## プラットフォーム差
 
 調査ソース: `orchagent/routeorch.cpp`、`orchagent/orch.h`、`fpmsyncd/fpmsyncd.cpp`、`fpmsyncd/routesync.cpp`、`orchagent/response_publisher.cpp`。
 

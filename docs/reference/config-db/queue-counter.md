@@ -111,11 +111,7 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 `counterpoll queue interval <ms>` / `counterpoll queue-watermark interval <ms>` で上書き可能。
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
-
-<!-- evidence: sonic-swss/orchagent/portsorch.cpp (ref:4305596156d7),
-     sonic-swss/orchagent/portsorch.h (ref:4305596156d7),
-     sonic-utilities/scripts/queuestat (ref:39732bceb8bd) -->
+## 暗黙デフォルト・コード由来挙動
 
 ### カウンタフィールドセットはコードハードコード
 
@@ -158,10 +154,7 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順序依存・タイミング依存 (Phase B)
-
-<!-- evidence: sonic-swss/orchagent/portsorch.cpp (ref:4305596156d7),
-     sonic-swss/orchagent/flexcounterorch.cpp (ref:4305596156d7) -->
+## 書込み順序依存・タイミング依存
 
 ### 1. SAI OID フェッチが先行必須
 
@@ -196,7 +189,7 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 [YANG](../../reference/glossary.md#term-yang) leafref を超えた他テーブル・他 DB・プラットフォームファイルへの実装上の依存関係。
 
@@ -216,17 +209,15 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 ### 補足
 
 - **`FLEX_COUNTER_TABLE` との依存は双方向**: `COUNTERS_DB` の `COUNTERS:<oid>` は `FLEX_COUNTER_TABLE` の enable/disable 状態が `true` の間のみ syncd がポーリングして更新する。disable にするとポーリングは停止するが、`COUNTERS_QUEUE_NAME_MAP` 等のマッピングテーブルは削除されない。
-- **`BUFFER_QUEUE` との依存は条件付き**: `create_only_config_db_buffers = false`（デフォルト）では `BUFFER_QUEUE` の設定内容に関係なく全キューのカウンタが有効化される。この場合 `BUFFER_QUEUE` の書込み順序はカウンタ有効化の最終状態に影響しない（Phase B 依存 #3 参照）。
+- **`BUFFER_QUEUE` との依存は条件付き**: `create_only_config_db_buffers = false`（デフォルト）では `BUFFER_QUEUE` の設定内容に関係なく全キューのカウンタが有効化される。この場合 `BUFFER_QUEUE` の書込み順序はカウンタ有効化の最終状態に影響しない（「書込み順序依存」依存 #3 参照）。
 - **VoQ モード固有**: `gMySwitchType == "voq"` の場合、`FLEX_COUNTER_TABLE|QUEUE` の enable 状態に関係なく `generateQueueMapPerPort()` が直接 `addQueueFlexCountersPerPortPerQueueIndex()` を呼ぶため、VoQ 環境では上記 `FLEX_COUNTER_TABLE` 依存の一部が無効化される（`portsorch.cpp:8499-8514`）。
 
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `COUNTERS_DB` QUEUE カウンタ書き込み経路（`portsorch` + `flexcounterorch`）における失敗は、(A) SAI 初期化段階で orchagent abort に至る致命的失敗、(B) FlexCounter グループ設定の非致命的エラー（ログのみ・継続）、(C) `BUFFER_QUEUE` キー解析エラー（silent skip）、(D) WRED ケイパビリティクエリ失敗（フォールバック）、(E) warm-reboot 遅延中の受信（設計上の猶予処理）の 5 系統に分類される。
-
-中間調査: `meta/_intermediate/cdb-flow/queue-counter-failure.md`
 
 ### A. SAI Queue OID フェッチ失敗 → orchagent abort（致命的）
 
@@ -303,14 +294,14 @@ catch(const std::system_error& e) {
 | `create_only_config_db_buffers` 読み込み失敗 | 正常書き込み済み | 全キュー対象（フォールバック） | 継続（ログのみ） |
 | warm-reboot delay 中 enable 受信 | タイマー満了後に書き込み（最大 60 秒猶予） | タイマー満了後に開始 | 正常（設計上の遅延） |
 
-> **証跡**: `initializeQueuesBulk()` `portsorch.cpp:6854-6935`、FlexCounter グループ try-catch `portsorch.cpp:820-840`、`getQueueConfigurations()` `flexcounterorch.cpp:544-606`、`initCounterCapabilities()` `portsorch.cpp:1850-1942`、warm-reboot delay `flexcounterorch.cpp:127-136,156-158`。詳細は `meta/_intermediate/cdb-flow/queue-counter-failure.md` を参照。
+> **裏取り**: `initializeQueuesBulk()` `portsorch.cpp:6854-6935`、FlexCounter グループ try-catch `portsorch.cpp:820-840`、`getQueueConfigurations()` `flexcounterorch.cpp:544-606`、`initCounterCapabilities()` `portsorch.cpp:1850-1942`、warm-reboot delay `flexcounterorch.cpp:127-136,156-158`。
 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-swss/orchagent/portsorch.h` L34-42、`sonic-swss/orchagent/portsorch.cpp` L90-93, L734-739、`sonic-swss/orchagent/flexcounterorch.cpp` L44-63 全行精読 (2026-05-19)
+> **Evidence**: `sonic-swss/orchagent/portsorch.h` L34-42、`sonic-swss/orchagent/portsorch.cpp` L90-93, L734-739、`sonic-swss/orchagent/flexcounterorch.cpp` L44-63 全行精読 (2026-05-19)
 
 ### FlexCounter グループ名定数 (portsorch.h)
 
@@ -362,7 +353,7 @@ catch(const std::system_error& e) {
 <!-- /constants -->
 
 <!-- side-effects -->
-## SET/DEL 副次 DB 書込み (Phase F)
+## SET/DEL 副次 DB 書込み
 
 `FLEX_COUNTER_TABLE|QUEUE` / `FLEX_COUNTER_TABLE|QUEUE_WATERMARK` / `FLEX_COUNTER_TABLE|WRED_ECN_QUEUE` の enable/disable および PORT の追加・削除に伴い、portsorch (orchagent) がトリガとなって複数の DB・テーブルへ副次書き込みを行う。
 
@@ -423,9 +414,9 @@ syncd はこの COUNTER_ID_LIST を受け取り、ポーリング周期ごとに
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `sonic-swss/orchagent/flexcounterorch.cpp`、`sonic-swss/orchagent/orchdaemon.cpp`、`sonic-swss/orchagent/portsorch.cpp`、`sonic-utilities/scripts/queuestat` 精読 (2026-05-19)
+> **Evidence**: `sonic-swss/orchagent/flexcounterorch.cpp`、`sonic-swss/orchagent/orchdaemon.cpp`、`sonic-swss/orchagent/portsorch.cpp`、`sonic-utilities/scripts/queuestat` 精読 (2026-05-19)
 
 ### Producer/Consumer ペア全体
 
@@ -519,10 +510,9 @@ queuestat
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> 調査対象: `sonic-swss/orchagent/portsorch.cpp`, `sonic-swss/orchagent/flexcounterorch.cpp`
-> 調査日: 2026-05-19
+> スキャン範囲: `sonic-swss/orchagent/portsorch.cpp`, `sonic-swss/orchagent/flexcounterorch.cpp` (2026-05-19)
 
 ### switch_type による挙動差
 

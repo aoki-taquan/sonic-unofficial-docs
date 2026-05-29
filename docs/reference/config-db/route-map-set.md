@@ -98,7 +98,7 @@ YANG に定義されているフィールドは `name`（key）のみ。デー�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `ROUTE_MAP_SET` テーブルは frrcfgd・[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)・[orchagent](../../reference/glossary.md#term-orchagent) のいずれも購読しないため、
 **FRR への反映という観点での書込み順序制約は存在しない**。
@@ -121,13 +121,13 @@ YANG に定義されているフィールドは `name`（key）のみ。デー�
 DEL 時も同様で、`sonic-db-cli` であれば参照中の `ROUTE_MAP_SET` エントリを先に削除することは可能だが、
 [gNMI](../../reference/glossary.md#term-gnmi)/NETCONF では参照元の解除が先行必須となる。
 
-> **スキャン証跡**: `sonic-route-map.yang:125-134,269-273`、`sonic-bgp-common.yang:354-413`、`sonic-bgp-global.yang:373,380,502,532`、`sonic-route-common.yang:60-66`。詳細は `meta/_intermediate/cdb-flow/route-map-set-ordering.md` を参照。
+> **裏取り**: `sonic-route-map.yang:125-134,269-273`、`sonic-bgp-common.yang:354-413`、`sonic-bgp-global.yang:373,380,502,532`、`sonic-route-common.yang:60-66`。
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-YANG leafref スキャン (`sonic-route-map.yang`, `sonic-bgp-common.yang`, `sonic-bgp-global.yang`, `sonic-route-common.yang`) および frrcfgd 実装確認による参照関係。詳細は `meta/_intermediate/cdb-flow/route-map-set-cross-refs.md` を参照。
+YANG leafref スキャン (`sonic-route-map.yang`, `sonic-bgp-common.yang`, `sonic-bgp-global.yang`, `sonic-route-common.yang`) および frrcfgd 実装確認による参照関係。
 
 `ROUTE_MAP_SET` テーブル自身は他テーブルを leafref で参照するフィールドを持たない（`name` key のみの名前レジストリ）。以下はすべて **被参照**（他テーブルから ROUTE_MAP_SET.name を参照する逆参照）。
 
@@ -147,10 +147,9 @@ YANG leafref スキャン (`sonic-route-map.yang`, `sonic-bgp-common.yang`, `son
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・エラーパス (Phase D)
+## 失敗挙動・エラーパス
 
-> **調査根拠**: `sonic-route-map.yang:125-134,269-273`; `frrcfgd.py` 全文 grep (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/route-map-set-failure.md`
+> **Evidence**: `sonic-route-map.yang:125-134,269-273`; `frrcfgd.py` 全文 grep (2026-05-18)
 
 ROUTE_MAP_SET テーブルには **購読デーモンが存在しない**。frrcfgd・[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)・orchagent のいずれも本テーブルを購読しないため、「デーモンが書き込みを処理してエラーを返す」形式の失敗パスは存在しない。
 
@@ -172,10 +171,9 @@ ROUTE_MAP_SET への SET/DEL の成否は [CONFIG_DB](../../reference/glossary.m
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-route-map.yang:125-134`; `frrcfgd.py` 全文 grep (ROUTE_MAP_SET 出現なし); `db_migrator.py` 全文 grep (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/route-map-set-constants.md`
+> **Evidence**: `sonic-route-map.yang:125-134`; `frrcfgd.py` 全文 grep (ROUTE_MAP_SET 出現なし); `db_migrator.py` 全文 grep (2026-05-18)
 
 ROUTE_MAP_SET テーブルは frrcfgd・bgpcfgd・orchagent のいずれも購読しないため、**ランタイムのハードコード定数は存在しない**。実装コードがこのテーブルを処理しないことを `frrcfgd.py` 全文 grep（`ROUTE_MAP_SET` 出現なし）および `db_migrator.py` grep で確認した。
 
@@ -192,10 +190,9 @@ YANG の `string` 型にはデフォルトの長さ上限はなく、`sonic-rout
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> **調査根拠**: `frrcfgd.py` 全文 grep (`ROUTE_MAP_SET` 出現なし); `bgpcfgd` ソース全文 grep (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/route-map-set-side-effects.md`
+> **Evidence**: `frrcfgd.py` 全文 grep (`ROUTE_MAP_SET` 出現なし); `bgpcfgd` ソース全文 grep (2026-05-19)
 
 `ROUTE_MAP_SET` テーブルへの SET / DEL に伴う**副次 DB 書込は存在しない**。frrcfgd・bgpcfgd・orchagent のいずれも本テーブルを購読しないため、[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込は構造的に発生しない。
 
@@ -216,10 +213,9 @@ gNMI / NETCONF 経由で YANG 検証が有効な場合、leafref 整合性エラ
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## CONFIG_DB 購読メカニズム (Phase G)
+## CONFIG_DB 購読メカニズム
 
-> **調査根拠**: `frrcfgd.py` 全文 grep (`ROUTE_MAP_SET` 出現なし); `bgpcfgd/` 全文 grep (出現なし); `orchagent/` 全文 grep (出現なし) (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/route-map-set-pubsub.md`
+> **Evidence**: `frrcfgd.py` 全文 grep (`ROUTE_MAP_SET` 出現なし); `bgpcfgd/` 全文 grep (出現なし); `orchagent/` 全文 grep (出現なし) (2026-05-19)
 
 `ROUTE_MAP_SET` テーブルを **購読するデーモンは存在しない**。
 
@@ -251,9 +247,7 @@ CONFIG_DB hset 'ROUTE_MAP_SET|ALLOW' ''
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/route-map-set-platform.md`
+## プラットフォーム差分
 
 ### プラットフォーム非依存の設計
 

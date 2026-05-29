@@ -97,7 +97,7 @@ if (SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS == queue_stats_capability.list[it].st
 | `sonic-utilities/counterpoll/main.py` | 間接的（FLEX_COUNTER_TABLE|WRED_ECN_QUEUE 経由） | counterpoll show で `WRED_ECN_QUEUE_STAT` 行を表示 |
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) schema は存在しない。すべてのデフォルトは `portsorch.cpp` のコードに由来する。
 
@@ -130,7 +130,7 @@ if (SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS == queue_stats_capability.list[it].st
 <!-- /cdb-exceptions -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `QUEUE_COUNTER_CAPABILITIES` テーブルへの書込みは `PortsOrch::initCounterCapabilities(gSwitchId)` が PortsOrch 初期化処理の末尾（`portsorch.cpp:1107`）で 1 回のみ実行する。書込みは以下の固定順序で行われ、この順序は変更不可能。
 
@@ -154,7 +154,7 @@ if (SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS == queue_stats_capability.list[it].st
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 [YANG](../../reference/glossary.md#term-yang) leafref を超えた他テーブル・他 DB・プラットフォームとの実装上の依存関係。`QUEUE_COUNTER_CAPABILITIES` は `portsorch` が**書き手専用**のテーブルであり、consumer 側（`wredstat` / `portstat.py`）は参照のみ行う。
 
@@ -174,10 +174,9 @@ if (SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS == queue_stats_capability.list[it].st
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・エラーパス (Phase D)
+## 失敗挙動・エラーパス
 
-> **調査根拠**: `sonic-swss/orchagent/portsorch.cpp` @ master 全行精読  
-> 詳細証跡: `meta/_intermediate/cdb-flow/queue-state-failure.md`
+> **Evidence**: `sonic-swss/orchagent/portsorch.cpp` @ master 全行精読
 
 ### SAI クエリ失敗（`sai_query_stats_capability` エラー）
 
@@ -232,10 +231,9 @@ else
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-swss/orchagent/portsorch.cpp` @ master 全行精読  
-> 詳細証跡: `meta/_intermediate/cdb-flow/queue-state-constants.md`
+> **Evidence**: `sonic-swss/orchagent/portsorch.cpp` @ master 全行精読
 
 `QUEUE_COUNTER_CAPABILITIES` テーブルに関わるハードコード定数は `portsorch.cpp` の `initCounterCapabilities()` 内にすべて埋め込まれており、[YANG](../../reference/glossary.md#term-yang) / [CONFIG_DB](../../reference/glossary.md#term-config_db) に対応するスキーマ定義は存在しない。
 
@@ -275,9 +273,7 @@ else
 <!-- /constants -->
 
 <!-- side-effects -->
-## SET/DEL 副次 DB 書込み (Phase F)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/queue-state-side-effects.md`
+## SET/DEL 副次 DB 書込み
 
 `initCounterCapabilities()` は `QUEUE_COUNTER_CAPABILITIES` への書込みと同一関数呼び出し内で、STATE_DB の別テーブル `PORT_COUNTER_CAPABILITIES` にも書込む。
 
@@ -305,9 +301,7 @@ else
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/queue-state-pubsub.md`
+## 通信メカニズム
 
 ### Producer/Consumer 構造
 
@@ -352,15 +346,13 @@ self.state_db.connect(self.state_db.STATE_DB)
 
 STATE_DB の `notify-keyspace-events` 設定に関わらず、orchagent / consumer のいずれも `SUBSCRIBE` / `PSUBSCRIBE` を使用しない。このため:
 
-- **consumer は orchagent の書き込み完了を待機しない**: `wredstat` は起動時に都度 GET するため、orchagent がまだ書き込む前に実行された場合は `None` が返り N/A 表示になる（Phase D 「orchagent 起動前の wredstat」参照）
+- **consumer は orchagent の書き込み完了を待機しない**: `wredstat` は起動時に都度 GET するため、orchagent がまだ書き込む前に実行された場合は `None` が返り N/A 表示になる（「失敗挙動 / orchagent 起動前の wredstat」参照）
 - **書き込み通知遅延は存在しない**: SET 後は即時 [Redis](../../reference/glossary.md#term-redis) に反映され、次回 GET で最新値が得られる
 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/queue-state-platform.md`
+## プラットフォーム / SAI Capability 差異
 
 `QUEUE_COUNTER_CAPABILITIES` テーブルのキー構造・フィールド名はすべてのプラットフォームで共通であり、コードレベルのプラットフォーム条件分岐（`gMySwitchType` 等）は `initCounterCapabilities()` 内に存在しない。唯一のプラットフォーム差分は `isSupported` の値であり、これは `sai_query_stats_capability(gSwitchId, SAI_OBJECT_TYPE_QUEUE, ...)` に対する SAI SDK の応答に完全に依存する。
 
