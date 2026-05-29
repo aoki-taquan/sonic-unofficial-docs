@@ -146,7 +146,7 @@ chassisd が起動していない場合は 10 秒タイムアウト後に強制�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `chassisd` は CONFIG_DB の `CHASSIS_MODULE` テーブルを購読し platform API に反映する。SmartSwitch と非 SmartSwitch で起動シーケンスと CHASSIS_APP_DB 連携が大きく異なる。
 
@@ -285,7 +285,7 @@ chassisd が停止中でもタイムアウト後に強制実行される。
 <!-- ref-triangle:end -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `CHASSIS_MODULE` は以下の CONFIG_DB テーブルをコードレベルで暗黙参照する（YANG leafref 非強制）。
 
@@ -372,7 +372,7 @@ SmartSwitch では `set_admin_state_gracefully(admin_state)` が別スレッド�
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `CHASSIS_MODULE`
 
@@ -503,7 +503,7 @@ SmartSwitch の `SmartSwitchConfigManagerTask` は `module_config_update()` 内�
 <!-- /ordering-startup -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `chassisd` は CONFIG_DB の `CHASSIS_MODULE` テーブルを購読し platform API を制御するが、その過程で **STATE_DB・CHASSIS_STATE_DB・CHASSIS_APP_DB・systemd** への副次的な書込と制御が発生する。
 
@@ -561,11 +561,10 @@ STATE_DB  CHASSIS_MIDPLANE_INFO_TABLE|<module_name>
 
 ASIC リストは `CHASSIS_STATE_DB.CHASSIS_FABRIC_ASIC_TABLE` から取得する。chassisd が未起動の場合は 10 秒タイムアウト後に強制実行される。
 
-> **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:364-478,530-591,593-680`; `sonic-utilities/config/chassis_modules.py:83-131`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-module-side-effects.md`
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 `chassisd` はプラットフォーム種別（[VOQ](../../reference/glossary.md#term-voq) チャシス / SmartSwitch DPU 搭載機）およびカード種別（LINE-CARD / FABRIC-CARD / DPU）によって `CHASSIS_MODULE` テーブルの処理クラスと許容 key prefix を切り替える。
 
@@ -660,7 +659,7 @@ SmartSwitch では `SmartSwitchModuleUpdater` が `chassisStateDB` の `DPU_STAT
 <!-- /platform -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-platform-daemons/sonic-chassisd/scripts/chassisd`
 
@@ -694,7 +693,6 @@ SmartSwitch では `SmartSwitchModuleUpdater` が `chassisStateDB` の `DPU_STAT
 | FABRIC-CARD shutdown 時に chassisd が起動していない | `config/chassis_modules.py:check_config_module_state_with_timeout()` | 最大 `TIMEOUT_SECS=10` 秒待機後に `systemctl stop swss@<asic>.service` を強制実行 | なし | `config/chassis_modules.py:12` |
 | main loop 内で予期しない例外 (SmartSwitch DpuStateManagerTask) | `DpuStateManagerTask.task_worker()` L1400-1401 | `log_error` を出力して継続 (クラッシュしない) | LOG_ERROR "Error in run: {}" | `chassisd:1400-1401` |
 
-> **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:92-93,125-141,143-149,192-212,235-256,309-311,338-341,420-435,471-478,663-664,1400-1401,1424-1427`; `config/chassis_modules.py:12`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-module-failure.md`
 <!-- /failure -->
 
 <!-- glossary-links-injected: a1b917b7e320 -->

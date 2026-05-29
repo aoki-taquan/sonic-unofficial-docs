@@ -206,7 +206,7 @@ show copp config
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `COPP_GROUP` (genetlink フィールド)
 
@@ -225,9 +225,9 @@ show copp config
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
@@ -235,7 +235,7 @@ show copp config
 | `genetlink_name` フィールドあり | `SAI_HOSTIF_ATTR_NAME = <値>` が genetlink_attribs に追加される | copporch.cpp L1271-1275 |
 | `genetlink_mcgrp_name` フィールドあり | `SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME = <値>` が genetlink_attribs に追加される | copporch.cpp L1281-1285 |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -245,7 +245,7 @@ show copp config
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -254,12 +254,12 @@ show copp config
 | `CoppOrch` | `processCoppTrapGroup()` | `!genetlink_attribs.empty()` | `createGenetlinkHostIf()` + `createGenetlinkHostIfTable()` を呼び出し | copporch.cpp L833-848 |
 | `CoppOrch` | `processCoppTrapGroup()` | `op == DEL_COMMAND` かつ `m_trap_group_hostif_map` に存在 | `removeGenetlinkHostIf()` で HostIf + table entry を削除 | copporch.cpp L1099-1119 |
 
-> **スキャン証跡**: `getAttribsFromTrapGroup` L1154-1294 全行読了、`processCoppTrapGroup` L730-872 + L1099-1151 読了。4 件分岐抽出。
+> **裏取り**: `getAttribsFromTrapGroup` L1154-1294 全行読了、`processCoppTrapGroup` L730-872 + L1099-1151 読了。4 件分岐抽出。
 
 <!-- /handler-branching -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 ### `genetlink_name` — フィールド不在 = genetlink HostIf 未作成
 
@@ -281,12 +281,12 @@ show copp config
 
 `COPP_GROUP|queue2_group1` が CONFIG_DB から削除されても、`coppmgrd` が init cfg 値で APPL_DB に再書き込みし、`CoppOrch` が genetlink HostIf を再作成する。sflow が有効な場合、一時的な停止後に自動復旧する。<!-- evidence: coppmgr.cpp L898-921, copporch.cpp L657-679 -->
 
-> **スキャン証跡**: copporch.cpp L1154-1295 (getAttribsFromTrapGroup 全行)、copporch.cpp L302-330 (initDefaultHostIntfTable)、copporch.cpp L419-493 (createGenetlinkHostIfTable/removeGenetlinkHostIfTable)、copporch.cpp L657-714 (createGenetlinkHostIf/removeGenetlinkHostIf)、copporch.cpp L730-872 (processCoppTrapGroup)、copp_cfg.j2 全行、coppmgr.cpp L898-921。発見 5 件。
+> **裏取り**: copporch.cpp L1154-1295 (getAttribsFromTrapGroup 全行)、copporch.cpp L302-330 (initDefaultHostIntfTable)、copporch.cpp L419-493 (createGenetlinkHostIfTable/removeGenetlinkHostIfTable)、copporch.cpp L657-714 (createGenetlinkHostIf/removeGenetlinkHostIf)、copporch.cpp L730-872 (processCoppTrapGroup)、copp_cfg.j2 全行、coppmgr.cpp L898-921。発見 5 件。
 
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### allPortsReady() ゲート
 
@@ -329,7 +329,7 @@ L341: gCoppOrch = new CoppOrch(...)     # PortsOrch 生成後に生成
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `COPP_GROUP` の genetlink フィールド (`genetlink_name` / `genetlink_mcgrp_name`) が処理される際に
 `coppmgr` / `CoppOrch` が暗黙的に参照する他テーブル・内部マップの依存関係を示す。
@@ -350,7 +350,7 @@ L341: gCoppOrch = new CoppOrch(...)     # PortsOrch 生成後に生成
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `COPP_GROUP` の genetlink フィールド (`genetlink_name` / `genetlink_mcgrp_name`) を処理する `CoppOrch::processCoppRule()` と `doTask()` の失敗分岐を整理する。
 
@@ -404,11 +404,10 @@ genetlink HostIf / HostIfTable を SAI に作成済みの後に呼ばれる `tra
 
 `task_failed` 時は SWSS_LOG_ERROR が記録される。[orchagent](../../reference/glossary.md#term-orchagent) はプロセス終了せず生存するが、次回 `doTask()` 呼び出しまで他 COPP グループの処理も停止する点に注意。
 
-> **スキャン証跡**: `copporch.cpp` L419-471 (createGenetlinkHostIfTable)、L657-680 (createGenetlinkHostIf)、L833-856 (processCoppRule genetlink 分岐)、L880-933 (doTask)。失敗分岐 6 系統確認。詳細は `meta/_intermediate/cdb-flow/copp-port-failure.md` 参照。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### フィールド名文字列リテラル (copporch.h)
 
@@ -439,11 +438,10 @@ attr.value.chardata[size - 1] = '\0';
 | `HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | HostIF trap [FlexCounter](../../reference/glossary.md#term-flexcounter) ポーリング間隔 (10 秒) | `copporch.cpp:189` |
 | `FLEX_COUNTER_UPD_INTERVAL` | `1` 秒 | [FlexCounter](../../reference/glossary.md#term-flexcounter) 更新タイマー間隔 | `copporch.cpp:37` |
 
-> **スキャン証跡**: `copporch.h` 全行、`copporch.cpp` L37,189,1265-1286 精読。定数 7 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-constants.md`
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `COPP_GROUP` の `genetlink_name` / `genetlink_mcgrp_name` を SET/DEL したときに CONFIG_DB 以外の DB へ書き込まれるエントリを示す。
 
@@ -487,11 +485,10 @@ trap_ids 追加に伴い `bindTrapCounter()` が呼ばれ、カウンタ登録�
 | `sai_hostif_api->remove_hostif()` | DEL または既存 hostif 検知時 | `copporch.cpp:702` |
 | `sai_hostif_api->remove_hostif_table_entry()` | trap_id 除去時 | `copporch.cpp:481-487` |
 
-> **スキャン証跡**: `copporch.cpp` L126-152 (coppmgrd APPL_DB 書込)、L222-236 (updateTrapOperStatus)、L419-493 (genetlink hostif table create/remove)、L499-533 (applyAttributesToTrapIds + bindTrapCounter)、L657-714 (createGenetlinkHostIf/removeGenetlinkHostIf)、L833-851 (processCoppRule genetlink 分岐)、L1418-1495 (bindTrapCounter/unbindTrapCounter)。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-side-effects.md`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `genetlink_name` / `genetlink_mcgrp_name` フィールドは CONFIG_DB → coppmgrd → APPL_DB → CoppOrch → SAI という多段 Producer/Consumer パイプラインを経由して適用される。フィールド値は各段で透過的に転送され、最終的に SAI genetlink HostIf の生成に使われる。
 
@@ -539,11 +536,10 @@ orchagent: CoppOrch::doTask()
   ↓ createGenetlinkHostIfTable() → sai_hostif_api->create_hostif_table_entry() (CHANNEL_TYPE_GENETLINK)
 ```
 
-> **スキャン証跡**: `coppmgrd.cpp` 全行読了。`coppmgr.cpp` L298-310, L510-530 読了。`copporch.cpp` L191-215, L880-935 読了。`orchdaemon.cpp` L341 確認。`show/copp.py` `dump/plugins/copp.py` で genetlink 読み出し consumer 不在を確認。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `COPP_GROUP` の `genetlink_name` / `genetlink_mcgrp_name` フィールドは SAI の `SAI_HOSTIF_TYPE_GENETLINK` と Linux カーネルの `psample` genetlink モジュールに依存するため、プラットフォームによって動作に差が生じる。
 
@@ -575,7 +571,6 @@ genetlink フィールド自体の処理は `platform` 環境変数でゲート�
 | `FEATURE\|sflow` 有効 + SAI サポートあり | `genetlink_name` / `genetlink_mcgrp_name` | 正常動作。`sample_packet` trap → genetlink (psample) 経由でカーネルに転送 |
 | `platform` 環境変数に `"mellanox"` / `"marvell-prestera"` 含む | `trap_priority` のみ（genetlink 自体は影響なし） | trap_priority SET をサイレントスキップ |
 
-> **スキャン証跡**: `copporch.cpp` L657-714 (createGenetlinkHostIf/removeGenetlinkHostIf), L419-493 (createGenetlinkHostIfTable), L1265-1286 (getAttribsFromTrapGroup — platform チェックなし確認), L1184-1194 (trap_priority platform チェック)。`coppmgr.cpp` L82-106 (setFeatureTrapIdsStatus)。`copp_cfg.j2` L131-134 (sflow COPP_TRAP)。`orch.h` L41-42 定義確認。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-platform.md`
 <!-- /platform -->
 
 <!-- glossary-links-injected: ef90bea7fa5c -->

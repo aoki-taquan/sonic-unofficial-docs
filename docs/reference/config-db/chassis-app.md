@@ -67,10 +67,8 @@ flowchart LR
 ```
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
-> 調査対象: `sonic-swss/orchagent/intfsorch.cpp`, `neighorch.cpp`, `portsorch.cpp`, `lagids.lua`, `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_chassis_app_db.py`, `managers_device_global.py`
-> 調査日: 2026-05-14
 
 ### SYSTEM_INTERFACE テーブル
 
@@ -133,9 +131,8 @@ flowchart LR
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-ordering.md`
 
 ### 起動シーケンスと先行条件
 
@@ -211,9 +208,8 @@ WarmStart::isWarmStart() == true
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-> 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-cross-refs.md`
 
 CHASSIS_APP_DB 各テーブルへの書き込みが依存する他テーブル・DB の参照関係を示す。
 
@@ -238,9 +234,8 @@ CHASSIS_APP_DB 各テーブルへの書き込みが依存する他テーブル�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-> 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-failure.md`
 
 ### CHASSIS_APP_DB 非使用環境での全スキップ (silent)
 
@@ -307,10 +302,8 @@ Evidence: `managers_chassis_app_db.py:36-46`, `managers_device_global.py:244-249
 <!-- /failure -->
 
 <!-- constants -->
-## コード定数・魔法数値 (Phase E)
+## コード定数・魔法数値
 
-> 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-constants.md`
-> 調査対象: `sonic-swss-common/common/schema.h` @ 158de8d3463ff4b841653f6d57190bb142b80d9c, `sonic-swss-common/common/database_config.json` @ 158de8d3463ff4b841653f6d57190bb142b80d9c, `sonic-swss/orchagent/lagid.h` @ 4305596, `sonic-swss/orchagent/lagids.lua` @ 4305596, `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` @ 4ba9612, `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py` @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 
 ### DB ID / Redis インスタンス定数
 
@@ -373,10 +366,8 @@ Evidence: `managers_chassis_app_db.py:36-46`, `managers_device_global.py:244-249
 <!-- /constants -->
 
 <!-- side-effects -->
-## 書き込み副作用 (Phase F)
+## 書き込み副作用
 
-> 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-side-effects.md`
-> 調査対象: `sonic-swss/orchagent/intfsorch.cpp` @ 4305596, `sonic-swss/orchagent/neighorch.cpp` @ 4305596, `sonic-swss/orchagent/portsorch.cpp` @ 4305596, `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_chassis_app_db.py` @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 
 CHASSIS_APP_DB への書き込みは単なるデータ保存ではない。リモートラインカード側の orchagent および [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が各テーブルを `SubscriberStateTable` で購読しており、SAI プログラミング・[STATE_DB](../../reference/glossary.md#term-state_db) 更新・[FRR](../../reference/glossary.md#term-frr) 設定変更などの連鎖処理が発生する。
 
@@ -450,10 +441,8 @@ DEL イベント受信時: SAI からのneighbor削除 → STATE_DB エントリ
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Pub/Sub・通知チャネル (Phase G)
+## Pub/Sub・通知チャネル
 
-> 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-pubsub.md`
-> 調査対象: `sonic-swss/orchagent/intfsorch.cpp` @ 4305596, `sonic-swss/orchagent/neighorch.cpp` @ 4305596, `sonic-swss/orchagent/portsorch.cpp` @ 4305596, `sonic-swss-common/common/subscriberstatetable.cpp` @ 158de8d3463ff4b841653f6d57190bb142b80d9c, `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py` @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd, `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py` @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 
 CHASSIS_APP_DB (DB 12、`redis_chassis`) への書き込みは Redis の **keyspace 通知**を通じてリモートラインカード側のプロセスに伝達される。swsscommon の `SubscriberStateTable` が `psubscribe` を用いてパターン購読し、orchagent の `Orch::addExecutor(Consumer(...))` フレームワークに組み込まれる。
 
@@ -519,10 +508,8 @@ chassisd は CHASSIS_APP_DB を `SubscriberStateTable` で購読しない。CONF
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム依存挙動 (Phase H)
+## プラットフォーム依存挙動
 
-> 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-platform.md`
-> 調査対象: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` @ 4ba9612, `sonic-platform-daemons/sonic-chassisd/scripts/chassis_db_init` @ 4ba9612, `sonic-swss/orchagent/main.cpp` @ 4305596, `sonic-swss-common/common/dbconnector.h` @ 158de8d3463ff4b841653f6d57190bb142b80d9c
 
 ### プラットフォーム API ロード (sonic_platform プラグイン)
 

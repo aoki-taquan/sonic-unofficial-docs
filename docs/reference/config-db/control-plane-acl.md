@@ -134,7 +134,7 @@ CTRLPLANE を `TABLE_TYPE_CTRLPLANE` マクロで定義 (`acltable.h:33`)。
 <!-- /value-behavior -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 YANG 未定義テーブルのため、全デフォルトはコード実装が正本。CTRLPLANE ACL 固有の挙動を重点的に列挙する。
 
@@ -169,14 +169,13 @@ minigraph.py は `acl_intfs` リストが空 (インターフェースバイン�
 - 訪問ファイル数: 4 (`aclorch.cpp`, `aclorch.h`, `acltable.h`, `minigraph.py`)
 - 訪問関数数: 8
 - 検出 fallback: 5 件 (stage 初期値・policy_desc fallback・ports 空リスト・services 読み捨て・ルール erase)
-- 中間トレース: `meta/_intermediate/cdb-flow/control-plane-acl-defaults.md`
 
 <!-- /defaults -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -186,7 +185,7 @@ minigraph.py は `acl_intfs` リストが空 (インターフェースバイン�
 | `stage` | minigraph.py: XML `OutAcl` タグ | `egress` (orchagent では無視) | `minigraph.py:1106-1107` |
 | `services` | minigraph.py: XML `<Type>` 要素テキスト | サービス文字列 (orchagent では無視) | `minigraph.py:1232,1247` |
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -205,7 +204,7 @@ minigraph.py は `acl_intfs` リストが空 (インターフェースバイン�
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 CTRLPLANE ACL は `AclOrch::doAclTableTask()` と `doAclRuleTask()` の両方で特殊処理される。
 
@@ -217,12 +216,12 @@ CTRLPLANE ACL は `AclOrch::doAclTableTask()` と `doAclRuleTask()` の両方で
 | `AclOrch` | `addAclTable()` | `type == TABLE_TYPE_CTRLPLANE` | SAI テーブル作成なし。`m_ctrlAclTables.emplace()` して即 return | `aclorch.cpp:4680-4684` |
 | `AclOrch` | `doAclRuleTask()` | `table_oid == SAI_NULL_OBJECT_ID` かつ `m_ctrlAclTables` にキーあり | INFO ログ `"Skip control plane ACL rule"` + erase。ルール SAI 未投入 | `aclorch.cpp:5556-5560` |
 
-> **スキャン証跡**: `doAclTableTask()` L5346-5520 および `doAclRuleTask()` L5520-5700 全行読了。`AclTable::validate()` L2725-2750、`addAclTable()` L4675-4700 確認。CTRLPLANE 固有分岐 5 件抽出。`services` フィールドの `continue` は L5410-5413 で確認、コメントに `"TODO: validate control plane ACL table has this attribute"` が残存 (L5412)。
+> **裏取り**: `doAclTableTask()` L5346-5520 および `doAclRuleTask()` L5520-5700 全行読了。`AclTable::validate()` L2725-2750、`addAclTable()` L4675-4700 確認。CTRLPLANE 固有分岐 5 件抽出。`services` フィールドの `continue` は L5410-5413 で確認、コメントに `"TODO: validate control plane ACL table has this attribute"` が残存 (L5412)。
 
 <!-- /handler-branching -->
 
 <!-- ordering -->
-## 書込み順依存・タイミング依存 (Phase B)
+## 書込み順依存・タイミング依存
 
 CTRLPLANE ACL の実体は `caclmgrd` が管理する iptables ルール群である。`AclOrch` (orchagent) は `m_ctrlAclTables` に記録するのみで SAI に投入しない。そのため「書込み順依存」は orchagent 側ではなく **caclmgrd の iptables プログラム順序**に集約される。
 
@@ -252,7 +251,7 @@ CTRLPLANE ACL の実体は `caclmgrd` が管理する iptables ルール群で�
 | 18 | TTL < 2 ICMP/UDP/TCP ACCEPT (traceroute) | INPUT | 常時 |
 | 19 | デフォルト DROP (num_ctrl_plane_acl_rules > 0 の場合のみ) | INPUT | ルール 0 件なら追加しない |
 
-> **証跡**: `caclmgrd L625-901` 全行読了。`caclmgrd.service` systemd 依存確認。
+> **裏取り**: `caclmgrd L625-901` 全行読了。`caclmgrd.service` systemd 依存確認。
 
 ### 2. ACL_RULE の PRIORITY 処理順序
 
@@ -313,12 +312,12 @@ warm-reboot 時は caclmgrd が systemd によって再起動され、起動直�
 | ACL_TABLE(CTRLPLANE) → ACL_RULE | TABLE 登録後 RULE を erase。順序通り |
 | ACL_RULE → ACL_TABLE(CTRLPLANE) | RULE 到着時 `table_oid == SAI_NULL_OBJECT_ID` かつ `m_ctrlAclTables` 未登録 → `it++` で再試行待機。TABLE 登録後に RULE が再処理され erase |
 
-> **証跡**: `aclorch.cpp:5548-5566` (`doAclRuleTask()` CTRLPLANE erase ロジック確認)
+> **裏取り**: `aclorch.cpp:5548-5566` (`doAclRuleTask()` CTRLPLANE erase ロジック確認)
 
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `ACL_TABLE (CTRLPLANE)` は `orchagent` 側では SAI に投入されず参照テーブルが最小限に留まる。
 実際の CPU 宛ルール生成は `caclmgrd` が行い、複数の CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) テーブルを暗黙参照する。
@@ -335,12 +334,12 @@ warm-reboot 時は caclmgrd が systemd によって再起動され、起動直�
 
 `AclOrch` は CTRLPLANE テーブルを `m_ctrlAclTables` に登録するのみ。SAI / [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みなし。他テーブルへの暗黙参照もない。
 
-> **スキャン証跡**: `sonic-host-services/scripts/caclmgrd` 全行読了。`caclmgrd L77-91` (定数定義), `L165,L286-330,L729-730,L1157,L1160` (テーブル参照箇所) を確認。
+> **裏取り**: `sonic-host-services/scripts/caclmgrd` 全行読了。`caclmgrd L77-91` (定数定義), `L165,L286-330,L729-730,L1157,L1160` (テーブル参照箇所) を確認。
 
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 <!-- evidence: sonic-host-services/scripts/caclmgrd L226-238 (run_commands), L748-821 (get_acl_rules_and_translate), L943-993 (check_and_update), L1200-1201 (SIGKILL), aclorch.cpp:5554-5566 (CTRLPLANE erase) -->
 
@@ -382,7 +381,7 @@ warm-reboot 時は caclmgrd が systemd によって再起動され、起動直�
 <!-- /failure -->
 
 <!-- constants -->
-## コード定数カタログ (Phase E)
+## コード定数カタログ
 
 CTRLPLANE ACL に関係するコード定数を `acltable.h`、`aclorch.h`、`caclmgrd` から抽出する。
 
@@ -449,12 +448,11 @@ caclmgrd は `ACL_RULE.PACKET_ACTION` を `iptables -j <値>` に **そのまま
 
 > **注意**: orchagent 側の `PACKET_ACTION_FORWARD` 等のマクロ (`aclorch.h:83-88`) は CTRLPLANE では参照されない。caclmgrd が直接文字列を iptables に渡すため、`ACCEPT` / `DROP` 以外は iptables コマンド失敗になる。
 
-> スキャン証跡: `acltable.h` 全行、`aclorch.h:83-88`、`caclmgrd:77-123,859,873` 確認。定数 10 カテゴリ抽出。中間トレース: `meta/_intermediate/cdb-flow/control-plane-acl-constants.md`
 
 <!-- /constants -->
 
 <!-- side-effects -->
-## 書き込み副作用カタログ (Phase F)
+## 書き込み副作用カタログ
 
 ACL_TABLE (CTRLPLANE) が SET/DEL されたとき、複数の担い手がカーネルや DB に副作用を生じる。
 
@@ -521,12 +519,11 @@ caclmgrd 起動時、全 namespace に対して無条件で `update_control_plan
 
 evidence: `caclmgrd:1169-1171`
 
-> スキャン証跡: `caclmgrd` 全行読了。`aclorch.cpp:4680-4684, 5474-5477, 6088-6093, 3479-3481` 確認。副作用 7 カテゴリ抽出。中間トレース: `meta/_intermediate/cdb-flow/control-plane-acl-side-effects.md`
 
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 <!-- evidence: sonic-host-services/scripts/caclmgrd:1112-1304 (run メインループ) / caclmgrd:943-993 (check_and_update_control_plane_acls) / caclmgrd:123,959 (UPDATE_DELAY_SECS=0.5) / caclmgrd:1221-1224 (BFD one-shot) -->
 
@@ -568,12 +565,11 @@ CONFIG_DB ACL_TABLE / ACL_RULE 変更
 
 BFD セッションの最初の SET を検出後、caclmgrd は `sel.removeSelectable(subscribe_bfd_session)` で購読を解除する (caclmgrd:1224)。BFD ルールは `self.bfdAllowed == True` フラグで管理され、以降の iptables 全フラッシュ時に再追加される。
 
-> スキャン証跡: `caclmgrd` 全行読了。購読テーブル 7 件、デバウンス機構、BFD one-shot 購読解除を確認。中間トレース: `meta/_intermediate/cdb-flow/control-plane-acl-pubsub.md`
 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 `caclmgrd` は `device_info` API でプラットフォーム種別を検出し、iptables ルールセットを切り替える。`AclOrch` 側はプラットフォーム非依存で常時登録される。
 
@@ -603,7 +599,6 @@ BFD セッションの最初の SET を検出後、caclmgrd は `sel.removeSelec
 | `EXTERNAL_CLIENT` | False | 非対象 |
 | `ANY` | False | 非対象 |
 
-> スキャン証跡: `caclmgrd` 全行読了。`device_info.is_chassis()` / `is_smartswitch()` / `is_multi_npu()` / `DualToR` 各分岐を確認。`orchdaemon.cpp:533` にて platform 条件なしの AclOrch 登録を確認。中間トレース: `meta/_intermediate/cdb-flow/control-plane-acl-platform.md`
 
 <!-- /platform -->
 
@@ -663,7 +658,7 @@ sonic-db-cli CONFIG_DB keys 'COPP_TRAP|*'
 <!-- /ops-hint -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 CONFIG_DB の `ACL_TABLE` (CTRLPLANE) を書き込むコードパス。
 

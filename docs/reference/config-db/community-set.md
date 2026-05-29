@@ -103,7 +103,7 @@ EXTENDED_COMMUNITY_SET|<name>
 <!-- ref-triangle:end -->
 
 <!-- cross-refs -->
-## 暗黙参照 — COMMUNITY_SET を参照する CONFIG_DB テーブル (Phase C)
+## 暗黙参照 — COMMUNITY_SET を参照する CONFIG_DB テーブル
 
 `COMMUNITY_SET` は **参照される側**（被参照テーブル）であり、自身が他テーブルを読み出すことはない。以下は `frrcfgd` の実装から抽出した、`COMMUNITY_SET` エントリ名を実行時に解決する上位テーブルの一覧。
 
@@ -132,7 +132,6 @@ EXTENDED_COMMUNITY_SET|<name>
 | `set_community_ref` で参照する COMMUNITY_SET が `is_configurable()` = false | 同上（コマンド生成スキップ） | `frrcfgd.py:833` |
 | `match_community` で参照する COMMUNITY_SET 名が FRR に未登録 | FRR bgpd が community-list 未定義として扱い、match は常に false（全ルート非マッチ） | FRR bgpd 実装 |
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/community-set-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 ## 引用元
@@ -184,7 +183,7 @@ vtysh -c 'show bgp community-list'
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `COMMUNITY_SET`
 
@@ -213,7 +212,7 @@ vtysh -c 'show bgp community-list'
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `frrcfgd`（`BGPConfigDaemon`）は `COMMUNITY_SET` を購読して FRR の `bgp community-list` に変換する。`ROUTE_MAP` の `match_community` / `set_community_ref` は COMMUNITY_SET 名を参照するため、以下の順序依存が存在する。
 
@@ -234,20 +233,19 @@ vtysh -c 'show bgp community-list'
 
 **set_community_ref の先行必須 (依存 #4)**: `CommandArgument.__format__` の `com-ref` 分岐は `daemon.comm_set_list.get(name)` で COMMUNITY_SET を引き当て、`is_configurable()` が `True` の場合のみメンバー列を返す。未登録の場合は `None` が返り FRR コマンドが生成されない（`frrcfgd.py:831-834`）。
 
-詳細調査ノートは `meta/_intermediate/cdb-flow/community-set-ordering.md` 参照。
 
 <!-- /ordering -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | 派生なし（COMMUNITY_SET は CLI または [gNMI](../../reference/glossary.md#term-gnmi)/OpenConfig 経由でのみ書き込まれる） | — | frrcfgd は読み取り専用消費 |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -258,7 +256,7 @@ vtysh -c 'show bgp community-list'
 - frrcfgd.py L2300: COMMUNITY_SET 購読（条件なし）
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -267,10 +265,10 @@ vtysh -c 'show bgp community-list'
 | `BGPConfigDaemon` | `hdl_com_set()` | `match_action == 'all'` | `permit <all members>` を 1 行コマンドで生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:993-999` |
 | `BGPConfigDaemon` | `hdl_com_set()` | `match_action == 'any'` | member ごとに `permit <member>` を個別コマンドで生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1000-1006` |
 
-> **スキャン証跡**: `hdl_com_set` L981-1006 全行読了。match_action ('all' vs 'any') による分岐が核心。4 件抽出。
+> **裏取り**: `hdl_com_set` L981-1006 全行読了。match_action ('all' vs 'any') による分岐が核心。4 件抽出。
 <!-- /handler-branching -->
 <!-- pubsub -->
-## CONFIG_DB 購読メカニズム (Phase G)
+## CONFIG_DB 購読メカニズム
 
 COMMUNITY_SET テーブルは `frrcfgd` のみが購読する。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は COMMUNITY_SET を直接購読しない。
 
@@ -329,7 +327,7 @@ CONFIG_DB COMMUNITY_SET / EXTENDED_COMMUNITY_SET
 <!-- /pubsub -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 実装コードに直接定義されている文字列定数・enum 値を一覧化する。CONFIG_DB フィールド値を正確に把握するための参照用。
 
@@ -394,10 +392,10 @@ EXTENDED_COMMUNITY_SET の `community_member` 値のプレフィックスとし�
 
 `COMMUNITY_SET` にはシーケンス番号フィールドなし（`PREFIX_LIST` と異なる）。順序は `community_member` の `ordered-by user` leaf-list で保持される（`sonic-routing-policy-sets.yang:169`）。
 
-> **スキャン証跡**: `frrcfgd.py:981-1007,1569-1603` (`hdl_com_set`, `CommunityList` クラス) 精読、`bgpcfgd/managers_rm.py:54-65` (community_id 検証) 確認、`sonic-routing-policy-sets.yang:28-39,135-173` (action/set_type/match_action/community_member 定義) 精読。定数 4 分類 + well-known 4 件 + ext-community マーカー 2 件抽出。
+> **裏取り**: `frrcfgd.py:981-1007,1569-1603` (`hdl_com_set`, `CommunityList` クラス) 精読、`bgpcfgd/managers_rm.py:54-65` (community_id 検証) 確認、`sonic-routing-policy-sets.yang:28-39,135-173` (action/set_type/match_action/community_member 定義) 精読。定数 4 分類 + well-known 4 件 + ext-community マーカー 2 件抽出。
 <!-- /constants -->
 <!-- side-effects -->
-## Phase F: 副次 DB 書込・FRR 設定書込 (Direction B)
+## 副次 DB 書込・FRR 設定書込
 
 対象スクリプト: `frrcfgd` (`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`)
 
@@ -430,7 +428,7 @@ EXTENDED_COMMUNITY_SET の `community_member` 値のプレフィックスとし�
 - `g_run_command()` が失敗（vtysh 返値非ゼロ）した場合: `syslog LOG_ERR` を出力し `continue`（再試行なし）。FRR と CONFIG_DB の設定乖離が生じる可能性がある。<!-- evidence: frrcfgd.py:47-62, 2879-2881 -->
 <!-- /side-effects -->
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 ### FRR バージョン固定
 
@@ -457,7 +455,7 @@ SONiC master は FRR **10.5.1** に固定されている (`rules/frr.mk:3`)。`b
 `bgpd.conf.db.comm_list.j2` はコンテナ起動時の初期コンフィグ生成に使用され、`frrcfgd` はその後の差分を vtysh 経由で適用する。両者は同じロジックを持つが独立しており、起動前後で挙動の整合性を確認する必要がある。<!-- evidence: sonic-buildimage/src/sonic-frr-mgmt-framework/templates/bgpd/bgpd.conf.db.comm_list.j2 L1-54 -->
 <!-- /platform -->
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 ### `action` フィールド — dead field / ハードコード固定値
 
@@ -488,7 +486,7 @@ SONiC master は FRR **10.5.1** に固定されている (`rules/frr.mk:3`)。`b
 - 起動時の `bgpd.conf` 生成（Jinja2）とランタイムの設定変更（frrcfgd vtysh 直接発行）は独立したコードパス。どちらも `action` フィールドを参照せず `permit` 固定で動作する点は共通。Jinja2 側は `match_action` が `all`/`any` 以外の値の場合にサイレントスキップするが、frrcfgd 側は `all` 以外を MATCH_ANY に fallback する点で挙動が異なる。<!-- evidence: bgpd.conf.db.comm_list.j2 L10-20; frrcfgd.py L1588-1591 -->
 <!-- /defaults -->
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ### 不正 community 値 → FRR がコマンドを拒否 / syslog LOG_ERR
 
@@ -511,7 +509,7 @@ bgpd との vtysh ソケット通信が失敗した場合（ソケット書き�
 DB 更新ハンドラ全体を囲む `except Exception as e` ブロックが `syslog.LOG_ERR '[bgp cfgd] Failed handling config DB update with exception: ...'` を出力してそのエントリを破棄する。当該 community-set の変更は反映されず、DB と FRR の乖離が検出されない。<!-- evidence: frrcfgd.py L1532-1534 -->
 <!-- /failure -->
 <!-- cross-refs-extcomm -->
-## 暗黙参照 — EXTENDED_COMMUNITY_SET を参照する CONFIG_DB テーブル (Phase C)
+## 暗黙参照 — EXTENDED_COMMUNITY_SET を参照する CONFIG_DB テーブル
 
 `frrcfgd` の `BGPConfigDaemon` は起動時に `get_table('EXTENDED_COMMUNITY_SET')` で全エントリを `self.extcomm_set_list` キャッシュに一括ロードする (frrcfgd.py:2221-2226)。以下は `frrcfgd.py` のスキャンで検出した暗黙参照テーブル。
 
@@ -535,7 +533,6 @@ DB 更新ハンドラ全体を囲む `except Exception as e` ブロックが `sy
 | 起動時一括ロード | `get_table('EXTENDED_COMMUNITY_SET')` → `self.extcomm_set_list` キャッシュ | frrcfgd.py:2221-2226 |
 | ランタイム間接参照 | `ROUTE_MAP` の `set_ext_community_ref` 処理時に `hdl_set_extcomm()` がキャッシュを参照 | frrcfgd.py:423-427, 856-863 |
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ext-community-set-cross-refs.md` を参照。
 <!-- /cross-refs-extcomm -->
 
 <!-- glossary-links-injected: 74f3161d6627 -->
