@@ -103,7 +103,7 @@ DPU|<dpu_name>
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-smart-switch`
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) `default` 文はいずれのフィールドにも存在しない。以下はコード読み取り側の暗黙 fallback をまとめた調査結果。
 
@@ -133,7 +133,7 @@ DPU|<dpu_name>
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `DPU` テーブルは [SmartSwitch](../../reference/glossary.md#term-smartswitch) 起動シーケンスの基点となる。orchagent / caclmgrd / sonic-gnmi / chassisd が参照するため、書き込みタイミングが各コンポーネントの初期化に影響する。
 
@@ -158,7 +158,7 @@ DPU|<dpu_name>
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `DPU` テーブルは SmartSwitch 固有の CONFIG_DB テーブルとして他の複数テーブルと暗黙依存関係を持つ。
 YANG `leafref` による明示的な参照は持たないが、orchagent / chassisd / monit の実行時コードが
@@ -184,7 +184,7 @@ YANG `leafref` による明示的な参照は持たないが、orchagent / chass
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-swss/orchagent/dash/dashenifwdorch.cpp`, `dashenifwdorch.h`,
 `sonic-net/sonic-host-services/scripts/caclmgrd`, `sonic-net/sonic-gnmi/pkg/interceptors/dpuproxy/resolver.go`
@@ -218,13 +218,10 @@ YANG `leafref` による明示的な参照は持たないが、orchagent / chass
 - **VIP_TABLE 依存 (依存 #5)**: `VIP_TABLE` は `DPU` テーブルとは独立したテーブルだが、`DashEniFwdOrch` の ENI 処理経路で参照される。SmartSwitch では `platform.json` 経由で VIP が事前設定されることが期待されており、欠如は設定ミスを意味する。
 - **iptables 部分失敗 (依存 #7)**: `run_commands()` は失敗したコマンドのエラーをログ出力して次コマンドに進むため、iptables / ip6tables のどちらか片方のみルールが適用される部分的な状態が起こりうる。
 
-詳細調査ノートは `meta/_intermediate/cdb-flow/dpu-failure.md` を参照。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/dpu-constants.md`
+## ハードコード定数
 
 ### テーブル名・フィールド名定数 (`dashenifwdorch.h` — `DashEniFwd` 名前空間)
 
@@ -287,9 +284,7 @@ YANG `leafref` による明示的な参照は持たないが、orchagent / chass
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用 (Phase F)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/dpu-side-effects.md`
+## 副作用
 
 `DPU` テーブルへの SET / DEL が発生したとき、各コンシューマが他テーブル・OS・ハードウェアに
 対して行う副作用を示す。
@@ -325,7 +320,7 @@ DPU の設定変更（`state` / `pa_ipv4` 等）を orchagent に反映させる
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G — subscribe 経路)
+## 通信メカニズム (subscribe 経路)
 
 CONFIG_DB `DPU` テーブルへの runtime subscribe を行うコンシューマは **`caclmgrd` のみ**。他の購読者は起動時の一括読み込みまたは都度参照を行う。
 
@@ -351,14 +346,12 @@ CONFIG_DB `DPU` テーブルへの runtime subscribe を行うコンシューマ
 - `DPU` テーブルの参照は `DpuRegistry::populate()` での `swss::Table::hgetall()` 呼び出しのみ（`dashenifwdorch.cpp:225`）。`swss::Table` は subscribe 型 API ではなく点呼型
 - **実行時 DPU 変更の反映**: `swss` (orchagent) コンテナの再起動が必要
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dpu-pubsub.md` を参照。
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> **調査根拠**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:82-85,720-729,1412-1420,1576-1579`; `sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py:671-694,1043-1101`; `sonic-buildimage/src/sonic-config-engine/smartswitch_config.py:22-48`; `sonic-utilities/scripts/reboot_smartswitch_helper:16-26,40-47`; `sonic-swss/orchagent/orchdaemon.cpp:613-618` (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/dpu-platform.md`
+> **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:82-85,720-729,1412-1420,1576-1579`; `sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py:671-694,1043-1101`; `sonic-buildimage/src/sonic-config-engine/smartswitch_config.py:22-48`; `sonic-utilities/scripts/reboot_smartswitch_helper:16-26,40-47`; `sonic-swss/orchagent/orchdaemon.cpp:613-618` (2026-05-17)
 
 `DPU` テーブルの YANG スキーマはプラットフォーム非依存。ただし以下の点でプラットフォーム差が生じる。
 

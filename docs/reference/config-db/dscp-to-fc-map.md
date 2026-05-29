@@ -181,7 +181,7 @@ config cbf clear
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DSCP_TO_FC_MAP`
 
@@ -207,9 +207,7 @@ config cbf clear
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/dscp-to-fc-map-ordering.md -->
+## 書込み順依存
 
 ### 検出された順序依存
 
@@ -230,9 +228,7 @@ config cbf clear
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/dscp-to-fc-map-cross-refs.md -->
+## 暗黙参照テーブル
 
 `DSCP_TO_FC_MAP` 自身の YANG leafref は `PORT_QOS_MAP.dscp_to_fc_map` から被参照されるが、実装上の処理経路では以下のリソースを暗黙参照している。
 
@@ -269,15 +265,13 @@ DSCP_TO_FC_MAP
 !!! note "CONFIG_DB 直接 → SAI 経路"
     `qosorch` は `DSCP_TO_FC_MAP` を CONFIG_DB から直接購読し SAI へ反映する。APPL_DB / STATE_DB への暗黙参照はない。FLEX_COUNTER_DB への書き込みも発生しない。
 
-> **スキャン証跡**: `qosorch.cpp:80-93, 111, 1039-1094, 1337` 読了 / `nhgmaporch.cpp:299-325` 読了。
+> **裏取り**: `qosorch.cpp:80-93, 111, 1039-1094, 1337` 読了 / `nhgmaporch.cpp:299-325` 読了。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `DscpToFcMapHandler::processWorkItem()` は SET / DEL 失敗を以下のパターンに分類し、失敗ログをすべて `SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE` で出力する。[STATE_DB](../../reference/glossary.md#term-state_db) へのステータス記録はなく（CONFIG_DB → SAI 直行経路）、`ERROR_TABLE` への書き込みも発生しない。
-
-<!-- evidence: meta/_intermediate/cdb-flow/dscp-to-fc-map-failure.md -->
 
 ### SET 時の失敗パターン
 
@@ -323,11 +317,9 @@ sonic-db-cli CONFIG_DB hgetall 'DSCP_TO_FC_MAP|AZURE'
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `DSCP_TO_FC_MAP` の処理で使われる、CONFIG_DB / YANG に現れないハードコード定数の一覧。出典は `sonic-swss/orchagent/qosorch.cpp` と `sonic-swss/orchagent/cbf/nhgmaporch.cpp`。
-
-<!-- evidence: meta/_intermediate/cdb-flow/dscp-to-fc-map-constants.md -->
 
 ### バリデーション境界値
 
@@ -364,7 +356,7 @@ orchagent 再起動なしにはキャッシュが更新されない。FC 非対�
 <!-- /constants -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 ### `fc` フィールド — YANG-実装 discrepancy
 
@@ -409,9 +401,7 @@ orchagent 再起動なしにはキャッシュが更新されない。FC 非対�
 <!-- /defaults -->
 
 <!-- side-effects -->
-## 副作用 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/dscp-to-fc-map-side-effects.md -->
+## 副作用
 
 ### MAP SET/DEL の直接副作用
 
@@ -449,9 +439,7 @@ DEL 試行時に参照が残っている場合、`m_pendingRemove = true` がセ
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-<!-- evidence: meta/_intermediate/cdb-flow/dscp-to-fc-map-pubsub.md -->
+## 通信メカニズム
 
 ### Producer/Consumer ペア
 
@@ -509,9 +497,8 @@ NotificationConsumer / Producer: なし
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-<!-- evidence: meta/_intermediate/cdb-flow/dscp-to-fc-map-platform.md -->
 <!-- source: sonic-swss/orchagent/qosorch.cpp:1039-1094 / orchagent/cbf/nhgmaporch.cpp:299-324 -->
 <!-- date: 2026-05-18 -->
 

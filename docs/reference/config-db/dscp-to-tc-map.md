@@ -142,7 +142,7 @@ show qos map dscp-tc
 <!-- /cdb-exceptions -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 ### 不正 DSCP / TC 値 → `task_invalid_entry`
 
@@ -205,7 +205,7 @@ DEL 受信時に `processWorkItem()` は以下を順に評価する (qosorch.cpp
 <!-- /runtime-trace -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### 購読方式
 
@@ -244,7 +244,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 <!-- /pubsub -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DSCP_TO_TC_MAP`
 
@@ -272,7 +272,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 対象テーブル: `DSCP_TO_TC_MAP`。Consumer: `QosOrch::handleDscpToTcTable()` / `handlePortQosMapTable()` (`qosorch.cpp`)。
 スキャン範囲: `qosorch.cpp` 全行精読、`tunneldecaporch.cpp:101-302`、`db_migrator.py:700-715`。
@@ -369,7 +369,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/qosorch.h`
 
@@ -415,7 +415,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 ソース: `sonic-swss/orchagent/qosorch.cpp`
 
@@ -453,7 +453,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 <!-- /cross-refs -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/tunneldecaporch.cpp`
 
@@ -520,9 +520,7 @@ DSCP_TO_TC_MAP は `TUNNEL_DECAP_TABLE` の `decap_dscp_to_tc_map` フィール�
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/dscp-to-tc-map-platform.md`
+## プラットフォーム差分
 
 ### SAI capability クエリによる分岐
 

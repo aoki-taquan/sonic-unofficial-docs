@@ -173,7 +173,7 @@ Critical/Major アラームあり → Red、Minor/Warning のみ → Amber、ア
 | `sonic-events-dhcp-relay` | DHCP relay イベント |
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `eventd` は起動時に複数のサービスを順序付きで初期化し、その後イベントキャプチャのライフサイクルを厳格な状態遷移で管理する。誤った順序での操作はエラーまたはデータロスを招く。
 
@@ -210,7 +210,7 @@ Critical/Major アラームあり → Red、Minor/Warning のみ → Amber、ア
 <!-- /ordering -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [HLD](../../reference/glossary.md#term-hld) および `eventd.cpp` の定数から導出する[^1][^3]。
 
@@ -255,7 +255,7 @@ Critical/Major アラームあり → Red、Minor/Warning のみ → Amber、ア
 <!-- /defaults -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `eventd` が読み書きする関連 DB・ファイル (Phase C)
+## 暗黙参照 — `eventd` が読み書きする関連 DB・ファイル
 
 `eventd` はファイルシステム上の設定ファイルと複数の [Redis](../../reference/glossary.md#term-redis) DB にまたがって依存を持つ。以下にその全体像を示す。
 
@@ -294,9 +294,9 @@ Critical/Major アラームあり → Red、Minor/Warning のみ → Amber、ア
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-> **調査根拠**: `sonic-buildimage/src/sonic-eventd/src/eventd.cpp`、`sonic-swss-common/common/events_common.h` の `RET_ON_ERR` マクロ定義および `run_eventd_service()` 関数全体。
+> **Evidence**: `sonic-buildimage/src/sonic-eventd/src/eventd.cpp`、`sonic-swss-common/common/events_common.h` の `RET_ON_ERR` マクロ定義および `run_eventd_service()` 関数全体。
 
 `eventd` プロセス内の失敗は `RET_ON_ERR` マクロ (`events_common.h:47-52`) で一元処理される。条件が偽の場合、`SWSS_LOG_INFO` でエラーを syslog 出力し `goto out` でクリーンアップコードへジャンプする。致命的な失敗はプロセス終了に至る。
 
@@ -341,7 +341,7 @@ Critical/Major アラームあり → Red、Minor/Warning のみ → Amber、ア
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `eventd` および `events_common.h` / `eventd.cpp` / `eventd.h` 内に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されない固定値の一覧。`/etc/eventd.json` や `/etc/evprofile/default.json` で上書きできないプロセス内部定数を中心に示す。
 
@@ -400,7 +400,7 @@ Critical/Major アラームあり → Red、Minor/Warning のみ → Amber、ア
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 EventDB service (`eventd` 内の event_consumer + alarm_consumer) が `/etc/evprofile/default.json` の内容をもとにイベントを処理した際の副次 DB 書込みを示す。
 
@@ -412,7 +412,7 @@ EventDB service (`eventd` 内の event_consumer + alarm_consumer) が `/etc/evpr
 | `EVENT_DB` (index 19) | `ALARM` | **あり** | `action=RAISE_ALARM` でエントリ追加、`CLEAR_ALARM` で削除。`ACK_ALARM`/`UNACK_ALARM` で `acknowledged` フラグと `acknowledge_time` を更新 (HLD section 3.1.3) |
 | `EVENT_DB` (index 19) | `EVENT_STATS` | **あり** | イベント累計統計カウンタ (HLD section 3.1.4) |
 | `EVENT_DB` (index 19) | `ALARM_STATS` | **あり** | severity 別アクティブアラーム数 (`critical`/`major`/`minor`/`warning`/`acknowledged`)。RAISE/CLEAR/ACK/UNACK ごとに増減 (HLD section 3.1.3) |
-| `COUNTERS_DB` | `COUNTERS_EVENTS` | **あり（定期）** | `stats_collector::run_writer()` が最大 10 ms 毎に発行済み・キャッシュ損失カウンタを書込み (`eventd.cpp:198-210`)。`event-publisher.md` の Phase F と共通の書込みパス |
+| `COUNTERS_DB` | `COUNTERS_EVENTS` | **あり（定期）** | `stats_collector::run_writer()` が最大 10 ms 毎に発行済み・キャッシュ損失カウンタを書込み (`eventd.cpp:198-210`)。`event-publisher.md` の副次 DB 書込と共通の書込みパス |
 | `CONFIG_DB` | — | なし | eventd はファイル直接読み。CONFIG_DB アクセスなし |
 | `APPL_DB` | — | なし | 書込みパスなし |
 | `STATE_DB` | — | なし | 書込みパスなし |
@@ -443,9 +443,7 @@ EventDB service (`eventd` 内の event_consumer + alarm_consumer) が `/etc/evpr
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/extended-monitor-pubsub.md`
+## 通信メカニズム
 
 ### 購読方式: Redis keyspace 通知なし — ファイル直接読み込み + ZMQ ブローカー
 
@@ -479,13 +477,13 @@ systemctl restart eventd
 
 ### APPL_DB / SAI 中継
 
-なし。拡張監視設定 (`eventd.json` / `evprofile`) は `eventd` 内部で完結し、[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への伝播も [SAI](../../reference/glossary.md#term-sai) 書き込みも発生しない。EVENT_DB と COUNTERS_DB への書き込みは `eventd` が直接行う（Phase F 参照）。
+なし。拡張監視設定 (`eventd.json` / `evprofile`) は `eventd` 内部で完結し、[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への伝播も [SAI](../../reference/glossary.md#term-sai) 書き込みも発生しない。EVENT_DB と COUNTERS_DB への書き込みは `eventd` が直接行う（副次 DB 書込節参照）。
 
 > **Evidence**: `eventd.cpp:172-225` (stats_collector::start); `eventd.cpp:656-704` (run_eventd_service 起動シーケンス); `eventd.cpp:244` (内部サブスクライバー); HLD section 3.1.2, 3.1.3, 3.1.8
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-eventd/src/eventd.cpp (全体),
      sonic-net/sonic-buildimage/src/sonic-eventd/src/eventd.h (全体),

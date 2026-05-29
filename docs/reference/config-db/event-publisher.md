@@ -108,7 +108,7 @@ flowchart LR
 - 関連 [HLD](../../reference/glossary.md#term-hld): `SONiC/doc/event-alarm-framework/event-alarm-framework.md`、`events-producer.md`
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `init_cfg.json` はファイルベース設定であり、通常の [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルとは異なる読み込みメカニズムを持つ。
 `get_config(key)` (`events_common.cpp:74-83`) は lazy 初期化パターンを採用しており、
@@ -146,7 +146,7 @@ flowchart LR
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `eventd` がイベントフレームワーク設定を処理する際に暗黙的に依存する外部リソースとの関係を示す。
 
@@ -169,7 +169,7 @@ flowchart LR
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 障害時挙動 (Phase D)
+## 障害時挙動
 
 `eventd` の障害パスは「起動時致命的失敗」と「ループ内ソフト失敗」の 2 種類に分類される。
 いずれも `RET_ON_ERR` マクロ (`events_common.h:47-54`) が中心機構であり、
@@ -239,7 +239,7 @@ capture サービスが NULL のままサービスが継続する (`eventd.cpp:6
 <!-- /cdb-exceptions -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) definition が存在しないため、デフォルト値はすべて `events_common.cpp` の `cfg_default` マップおよび `eventd.cpp` の定数から導出される[^2][^3]。
 
@@ -263,7 +263,7 @@ capture サービスが NULL のままサービスが継続する (`eventd.cpp:6
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `eventd` および `events_common` に存在する、`init_cfg.json` / [YANG](../../reference/glossary.md#term-yang) では管理されないハードコード定数の一覧。
 出典は `sonic-buildimage/src/sonic-eventd/src/eventd.cpp`、`eventd.h`、`events_common.h`。
@@ -311,7 +311,7 @@ capture サービスが NULL のままサービスが継続する (`eventd.cpp:6
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `eventd` が `init_cfg.json` の `"events"` 設定を読み込んで ZMQ フレームワークを起動する際の副次 DB 書込みを示す。
 
@@ -346,10 +346,9 @@ capture サービスが NULL のままサービスが継続する (`eventd.cpp:6
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `sonic-swss-common/common/events_common.cpp` `read_init_config()` L38-83 / `sonic-buildimage/src/sonic-eventd/src/eventd.cpp` `run_eventd_service()` L656-704 / `stats_collector::start()` L172-225 精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/event-publisher-pubsub.md`
+> **Evidence**: `sonic-swss-common/common/events_common.cpp` `read_init_config()` L38-83 / `sonic-buildimage/src/sonic-eventd/src/eventd.cpp` `run_eventd_service()` L656-704 / `stats_collector::start()` L172-225 精読 (2026-05-19)
 
 ### 購読方式: なし (ファイル起動時読み込みのみ — ZMQ が内部 pub/sub メカニズム)
 
@@ -393,7 +392,7 @@ systemctl restart eventd
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: `eventd` は ZMQ ブローカーおよびファイルベース設定 (`init_cfg.json`) のみで動作し、[SAI](../../reference/glossary.md#term-sai) / [ASIC](../../reference/glossary.md#term-asic) ベンダー依存コードを一切持たない。
 
@@ -405,7 +404,7 @@ systemctl restart eventd
 | [VS](../../reference/glossary.md#term-vs) (仮想スイッチ / sonic-vs) | 完全サポート (差異なし) | `eventd_ut.cpp` テストが [VS](../../reference/glossary.md#term-vs) 環境で動作する。ZMQ ポートアドレスは `init_cfg.json` で変更可能なため環境依存なし |
 | ベンダー固有 eventd プラグイン | なし | `rsyslog_plugin/` は `eventd` 本体と別バイナリ。syslog テキストを ZMQ に変換する補助コンポーネントであり、platform 条件分岐を持たない (`rsyslog_plugin/rsyslog_plugin.cpp` 全行確認) |
 
-> **スキャン証跡**: `sonic-buildimage/src/sonic-eventd/src/eventd.cpp`・`eventd.h`・`rsyslog_plugin/rsyslog_plugin.cpp`・`sonic-swss-common/common/events_common.cpp`・`events.cpp` を `platform|PLATFORM|asic|ASIC|multi_npu|IS_MULTI_NPU|chassis|vendor` で grep → 全ファイル 0 ヒット。platform 分岐なしを確認。
+> **裏取り**: `sonic-buildimage/src/sonic-eventd/src/eventd.cpp`・`eventd.h`・`rsyslog_plugin/rsyslog_plugin.cpp`・`sonic-swss-common/common/events_common.cpp`・`events.cpp` を `platform|PLATFORM|asic|ASIC|multi_npu|IS_MULTI_NPU|chassis|vendor` で grep → 全ファイル 0 ヒット。platform 分岐なしを確認。
 
 <!-- /platform -->
 

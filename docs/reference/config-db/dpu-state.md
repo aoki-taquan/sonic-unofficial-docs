@@ -68,7 +68,7 @@ DPU_STATE|DPU<N>
 - [YANG](../../reference/glossary.md#term-yang) モデルは存在しない ([STATE_DB](../../reference/glossary.md#term-state_db) は [YANG](../../reference/glossary.md#term-yang) の管轄外)
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 このテーブルは [YANG](../../reference/glossary.md#term-yang) `default` 文を持たない [STATE_DB](../../reference/glossary.md#term-state_db) テーブル。以下はコードから読み取ったデフォルト / fallback の調査結果。
 
@@ -152,7 +152,7 @@ else:                   oper_status = "Partial Online"
 | midplane `'up'` で CP/DP いずれか `'down'` | `Partial Online` |
 <!-- /defaults -->
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 <!-- evidence: sonic-platform-daemons/sonic-chassisd/scripts/chassisd SmartSwitchModuleUpdater.update_dpu_state:864 / DpuStateUpdater.update_state:1303 / DpuStateManagerTask.task_worker:1482 / DpuChassisdDaemon.run:1537 -->
 
@@ -225,7 +225,7 @@ DpuStateUpdater.deinit()  ← dpu_data_plane_state, dpu_control_plane_state を 
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `DPU_STATE` は CHASSIS_STATE_DB への **書き出し専用** テーブル。`SmartSwitchModuleUpdater` と `DpuStateUpdater` が書き手であり、フィールド値の算出に以下の外部テーブル / リソースを**暗黙に参照**する。
 
@@ -248,7 +248,7 @@ DpuStateUpdater.deinit()  ← dpu_data_plane_state, dpu_control_plane_state を 
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
+## 失敗挙動・retry / recovery
 
 <!-- evidence: sonic-platform-daemons/sonic-chassisd/scripts/chassisd update_dpu_state:864-891 / try_get:125-139 / set_initial_dpu_admin_state:1364-1405 / DpuChassisdDaemon.run:1408-1461 -->
 
@@ -336,9 +336,7 @@ except Exception as e:
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/dpu-state-constants.md`
+## ハードコード定数
 
 `chassisd` は `DPU_STATE` テーブルのフィールド名・タイムスタンプ形式・ポーリング間隔をモジュール先頭の定数で管理する。
 
@@ -386,7 +384,7 @@ if not "DPU_STATE" in key and not "REBOOT_CAUSE" in key:
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 <!-- evidence: sonic-platform-daemons/sonic-chassisd/scripts/chassisd DpuStateManagerTask.task_worker:1484-1530 / DpuStateUpdater.update_state:1303-1316 / SmartSwitchModuleUpdater.module_down_chassis_db_cleanup:1113-1130 / DpuChassisdDaemon.run:1537-1557 -->
 
@@ -427,11 +425,11 @@ DPU_STATE エントリは DPU down 状態でも CHASSIS_STATE_DB に残り続け
 | CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / STATE_DB | `chassisd` はこれらへの書き戻しを行わない |
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | DPU_STATE は [SAI](../../reference/glossary.md#term-sai) counter binding を持たないため書き込みなし |
 
-> **スキャン証跡**: `chassisd` `DpuStateUpdater` クラス全行 (L1234-1320)、`DpuStateManagerTask` 全行 (L1464-1557)、`SmartSwitchModuleUpdater.module_down_chassis_db_cleanup` (L1113-1130) 読了。副次書き込みは `CHASSIS_STATE_DB:DPU_STATE` への自己フィードバック 1 件のみ。詳細は `meta/_intermediate/cdb-flow/dpu-state-side.md` 参照。
+> **裏取り**: `chassisd` `DpuStateUpdater` クラス全行 (L1234-1320)、`DpuStateManagerTask` 全行 (L1464-1557)、`SmartSwitchModuleUpdater.module_down_chassis_db_cleanup` (L1113-1130) 読了。副次書き込みは `CHASSIS_STATE_DB:DPU_STATE` への自己フィードバック 1 件のみ。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 <!-- evidence: sonic-platform-daemons/sonic-chassisd/scripts/chassisd DpuStateManagerTask:1464-1530 / DpuChassisdDaemon.run:1537-1557 / SELECT_TIMEOUT:95 -->
 
@@ -486,13 +484,10 @@ selectable = [
 
 `poll_dpu_state = True` の場合は DPU_STATE 変化の keyspace notification は使用されない。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/dpu-state-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/dpu-state-platform.md`
+## プラットフォーム差
 
 ### 前提: SmartSwitch 専用テーブル
 
