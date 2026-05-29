@@ -75,7 +75,7 @@ FLEX_COUNTER_TABLE|<group>|<oid>
 | `PORT_PHY_ATTR` | `PORT_PHY_ATTR_ID_LIST` / `PORT_PHY_SERDES_ATTR_ID_LIST` |
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 <!-- evidence: sonic-swss/orchagent/portsorch.cpp,
      sonic-swss-common/common/schema.h -->
@@ -183,9 +183,8 @@ VoQ 対応時は `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が追加される�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-flex-ordering.md`
 
 ### doTask 処理ガード順序
 
@@ -274,9 +273,8 @@ disable 受信時に FLEX_COUNTER_DB の per-OID エントリを **削除する�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
+## 暗黙参照マップ
 
-> 調査証跡: `meta/_intermediate/cdb-flow/counters-flex-cross-refs.md`
 
 `FlexCounterOrch` は [YANG](../../reference/glossary.md#term-yang) leafref として定義されていない以下のテーブル・グローバル Orch を暗黙参照して、個別カウンタフィールドの生成範囲を決定する。
 
@@ -310,9 +308,8 @@ disable 受信時に FLEX_COUNTER_DB の per-OID エントリを **削除する�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
+## 失敗挙動・retry / recovery
 
-<!-- evidence: meta/_intermediate/cdb-flow/counters-flex-failure.md -->
 
 ### retry パターン概要
 
@@ -383,9 +380,8 @@ return;  // FLEX_COUNTER_DB へ書き込まずリターン
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-<!-- evidence: meta/_intermediate/cdb-flow/counters-flex-constants.md -->
 
 ### Warm-reboot 遅延タイマー
 
@@ -452,11 +448,8 @@ CONFIG_DB の `FLEX_COUNTER_TABLE|<group>` キー名と、FLEX_COUNTER_DB で使
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-<!-- evidence: meta/_intermediate/cdb-flow/counters-flex-side-effects.md -->
-<!-- source: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/portsorch.cpp,
-     sonic-swss/orchagent/intfsorch.cpp (ref: master) -->
 
 `FLEX_COUNTER_TABLE|<group>` への `FLEX_COUNTER_STATUS = enable/disable` 処理に伴い
 `FlexCounterOrch::doTask()` が各 Orch の `generateXxxMap()` を呼び出す際に生じる副次 DB 書き込み。
@@ -494,13 +487,8 @@ evidence: `flexcounterorch.cpp:287-340`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-<!-- evidence: meta/_intermediate/cdb-flow/counters-flex-pubsub.md -->
-<!-- source: sonic-swss/orchagent/saihelper.cpp (ref: master),
-     sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp (ref: master),
-     sonic-sairedis/syncd/Syncd.cpp (ref: master),
-     sonic-sairedis/syncd/FlexCounter.cpp (ref: master) -->
 
 ### orchagent → FLEX_COUNTER_DB 書き込み方式
 
@@ -557,11 +545,8 @@ consumer 側はすべて on-demand polling で読み出す必要がある。
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
-<!-- evidence: meta/_intermediate/cdb-flow/counters-flex-platform.md -->
-<!-- source: sonic-swss/orchagent/portsorch.cpp (ref: master),
-     sonic-swss-common/common/schema.h (ref: master) -->
 
 ### プラットフォーム識別
 

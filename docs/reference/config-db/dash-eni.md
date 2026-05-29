@@ -106,7 +106,7 @@ DASH_ENI_TABLE:<eni_mac>
 <!-- /cdb-exceptions -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) / proto3 デフォルト以外の実装由来 fallback。`DashOrch::addEniObject()` (dashorch.cpp:566-768) の [SAI](../../reference/glossary.md#term-sai) 属性組み立てロジックから導出。
 
@@ -131,7 +131,7 @@ DASH_ENI_TABLE:<eni_mac>
 <!-- /defaults -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DASH_ENI_TABLE`
 
@@ -223,7 +223,7 @@ Warm start 時 `warmRestoreAndSyncUp()` は全 Orch の `bake()` で APP_DB の�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 [YANG](../../reference/glossary.md#term-yang) 未定義テーブルのため leafref は存在しない。以下はすべて実装レベルの暗黙参照。
 
@@ -251,7 +251,7 @@ Warm start 時 `warmRestoreAndSyncUp()` は全 Orch の `bake()` で APP_DB の�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-swss/orchagent/dash/dashorch.cpp`
 
@@ -304,7 +304,7 @@ Warm start 時 `warmRestoreAndSyncUp()` は全 Orch の `bake()` で APP_DB の�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ソース: `sonic-net/sonic-swss/orchagent/dash/dashorch.h`, `dashorch.cpp`, `crmorch.h`
 
@@ -356,7 +356,7 @@ ENI 1 件の作成・削除ごとに以下の **2 つのカウンタが独立し
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `DashOrch` は SAI ([ASIC_DB](../../reference/glossary.md#term-asic_db)) への書き込みに加えて、以下の DB 副次書込を行う[^orch]。
 
@@ -404,10 +404,9 @@ ENI 1 件の作成・削除ごとに以下の **2 つのカウンタが独立し
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (ZMQ / ZmqConsumerStateTable) — Phase G
+## 通信メカニズム (ZMQ / ZmqConsumerStateTable)
 
-> **調査根拠**: `sonic-swss/orchagent/zmqorch.cpp`, `zmqorch.h`, `sonic-swss-common/common/zmqserver.h`, `zmqconsumerstatetable.cpp`, `orchdaemon.cpp` L1322–1420 精読 (2026-05-17)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/dash-eni-pubsub.md`
+> **Evidence**: `sonic-swss/orchagent/zmqorch.cpp`, `zmqorch.h`, `sonic-swss-common/common/zmqserver.h`, `zmqconsumerstatetable.cpp`, `orchdaemon.cpp` L1322–1420 精読 (2026-05-17)
 
 ### 購読方式
 
@@ -472,10 +471,9 @@ ENI 1 件の作成・削除ごとに以下の **2 つのカウンタが独立し
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差・SAI capability (Phase H)
+## プラットフォーム差・SAI capability
 
-> **調査根拠**: `sonic-swss/orchagent/main.cpp`, `orchdaemon.cpp`, `dashorch.cpp`, `dashorch.h` 精読 (2026-05-17)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/dash-eni-platform.md`
+> **Evidence**: `sonic-swss/orchagent/main.cpp`, `orchdaemon.cpp`, `dashorch.cpp`, `dashorch.h` 精読 (2026-05-17)
 
 ### 動作条件: switch_type=dpu のみ
 

@@ -159,7 +159,7 @@ sai_query_attribute_enum_values_capability() 失敗
 ---
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 ### `state` フィールド — 値は常に `"ok"` でハードコード
 
@@ -181,11 +181,11 @@ SAI capability query が失敗した場合、`neighbor_miss` は `default_suppor
 
 `updateTrapOperStatus()` は `get_trap_name_by_type()` で `sai_hostif_trap_type_t` を文字列に変換する。`trap_id_map` に存在しない SAI 内部トラップ型は文字列変換に失敗し、`SWSS_LOG_ERROR` を出力したうえで `COPP_TRAP_TABLE` への書き込みをスキップする。<!-- evidence: copporch.cpp L226-231 -->
 
-> **スキャン証跡**: coppmgr.cpp L424-451 全行読了。copporch.cpp L104-300, L499-540, L1390-1420 読了。schema.h L448-450 読了。state_db.json (UT mock) 読了。発見 4 件。
+> **裏取り**: coppmgr.cpp L424-451 全行読了。copporch.cpp L104-300, L499-540, L1390-1420 読了。schema.h L448-450 読了。state_db.json (UT mock) 読了。発見 4 件。
 <!-- /defaults -->
 
 <!-- ordering -->
-## STATE_DB 書き込み順序 (Phase B)
+## STATE_DB 書き込み順序
 
 ### 通常起動シーケンス
 
@@ -259,7 +259,7 @@ orchagent が APPL_DB を処理
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 本ページの [STATE_DB](../../reference/glossary.md#term-state_db) 3 テーブル（`COPP_GROUP_TABLE` / `COPP_TRAP_TABLE` / `COPP_TRAP_CAPABILITY_TABLE`）はいずれも [YANG](../../reference/glossary.md#term-yang) 未モデル化のオペレーショナルテーブルで、`coppmgrd` および `CoppOrch` が**書き手 (producer only)** として書き込む。以下では各 STATE_DB エントリの**生成トリガ・キー値・フィールド値**が依存する入力側テーブルと前提リソースを整理する。
 
@@ -282,11 +282,11 @@ orchagent が APPL_DB を処理
 !!! note "`COPP_TRAP_CAPABILITY_TABLE` は orchagent 起動時 1 回のみ更新"
     `publishTrapIdsCapability()` は `CoppOrch` コンストラクタ (`copporch.cpp:208-209`) で呼ばれるのみで、CONFIG_DB / APPL_DB の動的変更による再書込みは発生しない。プラットフォームの SAI 実装が変わらない限り、起動後の値は固定である。
 
-> **スキャン証跡**: coppmgr.cpp L296-411, L531-985 全行読了。copporch.cpp L32-36, L191-215, L240-300, L392-420, L880-960, L1370-1492 読了。cross-refs 8 件検出。
+> **裏取り**: coppmgr.cpp L296-411, L531-985 全行読了。copporch.cpp L32-36, L191-215, L240-300, L392-420, L880-960, L1370-1492 読了。cross-refs 8 件検出。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `COPP_GROUP_TABLE` / `COPP_TRAP_TABLE` / `COPP_TRAP_CAPABILITY_TABLE` への書き手は `coppmgrd` と `CoppOrch`（[orchagent](../../reference/glossary.md#term-orchagent)）の 2 プロセス。両プロセスとも STATE_DB への書き込みは `swss::Table::set/del`（void 戻り値）で行うため、**[Redis](../../reference/glossary.md#term-redis) 書き込み失敗はアプリ層では検出できず**、例外伝播によるプロセス abort → systemd 再起動が唯一の回復経路となる。以下では各プロセスの失敗分岐と STATE_DB への影響を整理する。
 
@@ -333,11 +333,11 @@ orchagent が APPL_DB を処理
 | `hw_status` 未書き込み（永続） | SAI `create_hostif_trap` の `task_invalid_entry` 系失敗 | 当該エントリは永久スキップ。orchagent 再起動後に再処理 |
 | `COPP_TRAP_TABLE.state` 未書き込み | `trap_group` / `trap_ids` 欠落による coppmgrd サイレントスキップ | CONFIG_DB の当該 COPP_TRAP エントリを修正して再投入するまで回復しない |
 
-> **スキャン証跡**: `copporch.cpp` L208-215, L240-300, L315-390, L499-532, L880-934 読了。`coppmgr.cpp` L424-451, L531-815 読了。失敗分岐 4 系統（SAI init / doTask status / SAI trap create / coppmgrd skip）を確認。詳細は `meta/_intermediate/cdb-flow/copp-state-failure.md` 参照。
+> **裏取り**: `copporch.cpp` L208-215, L240-300, L315-390, L499-532, L880-934 読了。`coppmgr.cpp` L424-451, L531-815 読了。失敗分岐 4 系統（SAI init / doTask status / SAI trap create / coppmgrd skip）を確認。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `CoppOrch` (`copporch.cpp` / `copporch.h`) および `CoppMgr` (`coppmgr.cpp`) 内に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。これらの値は STATE_DB テーブルの書き込みタイミング・フィールド値・capability 公開内容に直接影響する。
 
@@ -372,13 +372,13 @@ orchagent が APPL_DB を処理
 |--------------|------|--------|
 | `getenv("platform")` 文字列比較 | `"x86_64-mlnx_msn*"` (Mellanox) または `"arm64-marvell_*"` パターンで trap priority 設定をスキップ。SAI create_hostif_trap の attrib リストに `SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY` を含めない | `copporch.cpp` L353-354, L1188-1189 |
 
-> **スキャン証跡**: `copporch.cpp` L37, L106-151, L184-215, L296-299, L350-360, L499-532, L1185-1195, L1385-1395, L1413 読了。`copporch.h` L23-46 読了。`coppmgr.cpp` L424-451 読了。定数 5 種別 13 件を確認。
+> **裏取り**: `copporch.cpp` L37, L106-151, L184-215, L296-299, L350-360, L499-532, L1185-1195, L1385-1395, L1413 読了。`copporch.h` L23-46 読了。`coppmgr.cpp` L424-451 読了。定数 5 種別 13 件を確認。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-`CoppOrch` (`copporch.cpp`) が STATE_DB 3 テーブルへの書き込みと並行して行う、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) および [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への副次書き込みを整理する。`coppmgrd` が書く [APPL_DB](../../reference/glossary.md#term-appl_db) は本ページのテーブルの直接の生成トリガ（Phase B 参照）であるため除外する。
+`CoppOrch` (`copporch.cpp`) が STATE_DB 3 テーブルへの書き込みと並行して行う、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) および [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への副次書き込みを整理する。`coppmgrd` が書く [APPL_DB](../../reference/glossary.md#term-appl_db) は本ページのテーブルの直接の生成トリガ（「STATE_DB 書き込み順序」参照）であるため除外する。
 
 ### SAI トラップ作成成功時 — COUNTERS_DB 書き込み
 
@@ -426,11 +426,11 @@ orchagent が APPL_DB を処理
 | APPL_DB / CONFIG_DB | `CoppOrch` は CONFIG_DB / APPL_DB への書き戻しを行わない |
 | STATE_DB 以外の STATE 系 | APPL_STATE_DB への `ResponsePublisher` 書き込みは COPP テーブルには存在しない |
 
-> **スキャン証跡**: `copporch.cpp` L35-37, L193-215, L520-532, L935-965, L1375-1530 読了。副次書き込み先は COUNTERS_DB (`COUNTERS_TRAP_NAME_MAP`) と FLEX_COUNTER_DB (`HOSTIF_TRAP_FLOW_COUNTER|*`, `FLEX_COUNTER_GROUP_TABLE|HOSTIF_TRAP_FLOW_COUNTER`) の 3 テーブルのみ。詳細は `meta/_intermediate/cdb-flow/copp-state-side.md` 参照。
+> **裏取り**: `copporch.cpp` L35-37, L193-215, L520-532, L935-965, L1375-1530 読了。副次書き込み先は COUNTERS_DB (`COUNTERS_TRAP_NAME_MAP`) と FLEX_COUNTER_DB (`HOSTIF_TRAP_FLOW_COUNTER|*`, `FLEX_COUNTER_GROUP_TABLE|HOSTIF_TRAP_FLOW_COUNTER`) の 3 テーブルのみ。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 STATE_DB の COPP 3 テーブルは、CONFIG_DB → coppmgrd → APPL_DB → CoppOrch → STATE_DB という多段 Producer/Consumer パイプラインの終端に位置する。
 
@@ -491,11 +491,11 @@ STATE_DB[COPP_GROUP_TABLE|*, COPP_TRAP_TABLE|*, COPP_TRAP_CAPABILITY_TABLE|traps
 sonic-utilities (show copp / dump copp)
 ```
 
-> **スキャン証跡**: `coppmgrd.cpp` L21-65 全行読了。`coppmgr.cpp` L71, L296-310, L424-451 読了。`copporch.cpp` L191-215, L880-892 読了。`orchdaemon.cpp` L341, L500 読了。`show/copp.py` L21 読了。`dump/plugins/copp.py` L109-113 読了。
+> **裏取り**: `coppmgrd.cpp` L21-65 全行読了。`coppmgr.cpp` L71, L296-310, L424-451 読了。`copporch.cpp` L191-215, L880-892 読了。`orchdaemon.cpp` L341, L500 読了。`show/copp.py` L21 読了。`dump/plugins/copp.py` L109-113 読了。
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 ### Mellanox / Marvell Prestera — `trap_priority` 設定のスキップと `hw_status` への影響
 
@@ -516,7 +516,7 @@ sonic-utilities (show copp / dump copp)
 | Marvell Prestera (`"marvell-prestera"` 含む) | スキップ | 共通 (SAI 成否に依存) | SAI capability 返却値依存 |
 | その他 (x86, Broadcom 等) | `priority=1` を設定 | 共通 (SAI 成否に依存) | SAI capability 返却値依存 |
 
-> **スキャン証跡**: `copporch.cpp` L348-362 (`initDefaultTrapIds` platform 分岐)、`copporch.cpp` L1183-1195 (`getAttribsFromTrapGroup` platform 分岐)、`orchagent/orch.h` L41-42 (定数定義 `MLNX_PLATFORM_SUBSTRING="mellanox"`, `MRVL_PRST_PLATFORM_SUBSTRING="marvell-prestera"`)、`copporch.cpp` L240-300 (`publishTrapIdsCapability` — platform 分岐なし) 読了。
+> **裏取り**: `copporch.cpp` L348-362 (`initDefaultTrapIds` platform 分岐)、`copporch.cpp` L1183-1195 (`getAttribsFromTrapGroup` platform 分岐)、`orchagent/orch.h` L41-42 (定数定義 `MLNX_PLATFORM_SUBSTRING="mellanox"`, `MRVL_PRST_PLATFORM_SUBSTRING="marvell-prestera"`)、`copporch.cpp` L240-300 (`publishTrapIdsCapability` — platform 分岐なし) 読了。
 <!-- /platform -->
 
 ## 確認コマンド
@@ -558,7 +558,7 @@ sonic-db-cli STATE_DB keys 'COPP_*TABLE|*'
 - [`cfgmgr/coppmgr.cpp`](https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/coppmgr.cpp) — `setCoppGroupStateOk()` / `setCoppTrapStateOk()` (L424-451) が `state=ok` を書き込む。`doCoppTrapTask()` / `doCoppGroupTask()` / `setFeatureTrapIdsStatus()` (L531-985)・`trap_group`/`trap_ids` 欠落時のサイレントスキップ (L609-613)。`COPP_GROUP_TABLE` / `COPP_TRAP_TABLE.state` 書き込みの全証跡
 - [`orchagent/copporch.cpp`](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/copporch.cpp) — `publishTrapIdsCapability()` (L208-300)・`default_supported_trap_ids` フォールバックリスト (L106-151, `neighbor_miss` 除外)・`updateTrapOperStatus()` で `hw_status=installed`/`not-installed` (L526/L1413)・`allPortsReady()` ガード (L885-888)・platform 分岐 (L353-354/L1188-1189)・FlexCounter 副次書込 (L1389-1496)。`COPP_TRAP_CAPABILITY_TABLE` / `hw_status` の全証跡
 - [`orchagent/copporch.h`](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/copporch.h) — `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` 等の FlexCounter 定数 (L23-46)
-- [`cfgmgr/coppmgrd.cpp`](https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/coppmgrd.cpp) — `CoppMgr` の `SubscriberStateTable` 生成 (L21-65)。CONFIG_DB 3 テーブル購読の証跡 (Phase G)
+- [`cfgmgr/coppmgrd.cpp`](https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/coppmgrd.cpp) — `CoppMgr` の `SubscriberStateTable` 生成 (L21-65)。CONFIG_DB 3 テーブル購読の証跡
 - [`orchagent/orchdaemon.cpp`](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp) — `CoppOrch` の APPL_DB `APP_COPP_TABLE` Consumer 生成 (L341)
 - [`show/copp.py`](https://github.com/sonic-net/sonic-utilities/blob/master/show/copp.py) / [`dump/plugins/copp.py`](https://github.com/sonic-net/sonic-utilities/blob/master/dump/plugins/copp.py) — STATE_DB COPP テーブルの読み出し側 (`show copp policer` / `dump copp`)
 
