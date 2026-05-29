@@ -1,6 +1,6 @@
 ---
 title: YANG 横断索引
-description: YANG 横断索引 — docs/reference/yang/ 配下の 39 モジュールを、Phase B の機能章ごとに並べ直した索引である。SONiC
+description: YANG 横断索引 — docs/reference/yang/ 配下の 39 モジュールを、機能章ごとに並べ直した索引である。SONiC
   の YANG は概ね sonic-.yang の命名で CONFIG_DB の table family に 1 対 1 ないし 1 対多で対応している。
 area: topics
 verification: meta
@@ -29,9 +29,9 @@ related:
 
 # YANG 横断索引
 
-`docs/reference/yang/` 配下の 39 モジュールを、Phase B の機能章ごとに並べ直した索引である。[SONiC](../../reference/glossary.md#term-sonic) の [YANG](../../reference/glossary.md#term-yang) は概ね `sonic-<feature>.yang` の命名で [CONFIG_DB](../../reference/glossary.md#term-config_db) の table family に 1 対 1 ないし 1 対多で対応している。
+`docs/reference/yang/` 配下の 39 モジュールを、機能章ごとに並べ直した索引である。[SONiC](../../reference/glossary.md#term-sonic) の [YANG](../../reference/glossary.md#term-yang) は概ね `sonic-<feature>.yang` の命名で [CONFIG_DB](../../reference/glossary.md#term-config_db) の table family に 1 対 1 ないし 1 対多で対応している。
 
-management framework / [gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig との対応関係は別章 (Phase B 第 2 波で予定) で扱う。本ページは native SONiC YANG モジュールから機能章へ戻る逆引きに専念する。
+management framework / [gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig との対応関係は別章 (今後予定) で扱う。本ページは native SONiC YANG モジュールから機能章へ戻る逆引きに専念する。
 
 ## 機能章別 YANG モジュール
 
@@ -108,7 +108,7 @@ management framework / [gNMI](../../reference/glossary.md#term-gnmi) / OpenConfi
 
 ## OpenConfig / management framework との対応
 
-native SONiC YANG は CONFIG_DB の table 構造を素直に表す。一方、management framework (Sonic-MGMT-Framework) は OpenConfig / IETF YANG を入力し、内部で SONiC YANG に変換する。両者の対応表は本章の対象外とし、Phase B 第 2 波で扱う `gNMI / gNOI / OpenConfig / YANG` 章に置く。
+native SONiC YANG は CONFIG_DB の table 構造を素直に表す。一方、management framework (Sonic-MGMT-Framework) は OpenConfig / IETF YANG を入力し、内部で SONiC YANG に変換する。両者の対応表は本章の対象外とし、今後扱う `gNMI / gNOI / OpenConfig / YANG` 章に置く。
 
 現時点で参考になる既存ページ:
 

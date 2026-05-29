@@ -1,6 +1,6 @@
 ---
 title: CLI 横断索引
-description: CLI 横断索引 — docs/reference/cli/ 配下の 72 ページを、Phase B の機能章でどこから引かれるかで並べ直した索引である。各
+description: CLI 横断索引 — docs/reference/cli/ 配下の 72 ページを、機能章でどこから引かれるかで並べ直した索引である。各
   CLI ページは config- / show- / debug-* のグループごとに分かれており、本ページではこれを機能章ごとに束ね直す。
 area: topics
 verification: meta
@@ -34,11 +34,11 @@ related:
 
 # CLI 横断索引
 
-`docs/reference/cli/` 配下の 72 ページを、Phase B の機能章でどこから引かれるかで並べ直した索引である。各 CLI ページは `config-*` / `show-*` / `debug-*` のグループごとに分かれており、本ページではこれを機能章ごとに束ね直す。
+`docs/reference/cli/` 配下の 72 ページを、機能章でどこから引かれるかで並べ直した索引である。各 CLI ページは `config-*` / `show-*` / `debug-*` のグループごとに分かれており、本ページではこれを機能章ごとに束ね直す。
 
 ## 機能章別 CLI 表
 
-実装済の章は本表からリンクする。未実装の章 (Phase B 未着手分) はプレースホルダとして「章番号 / 主題」のみ記載する。
+実装済の章は本表からリンクする。未実装の章はプレースホルダとして「章番号 / 主題」のみ記載する。
 
 ### 02 BGP と FRR 制御プレーン
 
@@ -152,6 +152,6 @@ related:
 
 - `show ip / show ipv6` ページは [BGP](../../reference/glossary.md#term-bgp) 章と [VRF](../../reference/glossary.md#term-vrf) 章の両方から参照される。主入口は VRF 章。
 - `config interface` は L2 章と VRF 章の双方から参照される。主入口は L2 章。
-- `config-mgmt-trio` は management framework / [gNMI](../../reference/glossary.md#term-gnmi) 章で扱う想定だが、Phase B 第 1 波では未実装のため上記 15 章プレースホルダとして残す。
+- `config-mgmt-trio` は management framework / [gNMI](../../reference/glossary.md#term-gnmi) 章で扱う想定だが、現時点では未実装のため上記 15 章プレースホルダとして残す。
 
 <!-- glossary-links-injected: d913b2e2ebed -->
