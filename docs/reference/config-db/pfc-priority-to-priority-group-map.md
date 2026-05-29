@@ -122,8 +122,6 @@ RoCEv2 lossless クラスは TC 3 と TC 4 の 2 本が標準的な AZURE 構成
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map.md -->
-
 ### YANG スキーマ検証
 - `pfc_priority` / `pg` は pattern `[0-7]?`。空文字も YANG 上は許容するが、orch は数値として処理するため実質 0..7 必須。
 
@@ -234,9 +232,9 @@ db_migrator.py での PFC_PRIORITY_TO_PRIORITY_GROUP_MAP マイグレーショ�
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
@@ -244,7 +242,7 @@ db_migrator.py での PFC_PRIORITY_TO_PRIORITY_GROUP_MAP マイグレーショ�
 
 minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_config.j2` Jinja テンプレートが CONFIG_DB に書き込む。
 
-### Phase 7: 条件付き登録
+### 条件付き登録
 
 | 条件 | 影響 | ソース |
 |---|---|---|
@@ -261,9 +259,7 @@ minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_co
 <!-- /derivation -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-ordering.md`
+## 書込み順依存
 
 ### SET 時の先行必須テーブル
 
@@ -303,7 +299,7 @@ config qos reload
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
 `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` が関わる CONFIG_DB テーブル間の暗黙参照を `qosorch.cpp` から抽出した。
 
@@ -317,12 +313,11 @@ config qos reload
 - `PORT_QOS_MAP` から参照中に DEL しようとすると `isObjectBeingReferenced()` が true を返し `task_need_retry` で削除保留。
 - `SWITCH` への直接適用は `DSCP_TO_TC_MAP` (`PORT_QOS_MAP|global` 経路) のみで、PFC 系マップは非対象。
 
-> 詳細: `meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-cross-refs.md`
 
 <!-- /cross-refs -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 `QosOrch::PfcPriorityToPgHandler` の分岐:
 
@@ -332,12 +327,12 @@ config qos reload
 | `QosOrch` | `PfcPriorityToPgHandler` | `isObjectBeingReferenced()` かつ DEL | `task_need_retry` (参照解除まで削除保留) | `sonic-swss/orchagent/qosorch.cpp` |
 | `QosOrch` | SAI create | SAI 返値 ≠ `SAI_STATUS_SUCCESS` | `task_failed` | `sonic-swss/orchagent/qosorch.cpp` |
 
-> **スキャン証跡**: `qosorch.cpp` PfcPriorityToPgHandler 部を確認、3 件分岐抽出。qos_config.j2 経由での自動設定を確認 — 誤読なし。
+> **裏取り**: `qosorch.cpp` PfcPriorityToPgHandler 部を確認、3 件分岐抽出。qos_config.j2 経由での自動設定を確認 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- failure -->
-## Phase D: 失敗挙動
+## 失敗挙動
 
 ソース: `sonic-swss/orchagent/qosorch.cpp` (`PfcPrioToPgHandler`, `QosMapHandler::processWorkItem`)
 
@@ -373,11 +368,10 @@ DEL 操作時に `isObjectBeingReferenced()` が true (PORT_QOS_MAP 等から参
 - ログ (保留中 SET): `"Entry %s %s is pending remove, need retry"` (qosorch.cpp:138)
 - 結果: `task_need_retry` → Consumer キューへ戻し、参照解除後に再処理
 
-<!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-failure.md -->
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/orchagent/qosorch.h:14 / qosorch.cpp:947-950,965-969,974 / sonic-swss-common/common/schema.h:214 -->
 
@@ -427,9 +421,7 @@ YANG バリデーションをバイパスして 8 以上を書き込んだ場合
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-side-effects.md -->
+## 副作用
 
 ### MAP SET/DEL の直接副作用
 
@@ -467,9 +459,7 @@ DEL 試行時に参照が残っている場合、`m_pendingRemove = true` がセ
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-pubsub.md -->
+## 通信メカニズム
 
 ### 購読方式
 
@@ -508,10 +498,9 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差・SAI capability 分岐 (Phase H)
+## プラットフォーム差・SAI capability 分岐
 
 > 調査対象: `sonic-buildimage/files/build_templates/qos_config.j2`, `sonic-swss/orchagent/qosorch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`
-> 調査日: 2026-05-18
 
 ### ASIC 限定生成 — Mellanox / Barefoot のみ
 
@@ -553,7 +542,6 @@ Mellanox DualToR 構成 (`port_names_list_extra_queues` が非空) では `AZURE
 
 `qosorch.cpp:957-988` の `PfcPrioToPgHandler::addQosItem()` および `handlePfcPrioToPgTable()` にベンダー固有分岐はない。SAI `sai_qos_map_api->create_qos_map()` を直接呼ぶだけで、ASIC capability クエリも行わない。
 
-<!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-platform.md -->
 <!-- /platform -->
 
 <!-- glossary-links-injected: 0af8863862be -->

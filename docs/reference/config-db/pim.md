@@ -97,7 +97,7 @@ PIM_INTERFACE|<vrf>|<af>|<interface>
 | `bfd-enabled` | boolean string | `"false"` | [BFD](../../reference/glossary.md#term-bfd) による PIM 隣接監視を有効化 |
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `frrcfgd` (`BGPConfigDaemon`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `PIM_GLOBALS` および `PIM_INTERFACE` を購読し、`bgp_table_handler_common` を通じて `__update_bgp()` キューで逐次処理する[^1]。以下の書き込み順序を守ること。
 
@@ -145,7 +145,7 @@ PIM_INTERFACE|<vrf>|ipv4|<if>  ← mode を含む SET が必須
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — `frrcfgd` が読み出す関連 CONFIG_DB テーブル (Phase C)
+## 暗黙参照 — `frrcfgd` が読み出す関連 CONFIG_DB テーブル
 
 `frrcfgd` (`BGPConfigDaemon`) は起動時に `config_db.get_table_data()` で購読テーブルの初期データを一括取得し、変更イベントは `config_db.subscribe()` で受信する[^1]。`PIM_GLOBALS` / `PIM_INTERFACE` ハンドラが直接・間接に依存するテーブルを以下に示す。
 
@@ -181,11 +181,10 @@ IGMP は PIM sparse-mode が有効な (`mode = "sm"`) インタフェースで�
 - `PREFIX_SET`: `ssm-ranges` フィールドが参照する prefix-list は FRR pimd 内部で評価される。frrcfgd は prefix-list 名の文字列を vtysh に渡すだけで `PREFIX_SET` テーブルを読み出すことはない。
 - `ROUTE_MAP`: PIM は route-map を使用しない。frrcfgd の PIM ハンドラは `ROUTE_MAP` テーブルを参照しない。
 
-詳細スキャン手順は `meta/_intermediate/cdb-flow/pim-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
+## 失敗挙動・retry / recovery
 
 `frrcfgd` の PIM テーブルハンドラ (`bgp_table_handler_common` → `__update_bgp()`) は **retry キューを持たない**。SET / DEL のいずれも 1 回の `key_map.run_command()` 呼び出しで完結し、失敗時は `LOG_ERR` を出力して `continue`（次イベントへ進む）するだけで **自動 retry は発生しない**。これは [BGP](../../reference/glossary.md#term-bgp) の `bgpcfgd` (`set_queue` ベース deps-driven retry) とは異なる設計である。
 
@@ -214,7 +213,6 @@ IGMP は PIM sparse-mode が有効な (`mode = "sm"`) インタフェースで�
 
 **frrcfgd は値域を検証しない**: フィールド値は frrcfgd を通過してそのまま vtysh に渡される（frrcfgd.py L763）。FRR CLI の値域チェックのみが最終バリアとなる。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-failure.md`
 <!-- /failure -->
 
 <!-- defaults -->
@@ -279,7 +277,7 @@ if 'mode' in data:
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 CONFIG_DB の `PIM_GLOBALS` / `PIM_INTERFACE` テーブルで管理されず、FRR `pimd` またはフレームワーク `frrcfgd` のコードに直書きされた定数。変更には FRR / [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) のリコンパイルが必要。
 
@@ -323,7 +321,6 @@ CONFIG_DB の `PIM_GLOBALS` / `PIM_INTERFACE` テーブルで管理されず、F
 | `hello-interval` (hold-time 部) | `ip pim hello <interval> <hold>` | `1`〜`180` 秒 | `pim_cmd.c` L6997 |
 | `dr-priority` | `ip pim drpriority <N>` | `1`〜`4294967295` | `pim_cmd.c` L6458 |
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-constants.md`
 <!-- /constants -->
 
 <!-- side-effects -->
@@ -376,11 +373,10 @@ CONFIG_DB PIM_INTERFACE write
 
 `pim->ecmp_enable` フラグ変更は即時だが、ECMP 経路の再選択は次回 RPF lookup (Join/Prune タイマーまたはトポロジ変化) 時に発生する。`ecmp-rebalance-enabled` を有効化しても、設定変更直後のリバランスは行われない。
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-side-effects.md`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## CONFIG_DB 購読メカニズム (Phase G)
+## CONFIG_DB 購読メカニズム
 
 `PIM_GLOBALS` および `PIM_INTERFACE` テーブルを CONFIG_DB から購読するのは `frrcfgd` のみである。swss [orchagent](../../reference/glossary.md#term-orchagent)・[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 等の他デーモンによる購読は確認されていない[^1]。
 
@@ -442,13 +438,12 @@ frrcfgd から pimd への経路は単方向であり、pimd から CONFIG_DB �
 | 起動時 replay | `get_table()` → queue 投入（unified config mode） |
 | [STATE_DB](../../reference/glossary.md#term-state_db) 連携 | なし |
 
-> 詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-PIM_GLOBALS / PIM_INTERFACE の処理は FRR `pimd` + `frrcfgd` の純粋な制御プレーン実装であり、[SAI](../../reference/glossary.md#term-sai) / [ASIC](../../reference/glossary.md#term-asic) 非経由のため [ASIC](../../reference/glossary.md#term-asic) 種別によるプラットフォーム差はない。ただし起動制御フラグと multi-asic 構成には制約がある。詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-platform.md`。
+PIM_GLOBALS / PIM_INTERFACE の処理は FRR `pimd` + `frrcfgd` の純粋な制御プレーン実装であり、[SAI](../../reference/glossary.md#term-sai) / [ASIC](../../reference/glossary.md#term-asic) 非経由のため [ASIC](../../reference/glossary.md#term-asic) 種別によるプラットフォーム差はない。ただし起動制御フラグと multi-asic 構成には制約がある。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|

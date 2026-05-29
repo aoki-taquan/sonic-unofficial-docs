@@ -65,7 +65,7 @@ PASSW_HARDENING|POLICIES
 | `special_class` | boolean | `true` | 特殊文字 1 文字以上を要求 |
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → DB 書き込み) に適用される。
 以下は **DB エントリ自体がない場合** のランタイム fallback を per-field で示す。
@@ -93,7 +93,7 @@ YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → 
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `hostcfgd` (`PasswHardening`) の `passw_policies_update()` はイベントごとに PAM ファイル (`/etc/pam.d/common-password`) と `/etc/login.defs` を**丸ごと再生成**する。このため書き込み順序が中間状態の整合性に直結する。
 
@@ -122,7 +122,7 @@ YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → 
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `PasswHardening` クラスは `config_db` インスタンスを保持せず（コンストラクタ引数なし）、[CONFIG_DB](../../reference/glossary.md#term-config_db) の他テーブルへの暗黙参照は一切存在しない。YANG `sonic-passwh.yang` にも `must` / `when` / `leafref` 条件での他テーブル参照は定義されていない。
 
@@ -142,7 +142,7 @@ YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → 
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-host-services/scripts/hostcfgd`
 
@@ -175,9 +175,7 @@ YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/passw-hardening-constants.md -->
+## ハードコード定数
 
 `PASSW_HARDENING` テーブルを処理する `hostcfgd` (`PasswHardening` クラス) が持つ、[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG で管理されないハードコード定数の一覧。出典は `sonic-host-services/scripts/hostcfgd`。
 
@@ -220,7 +218,7 @@ YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → 
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `PASSW_HARDENING` テーブルの変更に伴って `hostcfgd` の `PasswHardening` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS のファイルシステム書き換えに閉じる。
 
@@ -239,11 +237,10 @@ CONFIG_DB `PASSW_HARDENING` テーブルの変更に伴って `hostcfgd` の `Pa
 | `/etc/login.defs` | `modify_single_file_inplace()` で `PASS_MAX_DAYS` / `PASS_WARN_AGE` を sed 書き換え | 現在値と変化がある場合のみ (`is_passwd_aging_expire_update()` でチェック) | `hostcfgd:961-975` |
 | `chage` コマンド実行 | 既存 normal ユーザ全員のパスワード有効期限を更新 | `/etc/login.defs` 書き換えと同タイミング | `hostcfgd:1019-1032` |
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/passw-hardening-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -286,9 +283,7 @@ passwh_handler(key="POLICIES", op=SET, data={state:"enabled", ...})
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/passw-hardening-platform.md`
+## プラットフォーム差
 
 ### プラットフォーム差なし
 
@@ -413,7 +408,7 @@ show passw-hardening policies
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `PASSW_HARDENING`
 

@@ -52,7 +52,7 @@ flowchart LR
 <!-- /cdb-mermaid -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 <!-- evidence: sonic-swss/orchagent/pbhorch.cpp:1539-1550 (deployPbhTasks), pbhmgr.cpp:81-113 (validateDependencies), pbhorch.cpp:941-946, 1288-1303 -->
 
@@ -140,7 +140,7 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `PBH_RULE` は CONFIG_DB の **読み手（consumer）専用**テーブルで、`PbhOrch` が書き込む [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) エントリは存在しない。ここでの暗黙参照は、[SAI](../../reference/glossary.md#term-sai) 反映の前提となる他テーブル・他 Orch への依存を指す。
 
@@ -155,17 +155,14 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 | SAI [ACL](../../reference/glossary.md#term-acl) API（間接） | ✗ | `AclOrch::addAclRule()` 内で `sai_acl_api->create_acl_entry()` を呼ぶ。SAI 失敗は `addAclRule()` → `createPbhRule()` → retry loop として伝播 | ERROR ログ + retry loop |
 
 !!! note "DEL 方向の逆参照"
-    `PBH_TABLE` および `PBH_HASH` が `PBH_RULE` の生存中に DEL されても、refCount > 0 のため `hasDependencies()` (`pbhmgr.cpp:75-78`) が削除を保留する。`PBH_RULE` を先に DEL して `decRefCount` を呼ぶことで refCount が 0 に戻り、`PBH_TABLE` / `PBH_HASH` の削除が可能になる（Phase B 依存 5 も参照）。
+    `PBH_TABLE` および `PBH_HASH` が `PBH_RULE` の生存中に DEL されても、refCount > 0 のため `hasDependencies()` (`pbhmgr.cpp:75-78`) が削除を保留する。`PBH_RULE` を先に DEL して `decRefCount` を呼ぶことで refCount が 0 に戻り、`PBH_TABLE` / `PBH_HASH` の削除が可能になる（「書込み順依存」依存 5 も参照）。
 
-詳細な調査メモは `meta/_intermediate/cdb-flow/pbh-rule-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `PBH_RULE` の SET / UPDATE / DEL 処理（`PbhOrch` / `pbhmgr` / `pbhrule` / `pbhcap`）における失敗は、(A) parse 段階の入力値エラー、(B) バリデーション失敗（match 欠如・必須フィールド欠損）、(C) SAI 作成・更新・削除失敗、(D) capability 未サポート、(E) 依存関係未解決（retry loop）の 5 系統に分類される。
-
-証跡: `meta/_intermediate/cdb-flow/pbh-phaseD-failure.md`
 
 ### A. フィールド Parse 失敗（pbhmgr.cpp — silent skip / return false）
 
@@ -262,9 +259,8 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-rule-constants.md -->
 <!-- source: sonic-swss/orchagent/pbh/pbhschema.h, pbhmgr.cpp, pbhrule.cpp, pbhcap.cpp -->
 
 `PBH_RULE` 処理に関係するハードコード定数の一覧。いずれも CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) では設定変更不可か、実装側のみで定義される値である。
@@ -328,11 +324,10 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `PbhOrch` が `PBH_RULE` の SET / DEL を処理した後に CONFIG_DB 以外の DB へ書き込む副次エントリを整理する。
 
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-rule-side-effects.md -->
 <!-- source: sonic-swss/orchagent/pbhorch.cpp:633, aclorch.cpp:4980-4983,6040-6048, aclorch.h:45,116, pbh/pbhrule.h:8 -->
 
 ### COUNTERS_DB / `ACL_COUNTER_RULE_MAP` (flow_counter=ENABLED 時のみ)
@@ -379,9 +374,8 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-rule-pubsub.md -->
 <!-- source: sonic-swss/orchagent/pbhorch.cpp:88-96, orchdaemon.cpp:552-565, swss-common/orch.cpp:1186-1196, sonic-utilities/show/plugins/pbh.py:191-206,365-391,450-453 -->
 
 ### Redis 購読方式
@@ -443,7 +437,7 @@ createPbhRule() → AclOrch::addAclRule() → SAI: sai_acl_api->create_acl_entry
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 <!-- evidence: sonic-swss/orchagent/pbh/pbhcap.cpp:107-141 (PbhGenericFieldCapabilities / PbhMellanoxFieldCapabilities), pbhorch.cpp:839-863 (updatePbhRule Mellanox W/A), pbhcap.cpp:286-407 (STATE_DB write), sonic-swss-common/common/schema.h:419 (STATE_PBH_CAPABILITIES_TABLE_NAME) -->
 
