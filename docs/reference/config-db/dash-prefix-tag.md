@@ -82,7 +82,7 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 - [`DASH_ENI_TABLE`](dash-eni.md): [ENI](../../reference/glossary.md#term-eni) への ACL グループバインドの起点
 
 <!-- ordering -->
-## エントリ投入順序・依存関係 (Phase B)
+## エントリ投入順序・依存関係
 
 `DASH_PREFIX_TAG_TABLE` は [DASH](../../reference/glossary.md#term-dash) ACL 依存チェーンの **最上流** に位置する。SDN コントローラはタグを ACL ルールより先に投入しなければならない。
 
@@ -131,7 +131,6 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 
 `DashAclOrch` は `ZmqOrch` を継承し `m_orchList` には登録されない（`gDirectory.set()` のみ）。`warmRestoreAndSyncUp()` の 3 イテレーションループは [DASH](../../reference/glossary.md#term-dash) ACL orch を含まないため、**タグエントリを含む DASH ACL 系は warm-reboot の自動リプレイ対象外**となる。リストアは SDN コントローラが [gNMI](../../reference/glossary.md#term-gnmi) 経由で全エントリを再投入する設計（ステートレス warm-reboot）。
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-ordering.md`
 <!-- /ordering -->
 
 <!-- cdb-exceptions -->
@@ -147,7 +146,7 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 <!-- /cdb-exceptions -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 [YANG](../../reference/glossary.md#term-yang) 未定義テーブルのため leafref は存在しない。以下はすべて実装レベルの暗黙参照。`DASH_PREFIX_TAG_TABLE` 自体は他テーブルを参照しないが、ACL 系テーブルから参照される側として双方向依存がある。
 
@@ -165,9 +164,7 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/dash-prefix-tag-failure.md -->
+## 失敗挙動・retry / recovery
 
 ### retry パターン概要
 
@@ -214,11 +211,10 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 - タグはオーケストレーターメモリにのみ存在し SAI への書き込みがないため、`task_failed` による部分的な [ASIC](../../reference/glossary.md#term-asic) 汚染は発生しない
 - `task_need_retry` エントリはキューに残留し上限なく自動再試行される
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `DASH_PREFIX_TAG_TABLE` 処理に関わる、[YANG](../../reference/glossary.md#term-yang) / [CONFIG_DB](../../reference/glossary.md#term-config_db) スキーマで管理されないハードコード定数の一覧。
 
@@ -260,11 +256,10 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 | タグ名フォーマット | 任意文字列（制限なし） |
 | refcount (`m_groups`) 上限 | 実装上制限なし |
 
-詳細根拠は `meta/_intermediate/cdb-flow/dash-prefix-tag-constants.md` を参照。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `DASH_PREFIX_TAG_TABLE` の SET / DEL に伴って `DashAclOrch` / `DashTagMgr` が副次的に書き込む DB エントリは **存在しない**。タグは [orchagent](../../reference/glossary.md#term-orchagent) 内の `m_tag_table` (`unordered_map<string, DashTag>`) にのみ保持される SAI 非経由オブジェクトであり、DB コネクタを保持しない。
 
@@ -276,11 +271,10 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 | [ASIC_DB](../../reference/glossary.md#term-asic_db) (via [CRM](../../reference/glossary.md#term-crm)) | なし | `gCrmOrch->incCrmDashAclUsedCounter()` は ACL group / rule 作成時のみ発生 (`dashaclgroupmgr.cpp:175-176, 374-376`)。タグ SET/DEL では [CRM](../../reference/glossary.md#term-crm) 更新なし |
 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | DASH タグに対応する flex-counter エントリなし |
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dash-prefix-tag-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis / ZMQ 購読方式
 
@@ -344,11 +338,10 @@ DashAclOrch::doTask(ConsumerBase&)
 !!! note "タグ参照時の非同期確認"
     `DASH_ACL_RULE_TABLE` の rule 投入が `task_need_retry` でキューに残った場合、ACL rule が STATE_DB に出現することでタグ投入の成功を間接的に確認できる。タグ単体の STATE_DB エントリは作成されない。
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
 **[DPU](../../reference/glossary.md#term-dpu) ([SmartSwitch](../../reference/glossary.md#term-smartswitch)) 専用**: `DashAclOrch` および内包する `DashTagMgr` は `gMySwitchType == "dpu"` のときのみ `DpuOrchDaemon` 内で生成される (`main.cpp:990`, `orchdaemon.cpp:1378`)。通常スイッチ・VoQ シャーシ・Fabric モードでは本テーブルは存在しない。`DashTagMgr` は SAI API を一切呼び出さずタグを orchagent 内メモリのみに保持するため、[ASIC](../../reference/glossary.md#term-asic) 種別による挙動差異はない。
 
@@ -361,11 +354,10 @@ DashAclOrch::doTask(ConsumerBase&)
 | ZMQ transport | feature flag `ORCH_NORTHBOND_DASH_ZMQ_ENABLED` で制御 | デフォルト有効。無効化で [Redis](../../reference/glossary.md#term-redis) fallback (`orchdaemon.cpp:1329`) |
 | IPv4 / IPv6 | orchagent メモリ属性のみ、ASIC 非依存 | `to_sai(IpVersion)` が `0` を拒否。SAI 呼び出しなし (`dashtagmgr.cpp:11-14`) |
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-platform.md`
 <!-- /platform -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) / proto3 デフォルト以外の実装由来 fallback。`DashTagMgr::from_pb()` と `to_sai()` (dashtagmgr.cpp / pbutils.cpp) から導出。
 
@@ -383,7 +375,7 @@ DashAclOrch::doTask(ConsumerBase&)
 <!-- /defaults -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DASH_PREFIX_TAG_TABLE`
 

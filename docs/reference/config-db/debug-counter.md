@@ -87,7 +87,7 @@ DEBUG_DROP_MONITOR|CONFIG          # global setting (container)
 - **更新はべき等・失敗は状態を変更しない**: 失敗した更新はシステム状態を変更しない。同一リクエストの繰り返しは同一結果となる。<!-- evidence: debugcounterorch.cpp L128-130 -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 | フィールド | YANG default | 実行時 fallback | 種別 | evidence |
 |---|---|---|---|---|
@@ -190,7 +190,7 @@ show dropcounters configuration
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DEBUG_COUNTER`
 
@@ -219,15 +219,15 @@ show dropcounters configuration
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | 派生なし（DEBUG_COUNTER は CLI / [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common 経由でのみ書き込まれる） | — | — |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -238,7 +238,7 @@ show dropcounters configuration
 - debugcounterorch.cpp L129-220: doTask 登録（条件なし）
 <!-- /derivation -->
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
@@ -248,10 +248,10 @@ show dropcounters configuration
 | `DebugCounterOrch` | `doTask()` | `op == SET_COMMAND`（DEBUG_COUNTER テーブル） | `installDebugCounter()` 実行 | `sonic-swss/orchagent/debugcounterorch.cpp:153` |
 | `DebugCounterOrch` | `doTask()` | `op == DEL_COMMAND`（DEBUG_COUNTER テーブル） | `uninstallDebugCounter()` 実行 | `sonic-swss/orchagent/debugcounterorch.cpp:165` |
 
-> **スキャン証跡**: `doTask` L129-220 全行読了。`allPortsReady()` ガードと 2 テーブルの dispatch 分岐が核心。5 件抽出。
+> **裏取り**: `doTask` L129-220 全行読了。`allPortsReady()` ガードと 2 テーブルの dispatch 分岐が核心。5 件抽出。
 <!-- /handler-branching -->
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### 前提条件: allPortsReady() ガード
 
@@ -283,7 +283,7 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 
 <!-- /ordering -->
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `DEBUG_COUNTER` / `DEBUG_COUNTER_DROP_REASON` は **YANG leafref を PORT / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に対して持たない**。以下はすべて実装レベルの暗黙参照。
 
@@ -302,14 +302,11 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 !!! note "FLEX_COUNTER_DB への書き込みは間接的"
     `DebugCounterOrch` は直接 FLEX_COUNTER_DB に書かず、`FlexCounterManager` / `flex_counter_manager` 経由で書き込む。`FlexCounterManager` が `FLEX_COUNTER_GROUP_TABLE` / `FLEX_COUNTER_TABLE` を管理する。
 
-詳細な参照経路・行番号は `meta/_intermediate/cdb-flow/debug-counter-cross-refs.md` を参照。
-
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・retry / recovery (Phase D)
+## 失敗挙動・retry / recovery
 
-<!-- evidence: meta/_intermediate/cdb-flow/debug-counter-failure.md -->
 
 ### retry パターン概要
 
@@ -364,9 +361,9 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-swss/orchagent/debug_counter/debug_counter.h` L15-24, L27-30; `debug_counter.cpp` L25-44; `debugcounterorch.h` L19-21; `debugcounterorch.cpp` L18-22 精読 (2026-05-18)
+> **Evidence**: `sonic-swss/orchagent/debug_counter/debug_counter.h` L15-24, L27-30; `debug_counter.cpp` L25-44; `debugcounterorch.h` L19-21; `debugcounterorch.cpp` L18-22 精読 (2026-05-18)
 
 ### フィールド名定数 (debug_counter.h)
 
@@ -420,7 +417,7 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 <!-- /constants -->
 
 <!-- side-effects -->
-## SET/DEL 副次 DB 書込み (Phase F)
+## SET/DEL 副次 DB 書込み
 
 `CONFIG_DB DEBUG_COUNTER` エントリの SET / DEL が引き起こす他 DB への書込み一覧。
 
@@ -452,7 +449,7 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Producer/Consumer ペア
 
@@ -515,7 +512,7 @@ PortsOrch.attach(DebugCounterOrch):
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 `DEBUG_COUNTER` はプラットフォーム識別文字列（`BRCM_PLATFORM_SUBSTRING` 等）による静的分岐を**一切持たない**。
 すべての制約を **SAI capability クエリ（起動時動的照会）** で解決する。
@@ -547,8 +544,6 @@ PortsOrch.attach(DebugCounterOrch):
 !!! note "プラットフォーム差の調査方法"
     `sonic-db-cli STATE_DB hgetall 'DEBUG_COUNTER_CAPABILITIES|PORT_INGRESS_DROPS'` で `count` と `reasons` を確認する。
     `count=0` または当該 key が存在しない場合は ASIC が対応していない。
-
-詳細な調査メモは `meta/_intermediate/cdb-flow/debug-counter-platform.md` を参照。
 
 <!-- /platform -->
 

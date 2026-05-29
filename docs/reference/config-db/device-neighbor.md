@@ -140,7 +140,7 @@ show lldp neighbors
 <!-- /cdb-exceptions -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `DEVICE_NEIGHBOR` には [orchagent](../../reference/glossary.md#term-orchagent) / [SAI](../../reference/glossary.md#term-sai) 経路の依存はない。書込み順が問題になるのは **minigraph.py によるテーブル生成時** と、**pfcwd / ecnconfig がテーブルを参照するタイミング** の 2 箇所である。
 
@@ -185,9 +185,8 @@ show lldp neighbors
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-<!-- evidence: meta/_intermediate/cdb-flow/device-neighbor-cross-refs.md -->
 
 `DEVICE_NEIGHBOR` テーブルは単独で機能せず、書き込み時・参照時に複数のテーブルおよびファイルシステムリソースを暗黙的に参照する。
 
@@ -253,7 +252,7 @@ YANG バリデーション時に `PORT_LIST.name` に存在しないポート名
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DEVICE_NEIGHBOR`
 
@@ -331,7 +330,7 @@ minigraph.py が生成するエントリは常に `{'name': <隣接ホスト名>
 <!-- /defaults -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-buildimage/src/sonic-config-engine/minigraph.py:2631-2641`; `sonic-utilities/pfcwd/main.py:98-108,413-416`; `sonic-utilities/scripts/ecnconfig:282-287`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:219-223`; `sonic-utilities/show/interfaces/__init__.py:316-319`; `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_neighbor.yang:52-56`
 
@@ -366,7 +365,7 @@ minigraph.py が生成するエントリは常に `{'name': <隣接ホスト名>
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 ### テーブル名文字列リテラル
 
@@ -445,11 +444,11 @@ port['description'] = "%s:%s" % (neighbors[port_name]['name'], neighbors[port_na
 | `show/interfaces/__init__.py` | `"DEVICE_NEIGHBOR information is not present."` | `show/interfaces/__init__.py:318` |
 | `managers_bgp.py` | `"DEVICE_NEIGHBOR_METADATA is not ready for neighbor '%s' - '%s'"` | `managers_bgp.py:222` |
 
-> **スキャン証跡**: `ecnconfig:93,282-294` 読了。`pfcwd/main.py:98,413` 読了。`show/interfaces/__init__.py:316-323` 読了。`minigraph.py:610,631-655,2465,2635-2637` 読了。`sonic-device_neighbor.yang` 全行読了。定数 5 種別 15 件を確認。詳細は `meta/_intermediate/cdb-flow/device-neighbor-constants.md` 参照。
+> **裏取り**: `ecnconfig:93,282-294` 読了。`pfcwd/main.py:98,413` 読了。`show/interfaces/__init__.py:316-323` 読了。`minigraph.py:610,631-655,2465,2635-2637` 読了。`sonic-device_neighbor.yang` 全行読了。定数 5 種別 15 件を確認。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `DEVICE_NEIGHBOR` テーブルは **書かれる側（producer のみ）** であり、[orchagent](../../reference/glossary.md#term-orchagent) / [SAI](../../reference/glossary.md#term-sai) 経路の書き手を持たない。副次書込が発生するのは、DEVICE_NEIGHBOR を**参照した後に別テーブルへ書き込む CLI ツール**（pfcwd / ecnconfig）と、**bgpcfgd が BGP セッション確立後に [STATE_DB](../../reference/glossary.md#term-state_db) へ書き込む**場面の 2 種類に分類される。
 
@@ -499,7 +498,7 @@ DEVICE_NEIGHBOR が正しく書き込まれていない場合、`DEVICE_NEIGHBOR
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## CONFIG_DB Subscribe 機構 (Phase G)
+## CONFIG_DB Subscribe 機構
 
 `DEVICE_NEIGHBOR` テーブルは **SubscriberStateTable / subscribe によるリアルタイム購読をするコンポーネントが存在しない**。すべての consumer は起動時または操作実行時の **one-shot `get_table()` 読み取り** でテーブル全体を取得する。
 
@@ -562,9 +561,8 @@ CONFIG_DB DEVICE_NEIGHBOR|<peer_name> (SET/DEL)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/device-neighbor-platform.md`
 > スキャン範囲: `sonic-buildimage/src/sonic-config-engine/minigraph.py` 全行（重点: 599-839, 1719-1782, 2064-2120, 2186-2193, 2631-2641）
 
 `DEVICE_NEIGHBOR` は [orchagent](../../reference/glossary.md#term-orchagent) / SAI を経由しないため `getenv("platform")` による ASIC 種別分岐は存在しない。プラットフォーム差が生じるのは **minigraph.py によるテーブル生成時** のトポロジ種別（multi-ASIC pizza box / VoQ chassis / DualToR）に起因する差異のみである。

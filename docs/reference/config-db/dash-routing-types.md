@@ -96,7 +96,7 @@ DASH_ROUTING_TYPE_TABLE|<routing_type>
 `action.has_vni()` が false（protobuf フィールド未設定）の場合、`routing_type_tunnel_key = 0` のまま推移し、VNI 属性は SAI に設定されない (`dashvnetorch.cpp:341-343`)。
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) schema (`sonic-dash.yang`) は `DASH_ROUTING_TYPE_LIST` の各フィールドに明示的な `default` ステートメントを持たない。実行時のデフォルト・フォールバックはすべて [orchagent](../../reference/glossary.md#term-orchagent) コード (`dashorch.cpp`、`dashvnetorch.cpp`) による。
 
@@ -116,7 +116,7 @@ DASH_ROUTING_TYPE_TABLE|<routing_type>
 <!-- /defaults -->
 
 <!-- ordering -->
-## エントリ投入順序・依存関係 (Phase B)
+## エントリ投入順序・依存関係
 
 ### 投入の必須順序
 
@@ -167,11 +167,10 @@ warm-reboot 後のリプレイで `DASH_VNET_MAPPING_TABLE` が先にキュー�
 | 3 | `DASH_ROUTING_TYPE_TABLE` DEL | `DASH_ROUTING_TYPE_TABLE` SET（変更時） | DEL 後に SET を再投入（DEL→SET 順守） |
 | 4 | `DASH_VNET_MAPPING_TABLE` DEL | `DASH_ROUTING_TYPE_TABLE` DEL | 参照元 VNET マッピングを先に削除しないと孤立エントリ |
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-types-ordering.md`
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `DASH_ROUTING_TYPE_TABLE` は他の DASH テーブルへの暗黙参照を持たない。外部 OID 解決も [CRM](../../reference/glossary.md#term-crm) カウンタ更新も行わない自己完結型テーブルであり、他テーブルから参照される側（被参照）として機能する。
 
@@ -199,11 +198,10 @@ SET 完了後に `writeResultToDB(dash_routing_type_result_table_, routing_type_
 
 使用なし。`DASH_ROUTING_TYPE_TABLE` は SAI OID を返さないため [CRM](../../reference/glossary.md#term-crm) リソースカウンタは不使用。
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-types-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 <!-- evidence: sonic-swss/orchagent/dash/dashorch.cpp doTaskRoutingTypeTable:473 / addRoutingTypeEntry:441 / removeRoutingTypeEntry:457 / dashvnetorch.cpp addOutboundCaToPa:300 -->
 
@@ -235,11 +233,10 @@ SET 完了後に `writeResultToDB(dash_routing_type_result_table_, routing_type_
 - **依存側の失敗伝播**: VNET マッピングが `getRouteTypeActions()` で `false` を返した場合、そのエントリは consumer キューに保留（`return false` → `it++` パターン）。routing type が後から登録されると次の tick で自動再処理される。
 - **二重登録の冪等性**: 重複は WARN ログのみで既存エントリは変更されない。更新には DEL → SET が必要（`addRoutingTypeEntry()` は上書きをサポートしない）。
 
-- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-types-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/orchagent/dash/dashorch.h:29-36 / dashorch.cpp:487-488 / dashrouteorch.cpp:41-47 / dashvnetorch.cpp:322-343 / dashtunnelorch.cpp:289-292 / sonic-dash.yang:356-398 -->
 
@@ -292,13 +289,12 @@ SET 完了後に `writeResultToDB(dash_routing_type_result_table_, routing_type_
 | `encap_type` | `vxlan` / `nvgre` | `sonic-dash.yang:385` |
 | `vni` | `1..16777215`（24bit VNI 全有効範囲、RFC 7348） | `sonic-dash.yang:392` |
 
-> **スキャン証跡**: `dashorch.h` L29-36、`dashorch.cpp` L45-46,73,487-488、`dashrouteorch.cpp` L41-47,78-130,326、`dashvnetorch.cpp` L314-374,771、`dashtunnelorch.cpp` L289-292、`sonic-dash.yang` L356-398 読了。定数 2 (result code) + 2 (key transform) + 4 (sOutboundAction) + 2 (encap) + 4 (YANG pattern) = 14 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/dash-routing-types-constants.md`
+> **裏取り**: `dashorch.h` L29-36、`dashorch.cpp` L45-46,73,487-488、`dashrouteorch.cpp` L41-47,78-130,326、`dashvnetorch.cpp` L314-374,771、`dashtunnelorch.cpp` L289-292、`sonic-dash.yang` L356-398 読了。定数 2 (result code) + 2 (key transform) + 4 (sOutboundAction) + 2 (encap) + 4 (YANG pattern) = 14 件抽出。
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/dash-routing-types-side.md`
 
 `DASH_ROUTING_TYPE_TABLE` の SET/DEL が引き起こす副次書込は **DPU_APPL_STATE_DB への結果書込のみ**。SAI API 呼び出しは一切発生せず、`routing_type_entries_` in-memory マップへの格納で処理が完結するため、[ASIC_DB](../../reference/glossary.md#term-asic_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書込もない。
 
@@ -333,10 +329,9 @@ SET 完了後に `writeResultToDB(dash_routing_type_result_table_, routing_type_
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (ZMQ / ZmqConsumerStateTable) — Phase G
+## 通信メカニズム (ZMQ / ZmqConsumerStateTable)
 
-> **調査根拠**: `sonic-swss/orchagent/zmqorch.cpp`, `zmqorch.h`, `sonic-swss-common/common/zmqserver.h`, `zmqconsumerstatetable.cpp`, `orchdaemon.cpp` L1322–1351 精読 (2026-05-17)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/dash-routing-types-pubsub.md`
+> **Evidence**: `sonic-swss/orchagent/zmqorch.cpp`, `zmqorch.h`, `sonic-swss-common/common/zmqserver.h`, `zmqconsumerstatetable.cpp`, `orchdaemon.cpp` L1322–1351 精読 (2026-05-17)  
 
 ### 購読方式
 
@@ -401,10 +396,9 @@ SET 完了後に `writeResultToDB(dash_routing_type_result_table_, routing_type_
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差・SAI capability (Phase H)
+## プラットフォーム差・SAI capability
 
-> **調査根拠**: `sonic-swss/orchagent/main.cpp`, `orchdaemon.cpp`, `dashorch.cpp` 精読 (2026-05-17)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/dash-routing-types-platform.md`
+> **Evidence**: `sonic-swss/orchagent/main.cpp`, `orchdaemon.cpp`, `dashorch.cpp` 精読 (2026-05-17)  
 
 ### 動作条件: switch_type=dpu のみ
 

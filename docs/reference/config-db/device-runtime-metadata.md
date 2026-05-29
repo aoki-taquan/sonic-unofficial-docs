@@ -73,7 +73,7 @@ DEVICE_RUNTIME_METADATA|MACSEC_SUPPORTED
 (`init_cfg.json.j2` の `FEATURE` テーブル展開で使用)[^2]。
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 <!-- evidence: sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py / sonic-buildimage/files/build_templates/init_cfg.json.j2 / sonic-host-services/scripts/featured -->
 
@@ -225,7 +225,7 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DEVICE_RUNTIME_METADATA`
 
@@ -252,7 +252,7 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `DEVICE_RUNTIME_METADATA` は `sonic-cfggen` / `sysmonitor.py` が起動時にオンデマンドで構築するインメモリ辞書であり、CONFIG_DB への永続書き込みは行われない。そのため通常の SET/DEL シーケンス依存は存在しないが、以下の**呼び出し内部の順序制約**が成立する。
 
@@ -274,7 +274,7 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `DEVICE_RUNTIME_METADATA` は CONFIG_DB に書き込まれず `get_device_runtime_metadata()` がインメモリで構築する仮想テーブルである。そのためここでの「暗黙参照」は、**生成関数が内部で依存するリソース**（CONFIG_DB テーブルおよびファイルシステムオブジェクト）を指す。
 
@@ -295,10 +295,9 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・エラーパス (Phase D)
+## 失敗挙動・エラーパス
 
-> **調査根拠**: `sonic_py_common/device_info.py` L228-748 全行精読 (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/device-runtime-metadata-failure.md`
+> **Evidence**: `sonic_py_common/device_info.py` L228-748 全行精読 (2026-05-18)
 
 `DEVICE_RUNTIME_METADATA` は CONFIG_DB に永続化されない仮想テーブルであり、`get_device_runtime_metadata()` が起動時に構築する。失敗はすべて「フィールドがフォールバック値（`False`）に設定される」か「未キャッチ例外が呼び出し元に伝播する」の 2 種類に分類できる。
 
@@ -338,10 +337,9 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic_py_common/device_info.py` L1-60 (定数定義群), L699-747 (生成関数群) 精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/device-runtime-metadata-constants.md`
+> **Evidence**: `sonic_py_common/device_info.py` L1-60 (定数定義群), L699-747 (生成関数群) 精読 (2026-05-19)
 
 `DEVICE_RUNTIME_METADATA` の全フィールドキー名・フィールド値文字列はすべて `device_info.py` にハードコードされた Python 文字列リテラルであり、YANG スキーマ・CLI・設定ファイルから変更できない。
 
@@ -383,7 +381,7 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 | `'supervisor'` (`.lower()` 後比較) | 値 `'1'` → `module_type='supervisor'` | `is_supervisor()` L708-711 |
 | `'macsec_enabled'` (`.lower()` 後比較) | 値を `int()` 変換 → `MACSEC_SUPPORTED` | `is_macsec_supported()` L729-731 |
 
-> **注意**: `'supervisor=YES'` や `'macsec_enabled=true'` のような非整数・非 `'1'` 値はいずれも検出されない（`'1'` のみ `True` 扱い）。`macsec_enabled` の値が整数文字列以外だと `int()` で `ValueError` が未キャッチで伝播する（Phase D 参照）。
+> **注意**: `'supervisor=YES'` や `'macsec_enabled=true'` のような非整数・非 `'1'` 値はいずれも検出されない（`'1'` のみ `True` 扱い）。`macsec_enabled` の値が整数文字列以外だと `int()` で `ValueError` が未キャッチで伝播する（「失敗挙動・エラーパス」参照）。
 
 ### マルチ NPU での ASIC 番号ハードコード
 
@@ -398,10 +396,9 @@ get_path_to_port_config_file(hwsku=None, asic="0" if is_multi_npu() else None)
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-> **調査根拠**: `sonic-host-services/scripts/featured` L145,195,232,587-590; `sonic-buildimage/files/build_templates/init_cfg.json.j2` L67,75,90,106-107 精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/device-runtime-metadata-side-effects.md`
+> **Evidence**: `sonic-host-services/scripts/featured` L145,195,232,587-590; `sonic-buildimage/files/build_templates/init_cfg.json.j2` L67,75,90,106-107 精読 (2026-05-19)
 
 `DEVICE_RUNTIME_METADATA` は CONFIG_DB に永続化されない仮想テーブルであり、自身が DB を直接書き込むことはない。ここでは `get_device_runtime_metadata()` の返り値を参照した consumer（`featured` / `sysmonitor.py` / `init_cfg.json.j2`）が、**FEATURE テーブル以外**へ副次的に行う書き込みを示す。
 
@@ -431,10 +428,9 @@ get_path_to_port_config_file(hwsku=None, asic="0" if is_multi_npu() else None)
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `sonic-host-services/scripts/featured:137-145,193-196`; `sonic-buildimage/src/system-health/health_checker/sysmonitor.py:217-226`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:67,75,90,106-107` 精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/device-runtime-metadata-pubsub.md`
+> **Evidence**: `sonic-host-services/scripts/featured:137-145,193-196`; `sonic-buildimage/src/system-health/health_checker/sysmonitor.py:217-226`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:67,75,90,106-107` 精読 (2026-05-19)
 
 `DEVICE_RUNTIME_METADATA` は [Redis](../../reference/glossary.md#term-redis) に永続化されない **仮想テーブル** であり、`device_info.get_device_runtime_metadata()` 呼び出しによってインメモリで生成される。このため [Redis](../../reference/glossary.md#term-redis) keyspace notification (`PSUBSCRIBE`) や `SubscriberStateTable` / `ConsumerStateTable` による subscribe は **一切存在しない**。
 
@@ -463,10 +459,9 @@ get_path_to_port_config_file(hwsku=None, asic="0" if is_multi_npu() else None)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> **調査根拠**: `sonic_py_common/device_info.py` L511-747 全行精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/device-runtime-metadata-platform.md`
+> **Evidence**: `sonic_py_common/device_info.py` L511-747 全行精読 (2026-05-19)
 
 `DEVICE_RUNTIME_METADATA` のフィールド構造・値はすべてランタイム時の**ハードウェアプラットフォーム検出結果**に依存する。ASIC ベンダや YANG スキーマには依存せず、以下の 3 要素の組み合わせで決定する。
 
