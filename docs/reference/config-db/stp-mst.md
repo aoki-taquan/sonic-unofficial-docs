@@ -553,7 +553,7 @@ sendMsgStpd(STP_MST_INST_CONFIG, len, (void *)msg);
 |---|---|---|
 | `STP_MST_INST_CONFIG` | `/var/run/stpipc.sock` | SET/DEL の calloc 成功後 |
 
-`sendMsgStpd()` の戻り値は呼び元でチェックされない。`sendto` 失敗時もエントリは消費される（Phase D 参照）。
+`sendMsgStpd()` の戻り値は呼び元でチェックされない。`sendto` 失敗時もエントリは消費される（失敗挙動の節を参照）。
 
 #### `m_vlanInstMap[]` 更新（インメモリ）
 

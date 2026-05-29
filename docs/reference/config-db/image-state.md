@@ -347,7 +347,7 @@ Redis pub/sub が存在しないため、`/etc/sonic/sonic_version.yml` を書�
 
 ### APPL_DB / STATE_DB / SAI 中継
 
-直接は存在しない。`ctrmgrd` のみが例外で、Kubernetes 環境においてのみ `build_version` の値を `STATE_DB:KUBE_LABEL_TABLE|kube_labels.sonic_version` に書き込む（Phase F 参照）。この書き込みも Redis pub/sub トリガではなく、ctrmgrd 起動後の一度限りの API 呼び出し経由である。
+直接は存在しない。`ctrmgrd` のみが例外で、Kubernetes 環境においてのみ `build_version` の値を `STATE_DB:KUBE_LABEL_TABLE|kube_labels.sonic_version` に書き込む（副次 DB 書込の節を参照）。この書き込みも Redis pub/sub トリガではなく、ctrmgrd 起動後の一度限りの API 呼び出し経由である。
 
 <!-- /pubsub -->
 

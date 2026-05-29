@@ -428,7 +428,7 @@ STP_PORT テーブル処理
     CLI の `stp_interface_link_type_point_to_point()` (stp.py:1235) は `'point-to-point'` を DB に書き込む。
     一方 stpmgr.h:61 の `POINT_TO_POINT` は `stoi()` による整数変換で使用されており、
     文字列 `"point-to-point"` からの直接マッピングは存在しない。
-    さらに `stpmgr.cpp:612` の `stoi(field.c_str())` バグ（Phase D 参照）により、MST `link_type` の処理は実質機能していない可能性がある。
+    さらに `stpmgr.cpp:612` の `stoi(field.c_str())` バグ（失敗挙動の節を参照）により、MST `link_type` の処理は実質機能していない可能性がある。
 
 <!-- /constants -->
 
@@ -452,7 +452,7 @@ sendMsgStpd(STP_PORT_CONFIG, len, reinterpret_cast<void *>(msg));
 | `STP_PORT_CONFIG` | `/var/run/stpipc.sock` (STPD_SOCK_NAME) | SET/DEL いずれも calloc 成功後 |
 
 stpd への IPC 送信はベストエフォートで、`sendto()` 失敗時はエラーログのみで再送なし。
-CONFIG_DB エントリはすでに消費済みのため設定が永久消失する（Phase D 参照）。
+CONFIG_DB エントリはすでに消費済みのため設定が永久消失する（失敗挙動の節を参照）。
 
 証跡: `stpmgr.cpp:519-628`
 
@@ -599,7 +599,7 @@ if (l2ProtoEnabled == L2_NONE)
 | モード | 有効フィールド | 備考 |
 |--------|--------------|------|
 | `L2_PVSTP` | `portfast`, `uplink_fast`, `bpdu_guard_do_disable` | PVST 専用フィールド |
-| `L2_MSTP` | `edge_port`, `link_type`, `bpdu_guard_do` | MST 専用フィールド。`link_type` は `stoi(field)` バグ (Phase D 参照) のためクラッシュ発生 |
+| `L2_MSTP` | `edge_port`, `link_type`, `bpdu_guard_do` | MST 専用フィールド。`link_type` は `stoi(field)` バグ (失敗挙動の節を参照) のためクラッシュ発生 |
 | `L2_NONE` | なし | SET はキューに残留、DEL は即消去 |
 
 プロトコルモードはプラットフォームではなく CLI 設定 (`STP|GLOBAL.mode`) で決まる。

@@ -477,7 +477,7 @@ TCP 定数: `MCLAG_DEFAULT_IP = 0x7f000006`（127.0.0.6）、`MCLAG_DEFAULT_PORT
 
 ### 逆方向: iccpd → mclagsyncd → APPL_DB
 
-STANDBY ノードかつ L3 モードの場合、iccpd が `MCLAG_MSG_TYPE_SET_INTF_MAC` を返送し、mclagsyncd の `setIntfMac()` → [APPL_DB](../../reference/glossary.md#term-appl_db) `INTF_TABLE|<vlan_if>` に `mac_addr` を書き込む（`mclaglink.cpp:435-460`）。この経路の詳細は Phase F 参照。
+STANDBY ノードかつ L3 モードの場合、iccpd が `MCLAG_MSG_TYPE_SET_INTF_MAC` を返送し、mclagsyncd の `setIntfMac()` → [APPL_DB](../../reference/glossary.md#term-appl_db) `INTF_TABLE|<vlan_if>` に `mac_addr` を書き込む（`mclaglink.cpp:435-460`）。この経路の詳細は副次 DB 書込の節を参照。
 
 ### 購読解除（MCLAG_DOMAIN DEL 時）
 
