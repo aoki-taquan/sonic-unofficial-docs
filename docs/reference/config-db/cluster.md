@@ -136,7 +136,7 @@ leaf cluster {
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `cluster` フィールドは minigraph XML の `<ClusterName>` タグから `sonic-cfggen` が書き込む。`bgpcfgd` はこのフィールドを直接参照しないため、ordering の影響は限定的。
 
@@ -157,7 +157,7 @@ leaf cluster {
 
 <!-- /ordering -->
 
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 対象テーブル: `DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA` の `cluster` フィールド
 
@@ -186,7 +186,7 @@ leaf cluster {
 
 - なし
 
-## 消費側 (Direction B)
+## 消費側
 
 | 消費元 | 参照箇所 | 使用目的 |
 |-------|---------|---------|
@@ -199,7 +199,7 @@ leaf cluster {
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-device_metadata`、`sonic-device_neighbor_metadata`
 
 <!-- cross-refs -->
-## 暗黙参照 — ランタイム消費デーモン調査 (Phase C)
+## 暗黙参照 — ランタイム消費デーモン調査
 
 `cluster` フィールドはコードベース全体を grep した結果、**ランタイムで読み出すデーモンが存在しない write-only フィールド**であることが確認された。
 
@@ -281,9 +281,8 @@ minigraph XML に `<ClusterName>` タグが存在しない構成では、フィ�
 <!-- /cdb-exceptions -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/cluster-failure.md -->
 <!-- source: sonic-buildimage/src/sonic-config-engine/minigraph.py -->
 
 ### 失敗パス一覧
@@ -323,7 +322,7 @@ XML に `<ClusterName></ClusterName>` (空タグ) が存在する場合、`node.
 - `DEVICE_NEIGHBOR_METADATA` (`minigraph.py:667`): `if cluster != None:` → 空文字列は `None` でないため通過 → `cluster = ""` が DB に書き込まれる
 - `DEVICE_METADATA` (`minigraph.py:2170-2172`): `cluster = devices[...][0].get('cluster', "")` で `""` を取得後、`if cluster:` → 空文字列は falsy → 書き込みスキップ
 
-`cluster` フィールドがランタイムで消費されるデーモンは存在しないため、この非対称性による実害はない (Phase C 調査済み)。
+`cluster` フィールドがランタイムで消費されるデーモンは存在しないため、この非対称性による実害はない (「暗黙参照テーブル」調査済み)。
 
 !!! note "ランタイム失敗なし"
     `cluster` は write-only フィールド。DB への書き込み完了後、orchagent・bgpcfgd・linkmgrd 等はこのフィールドを参照しないため、書き込み後の失敗パスは存在しない。
@@ -331,9 +330,8 @@ XML に `<ClusterName></ClusterName>` (空タグ) が存在する場合、`node.
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> 根拠: `minigraph.py` 全行精読。evidence: `meta/_intermediate/cdb-flow/cluster-constants.md`
 
 `cluster` フィールドに関して minigraph.py にハードコードされている定数・判定パターンの一覧。ランタイム消費デーモンが存在しないため、定数は書き込み側 (`sonic-cfggen` / `minigraph.py`) にのみ存在する。
 
@@ -362,9 +360,8 @@ XML に `<ClusterName></ClusterName>` (空タグ) が存在する場合、`node.
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
-<!-- evidence: meta/_intermediate/cdb-flow/cluster-side.md -->
 
 `cluster` フィールドは minigraph XML から CONFIG_DB への**一方向書き込みのみ**を目的としており、SET/DEL に伴い他の DB エントリへの書き込みが発生することはない。
 
@@ -384,7 +381,7 @@ XML に `<ClusterName></ClusterName>` (空タグ) が存在する場合、`node.
 
 `portmgrd` は CONFIG_DB `DEVICE_METADATA` を参照する際も `cluster` フィールドには触れない。
 
-Phase C (cross-refs) 調査でコードベース全体を grep した結果、ランタイムで `cluster` フィールドを読み出すコンポーネントが存在しないことが確認されており、副次書き込みのトリガとなる経路は存在しない。
+「暗黙参照テーブル」調査でコードベース全体を grep した結果、ランタイムで `cluster` フィールドを読み出すコンポーネントが存在しないことが確認されており、副次書き込みのトリガとなる経路は存在しない。
 
 !!! note "write-only フィールド"
     `cluster` は `sonic-cfggen` / `minigraph.py` による起動時一括書き込み後、どのデーモンも参照しない write-only フィールド。SET/DEL 後の副次 DB 書き込みは発生しない。
@@ -392,10 +389,8 @@ Phase C (cross-refs) 調査でコードベース全体を grep した結果、�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> 調査対象: `sonic-buildimage/src/sonic-config-engine/minigraph.py`、`sonic-swss/cfgmgr/buffermgr.cpp`、`sonic-swss/cfgmgr/buffermgrdyn.cpp`、`sonic-swss` [orchagent](../../reference/glossary.md#term-orchagent) 全体 grep
-> 調査日: 2026-05-18; 詳細分析 `meta/_intermediate/cdb-flow/cluster-pubsub.md`
 
 `cluster` フィールドの通信構造は **Producer 1 名・Consumer 0 名** という極めてシンプルな形態。
 
@@ -431,9 +426,8 @@ minigraph XML (<ClusterName>) → minigraph.py parse_device()
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差異
 
-> 根拠: `sonic-buildimage/src/sonic-config-engine/minigraph.py` 全行精査; 詳細 `meta/_intermediate/cdb-flow/cluster-platform.md`
 
 ### SAI 非経由フィールド
 

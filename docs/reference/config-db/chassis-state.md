@@ -374,7 +374,7 @@ supervisor が CHASSIS_FABRIC_ASIC_TABLE を `SubscriberStateTable` で購読し
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `CHASSIS_STATE_DB` テーブル群は以下の DB テーブルをコードレベルで参照・操作する（[YANG](../../reference/glossary.md#term-yang) leafref 非対象、CONFIG_DB ではないため）。
 
@@ -393,7 +393,7 @@ supervisor が CHASSIS_FABRIC_ASIC_TABLE を `SubscriberStateTable` で購読し
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ### platform API 失敗時の DB 書き込み経路
 
@@ -451,9 +451,8 @@ supervisor が CHASSIS_FABRIC_ASIC_TABLE を `SubscriberStateTable` で購読し
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> 調査証跡: `meta/_intermediate/cdb-flow/chassis-state-constants.md`
 
 ### テーブル名定数
 
@@ -503,9 +502,8 @@ DP/CP 側フィールド名（`DP_STATE`、`CP_STATE`、`DP_UPDATE_TIME`、`CP_U
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 / 外部影響 (Phase F)
+## 副次 DB 書込 / 外部影響
 
-> 調査証跡: `meta/_intermediate/cdb-flow/chassis-state-side-effects.md`
 
 `CHASSIS_STATE_DB` は `chassisd` が**書き込む先**のデータベースである。副次影響は「CHASSIS_STATE_DB への書き込みを受け取って下流が何を行うか」として整理する。
 
@@ -559,7 +557,7 @@ supervisor の `module_down_chassis_db_cleanup()` (chassisd:667-680) がモジ�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Pub/Sub チャネル詳細 (Phase G)
+## Pub/Sub チャネル詳細
 
 chassisd が `swsscommon.Select` + `SubscriberStateTable` で構築するイベント駆動ループと外部購読者をまとめる。
 
@@ -657,7 +655,7 @@ while True:
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 プラットフォーム依存箇所は 3 点。ASIC 種別 (Broadcom / Mellanox / Marvell 等) や multi-asic 構成による差は存在しない。
 

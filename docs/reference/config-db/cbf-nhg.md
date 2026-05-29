@@ -117,7 +117,7 @@ CLASS_BASED_NEXT_HOP_GROUP_TABLE|<name>
 <!-- /value-behavior -->
 
 <!-- ordering -->
-## 順序依存関係 (Phase B)
+## 順序依存関係
 
 APPL_DB の `CLASS_BASED_NEXT_HOP_GROUP_TABLE` エントリが SAI へプログラムされるまでの処理順序。
 
@@ -176,7 +176,7 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `CLASS_BASED_NEXT_HOP_GROUP_TABLE` エントリが処理される際に `CbfNhgOrch` が暗黙的に参照・依存する他テーブル / グローバルリソースを示す。
 
@@ -200,7 +200,7 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `CbfNhgOrch::doTask(Consumer&)` (`sonic-swss/orchagent/cbf/cbfnhgorch.cpp`) を全行精読した結果、以下の失敗分岐・retry 挙動を検出した。
 
@@ -241,11 +241,11 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 - **保留（`it++`）系**は自動 retry のため、依存リソース（NHG / FC_TO_NHG_INDEX_MAP / SAI リソース）を解消すれば次ループで自然に回復する。
 - **参照カウントガード**で DEL が詰まった場合は、参照元エントリ（例: RouteOrch が参照する CBF NHG）を先に削除してから再度 DEL を投入する。
 
-> **証跡**: `CbfNhgOrch::doTask()` L38-200、`CbfNhgOrch::getMembers()` L212-237、`CbfNhg::sync()` L287-375、`CbfNhg::update()` L453-593、`CbfNhg::syncMembers()` L603-703、`CbfNhg::remove()` (`sonic-swss/orchagent/nhg.h` 基底クラス)。
+> **裏取り**: `CbfNhgOrch::doTask()` L38-200、`CbfNhgOrch::getMembers()` L212-237、`CbfNhg::sync()` L287-375、`CbfNhg::update()` L453-593、`CbfNhg::syncMembers()` L603-703、`CbfNhg::remove()` (`sonic-swss/orchagent/nhg.h` 基底クラス)。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `CbfNhgOrch` / `CbfNhg` / `CbfNhgMember` に存在する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。出典は `sonic-swss/orchagent/cbf/cbfnhgorch.cpp` および `sonic-swss/orchagent/cbf/cbfnhgorch.h`。
 
@@ -282,7 +282,7 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 `CLASS_BASED_NEXT_HOP_GROUP_TABLE` エントリ処理に伴う直接 DB 副次書込は存在しない。副次効果はインメモリカウンタ更新と SAI 経由の間接書込に限られる。
 
@@ -323,9 +323,8 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## PUBSUB / Keyspace 通知メカニズム (Phase G)
+## PUBSUB / Keyspace 通知メカニズム
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/cbf-nhg-pubsub.md`
 
 ### 書き込みメカニズム: ProducerStateTable
 
@@ -376,7 +375,7 @@ orchdaemon select() ループ
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
+## プラットフォーム / SAI Capability 差異
 
 `CbfNhgOrch` の動作はプラットフォームが提供する SAI Capability によって以下の軸で分岐する。
 
@@ -422,7 +421,6 @@ if (sai_object_type_get_availability(gSwitchId, SAI_OBJECT_TYPE_NEXT_HOP_GROUP_M
 
 `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX` は SAI 仕様上 `CREATE_ONLY` 属性であるため、メンバー順序の変更時は全メンバーの remove → 再 sync が必須となる (`cbfnhgorch.cpp:509-516`)。この制約はプラットフォーム共通。
 
-詳細証跡: `meta/_intermediate/cdb-flow/cbf-nhg-platform.md`
 <!-- /platform -->
 
 <!-- ref-triangle:start -->
@@ -464,7 +462,7 @@ sonic-db-cli APPL_DB hgetall 'CLASS_BASED_NEXT_HOP_GROUP_TABLE:CbfNhg1'
 <!-- /ops-hint -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト (Phase A — コード由来)
+## フィールド暗黙デフォルト (コード由来)
 
 [YANG](../../reference/glossary.md#term-yang) schema が存在しないため、デフォルトはコード (`cbfnhgorch.cpp`) の初期化から派生する。
 

@@ -90,7 +90,7 @@ SSH_SERVER|POLICIES
 | `macs` | leaf-list enum | なし | 許可する MAC アルゴリズムの一覧 |
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト (Phase A)
+## コード由来の暗黙デフォルト
 
 ### SERIAL_CONSOLE|POLICIES
 
@@ -233,7 +233,7 @@ sudo sshd -T | grep -E 'maxauthtries|logingracetime|port|clientaliveinterval|pas
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 ### CLI
 
@@ -269,16 +269,16 @@ sudo sshd -T | grep -E 'maxauthtries|logingracetime|port|clientaliveinterval|pas
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | `SSH_SERVER.inactivity_timeout` 設定 | `sshd_config` の `ClientAliveInterval` (分×60秒) | hostcfgd L1129-1131 |
 | `SSH_SERVER.max_sessions` > 0 | PAM limits `/etc/security/limits.d/` の `maxlogins` | hostcfgd L1418-1441 |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -287,7 +287,7 @@ sudo sshd -T | grep -E 'maxauthtries|logingracetime|port|clientaliveinterval|pas
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -302,7 +302,7 @@ sudo sshd -T | grep -E 'maxauthtries|logingracetime|port|clientaliveinterval|pas
 <!-- /handler-branching -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存
 
 ### 1. systemd 初期化完了待ち — SSH_SERVER / SERIAL_CONSOLE は wait 後に適用
 
@@ -354,7 +354,7 @@ load フェーズでは `serial-config.service` の再起動は行わず、キ�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase C)
+## 暗黙テーブル参照
 
 `SERIAL_CONSOLE` / `SSH_SERVER` テーブルが処理される際に `hostcfgd` が暗黙的に参照・依存する他テーブルと外部ファイルを示す。
 
@@ -394,7 +394,7 @@ load フェーズでは `serial-config.service` の再起動は行わず、キ�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗モード・エラー処理 (Phase D)
+## 失敗モード・エラー処理
 
 `SshServer` / `SerialConsoleCfg` / `PamLimitsCfg` が [CONFIG_DB](../../reference/glossary.md#term-config_db) 変化を処理する際に発生しうる失敗モードと hostcfgd の対応を示す。
 
@@ -430,7 +430,7 @@ load フェーズでは `serial-config.service` の再起動は行わず、キ�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `SERIAL_CONSOLE` / `SSH_SERVER` テーブルを処理する `hostcfgd` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-host-services/scripts/hostcfgd` と `sonic-buildimage/files/image_config/cli_sessions/tmout-env.sh.j2`。
 
@@ -498,7 +498,7 @@ load フェーズでは `serial-config.service` の再起動は行わず、キ�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `SERIAL_CONSOLE` / `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の各ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換えおよびシステムサービス制御に閉じる。
 
@@ -519,11 +519,10 @@ CONFIG_DB `SERIAL_CONSOLE` / `SSH_SERVER` テーブルの変更に伴って `hos
 | `/etc/pam.d/pam-limits-conf` | `SSH_SERVER\|POLICIES.max_sessions` 変化 → `PamLimitsCfg.render_conf_file()` | hostcfgd L1466 |
 | `/etc/security/limits.conf` | `SSH_SERVER\|POLICIES.max_sessions` 変化 → `PamLimitsCfg.render_conf_file()` | hostcfgd L1471 |
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/cli-config-side.md` を参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### Redis 購読方式
 
@@ -564,11 +563,10 @@ ssh_handler("POLICIES", SET, {inactivity_timeout:"20"})
 | `SSH_SERVER\|POLICIES.max_sessions` 変化 | `/etc/security/limits.d/` PAM limits 更新 | hostcfgd:1418-1441 |
 | `SERIAL_CONSOLE\|POLICIES` 変化 (キャッシュ差分時) | `service serial-config restart` | hostcfgd:2035 |
 
-> **Evidence**: `sonic-host-services/scripts/hostcfgd:2478,2481` (subscribe)、`hostcfgd:2528` (listen)、`hostcfgd:2297-2300` (`ssh_handler`)、`hostcfgd:2438-2440` (`serial_console_config_handler`)、`hostcfgd:2454-2466` (`make_callback`); 詳細分析は `meta/_intermediate/cdb-flow/cli-config-pubsub.md` を参照。
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: SERIAL_CONSOLE / SSH_SERVER は host 単位で適用される host-only 設定であり、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
 
@@ -580,7 +578,6 @@ ssh_handler("POLICIES", SET, {inactivity_timeout:"20"})
 | ベンダー固有モジュール | なし | community master の SSH スタックは OpenSSH (Debian 標準)。`files/image_config/cli_sessions/` にプラットフォーム別差し替え機構なし |
 | テンプレート内分岐 | プラットフォーム条件なし | `tmout-env.sh.j2` / `sysrq-sysctl.conf.j2` を `platform\|asic\|chassis\|namespace\|vendor` で grep して 0 ヒット。分岐は `SERIAL_CONSOLE.POLICIES` フィールド値のみ |
 
-詳細根拠は `meta/_intermediate/cdb-flow/cli-config-platform.md` を参照。
 <!-- /platform -->
 
 <!-- glossary-links-injected: 841e6cdca746 -->
