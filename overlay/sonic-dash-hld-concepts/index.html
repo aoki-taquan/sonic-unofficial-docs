@@ -11946,7 +11946,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2" class="md-nav__link">
+  <a href="#vnet-mapping" class="md-nav__link">
     <span class="md-ellipsis">
       
         2. オブジェクトモデル
@@ -36015,7 +36015,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2" class="md-nav__link">
+  <a href="#vnet-mapping" class="md-nav__link">
     <span class="md-ellipsis">
       
         2. オブジェクトモデル
@@ -36281,7 +36281,7 @@
 </tbody>
 </table>
 <p>通常の SONiC スイッチでは扱わない桁のオブジェクト数で、HLD §1.6 の "Design Considerations" は <strong>bulk update</strong>、<strong>メモリのフレキシブル割り当て</strong>（最大スケールを事前確保しない）、<strong>API の冪等性</strong>、<strong>silent failure 禁止</strong> 等を必須要件として明記している<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="2">2. オブジェクトモデル<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<h2 id="vnet-mapping">2. オブジェクトモデル<a class="headerlink" href="#vnet-mapping" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>APPLIANCE (sip / vm_vni / local_region_id)
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  └── ENI (mac_address, underlay_ip, vnet, admin_state, mode={vm_mode,floating_nic_mode})
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        ├── VNet（VNI / address_spaces / peer_list）
@@ -36466,7 +36466,6 @@
 <li><a href="../sonic-dash-hld-internals/">sonic-dash-hld-internals.md</a> — DASH APP DB スキーマ、SAI mapping、Orch 内部実装</li>
 <li><a href="../sonic-dash-hld-operations/">sonic-dash-hld-operations.md</a> — CLI / 設定例 / トラブルシュート</li>
 </ul>
-<p><a id="vnet-mapping"></a></p>
 <h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

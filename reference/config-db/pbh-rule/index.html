@@ -37831,7 +37831,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>show pbh rule</code> は <a href="../../glossary/#term-orchagent">orchagent</a> の処理を経由せず CONFIG_DB を直接参照するため、SAI 反映状態とは独立して最新の設定を表示する。<code>show pbh statistics</code> の <code>ACL_COUNTER_RULE_MAP</code> は <code>AclOrch::registerFlexCounter()</code> が <code>flow_counter=ENABLED</code> の SET 成功時に書き込む（Phase F 参照）。</p>
+<p><code>show pbh rule</code> は <a href="../../glossary/#term-orchagent">orchagent</a> の処理を経由せず CONFIG_DB を直接参照するため、SAI 反映状態とは独立して最新の設定を表示する。<code>show pbh statistics</code> の <code>ACL_COUNTER_RULE_MAP</code> は <code>AclOrch::registerFlexCounter()</code> が <code>flow_counter=ENABLED</code> の SET 成功時に書き込む（副次 DB 書込の節を参照）。</p>
 <h3 id="ttl">TTL / バックプレッシャー<a class="headerlink" href="#ttl" title="Permanent link">&para;</a></h3>
 <ul>
 <li>TTL: なし（CONFIG_DB は永続）</li>

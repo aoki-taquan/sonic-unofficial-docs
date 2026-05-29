@@ -37713,19 +37713,19 @@
 </tr>
 <tr>
 <td><code>DEVICE_METADATA\|localhost</code> (CONFIG_DB)</td>
-<td>間接: lldpmgrd → lldpcli → LLDPDU TLV</td>
+<td>間接: <a href="../../glossary/#term-lldpmgrd">lldpmgrd</a> → lldpcli → LLDPDU TLV</td>
 <td>常時。<code>hostname</code> / <code>chassis_hostname</code> 変更時に <code>lldpcli configure system hostname</code> を実行。対向ノードの <code>lldp_rem_sys_name</code> に伝播</td>
 <td><code>lldpmgrd:247-256, 308-310</code></td>
 </tr>
 <tr>
 <td><code>MGMT_INTERFACE</code> (CONFIG_DB)</td>
-<td>間接: lldpmgrd → lldpcli → LLDPDU TLV</td>
+<td>間接: <a href="../../glossary/#term-lldpmgrd">lldpmgrd</a> → lldpcli → LLDPDU TLV</td>
 <td>常時。管理 IP 変更時に <code>lldpcli configure system ip management pattern</code> を実行。対向ノードの <code>lldp_rem_man_addr</code> に伝播</td>
 <td><code>lldpmgrd:228-245, 304-306</code></td>
 </tr>
 <tr>
 <td><code>PORT_TABLE.alias</code> (APPL_DB)</td>
-<td>間接: lldpmgrd → lldpcli → LLDPDU TLV</td>
+<td>間接: <a href="../../glossary/#term-lldpmgrd">lldpmgrd</a> → lldpcli → LLDPDU TLV</td>
 <td>ポート up 時。alias / description を <code>lldpcli configure ports</code> で lldpd に設定。対向ノードの <code>lldp_rem_port_id</code> に伝播。alias 未設定時はポート名を使用</td>
 <td><code>lldpmgrd:136-166, 300-325</code></td>
 </tr>
@@ -38373,7 +38373,7 @@ lldpd が送出する LLDPDU 内容を制御し、<strong>対向ノードの</st
 
 <!-- glossary-links-injected: lldp-state-v1 -->
 
-<!-- glossary-links-injected: 0af8863862be -->
+<!-- glossary-links-injected: 236c2b782612 -->
 
 <div class="footnote">
 <hr />

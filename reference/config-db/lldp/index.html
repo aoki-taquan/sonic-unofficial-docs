@@ -37624,7 +37624,7 @@
 <p>根拠: <code>dockers/docker-lldp/lldpmgrd</code></p>
 </blockquote>
 <h3 id="_6">構造的前提<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p><code>lldpmgrd</code> は <code>LLDP</code> / <code>LLDP_PORT</code> テーブルを<strong>直接購読しない</strong>。購読対象は <code>APPL_DB PORT</code>（ポート oper_status）、<code>CONFIG_DB MGMT_INTERFACE</code>、<code>CONFIG_DB DEVICE_METADATA</code> のみ。したがって <code>LLDP|GLOBAL</code> や <code>LLDP_PORT|&lt;ifname&gt;</code> への書き込みは lldpmgrd に到達せず、エラーログも生成されない（構造的 no-op）。</p>
+<p><code>lldpmgrd</code> は <code>LLDP</code> / <code>LLDP_PORT</code> テーブルを<strong>直接購読しない</strong>。購読対象は <code>APPL_DB PORT</code>（ポート oper_status）、<code>CONFIG_DB MGMT_INTERFACE</code>、<code>CONFIG_DB DEVICE_METADATA</code> のみ。したがって <code>LLDP|GLOBAL</code> や <code>LLDP_PORT|&lt;ifname&gt;</code> への書き込みは <a href="../../glossary/#term-lldpmgrd">lldpmgrd</a> に到達せず、エラーログも生成されない（構造的 no-op）。</p>
 <h3 id="set">SET 処理における失敗経路<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -37703,7 +37703,7 @@
 <tr>
 <td><code>LLDP\|GLOBAL</code> / <code>LLDP_PORT\|&lt;ifname&gt;</code> への書き込み</td>
 <td>—</td>
-<td><strong>lldpmgrd はイベントを受信しない（構造的 no-op）</strong>。<a href="../../glossary/#term-config_db">CONFIG_DB</a> には書けるが lldpd に一切反映されない</td>
+<td><strong><a href="../../glossary/#term-lldpmgrd">lldpmgrd</a> はイベントを受信しない（構造的 no-op）</strong>。<a href="../../glossary/#term-config_db">CONFIG_DB</a> には書けるが lldpd に一切反映されない</td>
 <td>なし</td>
 <td><code>lldpmgrd:300-325</code></td>
 </tr>
@@ -37754,7 +37754,7 @@
 <td>supervisord 再起動後に再試行</td>
 <td>—</td>
 <td>—</td>
-<td>lldpmgrd 再起動</td>
+<td><a href="../../glossary/#term-lldpmgrd">lldpmgrd</a> 再起動</td>
 </tr>
 <tr>
 <td>LLDP/LLDP_PORT 書き込み</td>
@@ -38608,7 +38608,7 @@
 <p><a href="../../glossary/#term-voq">VOQ</a> chassis 構成では <code>DEVICE_METADATA|localhost.chassis_hostname</code> が設定され、line card ホスト名ではなくシャーシ全体名が LLDP System Name TLV に載る。<code>hostname</code> のみの通常構成では <code>chassis_hostname</code> キーが存在しないため、この分岐は実質的に無効。</p>
 <!-- /platform -->
 
-<!-- glossary-links-injected: 081fe6ef0b39 -->
+<!-- glossary-links-injected: 236c2b782612 -->
 
 <div class="footnote">
 <hr />

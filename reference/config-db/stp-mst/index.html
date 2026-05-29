@@ -37912,7 +37912,7 @@ CONFIG_DB に蓄積され再起動後に一括再処理される。</p>
 </tr>
 </tbody>
 </table>
-<p><code>sendMsgStpd()</code> の戻り値は呼び元でチェックされない。<code>sendto</code> 失敗時もエントリは消費される（Phase D 参照）。</p>
+<p><code>sendMsgStpd()</code> の戻り値は呼び元でチェックされない。<code>sendto</code> 失敗時もエントリは消費される（失敗挙動の節を参照）。</p>
 <h4 id="m_vlaninstmap"><code>m_vlanInstMap[]</code> 更新（インメモリ）<a class="headerlink" href="#m_vlaninstmap" title="Permanent link">&para;</a></h4>
 <p><code>STP_MST_INST</code> イベント処理時に <code>updateVlanInstanceMap()</code> (<code>stpmgr.cpp:1454</code>) がプロセスメモリ内の VLAN-インスタンス対応表を更新する:</p>
 <table>

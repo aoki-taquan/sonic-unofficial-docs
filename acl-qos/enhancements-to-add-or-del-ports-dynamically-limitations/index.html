@@ -36247,7 +36247,7 @@
 <li><code>SAI_STATUS_OBJECT_IN_USE</code>（VLAN_MEMBER / ACL_TABLE / <a href="../../reference/glossary/#term-buffer-pg">BUFFER_PG</a> が参照中）</li>
 <li><code>SAI_STATUS_INVALID_OBJECT_ID</code>（既に部分削除された下流 SAI オブジェクト）</li>
 <li>最悪は orchagent 自体が <code>abort()</code> し <a href="../../reference/glossary/#term-syncd">syncd</a> / swss コンテナが crash loop に入る。<code>fast-reboot</code> / <code>warm-reboot</code> が必要になる。</li>
-<li>chassis line card 投入で「init 時に空 → 後から PORT を投入」フローを使うと、buffermgrd / lldpmgrd の起動順次第で <code>pending_cmds</code> が滞留し、lldp neighbor 表に古い情報が残る。</li>
+<li>chassis line card 投入で「init 時に空 → 後から PORT を投入」フローを使うと、buffermgrd / <a href="../../reference/glossary/#term-lldpmgrd">lldpmgrd</a> の起動順次第で <code>pending_cmds</code> が滞留し、lldp neighbor 表に古い情報が残る。</li>
 <li>HLD で「ref counter で守られているから順序気にせず消してよい」と読んで自動化スクリプトを書くと、上記 race を踏む。</li>
 </ul>
 <h3 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h3>
@@ -36302,7 +36302,7 @@
 <h2 id="_4">実装との乖離<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../enhancements-to-add-or-del-ports-dynamically/">動的ポート add/del 制限事項と HLD との乖離 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 0640f7ac8c6f -->
+<!-- glossary-links-injected: 0da81fc24635 -->
 
 <div class="footnote">
 <hr />

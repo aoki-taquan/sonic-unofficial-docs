@@ -37174,13 +37174,13 @@
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># TODO: Also listen for changes in DEVICE_NEIGHBOR and PORT tables in</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1">#       Config DB and update LLDP config upon changes.</span>
 </span></code></pre></div>
-<p>現行実装での lldpmgrd が subscribe するテーブルは次の 3 つのみ:</p>
+<p>現行実装での <a href="../../glossary/#term-lldpmgrd">lldpmgrd</a> が subscribe するテーブルは次の 3 つのみ:</p>
 <ul>
 <li><code>APP_PORT_TABLE_NAME</code> (<a href="../../glossary/#term-appl_db">APPL_DB</a>) — port oper_status 変化</li>
 <li><code>CFG_MGMT_INTERFACE_TABLE_NAME</code> (<a href="../../glossary/#term-config_db">CONFIG_DB</a>) — 管理 IP 変化</li>
 <li><code>CFG_DEVICE_METADATA_TABLE_NAME</code> (CONFIG_DB) — hostname 変化</li>
 </ul>
-<p>DEVICE_NEIGHBOR は<strong>まったく購読されていない</strong>。lldpmgrd の動作に DEVICE_NEIGHBOR の内容は現状影響しない。</p>
+<p>DEVICE_NEIGHBOR は<strong>まったく購読されていない</strong>。<a href="../../glossary/#term-lldpmgrd">lldpmgrd</a> の動作に DEVICE_NEIGHBOR の内容は現状影響しない。</p>
 <h3 id="bgpcfgd-device_neighbor_metadata">bgpcfgd — DEVICE_NEIGHBOR_METADATA 依存待機<a class="headerlink" href="#bgpcfgd-device_neighbor_metadata" title="Permanent link">&para;</a></h3>
 <p><a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> (<code>managers_bgp.py:139-140,219-224</code>) は DEVICE_NEIGHBOR 本体ではなく <strong>DEVICE_NEIGHBOR_METADATA</strong> を依存テーブルとして登録する。</p>
 <ul>
@@ -37190,7 +37190,7 @@
 </ul>
 <!-- ordering -->
 <h2 id="_3">書込み順依存<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>DEVICE_NEIGHBOR テーブルは <strong>consumer が起動時に一括読み出し（<code>get_table</code>）する</strong>参照テーブルであり、常時 subscribe する daemon は存在しない（lldpmgrd は TODO 状態で未実装）。このため、書込み順依存は「consumer の起動タイミング vs. DEVICE_NEIGHBOR の書込みタイミング」という起動順序の問題として現れる。</p>
+<p>DEVICE_NEIGHBOR テーブルは <strong>consumer が起動時に一括読み出し（<code>get_table</code>）する</strong>参照テーブルであり、常時 subscribe する daemon は存在しない（<a href="../../glossary/#term-lldpmgrd">lldpmgrd</a> は TODO 状態で未実装）。このため、書込み順依存は「consumer の起動タイミング vs. DEVICE_NEIGHBOR の書込みタイミング」という起動順序の問題として現れる。</p>
 <h3 id="_4">検出された順序依存<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -37930,7 +37930,7 @@ multi-ASIC 環境では各ネームスペース（<code>asic0</code> / <code>asi
 </blockquote>
 <!-- /cdb-exceptions -->
 
-<!-- glossary-links-injected: 252867a9153e -->
+<!-- glossary-links-injected: 236c2b782612 -->
 
 
 

@@ -37751,7 +37751,7 @@
 </span></code></pre></div>
 <p>TCP 定数: <code>MCLAG_DEFAULT_IP = 0x7f000006</code>（127.0.0.6）、<code>MCLAG_DEFAULT_PORT = 2626</code>（<code>mclag.h:23,56</code>）。mclagsyncd が TCP サーバとして <code>listen / accept</code> し、iccpd が接続する。</p>
 <h3 id="iccpd-mclagsyncd-appl_db">逆方向: iccpd → mclagsyncd → APPL_DB<a class="headerlink" href="#iccpd-mclagsyncd-appl_db" title="Permanent link">&para;</a></h3>
-<p>STANDBY ノードかつ L3 モードの場合、iccpd が <code>MCLAG_MSG_TYPE_SET_INTF_MAC</code> を返送し、mclagsyncd の <code>setIntfMac()</code> → <a href="../../glossary/#term-appl_db">APPL_DB</a> <code>INTF_TABLE|&lt;vlan_if&gt;</code> に <code>mac_addr</code> を書き込む（<code>mclaglink.cpp:435-460</code>）。この経路の詳細は Phase F 参照。</p>
+<p>STANDBY ノードかつ L3 モードの場合、iccpd が <code>MCLAG_MSG_TYPE_SET_INTF_MAC</code> を返送し、mclagsyncd の <code>setIntfMac()</code> → <a href="../../glossary/#term-appl_db">APPL_DB</a> <code>INTF_TABLE|&lt;vlan_if&gt;</code> に <code>mac_addr</code> を書き込む（<code>mclaglink.cpp:435-460</code>）。この経路の詳細は副次 DB 書込の節を参照。</p>
 <h3 id="mclag_domain-del">購読解除（MCLAG_DOMAIN DEL 時）<a class="headerlink" href="#mclag_domain-del" title="Permanent link">&para;</a></h3>
 <p><code>delDomainCfgDependentSelectables()</code> で <code>m_select-&gt;removeSelectable()</code> → <code>delete</code> によって <code>SubscriberStateTable</code> が解放される（<code>mclaglink.cpp:962-967</code>）。</p>
 <h3 id="_26">タイムアウト・リトライ<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>

@@ -25017,7 +25017,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_30" class="md-nav__link">
+  <a href="#platform-differences" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差
@@ -37844,7 +37844,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_30" class="md-nav__link">
+  <a href="#platform-differences" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差
@@ -37959,7 +37959,7 @@
 
 <div class="admonition note">
 <p class="admonition-title">SAI 経路の補足</p>
-<p>上図の <code>sai_acl_api</code> は <code>PfcWdAclHandler</code> 経路（barefoot / Broadcom DLR 無効構成）を示す。汎用ソフトウェアプラットフォーム（mellanox / marvell 等）は <code>sai_port_api</code> / <code>sai_queue_api</code> 経由で PFC deadlock 検出を設定する（<a href="#プラットフォーム差">プラットフォーム差</a> 参照）。</p>
+<p>上図の <code>sai_acl_api</code> は <code>PfcWdAclHandler</code> 経路（barefoot / Broadcom DLR 無効構成）を示す。汎用ソフトウェアプラットフォーム（mellanox / marvell 等）は <code>sai_port_api</code> / <code>sai_queue_api</code> 経由で PFC deadlock 検出を設定する（<a href="#platform-differences">プラットフォーム差</a> 参照）。</p>
 </div>
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>PFC_WD|&lt;port-name&gt;      # 通常ポート用エントリ
@@ -39188,7 +39188,7 @@ PFC_WD per-port エントリ処理時に <code>getPortPfcWatchdogStatus()</code>
 <!-- /pubsub -->
 
 <!-- platform -->
-<h2 id="_30">プラットフォーム差<a class="headerlink" href="#_30" title="Permanent link">&para;</a></h2>
+<h2 id="platform-differences">プラットフォーム差<a class="headerlink" href="#platform-differences" title="Permanent link">&para;</a></h2>
 <p>PFC_WD の platform 差は community <a href="../../glossary/#term-sonic">SONiC</a> の中でも特に重大なカテゴリ。<a href="../../glossary/#term-asic">ASIC</a> ベンダーが識別できない場合は <strong>PFC-WD 機能自体が無効化</strong> され、ベンダーが識別できても Handler クラス・SAI カウンタ種別・Lua 検出スクリプトがすべて異なる。</p>
 <h3 id="asic-handler-sai">ASIC ベンダー別 Handler 登録・SAI カウンタ種別<a class="headerlink" href="#asic-handler-sai" title="Permanent link">&para;</a></h3>
 <p><code>orchdaemon.cpp:635-843</code> の <code>getenv("platform")</code> 分岐で Handler クラスと SAI ポートカウンタ種別が決定される。</p>

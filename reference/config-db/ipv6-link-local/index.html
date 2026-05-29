@@ -37213,13 +37213,13 @@
 <td>STATE_DB</td>
 <td><code>PORT_TABLE</code> / <code>LAG_TABLE</code> / <code>VLAN_TABLE</code></td>
 <td><code>intfmgr.cpp:833-837</code> (<code>isIntfStateOk</code>)</td>
-<td>APP_DB 転送の gating (Phase B 既述)</td>
+<td>APP_DB 転送の gating (書込み順依存の節で既述)</td>
 </tr>
 <tr>
 <td>STATE_DB</td>
 <td><code>VRF_TABLE</code></td>
 <td><code>intfmgr.cpp:839-843</code></td>
-<td>VRF バインド時の gating (Phase B 既述)</td>
+<td>VRF バインド時の gating (書込み順依存の節で既述)</td>
 </tr>
 <tr>
 <td>APP_DB</td>
@@ -37614,7 +37614,7 @@
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">m_cfgLagInterfaceTable</span><span class="p">(</span><span class="n">cfgDb</span><span class="p">,</span><span class="w"> </span><span class="n">CFG_LAG_INTF_TABLE_NAME</span><span class="p">),</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">m_cfgVlanInterfaceTable</span><span class="p">(</span><span class="n">cfgDb</span><span class="p">,</span><span class="w"> </span><span class="n">CFG_VLAN_INTF_TABLE_NAME</span><span class="p">),</span>
 </span></code></pre></div>
-<p><code>isLinkLocalEnabled()</code> は netlink <code>RTM_NEWNEIGH</code> / <code>RTM_DELNEIGH</code> イベント受信時に呼ばれ、CONFIG_DB を同期的に <code>get()</code> する。これにより <code>intfmgrd</code> の APP_DB 転送完了を待たずに CONFIG_DB 書き込みの瞬間からフィルタリングが有効になる（Phase B 依存 #3 で既述）。</p>
+<p><code>isLinkLocalEnabled()</code> は netlink <code>RTM_NEWNEIGH</code> / <code>RTM_DELNEIGH</code> イベント受信時に呼ばれ、CONFIG_DB を同期的に <code>get()</code> する。これにより <code>intfmgrd</code> の APP_DB 転送完了を待たずに CONFIG_DB 書き込みの瞬間からフィルタリングが有効になる（書込み順依存 #3 で既述）。</p>
 <h3 id="_18">通信フロー概要<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
   CLI["config interface ipv6&lt;br/&gt;(CLI)"] --&gt;|HSET| CDB[("CONFIG_DB&lt;br/&gt;INTERFACE / PORTCHANNEL_INTERFACE&lt;br/&gt;/ VLAN_INTERFACE")]
@@ -37712,7 +37712,7 @@
 <h3 id="neighsyncd">neighsyncd の動作もプラットフォーム不問<a class="headerlink" href="#neighsyncd" title="Permanent link">&para;</a></h3>
 <p><code>neighsync.cpp</code> の <code>isLinkLocalEnabled()</code> はプレフィクス文字列比較と CONFIG_DB 直接参照のみで構成されており（Phase E 定数表参照）、platform 定数・vendor フラグ・capability クエリを一切参照しない。link-local neigh の学習有効/無効判定は CONFIG_DB 値のみで決まる。</p>
 <h3 id="_21">差異が残る唯一の領域（インターフェース名種別）<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
-<p>Phase E で示したインターフェース名プレフィクス (<code>Ethernet</code> / <code>PortChannel</code> / <code>Vlan</code>) によるテーブル振り分けは、特定 ASIC 機種固有ではなくインターフェース命名規則依存である。スマートスイッチ / <a href="../../glossary/#term-dpu">DPU</a> などで異なるプレフィクス名を持つインターフェース (<code>dpu0</code> 等) が登場した場合、<code>isLinkLocalEnabled()</code> が <code>false</code> を返して link-local neigh を無視するが、これはプラットフォーム分岐ではなく未サポートインターフェース種別として Phase D (#5) で既述。</p>
+<p>「コード由来デフォルト」で示したインターフェース名プレフィクス (<code>Ethernet</code> / <code>PortChannel</code> / <code>Vlan</code>) によるテーブル振り分けは、特定 ASIC 機種固有ではなくインターフェース命名規則依存である。スマートスイッチ / <a href="../../glossary/#term-dpu">DPU</a> などで異なるプレフィクス名を持つインターフェース (<code>dpu0</code> 等) が登場した場合、<code>isLinkLocalEnabled()</code> が <code>false</code> を返して link-local neigh を無視するが、これはプラットフォーム分岐ではなく未サポートインターフェース種別として失敗挙動の節 (#5) で既述。</p>
 <!-- /platform -->
 
 <h2 id="_22">購読者<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>

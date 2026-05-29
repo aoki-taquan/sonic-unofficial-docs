@@ -12107,7 +12107,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-swss-lite-underlay" class="md-nav__link">
+  <a href="#swss-lite-underlay" class="md-nav__link">
     <span class="md-ellipsis">
       
         6. SWSS Lite と Underlay
@@ -36109,7 +36109,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-swss-lite-underlay" class="md-nav__link">
+  <a href="#swss-lite-underlay" class="md-nav__link">
     <span class="md-ellipsis">
       
         6. SWSS Lite と Underlay
@@ -36588,7 +36588,7 @@
 </tbody>
 </table>
 <p>また、<strong>全 ENI から unbind された route group は <a href="../../reference/glossary/#term-orchagent">orchagent</a> と SAI で自動削除</strong> され、route 情報がキャッシュされていないため再 bind 不可となる。再利用するには <code>DASH_ROUTE_GROUP_TABLE</code> から作り直す必要がある<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="6-swss-lite-underlay">6. SWSS Lite と Underlay<a class="headerlink" href="#6-swss-lite-underlay" title="Permanent link">&para;</a></h2>
+<h2 id="swss-lite-underlay">6. SWSS Lite と Underlay<a class="headerlink" href="#swss-lite-underlay" title="Permanent link">&para;</a></h2>
 <p><a href="../../reference/glossary/#term-sonic">SONiC</a> for DPU は <strong><code>switch_type=dpu</code></strong> で起動し、通常の switch 向け Orch の大半（<a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a>, nat, sflow, dhcp_relay, radv, macsec, resttapi）を無効化する。<strong>有効</strong> な container は database / swss / <a href="../../reference/glossary/#term-syncd">syncd</a> / bgp / snmp / telemetry / lldp / pmon / gnmi のみ<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>Underlay は通常の SAI で、appliance は接続 Peer (SmartSwitch / network device) と <a href="../../reference/glossary/#term-bgp">BGP</a> セッションを張り、自分が advertise する VIP PA の経路を Peer から default route として受け取る。<strong><a href="../../reference/glossary/#term-ecmp">ECMP</a> は 2 peer を前提</strong> とし、LPM リソースは underlay 側にほとんど確保しない設計（HLD §3.3.5）<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>encap behavior は <strong><a href="../../reference/glossary/#term-dscp">DSCP</a> uniform / TTL pipe</strong>（HLD §3.3.6）。DSCP は decap 前のオリジナル outer から copy し、内部 customer header の DSCP は <strong>変更禁止</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

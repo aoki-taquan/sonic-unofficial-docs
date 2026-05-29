@@ -37310,7 +37310,7 @@
 
 <h1 id="lldp_port">LLDP_PORT テーブル<a class="headerlink" href="#lldp_port" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>LLDP_PORT</code> は <strong>ポート単位の <a href="../../glossary/#term-lldp">LLDP</a> 設定</strong> を保持する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>lldp</code> (lldpd / lldpmgrd) コンテナが <a href="../../glossary/#term-config_db">CONFIG_DB</a> から読み、各物理ポートで <a href="../../glossary/#term-lldp">LLDP</a> を有効化するか、また RX / TX どちらのモードで動かすかを決める。</p>
+<p><code>LLDP_PORT</code> は <strong>ポート単位の <a href="../../glossary/#term-lldp">LLDP</a> 設定</strong> を保持する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>lldp</code> (lldpd / <a href="../../glossary/#term-lldpmgrd">lldpmgrd</a>) コンテナが <a href="../../glossary/#term-config_db">CONFIG_DB</a> から読み、各物理ポートで <a href="../../glossary/#term-lldp">LLDP</a> を有効化するか、また RX / TX どちらのモードで動かすかを決める。</p>
 <p><code>LLDP</code> (グローバル) テーブルが <code>hello_time</code> / <code>multiplier</code> / <code>system_name</code> / <code>system_description</code> 等のシャーシ全体の設定を持つのに対し、本テーブルはポート単位の上書き設定。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -37411,7 +37411,7 @@
 
 <!-- defaults -->
 <h2 id="_13">コード由来デフォルト<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
-<p><code>LLDP_PORT</code> の per-port フィールドは YANG <code>default</code> 文と lldpmgrd / <code>lldpd.conf.j2</code> のハードコードで決まる。</p>
+<p><code>LLDP_PORT</code> の per-port フィールドは YANG <code>default</code> 文と <a href="../../glossary/#term-lldpmgrd">lldpmgrd</a> / <code>lldpd.conf.j2</code> のハードコードで決まる。</p>
 <h3 id="field-enabled">field: <code>enabled</code><a class="headerlink" href="#field-enabled" title="Permanent link">&para;</a></h3>
 <p><strong>コード由来デフォルト</strong>: <code>true</code> (YANG <code>default</code>)</p>
 <div class="language-yang highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c">// sonic-buildimage/src/sonic-yang-models/yang-models/sonic-lldp.yang:24-31</span>
@@ -37425,7 +37425,7 @@
 <p><code>LLDP_PORT</code> は <code>lldp_mode_config</code> を <code>uses</code> するため、フィールド省略時は <code>true</code> 扱い。<code>config lldp interface &lt;port&gt; disable</code> で <code>false</code> に切り替わるまでは LLDP TX/RX が有効。</p>
 <h3 id="field-mode">field: <code>mode</code><a class="headerlink" href="#field-mode" title="Permanent link">&para;</a></h3>
 <p><strong>コード由来デフォルト</strong>: 未設定 (= lldpd 組み込みの双方向 rx+tx)</p>
-<p><code>sonic-lldp.yang</code> の <code>mode</code> には <code>default</code> 文がなく、enum も <code>RECEIVE</code> / <code>TRANSMIT</code> の 2 値のみ (<code>BOTH</code> は存在しない)。<code>mode</code> 未指定時は lldpmgrd が <code>lldpcli configure ports ... lldp status</code> を発行しないため、lldpd の組み込みデフォルト (双方向送受信) が有効になる。</p>
+<p><code>sonic-lldp.yang</code> の <code>mode</code> には <code>default</code> 文がなく、enum も <code>RECEIVE</code> / <code>TRANSMIT</code> の 2 値のみ (<code>BOTH</code> は存在しない)。<code>mode</code> 未指定時は <a href="../../glossary/#term-lldpmgrd">lldpmgrd</a> が <code>lldpcli configure ports ... lldp status</code> を発行しないため、lldpd の組み込みデフォルト (双方向送受信) が有効になる。</p>
 <h3 id="field-portidsubtype-per-port">field: portidsubtype (per-port の暗黙デフォルト)<a class="headerlink" href="#field-portidsubtype-per-port" title="Permanent link">&para;</a></h3>
 <p><strong>コード由来デフォルト (per-port)</strong>: <code>local &lt;PORT.alias&gt;</code> (alias 空時は port name)</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># sonic-buildimage/dockers/docker-lldp/lldpmgrd:156</span>
@@ -38161,7 +38161,7 @@
 <p>これらの prefix は <code>sonic_py_common.interface</code> が返すプラットフォーム共通値であり、ASIC 種別によらず同一の除外ロジックが適用される。</p>
 <!-- /platform -->
 
-<!-- glossary-links-injected: 0505ce402ce4 -->
+<!-- glossary-links-injected: 236c2b782612 -->
 
 <div class="footnote">
 <hr />

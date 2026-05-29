@@ -38152,7 +38152,7 @@ create/remove は NhgOrch / RouteOrch 双方が観るが、SAI 反映は NeighOr
 （MPLS 経路は DualToR tunnel 経由で書かれない）。SAI status は一律
 <code>handleSaiSetStatus(SAI_API_MPLS, ...)</code> / <code>handleSaiRemoveStatus(SAI_API_MPLS, ...)</code>
 (<code>mplsrouteorch.cpp:907-915</code>) に委譲され、<code>task_need_retry</code> / <code>task_failed</code> のいずれかに振り分けられる
-（Phase D で整理）。</p>
+（失敗挙動の節で整理）。</p>
 <h3 id="11-warm-reboot">11. Warm reboot 順序<a class="headerlink" href="#11-warm-reboot" title="Permanent link">&para;</a></h3>
 <p><code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> 内に <code>warm</code> / <code>reconcile</code> / <code>WarmStart</code> の文字列は 0 件。warm reboot
 時の MPLS 経路順序は <strong>fpmsyncd 側 + 通常起動順序</strong> に依存する:</p>

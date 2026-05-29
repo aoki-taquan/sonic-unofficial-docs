@@ -38250,7 +38250,7 @@ minigraph 経由では <code>type</code> が常に書き込まれるが、直接
 <!-- runtime-trace -->
 <h2 id="_25">実コンテナ動作トレース<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>bgpcfgd</code> / <code>pfcwd</code> / <code>show</code> / <code>db_migrator</code> が CONFIG_DB の <code>DEVICE_NEIGHBOR_METADATA</code> テーブルを購読する（lldpmgrd は購読しない — pubsub セクション参照）。</p>
+<p><code>bgpcfgd</code> / <code>pfcwd</code> / <code>show</code> / <code>db_migrator</code> が CONFIG_DB の <code>DEVICE_NEIGHBOR_METADATA</code> テーブルを購読する（<a href="../../glossary/#term-lldpmgrd">lldpmgrd</a> は購読しない — pubsub セクション参照）。</p>
 <p><code>DEVICE_NEIGHBOR_METADATA</code> は <code>&lt;device_name&gt;</code> の key で hwsku / type 情報を保持。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継なし)</p>
@@ -38258,7 +38258,7 @@ minigraph 経由では <code>type</code> が常に書き込まれるが、直接
 <p>なし (<a href="../../glossary/#term-sai">SAI</a> 非経由 — <a href="../../glossary/#term-lldp">LLDP</a> / neighbor テーブルのメタデータとして参照)</p>
 <h3 id="4">段階 4 — タイミングと副作用<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
 <p><strong>適用タイミング</strong>: CONFIG_DB に書き込まれると即時に参照可能。<a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> が SubscriberStateTable で継続購読し、BGP ピア設定生成に使用する。pfcwd / show / db_migrator はスナップショット読み出し。</p>
-<p><strong>副作用</strong>: neighbor metadata の変更は BGP セッション設定・pfcwd のポートロール判定・QoS 設定に影響。lldpmgrd は本テーブルを購読しない（pubsub セクション参照）。</p>
+<p><strong>副作用</strong>: neighbor metadata の変更は BGP セッション設定・pfcwd のポートロール判定・QoS 設定に影響。<a href="../../glossary/#term-lldpmgrd">lldpmgrd</a> は本テーブルを購読しない（pubsub セクション参照）。</p>
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -38553,7 +38553,7 @@ minigraph 経由では <code>type</code> が常に書き込まれるが、直接
 </table>
 <!-- /platform -->
 
-<!-- glossary-links-injected: 1c59d90c07b4 -->
+<!-- glossary-links-injected: cd3ad7aff057 -->
 
 <div class="footnote">
 <hr />

@@ -37845,7 +37845,7 @@ CONFIG_DB に <code>STP_PORT.path_cost</code> が存在しない状態を表す�
 <p>CLI の <code>stp_interface_link_type_point_to_point()</code> (stp.py:1235) は <code>'point-to-point'</code> を DB に書き込む。
 一方 stpmgr.h:61 の <code>POINT_TO_POINT</code> は <code>stoi()</code> による整数変換で使用されており、
 文字列 <code>"point-to-point"</code> からの直接マッピングは存在しない。
-さらに <code>stpmgr.cpp:612</code> の <code>stoi(field.c_str())</code> バグ（Phase D 参照）により、MST <code>link_type</code> の処理は実質機能していない可能性がある。</p>
+さらに <code>stpmgr.cpp:612</code> の <code>stoi(field.c_str())</code> バグ（失敗挙動の節を参照）により、MST <code>link_type</code> の処理は実質機能していない可能性がある。</p>
 </div>
 <!-- /constants -->
 
@@ -37875,7 +37875,7 @@ CONFIG_DB 以外の永続ストレージ（<a href="../../glossary/#term-state_d
 </tbody>
 </table>
 <p>stpd への IPC 送信はベストエフォートで、<code>sendto()</code> 失敗時はエラーログのみで再送なし。
-CONFIG_DB エントリはすでに消費済みのため設定が永久消失する（Phase D 参照）。</p>
+CONFIG_DB エントリはすでに消費済みのため設定が永久消失する（失敗挙動の節を参照）。</p>
 <p>証跡: <code>stpmgr.cpp:519-628</code></p>
 <hr />
 <h3 id="2-stpporttask-true">2. stpPortTask フラグの true 化（後段テーブルのゲート解除）<a class="headerlink" href="#2-stpporttask-true" title="Permanent link">&para;</a></h3>
@@ -38074,7 +38074,7 @@ stpmgrd は <a href="../../glossary/#term-sai">SAI</a> を直接呼ばず、Unix
 <tr>
 <td><code>L2_MSTP</code></td>
 <td><code>edge_port</code>, <code>link_type</code>, <code>bpdu_guard_do</code></td>
-<td>MST 専用フィールド。<code>link_type</code> は <code>stoi(field)</code> バグ (Phase D 参照) のためクラッシュ発生</td>
+<td>MST 専用フィールド。<code>link_type</code> は <code>stoi(field)</code> バグ (失敗挙動の節を参照) のためクラッシュ発生</td>
 </tr>
 <tr>
 <td><code>L2_NONE</code></td>
