@@ -185,8 +185,8 @@ jobs:
       - name: partial-boundary suspects (informational)
         run: python3 meta/scripts/check_partial_boundary.py --check || true
 
-      - name: mermaid block syntax check (informational)
-        run: python3 meta/scripts/check_mermaid_syntax.py --check || true
+      - name: mermaid block syntax check (strict)
+        run: python3 meta/scripts/check_mermaid_syntax.py --strict
 
       - name: partial-boundary phase-table (strict)
         run: python3 meta/scripts/check_partial_boundary.py --strict-phase-table
@@ -203,8 +203,8 @@ jobs:
       - name: heading hierarchy skips a11y (informational)
         run: python3 meta/scripts/check_heading_hierarchy.py --check || true
 
-      - name: image alt-text a11y (informational)
-        run: python3 meta/scripts/check_image_alt.py --check || true
+      - name: image alt-text a11y (strict)
+        run: python3 meta/scripts/check_image_alt.py
 
       - name: untagged code-block language (informational)
         run: python3 meta/scripts/check_code_lang.py --check || true

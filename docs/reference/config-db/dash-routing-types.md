@@ -48,7 +48,7 @@ flowchart LR
   SAI["SAI DASH API"]
   HW["DPU / ASIC"]
   EXT --> APPDB --> OA --> MEM
-  VNET -->|getRouteTypeActions()| MEM
+  VNET -->|"getRouteTypeActions()"| MEM
   VNET --> SAI --> HW
 ```
 
