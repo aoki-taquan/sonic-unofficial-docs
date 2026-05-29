@@ -125,7 +125,7 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 | LT failure string | SAI failure status 由来 |
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `STATE_DB PORT_TABLE` への書き込みは `portsyncd`（linksync.cpp）と `PortsOrch`（portsorch.cpp）の 2 プロセスが担う。両者の書き込みタイミングには下記の順序制約がある。
 
@@ -154,7 +154,7 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase C)
+## 暗黙テーブル参照
 
 書き込みデーモン (`portsyncd` / `PortsOrch`) が STATE_DB へ書き込む前に暗黙的に参照・依存する CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / STATE_DB テーブルおよび外部コンポーネントを示す。
 
@@ -176,11 +176,10 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 !!! note "CMIS 環境での `host_tx_ready` 制御の切り替え"
     `m_cmisModuleAsicSyncSupported` が `true` の場合、`PortsOrch` は `setPortAdminStatus()` 内で `host_tx_ready` を直接書き込まず、SAI コールバック `on_port_host_tx_ready` (portsorch.cpp:977) と `TRANSCEIVER_INFO` 購読経由でのみ書き込む。この切り替えにより `host_tx_ready = "true"` の到達タイミングが非 CMIS 環境と異なるため、consumer は環境依存の遅延を考慮する必要がある。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/state-db-port-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `STATE_DB PORT_TABLE` への書き込みは `portsyncd` と `PortsOrch` の 2 プロセスが担い、それぞれ独立した失敗経路を持つ。本テーブルは STATUS テーブルではないため、フィールドへの書き込み失敗は**サイレント（フィールド不在または旧値残留）**になる場合が多い。`ERROR_TABLE` への書き込みはどちらのプロセスも行わない。
 
@@ -212,11 +211,10 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 - **stale 残留**: `speed` / `fec` はポート oper DOWN 時に削除・更新されない。`netdev_oper_status != "up"` 時に参照すると前回 UP 時の値が返る。
 - **ERROR_TABLE**: linksync.cpp / portsorch.cpp いずれも失敗時に `ERROR_TABLE` へ書き込まない。失敗検知は syslog (`journalctl -u swss`) の `SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE` のみ。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/state-db-port-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 以下の定数は `sonic-swss/orchagent/portsorch.cpp`、`sonic-swss/orchagent/portsorch.h`、`sonic-swss/portsyncd/linksync.cpp` から検出したマジックナンバー・閾値。いずれも CONFIG_DB では変更不可のハードコード値。
 
@@ -236,11 +234,10 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 !!! note "MACsec 環境での `mtu` 乖離"
     MACsec が有効なポートでは、orchagent が SAI に設定する MTU は `CONFIG_DB PORT.mtu - 32` になる。一方 STATE_DB `PORT_TABLE.mtu` は `portsyncd` がカーネル netdev の MTU を直接読み出す。カーネル側 MTU を MACsec を考慮した値に設定している場合、STATE_DB 値と CONFIG_DB 設定値が一致しないことがある。
 
-> 調査証跡: `meta/_intermediate/cdb-flow/state-db-port-constants.md`
 <!-- /constants -->
 
 <!-- defaults -->
-## フィールド暗黙デフォルト（Phase A — コード由来）
+## フィールド暗黙デフォルト（コード由来）
 
 [YANG](../../reference/glossary.md#term-yang)/スキーマ定義外の fallback。`linksync.cpp` および `portsorch.cpp` の実装から導出。
 
@@ -275,9 +272,7 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 
 <!-- /defaults -->
 
-## ハードコード定数 (Phase E)（補足）
-
-> 証跡: `meta/_intermediate/cdb-flow/state-db-port-ordering.md`
+## ハードコード定数（補足）
 
 ### portsyncd (linksync.cpp) 定義定数
 
@@ -317,10 +312,7 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込み (Phase F)
-
-> 調査日 2026-05-19。ソース: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `sonic-swss/cfgmgr/macsecmgr.cpp`
-> 中間調査: `meta/_intermediate/cdb-flow/state-db-port-side-effects.md`
+## 副次 DB 書込み
 
 `STATE_DB PORT_TABLE|EthernetN` への SET/DEL は、購読プロセスが非同期に検出して下流 DB へ書き込む。書き込み瞬間に同期的な副次書き込みは発生しない。
 
@@ -352,10 +344,7 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> 調査対象: `sonic-swss/portsyncd/linksync.cpp`, `sonic-swss/orchagent/portsorch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/cfgmgr/buffermgrd.cpp`
-> 調査日: 2026-05-19
+## 通信メカニズム
 
 ### 書き込み側（Producer）
 
@@ -407,11 +396,7 @@ intfmgrd (swss::Select, SELECT_TIMEOUT=1000 ms)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / SAI Capability 差異 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/state-db-port-platform.md`
-> 調査対象: `sonic-swss/orchagent/portsorch.cpp`, `sonic-swss/portsyncd/linksync.cpp`
-> 調査日: 2026-05-19
+## プラットフォーム / SAI Capability 差異
 
 ### switchType 別の動作差異
 

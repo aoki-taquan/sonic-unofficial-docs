@@ -89,9 +89,7 @@ flowchart LR
 <!-- /cdb-mermaid -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-ordering.md -->
+## 書込み順序依存
 
 ### ICCP セッション確立と STP ロール決定の順序
 
@@ -156,9 +154,7 @@ ICCP セッションの TCP 接続方向は `source_ip` と `peer_ip` の数値�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## テーブル間・DB 間参照 (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-cross-refs.md -->
+## テーブル間・DB 間参照
 
 ### CONFIG_DB 内テーブル依存
 
@@ -235,7 +231,6 @@ iccpd は `stpmgrd` と **直接通信しない**。ICCP プロトコルに定�
 <!-- defaults -->
 ## 暗黙デフォルトとハードコード挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-defaults.md -->
 
 ### 1. STP ロール型 — iccpd 内部定義
 
@@ -432,9 +427,7 @@ STP 設定テーブルの [YANG](../../reference/glossary.md#term-yang) 定義�
 <!-- /defaults -->
 
 <!-- ordering-detail -->
-## 書込み順序依存 詳細 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-ordering.md -->
+## 書込み順序依存 詳細
 
 STP/ICCP 連携において iccpd が STP ロールを正しく決定するためには、以下の順序依存がある。
 
@@ -482,9 +475,7 @@ STP/ICCP 連携において iccpd が STP ロールを正しく決定するた�
 <!-- /ordering-detail -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-failure.md -->
+## 失敗挙動
 
 ### ICCP セッション切断時の STP ロールリセット
 
@@ -512,9 +503,7 @@ ICCP セッションが切断されると `scheduler_session_disconnect_handler(
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-constants.md -->
+## ハードコード定数
 
 iccpd の STP/ICCP 連携に関係するハードコード定数を列挙する。これらは CONFIG_DB での設定変更が不可か、初期値として機能する。
 
@@ -555,9 +544,7 @@ iccpd の STP/ICCP 連携に関係するハードコード定数を列挙する�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 中間調査詳細: `meta/_intermediate/cdb-flow/stp-iccp-side-effects.md`
+## 副次 DB 書込
 
 STP/ICCP 連携では CONFIG_DB への書き戻しは行われない。`iccpd` がロール決定・セッション状態を `mclagsyncd` へ通知し、`mclagsyncd` が **[STATE_DB](../../reference/glossary.md#term-state_db)** へ書き込む。
 
@@ -580,9 +567,7 @@ Standby ロール確定時に `mlacp_fix_bridge_mac(csm)` が実行され、Linu
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-pubsub.md -->
+## Redis 通知メカニズム
 
 STP/ICCP 連携における CONFIG_DB → iccpd → STATE_DB の通知経路を整理する。
 
@@ -642,9 +627,7 @@ ICCP セッション生存確認は TCP keepalive ではなく iccpd 独自タ�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-platform.md -->
+## プラットフォーム差異
 
 STP/ICCP 連携における `iccpd` コアロジック（ロール決定・MAC 書き換え）自体にプラットフォーム分岐はない。プラットフォーム差異は **mclagsyncd の `setPortIsolate()`** に集中する。
 

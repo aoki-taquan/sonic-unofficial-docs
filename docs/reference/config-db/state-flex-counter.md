@@ -71,7 +71,7 @@ FLEX_COUNTER_TABLE|<group>|<oid>
 [orchagent](../../reference/glossary.md#term-orchagent) の各 Orch（PortsOrch / IntfsOrch / BufferOrch 等）が、`FLEX_COUNTER_STATUS = enable` を受信すると、ハードウェアオブジェクトごとにエントリを書き込む。詳細は [`counters-flex`](counters-flex.md) を参照。
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 <!-- evidence: sonic-sairedis/syncd/FlexCounter.cpp,
      sonic-sairedis/syncd/FlexCounterManager.cpp,
@@ -192,7 +192,7 @@ FLEX_COUNTER_DB は warm-reboot 後に全クリアされ、orchagent 起動時�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `FlexCounterOrch` → `FLEX_COUNTER_DB` → `syncd FlexCounter` の 3 段パイプラインでは、`FLEX_COUNTER_GROUP_TABLE`（グループ制御）と `FLEX_COUNTER_TABLE`（per-OID カウンタ ID リスト）が **別の [Redis](../../reference/glossary.md#term-redis) キー空間**に書き込まれるため、syncd が受信するイベントの順序は保証されない。ポーリング起動条件（`m_enable && !allIdsEmpty() && m_pollInterval > 0`）が揃うまでの間は中間状態が観測しうる。
 
@@ -216,9 +216,7 @@ FLEX_COUNTER_DB は warm-reboot 後に全クリアされ、orchagent 起動時�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/state-flex-counter-cross-refs.md -->
+## 暗黙参照マップ
 
 `FlexCounterOrch` が `FLEX_COUNTER_DB` へ書き込む際に暗黙的に参照・依存する CONFIG_DB / APP_DB テーブルおよびOrch 内状態。
 
@@ -257,9 +255,7 @@ CONFIG_DB:FLEX_COUNTER_TABLE
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/state-flex-counter-failure.md -->
+## 失敗挙動
 
 FLEX_COUNTER_DB への書き込みと syncd 内 `FlexCounter` ポーリングの各障害経路を示す。**[COUNTERS_DB](../../reference/glossary.md#term-counters_db) への影響**に着目することが重要で、失敗時には「書き込まれない」か「stale 値が残留する」かのどちらかになる。
 
@@ -326,7 +322,7 @@ SAI 失敗は `SWSS_LOG_ERROR` または `SWSS_LOG_WARN` で syslog に出力さ
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp,
      sonic-swss/orchagent/portsorch.h,
@@ -397,9 +393,7 @@ PortsOrch コンストラクタが `FlexCounterManager` 初期化時に直接渡
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 調査証跡: `sonic-sairedis/syncd/FlexCounter.cpp`、`sonic-swss-common/common/schema.h`
+## 副次 DB 書込
 
 `FLEX_COUNTER_DB` のエントリが設定・削除されると、syncd 内 `FlexCounter` スレッドを通じて以下の DB への副次書き込みが発生する。
 
@@ -438,7 +432,7 @@ PortsOrch コンストラクタが `FlexCounterManager` 初期化時に直接渡
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## Redis 通知メカニズム
 
 ### 書き込み側 orchagent の通信構造
 
@@ -509,16 +503,14 @@ FlexCounter ポーリングスレッド wakeup
     collectCounters() → COUNTERS_DB 書込み
 ```
 
-orchagent 側の `FLEX_COUNTER_TABLE`（OID リスト）と `FLEX_COUNTER_GROUP_TABLE`（グループ制御）は別チャネルで独立して届くため、syncd が STATUS=enable を先に受信するケースと OID リストを先に受信するケースの両方が発生しうる。いずれの順序でも 3 条件が揃った次回ポーリングスレッド判定時にポーリングが起動する（Phase B「書込み順依存 #1」参照）。
+orchagent 側の `FLEX_COUNTER_TABLE`（OID リスト）と `FLEX_COUNTER_GROUP_TABLE`（グループ制御）は別チャネルで独立して届くため、syncd が STATUS=enable を先に受信するケースと OID リストを先に受信するケースの両方が発生しうる。いずれの順序でも 3 条件が揃った次回ポーリングスレッド判定時にポーリングが起動する（「書込み順依存 #1」参照）。
 
 > **参照ソース**: `Syncd.cpp:208-212, 5832-5856, 477-486`（主ループ）、`consumertable.cpp:31`（SUBSCRIBE）、`producertable.cpp:38`（PUBLISH）、`table.h:85-96`（チャネル名生成）、`FlexCounter.cpp:3068, 3089, 3110, 3597, 3902`（条件変数 wakeup）
 
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/state-flex-counter-platform.md`
+## プラットフォーム差
 
 FLEX_COUNTER_DB のテーブル名・チャネル名・`FlexCounter` 制御ロジック自体はプラットフォーム非依存だが、**どのカウンタグループが FLEX_COUNTER_DB に生成されるか**はプラットフォーム構成に依存する。
 

@@ -39,7 +39,6 @@ MST 有効化 (`config spanning-tree enable mst`) により、インスタンス
 <!-- defaults -->
 ## 暗黙デフォルトとハードコード挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-defaults.md -->
 
 ### 1. MST 定数 — コード定義値
 
@@ -185,9 +184,7 @@ db.set_entry('STP_PORT', port_key, fvs_port)
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-ordering.md -->
+## 書込み順依存
 
 `stpmgrd` は [CONFIG_DB](../../reference/glossary.md#term-config_db) イベントを以下の順序で処理する。各テーブルには起動ガードが設けられており、前提テーブルが受信済みになるまでイベントを保留する。
 
@@ -272,9 +269,7 @@ PVST 系との差異: `STP_MST_INST` は `stpVlanTask` を必要としない。M
 ---
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-cross-refs.md -->
+## 暗黙参照テーブル
 
 `stpmgrd` が `STP_MST_INST` / `STP_MST_PORT` のイベントを処理する際、以下のテーブルを暗黙的に参照・依存する。
 
@@ -340,9 +335,7 @@ DB テーブルへの直接読み出しは発生しない。
 ---
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-failure.md -->
+## 失敗挙動
 <!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 
 `stpmgrd` は [orchagent](../../reference/glossary.md#term-orchagent) と異なり `task_need_retry` / `task_failed` の明示的な戻り値を持たない。
@@ -465,9 +458,7 @@ CONFIG_DB に蓄積され再起動後に一括再処理される。
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-constants.md -->
+## ハードコード定数
 <!-- source: sonic-swss/cfgmgr/stpmgr.h ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 <!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 <!-- source: sonic-swss/cfgmgr/stpmgrd.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
@@ -543,9 +534,7 @@ CLI (`config/stp.py:763`) も最大 31 文字でバリデーションしてお�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-side-effects.md -->
+## 副次 DB 書込
 <!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 
 `stpmgrd` は `STP_MST_INST` / `STP_MST_PORT` のイベントを処理する際、[STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への直接書き込みを行わない。副次効果は Unix ドメインソケット経由の stpd IPC 送信と、プロセスメモリ上の `m_vlanInstMap[]` 更新のみである。
@@ -650,17 +639,13 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / [APPL_DB](../../reference/
 - `"STP_MST_INST"` → `doStpMstInstTask(consumer)`
 - `"STP_MST_PORT"` → `doStpMstInstPortTask(consumer)`
 
-<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-pubsub.md -->
 <!-- source: sonic-swss/cfgmgr/stpmgrd.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 <!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 <!-- source: sonic-swss/orchagent/orch.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム / 構成差異 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/stp-mst-platform.md`
-> 調査対象: `sonic-swss/cfgmgr/stpmgrd.cpp`, `sonic-swss/cfgmgr/stpmgr.cpp`, `sonic-swss/cfgmgr/stpmgr.h`
+## プラットフォーム / 構成差異
 
 `stpmgrd` は [SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) を一切経由しない純粋なソフトウェア STP デーモンであり、[ASIC](../../reference/glossary.md#term-asic) ベンダー固有の処理は存在しない。プラットフォーム差は `max_stp_instances` の上限値と multi-asic / VoQ chassis への非対応に集約される。
 

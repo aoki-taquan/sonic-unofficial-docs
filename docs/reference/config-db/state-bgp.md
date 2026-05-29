@@ -229,7 +229,7 @@ CONFIG_DB BMP|table:
 ```
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 各テーブルの書き込み元デーモンと前提条件を示す。
 
@@ -271,11 +271,10 @@ BMP（BGP Monitoring Protocol）テーブルは `openbmpd` が FRR bgpd から B
 | `BGP_RIB_IN_TABLE` | `openbmpd` (BMP) | BMP 有効、BGP OPEN 完了後 | BGP UPDATE 受信時（RIB-In） |
 | `BGP_RIB_OUT_TABLE` | `openbmpd` (BMP) | BMP 有効、BGP OPEN 完了後 | BGP UPDATE 送信時（RIB-Out） |
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-state-ordering.md`
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase C)
+## 暗黙テーブル参照
 
 各テーブルの書き込みデーモンが暗黙的に参照する CONFIG_DB テーブルおよび外部コンポーネントを示す。
 
@@ -322,11 +321,10 @@ BMP（BGP Monitoring Protocol）テーブルは `openbmpd` が FRR bgpd から B
 | FRR bgpd BMP ソケット | `openbmpd` が bgpd の BMP ポートに TCP 接続。BGP OPEN メッセージ受信後にのみ `BGP_NEIGHBOR_TABLE` エントリが生成される | bgpd との接続が確立しない間はエントリが生成されない | [SONiC](../../reference/glossary.md#term-sonic)/doc/bmp/bmp.md L141–166 |
 | FRR bgpd UPDATE メッセージ | `openbmpd` が BGP UPDATE を解析して `BGP_RIB_IN_TABLE` / `BGP_RIB_OUT_TABLE` を書く | BGP OPEN 完了後に受信・送信する UPDATE のみ対象 | [SONiC](../../reference/glossary.md#term-sonic)/doc/bmp/bmp.md L286–306 |
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/state-bgp-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 <!-- evidence: sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py,
      sonic-swss/fpmsyncd/bgp_eoiu_marker.py,
@@ -374,11 +372,10 @@ journalctl -u bgp_eoiu_marker | grep -i "error\|warn"
 !!! warning "apply_op が常に True を返す設計"
     `bgpcfgd` の `apply_op()` は FRR への設定コマンドをキューに**追加するのみ**で投入結果を確認しない（managers_bgp.py L494-508）。FRR が設定を拒否した場合でも `BGP_PEER_CONFIGURED_TABLE` への書き込みが行われるため、STATE_DB と FRR の実態が乖離しうる。障害時の自動 reconciliation 機構は存在せず、デーモン再起動時に `load_peers()` が FRR 現状を読み直すのみ。
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-failure.md`
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されず、コード中に直書きされた定数の一覧。
 
@@ -412,11 +409,10 @@ CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されず、�
 !!! note "120 秒は意図的な同値設計"
     `DEFAULT_ROUTING_RESTART_INTERVAL`（fpmsyncd）と `BgpStateCheck.DEF_TIME_OUT`（bgp_eoiu_marker）はいずれも 120 秒であり、コメントで「consistent with the default timeout for bgp warm restart set in fpmsyncd」と明記されている（bgp_eoiu_marker.py L30–31）。どちらのタイムアウトが先に発火しても reconciliation がトリガーされる設計。
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-constants.md`
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 本ページで扱う BGP 関連ステートテーブルは原則として**観測専用（読み取り専用）**であり、他テーブルからの読み出しトリガーに応答して副次的な DB 書込が発生するケースは限定的。
 
@@ -437,11 +433,10 @@ CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されず、�
 
 `BGP_NEIGHBOR_TABLE` / `BGP_RIB_IN_TABLE` / `BGP_RIB_OUT_TABLE` はすべて **BMP_STATE_DB 内の観測専用テーブル**であり、他 DB へ副次書込をトリガーする経路はない。`bmpcfgd` が CONFIG_DB `BMP` テーブルの変更時に `delete_all_by_pattern` でリセットする（bmpcfgd.py:61–65）が、操作は BMP_STATE_DB 内に閉じており外部 DB への書込は発生しない。
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-side.md`
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 ### bgpcfgd — SubscriberStateTable による CONFIG_DB / STATE_DB 購読
 
@@ -497,14 +492,10 @@ DEL イベントでは `state_peer_table.delete(key)` (managers_bgp.py:294) を�
 
 `bmpcfgd` は CONFIG_DB `BMP` テーブルを `ConfigDBConnector.subscribe()` + `listen()` (keyspace 通知) で購読し、フィールド変更時に `openbmpd` 停止 → `delete_all_by_pattern` → 再起動 を実行する (bmpcfgd.py:58–70, 82–89)。
 
-> 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-pubsub.md`
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
-
-> 調査日 2026-05-19。ソース: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py`, `managers_chassis_app_db.py`, `sonic-swss/fpmsyncd/bgp_eoiu_marker.py`, `sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py`
-> 中間調査: `meta/_intermediate/cdb-flow/state-bgp-platform.md`
+## プラットフォーム差分
 
 ### BGP_STATE_TABLE — Warm Restart 機能ゲート
 

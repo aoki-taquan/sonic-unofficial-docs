@@ -67,8 +67,6 @@ gStpOrch = new StpOrch(m_applDb, m_stateDb, stp_tables);
 
 ## 暗黙デフォルトとハードコード挙動
 
-<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-defaults.md -->
-
 ### 1. 前提: allPortsReady() ガード
 
 `doTask()` (`stporch.cpp:578-581`) は **ポート初期化完了 (`allPortsReady()`) 前は全テーブルの処理をスキップ** する:
@@ -250,7 +248,7 @@ STATE_DB: STP|GLOBAL.max_stp_inst = (SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1)
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存・タイミング依存 (Phase B)
+## 書込み順依存・タイミング依存
 
 `StpOrch::doTask()` は APPL_DB の 4 テーブルを購読するが、各テーブルの処理には明確な前提条件がある。前提未成立時の挙動はテーブルごとに異なる (残置 `it++` / コンシューマ全体ブロック `return` / fail-silent) ため、運用上のトラブルシューティングで重要になる。
 
@@ -386,15 +384,12 @@ if (it_map != m_vlanAliasToStpInstanceMap.end())
 | `STP_FASTAGEING_FLUSH_TABLE` SET | VLAN が PortsOrch に登録済み | fail-silent (消去) |
 | `STP_INST_PORT_FLUSH_TABLE` SET | STP_VLAN_INSTANCE_TABLE で割当済み | no-op (消去) |
 
-詳細根拠は `meta/_intermediate/cdb-flow/stp-orch-ordering.md` を参照。
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
 `StpOrch` が購読する APPL_DB 4 テーブルは `stpd → stpmgrd` が書き手で、`StpOrch` は読み手兼 SAI 変換器である。以下の暗黙参照は、各テーブルの処理がどのテーブル / Orch / SAI に依存するかを示す。
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-cross-refs.md -->
 
 | 参照方向 | このテーブル / Orch | 相手テーブル / リソース | 条件 |
 |---------|-------------------|----------------------|------|
@@ -418,9 +413,7 @@ if (it_map != m_vlanAliasToStpInstanceMap.end())
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・リトライ・リカバリ (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-failure.md -->
+## 失敗挙動・リトライ・リカバリ
 
 ### 即時破棄 (fail-silent / no retry)
 
@@ -480,9 +473,7 @@ StpOrch には専用の Warm Restart reconciliation 機構が実装されてい�
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-constants.md -->
+## ハードコード定数
 
 実装コードに直接定義されている文字列定数・enum 値・マジックナンバーを一覧化する。
 
@@ -535,9 +526,7 @@ STATE_DB に書き込まれる `max_stp_inst` はインデックス最大値 (`m
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-side-effects.md -->
+## 副作用
 
 `StpOrch` が処理するテーブルは、SAI オブジェクト生成・VLAN 属性変更・FDB フラッシュ・STATE_DB 書き込みという複数の副作用を伴う。副作用はテーブルごとに異なる。
 
@@ -640,9 +629,7 @@ STATE_DB: STP_TABLE|GLOBAL
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-pubsub.md -->
+## Redis 通知メカニズム
 
 StpOrch が扱う通信経路は「APPL_DB の 4 テーブルを `ConsumerStateTable` で購読」と「STATE_DB `STP_TABLE` を素の `swss::Table` で読み書き」の 2 系統に分かれる。
 
@@ -720,11 +707,9 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差分 (Phase H)
+## プラットフォーム差分
 
 `StpOrch` は ASIC から `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を取得する 1 か所のみにプラットフォーム依存がある。orchdaemon はプラットフォーム条件なしで `gStpOrch` を常に登録し、multi-ASIC / [VOQ](../../reference/glossary.md#term-voq) chassis 分岐コードは存在しない。
-
-<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-platform.md -->
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
@@ -737,8 +722,6 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 
 !!! note "SAI 取得失敗時の動作"
     `StpOrch` コンストラクタ (`stporch.cpp:34-42`) は `SAI_SWITCH_ATTR_DEFAULT_STP_INST_ID` と `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` をまとめて取得する。VS などで取得が失敗した場合、`m_defaultStpId` と `m_maxStpInstance` は未初期化のまま残り、`SWSS_LOG_NOTICE("StpOrch initialization failure")` のみが出力される。STATE_DB への `max_stp_inst` 書き込みも行われないため、`stpmgrd` はフォールバック値 `STP_DEFAULT_MAX_INSTANCES = 255` を使用する。
-
-詳細根拠は `meta/_intermediate/cdb-flow/stp-orch-platform.md` を参照。
 
 <!-- /platform -->
 

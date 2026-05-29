@@ -58,8 +58,6 @@ STP_TABLE|GLOBAL
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
-<!-- evidence: meta/_intermediate/cdb-flow/stp-state-defaults.md -->
-
 ### 1. max_stp_inst — SAI 由来 HW 能力値
 
 `StpOrch::updateMaxStpInstance()` (`stporch.cpp:603-617`) が [SAI](../../reference/glossary.md#term-sai) から取得した最大インスタンス数から **-1** した値を書き込む:
@@ -116,7 +114,7 @@ if(max_stp_instances == 0)
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存・タイミング依存 (Phase B)
+## 書込み順依存・タイミング依存
 
 `STATE_DB STP_TABLE` は `orchagent` (`StpOrch`) が書き込み、`stpmgrd` (`StpMgr`) がポーリング読み取りする。書き込み側と読み取り側が別プロセスであるため、起動順序・タイミングに依存する動作が存在する。
 
@@ -175,10 +173,9 @@ SAI の `get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返した場�
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-> **調査根拠**: `sonic-swss/orchagent/stporch.cpp` L17–43, L603–617、`sonic-swss/cfgmgr/stpmgrd.cpp` L68–88、`sonic-swss/cfgmgr/stpmgr.cpp` L1257–1274, L1381–1413 精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/stp-state-cross-refs.md`
+> **Evidence**: `sonic-swss/orchagent/stporch.cpp` L17–43, L603–617、`sonic-swss/cfgmgr/stpmgrd.cpp` L68–88、`sonic-swss/cfgmgr/stpmgr.cpp` L1257–1274, L1381–1413 精読 (2026-05-19)
 
 `STP_TABLE|GLOBAL` は他の [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルを leafref で参照しない独立した STATE_DB エントリである。
 書き込み側 (`StpOrch`) は SAI のみを入力とし、読み取り側 (`stpmgrd`) は `PORT_TABLE|PortInitDone` を先行確認してから `STP_TABLE` を参照する。
@@ -198,7 +195,7 @@ SAI の `get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返した場�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
 `STP_TABLE|GLOBAL` の書込みパスは `SAI → StpOrch::updateMaxStpInstance() → swss::Table::set()` の 1 段構成であり、書込み失敗は (A) SAI 取得失敗による書込みスキップ、(B) [Redis](../../reference/glossary.md#term-redis) 接続失敗による例外、の 2 系統に集約される。読み取り側 `stpmgrd` は (C) 60 秒タイムアウト後のフォールバック、(D) 例外による stpmgrd プロセス終了、を持つ。
 
@@ -236,12 +233,12 @@ SAI の `get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返した場�
 | stpmgrd が 60 秒タイムアウト | 読取り失敗 → フォールバック 255 | なし (フォールバックで続行) | NOTICE "set default max stp instance" |
 | stpmgrd 起動中例外 | 読取り未到達 | supervisord 再起動 | ERROR "Runtime error" |
 
-> **証跡**: `stporch.cpp:17-43, 603-615`、`stpmgr.cpp:1381-1413`、`stpmgrd.cpp:70-122`、`stpmgr.h:38`。詳細は `meta/_intermediate/cdb-flow/stp-state-failure.md` を参照。
+> **証跡**: `stporch.cpp:17-43, 603-615`、`stpmgr.cpp:1381-1413`、`stpmgrd.cpp:70-122`、`stpmgr.h:38`。
 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 <!-- evidence: sonic-swss/orchagent/stporch.h (ref: master), sonic-swss/cfgmgr/stpmgr.h (ref: master), sonic-swss/cfgmgr/stpmgr.cpp (ref: master) -->
 
@@ -266,7 +263,7 @@ SAI の `get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返した場�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 波及副作用 (Phase F)
+## 波及副作用
 
 `STP_TABLE|GLOBAL` の `max_stp_inst` は `stpmgrd` が読み取った直後に `stpd`（STP デーモン）へ IPC メッセージとして転送される。STATE_DB の 1 フィールドがダウンストリームの STP デーモン全体の動作を規定するという点で、このテーブルは読み取り専用ながら実質的な制御データとして機能する。
 
@@ -308,15 +305,12 @@ sendMsgStpd(STP_INIT_READY)   // → stpd に max_stp_instances 送信 (stpmgrd.
 | `stpd` (STP デーモン) | IPC 送信 (`STP_INIT_READY` メッセージ、`max_stp_instances` フィールドを含む) | `stpmgrd` 起動時、STATE_DB `STP_TABLE\|GLOBAL` 読み取り直後 | `stpmgrd.cpp:74-78` |
 | `stpd` 内インスタンスプール | STP インスタンス上限の初期化（HW 依存値 または フォールバック `255`） | `STP_INIT_READY` 受信 | `stpmgrd.cpp:77`, `stpmgr.h:38` |
 
-> **証跡**: `stpmgrd.cpp:70-78`、`stpmgr.cpp:1218-1248, 1381-1413`。詳細は `meta/_intermediate/cdb-flow/stp-state-side-effects.md` を参照。
+> **証跡**: `stpmgrd.cpp:70-78`、`stpmgr.cpp:1218-1248, 1381-1413`。
 
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-> 調査対象: `sonic-swss/orchagent/stporch.cpp`、`sonic-swss/orchagent/orchdaemon.cpp`、`sonic-swss/cfgmgr/stpmgrd.cpp`、`sonic-swss/cfgmgr/stpmgr.cpp`、`sonic-swss/cfgmgr/stpmgr.h`
-> 調査日: 2026-05-19
+## 通信メカニズム
 
 `STP_TABLE` (STATE_DB) は **pub/sub ではなくポーリング読み取り** で消費される特殊なテーブルである。書き込み側 (`StpOrch`) は `swss::Table::set()` で直接書き込み、読み取り側 (`stpmgrd`) は `swss::Table::get()` を用いた **60 秒ポーリングループ** で値を取得する。
 
@@ -381,10 +375,9 @@ STP 設定変更の受信は `stpmgrd.cpp:43-65` の `TableConnector` 群 → `O
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> **調査根拠**: `stporch.cpp` / `stpmgr.cpp` / `stpmgrd.cpp` を `platform` / `is_multi_npu` / `chassis` / `vendor` / `mellanox` / `broadcom` で grep → 全 0 ヒット (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/stp-state-platform.md`
+> **Evidence**: `stporch.cpp` / `stpmgr.cpp` / `stpmgrd.cpp` を `platform` / `is_multi_npu` / `chassis` / `vendor` / `mellanox` / `broadcom` で grep → 全 0 ヒット (2026-05-19)
 
 `STP_TABLE|GLOBAL.max_stp_inst` の**値**は SAI `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` に依存するため [ASIC](../../reference/glossary.md#term-asic) ベンダーごとに異なるが、書き込み・読み取りの**コードパスは全プラットフォーム共通**。`stporch.cpp` に ASIC ベンダー分岐は存在しない。
 
