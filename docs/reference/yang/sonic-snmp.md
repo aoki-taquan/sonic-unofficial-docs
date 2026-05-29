@@ -41,7 +41,7 @@ flowchart LR
   Y["sonic-snmp"]
   C1[("CONFIG_DB<br/>SNMP")]
   Y --> C1
-  D1["snmp-config"]
+  D1["docker-snmp 起動スクリプト"]
   C1 --> D1
   C2[("CONFIG_DB<br/>SNMP_COMMUNITY")]
   Y --> C2

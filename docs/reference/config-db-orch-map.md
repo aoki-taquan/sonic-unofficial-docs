@@ -297,10 +297,10 @@ CONFIG_DB → APPL_DB → orchagent と同じ構造を **[DPU](../reference/glos
 | `RESTAPI` | `restapi` | — | (REST server cert/listen) |
 | `ROUTE_MAP` | `bgpcfgd` | — | (FRR route-map) |
 | `ROUTE_MAP_SET` | `bgpcfgd` | — | (FRR prefix/community list) |
-| `SNMP` | `snmp-config` | — | (snmpd) |
-| `SNMP_AGENT_ADDRESS_CONFIG` | `snmp-config` | — | (snmpd) |
-| `SNMP_COMMUNITY` | `snmp-config` | — | (snmpd) |
-| `SNMP_USER` | `snmp-config` | — | (snmpd v3) |
+| `SNMP` | `docker-snmp 起動スクリプト` (orchagent なし) | — | (snmpd.conf.j2 → snmpd) |
+| `SNMP_AGENT_ADDRESS_CONFIG` | `docker-snmp 起動スクリプト` (orchagent なし) | — | (snmpd.conf.j2 → snmpd) |
+| `SNMP_COMMUNITY` | `docker-snmp 起動スクリプト` (orchagent なし) | — | (snmpd.conf.j2 → snmpd) |
+| `SNMP_USER` | `docker-snmp 起動スクリプト` (orchagent なし) | — | (snmpd.conf.j2 → snmpd v3) |
 | `SSH_SERVER` | `hostcfgd` | — | (sshd_config) |
 | `SYSLOG_CONFIG` | `hostcfgd` | — | (rsyslog) |
 | `SYSLOG_SERVER` | `hostcfgd` | — | (rsyslog) |

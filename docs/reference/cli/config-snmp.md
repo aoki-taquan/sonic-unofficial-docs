@@ -213,19 +213,19 @@ flowchart LR
   CLI --> SC
   CDB0[("CONFIG_DB<br/>SNMP")]
   SC --> CDB0
-  DM0["snmp-config"]
+  DM0["docker-snmp 起動スクリプト"]
   CDB0 --> DM0
   CDB1[("CONFIG_DB<br/>SNMP_COMMUNITY")]
   SC --> CDB1
-  DM1["snmp-config"]
+  DM1["docker-snmp 起動スクリプト"]
   CDB1 --> DM1
   CDB2[("CONFIG_DB<br/>SNMP_USER")]
   SC --> CDB2
-  DM2["snmp-config"]
+  DM2["docker-snmp 起動スクリプト"]
   CDB2 --> DM2
   CDB3[("CONFIG_DB<br/>SNMP_AGENT_ADDRESS_CONFIG")]
   SC --> CDB3
-  DM3["snmp-config"]
+  DM3["docker-snmp 起動スクリプト"]
   CDB3 --> DM3
 ```
 

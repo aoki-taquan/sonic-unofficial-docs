@@ -55,7 +55,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SNMP_AGENT_ADDRESS_CONFIG")]
-  DM["snmp-config"]
+  DM["docker-snmp 起動スクリプト"]
   CDB --> DM
 ```
 
@@ -254,7 +254,7 @@ CreateUser {{ user }} {{ SNMP_USER[user]['SNMP_USER_AUTH_TYPE'] }} {{ SNMP_USER[
 ---
 
 <!-- ordering -->
-## 書込み順序依存（Phase B）
+## 書込み順序依存
 
 `SNMP_AGENT_ADDRESS_CONFIG` および `SNMP_USER` テーブルへの書込みには、以下の順序依存が存在する。
 
@@ -328,10 +328,9 @@ minigraph.py は `MGMT_VRF_CONFIG` を先行して格納後、`mgmt_intf`（MGMT
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 — Phase C (cross-table refs)
+## 暗黙参照 (cross-table refs)
 
-> **調査根拠**: `dockers/docker-snmp/snmpd.conf.j2`, `supervisord.conf.j2`, `sonic-utilities/config/main.py` L4095–4210 & L4709–4800, `src/sonic-config-engine/minigraph.py` L2308–2324, `sonic-snmp.yang` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-cross-refs.md`
+> **Evidence**: `dockers/docker-snmp/snmpd.conf.j2`, `supervisord.conf.j2`, `sonic-utilities/config/main.py` L4095–4210 & L4709–4800, `src/sonic-config-engine/minigraph.py` L2308–2324, `sonic-snmp.yang` 全行精読 (2026-05-17)
 
 `SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` は YANG leafref を持たないが、CLI・テンプレートエンジン・minigraph の実装レベルで以下のテーブルを暗黙参照する。
 
@@ -376,9 +375,8 @@ minigraph.py は `MGMT_VRF_CONFIG` を先行して格納後、`mgmt_intf`（MGMT
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-failure.md`
 
 ### SNMP_AGENT_ADDRESS_CONFIG の失敗経路
 
@@ -432,10 +430,9 @@ CLI の `add_snmp_agent_address()` は `os.system("systemctl restart snmp")` の
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-> **調査根拠**: `sonic-utilities/config/main.py` L4293-4369, `dockers/docker-snmp/snmpd.conf.j2` L32-33, `src/sonic-config-engine/minigraph.py:2314`, `sonic-snmp.yang` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-constants.md`
+> **Evidence**: `sonic-utilities/config/main.py` L4293-4369, `dockers/docker-snmp/snmpd.conf.j2` L32-33, `src/sonic-config-engine/minigraph.py:2314`, `sonic-snmp.yang` 全行精読 (2026-05-17)
 
 `SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` テーブルに関連して、CONFIG_DB では管理されないハードコード定数の一覧。
 
@@ -483,10 +480,9 @@ YANG の `SNMP_USER_AUTH_TYPE` は `type string` で明示的な enum 制約を�
 ---
 
 <!-- side-effects -->
-## 副次 DB 書込・ファイル書込 (Phase F)
+## 副次 DB 書込・ファイル書込
 
-> **調査根拠**: `dockers/docker-snmp/start.sh` L14-26, `dockers/docker-snmp/snmpd.conf.j2` 全行, `sonic-utilities/config/main.py` L4188-4209, L4786-4813 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-side-effects.md`
+> **Evidence**: `dockers/docker-snmp/start.sh` L14-26, `dockers/docker-snmp/snmpd.conf.j2` 全行, `sonic-utilities/config/main.py` L4188-4209, L4786-4813 (2026-05-17)
 
 ### ファイル書込: `/etc/snmp/snmpd.conf`
 
@@ -552,10 +548,9 @@ clicommon.run_command(['systemctl', 'restart', 'snmp.service'], display_cmd=Fals
 ---
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `docker-snmp/start.sh`, `snmpd.conf.j2`, `snmp_yml_to_configdb.py`, `sonic_ax_impl/mibs/__init__.py:497-509`, `config/main.py:4188-4209, 4787-4791`, `hostcfgd` 全行精読 (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-pubsub.md`
+> **Evidence**: `docker-snmp/start.sh`, `snmpd.conf.j2`, `snmp_yml_to_configdb.py`, `sonic_ax_impl/mibs/__init__.py:497-509`, `config/main.py:4188-4209, 4787-4791`, `hostcfgd` 全行精読 (2026-05-17)
 
 ### 購読方式: なし (起動時スナップショット読み取りのみ)
 
@@ -611,10 +606,9 @@ APPL_DB / STATE_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) への�
 ---
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
-> **調査根拠**: `sonic-buildimage/src/sonic-config-engine/minigraph.py:2312-2324`, `dockers/docker-snmp/snmpd.conf.j2:16-34`, `dockers/docker-snmp/start.sh`, `sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py:586-607`, `src/sonic-config-engine/tests/test_cfggen.py:1158-1165` (2026-05-17)
-> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-platform.md`
+> **Evidence**: `sonic-buildimage/src/sonic-config-engine/minigraph.py:2312-2324`, `dockers/docker-snmp/snmpd.conf.j2:16-34`, `dockers/docker-snmp/start.sh`, `sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py:586-607`, `src/sonic-config-engine/tests/test_cfggen.py:1158-1165` (2026-05-17)
 
 ### Single-ASIC vs Multi-ASIC: 初期値生成の分岐
 

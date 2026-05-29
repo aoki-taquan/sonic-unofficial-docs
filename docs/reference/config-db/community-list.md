@@ -37,7 +37,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SNMP_COMMUNITY")]
-  DM["snmp-config"]
+  DM["docker-snmp 起動スクリプト"]
   CDB --> DM
 ```
 
@@ -138,7 +138,7 @@ show snmp community
 <!-- cdb-defaults -->
 
 <!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
+## 暗黙デフォルト・コード由来挙動
 
 ### `TYPE` フィールド — YANG mandatory なし、実装は値存在前提
 
@@ -166,7 +166,7 @@ show snmp community
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ### 1. replace コマンド: 新 community SET → 旧 community DEL（逆順禁止）
 
@@ -199,9 +199,9 @@ show snmp community
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+## 暗黙参照テーブル
 
-YANG leafref および実装スキャンにより確認した参照関係。詳細スキャン証跡は `meta/_intermediate/cdb-flow/community-list-cross-refs.md` を参照。
+YANG leafref および実装スキャンにより確認した参照関係。
 
 ### YANG レベル参照: なし
 
@@ -226,9 +226,9 @@ YANG leafref および実装スキャンにより確認した参照関係。詳�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-`SNMP_COMMUNITY` テーブルを消費する経路は `snmpd.conf.j2` テンプレート（バッチ読み取り）と `snmp_yml_to_configdb.py`（ブート時注入）の 2 本立てであり、それぞれ独立した失敗モードを持つ。詳細スキャン証跡は `meta/_intermediate/cdb-flow/community-list-failure.md` を参照。
+`SNMP_COMMUNITY` テーブルを消費する経路は `snmpd.conf.j2` テンプレート（バッチ読み取り）と `snmp_yml_to_configdb.py`（ブート時注入）の 2 本立てであり、それぞれ独立した失敗モードを持つ。
 
 ### 検出された失敗パターン
 
@@ -250,14 +250,14 @@ YANG leafref および実装スキャンにより確認した参照関係。詳�
 
 **設定変更の非即時性 (失敗 #7)**: `SNMP_COMMUNITY` は CONFIG_DB の購読ではなくコンテナ起動時の一括読み取りで消費されるため、実行中の snmpd プロセスには変更が通知されない。CLI (`config snmp community add/del/replace`) は変更後に `systemctl restart snmp.service` を自動発行（`config/main.py:4395-4401`）するが、`sonic-db-cli` など直接書き込み手段では手動再起動が必要。再起動中は既存 SNMP セッションが切断される。
 
-> **スキャン証跡**: `snmpd.conf.j2` L48-64 / `snmp_yml_to_configdb.py` L25-56 読了。失敗時のリトライロジック・フォールバックは実装されていない。詳細は `meta/_intermediate/cdb-flow/community-list-failure.md` を参照。
+> **裏取り**: `snmpd.conf.j2` L48-64 / `snmp_yml_to_configdb.py` L25-56 読了。失敗時のリトライロジック・フォールバックは実装されていない。
 
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-`SNMP_COMMUNITY` テーブルの処理に直接影響するコード内リテラル固定値。CONFIG_DB エントリでは制御できない。詳細スキャン証跡は `meta/_intermediate/cdb-flow/community-list-constants.md` を参照。
+`SNMP_COMMUNITY` テーブルの処理に直接影響するコード内リテラル固定値。CONFIG_DB エントリでは制御できない。
 
 ### YANG 制約固定値（name フィールド）
 
@@ -300,9 +300,9 @@ YANG leafref および実装スキャンにより確認した参照関係。詳�
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込・外部副作用 (Phase F)
+## 副次 DB 書込・外部副作用
 
-`SNMP_COMMUNITY` テーブルへの書き込みが発生したとき、CONFIG_DB 以外に変化が生じるリソースを網羅的に調査した結果。詳細スキャン証跡は `meta/_intermediate/cdb-flow/community-list-side.md` を参照。
+`SNMP_COMMUNITY` テーブルへの書き込みが発生したとき、CONFIG_DB 以外に変化が生じるリソースを網羅的に調査した結果。
 
 ### `/etc/snmp/snmpd.conf` の再生成（コンテナ起動時）
 
@@ -329,9 +329,8 @@ CLI (`config snmp community add/del/replace`) は DB 書き込み完了直後に
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> 調査証跡: `meta/_intermediate/cdb-flow/community-list-pubsub.md`
 > ソース: `sonic-buildimage/dockers/docker-snmp/start.sh`, `snmpd.conf.j2`, `snmp_yml_to_configdb.py`
 
 ### Redis 購読方式
@@ -363,7 +362,7 @@ CLI 経由では DB 書き込み後に `systemctl restart snmp.service` が自�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**: `SNMP_COMMUNITY` は [ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。`docker-snmp` コンテナが host CONFIG_DB を一括読み取りするのみで、[SAI](../../reference/glossary.md#term-sai) 経由操作が存在しないため [ASIC](../../reference/glossary.md#term-asic) 差異が入り込む余地がない。
 
@@ -375,7 +374,7 @@ CLI 経由では DB 書き込み後に `systemctl restart snmp.service` が自�
 | ベンダー固有 hook | なし | `snmpd.conf.j2` にベンダー分岐なし。`sonic-snmp.yang` にもプラットフォーム条件なし |
 | テンプレート内分岐 | プラットフォーム条件なし | `snmpd.conf.j2` 全体を `platform\|asic\|chassis\|namespace\|vendor` で grep して SNMP_COMMUNITY ブロックへの影響は 0 ヒット。agentAddress のみ `SNMP_AGENT_ADDRESS_CONFIG` に応じて差異があるが SNMP_COMMUNITY 自体には波及しない |
 
-詳細根拠は `meta/_intermediate/cdb-flow/community-list-platform.md` を参照。
+。
 <!-- /platform -->
 
 <!-- runtime-trace -->
@@ -402,7 +401,7 @@ CLI 経由では DB 書き込み後に `systemctl restart snmp.service` が自�
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 SNMP_COMMUNITY テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -434,15 +433,15 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（Op
 <!-- /entry-points -->
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 値による他フィールド自動派生
+### 値による他フィールド自動派生
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
 | 派生なし（SNMP_COMMUNITY は CLI / snmp_yml_to_configdb.py でのみ書き込まれる） | — | テンプレートは読み取り専用消費 |
 
-### Phase 7: 条件付き module/manager 登録
+### 条件付き module/manager 登録
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
@@ -452,7 +451,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（Op
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### テンプレート / 注入スクリプト内の条件分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
