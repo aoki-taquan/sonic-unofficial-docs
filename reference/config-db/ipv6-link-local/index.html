@@ -37617,15 +37617,15 @@
 <p><code>isLinkLocalEnabled()</code> は netlink <code>RTM_NEWNEIGH</code> / <code>RTM_DELNEIGH</code> イベント受信時に呼ばれ、CONFIG_DB を同期的に <code>get()</code> する。これにより <code>intfmgrd</code> の APP_DB 転送完了を待たずに CONFIG_DB 書き込みの瞬間からフィルタリングが有効になる（Phase B 依存 #3 で既述）。</p>
 <h3 id="_18">通信フロー概要<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
-  CLI["config interface ipv6\n(CLI)"] --&gt;|HSET| CDB[("CONFIG_DB\nINTERFACE / PORTCHANNEL_INTERFACE\n/ VLAN_INTERFACE")]
-  CDB --&gt;|ConsumerStateTable\n(keyspace notification)| IntfMgr["IntfMgrd\n(swss)"]
-  IntfMgr --&gt;|ProducerStateTable| APPL[("APPL_DB\nINTF_TABLE\|&lt;ifname&gt;")]
-  APPL --&gt;|ConsumerStateTable| IntfsOrch["IntfsOrch\n(orchagent)\n※dead consumer"]
+  CLI["config interface ipv6&lt;br/&gt;(CLI)"] --&gt;|HSET| CDB[("CONFIG_DB&lt;br/&gt;INTERFACE / PORTCHANNEL_INTERFACE&lt;br/&gt;/ VLAN_INTERFACE")]
+  CDB --&gt;|"ConsumerStateTable&lt;br/&gt;(keyspace notification)"| IntfMgr["IntfMgrd&lt;br/&gt;(swss)"]
+  IntfMgr --&gt;|ProducerStateTable| APPL[("APPL_DB&lt;br/&gt;INTF_TABLE\|&lt;ifname&gt;")]
+  APPL --&gt;|ConsumerStateTable| IntfsOrch["IntfsOrch&lt;br/&gt;(orchagent)&lt;br/&gt;※dead consumer"]
 
-  kernel["Linux kernel\nnetlink RTM_NEWNEIGH"] --&gt;|rtnetlink socket| neighsyncd["neighsyncd\n(swss)"]
-  CDB --&gt;|Table::get\n(直接参照)| neighsyncd
-  neighsyncd --&gt;|ProducerStateTable\n(link-local enabled 時のみ)| NEIGH[("APPL_DB\nNEIGH_TABLE")]
-  NEIGH --&gt;|ConsumerStateTable| NeighOrch["NeighOrch\n(orchagent)"]</code></pre>
+  kernel["Linux kernel&lt;br/&gt;netlink RTM_NEWNEIGH"] --&gt;|rtnetlink socket| neighsyncd["neighsyncd&lt;br/&gt;(swss)"]
+  CDB --&gt;|"Table::get&lt;br/&gt;(直接参照)"| neighsyncd
+  neighsyncd --&gt;|"ProducerStateTable&lt;br/&gt;(link-local enabled 時のみ)"| NEIGH[("APPL_DB&lt;br/&gt;NEIGH_TABLE")]
+  NEIGH --&gt;|ConsumerStateTable| NeighOrch["NeighOrch&lt;br/&gt;(orchagent)"]</code></pre>
 <h3 id="_19">チャンネル種別まとめ<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
