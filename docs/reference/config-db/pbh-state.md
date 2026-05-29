@@ -114,7 +114,7 @@ PBH_CAPABILITIES|hash-field
 | Generic | `ASIC_VENDOR != "mellanox"` / 未設定 | `"UPDATE"` (`pbhcap.cpp:123` で `hash.hash_field_list.insert(UPDATE)`) | `setPbhDefaults()` 未呼び出し → 全空 |
 | Mellanox | `ASIC_VENDOR = "mellanox"` | `""` (空。`pbhcap.cpp:126-141` に対応 INSERT なし) | 同上 → 全空 |
 
-`PBH_CAPABILITIES|hash` の `hash_field_list` は Generic と Mellanox で**異なる**（Generic=`UPDATE`、Mellanox=空）。Mellanox 環境では `config pbh hash update` が `pbh_capabilities_query()` の検証で拒否される。詳細マトリクスは本ページ Phase H セクションを参照。差異は `pbhcap.cpp:94-141` を参照。
+`PBH_CAPABILITIES|hash` の `hash_field_list` は Generic と Mellanox で**異なる**（Generic=`UPDATE`、Mellanox=空）。Mellanox 環境では `config pbh hash update` が `pbh_capabilities_query()` の検証で拒否される。詳細マトリクスは本ページ「プラットフォーム差異」セクションを参照。差異は `pbhcap.cpp:94-141` を参照。
 
 ## 購読者
 
@@ -124,9 +124,7 @@ PBH_CAPABILITIES|hash-field
 - `config pbh hash-field add/update/del` (`config/plugins/pbh.py:670`) — `pbh_capabilities_query(db, "hash-field")` で各フィールドの操作可否チェック
 
 <!-- defaults -->
-## フィールドデフォルト (Phase A — コード由来)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-defaults.md -->
+## フィールドデフォルト (コード由来)
 
 [STATE_DB](../../reference/glossary.md#term-state_db) `PBH_CAPABILITIES` に対応する [YANG](../../reference/glossary.md#term-yang) schema は存在しない。フィールドとその値はすべて `pbhcap.cpp` のコードレベルで定義される。
 
@@ -189,9 +187,7 @@ Generic platform での期待値:
 <!-- /defaults -->
 
 <!-- ordering -->
-## オブジェクト生成順序・依存関係 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-ordering.md -->
+## オブジェクト生成順序・依存関係
 
 ### PbhCapabilities の初期化位置
 
@@ -231,9 +227,7 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-cross-refs.md -->
+## 暗黙参照テーブル
 
 `PBH_CAPABILITIES` は `PbhCapabilities::writePbhVendorCapabilitiesToDb()` が起動時 1 回のみ書き込む STATE_DB テーブルである。書き込まれるフィールド値はすべてコンストラクタ内でハードコードされており、CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [SAI](../../reference/glossary.md#term-sai) への実行時参照はない。
 
@@ -263,9 +257,7 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-failure.md -->
+## 失敗挙動マトリクス
 
 `PBH_CAPABILITIES` は `PbhCapabilities` コンストラクタが起動時 1 回のみ書き込む STATE_DB テーブルである。
 書き込み経路は `parsePbhAsicVendor()` → `initPbhVendorCapabilities()` → `writePbhVendorCapabilitiesToDb()` の 3 段。
@@ -295,9 +287,9 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-`PBH_CAPABILITIES` テーブルに関係するハードコード定数の一覧。[YANG](../../reference/glossary.md#term-yang) スキーマは存在せず、テーブル名・フィールド名・値の文字列はすべて C++ `#define` および Python 変数としてコードに埋め込まれている。詳細スキャンノート: [`meta/_intermediate/cdb-flow/pbh-state-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/pbh-state-constants.md)。
+`PBH_CAPABILITIES` テーブルに関係するハードコード定数の一覧。[YANG](../../reference/glossary.md#term-yang) スキーマは存在せず、テーブル名・フィールド名・値の文字列はすべて C++ `#define` および Python 変数としてコードに埋め込まれている。
 
 ### STATE_DB 接続パラメータ
 
@@ -353,9 +345,7 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-side-effects.md -->
+## 副次 DB 書込
 
 `PbhCapabilities` は `STATE_DB.PBH_CAPABILITIES` への 4 キー書き込みのみを行う。
 その他の DB への副次書き込みは発生しない。
@@ -380,9 +370,7 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-pubsub.md -->
+## 通信メカニズム
 
 ### 書き込み側の通信構造
 
@@ -412,9 +400,7 @@ Table PbhCapabilities::capTable(&stateDb, STATE_PBH_CAPABILITIES_TABLE_NAME);
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-platform.md -->
+## プラットフォーム差異
 
 ### プラットフォーム識別
 

@@ -304,12 +304,10 @@ P4RT テーブルには専用 YANG モデルが存在しない。全デフォル
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 `p4rt` コンテナは起動時に `sonic-cfggen -d -t p4rt_vars.j2` で CONFIG_DB を**一度だけ**読み込む。
 このため `P4RT|certs` / `P4RT|p4rt_app` の書込み順と存在タイミングがコンテナの TLS モード・機能設定を確定させる。
-
-<!-- evidence: meta/_intermediate/cdb-flow/pin-config-ordering.md -->
 
 ### 検出された順序依存
 
@@ -337,8 +335,6 @@ P4RT テーブルには専用 YANG モデルが存在しない。全デフォル
 
 P4RT テーブルには専用 YANG モデルが存在しないため leafref は一切なし。以下はすべてスクリプトレベルの暗黙参照。
 
-<!-- evidence: meta/_intermediate/cdb-flow/pin-config-cross-refs.md -->
-
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
 | `DEVICE_METADATA\|localhost\|x509` | 読み取り（TLS 代替設定） | `P4RT\|certs` が CONFIG_DB に存在しない場合のみ。`P4RT\|certs` が存在すれば完全に無視される | `p4rt_vars.j2:L4`, `p4rt.sh:L38–56` |
@@ -352,13 +348,11 @@ P4RT テーブルには専用 YANG モデルが存在しないため leafref は
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動マトリクス (Phase D)
+## 失敗挙動マトリクス
 
 ソース: `sonic-net/sonic-buildimage/dockers/docker-sonic-p4rt/p4rt.sh` (コミット `9ea932ec`)
 
 `p4rt` テーブルは [orchagent](../../reference/glossary.md#term-orchagent) ではなく `p4rt.sh` スクリプトが起動時単回読込みするため、失敗は「サイレントフォールバック」または「起動中断」の二択になる。
-
-<!-- evidence: meta/_intermediate/cdb-flow/pin-config-failure.md -->
 
 ### 失敗挙動マトリクス
 
@@ -378,12 +372,10 @@ P4RT テーブルには専用 YANG モデルが存在しないため leafref は
 <!-- /failure -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
 `p4rt.sh` および関連テンプレートに存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
 出典: `sonic-net/sonic-buildimage/dockers/docker-sonic-p4rt/p4rt.sh`（コミット `9ea932ec`）
-
-<!-- evidence: meta/_intermediate/cdb-flow/pin-config-constants.md -->
 
 ### 終了コード
 
@@ -409,11 +401,9 @@ P4RT テーブルには専用 YANG モデルが存在しないため leafref は
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込
 
 CONFIG_DB `P4RT` テーブルを読み込む `p4rt.sh` は DB への書き戻しを**一切行わない**。副作用はすべてファイルシステムまたは p4rt バイナリの間接動作に閉じる。
-
-<!-- evidence: meta/_intermediate/cdb-flow/pin-config-side-effects.md -->
 
 | 副次 DB | 書込有無 | 根拠 |
 |---------|---------|------|
@@ -436,11 +426,9 @@ CONFIG_DB `P4RT` テーブルを読み込む `p4rt.sh` は DB への書き戻し
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
-> **調査根拠**: `sonic-buildimage/dockers/docker-sonic-p4rt/p4rt.sh` L1–99、`p4rt_vars.j2` L1–5 を精読 (2026-05-19)
-
-<!-- evidence: meta/_intermediate/cdb-flow/pin-config-pubsub.md -->
+> **Evidence**: `sonic-buildimage/dockers/docker-sonic-p4rt/p4rt.sh` L1–99、`p4rt_vars.j2` L1–5 を精読
 
 `P4RT` テーブルは **SubscriberStateTable・[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)・[ProducerStateTable](../../reference/glossary.md#term-producerstatetable) のいずれも使用しない**。
 `p4rt.sh` がコンテナ起動時に `sonic-cfggen -d -t p4rt_vars.j2` を**一回だけ**呼び出して CONFIG_DB をスナップショット取得し、
@@ -481,7 +469,7 @@ CONFIG_DB `P4RT` テーブルへの変更は `p4rt` コンテナ稼働中には�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差
 
 **プラットフォーム差なし**。`P4RT` テーブルは `p4rt.sh` がコンテナ起動時に1回だけスナップショット読み込みする host-only 設定処理であり、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / chassis 構成・ハードウェアベンダーに依存しない。
 
