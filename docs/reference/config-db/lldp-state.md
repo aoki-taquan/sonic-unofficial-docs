@@ -284,9 +284,9 @@ APPL_DB: LLDP_ENTRY_TABLE|<ifname> 存在
 |--------------------------|---------|------|----------------|
 | `PORT_TABLE` (APPL_DB) | 読み取り: OID→IF マッピング構築 | 常時。`LLDPRemTableUpdater.reinit_data()` が `init_sync_d_interface_tables()` 経由で参照。OID マップ不在ポートの LLDP エントリは SNMP walk に現れない | `ieee802_1ab.py:416-423`, `mibs/__init__.py:276-333` |
 | `MGMT_PORT_TABLE` (CONFIG_DB) | 読み取り: 管理ポートの alias 取得 | 管理ポート (`eth0` 等) のみ。データプレーンポートは APPL_DB `PORT_TABLE` 経由 | `ieee802_1ab.py:206-215` |
-| `DEVICE_METADATA\|localhost` (CONFIG_DB) | 間接: lldpmgrd → lldpcli → LLDPDU TLV | 常時。`hostname` / `chassis_hostname` 変更時に `lldpcli configure system hostname` を実行。対向ノードの `lldp_rem_sys_name` に伝播 | `lldpmgrd:247-256, 308-310` |
-| `MGMT_INTERFACE` (CONFIG_DB) | 間接: lldpmgrd → lldpcli → LLDPDU TLV | 常時。管理 IP 変更時に `lldpcli configure system ip management pattern` を実行。対向ノードの `lldp_rem_man_addr` に伝播 | `lldpmgrd:228-245, 304-306` |
-| `PORT_TABLE.alias` (APPL_DB) | 間接: lldpmgrd → lldpcli → LLDPDU TLV | ポート up 時。alias / description を `lldpcli configure ports` で lldpd に設定。対向ノードの `lldp_rem_port_id` に伝播。alias 未設定時はポート名を使用 | `lldpmgrd:136-166, 300-325` |
+| `DEVICE_METADATA\|localhost` (CONFIG_DB) | 間接: [lldpmgrd](../../reference/glossary.md#term-lldpmgrd) → lldpcli → LLDPDU TLV | 常時。`hostname` / `chassis_hostname` 変更時に `lldpcli configure system hostname` を実行。対向ノードの `lldp_rem_sys_name` に伝播 | `lldpmgrd:247-256, 308-310` |
+| `MGMT_INTERFACE` (CONFIG_DB) | 間接: [lldpmgrd](../../reference/glossary.md#term-lldpmgrd) → lldpcli → LLDPDU TLV | 常時。管理 IP 変更時に `lldpcli configure system ip management pattern` を実行。対向ノードの `lldp_rem_man_addr` に伝播 | `lldpmgrd:228-245, 304-306` |
+| `PORT_TABLE.alias` (APPL_DB) | 間接: [lldpmgrd](../../reference/glossary.md#term-lldpmgrd) → lldpcli → LLDPDU TLV | ポート up 時。alias / description を `lldpcli configure ports` で lldpd に設定。対向ノードの `lldp_rem_port_id` に伝播。alias 未設定時はポート名を使用 | `lldpmgrd:136-166, 300-325` |
 | `LLDP_LOC_CHASSIS` (APPL_DB) | 直接読み取り: SNMP lldpLocalSystemData | 常時。`LLDPLocalSystemDataUpdater` が `dbs_get_all` で全フィールドを取得して SNMP MIB に返す | `ieee802_1ab.py:114-146, 302-345` |
 
 !!! note "lldp_app.go の参照範囲"
@@ -545,4 +545,4 @@ capability 情報は別途 `lldpCapTableMap` (bool map) として管理され、
 
 <!-- glossary-links-injected: lldp-state-v1 -->
 
-<!-- glossary-links-injected: 0af8863862be -->
+<!-- glossary-links-injected: 236c2b782612 -->

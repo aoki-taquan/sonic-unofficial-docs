@@ -411,7 +411,7 @@ show lldp table
 
 ### 段階 1 — Consumer 登録
 
-`bgpcfgd` / `pfcwd` / `show` / `db_migrator` が CONFIG_DB の `DEVICE_NEIGHBOR_METADATA` テーブルを購読する（lldpmgrd は購読しない — pubsub セクション参照）。
+`bgpcfgd` / `pfcwd` / `show` / `db_migrator` が CONFIG_DB の `DEVICE_NEIGHBOR_METADATA` テーブルを購読する（[lldpmgrd](../../reference/glossary.md#term-lldpmgrd) は購読しない — pubsub セクション参照）。
 
 `DEVICE_NEIGHBOR_METADATA` は `<device_name>` の key で hwsku / type 情報を保持。
 
@@ -427,7 +427,7 @@ show lldp table
 
 **適用タイミング**: CONFIG_DB に書き込まれると即時に参照可能。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が SubscriberStateTable で継続購読し、BGP ピア設定生成に使用する。pfcwd / show / db_migrator はスナップショット読み出し。
 
-**副作用**: neighbor metadata の変更は BGP セッション設定・pfcwd のポートロール判定・QoS 設定に影響。lldpmgrd は本テーブルを購読しない（pubsub セクション参照）。
+**副作用**: neighbor metadata の変更は BGP セッション設定・pfcwd のポートロール判定・QoS 設定に影響。[lldpmgrd](../../reference/glossary.md#term-lldpmgrd) は本テーブルを購読しない（pubsub セクション参照）。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -581,4 +581,4 @@ bgpcfgd の `BGPPeerMgrBase` は `constants.bgp.use_neighbors_meta == True` の�
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 1c59d90c07b4 -->
+<!-- glossary-links-injected: cd3ad7aff057 -->

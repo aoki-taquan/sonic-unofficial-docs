@@ -115,13 +115,13 @@ if len(self.ports_key) == 0:
 #       Config DB and update LLDP config upon changes.
 ```
 
-現行実装での lldpmgrd が subscribe するテーブルは次の 3 つのみ:
+現行実装での [lldpmgrd](../../reference/glossary.md#term-lldpmgrd) が subscribe するテーブルは次の 3 つのみ:
 
 - `APP_PORT_TABLE_NAME` ([APPL_DB](../../reference/glossary.md#term-appl_db)) — port oper_status 変化
 - `CFG_MGMT_INTERFACE_TABLE_NAME` ([CONFIG_DB](../../reference/glossary.md#term-config_db)) — 管理 IP 変化
 - `CFG_DEVICE_METADATA_TABLE_NAME` (CONFIG_DB) — hostname 変化
 
-DEVICE_NEIGHBOR は**まったく購読されていない**。lldpmgrd の動作に DEVICE_NEIGHBOR の内容は現状影響しない。
+DEVICE_NEIGHBOR は**まったく購読されていない**。[lldpmgrd](../../reference/glossary.md#term-lldpmgrd) の動作に DEVICE_NEIGHBOR の内容は現状影響しない。
 
 ### bgpcfgd — DEVICE_NEIGHBOR_METADATA 依存待機
 
@@ -134,7 +134,7 @@ DEVICE_NEIGHBOR は**まったく購読されていない**。lldpmgrd の動作
 <!-- ordering -->
 ## 書込み順依存
 
-DEVICE_NEIGHBOR テーブルは **consumer が起動時に一括読み出し（`get_table`）する**参照テーブルであり、常時 subscribe する daemon は存在しない（lldpmgrd は TODO 状態で未実装）。このため、書込み順依存は「consumer の起動タイミング vs. DEVICE_NEIGHBOR の書込みタイミング」という起動順序の問題として現れる。
+DEVICE_NEIGHBOR テーブルは **consumer が起動時に一括読み出し（`get_table`）する**参照テーブルであり、常時 subscribe する daemon は存在しない（[lldpmgrd](../../reference/glossary.md#term-lldpmgrd) は TODO 状態で未実装）。このため、書込み順依存は「consumer の起動タイミング vs. DEVICE_NEIGHBOR の書込みタイミング」という起動順序の問題として現れる。
 
 ### 検出された順序依存
 
@@ -518,4 +518,4 @@ pfcwd show ports
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:282-287`; `show/interfaces/__init__.py:317-319,346-348`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:221-223`
 <!-- /cdb-exceptions -->
 
-<!-- glossary-links-injected: 252867a9153e -->
+<!-- glossary-links-injected: 236c2b782612 -->

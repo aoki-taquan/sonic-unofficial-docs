@@ -75,7 +75,7 @@ DASH を有効化するには [CONFIG_DB](../reference/glossary.md#term-config_d
 }
 ```
 
-この指定により SWSS Lite が起動し、[teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / nat / sflow 等が disabled、`dashorch` が enable される。詳細 container 一覧は [sonic-dash-hld-internals.md §6](sonic-dash-hld-internals.md#6-swss-lite-と-underlay) を参照。
+この指定により SWSS Lite が起動し、[teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / nat / sflow 等が disabled、`dashorch` が enable される。詳細 container 一覧は [sonic-dash-hld-internals.md §6](sonic-dash-hld-internals.md#swss-lite-underlay) を参照。
 
 ## 3. 設定例
 

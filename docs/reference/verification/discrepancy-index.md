@@ -43,7 +43,7 @@ last_verified: 2026-05-13
 
 各 subtype を material 組み込みの色付き admonition でラップしています。色は重要度ではなく **読み手が誤読する危険度** の目安です（赤=実装ゼロ、黄=一部のみ、青=設計と別物、灰=廃止）。
 
-### `not_implemented` — 未実装 (18 件) { #monitor-not-implemented }
+### `not_implemented` — 未実装 (18 件) {#monitor-not-implemented}
 
 !!! danger "未実装"
 
@@ -139,7 +139,7 @@ last_verified: 2026-05-13
   
   `monitor: not_implemented` — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
 
-### `partially_implemented` — 部分実装 (61 件) { #monitor-partially-implemented }
+### `partially_implemented` — 部分実装 (61 件) {#monitor-partially-implemented}
 
 !!! warning "部分実装"
 
@@ -444,7 +444,7 @@ last_verified: 2026-05-13
   
   `monitor: partially_implemented` — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
 
-### `evolved_beyond_hld` — HLD と乖離した形で実装/進化 (30 件) { #monitor-evolved-beyond-hld }
+### `evolved_beyond_hld` — HLD と乖離した形で実装/進化 (30 件) {#monitor-evolved-beyond-hld}
 
 !!! info "HLD と乖離した形で実装/進化"
 
@@ -596,7 +596,7 @@ last_verified: 2026-05-13
   
   2026-05-11 時点の現行 master を裏取り。
 
-### `deprecated` — deprecated（廃止予定 / 撤去済み） (3 件) { #monitor-deprecated }
+### `deprecated` — deprecated（廃止予定 / 撤去済み） (3 件) {#monitor-deprecated}
 
 !!! abstract "deprecated（廃止予定 / 撤去済み）"
 
@@ -621,7 +621,7 @@ last_verified: 2026-05-13
 
 area 横断で機能を探したい読み手向けの索引。各エントリは monitor subtype の見出しからもリンクされています。
 
-### acl-qos { #area-acl-qos }
+### acl-qos {#area-acl-qos}
 
 - [DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）](../../acl-qos/dhcp-dos-mitigation-in-sonic.md)  
   area: `acl-qos` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
@@ -653,7 +653,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   
   `monitor: partially_implemented` — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ [動的ポート add/del 設定と運用 親ページ](../../acl-qos/enhancements-to-add-or-del-ports-dynamically.md) の同セクション（`## 実装との乖離` または `!!! diff` ブロック）を参照のこと。
 
-### architecture { #area-architecture }
+### architecture {#area-architecture}
 
 - [DIP=SIP PTF 検証 内部実装（パケット仕様 / パラメータ）](../../architecture/dip-sip-ptf-validation-high-level-design-internals.md)  
   area: `architecture` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -776,7 +776,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   
   - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。本ページは HLD 主体で書かれており、HLD 記載なしのドロップ理由（implementation 推測部分）に「未確認」と本文中で明示している。実装側の確定は裏取り課題。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
-### internals { #area-internals }
+### internals {#area-internals}
 
 - [L3 Scaling と Performance 強化 内部実装（RouteOrch bulk / fpmsyncd / sairedis / show](../../internals/l3-scaling-and-performance-enhancements-internals.md)  
   area: `internals` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
@@ -806,7 +806,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   
   - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。select イベントループのバックプレッシャ挙動など、HLD で詳細が省略されている部分を本文で「要確認」と明示している。実装側の確定は裏取り課題。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
-### management { #area-management }
+### management {#area-management}
 
 - [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../../management/aaa-improvements.md)  
   area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
@@ -888,14 +888,14 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   
   実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b76`）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという **一部のみの部分実装** 状態:
 
-### overlay { #area-overlay }
+### overlay {#area-overlay}
 
 - [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](../../overlay/dscp-remapping-for-tunnel-traffic.md)  
   area: `overlay` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   verified at: 2026-05-09。
 
-### platform { #area-platform }
+### platform {#area-platform}
 
 - [FEC FLR 内部実装（port_flr.lua / FlexCounterOrch / SAI counter mapping）](../../platform/fec-flr-support-in-sonic-internals.md)  
   area: `platform` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -960,7 +960,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   
   2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
-### reference { #area-reference }
+### reference {#area-reference}
 
 - [DOT1P_TO_PG_MAP テーブル（非実在）](../../reference/config-db/dot1p-to-pg-map.md)  
   area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-14`
@@ -1002,7 +1002,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   
   `eventd` のコアロジック（ZMQ ブローカー・stats_collector・capture_service）は `sonic-buildimage/src/sonic-eventd/src/eventd.cpp` で確認済み（`verification: discrepancy-found`）。ただし以下の差分が存在する。
 
-### routing { #area-routing }
+### routing {#area-routing}
 
 - [BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）](../../routing/bgp-route-install-error-handling.md)  
   area: `routing` / monitor: `deprecated`（deprecated（廃止予定 / 撤去済み）） / last_verified: `2026-05-09`
@@ -1057,7 +1057,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   
   `monitor: evolved_beyond_hld` — `monitor: evolved_beyond_hld` の HLD と実装の差分。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
 
-### switching { #area-switching }
+### switching {#area-switching}
 
 - [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](../../switching/layer-2-forwarding-enhancements.md)  
   area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
@@ -1099,7 +1099,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   
   2026-05-11 時点の現行 master を裏取り。
 
-### system { #area-system }
+### system {#area-system}
 
 - [Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota）](../../system/event-driven-techsupport-invocation-coredump-mgmt.md)  
   area: `system` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`

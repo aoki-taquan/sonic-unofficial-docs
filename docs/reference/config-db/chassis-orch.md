@@ -139,7 +139,7 @@ ChassisOrch* chassis_frontend_orch = new ChassisOrch(m_configDb, m_applDb, chass
 
 `VNetRouteOrch` (`vnet_rt_orch`) が存在しない場合、ChassisOrch は機能しない（constructor で受け取る依存関係）。
 
-> ハードコード定数の網羅一覧は [ハードコード定数](#ハードコード定数) を参照。
+> ハードコード定数の網羅一覧は [ハードコード定数](#hardcoded-constants) を参照。
 
 <!-- /defaults -->
 
@@ -252,15 +252,15 @@ void VNetRouteOrch::detach(Observer* observer, const IpAddress& dstAddr)
 
 ### VNet ルート未解決時の silent drop
 
-`ChassisOrch` は `OrchDaemon::init()` で switch_type に関わらず**無条件に生成**される（`orchdaemon.cpp:290-294` に VoQ / switch_type ガードはない。詳細は [プラットフォーム差異](#プラットフォーム差異) を参照）。したがって VoQ 専用機能ではなく、`fabric` を除く全 switch_type で `PASS_THROUGH_ROUTE_TABLE` の購読者が存在する。
+`ChassisOrch` は `OrchDaemon::init()` で switch_type に関わらず**無条件に生成**される（`orchdaemon.cpp:290-294` に VoQ / switch_type ガードはない。詳細は [プラットフォーム差異](#platform-differences) を参照）。したがって VoQ 専用機能ではなく、`fabric` を除く全 switch_type で `PASS_THROUGH_ROUTE_TABLE` の購読者が存在する。
 
-ただし `attach()` 呼び出し時に `VNetRouteOrch::syncd_routes_` に対象アドレスを包含する VNet ルートが存在しない場合、即時通知が行われず APP_DB への書き込みは発生しない。VNet ルートが永続的に解決されなければ、CONFIG_DB エントリは登録されたまま APP_DB へ転送されない状態が続く（後から VNet ルートが追加されれば自動的に転送される。[暗黙参照テーブル](#暗黙参照テーブル) の遅延通知を参照）。`fabric` switch_type のみ `ChassisOrch` 自体が生成されず、購読者不在で silent drop となる。
+ただし `attach()` 呼び出し時に `VNetRouteOrch::syncd_routes_` に対象アドレスを包含する VNet ルートが存在しない場合、即時通知が行われず APP_DB への書き込みは発生しない。VNet ルートが永続的に解決されなければ、CONFIG_DB エントリは登録されたまま APP_DB へ転送されない状態が続く（後から VNet ルートが追加されれば自動的に転送される。[暗黙参照テーブル](#implicit-reference-tables) の遅延通知を参照）。`fabric` switch_type のみ `ChassisOrch` 自体が生成されず、購読者不在で silent drop となる。
 
 > **Evidence**: `sonic-swss/orchagent/chassisorch.cpp:50-72`; `sonic-swss/orchagent/vnetorch.cpp:1910-1952`; `sonic-swss/orchagent/orchdaemon.cpp:281-293`
 <!-- /failure -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル
+## 暗黙参照テーブル {#implicit-reference-tables}
 
 `ChassisOrch` が消費する `PASS_THROUGH_ROUTE_TABLE` はフィールドを持たない key-only テーブルであるため、フィールドベースの leafref は存在しない。ただし key（IP プレフィックス文字列）がコードレベルで複数のオブジェクトと暗黙的な依存を形成する。
 
@@ -290,7 +290,7 @@ for (auto route : syncd_routes_)
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数
+## ハードコード定数 {#hardcoded-constants}
 
 ### テーブル名定数 (`schema.h`)
 
@@ -509,7 +509,7 @@ orchdaemon select ループ (epoll)
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異
+## プラットフォーム差異 {#platform-differences}
 
 `ChassisOrch` の生成有無は `DEVICE_METADATA|localhost.switch_type` によって決定される。
 `OrchDaemon::init()` 内に switch_type ガードは存在せず、`OrchDaemon` を使用するすべての switch_type で ChassisOrch が生成される。

@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`LLDP_PORT` は **ポート単位の [LLDP](../../reference/glossary.md#term-lldp) 設定** を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`lldp` (lldpd / lldpmgrd) コンテナが [CONFIG_DB](../../reference/glossary.md#term-config_db) から読み、各物理ポートで [LLDP](../../reference/glossary.md#term-lldp) を有効化するか、また RX / TX どちらのモードで動かすかを決める。
+`LLDP_PORT` は **ポート単位の [LLDP](../../reference/glossary.md#term-lldp) 設定** を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`lldp` (lldpd / [lldpmgrd](../../reference/glossary.md#term-lldpmgrd)) コンテナが [CONFIG_DB](../../reference/glossary.md#term-config_db) から読み、各物理ポートで [LLDP](../../reference/glossary.md#term-lldp) を有効化するか、また RX / TX どちらのモードで動かすかを決める。
 
 `LLDP` (グローバル) テーブルが `hello_time` / `multiplier` / `system_name` / `system_description` 等のシャーシ全体の設定を持つのに対し、本テーブルはポート単位の上書き設定。
 
@@ -115,7 +115,7 @@ show lldp table
 <!-- defaults -->
 ## コード由来デフォルト
 
-`LLDP_PORT` の per-port フィールドは YANG `default` 文と lldpmgrd / `lldpd.conf.j2` のハードコードで決まる。
+`LLDP_PORT` の per-port フィールドは YANG `default` 文と [lldpmgrd](../../reference/glossary.md#term-lldpmgrd) / `lldpd.conf.j2` のハードコードで決まる。
 
 ### field: `enabled`
 
@@ -137,7 +137,7 @@ grouping lldp_mode_config {
 
 **コード由来デフォルト**: 未設定 (= lldpd 組み込みの双方向 rx+tx)
 
-`sonic-lldp.yang` の `mode` には `default` 文がなく、enum も `RECEIVE` / `TRANSMIT` の 2 値のみ (`BOTH` は存在しない)。`mode` 未指定時は lldpmgrd が `lldpcli configure ports ... lldp status` を発行しないため、lldpd の組み込みデフォルト (双方向送受信) が有効になる。
+`sonic-lldp.yang` の `mode` には `default` 文がなく、enum も `RECEIVE` / `TRANSMIT` の 2 値のみ (`BOTH` は存在しない)。`mode` 未指定時は [lldpmgrd](../../reference/glossary.md#term-lldpmgrd) が `lldpcli configure ports ... lldp status` を発行しないため、lldpd の組み込みデフォルト (双方向送受信) が有効になる。
 
 ### field: portidsubtype (per-port の暗黙デフォルト)
 
@@ -543,4 +543,4 @@ if any([port_name.startswith(inband_prefix()),
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 0505ce402ce4 -->
+<!-- glossary-links-injected: 236c2b782612 -->

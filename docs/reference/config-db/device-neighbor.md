@@ -64,14 +64,14 @@ DEVICE_NEIGHBOR|<peer_name>
 
 | 値 | 挙動 |
 |----|------|
-| 存在する PORT.name | lldpmgrd が期待 neighbor の照合に使用 |
+| 存在する PORT.name | [lldpmgrd](../../reference/glossary.md#term-lldpmgrd) が期待 neighbor の照合に使用 |
 | 存在しない PORT.name | YANG leafref 違反で reject |
 
 ### `type` (string: 制約なし)
 
 | 値の例 | 挙動 |
 |-------|------|
-| `ToRRouter` / `LeafRouter` 等 | lldpmgrd や [BGP](../../reference/glossary.md#term-bgp) テンプレが参照することがある |
+| `ToRRouter` / `LeafRouter` 等 | [lldpmgrd](../../reference/glossary.md#term-lldpmgrd) や [BGP](../../reference/glossary.md#term-bgp) テンプレが参照することがある |
 | 任意の文字列 | YANG 上 string 型で制約なし |
 
 > フィールドに明示的な enum 制約なし。`local_port` の leafref 違反のみ YANG レベルで reject。
@@ -245,7 +245,7 @@ YANG バリデーション時に `PORT_LIST.name` に存在しないポート名
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: CONFIG_DB に書き込まれると即時に参照可能。lldpmgrd が neighbor 情報との照合に使用。
+**適用タイミング**: CONFIG_DB に書き込まれると即時に参照可能。[lldpmgrd](../../reference/glossary.md#term-lldpmgrd) が neighbor 情報との照合に使用。
 
 **副作用**: topology 情報の更新のみ。ネットワーク動作への直接影響なし。
 <!-- /runtime-trace -->
@@ -609,4 +609,4 @@ CONFIG_DB DEVICE_NEIGHBOR|<peer_name> (SET/DEL)
 > **Evidence**: `sonic-buildimage` `src/sonic-config-engine/minigraph.py:85-88,178-179,599-724,727-778,779-839,1719-1782,2064-2120,2186-2193,2277,2616-2622,2631-2641`
 <!-- /platform -->
 
-<!-- glossary-links-injected: 261edaec819f -->
+<!-- glossary-links-injected: 236c2b782612 -->
