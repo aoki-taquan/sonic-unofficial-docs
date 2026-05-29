@@ -126,9 +126,7 @@ if (!nhg_index.empty() && (!ips.empty() || !aliases.empty()))
 <!-- /defaults -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-platform.md -->
+## プラットフォーム差異
 
 ### ASIC 別 ECMP グループ数上限
 
@@ -194,9 +192,7 @@ SAI 実装がバルク操作 (`sai_bulk_create_route_entry` 等) を実装して
 <!-- /platform -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-ordering.md -->
+## 書込み順依存
 
 ### ADD 時: VRF 経路は VRF エントリが先行必須
 
@@ -260,9 +256,7 @@ ROUTE_TABLE|<prefix> DEL
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-cross-refs.md -->
+## 暗黙参照テーブル
 
 `RouteOrch` (`orchagent/routeorch.cpp`) が [ROUTE_TABLE](../../reference/glossary.md#term-route_table) エントリを処理する際に参照・更新する他テーブル/Orch の一覧。フィールドに明示されていない暗黙依存関係を示す。
 
@@ -333,9 +327,7 @@ MuxOrch が初期化されていない場合 (`gDirectory.get<MuxOrch*>()` が�
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動・エラーハンドリング (Phase D)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-failure.md -->
+## 失敗挙動・エラーハンドリング
 
 `ROUTE_TABLE` 処理の失敗は **フィールド検証エラー（即時破棄）** と **依存オブジェクト未解決による後回し** と **SAI Bulk 操作失敗** の 3 種類に分類される。
 
@@ -429,8 +421,6 @@ sonic-db-cli APPL_STATE_DB hgetall 'ROUTE_TABLE:10.0.0.0/24'
 <!-- pubsub -->
 ## 通信メカニズム (Redis PUBSUB / ZMQ)
 
-<!-- evidence: meta/_intermediate/cdb-flow/route-pubsub.md -->
-
 `ROUTE_TABLE` は **APPL_DB** テーブルであり、[CONFIG_DB](../../reference/glossary.md#term-config_db) からの keyspace notification は使用しない。[FRR](../../reference/glossary.md#term-frr) ([zebra](../../reference/glossary.md#term-zebra)) が [FPM](../../reference/glossary.md#term-fpm) (Forwarding Plane Manager) プロトコル経由で送る netlink メッセージを `fpmsyncd` が受信し、直接 APPL_DB に書き込む構成。
 
 ### fpmsyncd → APPL_DB (ProducerStateTable / ZmqProducerStateTable)
@@ -503,9 +493,6 @@ STATE_DB[ROUTE_TABLE|<default-route>]
 
 <!-- side-effects -->
 ## SET/DEL 副次 DB 書込み
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-side-effects.md -->
-<!-- evidence-alt: meta/_intermediate/cdb-flow/route-side.md -->
 
 `ROUTE_TABLE` エントリの SET / DEL が引き起こす他 DB への書込み一覧。`ROUTE_TABLE` は APPL_DB テーブルであるため、CONFIG_DB 直接の副作用はなく、すべて `orchagent (RouteOrch)` 経由で発生する。
 
@@ -589,9 +576,7 @@ m_publisher.publish(APP_ROUTE_TABLE_NAME, ctx.key, fvs, status, replace);
 <!-- /side-effects -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
-
-<!-- evidence: meta/_intermediate/cdb-flow/route-constants.md -->
+## ハードコード定数
 
 ### SAI route_entry 属性定数
 

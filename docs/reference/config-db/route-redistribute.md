@@ -82,9 +82,9 @@ ROUTE_REDISTRIBUTE|<vrf_name>|<src_protocol>|<dst_protocol>|<address_family>
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-global`
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
-`ROUTE_REDISTRIBUTE` テーブルへの書き込みには以下の順序制約がある。`frrcfgd` の実装（`frrcfgd.py`）を全行精読して確認した。詳細スキャン結果は `meta/_intermediate/cdb-flow/route-redistribute-ordering.md`。
+`ROUTE_REDISTRIBUTE` テーブルへの書き込みには以下の順序制約がある。`frrcfgd` の実装（`frrcfgd.py`）を全行精読して確認した。
 
 ### 必須制約（違反すると silent drop）
 
@@ -132,7 +132,7 @@ ROUTE_REDISTRIBUTE|<vrf_name>|<src_protocol>|<dst_protocol>|<address_family>
 <!-- /ordering -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## 通信メカニズム
 
 `ROUTE_REDISTRIBUTE` テーブルの変更は **2 つの異なるデーモン** が異なる API で受信する。
 
@@ -192,7 +192,6 @@ vtysh -c "configure terminal"
 | 購読テーブル | `ROUTE_REDISTRIBUTE` | `STATIC_ROUTE` |
 | FRR 送出 | `vtysh -c <cmd>` (逐次) | `vtysh -f <tmpfile>` (バッチ) |
 
-詳細スキャン結果は `meta/_intermediate/cdb-flow/route-redistribute-pubsub.md`。
 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2316L (table_handler_list ROUTE_REDISTRIBUTE) -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3149-3168L (ROUTE_REDISTRIBUTE イベント処理) -->
@@ -219,9 +218,9 @@ vtysh -c "configure terminal"
 [^2]: frrcfgd route_redist_key_map: `frrcfgd.py` L1979-1980. `route_redist_key_map = [(['protocol', '++metric', '+route_map'], '{no:no-prefix}redistribute {} {:redist-metric} {:redist-route-map}', hdl_route_redist_set)]`
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-`frrcfgd` (`frrcfgd.py`) および `bgpcfgd` (`managers_static_rt.py`) から抽出した ROUTE_REDISTRIBUTE 経路に関わるハードコード定数。詳細スキャン結果は `meta/_intermediate/cdb-flow/route-redistribute-constants.md`。
+`frrcfgd` (`frrcfgd.py`) および `bgpcfgd` (`managers_static_rt.py`) から抽出した ROUTE_REDISTRIBUTE 経路に関わるハードコード定数。
 
 ### src_protocol enum 定数
 
@@ -285,10 +284,9 @@ STATIC_ROUTE テーブル変更時に `bgpcfgd` が自動生成する FRR コマ
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・連鎖変更 (Phase F)
+## 副作用・連鎖変更
 
-> **調査根拠**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3149-3168,1330-1341,1979-1980`; `sonic-swss/fpmsyncd/routesync.cpp:156,1433`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py:220-248` (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/route-redistribute-side-effects.md`
+> **Evidence**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3149-3168,1330-1341,1979-1980`; `sonic-swss/fpmsyncd/routesync.cpp:156,1433`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py:220-248` (2026-05-18)
 
 `ROUTE_REDISTRIBUTE` の SET / DEL は frrcfgd → FRR bgpd → [zebra](../../reference/glossary.md#term-zebra) → [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) → [APPL_DB](../../reference/glossary.md#term-appl_db) → [orchagent](../../reference/glossary.md#term-orchagent) という連鎖を引き起こす。frrcfgd 自身は CONFIG_DB 以外の DB に書き込まない。
 
@@ -352,10 +350,9 @@ frrcfgd は処理結果を CONFIG_DB 以外のいかなる DB にも書き込ま
 <!-- /side-effects -->
 
 <!-- failure -->
-## 失敗挙動・エラーパス (Phase D)
+## 失敗挙動・エラーパス
 
-> **調査根拠**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` 精読 (2026-05-18)
-> 詳細証跡: `meta/_intermediate/cdb-flow/route-redistribute-failure.md`
+> **Evidence**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` 精読 (2026-05-18)
 
 `frrcfgd` は `ConfigDBConnector.subscribe()` / keyspace 通知モデルを採用する。`bgpcfgd` (Manager.set_handler の `False` リトライ) とは異なり、**エラー時は `continue` でそのイベントを廃棄する。自動リトライ機構はない。**
 
@@ -403,7 +400,7 @@ frrcfgd は処理結果を CONFIG_DB 以外のいかなる DB にも書き込ま
 <!-- /failure -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照
 
 ### BGP_GLOBALS への暗黙参照
 
@@ -445,7 +442,7 @@ router bgp <local_asn> vrf <vrf>
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-調査ソース: `frrcfgd.py`、`bgpcfgd/main.py`、`managers_static_rt.py`、`bgpd.conf.db.addr_family.j2`。詳細スキャン結果は `meta/_intermediate/cdb-flow/route-redistribute-platform.md`。
+調査ソース: `frrcfgd.py`、`bgpcfgd/main.py`、`managers_static_rt.py`、`bgpd.conf.db.addr_family.j2`。
 
 **プラットフォーム差なし。** ROUTE_REDISTRIBUTE 経路は FRR vtysh への BGP コマンド生成のみを行う。
 

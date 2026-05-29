@@ -167,20 +167,20 @@ vtysh -c 'show route-map'
 
 
 <!-- derivation -->
-## 派生・条件付き登録 (Phase 6/7)
+## 派生・条件付き登録
 
-### Phase 6: 自動派生
+### 自動派生
 
 bgpcfgd の `RouteMapMgr` が `ROUTE_MAP` テーブルの各フィールド（`MATCH_PREFIX_LIST`、`MATCH_AS_PATH`、`SET_COMMUNITY` 等）を [FRR](../../reference/glossary.md#term-frr) の `match` / `set` 句コマンドへ変換する。CONFIG_DB 内フィールド間の自動付与なし。
 
-### Phase 7: 条件付き登録 (add_manager 条件)
+### 条件付き登録 (add_manager 条件)
 
 bgpcfgd は常時起動し `RouteMapMgr` を無条件登録する。参照先の `PREFIX_LIST` / `AS_PATH_SET` / `COMMUNITY_SET` が未設定でも [FRR](../../reference/glossary.md#term-frr) コマンドは発行されるが、FRR 側で未解決参照エラーになる場合がある。
 
 <!-- /derivation -->
 
 <!-- handler-branching -->
-### Phase 8: Handler メソッド内分岐
+### Handler メソッド内分岐
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
@@ -191,7 +191,7 @@ bgpcfgd は常時起動し `RouteMapMgr` を無条件登録する。参照先の
 | `RouteMapMgr` | `SET_COMMUNITY` フィールドあり | `set community <value>` 追加 | `managers_route_map.py` |
 | `RouteMapMgr` | del_handler | FRR に `no route-map <name>` 発行 | `managers_route_map.py` |
 
-> **スキャン証跡**: `ROUTE_MAP` は BGP ルーティングポリシーの中核。bgpcfgd が FRR [vtysh](../../reference/glossary.md#term-vtysh) に変換。CONFIG_DB 内フィールド間の自動派生なし。
+> **裏取り**: `ROUTE_MAP` は BGP ルーティングポリシーの中核。bgpcfgd が FRR [vtysh](../../reference/glossary.md#term-vtysh) に変換。CONFIG_DB 内フィールド間の自動派生なし。
 
 <!-- /handler-branching -->
 
@@ -218,7 +218,7 @@ bgpcfgd は常時起動し `RouteMapMgr` を無条件登録する。参照先の
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
-## 書き込み入り口 (Direction A)
+## 書き込み入り口
 
 [ROUTE_MAP](../../reference/glossary.md#term-route_map) テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
@@ -252,7 +252,7 @@ db_migrator.py での ROUTE_MAP マイグレーションなし
 <!-- /entry-points -->
 
 <!-- pubsub -->
-## CONFIG_DB 購読メカニズム (Phase G)
+## CONFIG_DB 購読メカニズム
 
 ROUTE_MAP テーブルは 2 つの独立したデーモンが購読する。
 
@@ -319,7 +319,7 @@ CONFIG_DB ROUTE_MAP
 
 <!-- /pubsub -->
 <!-- side-effects -->
-## 副次 DB 書込・外部副作用 (Phase F)
+## 副次 DB 書込・外部副作用
 
 ### FRR vtysh コマンド発行 (bgpcfgd)
 
@@ -366,9 +366,9 @@ route-map は FRR の BGP/OSPF/zebra ルーティングポリシーとして機�
 [^4]: frrcfgd ROUTE_MAP handler 実装: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py>
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数
 
-`bgpcfgd` の `RouteMapMgr` (`managers_rm.py`) から抽出した ROUTE_MAP 経路に関わるハードコード定数。詳細スキャン結果は `meta/_intermediate/cdb-flow/route-map-constants.md`。
+`bgpcfgd` の `RouteMapMgr` (`managers_rm.py`) から抽出した ROUTE_MAP 経路に関わるハードコード定数。
 
 ### 処理対象キー定数 (`ROUTE_MAPS`)
 
@@ -510,7 +510,7 @@ BGP ASN は `constants['deployment_id_asn_map']['2']` から取得。未設定�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存
 
 ROUTE_MAP テーブルへの書き込みには以下の順序制約がある。`frrcfgd` の実装（`frrcfgd.py`）を全行精読して確認した。
 
@@ -547,12 +547,12 @@ ROUTE_MAP テーブルへの書き込みには以下の順序制約がある。`
 | 7 | BGP_NEIGHBOR_AF 参照解除 → ROUTE_MAP DEL | 先行推奨 | BGP フィルタ消滅 |
 | 8 | ROUTE_MAP 参照除去 → PREFIX_SET DEL | 先行推奨 | subsequent update silent drop |
 
-> **スキャン証跡**: `frrcfgd.py` L2669-2676 (PREFIX_SET AF 解決), L3113-3133 (route_operation ガード), L3139-3148 (DEL 処理), L2875-2882 (COMMUNITY_SET), L2907-2908 (PREFIX_SET DEL)。詳細は `meta/_intermediate/cdb-flow/route-map-ordering.md` を参照。
+> **裏取り**: `frrcfgd.py` L2669-2676 (PREFIX_SET AF 解決), L3113-3133 (route_operation ガード), L3139-3148 (DEL 処理), L2875-2882 (COMMUNITY_SET), L2907-2908 (PREFIX_SET DEL)。
 
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase C)
+## 暗黙テーブル参照
 
 ROUTE_MAP テーブルが直接・間接に参照する他テーブル、および ROUTE_MAP を参照する逆方向テーブルの一覧。`sonic-route-map.yang` leafref 全行スキャンと `frrcfgd.py` のランタイム参照から抽出。[^5]
 
@@ -604,16 +604,16 @@ ROUTE_MAP 名は `ROUTE_MAP_SET` テーブルで管理される。`BGP_NEIGHBOR_
 | `AS_PATH_SET` | `match_as_path` の FRR bgpd 側で無効参照エラー |
 | `ROUTE_MAP_SET` | `call_route_map` 参照先消滅 → FRR 素通り |
 
-> **スキャン証跡**: `sonic-route-map.yang` leafref 全行、`frrcfgd.py` L82-99, L1863, L1899-1904, L1942, L1979, L2214-2249, L2298-2315。詳細は `meta/_intermediate/cdb-flow/route-map-cross-refs.md`。
+> **裏取り**: `sonic-route-map.yang` leafref 全行、`frrcfgd.py` L82-99, L1863, L1899-1904, L1942, L1979, L2214-2249, L2298-2315。
 
 [^5]: YANG leafref 定義: `sonic-route-map.yang`, `sonic-bgp-common.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-route-map.yang>
 
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動
 
-frrcfgd の ROUTE_MAP 処理における失敗パターンを全行スキャンして確認した。詳細は `meta/_intermediate/cdb-flow/route-map-failure.md` を参照。
+frrcfgd の ROUTE_MAP 処理における失敗パターンを全行スキャンして確認した。
 
 ### frrcfgd の失敗パターン
 
@@ -679,7 +679,7 @@ journalctl -u frr-mgmt-framework | grep 'route-map'
 vtysh -c 'show route-map'
 ```
 
-> **スキャン証跡**: `frrcfgd.py` L47-63 (`g_run_command`), L181-218 (接続 retry), L502-504 (`handle_rmap_set_metric`), L3109-3148 (ROUTE_MAP handler), L1532-1534 (例外吸収)。詳細は `meta/_intermediate/cdb-flow/route-map-failure.md` を参照。
+> **裏取り**: `frrcfgd.py` L47-63 (`g_run_command`), L181-218 (接続 retry), L502-504 (`handle_rmap_set_metric`), L3109-3148 (ROUTE_MAP handler), L1532-1534 (例外吸収)。
 
 <!-- /failure -->
 
