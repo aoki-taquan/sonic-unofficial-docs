@@ -143,37 +143,11 @@ mis = "mis"                   # "mis-parsed" コメント
 ubernetes = "ubernetes"       # k(ubernetes|vm) regex
 infor = "infor"               # MCLAG infor_len フィールド名
 
-# GitHub issue タイトル / sitemap description の cell 幅切り出し残骸。
-complie = "complie"
-incorrent = "incorrent"
-happend = "happend"
-faile = "faile"
-refere = "refere"
-aliase = "aliase"
-doens = "doens"
-erro = "erro"
-actve = "actve"
-updatin = "updatin"
-assigne = "assigne"
-featur = "featur"
-requrement = "requrement"
-initizalize = "initizalize"
-initated = "initated"
-erros = "erros"
-trafic = "trafic"
-configurtions = "configurtions"
-updat = "updat"
-debia = "debia"
-loca = "loca"
-routin = "routin"
-fram = "fram"
-syste = "syste"
-contex = "contex"
-ove = "ove"
-interfac = "interfac"
-fo = "fo"
-serial = "serial"
-devic = "devic"
+# NOTE: cell 幅切り出し残骸 (GitHub issue 一覧テーブルや sitemap description の
+# truncated word) はこの extend-words ではなく [files] extend-exclude で対象
+# ソースファイルを丸ごと除外することで吸収する (下記の sitemap.md / issues/
+# _decisions/*.md 等)。短断片をグローバル許可すると本文中の実 typo を
+# 見逃すため、ファイル単位での除外を優先する。
 
 [files]
 extend-exclude = [
@@ -193,6 +167,9 @@ extend-exclude = [
     # GitHub issue タイトル一覧テーブル。タイトル末尾が cell 幅で切られて
     # truncated word が大量に出るため、ファイル単位で除外。
     "meta/_intermediate/issues/_decisions/*.md",
+    # 旧 backlog JSON (アーカイブ済)。上流 issue タイトルの truncated word
+    # (Requrement / configurtions / actve 等) が残るが、生きたドキュメントではない。
+    "meta/backlog/_archived/",
     # auto-generated sitemap。description 末尾が … で切られた word を含む。
     "docs/_meta/sitemap.md",
     # 上流 typo の意図的引用や iteration コード (BA-BD 等) が多い。
