@@ -200,8 +200,8 @@ jobs:
       - name: link-density outliers (informational)
         run: python3 meta/scripts/check_link_density.py --check || true
 
-      - name: heading hierarchy skips a11y (informational)
-        run: python3 meta/scripts/check_heading_hierarchy.py --check || true
+      - name: heading hierarchy skips a11y (strict)
+        run: python3 meta/scripts/check_heading_hierarchy.py
 
       - name: image alt-text a11y (strict)
         run: python3 meta/scripts/check_image_alt.py
