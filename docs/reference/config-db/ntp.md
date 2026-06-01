@@ -46,6 +46,10 @@ related:
 
 # NTP テーブル群
 
+## 概要
+
+CONFIG_DB の NTP 系 3 テーブル (`NTP` グローバル / `NTP_SERVER` / `NTP_KEY`) を横断して、`hostcfgd` が `chrony.conf` を再生成する経路の概要・暗黙デフォルト・乖離・dead field を 1 ページに集約する。各テーブル単体の詳細は配下ページを参照。
+
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 

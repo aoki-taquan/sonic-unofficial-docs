@@ -2,7 +2,7 @@
 title: 変更履歴
 description: "変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。"
 verification: meta
-last_verified: 2026-05-29
+last_verified: 2026-06-01
 tags:
   - changelog
   - meta
@@ -23,6 +23,8 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-29 #5086 ci: promote citation-quality + broken-links checks to strict
+- 2026-05-29 #5085 fix(citation): 引用不足 5 ページに一次情報引用を付与
 - 2026-05-29 #5084 fix(links): resolve 21 broken intra-doc anchors across 6 pages
 - 2026-05-29 #5083 fix(config-db): neutralize residual inline Phase cross-references (8 files)
 - 2026-05-29 #5082 ci: promote image-alt + mermaid-syntax checks to strict
@@ -521,6 +523,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3888 docs(config-db): add Phase E hardcoded-constants block to STP page
 - 2026-05-19 #3885 docs(config-db): add Phase D failure-behavior block to zmq page
 - 2026-05-19 #3886 docs(config-db): add Phase F side-effects block to gnmi-state page
-- 2026-05-19 #3882 docs(config-db): add Phase E hardcoded-constants block to LOGGER page
-- 2026-05-19 #3880 docs(config-db): add Phase G pubsub block to FIPS page
 
