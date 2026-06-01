@@ -6,7 +6,7 @@ admonition の前）に以下を挿入する:
 
     <!-- topics-tip -->
     !!! tip "Topics で読み物として読む"
-        この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として
+        この HLD は実装詳細を含む。機能の概念・設定・運用を読み物として
         読みたい場合は [Topics XX 章: TITLE](../../topics/XX-name/) を参照。
     <!-- /topics-tip -->
 
@@ -417,7 +417,7 @@ def build_admonition(chap_num: str, chap_dir: str, chap_title: str) -> str:
     return (
         f"{MARK_START}\n"
         f"!!! tip \"Topics で読み物として読む\"\n"
-        f"    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は "
+        f"    この HLD は実装詳細を含む。機能の概念・設定・運用を読み物として読みたい場合は "
         f"[Topics {chap_num} 章: {chap_title}](../topics/{chap_dir}/index.md) を参照。\n"
         f"{MARK_END}\n"
     )

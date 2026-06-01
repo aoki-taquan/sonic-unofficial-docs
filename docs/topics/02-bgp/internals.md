@@ -101,7 +101,7 @@ flowchart LR
 | `SAI_OBJECT_TYPE_NEXT_HOP_GROUP` | `SAI_NEXT_HOP_GROUP_ATTR_TYPE = ECMP / DYNAMIC_UNORDERED_ECMP` |
 | `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER` | `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT`（PIC で [BFD](../../reference/glossary.md#term-bfd) down 時に動的更新）、`SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID` |
 
-PIC は member weight の hot update に依存するため、ベンダ SAI 側で WEIGHT のホットスワップが SAI_STATUS_SUCCESS で返るかが分かれ目になります。`offloaded` feedback も同じく ASIC 側の `ROUTE_ENTRY` 設置完了通知に依存します。
+PIC は member weight の hot update に依存するため、ベンダ SAI 側で WEIGHT のホットスワップが SAI_STATUS_SUCCESS で返るかが分かれ目になる。`offloaded` feedback も同じく ASIC 側の `ROUTE_ENTRY` 設置完了通知に依存する。
 
 ## Redis テーブル参照関係
 
@@ -118,13 +118,13 @@ ASIC_DB:
   ROUTE_ENTRY, NEXT_HOP, NEXT_HOP_GROUP, NEXT_HOP_GROUP_MEMBER
 ```
 
-`bgpcfgd` は CONFIG_DB の更新を subscribe するときに `BGP_PEER_RANGE` 単位で diff を取り、FRR [vtysh](../../reference/glossary.md#term-vtysh) に**追加/削除コマンド単位**で投入するため、frr.conf 全体を再書き出しせずに済みます。
+`bgpcfgd` は CONFIG_DB の更新を subscribe するときに `BGP_PEER_RANGE` 単位で diff を取り、FRR [vtysh](../../reference/glossary.md#term-vtysh) に**追加/削除コマンド単位**で投入するため、frr.conf 全体を再書き出しせずに済む。
 
 ## ZMQ / Redis pub/sub
 
-- BGP 系で **ZMQ は使われません**。fpmsyncd → APPL_DB → orchagent の経路はすべて Redis pub/sub と [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) です。
-- Loading Optimization では fpmsyncd 側の Redis pipeline flush と orchagent 側の ring buffer（`gRingBuffer`）+ assistant thread で大量 route 投入の throughput を上げます（→ [VRF/ECMP 章](../04-vrf-ecmp/index.md) 参照）。
-- `bgpd` は `fpm` socket（TCP localhost:2620）で zebra と通信し、Redis を介しません。
+- BGP 系で **ZMQ は使われない**。fpmsyncd → APPL_DB → orchagent の経路はすべて Redis pub/sub と [ProducerStateTable](../../reference/glossary.md#term-producerstatetable)。
+- Loading Optimization では fpmsyncd 側の Redis pipeline flush と orchagent 側の ring buffer（`gRingBuffer`）+ assistant thread で大量 route 投入の throughput を上げる（→ [VRF/ECMP 章](../04-vrf-ecmp/index.md) 参照）。
+- `bgpd` は `fpm` socket（TCP localhost:2620）で zebra と通信し、Redis を介さない。
 
 ## 大量 route loading
 
@@ -146,15 +146,15 @@ dynamic peer modification は、peer range や dynamic peer の変更時に FRR 
 
 ## 既知の実装上の制約
 
-- **Suppress FIB Pending** は ASIC からの `offloaded` フィードバックが前提で、ベンダ [syncd](../../reference/glossary.md#term-syncd) が `STATE_DB.ROUTE_TABLE.offloaded` を更新しない場合は永続的に suppress 状態のままになります。FRR の `show bgp suppress-fib-pending` で詰まった prefix を確認する必要があります。
-- **BGP PIC** は ASIC 側で `NEXT_HOP_GROUP_MEMBER` の weight 動的更新がサポートされている前提です。member 単位の差し替えしか提供しないベンダ ASIC では PIC の benefit が出ません。
-- **bgpcfgd の jinja2 template** は SONiC 標準 `bgpd.main.conf.j2` 系を基準にしており、外部のカスタム template を差し込むと dynamic peer modification が partial update ではなく全 reload に劣化することがあります。
-- **graceful restart / warm restart** は FRR 側で実装されていますが、SONiC の warm-reboot framework (`WARM_RESTART_TABLE|bgp`) と必ずしも完全に同期しないため、reconcile timeout を CONFIG_DB の `WARM_RESTART` で十分に確保する必要があります（→ [Reboot 章](../11-reboot/index.md)）。
-- **大量経路投入時** は orchagent の単一スレッド処理が bottleneck になりやすく、ring buffer / assistant thread の有効化が前提です。`gBufferOrchEnabled` 系のビルドフラグで挙動が変わります。
+- **Suppress FIB Pending** は ASIC からの `offloaded` フィードバックが前提で、ベンダ [syncd](../../reference/glossary.md#term-syncd) が `STATE_DB.ROUTE_TABLE.offloaded` を更新しない場合は永続的に suppress 状態のままになる。FRR の `show bgp suppress-fib-pending` で詰まった prefix を確認する必要がある。
+- **BGP PIC** は ASIC 側で `NEXT_HOP_GROUP_MEMBER` の weight 動的更新がサポートされている前提。member 単位の差し替えしか提供しないベンダ ASIC では PIC の benefit が出ない。
+- **bgpcfgd の jinja2 template** は SONiC 標準 `bgpd.main.conf.j2` 系を基準にしており、外部のカスタム template を差し込むと dynamic peer modification が partial update ではなく全 reload に劣化することがある。
+- **graceful restart / warm restart** は FRR 側で実装されているが、SONiC の warm-reboot framework (`WARM_RESTART_TABLE|bgp`) と必ずしも完全に同期しないため、reconcile timeout を CONFIG_DB の `WARM_RESTART` で十分に確保する必要がある（→ [Reboot 章](../11-reboot/index.md)）。
+- **大量経路投入時** は orchagent の単一スレッド処理が bottleneck になりやすく、ring buffer / assistant thread の有効化が前提。`gBufferOrchEnabled` 系のビルドフラグで挙動が変わる。
 
 ## bgpcfgd の manager 構成
 
-bgpcfgd は単一プロセス内で複数 manager を並べ、CONFIG_DB の各テーブルを subscribe します。`src/sonic-bgpcfgd/bgpcfgd/managers_*.py` の構成は以下のとおりです。
+bgpcfgd は単一プロセス内で複数 manager を並べ、CONFIG_DB の各テーブルを subscribe する。`src/sonic-bgpcfgd/bgpcfgd/managers_*.py` の構成は以下のとおり。
 
 | manager | 対象テーブル | 反映先 |
 | --- | --- | --- |
@@ -165,7 +165,7 @@ bgpcfgd は単一プロセス内で複数 manager を並べ、CONFIG_DB の各�
 | `BGPAggregateAddressMgr` | `BGP_AGGREGATE_ADDRESS` | vtysh `aggregate-address` |
 | `BGPVrfMgr` | `VRF` / `BGP_VRF` | vtysh `router bgp ... vrf ...` |
 
-全 manager は共通の `cfgmgr.run()` ループ上で動き、CONFIG_DB の変更を 1 トランザクション分まとめてから vtysh へ投げる設計です。これが「peer 1 件追加で frr.conf 全体を rewrite しない」根拠で、dynamic peer modification の partial update もこの粒度に依存します。
+全 manager は共通の `cfgmgr.run()` ループ上で動き、CONFIG_DB の変更を 1 トランザクション分まとめてから vtysh へ投げる設計である。これが「peer 1 件追加で frr.conf 全体を rewrite しない」根拠で、dynamic peer modification の partial update もこの粒度に依存する。
 
 ## 関連ページ
 

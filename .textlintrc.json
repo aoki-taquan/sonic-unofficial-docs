@@ -17,7 +17,7 @@
       "max-comma": false,
       "max-kanji-continuous-len": false,
       "ja-no-mixed-period": false,
-      "no-mix-dearu-desumasu": false,
+      "no-mix-dearu-desumasu": true,
       "ja-no-weak-phrase": false,
       "ja-no-successive-word": false,
       "ja-no-abusage": false,
@@ -29,7 +29,9 @@
       "arabic-kanji-numbers": false
     },
     "prh": {
-      "rulePaths": ["./meta/prh-sonic.yml"]
+      "rulePaths": [
+        "./meta/prh-sonic.yml"
+      ]
     }
   },
   "filters": {

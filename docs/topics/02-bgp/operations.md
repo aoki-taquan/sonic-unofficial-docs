@@ -70,7 +70,7 @@ CiscoBgp4MIB は SNMP から BGP neighbor 情報を見せるための互換面�
 
 ## show bgp summary の出力サンプル
 
-`show ip bgp summary` は FRR の `show bgp ipv4 unicast summary` を整形したものです。代表的な T1 ToR の構成では次のように 24 neighbor が並びます。
+`show ip bgp summary` は FRR の `show bgp ipv4 unicast summary` を整形したものである。代表的な T1 ToR の構成では次のように 24 neighbor が並ぶ。
 
 ```text
 IPv4 Unicast Summary:
@@ -91,13 +91,13 @@ Neighbor       V     AS    MsgRcvd    MsgSent    TblVer    InQ    OutQ  Up/Down 
 Total number of neighbors 24
 ```
 
-[VRF](../../reference/glossary.md#term-vrf) 指定時（`show ip bgp summary vrf Vrf_red` 等）は `vrf-id` が 0 ではなく VRF の数値 ID になり、neighbor 集合も VRF スコープに限定されます。
+[VRF](../../reference/glossary.md#term-vrf) 指定時（`show ip bgp summary vrf Vrf_red` 等）は `vrf-id` が 0 ではなく VRF の数値 ID になり、neighbor 集合も VRF スコープに限定される。
 
 カラムの読み方:
 
-- `State/PfxRcd` は数値なら受信プレフィクス数で Established 相当、`Active` / `Idle` / `Connect` / `OpenSent` / `OpenConfirm` は未確立。`Active` が続くなら TCP 接続失敗、`OpenSent` で止まるなら capability 不一致を疑います。
-- `Up/Down` の `never` は一度も Established していない印。physical link / TCP / [ACL](../../reference/glossary.md#term-acl) / source IP / password を最初に疑います。
-- `MsgRcvd` / `MsgSent` が時間と比べて極端に偏っているなら片方向 update が偏在しています。policy で deny されている可能性があります。
+- `State/PfxRcd` は数値なら受信プレフィクス数で Established 相当、`Active` / `Idle` / `Connect` / `OpenSent` / `OpenConfirm` は未確立。`Active` が続くなら TCP 接続失敗、`OpenSent` で止まるなら capability 不一致を疑う。
+- `Up/Down` の `never` は一度も Established していない印。physical link / TCP / [ACL](../../reference/glossary.md#term-acl) / source IP / password を最初に疑う。
+- `MsgRcvd` / `MsgSent` が時間と比べて極端に偏っているなら片方向 update が偏在している。policy で deny されている可能性がある。
 
 ## 異常検出パターン
 
@@ -113,7 +113,7 @@ Total number of neighbors 24
 
 ## 典型的な FRR / SWSS ログサンプル
 
-FRR / bgpd の `Last reset reason` 系メッセージは syslog にも出ます。
+FRR / bgpd の `Last reset reason` 系メッセージは syslog にも出る。
 
 ```text
 bgpd[28]: %ADJCHANGE: neighbor 10.0.0.1(ARISTA01T2) in vrf default Up
@@ -131,7 +131,7 @@ orchagent: :- doTask: Failed to remove still referenced next hop 10.0.0.1 on Eth
 syncd: :- processQuadEvent: api SAI_API_ROUTE failed in syncd mode: SAI_STATUS_ITEM_ALREADY_EXISTS
 ```
 
-`SAI_STATUS_INSUFFICIENT_RESOURCES` が出る場合は LPM / NextHop / NHG のいずれかが枯渇しています。`crm` を確認します。
+`SAI_STATUS_INSUFFICIENT_RESOURCES` が出る場合は LPM / NextHop / NHG のいずれかが枯渇している。`crm` を確認する。
 
 ## 対応コマンド早見表
 
@@ -170,7 +170,7 @@ syncd: :- processQuadEvent: api SAI_API_ROUTE failed in syncd mode: SAI_STATUS_I
 
 ## 追加の show 出力例
 
-`show ip bgp neighbor 10.0.0.1` の主要部抜粋です。Established 確認時はまず `BGP state` と `Last reset` を見ます。
+`show ip bgp neighbor 10.0.0.1` の主要部抜粋である。Established 確認時はまず `BGP state` と `Last reset` を見る。
 
 ```text
 BGP neighbor is 10.0.0.1, remote AS 65200, local AS 65100, external link
@@ -195,15 +195,15 @@ BGP neighbor is 10.0.0.1, remote AS 65200, local AS 65100, external link
     Keepalives:          2074       2713
 ```
 
-`Last reset` 行が無いケースは初回 Established 維持中です。`Dropped` カウンタが増えている場合は session が一度落ちてから再確立されています。
+`Last reset` 行が無いケースは初回 Established 維持中である。`Dropped` カウンタが増えている場合は session が一度落ちてから再確立されている。
 
 ## 典型的な運用シナリオ
 
-1. **新規 peer 追加** — `config bgp ...` または [GCU](../../reference/glossary.md#term-gcu) patch で `BGP_NEIGHBOR` を追加し、`show ip bgp summary` で `Up/Down` が `never` から時刻に切り替わるかを観察します。`Active` のまま停滞するなら ACL / source IP / MD5 を疑います。
-2. **メンテナンスモード移行** — `sudo TSA`（Traffic Shift Away）で community-based route policy を切り替え、上流に低 LOCAL_PREF を広告して traffic を引き受けないようにしてから、debug や upgrade を行います。復旧は `sudo TSB`。
-3. **peer flap の調査** — `show ip bgp neighbor X` の `Dropped` と `Last reset reason` を見て、hold-timer expired か NOTIFICATION 受信か、TCP RST かを切り分けます。`bgpd` syslog の `%ADJCHANGE` の連続を時系列で並べると周期が見えます。
-4. **policy 変更後の収束確認** — `vtysh -c "clear ip bgp <ip> soft"` で再 advertise を促し、`received-routes` / `advertised-routes` 数の変化を見ます。`clear ip bgp *` は全 peer に影響するので避けます。
-5. **route leak 疑い** — VRF 内 BGP の `show ip bgp vrf <vrf>` と `show ip route vrf <vrf>` を突き合わせ、想定外の prefix がどの peer / route-map / import から来たかを調べます。`show bgp ipv4 unicast <prefix> bestpath` で attribute も確認します。
+1. **新規 peer 追加** — `config bgp ...` または [GCU](../../reference/glossary.md#term-gcu) patch で `BGP_NEIGHBOR` を追加し、`show ip bgp summary` で `Up/Down` が `never` から時刻に切り替わるかを観察する。`Active` のまま停滞するなら ACL / source IP / MD5 を疑う。
+2. **メンテナンスモード移行** — `sudo TSA`（Traffic Shift Away）で community-based route policy を切り替え、上流に低 LOCAL_PREF を広告して traffic を引き受けないようにしてから、debug や upgrade を行う。復旧は `sudo TSB`。
+3. **peer flap の調査** — `show ip bgp neighbor X` の `Dropped` と `Last reset reason` を見て、hold-timer expired か NOTIFICATION 受信か、TCP RST かを切り分ける。`bgpd` syslog の `%ADJCHANGE` の連続を時系列で並べると周期が見える。
+4. **policy 変更後の収束確認** — `vtysh -c "clear ip bgp <ip> soft"` で再 advertise を促し、`received-routes` / `advertised-routes` 数の変化を見る。`clear ip bgp *` は全 peer に影響するので避ける。
+5. **route leak 疑い** — VRF 内 BGP の `show ip bgp vrf <vrf>` と `show ip route vrf <vrf>` を突き合わせ、想定外の prefix がどの peer / route-map / import から来たかを調べる。`show bgp ipv4 unicast <prefix> bestpath` で attribute も確認する。
 
 ## 関連ページ
 
