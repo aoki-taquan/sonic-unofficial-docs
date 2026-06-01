@@ -176,7 +176,7 @@ flowchart LR
 | FNIC | Floating NIC |
 | CA / PA | Customer Address / Provider Address |
 | SLB | Software Load Balancer |
-| [MUX](../reference/glossary.md#term-mux) | Software MUX（SLB の trafic director） |
+| [MUX](../reference/glossary.md#term-mux) | Software MUX（SLB の traffic director） |
 
 ## 関連ページ
 
