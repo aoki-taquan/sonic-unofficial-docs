@@ -1193,14 +1193,14 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
 
 ## この一覧の更新方法
 
-本一覧は手で編集しません。エントリの追加・修正は次の経路で行ってください。
+本一覧は手で編集しない。エントリの追加・修正は次の経路で行う。
 
-1. **個別ページの修正で十分な場合**：対象ページの frontmatter `verification` / `monitor` / `last_verified` と、本文の「実装との乖離」セクション（または `!!! diff` admonition）を編集して PR を出してください。`gen_discrepancy_index.py` が次の再生成で自動的にエントリを更新します。
-2. **新規 discrepancy の報告**：HLD と実装の乖離を新しく見つけた場合は、対象ページに `verification: discrepancy-found` と `monitor: <subtype>` を付け、`.cache/sonic-sources/` を裏取りした根拠を「実装との乖離」セクションに記述してください。`monitor` subtype の選択基準は本ページ上部の表 `monitor subtype 別件数` の「意味」列を参照。
-3. **verifier バッチで一括処理する場合**：`meta/prompts/verifier.md` のロール定義に従って verifier サブエージェントを起動し、複数ページの裏取りを並列実行してください。`meta/queue/<area>-<slug>.json` の per-page queue を使うと並走衝突を避けられます。
-4. **本一覧 (`discrepancy-index.md`) の再生成**：`.venv/bin/python3 meta/scripts/gen_discrepancy_index.py` で再生成し、生成された差分を commit します。CI では `--check` モードで鮮度が検査されます（差分があると lint 落ちします）。
+1. **個別ページの修正で十分な場合**：対象ページの frontmatter `verification` / `monitor` / `last_verified` と、本文の「実装との乖離」セクション（または `!!! diff` admonition）を編集して PR を出す。`gen_discrepancy_index.py` が次の再生成で自動的にエントリを更新する。
+2. **新規 discrepancy の報告**：HLD と実装の乖離を新しく見つけた場合は、対象ページに `verification: discrepancy-found` と `monitor: <subtype>` を付け、`.cache/sonic-sources/` を裏取りした根拠を「実装との乖離」セクションに記述する。`monitor` subtype の選択基準は本ページ上部の表 `monitor subtype 別件数` の「意味」列を参照。
+3. **verifier バッチで一括処理する場合**：`meta/prompts/verifier.md` のロール定義に従って verifier サブエージェントを起動し、複数ページの裏取りを並列実行する。`meta/queue/<area>-<slug>.json` の per-page queue を使うと並走衝突を避けられる。
+4. **本一覧 (`discrepancy-index.md`) の再生成**：`.venv/bin/python3 meta/scripts/gen_discrepancy_index.py` で再生成し、生成された差分を commit する。CI では `--check` モードで鮮度が検査される（差分があると lint 落ちする）。
 
-issue / 議論は GitHub の Issues に投げてください。monitor subtype の分類に迷う場合は `meta/templates/SCHEMA.md` を参照してください。
+issue / 議論は GitHub の Issues に投げる。monitor subtype の分類に迷う場合は `meta/templates/SCHEMA.md` を参照のこと。
 
 ## 監査基準の取り扱い
 

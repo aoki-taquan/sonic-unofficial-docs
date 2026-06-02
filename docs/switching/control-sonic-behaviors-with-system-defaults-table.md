@@ -30,7 +30,7 @@ related:
 
 <!-- topics-tip -->
 !!! tip "Topics で読み物として読む"
-    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 01 章: SONiC 概要](../topics/01-overview/index.md) を参照。
+    この HLD は実装詳細を含む。機能の概念・設定・運用を読み物として読みたい場合は [Topics 01 章: SONiC 概要](../topics/01-overview/index.md) を参照。
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"

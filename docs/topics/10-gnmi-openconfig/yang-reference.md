@@ -1,7 +1,7 @@
 ---
 title: YANG リファレンス
-description: YANG リファレンス — このページは、機能章 (本書の章 01〜21) から YANG モジュールを逆引きするための索引である。SONiC
-  native YANG のページは docs/reference/yang/*.md に並んでおり、CONFIG_DB のテーブルスキーマと 1:1 対応する。
+description: YANG リファレンス — このページは、機能章 (本書の章 01〜21) から YANG モジュールを逆引きするための索引です。SONiC
+  native YANG のページは docs/reference/yang/*.md に並んでおり、CONFIG_DB のテーブルスキーマと 1:1 対応します。
 area: topics
 verification: meta
 last_verified: 2026-05-10

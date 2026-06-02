@@ -54,14 +54,14 @@ flowchart LR
 
 ## SAI 属性使用
 
-gNMI server は [SAI](../../reference/glossary.md#term-sai) 属性を直接触りません。代わりに `COUNTERS_DB` の counter（port / queue / PG / buffer pool）、`STATE_DB` の運用状態を**読み取り側**として参照します。SAI 属性は `flexcounter` が裏で populate しています（→ 08 章 / 20 章）。
+gNMI server は [SAI](../../reference/glossary.md#term-sai) 属性を直接触らない。代わりに `COUNTERS_DB` の counter（port / queue / PG / buffer pool）、`STATE_DB` の運用状態を**読み取り側**として参照する。SAI 属性は `flexcounter` が裏で populate している（→ 08 章 / 20 章）。
 
 書き込み側で gNMI SET から SAI に到達する経路は:
 
 1. `gnmi SET` → translib transformer → `CONFIG_DB`
 2. `CONFIG_DB` 変更 → `*mgrd` / `orchagent` → SAI
 
-であり、gNMI server から直接 [ASIC_DB](../../reference/glossary.md#term-asic_db) を叩く経路はありません。
+であり、gNMI server から直接 [ASIC_DB](../../reference/glossary.md#term-asic_db) を叩く経路は無い。
 
 ## Redis テーブル参照関係
 
@@ -74,26 +74,26 @@ gNMI Path                                Redis target
 counters subtree                       ─>  COUNTERS_DB:COUNTERS:<oid>
 ```
 
-SUBSCRIBE は target が `STATE_DB` か `COUNTERS_DB` かによって on_change（keyspace notifications）と sample（poll）を選びます。OpenConfig path の場合、transformer が複数 DB をまたぐためにキャッシュ + 仮想的な change-set を作って notify します。
+SUBSCRIBE は target が `STATE_DB` か `COUNTERS_DB` かによって on_change（keyspace notifications）と sample（poll）を選ぶ。OpenConfig path の場合、transformer が複数 DB をまたぐためにキャッシュ + 仮想的な change-set を作って notify する。
 
 ## ZMQ / Redis pub/sub の使用
 
-- **Redis keyspace notifications**（`__keyspace@*__`）を gNMI server が subscribe して on_change を出します。
-- **ZMQ**: GNMIGet / GNMISet の一部経路で、[orchagent](../../reference/glossary.md#term-orchagent) との直結 RPC を行う実装が追加されました（`gnmi-native-write` 系の [HLD](../../reference/glossary.md#term-hld)）。これにより CONFIG_DB を経由しない write が一部のテーブルで可能です。
+- **Redis keyspace notifications**（`__keyspace@*__`）を gNMI server が subscribe して on_change を出す。
+- **ZMQ**: GNMIGet / GNMISet の一部経路で、[orchagent](../../reference/glossary.md#term-orchagent) との直結 RPC を行う実装が追加された（`gnmi-native-write` 系の [HLD](../../reference/glossary.md#term-hld)）。これにより CONFIG_DB を経由しない write が一部のテーブルで可能である。
 - **dial-out**: collector への gRPC push（poll/on_change の結果）。
-- gNOI の `Reboot` / `Ping` 等は **host service**（`sonic-host-service`）に DBus / Unix socket で投げ、root 権限の操作はコンテナ外で行います。
+- gNOI の `Reboot` / `Ping` 等は **host service**（`sonic-host-service`）に DBus / Unix socket で投げ、root 権限の操作はコンテナ外で行う。
 
 ## 既知の実装上の制約
 
-- OpenConfig path は `transformer` が個別に実装する必要があり、未実装の path は SET / GET が NotFound になります。すべての OC モジュールが網羅されているわけではありません。
-- gNMI Set の transaction 境界は単一 SetRequest 内のみ。複数 path で一部失敗すると rollback ロジックがあるが、CONFIG_DB に書き込んだ後の orchagent / SAI 反映を待たないため、SET が成功しても [ASIC](../../reference/glossary.md#term-asic) への反映までは別の subscribe で確認する必要があります。
-- TLS 設定は `DEVICE_METADATA` 系ではなく `GNMI` / `TELEMETRY_CLIENT` テーブルで管理し、CONFIG_DB の `TELEMETRY|gnmi` などのキー構造で証明書パスを指定します。CLI/UI が `config gnmi` 系で揃っていない箇所がある点に注意です。
-- gNSI の certz は `sonic-host-service` に証明書ローテーションを依頼する経路で、OS 側 `/etc/sonic/telemetry/` のファイル更新まで含めて atomicity を担保する設計です（途中失敗で telemetry が起動できなくなる事故が過去 issue にあります）。
-- Subscribe の `sample` mode で interval を極端に短く（例: 100ms）すると、counter 読み出し（flexcounter polling は通常 10s）と整合せず、同じ値を返し続けることがあります。
+- OpenConfig path は `transformer` が個別に実装する必要があり、未実装の path は SET / GET が NotFound になる。すべての OC モジュールが網羅されているわけではない。
+- gNMI Set の transaction 境界は単一 SetRequest 内のみ。複数 path で一部失敗すると rollback ロジックがあるが、CONFIG_DB に書き込んだ後の orchagent / SAI 反映を待たないため、SET が成功しても [ASIC](../../reference/glossary.md#term-asic) への反映までは別の subscribe で確認する必要がある。
+- TLS 設定は `DEVICE_METADATA` 系ではなく `GNMI` / `TELEMETRY_CLIENT` テーブルで管理し、CONFIG_DB の `TELEMETRY|gnmi` などのキー構造で証明書パスを指定する。CLI/UI が `config gnmi` 系で揃っていない箇所がある点に注意。
+- gNSI の certz は `sonic-host-service` に証明書ローテーションを依頼する経路で、OS 側 `/etc/sonic/telemetry/` のファイル更新まで含めて atomicity を担保する設計である（途中失敗で telemetry が起動できなくなる事故が過去 issue にある）。
+- Subscribe の `sample` mode で interval を極端に短く（例: 100ms）すると、counter 読み出し（flexcounter polling は通常 10s）と整合せず、同じ値を返し続けることがある。
 
 ## 認証 / 認可の内部経路
 
-gNMI server の認証は CONFIG_DB の `TELEMETRY` / `GNMI` / `TELEMETRY_CLIENT` テーブルを起点に、複数経路で行われます。
+gNMI server の認証は CONFIG_DB の `TELEMETRY` / `GNMI` / `TELEMETRY_CLIENT` テーブルを起点に、複数経路で行われる。
 
 | 認証方式 | 入口 | 確認先 |
 | --- | --- | --- |
@@ -102,17 +102,17 @@ gNMI server の認証は CONFIG_DB の `TELEMETRY` / `GNMI` / `TELEMETRY_CLIENT`
 | `cert_username` | TLS CN / SAN | gNSI authz policy で確認 |
 | JWT | gRPC metadata | `gnsi/authz` の policy 評価 |
 
-`gnsi/authz` の policy は protobuf テキストで、`SetRequest` の rotate API でローテーションする設計です。policy が壊れていると gNMI 自体が起動できない fail-closed 設計です。
+`gnsi/authz` の policy は protobuf テキストで、`SetRequest` の rotate API でローテーションする設計である。policy が壊れていると gNMI 自体が起動できない fail-closed 設計である。
 
 ## 性能観点
 
-- **subscribe sample interval** の下限は flexcounter polling と整合させるのが安全で、port counter は 10s、queue / PG は 10s、buffer pool は 60s が標準です。100ms 等は無意味（同じ値を返す）です。
-- **GET の最大サブツリー深さ**には実質制限が無く、`/interfaces` 全体を 1 度に取ると数千 OID の Redis 読み出しが直列で走り、数秒〜数十秒かかります。client 側でリスト要素を絞るのが定石です。
-- **dial-out** は collector への gRPC で [QoS](../../reference/glossary.md#term-qos) / retry の制御が薄く、collector 側がオフラインのときに gNMI server のメモリが膨らむ報告があります。`TELEMETRY_CLIENT` の `queue_size` で抑えます。
+- **subscribe sample interval** の下限は flexcounter polling と整合させるのが安全で、port counter は 10s、queue / PG は 10s、buffer pool は 60s が標準である。100ms 等は無意味（同じ値を返す）。
+- **GET の最大サブツリー深さ**には実質制限が無く、`/interfaces` 全体を 1 度に取ると数千 OID の Redis 読み出しが直列で走り、数秒〜数十秒かかる。client 側でリスト要素を絞るのが定石である。
+- **dial-out** は collector への gRPC で [QoS](../../reference/glossary.md#term-qos) / retry の制御が薄く、collector 側がオフラインのときに gNMI server のメモリが膨らむ報告がある。`TELEMETRY_CLIENT` の `queue_size` で抑える。
 
 ## translib transformer の責務分担
 
-`translib/transformer/` 配下の per-module ファイル（`xfmr_<module>.go`）は、OpenConfig YANG path を SONiC YANG path に変換する mapping を提供します。
+`translib/transformer/` 配下の per-module ファイル（`xfmr_<module>.go`）は、OpenConfig YANG path を SONiC YANG path に変換する mapping を提供する。
 
 | transformer | 対象 |
 | --- | --- |
@@ -122,11 +122,11 @@ gNMI server の認証は CONFIG_DB の `TELEMETRY` / `GNMI` / `TELEMETRY_CLIENT`
 | `xfmr_qos.go` | `/openconfig-qos` ↔ `QUEUE` / `SCHEDULER` / `WRED_PROFILE` |
 | `xfmr_system.go` | `/openconfig-system` ↔ `DEVICE_METADATA` / `SYSLOG` / etc |
 
-未実装の transformer がある OC path に対して GET / SET を投げると、translib 層で `NotFound` を返す動作で、HLD と実装の乖離が出やすいポイントです。
+未実装の transformer がある OC path に対して GET / SET を投げると、translib 層で `NotFound` を返す動作で、HLD と実装の乖離が出やすいポイントである。
 
 ## GNMIGet (ZMQ direct write) 経路
 
-`gnmi-native-write` 系の改善で、いくつかのテーブル（`DASH_*` 系、`APP_DB:GENERIC_CONFIG_UPDATER_TABLE` 等）は GNMISet → orchagent の **ZMQ endpoint** に直接届く経路が追加されました。これにより CONFIG_DB を経由しないため、CONFIG_DB rewrite race / 大量更新時の Redis 単一スレッド bottleneck を回避できます。
+`gnmi-native-write` 系の改善で、いくつかのテーブル（`DASH_*` 系、`APP_DB:GENERIC_CONFIG_UPDATER_TABLE` 等）は GNMISet → orchagent の **ZMQ endpoint** に直接届く経路が追加された。これにより CONFIG_DB を経由しないため、CONFIG_DB rewrite race / 大量更新時の Redis 単一スレッド bottleneck を回避できる。
 
 | 項目 | 通常経路 | ZMQ direct |
 | --- | --- | --- |
@@ -135,7 +135,7 @@ gNMI server の認証は CONFIG_DB の `TELEMETRY` / `GNMI` / `TELEMETRY_CLIENT`
 | Failure feedback | STATE_DB から間接的 | gNMI response に直接 |
 | 対象 | 全テーブル | [DASH](../../reference/glossary.md#term-dash) 等の opt-in テーブルのみ |
 
-CONFIG_DB を bypass するため、`config save` / `config reload` の永続化対象には入りません。再起動後に再投入する責任は外部 controller 側にあります。
+CONFIG_DB を bypass するため、`config save` / `config reload` の永続化対象には入らない。再起動後に再投入する責任は外部 controller 側にある。
 
 ## 関連ページ
 

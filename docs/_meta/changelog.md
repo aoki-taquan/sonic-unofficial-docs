@@ -2,7 +2,7 @@
 title: 変更履歴
 description: "変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。"
 verification: meta
-last_verified: 2026-06-01
+last_verified: 2026-06-02
 tags:
   - changelog
   - meta
@@ -20,6 +20,12 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 各エントリの形式は `- YYYY-MM-DD #N <title> [labels]` です。
 
 集計対象: 500 PR
+
+## 2026-06
+
+- 2026-06-01 #5089 chore(typos): remove redundant short-fragment extend-words + fix 3 trafic typos
+- 2026-06-01 #5087 ci(lychee): restore RFC URL checks (datatracker / rfc-editor)
+- 2026-06-01 #5088 ci: promote heading-hierarchy check to strict (fix ntp.md)
 
 ## 2026-05
 
@@ -520,7 +526,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3891 docs(config-db): add Phase C cross-refs block to NVGRE_TUNNEL
 - 2026-05-19 #3890 docs(config-db): add Phase D failure-behavior block to TC_TO_DSCP_MAP
 - 2026-05-19 #3889 docs(config-db): add Phase D failure block to mux-cable-port page
-- 2026-05-19 #3888 docs(config-db): add Phase E hardcoded-constants block to STP page
-- 2026-05-19 #3885 docs(config-db): add Phase D failure-behavior block to zmq page
-- 2026-05-19 #3886 docs(config-db): add Phase F side-effects block to gnmi-state page
 

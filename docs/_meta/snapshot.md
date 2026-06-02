@@ -2,7 +2,7 @@
 title: スナップショット
 area: meta
 verification: meta
-last_verified: 2026-06-01
+last_verified: 2026-06-02
 sources: []
 ---
 
@@ -31,7 +31,7 @@ sources: []
 
 ## last_verified 鮮度
 
-基準日 **2026-06-01**。
+基準日 **2026-06-02**。
 
 | バケツ | 件数 |
 |---|---:|
