@@ -243,7 +243,7 @@ Ethernet0     1234              template3
 | 症状 | 原因 | 対処 |
 |---|---|---|
 | `SRV6_MY_SIDS` を入れても FRR に降りない | `bgpcfgd` 側で SRv6Mgr が無効 / FRR バージョンが古い | `docker logs bgp` で `SRv6Mgr` のログを確認、FRR 9.x 以上が必要 |
-| `End.DT46` SID で trafic が drop される | `vrf` 指定の typo、または [VRF](../../reference/glossary.md#term-vrf) が未作成 | `show vrf`、`sonic-db-cli CONFIG_DB HGETALL VRF\|Vrf01` を確認 |
+| `End.DT46` SID で traffic が drop される | `vrf` 指定の typo、または [VRF](../../reference/glossary.md#term-vrf) が未作成 | `show vrf`、`sonic-db-cli CONFIG_DB HGETALL VRF\|Vrf01` を確認 |
 | `config interface mpls enable` が `Not supported on platform` | SAI capability に MPLS なし | `show platform syseeprom` / `sai_redis_record` で `SAI_OBJECT_TYPE_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` をチェック |
 | MPLS_TC_TO_TC_MAP 設定後も DSCP マップ動作のまま | `PORT_QOS_MAP|<port>` で `mpls_tc_to_tc_map` を未参照 | 当該 port の `PORT_QOS_MAP` 行を確認 |
 | Path Tracing で MCD が刻まれない | [ASIC](../../reference/glossary.md#term-asic) が Path Tracing 未対応、または FEC / speed 不一致 | capability、`sairedis.rec` のエラーを確認 |

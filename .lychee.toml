@@ -40,9 +40,6 @@ exclude = [
     "^https?://(www\\.)?example\\.(com|org|net)",
     # GitHub の rate-limit 重い API URL（lychee は HTML を fetch するので API URL は対象外でよい）
     "^https://api\\.github\\.com",
-    # rfc-editor.org は厳しい rate limit を持つ。informational なので skip。
-    "^https?://(www\\.)?rfc-editor\\.org",
-    "^https?://datatracker\\.ietf\\.org",
     # placeholder
     "^<.*>$",
     "^TBD",
