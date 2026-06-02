@@ -164,6 +164,9 @@ extend-exclude = [
     "meta/built-links-report.md",
     "meta/discrepancy-related-yang-report.md",
     "meta/frontmatter-lint-report*.md",
+    # 自動生成 changelog (git log 由来)。merge 済 PR のタイトルに上流 typo や
+    # 引用された typo (例: 'trafic typos' 修正 PR のタイトル) が含まれるため除外。
+    "docs/_meta/changelog.md",
     # GitHub issue タイトル一覧テーブル。タイトル末尾が cell 幅で切られて
     # truncated word が大量に出るため、ファイル単位で除外。
     "meta/_intermediate/issues/_decisions/*.md",
