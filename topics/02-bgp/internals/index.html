@@ -36313,7 +36313,7 @@
 </tr>
 </tbody>
 </table>
-<p>PIC は member weight の hot update に依存するため、ベンダ SAI 側で WEIGHT のホットスワップが SAI_STATUS_SUCCESS で返るかが分かれ目になります。<code>offloaded</code> feedback も同じく ASIC 側の <code>ROUTE_ENTRY</code> 設置完了通知に依存します。</p>
+<p>PIC は member weight の hot update に依存するため、ベンダ SAI 側で WEIGHT のホットスワップが SAI_STATUS_SUCCESS で返るかが分かれ目になる。<code>offloaded</code> feedback も同じく ASIC 側の <code>ROUTE_ENTRY</code> 設置完了通知に依存する。</p>
 <h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">CONFIG_DB</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">BGP_NEIGHBOR, BGP_PEER_RANGE, BGP_INTERNAL_NEIGHBOR,</span>
@@ -36326,12 +36326,12 @@
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nt">ASIC_DB</span><span class="p">:</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">ROUTE_ENTRY, NEXT_HOP, NEXT_HOP_GROUP, NEXT_HOP_GROUP_MEMBER</span>
 </span></code></pre></div>
-<p><code>bgpcfgd</code> は CONFIG_DB の更新を subscribe するときに <code>BGP_PEER_RANGE</code> 単位で diff を取り、FRR <a href="../../../reference/glossary/#term-vtysh">vtysh</a> に<strong>追加/削除コマンド単位</strong>で投入するため、frr.conf 全体を再書き出しせずに済みます。</p>
+<p><code>bgpcfgd</code> は CONFIG_DB の更新を subscribe するときに <code>BGP_PEER_RANGE</code> 単位で diff を取り、FRR <a href="../../../reference/glossary/#term-vtysh">vtysh</a> に<strong>追加/削除コマンド単位</strong>で投入するため、frr.conf 全体を再書き出しせずに済む。</p>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
-<li>BGP 系で <strong>ZMQ は使われません</strong>。fpmsyncd → APPL_DB → orchagent の経路はすべて Redis pub/sub と <a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> です。</li>
-<li>Loading Optimization では fpmsyncd 側の Redis pipeline flush と orchagent 側の ring buffer（<code>gRingBuffer</code>）+ assistant thread で大量 route 投入の throughput を上げます（→ <a href="../../04-vrf-ecmp/">VRF/ECMP 章</a> 参照）。</li>
-<li><code>bgpd</code> は <code>fpm</code> socket（TCP localhost:2620）で zebra と通信し、Redis を介しません。</li>
+<li>BGP 系で <strong>ZMQ は使われない</strong>。fpmsyncd → APPL_DB → orchagent の経路はすべて Redis pub/sub と <a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a>。</li>
+<li>Loading Optimization では fpmsyncd 側の Redis pipeline flush と orchagent 側の ring buffer（<code>gRingBuffer</code>）+ assistant thread で大量 route 投入の throughput を上げる（→ <a href="../../04-vrf-ecmp/">VRF/ECMP 章</a> 参照）。</li>
+<li><code>bgpd</code> は <code>fpm</code> socket（TCP localhost:2620）で zebra と通信し、Redis を介さない。</li>
 </ul>
 <h2 id="route-loading">大量 route loading<a class="headerlink" href="#route-loading" title="Permanent link">&para;</a></h2>
 <p>BGP Loading Optimization は、BGP 自体の best path 計算ではなく、<a href="../../../reference/glossary/#term-sonic">SONiC</a> に route が流れ込んだ後の処理量を減らす。fpmsyncd の Redis pipeline flush、orchagent の ring buffer/assistant thread、sairedis async 化が主な論点である。小規模経路の即時性と大量経路の throughput のバランスが設計上の注意点になる。詳細は <a href="../../../routing/bgp-loading-optimization-for-sonic/">BGP Loading Optimization</a> を参照する。</p>
@@ -36344,14 +36344,14 @@
 <p>dynamic peer modification は、peer range や dynamic peer の変更時に FRR container 全体を大きく揺らさず、bgpcfgd が追加/削除用 template を使って反映する設計である。STATE_DB の <code>BGP_PEER_CONFIGURED_TABLE</code> により、どの dynamic peer が構成済みかを管理する。頻繁に peer が増減する fabric では、設定反映の粒度と既存 session への影響を確認する。</p>
 <h2 id="_4">既知の実装上の制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Suppress FIB Pending</strong> は ASIC からの <code>offloaded</code> フィードバックが前提で、ベンダ <a href="../../../reference/glossary/#term-syncd">syncd</a> が <code>STATE_DB.ROUTE_TABLE.offloaded</code> を更新しない場合は永続的に suppress 状態のままになります。FRR の <code>show bgp suppress-fib-pending</code> で詰まった prefix を確認する必要があります。</li>
-<li><strong>BGP PIC</strong> は ASIC 側で <code>NEXT_HOP_GROUP_MEMBER</code> の weight 動的更新がサポートされている前提です。member 単位の差し替えしか提供しないベンダ ASIC では PIC の benefit が出ません。</li>
-<li><strong>bgpcfgd の jinja2 template</strong> は SONiC 標準 <code>bgpd.main.conf.j2</code> 系を基準にしており、外部のカスタム template を差し込むと dynamic peer modification が partial update ではなく全 reload に劣化することがあります。</li>
-<li><strong>graceful restart / warm restart</strong> は FRR 側で実装されていますが、SONiC の warm-reboot framework (<code>WARM_RESTART_TABLE|bgp</code>) と必ずしも完全に同期しないため、reconcile timeout を CONFIG_DB の <code>WARM_RESTART</code> で十分に確保する必要があります（→ <a href="../../11-reboot/">Reboot 章</a>）。</li>
-<li><strong>大量経路投入時</strong> は orchagent の単一スレッド処理が bottleneck になりやすく、ring buffer / assistant thread の有効化が前提です。<code>gBufferOrchEnabled</code> 系のビルドフラグで挙動が変わります。</li>
+<li><strong>Suppress FIB Pending</strong> は ASIC からの <code>offloaded</code> フィードバックが前提で、ベンダ <a href="../../../reference/glossary/#term-syncd">syncd</a> が <code>STATE_DB.ROUTE_TABLE.offloaded</code> を更新しない場合は永続的に suppress 状態のままになる。FRR の <code>show bgp suppress-fib-pending</code> で詰まった prefix を確認する必要がある。</li>
+<li><strong>BGP PIC</strong> は ASIC 側で <code>NEXT_HOP_GROUP_MEMBER</code> の weight 動的更新がサポートされている前提。member 単位の差し替えしか提供しないベンダ ASIC では PIC の benefit が出ない。</li>
+<li><strong>bgpcfgd の jinja2 template</strong> は SONiC 標準 <code>bgpd.main.conf.j2</code> 系を基準にしており、外部のカスタム template を差し込むと dynamic peer modification が partial update ではなく全 reload に劣化することがある。</li>
+<li><strong>graceful restart / warm restart</strong> は FRR 側で実装されているが、SONiC の warm-reboot framework (<code>WARM_RESTART_TABLE|bgp</code>) と必ずしも完全に同期しないため、reconcile timeout を CONFIG_DB の <code>WARM_RESTART</code> で十分に確保する必要がある（→ <a href="../../11-reboot/">Reboot 章</a>）。</li>
+<li><strong>大量経路投入時</strong> は orchagent の単一スレッド処理が bottleneck になりやすく、ring buffer / assistant thread の有効化が前提。<code>gBufferOrchEnabled</code> 系のビルドフラグで挙動が変わる。</li>
 </ul>
 <h2 id="bgpcfgd-manager">bgpcfgd の manager 構成<a class="headerlink" href="#bgpcfgd-manager" title="Permanent link">&para;</a></h2>
-<p>bgpcfgd は単一プロセス内で複数 manager を並べ、CONFIG_DB の各テーブルを subscribe します。<code>src/sonic-bgpcfgd/bgpcfgd/managers_*.py</code> の構成は以下のとおりです。</p>
+<p>bgpcfgd は単一プロセス内で複数 manager を並べ、CONFIG_DB の各テーブルを subscribe する。<code>src/sonic-bgpcfgd/bgpcfgd/managers_*.py</code> の構成は以下のとおり。</p>
 <table>
 <thead>
 <tr>
@@ -36393,7 +36393,7 @@
 </tr>
 </tbody>
 </table>
-<p>全 manager は共通の <code>cfgmgr.run()</code> ループ上で動き、CONFIG_DB の変更を 1 トランザクション分まとめてから vtysh へ投げる設計です。これが「peer 1 件追加で frr.conf 全体を rewrite しない」根拠で、dynamic peer modification の partial update もこの粒度に依存します。</p>
+<p>全 manager は共通の <code>cfgmgr.run()</code> ループ上で動き、CONFIG_DB の変更を 1 トランザクション分まとめてから vtysh へ投げる設計である。これが「peer 1 件追加で frr.conf 全体を rewrite しない」根拠で、dynamic peer modification の partial update もこの粒度に依存する。</p>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/bgp-loading-optimization-for-sonic/">BGP Loading Optimization</a></li>

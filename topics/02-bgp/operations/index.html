@@ -36209,7 +36209,7 @@
 <h2 id="ciscobgp4mib-state_db">CiscoBgp4MIB はなぜ STATE_DB 経由か<a class="headerlink" href="#ciscobgp4mib-state_db" title="Permanent link">&para;</a></h2>
 <p>CiscoBgp4MIB は SNMP から BGP neighbor 情報を見せるための互換面である。旧設計のように SNMP 実装が FRR の VTY socket に直接依存すると、daemon 間結合が強い。<a href="../../../reference/glossary/#term-state_db">STATE_DB</a> 経由化では <code>bgpmon</code> が FRR から情報を収集し、<code>NEIGH_STATE_TABLE</code> に書き、SNMP 側は DB を読む。運用上は、SNMP に出ない場合に FRR、bgpmon、STATE_DB、snmp_ax_impl のどこで止まっているかを分けて確認できる。</p>
 <h2 id="show-bgp-summary">show bgp summary の出力サンプル<a class="headerlink" href="#show-bgp-summary" title="Permanent link">&para;</a></h2>
-<p><code>show ip bgp summary</code> は FRR の <code>show bgp ipv4 unicast summary</code> を整形したものです。代表的な T1 ToR の構成では次のように 24 neighbor が並びます。</p>
+<p><code>show ip bgp summary</code> は FRR の <code>show bgp ipv4 unicast summary</code> を整形したものである。代表的な T1 ToR の構成では次のように 24 neighbor が並ぶ。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>IPv4 Unicast Summary:
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>BGP router identifier 10.1.0.32, local AS number 65100 vrf-id 0
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>BGP table version 12811
@@ -36227,12 +36227,12 @@
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>...
 </span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>Total number of neighbors 24
 </span></code></pre></div>
-<p><a href="../../../reference/glossary/#term-vrf">VRF</a> 指定時（<code>show ip bgp summary vrf Vrf_red</code> 等）は <code>vrf-id</code> が 0 ではなく VRF の数値 ID になり、neighbor 集合も VRF スコープに限定されます。</p>
+<p><a href="../../../reference/glossary/#term-vrf">VRF</a> 指定時（<code>show ip bgp summary vrf Vrf_red</code> 等）は <code>vrf-id</code> が 0 ではなく VRF の数値 ID になり、neighbor 集合も VRF スコープに限定される。</p>
 <p>カラムの読み方:</p>
 <ul>
-<li><code>State/PfxRcd</code> は数値なら受信プレフィクス数で Established 相当、<code>Active</code> / <code>Idle</code> / <code>Connect</code> / <code>OpenSent</code> / <code>OpenConfirm</code> は未確立。<code>Active</code> が続くなら TCP 接続失敗、<code>OpenSent</code> で止まるなら capability 不一致を疑います。</li>
-<li><code>Up/Down</code> の <code>never</code> は一度も Established していない印。physical link / TCP / <a href="../../../reference/glossary/#term-acl">ACL</a> / source IP / password を最初に疑います。</li>
-<li><code>MsgRcvd</code> / <code>MsgSent</code> が時間と比べて極端に偏っているなら片方向 update が偏在しています。policy で deny されている可能性があります。</li>
+<li><code>State/PfxRcd</code> は数値なら受信プレフィクス数で Established 相当、<code>Active</code> / <code>Idle</code> / <code>Connect</code> / <code>OpenSent</code> / <code>OpenConfirm</code> は未確立。<code>Active</code> が続くなら TCP 接続失敗、<code>OpenSent</code> で止まるなら capability 不一致を疑う。</li>
+<li><code>Up/Down</code> の <code>never</code> は一度も Established していない印。physical link / TCP / <a href="../../../reference/glossary/#term-acl">ACL</a> / source IP / password を最初に疑う。</li>
+<li><code>MsgRcvd</code> / <code>MsgSent</code> が時間と比べて極端に偏っているなら片方向 update が偏在している。policy で deny されている可能性がある。</li>
 </ul>
 <h2 id="_3">異常検出パターン<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
@@ -36282,7 +36282,7 @@
 </tbody>
 </table>
 <h2 id="frr-swss">典型的な FRR / SWSS ログサンプル<a class="headerlink" href="#frr-swss" title="Permanent link">&para;</a></h2>
-<p>FRR / bgpd の <code>Last reset reason</code> 系メッセージは syslog にも出ます。</p>
+<p>FRR / bgpd の <code>Last reset reason</code> 系メッセージは syslog にも出る。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>bgpd[28]: %ADJCHANGE: neighbor 10.0.0.1(ARISTA01T2) in vrf default Up
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>bgpd[28]: %NOTIFICATION: sent to neighbor 10.0.0.1 4/0 (Hold Timer Expired) 0 bytes
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>bgpd[28]: %ADJCHANGE: neighbor 10.0.0.1(ARISTA01T2) in vrf default Down BGP Notification send
@@ -36294,7 +36294,7 @@
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>orchagent: :- doTask: Failed to remove still referenced next hop 10.0.0.1 on Ethernet0
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>syncd: :- processQuadEvent: api SAI_API_ROUTE failed in syncd mode: SAI_STATUS_ITEM_ALREADY_EXISTS
 </span></code></pre></div>
-<p><code>SAI_STATUS_INSUFFICIENT_RESOURCES</code> が出る場合は LPM / NextHop / NHG のいずれかが枯渇しています。<code>crm</code> を確認します。</p>
+<p><code>SAI_STATUS_INSUFFICIENT_RESOURCES</code> が出る場合は LPM / NextHop / NHG のいずれかが枯渇している。<code>crm</code> を確認する。</p>
 <h2 id="_4">対応コマンド早見表<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36373,7 +36373,7 @@
 <li>Dual-ToR 上流 BGP の BFD offload: <a href="../../05-dual-tor/operations/">Dual-ToR 章 運用</a>。</li>
 </ul>
 <h2 id="show">追加の show 出力例<a class="headerlink" href="#show" title="Permanent link">&para;</a></h2>
-<p><code>show ip bgp neighbor 10.0.0.1</code> の主要部抜粋です。Established 確認時はまず <code>BGP state</code> と <code>Last reset</code> を見ます。</p>
+<p><code>show ip bgp neighbor 10.0.0.1</code> の主要部抜粋である。Established 確認時はまず <code>BGP state</code> と <code>Last reset</code> を見る。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>BGP neighbor is 10.0.0.1, remote AS 65200, local AS 65100, external link
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  Description: ARISTA01T2
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  BGP version 4, remote router ID 10.1.0.1
@@ -36395,14 +36395,14 @@
 </span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>    Updates:              641       3204
 </span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>    Keepalives:          2074       2713
 </span></code></pre></div>
-<p><code>Last reset</code> 行が無いケースは初回 Established 維持中です。<code>Dropped</code> カウンタが増えている場合は session が一度落ちてから再確立されています。</p>
+<p><code>Last reset</code> 行が無いケースは初回 Established 維持中である。<code>Dropped</code> カウンタが増えている場合は session が一度落ちてから再確立されている。</p>
 <h2 id="_6">典型的な運用シナリオ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>新規 peer 追加</strong> — <code>config bgp ...</code> または <a href="../../../reference/glossary/#term-gcu">GCU</a> patch で <code>BGP_NEIGHBOR</code> を追加し、<code>show ip bgp summary</code> で <code>Up/Down</code> が <code>never</code> から時刻に切り替わるかを観察します。<code>Active</code> のまま停滞するなら ACL / source IP / MD5 を疑います。</li>
-<li><strong>メンテナンスモード移行</strong> — <code>sudo TSA</code>（Traffic Shift Away）で community-based route policy を切り替え、上流に低 LOCAL_PREF を広告して traffic を引き受けないようにしてから、debug や upgrade を行います。復旧は <code>sudo TSB</code>。</li>
-<li><strong>peer flap の調査</strong> — <code>show ip bgp neighbor X</code> の <code>Dropped</code> と <code>Last reset reason</code> を見て、hold-timer expired か NOTIFICATION 受信か、TCP RST かを切り分けます。<code>bgpd</code> syslog の <code>%ADJCHANGE</code> の連続を時系列で並べると周期が見えます。</li>
-<li><strong>policy 変更後の収束確認</strong> — <code>vtysh -c "clear ip bgp &lt;ip&gt; soft"</code> で再 advertise を促し、<code>received-routes</code> / <code>advertised-routes</code> 数の変化を見ます。<code>clear ip bgp *</code> は全 peer に影響するので避けます。</li>
-<li><strong>route leak 疑い</strong> — VRF 内 BGP の <code>show ip bgp vrf &lt;vrf&gt;</code> と <code>show ip route vrf &lt;vrf&gt;</code> を突き合わせ、想定外の prefix がどの peer / route-map / import から来たかを調べます。<code>show bgp ipv4 unicast &lt;prefix&gt; bestpath</code> で attribute も確認します。</li>
+<li><strong>新規 peer 追加</strong> — <code>config bgp ...</code> または <a href="../../../reference/glossary/#term-gcu">GCU</a> patch で <code>BGP_NEIGHBOR</code> を追加し、<code>show ip bgp summary</code> で <code>Up/Down</code> が <code>never</code> から時刻に切り替わるかを観察する。<code>Active</code> のまま停滞するなら ACL / source IP / MD5 を疑う。</li>
+<li><strong>メンテナンスモード移行</strong> — <code>sudo TSA</code>（Traffic Shift Away）で community-based route policy を切り替え、上流に低 LOCAL_PREF を広告して traffic を引き受けないようにしてから、debug や upgrade を行う。復旧は <code>sudo TSB</code>。</li>
+<li><strong>peer flap の調査</strong> — <code>show ip bgp neighbor X</code> の <code>Dropped</code> と <code>Last reset reason</code> を見て、hold-timer expired か NOTIFICATION 受信か、TCP RST かを切り分ける。<code>bgpd</code> syslog の <code>%ADJCHANGE</code> の連続を時系列で並べると周期が見える。</li>
+<li><strong>policy 変更後の収束確認</strong> — <code>vtysh -c "clear ip bgp &lt;ip&gt; soft"</code> で再 advertise を促し、<code>received-routes</code> / <code>advertised-routes</code> 数の変化を見る。<code>clear ip bgp *</code> は全 peer に影響するので避ける。</li>
+<li><strong>route leak 疑い</strong> — VRF 内 BGP の <code>show ip bgp vrf &lt;vrf&gt;</code> と <code>show ip route vrf &lt;vrf&gt;</code> を突き合わせ、想定外の prefix がどの peer / route-map / import から来たかを調べる。<code>show bgp ipv4 unicast &lt;prefix&gt; bestpath</code> で attribute も確認する。</li>
 </ol>
 <h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>

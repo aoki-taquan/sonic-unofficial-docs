@@ -36181,13 +36181,13 @@
 </tbody>
 </table>
 <h2 id="sai">SAI 属性使用<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h2>
-<p>gNMI server は <a href="../../../reference/glossary/#term-sai">SAI</a> 属性を直接触りません。代わりに <code>COUNTERS_DB</code> の counter（port / queue / PG / buffer pool）、<code>STATE_DB</code> の運用状態を<strong>読み取り側</strong>として参照します。SAI 属性は <code>flexcounter</code> が裏で populate しています（→ 08 章 / 20 章）。</p>
+<p>gNMI server は <a href="../../../reference/glossary/#term-sai">SAI</a> 属性を直接触らない。代わりに <code>COUNTERS_DB</code> の counter（port / queue / PG / buffer pool）、<code>STATE_DB</code> の運用状態を<strong>読み取り側</strong>として参照する。SAI 属性は <code>flexcounter</code> が裏で populate している（→ 08 章 / 20 章）。</p>
 <p>書き込み側で gNMI SET から SAI に到達する経路は:</p>
 <ol>
 <li><code>gnmi SET</code> → translib transformer → <code>CONFIG_DB</code></li>
 <li><code>CONFIG_DB</code> 変更 → <code>*mgrd</code> / <code>orchagent</code> → SAI</li>
 </ol>
-<p>であり、gNMI server から直接 <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> を叩く経路はありません。</p>
+<p>であり、gNMI server から直接 <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> を叩く経路は無い。</p>
 <h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gNMI Path                                Redis target
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>/sonic-port:sonic-port/PORT/...     ─&gt;  CONFIG_DB:PORT
@@ -36196,24 +36196,24 @@
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>/openconfig-system:system/processes/  ─&gt;  STATE_DB / proc
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>counters subtree                       ─&gt;  COUNTERS_DB:COUNTERS:&lt;oid&gt;
 </span></code></pre></div>
-<p>SUBSCRIBE は target が <code>STATE_DB</code> か <code>COUNTERS_DB</code> かによって on_change（keyspace notifications）と sample（poll）を選びます。OpenConfig path の場合、transformer が複数 DB をまたぐためにキャッシュ + 仮想的な change-set を作って notify します。</p>
+<p>SUBSCRIBE は target が <code>STATE_DB</code> か <code>COUNTERS_DB</code> かによって on_change（keyspace notifications）と sample（poll）を選ぶ。OpenConfig path の場合、transformer が複数 DB をまたぐためにキャッシュ + 仮想的な change-set を作って notify する。</p>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub の使用<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Redis keyspace notifications</strong>（<code>__keyspace@*__</code>）を gNMI server が subscribe して on_change を出します。</li>
-<li><strong>ZMQ</strong>: GNMIGet / GNMISet の一部経路で、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> との直結 RPC を行う実装が追加されました（<code>gnmi-native-write</code> 系の <a href="../../../reference/glossary/#term-hld">HLD</a>）。これにより CONFIG_DB を経由しない write が一部のテーブルで可能です。</li>
+<li><strong>Redis keyspace notifications</strong>（<code>__keyspace@*__</code>）を gNMI server が subscribe して on_change を出す。</li>
+<li><strong>ZMQ</strong>: GNMIGet / GNMISet の一部経路で、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> との直結 RPC を行う実装が追加された（<code>gnmi-native-write</code> 系の <a href="../../../reference/glossary/#term-hld">HLD</a>）。これにより CONFIG_DB を経由しない write が一部のテーブルで可能である。</li>
 <li><strong>dial-out</strong>: collector への gRPC push（poll/on_change の結果）。</li>
-<li>gNOI の <code>Reboot</code> / <code>Ping</code> 等は <strong>host service</strong>（<code>sonic-host-service</code>）に DBus / Unix socket で投げ、root 権限の操作はコンテナ外で行います。</li>
+<li>gNOI の <code>Reboot</code> / <code>Ping</code> 等は <strong>host service</strong>（<code>sonic-host-service</code>）に DBus / Unix socket で投げ、root 権限の操作はコンテナ外で行う。</li>
 </ul>
 <h2 id="_3">既知の実装上の制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>OpenConfig path は <code>transformer</code> が個別に実装する必要があり、未実装の path は SET / GET が NotFound になります。すべての OC モジュールが網羅されているわけではありません。</li>
-<li>gNMI Set の transaction 境界は単一 SetRequest 内のみ。複数 path で一部失敗すると rollback ロジックがあるが、CONFIG_DB に書き込んだ後の orchagent / SAI 反映を待たないため、SET が成功しても <a href="../../../reference/glossary/#term-asic">ASIC</a> への反映までは別の subscribe で確認する必要があります。</li>
-<li>TLS 設定は <code>DEVICE_METADATA</code> 系ではなく <code>GNMI</code> / <code>TELEMETRY_CLIENT</code> テーブルで管理し、CONFIG_DB の <code>TELEMETRY|gnmi</code> などのキー構造で証明書パスを指定します。CLI/UI が <code>config gnmi</code> 系で揃っていない箇所がある点に注意です。</li>
-<li>gNSI の certz は <code>sonic-host-service</code> に証明書ローテーションを依頼する経路で、OS 側 <code>/etc/sonic/telemetry/</code> のファイル更新まで含めて atomicity を担保する設計です（途中失敗で telemetry が起動できなくなる事故が過去 issue にあります）。</li>
-<li>Subscribe の <code>sample</code> mode で interval を極端に短く（例: 100ms）すると、counter 読み出し（flexcounter polling は通常 10s）と整合せず、同じ値を返し続けることがあります。</li>
+<li>OpenConfig path は <code>transformer</code> が個別に実装する必要があり、未実装の path は SET / GET が NotFound になる。すべての OC モジュールが網羅されているわけではない。</li>
+<li>gNMI Set の transaction 境界は単一 SetRequest 内のみ。複数 path で一部失敗すると rollback ロジックがあるが、CONFIG_DB に書き込んだ後の orchagent / SAI 反映を待たないため、SET が成功しても <a href="../../../reference/glossary/#term-asic">ASIC</a> への反映までは別の subscribe で確認する必要がある。</li>
+<li>TLS 設定は <code>DEVICE_METADATA</code> 系ではなく <code>GNMI</code> / <code>TELEMETRY_CLIENT</code> テーブルで管理し、CONFIG_DB の <code>TELEMETRY|gnmi</code> などのキー構造で証明書パスを指定する。CLI/UI が <code>config gnmi</code> 系で揃っていない箇所がある点に注意。</li>
+<li>gNSI の certz は <code>sonic-host-service</code> に証明書ローテーションを依頼する経路で、OS 側 <code>/etc/sonic/telemetry/</code> のファイル更新まで含めて atomicity を担保する設計である（途中失敗で telemetry が起動できなくなる事故が過去 issue にある）。</li>
+<li>Subscribe の <code>sample</code> mode で interval を極端に短く（例: 100ms）すると、counter 読み出し（flexcounter polling は通常 10s）と整合せず、同じ値を返し続けることがある。</li>
 </ul>
 <h2 id="_4">認証 / 認可の内部経路<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>gNMI server の認証は CONFIG_DB の <code>TELEMETRY</code> / <code>GNMI</code> / <code>TELEMETRY_CLIENT</code> テーブルを起点に、複数経路で行われます。</p>
+<p>gNMI server の認証は CONFIG_DB の <code>TELEMETRY</code> / <code>GNMI</code> / <code>TELEMETRY_CLIENT</code> テーブルを起点に、複数経路で行われる。</p>
 <table>
 <thead>
 <tr>
@@ -36245,15 +36245,15 @@
 </tr>
 </tbody>
 </table>
-<p><code>gnsi/authz</code> の policy は protobuf テキストで、<code>SetRequest</code> の rotate API でローテーションする設計です。policy が壊れていると gNMI 自体が起動できない fail-closed 設計です。</p>
+<p><code>gnsi/authz</code> の policy は protobuf テキストで、<code>SetRequest</code> の rotate API でローテーションする設計である。policy が壊れていると gNMI 自体が起動できない fail-closed 設計である。</p>
 <h2 id="_5">性能観点<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>subscribe sample interval</strong> の下限は flexcounter polling と整合させるのが安全で、port counter は 10s、queue / PG は 10s、buffer pool は 60s が標準です。100ms 等は無意味（同じ値を返す）です。</li>
-<li><strong>GET の最大サブツリー深さ</strong>には実質制限が無く、<code>/interfaces</code> 全体を 1 度に取ると数千 OID の Redis 読み出しが直列で走り、数秒〜数十秒かかります。client 側でリスト要素を絞るのが定石です。</li>
-<li><strong>dial-out</strong> は collector への gRPC で <a href="../../../reference/glossary/#term-qos">QoS</a> / retry の制御が薄く、collector 側がオフラインのときに gNMI server のメモリが膨らむ報告があります。<code>TELEMETRY_CLIENT</code> の <code>queue_size</code> で抑えます。</li>
+<li><strong>subscribe sample interval</strong> の下限は flexcounter polling と整合させるのが安全で、port counter は 10s、queue / PG は 10s、buffer pool は 60s が標準である。100ms 等は無意味（同じ値を返す）。</li>
+<li><strong>GET の最大サブツリー深さ</strong>には実質制限が無く、<code>/interfaces</code> 全体を 1 度に取ると数千 OID の Redis 読み出しが直列で走り、数秒〜数十秒かかる。client 側でリスト要素を絞るのが定石である。</li>
+<li><strong>dial-out</strong> は collector への gRPC で <a href="../../../reference/glossary/#term-qos">QoS</a> / retry の制御が薄く、collector 側がオフラインのときに gNMI server のメモリが膨らむ報告がある。<code>TELEMETRY_CLIENT</code> の <code>queue_size</code> で抑える。</li>
 </ul>
 <h2 id="translib-transformer">translib transformer の責務分担<a class="headerlink" href="#translib-transformer" title="Permanent link">&para;</a></h2>
-<p><code>translib/transformer/</code> 配下の per-module ファイル（<code>xfmr_&lt;module&gt;.go</code>）は、OpenConfig YANG path を SONiC YANG path に変換する mapping を提供します。</p>
+<p><code>translib/transformer/</code> 配下の per-module ファイル（<code>xfmr_&lt;module&gt;.go</code>）は、OpenConfig YANG path を SONiC YANG path に変換する mapping を提供する。</p>
 <table>
 <thead>
 <tr>
@@ -36284,9 +36284,9 @@
 </tr>
 </tbody>
 </table>
-<p>未実装の transformer がある OC path に対して GET / SET を投げると、translib 層で <code>NotFound</code> を返す動作で、HLD と実装の乖離が出やすいポイントです。</p>
+<p>未実装の transformer がある OC path に対して GET / SET を投げると、translib 層で <code>NotFound</code> を返す動作で、HLD と実装の乖離が出やすいポイントである。</p>
 <h2 id="gnmiget-zmq-direct-write">GNMIGet (ZMQ direct write) 経路<a class="headerlink" href="#gnmiget-zmq-direct-write" title="Permanent link">&para;</a></h2>
-<p><code>gnmi-native-write</code> 系の改善で、いくつかのテーブル（<code>DASH_*</code> 系、<code>APP_DB:GENERIC_CONFIG_UPDATER_TABLE</code> 等）は GNMISet → orchagent の <strong>ZMQ endpoint</strong> に直接届く経路が追加されました。これにより CONFIG_DB を経由しないため、CONFIG_DB rewrite race / 大量更新時の Redis 単一スレッド bottleneck を回避できます。</p>
+<p><code>gnmi-native-write</code> 系の改善で、いくつかのテーブル（<code>DASH_*</code> 系、<code>APP_DB:GENERIC_CONFIG_UPDATER_TABLE</code> 等）は GNMISet → orchagent の <strong>ZMQ endpoint</strong> に直接届く経路が追加された。これにより CONFIG_DB を経由しないため、CONFIG_DB rewrite race / 大量更新時の Redis 単一スレッド bottleneck を回避できる。</p>
 <table>
 <thead>
 <tr>
@@ -36318,7 +36318,7 @@
 </tr>
 </tbody>
 </table>
-<p>CONFIG_DB を bypass するため、<code>config save</code> / <code>config reload</code> の永続化対象には入りません。再起動後に再投入する責任は外部 controller 側にあります。</p>
+<p>CONFIG_DB を bypass するため、<code>config save</code> / <code>config reload</code> の永続化対象には入らない。再起動後に再投入する責任は外部 controller 側にある。</p>
 <h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../management/sonic-gnmi-server-interface-design/">SONiC gNMI server interface design</a></li>
