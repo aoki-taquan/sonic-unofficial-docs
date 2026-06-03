@@ -85,7 +85,7 @@ reasoning: >
     def switchport_mode(db, type, port):
     ```
 
-    **判断根拠**: >
+    **判断根拠**: 現行 master の switchport_mode コマンドは引数が <mode_type> と <port> の 2 個のみで、 HLD が要求する第 3 引数 <vlan-list> が存在しないことを直接確認できる。switchport_mode typedef は sonic-buildimage の sonic-types.yang.j2 L244 に定義されている。
 
 <!-- evidence-rendered:end -->
 

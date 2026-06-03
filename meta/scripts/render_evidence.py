@@ -53,10 +53,48 @@ def parse_evidence(body: str) -> Evidence | None:
     """YAML ライクな body を厳密にではなく十分に parse する。"""
     source = ""
     excerpt_lines: list[str] = []
+    reasoning_lines: list[str] = []
     reasoning = ""
 
     lines = body.splitlines()
     i = 0
+
+    def consume_block_scalar(start_i: int, base_indent: int, style: str) -> tuple[list[str], int]:
+        """`|` (literal) / `>` (folded) ブロックスカラーの継続行を取り込み、
+        (取り込んだ行, 次の i) を返す。folded スタイルでは空行は段落区切り、
+        通常の継続行は単一スペースで join する。"""
+        collected: list[str] = []
+        j = start_i
+        while j < len(lines):
+            nxt = lines[j]
+            if not nxt.strip():
+                collected.append("")
+                j += 1
+                continue
+            indent = len(nxt) - len(nxt.lstrip())
+            if indent <= base_indent:
+                break
+            collected.append(nxt[base_indent + 2:] if len(nxt) > base_indent + 2 else nxt.lstrip())
+            j += 1
+        if style == ">":
+            # folded: 空行は段落区切り、連続行はスペース join
+            paragraphs: list[str] = []
+            buf: list[str] = []
+            for ln in collected:
+                if ln == "":
+                    if buf:
+                        paragraphs.append(" ".join(buf))
+                        buf = []
+                    paragraphs.append("")
+                else:
+                    buf.append(ln)
+            if buf:
+                paragraphs.append(" ".join(buf))
+            while paragraphs and paragraphs[-1] == "":
+                paragraphs.pop()
+            return paragraphs, j
+        return collected, j
+
     while i < len(lines):
         line = lines[i]
         stripped = line.strip()
@@ -66,29 +104,29 @@ def parse_evidence(body: str) -> Evidence | None:
         elif stripped.startswith("excerpt:"):
             rest = stripped[len("excerpt:"):].strip()
             if rest == "|" or rest == ">":
-                # block scalar: 続くインデント行を取り込む
-                i += 1
-                # 基準インデント = "excerpt:" 行のインデント + 2
                 base_indent = len(line) - len(line.lstrip())
-                while i < len(lines):
-                    nxt = lines[i]
-                    if not nxt.strip():
-                        excerpt_lines.append("")
-                        i += 1
-                        continue
-                    indent = len(nxt) - len(nxt.lstrip())
-                    if indent <= base_indent:
-                        break
-                    excerpt_lines.append(nxt[base_indent + 2:] if len(nxt) > base_indent + 2 else nxt.lstrip())
-                    i += 1
+                collected, i = consume_block_scalar(i + 1, base_indent, rest)
+                excerpt_lines.extend(collected)
             else:
                 excerpt_lines.append(rest)
                 i += 1
         elif stripped.startswith("reasoning:"):
-            reasoning = stripped[len("reasoning:"):].strip()
-            i += 1
+            rest = stripped[len("reasoning:"):].strip()
+            if rest == "|" or rest == ">":
+                base_indent = len(line) - len(line.lstrip())
+                collected, i = consume_block_scalar(i + 1, base_indent, rest)
+                reasoning_lines.extend(collected)
+            else:
+                reasoning_lines.append(rest)
+                i += 1
         else:
             i += 1
+
+    if reasoning_lines:
+        # reasoning は `**判断根拠**: <text>` の inline 形式でレンダリングされるため、
+        # 改行・段落区切りを半角スペースに畳んで 1 行化する。
+        joined = "\n".join(reasoning_lines).strip()
+        reasoning = re.sub(r"\s*\n+\s*", " ", joined).strip()
 
     if not source and not excerpt_lines and not reasoning:
         return None

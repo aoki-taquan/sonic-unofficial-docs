@@ -67,7 +67,7 @@ reasoning: >
         namespace "http://github.com/sonic-net/sonic-warm-restart";
     ```
 
-    **判断根拠**: >
+    **判断根拠**: 現行 master に sonic-warm-restart.yang が存在し WARM_RESTART テーブルのスキーマを 定義していることを確認。本ページが扱うウォームリスタート機構の実装裏取り。
 
 <!-- evidence-rendered:end -->
 

@@ -99,7 +99,7 @@ reasoning: >
     ifeq ($(strip $(SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD)),y)
     ```
 
-    **判断根拠**: >
+    **判断根拠**: SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD が現行 master の Makefile.work で ビルド経路を分岐する実在の設定変数であることを確認。Docker-in-Docker 回避策の裏取り。 デフォルト無効であることは rules/config L60-L65 のコメントアウトされた既定値で確認できる。
 
 <!-- evidence-rendered:end -->
 
@@ -167,18 +167,21 @@ make -j1
 
 ---
 
-### 3-2. Marvell ARM アーキテクチャのビルド失敗 (#7465, #11337)[^7465][^11337]
+### 3-2. Marvell プラットフォームのビルド失敗 (#7465, #11337)[^7465][^11337]
 
 ```
 [202012] Build failure: marvell-armhf
+Build failed. Marvell amd64.
 ```
 
-**対象**: Azure Pipelines（AzP）の CI 環境で特有のエラーが発生。
-プライベートビルド環境では再現しない場合がある。
+**対象**: Marvell プラットフォーム関連のビルド失敗が複数アーキテクチャで報告されている。
+#7465 は Marvell ARM（marvell-armhf）の AzP CI 環境でのビルド失敗、
+#11337 は Marvell amd64 ビルド失敗で、それぞれ異なるアーキテクチャの問題。
 
 **確認ポイント**:
-- クロスコンパイルツールチェーンのバージョン
+- クロスコンパイルツールチェーン（armhf）のバージョン
 - ARM エミュレーション（QEMU）の設定
+- amd64 ビルドのプラットフォーム依存パッケージ
 
 ---
 
@@ -294,7 +297,7 @@ export SONIC_DEBUGGING_ON=y
 [^9919]: [sonic-buildimage #9919](https://github.com/sonic-net/sonic-buildimage/issues/9919) — 非 Ubuntu ホスト（Arch Linux）で Docker-in-Docker ビルドが動作しない件。
 [^7139]: [sonic-buildimage #7139](https://github.com/sonic-net/sonic-buildimage/issues/7139) — Innovium プラットフォームの並列ビルド失敗。
 [^7465]: [sonic-buildimage #7465](https://github.com/sonic-net/sonic-buildimage/issues/7465) — Marvell ARM（marvell-armhf）のビルド失敗。
-[^11337]: [sonic-buildimage #11337](https://github.com/sonic-net/sonic-buildimage/issues/11337) — Marvell ARM ビルド失敗の継続報告。
+[^11337]: [sonic-buildimage #11337](https://github.com/sonic-net/sonic-buildimage/issues/11337) — Marvell amd64 ビルド失敗（"Build failed. Marvell amd64."）。
 [^11769]: [sonic-buildimage #11769](https://github.com/sonic-net/sonic-buildimage/issues/11769) — BULLSEYE のみ有効時の `libsnmp-dev` インストール無限ループ。
 [^9741]: [sonic-buildimage #9741](https://github.com/sonic-net/sonic-buildimage/issues/9741) — EOL の `sonic-slave-stretch` イメージ取得失敗。
 [^9885]: [sonic-buildimage #9885](https://github.com/sonic-net/sonic-buildimage/issues/9885) — P4RT コンテナ有効時の [VS](../reference/glossary.md#term-vs) イメージビルド失敗。
