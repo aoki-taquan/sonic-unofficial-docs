@@ -36268,13 +36268,34 @@
 </table>
 <p>実機が要らない test plan（VS test、Ansible test）はローカルで再現できます。実機 or PTF + ASIC が要る test plan は、CI 側で何が回っているかの参照として読むのが現実的です。</p>
 <h3 id="vs-test">VS test の最小回し方<a class="headerlink" href="#vs-test" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>host$ git clone https://github.com/sonic-net/sonic-buildimage
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>host$ cd sonic-buildimage/platform/vs
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>host$ make sonic-vs-image
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>host$ cd ../../../sonic-mgmt/tests
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>host$ ./run_tests.sh -n vms-kvm-t0 -t bgp/test_bgp_fact.py
+<p>VS image のビルドは <a href="../../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> の README に従い、<code>make init</code> → <code>make configure PLATFORM=vs</code> → KVM 用 <code>.img.gz</code> ターゲット (<code>platform/vs/kvm-image.mk</code> で <code>SONIC_KVM_IMAGE = sonic-vs.img.gz</code> と定義) を作る、という 3 段構成です。<code>platform/vs</code> 配下に独立した <code>make sonic-vs-image</code> ターゲットは無く、トップレベル Makefile から target/ パスを直接指定します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>host$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>--recurse-submodules<span class="w"> </span>https://github.com/sonic-net/sonic-buildimage
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>host$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>sonic-buildimage
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>host$<span class="w"> </span>make<span class="w"> </span>init
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>host$<span class="w"> </span>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>vs
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>host$<span class="w"> </span>make<span class="w"> </span><span class="nv">SONIC_BUILD_JOBS</span><span class="o">=</span><span class="m">4</span><span class="w"> </span>target/sonic-vs.img.gz
 </span></code></pre></div>
-<p>詳細な topology / inventory / testbed の組み立ては <a href="../../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> リポジトリの README（testbed セクション）を参照します。</p>
+<p>テスト側 (sonic-mgmt) は、testbed を立ち上げてから sonic-mgmt コンテナの中で <code>tests/run_tests.sh</code> か <code>pytest</code> を直接叩きます。<code>run_tests.sh</code> の <code>-t</code> は test path ではなく <strong>topology</strong> (<code>t0</code> / <code>t1</code> / <code>any</code>)、テストケース指定は <code>-c</code> です。canonical な引数は sonic-mgmt の トップレベル <code>Makefile</code> (<code>make test T=...</code>) が出力する形と一致しています。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># sonic-mgmt コンテナ内、/data/sonic-mgmt/tests で実行</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>container$<span class="w"> </span>./run_tests.sh<span class="w"> </span>-u<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span>-n<span class="w"> </span>vms-kvm-t0<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span>-d<span class="w"> </span>vlab-01<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span>-f<span class="w"> </span>vtestbed.yaml<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span>-i<span class="w"> </span>../ansible/veos_vtb<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span>-c<span class="w"> </span>bgp/test_bgp_fact.py<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span>-e<span class="w"> </span><span class="s2">&quot;--skip_sanity --disable_loganalyzer&quot;</span>
+</span></code></pre></div>
+<p><code>pytest</code> を直接呼ぶ場合は、testbed / inventory / host-pattern を明示します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>container$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/data/sonic-mgmt/tests
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>container$<span class="w"> </span>pytest<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span>--inventory<span class="w"> </span>../ansible/veos_vtb<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span>--host-pattern<span class="w"> </span>vlab-01<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span>--module-path<span class="w"> </span>../ansible/library<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span>--testbed<span class="w"> </span>vms-kvm-t0<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span>--testbed_file<span class="w"> </span>../ansible/vtestbed.yaml<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span>bgp/test_bgp_fact.py
+</span></code></pre></div>
+<p>詳細な topology / inventory / testbed の組み立ては <a href="../../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> リポジトリの <code>docs/testbed/</code> 配下 (<code>README.testbed.VsSetup.md</code> 等) を参照します。</p>
 <h2 id="lab">lab で起きがちな異常と対処<a class="headerlink" href="#lab" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36314,44 +36335,49 @@
 </table>
 <h2 id="lab_1">lab のスナップショットとやり直し<a class="headerlink" href="#lab_1" title="Permanent link">&para;</a></h2>
 <p>仮想 lab は壊して作り直すのが安いので、運用上の壊れ・状態の不整合は再起動より image 再生成のほうが早い場合が多いです。実機運用の手順を「lab で何度も繰り返す」のが lab の役目で、状態を温存する設計は基本的に不要です。</p>
-<p>ただし「再現に時間がかかる障害を掴んだ瞬間」は別で、そのときは下記を取ってから何もせず保全します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>show<span class="w"> </span>techsupport
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>syncd_dump.sh
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>admin@sonic:~$<span class="w"> </span><span class="k">for</span><span class="w"> </span>n<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="m">6</span><span class="w"> </span><span class="m">13</span><span class="w"> </span><span class="m">14</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>&gt;<span class="w">   </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="nv">$n</span><span class="w"> </span>--rdb<span class="w"> </span>/tmp/dump-db-<span class="nv">$n</span>.rdb
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>&gt;<span class="w"> </span><span class="k">done</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>admin@sonic:~$<span class="w"> </span>tar<span class="w"> </span>czf<span class="w"> </span>/tmp/lab-snapshot.tgz<span class="w"> </span>/var/dump<span class="w"> </span>/var/log<span class="w"> </span>/tmp/dump-db-*.rdb
+<p>ただし「再現に時間がかかる障害を掴んだ瞬間」は別で、そのときは下記を取ってから何もせず保全します。Redis snapshot は、<code>sonic-utilities</code> の <code>fast-reboot</code> / <code>generate_dump</code> と同じパターンで、<strong>database コンテナの中で <code>SAVE</code> (または <code>BGSAVE</code>) を発行 → サーバ側 <code>/var/lib/redis*/dump.rdb</code> を <code>docker cp</code> でホストにコピー</strong> します。<code>redis-cli --rdb</code> をホストの sonic admin から打つ形は、SONiC の database コンテナが UNIX socket 構成かつ namespace 分離されている関係で取り違いが起きやすく、CI / techsupport では使われていません。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>show<span class="w"> </span>techsupport
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>syncd_dump.sh
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># 各 DB instance の RDB を保存 → ホスト側にコピー</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># (single-ASIC VS なら database コンテナ 1 つ、multi-ASIC では database0/1/... を回す)</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>database<span class="w"> </span>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>SAVE
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>docker<span class="w"> </span>cp<span class="w"> </span>database:/var/lib/redis/dump.rdb<span class="w"> </span>/tmp/dump-appl.rdb
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>database<span class="w"> </span>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>SAVE
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>docker<span class="w"> </span>cp<span class="w"> </span>database:/var/lib/redis/dump.rdb<span class="w"> </span>/tmp/dump-config.rdb
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>tar<span class="w"> </span>czf<span class="w"> </span>/tmp/lab-snapshot.tgz<span class="w"> </span>/var/dump<span class="w"> </span>/var/log<span class="w"> </span>/tmp/dump-*.rdb
 </span></code></pre></div>
-<p>これは <a href="../../20-swss-sai-redis/operations/">SWSS / SAI / Redis 章</a> の techsupport / dump 取得と同じ手順です。</p>
+<p>これは <a href="../../20-swss-sai-redis/operations/">SWSS / SAI / Redis 章</a> の techsupport / dump 取得と同じ手順です (<code>sonic-utilities/scripts/fast-reboot</code> や <code>scripts/generate_dump</code> の <code>Dump by using Redis SAVE.</code> 経路と同じパターン)。</p>
 <h2 id="lab_2">仮想 lab の日常操作<a class="headerlink" href="#lab_2" title="Permanent link">&para;</a></h2>
 <p>頻出する VS / KVM 操作をまとめておくと、毎回検索する手間が省けます。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>host$ virsh list --all
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>host$ virsh start sonic-vs-01
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>host$ virsh console sonic-vs-01
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>host$ virsh shutdown sonic-vs-01
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>host$ virsh destroy sonic-vs-01   # 強制停止（state は壊れる前提）
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>host$ virsh snapshot-create-as sonic-vs-01 baseline
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>host$ virsh snapshot-revert sonic-vs-01 baseline
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>host$ virsh list --all
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>host$ virsh start sonic-vs-01
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>host$ virsh console sonic-vs-01
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>host$ virsh shutdown sonic-vs-01
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>host$ virsh destroy sonic-vs-01   # 強制停止（state は壊れる前提）
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>host$ virsh snapshot-create-as sonic-vs-01 baseline
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>host$ virsh snapshot-revert sonic-vs-01 baseline
 </span></code></pre></div>
 <p>snapshot を 1 つ作っておくと「設定を試す → 戻す」を秒で回せます。docker ベースの VS（<code>docker run docker-sonic-vs</code>）なら commit / restore でも同じことが可能。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>host$<span class="w"> </span>docker<span class="w"> </span>commit<span class="w"> </span>sonic-vs-01<span class="w"> </span>sonic-vs-baseline:latest
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>host$<span class="w"> </span>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>sonic-vs-01
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>host$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>sonic-vs-01<span class="w"> </span>sonic-vs-baseline:latest
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>host$<span class="w"> </span>docker<span class="w"> </span>commit<span class="w"> </span>sonic-vs-01<span class="w"> </span>sonic-vs-baseline:latest
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>host$<span class="w"> </span>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>sonic-vs-01
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>host$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>sonic-vs-01<span class="w"> </span>sonic-vs-baseline:latest
 </span></code></pre></div>
 <h2 id="config_db">CONFIG_DB を素早く差し替える<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <p>lab では <code>config_db.json</code> をテンプレ化しておき、用途別に差し替えると章ごとの検証が速い。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>cp<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span>/etc/sonic/config_db.bgp-t0.json
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>cp<span class="w"> </span>/tmp/config_db.vlan-only.json<span class="w"> </span>/etc/sonic/config_db.json
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>reload<span class="w"> </span>-y
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>admin@sonic:~$<span class="w"> </span>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>summary
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>admin@sonic:~$<span class="w"> </span>show<span class="w"> </span>vlan<span class="w"> </span>brief
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>cp<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span>/etc/sonic/config_db.bgp-t0.json
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>cp<span class="w"> </span>/tmp/config_db.vlan-only.json<span class="w"> </span>/etc/sonic/config_db.json
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>reload<span class="w"> </span>-y
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>admin@sonic:~$<span class="w"> </span>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>summary
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>admin@sonic:~$<span class="w"> </span>show<span class="w"> </span>vlan<span class="w"> </span>brief
 </span></code></pre></div>
 <p>minigraph 経由派なら <code>minigraph.xml</code> を差し替えて <code>config load_minigraph -y</code> でも同じ。</p>
 <h2 id="ci">CI ローカル再実行のヒント<a class="headerlink" href="#ci" title="Permanent link">&para;</a></h2>
 <p>CI で落ちた test を手元 VS で再現する場合、PTF と DUT の port mapping が一致しないと PTF テストが空振りする。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>host$<span class="w"> </span>cat<span class="w"> </span>sonic-mgmt/ansible/inventory
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>host$<span class="w"> </span>cat<span class="w"> </span>sonic-mgmt/ansible/testbed.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A5<span class="w"> </span>vms-kvm-t0
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>host$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>ptf_vms-kvm-t0<span class="w"> </span>ip<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>eth
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>host$<span class="w"> </span>cat<span class="w"> </span>sonic-mgmt/ansible/inventory
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>host$<span class="w"> </span>cat<span class="w"> </span>sonic-mgmt/ansible/testbed.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A5<span class="w"> </span>vms-kvm-t0
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>host$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>ptf_vms-kvm-t0<span class="w"> </span>ip<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>eth
 </span></code></pre></div>
 <p><code>ptf_*</code> コンテナ内の eth と DUT 側の Ethernet の対応は testbed yaml で決まる。失敗の 9 割はここの番号ずれ。</p>
 <h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -36365,7 +36391,7 @@
 <li><a href="../../02-bgp/">BGP 章</a> / <a href="../../06-l2-vlan-lag/">VLAN・LAG 章</a>（VS で最初に試すと感覚が掴める）</li>
 <li>本章 <a href="../setup/">設定</a>（lab の物理 / 仮想セットアップ）</li>
 </ul>
-<!-- glossary-links-injected: 9fb3fca99a59 -->
+<!-- glossary-links-injected: 75921d013977 -->
 
 
 
