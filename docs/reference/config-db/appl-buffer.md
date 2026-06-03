@@ -212,7 +212,7 @@ threshold_mode が未設定のとき、ingress_lossless_pool の `mode` フィ�
 | BUFFER_PROFILE: `headroom_type` | 転写のみ | pass-through | LOG_ERROR + skip |
 | BUFFER_PROFILE: `dynamic_th` | 自動決定 or 指定値 | pass-through | mode は create-only、値は更新可 |
 
-> **証跡**: `bufferorch.h` L18-35 全行読了、`bufferorch.cpp` L391-1000 全行読了、`buffermgrdyn.cpp` L870-960 全行読了、`schema.h` BUFFER 定数確認済み。
+> **証跡**: `bufferorch.h` L18-35、`bufferorch.cpp` L391-1000、`buffermgrdyn.cpp` L870-960、`schema.h` BUFFER 定数確認済み。
 <!-- /defaults -->
 
 <!-- ordering -->

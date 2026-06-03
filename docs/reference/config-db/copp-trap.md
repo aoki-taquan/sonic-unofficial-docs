@@ -220,7 +220,7 @@ show copp config
 | `CoppOrch` | `processCoppTrap()` | `trap_group` が `m_trap_group_map` に未存在 | `task_need_retry`（グループ未作成ガード） | `sonic-swss/orchagent/copporch.cpp:584` |
 | `CoppOrch` | `processCoppTrap()` | `op == DEL_COMMAND` | SAI トラップを削除しグループからアンバインド | `sonic-swss/orchagent/copporch.cpp:1102` |
 
-> **裏取り**: `doTask` L880-935 + `processCoppTrap` L1164-1200 全行読了。4 件分岐抽出。
+> **裏取り**: `doTask` L880-935 + `processCoppTrap` L1164-1200。4 件分岐抽出。
 <!-- /handler-branching -->
 
 <!-- constants -->

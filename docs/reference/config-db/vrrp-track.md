@@ -262,7 +262,7 @@ CLI と YANG で許容範囲が意図的に乖離している。
 <!-- side-effects -->
 ## 副次 DB 書込
 
-> 根拠: `SONiC/doc/vrrp/VRRP_Adaptation_HLD.md` L219-232, L481-492 全行精読。
+> 根拠: `SONiC/doc/vrrp/VRRP_Adaptation_HLD.md` L219-232, L481-492。
 
 `VRRP_TRACK` / `VRRP6_TRACK` への SET / DEL は **他の DB（[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db)）へ直接書き込まない**。変更は CONFIG_DB から FRR `vrrpd` のインメモリ track 設定に反映されるのみであり、DB への副次書き込みは発生しない。
 

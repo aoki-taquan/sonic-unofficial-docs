@@ -330,7 +330,7 @@ minigraph.py は `MGMT_VRF_CONFIG` を先行して格納後、`mgmt_intf`（MGMT
 <!-- cross-refs -->
 ## 暗黙参照 (cross-table refs)
 
-> **Evidence**: `dockers/docker-snmp/snmpd.conf.j2`, `supervisord.conf.j2`, `sonic-utilities/config/main.py` L4095–4210 & L4709–4800, `src/sonic-config-engine/minigraph.py` L2308–2324, `sonic-snmp.yang` 全行精読 (2026-05-17)
+> **Evidence**: `dockers/docker-snmp/snmpd.conf.j2`, `supervisord.conf.j2`, `sonic-utilities/config/main.py` L4095–4210 & L4709–4800, `src/sonic-config-engine/minigraph.py` L2308–2324, `sonic-snmp.yang` (2026-05-17)
 
 `SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` は YANG leafref を持たないが、CLI・テンプレートエンジン・minigraph の実装レベルで以下のテーブルを暗黙参照する。
 
@@ -432,7 +432,7 @@ CLI の `add_snmp_agent_address()` は `os.system("systemctl restart snmp")` の
 <!-- constants -->
 ## ハードコード定数
 
-> **Evidence**: `sonic-utilities/config/main.py` L4293-4369, `dockers/docker-snmp/snmpd.conf.j2` L32-33, `src/sonic-config-engine/minigraph.py:2314`, `sonic-snmp.yang` 全行精読 (2026-05-17)
+> **Evidence**: `sonic-utilities/config/main.py` L4293-4369, `dockers/docker-snmp/snmpd.conf.j2` L32-33, `src/sonic-config-engine/minigraph.py:2314`, `sonic-snmp.yang` (2026-05-17)
 
 `SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` テーブルに関連して、CONFIG_DB では管理されないハードコード定数の一覧。
 
@@ -550,7 +550,7 @@ clicommon.run_command(['systemctl', 'restart', 'snmp.service'], display_cmd=Fals
 <!-- pubsub -->
 ## 通信メカニズム
 
-> **Evidence**: `docker-snmp/start.sh`, `snmpd.conf.j2`, `snmp_yml_to_configdb.py`, `sonic_ax_impl/mibs/__init__.py:497-509`, `config/main.py:4188-4209, 4787-4791`, `hostcfgd` 全行精読 (2026-05-17)
+> **Evidence**: `docker-snmp/start.sh`, `snmpd.conf.j2`, `snmp_yml_to_configdb.py`, `sonic_ax_impl/mibs/__init__.py:497-509`, `config/main.py:4188-4209, 4787-4791`, `hostcfgd` (2026-05-17)
 
 ### 購読方式: なし (起動時スナップショット読み取りのみ)
 

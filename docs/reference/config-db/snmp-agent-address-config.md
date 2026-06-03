@@ -386,7 +386,7 @@ CLI の `add_snmp_agent_address()` / `del_snmp_agent_address()` はともに `os
 <!-- constants -->
 ## ハードコード定数
 
-> **Evidence**: `snmpd.conf.j2` L19-34, `minigraph.py:2314`, `sonic-snmp.yang` L178-196, `config/main.py:4137-4186` 全行精読 (2026-05-17)
+> **Evidence**: `snmpd.conf.j2` L19-34, `minigraph.py:2314`, `sonic-snmp.yang` L178-196, `config/main.py:4137-4186` (2026-05-17)
 
 `SNMP_AGENT_ADDRESS_CONFIG` テーブルおよび `docker-snmp` コンテナに存在する、CONFIG_DB で管理されないハードコード定数の一覧。
 
@@ -458,7 +458,7 @@ CONFIG_DB → [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](.
 <!-- pubsub -->
 ## 通信メカニズム
 
-> **Evidence**: `docker-snmp/start.sh`, `snmpd.conf.j2`, `snmp_yml_to_configdb.py`, `sonic_ax_impl/mibs/__init__.py`, `hostcfgd` 全行精読 (2026-05-17)
+> **Evidence**: `docker-snmp/start.sh`, `snmpd.conf.j2`, `snmp_yml_to_configdb.py`, `sonic_ax_impl/mibs/__init__.py`, `hostcfgd` (2026-05-17)
 
 ### 購読方式: なし (起動時スナップショット読み取りのみ)
 

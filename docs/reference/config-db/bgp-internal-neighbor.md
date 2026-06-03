@@ -167,9 +167,9 @@ neighbor INTERNAL_PEER_V4 route-map TO_BGP_INTERNAL_PEER_V4 out
 
 ### 裏取り
 
-- `instance.conf.j2` 34 行全行精読: timers ハードコード、nhopself 参照なし確認
-- `peer-group.conf.j2` 36 行全行精読: soft-reconfiguration/allowas-in/send-community 常時付与確認
-- `managers_bgp.py` 598 行全行精読: local_addr warn only、check_neig_meta=False 確認
+- `instance.conf.j2` 34 行: timers ハードコード、nhopself 参照なし確認
+- `peer-group.conf.j2` 36 行: soft-reconfiguration/allowas-in/send-community 常時付与確認
+- `managers_bgp.py` 598 行: local_addr warn only、check_neig_meta=False 確認
 - `minigraph.py` L1297-1430: filter_bad_asn、admin_status='up' ハードコード確認
 <!-- /defaults -->
 
@@ -285,7 +285,7 @@ CONFIG_DB の `holdtime` / `keepalive` フィールドは **dead field**。テ�
 <!-- cross-refs -->
 ## 暗黙参照
 
-> **Evidence**: `managers_bgp.py`、`frrcfgd.py`、`policies.conf.j2`（internal）全行精読 (2026-05-16)
+> **Evidence**: `managers_bgp.py`、`frrcfgd.py`、`policies.conf.j2`（internal） (2026-05-16)
 
 `BGP_INTERNAL_NEIGHBOR` テーブルは YANG leafref が最小限だが、実行時に以下のテーブルを暗黙参照する。
 

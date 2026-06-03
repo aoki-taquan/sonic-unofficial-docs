@@ -502,7 +502,7 @@ APP_SFLOW_TABLE  SET  →  APP_SFLOW_SESSION_TABLE  SET
 <!-- cross-refs -->
 ## 暗黙参照
 
-> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp` 全行精読 (2026-05-16)
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp` (2026-05-16)
 
 `SFLOW` / `SFLOW_SESSION` / `SFLOW_COLLECTOR` テーブルは YANG leafref を最小限しか持たないが、実行時に以下のテーブルを暗黙参照する。
 

@@ -258,7 +258,7 @@ minigraph.py および init_cfg.json.j2 からの `MCLAG_DOMAIN` 自動派生は
 | `MlagOrch` | `doMlagDomainTask()` | SET で `peer_link` フィールドが空 | erase してスキップ（peer_link は必須） | `sonic-swss/orchagent/mlagorch.cpp:98-99` |
 | `MlagOrch` | `doMlagDomainTask()` | `addIslInterface(peer_link)` = false | `it++` (retry) | `sonic-swss/orchagent/mlagorch.cpp:96` |
 
-> **裏取り**: `mlagorch.cpp:45-105` を全行読了、5 件分岐抽出。minigraph からの自動派生なしを確認。
+> **裏取り**: `mlagorch.cpp:45-105` を、5 件分岐抽出。minigraph からの自動派生なしを確認。
 
 <!-- /handler-branching -->
 

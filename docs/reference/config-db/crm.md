@@ -320,7 +320,7 @@ crm show resources all
 | `CrmOrch` | `handleSetCommand()` | `field` が `crmThreshHighResMap` に存在する | highThreshold を更新 | `sonic-swss/orchagent/crmorch.cpp:515` |
 | `CrmOrch` | `handleSetCommand()` | 上記いずれにも該当しない field | `log_error`（未知フィールド） | `sonic-swss/orchagent/crmorch.cpp:521` |
 
-> **裏取り**: `CrmOrch::doTask` L440-477 + `handleSetCommand` L478-537 全行読了。6 件分岐抽出。
+> **裏取り**: `CrmOrch::doTask` L440-477 + `handleSetCommand` L478-537。6 件分岐抽出。
 <!-- /handler-branching -->
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
@@ -589,7 +589,7 @@ COUNTERS_DB CRM テーブル
 | `DEL_COMMAND` 操作 | `doTask()` L463-466 | `SWSS_LOG_ERROR("Unsupported operation type")` のみ。閾値・interval 変更なし | `crmorch.cpp:463-466` |
 | 不明テーブル名 | `doTask()` L446-449 | `SWSS_LOG_ERROR("Invalid table %s")` のみ。処理継続（`return` しない） | `crmorch.cpp:446-449` |
 
-> **裏取り**: `crmorch.cpp` L428-538（handleSetCommand / CrmResourceEntry コンストラクタ）、L760-835（getResAvailability）、L878-1060（getResAvailableCounters）全行読了。10 件失敗パターン抽出。
+> **裏取り**: `crmorch.cpp` L428-538（handleSetCommand / CrmResourceEntry コンストラクタ）、L760-835（getResAvailability）、L878-1060（getResAvailableCounters）。10 件失敗パターン抽出。
 <!-- /failure -->
 
 <!-- glossary-links-injected: a0efaf3c47b3 -->

@@ -317,7 +317,7 @@ BPF フィルタは `"udp and port 547"` を使用する。`dhcp6relay` は L2 �
 <!-- pubsub -->
 ## 通信メカニズム
 
-> **Evidence**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` 全行精読 (2026-05-16)
+> **Evidence**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` (2026-05-16)
 
 ### DHCP_SERVER_IPV6 に関する結論
 

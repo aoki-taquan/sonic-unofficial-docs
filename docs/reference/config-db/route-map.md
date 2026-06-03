@@ -512,7 +512,7 @@ BGP ASN は `constants['deployment_id_asn_map']['2']` から取得。未設定�
 <!-- ordering -->
 ## 書込み順依存
 
-ROUTE_MAP テーブルへの書き込みには以下の順序制約がある。`frrcfgd` の実装（`frrcfgd.py`）を全行精読して確認した。
+ROUTE_MAP テーブルへの書き込みには以下の順序制約がある。`frrcfgd` の実装（`frrcfgd.py`）をして確認した。
 
 ### 必須制約（違反すると silent drop）
 

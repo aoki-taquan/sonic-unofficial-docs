@@ -101,7 +101,7 @@ SFLOW_COLLECTOR|<name>   # コレクタ名 (1..64 文字)
 
 SFLOW_COLLECTOR テーブルを CONFIG_DB へ書き込む際の **必須・推奨順序** を実装コードから導出した。
 
-> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sflowmgrd.cpp` 全行精読 + `sonic-utilities/config/main.py` sflow 周辺 + `sonic-sflow.yang` 精読 (2026-05-17)
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sflowmgrd.cpp` + `sonic-utilities/config/main.py` sflow 周辺 + `sonic-sflow.yang` 精読 (2026-05-17)
 
 ### O1: `MGMT_VRF_CONFIG|vrf_global` → `SFLOW_COLLECTOR` (条件付き必須)
 
@@ -141,7 +141,7 @@ SFLOW_COLLECTOR|<name>  SET  →  (hsflowd 再起動) → 反映
 
 SFLOW_COLLECTOR テーブルを処理する際に暗黙的に依存するテーブル・コンポーネントを実装コードから導出した。
 
-> **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp`, `sflowmgr.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py` 全行精読 (2026-05-17)
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp`, `sflowmgr.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py` (2026-05-17)
 
 ### MGMT_VRF_CONFIG（`collector_vrf = 'mgmt'` 時の必須依存）
 
@@ -172,7 +172,7 @@ MGMT_VRF_CONFIG|vrf_global (mgmtVrfEnabled=true) ←── 必須参照 ── S
 <!-- failure -->
 ## 失敗挙動マトリクス
 
-> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sflowmgrd.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py`, `sonic-mgmt-common/translib/transformer/xfmr_sflow.go` 全行精読 (2026-05-17)
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sflowmgrd.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py`, `sonic-mgmt-common/translib/transformer/xfmr_sflow.go` (2026-05-17)
 
 ### SET 処理における失敗経路
 
@@ -211,7 +211,7 @@ MGMT_VRF_CONFIG|vrf_global (mgmtVrfEnabled=true) ←── 必須参照 ── S
 
 `SFLOW_COLLECTOR` テーブルに関連するハードコード定数を YANG モデルおよびソースコードから抽出した。
 
-> **Evidence**: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py` 全行精読 (2026-05-17)
+> **Evidence**: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py` (2026-05-17)
 
 ### YANG 由来の定数
 
@@ -244,7 +244,7 @@ MGMT_VRF_CONFIG|vrf_global (mgmtVrfEnabled=true) ←── 必須参照 ── S
 
 `SFLOW_COLLECTOR` テーブルへの書き込み・削除が引き起こす downstream への副作用を実装コードから導出した。
 
-> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sflowmgrd.cpp`, `sonic-utilities/config/main.py`, `sonic-utilities/show/sflow.py`, `sonic-mgmt-common/translib/transformer/xfmr_sflow.go` 全行精読 (2026-05-17)
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sflowmgrd.cpp`, `sonic-utilities/config/main.py`, `sonic-utilities/show/sflow.py`, `sonic-mgmt-common/translib/transformer/xfmr_sflow.go` (2026-05-17)
 
 ### SE1: 直接副作用 — CONFIG_DB 書き込みのみ（即時・非同期なし）
 

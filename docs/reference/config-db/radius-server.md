@@ -315,7 +315,7 @@ hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する
 <!-- side-effects -->
 ## 副次 DB 書込
 
-> **Evidence**: `sonic-host-services/scripts/hostcfgd` 全行精読 (2026-05-16)
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` (2026-05-16)
 
 `RADIUS_SERVER` テーブルへの書込みが発生すると、`hostcfgd` の `AaaCfg.modify_conf_file()` が以下の副次処理を行う。DB への書込みは発生しない（すべてファイルシステム書込みと systemd サービス制御）。
 
