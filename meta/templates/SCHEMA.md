@@ -7,7 +7,7 @@
 | キー | 必須 | 値 | 説明 |
 |------|------|----|------|
 | `title` | ✅ | string | 表示タイトル |
-| `area` | ✅ | enum | `routing` / `switching` / `overlay` / `acl-qos` / `system` / `management` / `platform` / `architecture` / `internals` / `reference` |
+| `area` | ✅ | enum | `routing` / `switching` / `overlay` / `acl-qos` / `system` / `management` / `platform` / `architecture` / `internals` / `reference` / `topics` (`topics` は `docs/topics/NN-*/` 配下の章扉・解説ページ用) |
 | `verification` | ✅ | enum | `hld-only` / `issue-confirmed` / `code-verified` / `discrepancy-found` / `runbook-verified` / `stub` / `meta` |
 | `last_verified` | ✅ | date | `YYYY-MM-DD`。裏取りまたは更新を行った日 |
 | `sources` | ✅ | list | このページの根拠となる一次情報のリスト |

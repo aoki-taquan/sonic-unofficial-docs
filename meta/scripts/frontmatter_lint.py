@@ -71,6 +71,7 @@ REPORT_V2_PATH = REPO_ROOT / "meta" / "frontmatter-lint-report-v2.md"
 VALID_AREAS = {
     "routing", "switching", "overlay", "acl-qos", "system",
     "management", "platform", "architecture", "internals", "reference",
+    "topics",
 }
 VALID_VERIFICATION = {
     "hld-only", "issue-confirmed", "code-verified", "discrepancy-found",
