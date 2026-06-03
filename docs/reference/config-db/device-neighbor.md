@@ -443,7 +443,7 @@ port['description'] = "%s:%s" % (neighbors[port_name]['name'], neighbors[port_na
 | `show/interfaces/__init__.py` | `"DEVICE_NEIGHBOR information is not present."` | `show/interfaces/__init__.py:318` |
 | `managers_bgp.py` | `"DEVICE_NEIGHBOR_METADATA is not ready for neighbor '%s' - '%s'"` | `managers_bgp.py:222` |
 
-> **裏取り**: `ecnconfig:93,282-294` 読了。`pfcwd/main.py:98,413` 読了。`show/interfaces/__init__.py:316-323` 読了。`minigraph.py:610,631-655,2465,2635-2637` 読了。`sonic-device_neighbor.yang` 全行読了。定数 5 種別 15 件を確認。
+> **裏取り**: `ecnconfig:93,282-294` 読了。`pfcwd/main.py:98,413` 読了。`show/interfaces/__init__.py:316-323` 読了。`minigraph.py:610,631-655,2465,2635-2637` 読了。`sonic-device_neighbor.yang`。定数 5 種別 15 件を確認。
 <!-- /constants -->
 
 <!-- side-effects -->

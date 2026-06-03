@@ -178,7 +178,7 @@ YANG `must "(../format != 'standard')"` 制約により、`welf_firewall_name` �
 <!-- cross-refs -->
 ## 暗黙参照 (cross-table refs)
 
-> **Evidence**: `hostcfgd` (`RSyslogCfg.update_rsyslog_config`, `rsyslog_handler`)・`rsyslog.conf.j2` 全行精読 (2026-05-18)
+> **Evidence**: `hostcfgd` (`RSyslogCfg.update_rsyslog_config`, `rsyslog_handler`)・`rsyslog.conf.j2` (2026-05-18)
 
 `SYSLOG_CONFIG` テーブルは実行時に以下のテーブルを暗黙参照する。
 

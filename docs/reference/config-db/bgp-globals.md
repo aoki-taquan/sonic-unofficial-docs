@@ -282,7 +282,7 @@ vtysh -c 'show running-config bgpd'
 | `BGPConfigDaemon` | `bgp_global_handler()` | `data is None`（DELETE） | `del_table=True` → FRR に `no router bgp` 相当を送出 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3918` |
 | `BGPConfigDaemon` | `bgp_global_handler()` | `data` が `keepalive` と `holdtime` を共に含む | `comb_attr_list` 制約により両フィールドがセットでのみ FRR コマンドを生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3937` |
 
-> **裏取り**: `bgp_table_handler_common()` L3910 全行読了。BGP_GLOBALS 固有の追加分岐なし。keepalive/holdtime の組み合わせ制約のみ。
+> **裏取り**: `bgp_table_handler_common()` L3910。BGP_GLOBALS 固有の追加分岐なし。keepalive/holdtime の組み合わせ制約のみ。
 <!-- /handler-branching -->
 
 <!-- defaults -->
@@ -319,7 +319,7 @@ YANG `sonic-bgp-global.yang` の `BGP_GLOBALS_LIST` 本体には `default` 文�
 | `BGP_GLOBALS_AF` | `max_ebgp_paths` | **1** | `sonic-bgp-global.yang:345` |
 | `BGP_GLOBALS_AF` | `max_ibgp_paths` | **1** | `sonic-bgp-global.yang:354` |
 
-> **裏取り**: `frrcfgd.py` `global_key_map` L1784-1821 全行読了、`get_command_cmn()` L374-413 全行読了、`bgpd.conf.db.j2` 全行読了、`sonic-bgp-global.yang` 全行読了。
+> **裏取り**: `frrcfgd.py` `global_key_map` L1784-1821、`get_command_cmn()` L374-413、`bgpd.conf.db.j2`、`sonic-bgp-global.yang`。
 <!-- /defaults -->
 <!-- ordering -->
 ## 書込み順依存
@@ -496,7 +496,7 @@ vtysh -c "configure terminal" -c "router bgp <asn> vrf <vrf>" -c "no bgp default
 
 これにより、BGP_GLOBALS に `default_ipv4_unicast` フィールドが設定されていなくても、**デフォルトで IPv4 unicast は無効化**される（`frrcfgd.py:2700`）。
 
-> **裏取り**: `frrcfgd.py` L1784-1821 (`global_key_map` 全行), L2700 (`no bgp default ipv4-unicast`), L2716, L3935-3936 確認。`bgpd.conf.db.j2` 全行確認。`sonic-frr/defaults.h` + `bgpd/bgpd.h` L1397-1434 確認。
+> **裏取り**: `frrcfgd.py` L1784-1821 (`global_key_map` 全行), L2700 (`no bgp default ipv4-unicast`), L2716, L3935-3936 確認。`bgpd.conf.db.j2`。`sonic-frr/defaults.h` + `bgpd/bgpd.h` L1397-1434 確認。
 <!-- /constants -->
 
 <!-- side-effects -->

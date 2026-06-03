@@ -289,7 +289,7 @@ show copp config
 | `CoppOrch` | `processCoppTrapGroup()` | `genetlink_name` フィールドが存在する | Genetlink hostif を作成してトラップグループに紐付け | `sonic-swss/orchagent/copporch.cpp:844` |
 | `CoppOrch` | `processCoppTrapGroup()` | `trap_ids` フィールド変更あり | `trapGroupProcessTrapIdChange()` でトラップ ID を追加・削除 | `sonic-swss/orchagent/copporch.cpp:853` |
 
-> **裏取り**: `processCoppTrapGroup` L737-872 全行読了。デフォルトグループ削除拒否が最重要分岐。4 件抽出。
+> **裏取り**: `processCoppTrapGroup` L737-872。デフォルトグループ削除拒否が最重要分岐。4 件抽出。
 <!-- /handler-branching -->
 <!-- platform -->
 ## プラットフォーム差

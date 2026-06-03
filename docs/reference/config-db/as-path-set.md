@@ -100,7 +100,7 @@ AS_PATH_SET|<name>
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
-YANG `default` 文が存在しないフィールドでもコードが暗黙の値を強制する場合がある。以下は全行精読による per-field 調査結果。
+YANG `default` 文が存在しないフィールドでもコードが暗黙の値を強制する場合がある。以下はによる per-field 調査結果。
 
 | フィールド | YANG default | コード実効デフォルト | パターン | 根拠 |
 |-----------|-------------|-------------------|---------|------|
@@ -127,7 +127,7 @@ YANG `default` 文が存在しないフィールドでもコードが暗黙の�
 <!-- constants -->
 ## ハードコード定数
 
-`bgpcfgd` (`AsPathMgr`) と `frrcfgd` (sonic-frr-mgmt-framework) の両経路を全行精読して抽出した、AS_PATH_SET 処理に埋め込まれた固定リテラル・定数。[SONiC](../../reference/glossary.md#term-sonic) レイヤには **regex 長やエントリ数の上限値は一切定義されていない**（FRR `bgpd` 内部の天井に委譲）。
+`bgpcfgd` (`AsPathMgr`) と `frrcfgd` (sonic-frr-mgmt-framework) の両経路をして抽出した、AS_PATH_SET 処理に埋め込まれた固定リテラル・定数。[SONiC](../../reference/glossary.md#term-sonic) レイヤには **regex 長やエントリ数の上限値は一切定義されていない**（FRR `bgpd` 内部の天井に委譲）。
 
 ### action enum（YANG `routing-policy-action-type`）と実装乖離
 
@@ -238,7 +238,7 @@ YANG `default` 文が存在しないフィールドでもコードが暗黙の�
 <!-- failure -->
 ## 失敗挙動マトリクス
 
-ソース: `sonic-bgpcfgd/bgpcfgd/managers_as_path.py` (AsPathMgr, `DEVICE_METADATA.localhost.t2_group_asns` 経路) と `sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` (AS_PATH_SET テーブル経路) の 2 経路を全行精読。retry セマンティクスは `bgpcfgd/manager.py` と `frrcfgd.py` ループに依存。
+ソース: `sonic-bgpcfgd/bgpcfgd/managers_as_path.py` (AsPathMgr, `DEVICE_METADATA.localhost.t2_group_asns` 経路) と `sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` (AS_PATH_SET テーブル経路) の 2 経路を。retry セマンティクスは `bgpcfgd/manager.py` と `frrcfgd.py` ループに依存。
 
 ### bgpcfgd 経路 (AsPathMgr — 固定名 T2_GROUP_ASNS)
 
@@ -409,7 +409,7 @@ vtysh -c "show ip as-path-access-list"
 <!-- ordering -->
 ## 書込み順依存
 
-`AS_PATH_SET` テーブルは leafref 参照元 (`ROUTE_MAP.match_as_path`)・bgpd デーモン起動順・別経路 (`AsPathMgr`) の固定名予約という 3 系統の順序依存を持つ。`bgpcfgd` (`AsPathMgr` / `managers_as_path.py:7-66`) と `frrcfgd` (`frrcfgd.py:96, 1009-1020, 2248-2253, 3005-3011`) の全行精読と `bgpd.conf.db.j2:6-20`、`sonic-route-map.yang:263-268` のクロス読みで抽出。
+`AS_PATH_SET` テーブルは leafref 参照元 (`ROUTE_MAP.match_as_path`)・bgpd デーモン起動順・別経路 (`AsPathMgr`) の固定名予約という 3 系統の順序依存を持つ。`bgpcfgd` (`AsPathMgr` / `managers_as_path.py:7-66`) と `frrcfgd` (`frrcfgd.py:96, 1009-1020, 2248-2253, 3005-3011`) のと `bgpd.conf.db.j2:6-20`、`sonic-route-map.yang:263-268` のクロス読みで抽出。
 
 ### 強制順序（破ると不整合・silent skip）
 

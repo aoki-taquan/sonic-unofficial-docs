@@ -62,7 +62,7 @@ flowchart LR
 <!-- pubsub -->
 ## 通信メカニズム
 
-> 根拠: `routesync.cpp` 155-164, 1389, 1424, 1562, 1667, 3389, 3441 / `orchdaemon.cpp` 312-324 / `srv6orch.cpp` 98-140, 2352-2386 / `srv6orch.h` 238-242 / `managers_srv6.py` 14-133 の全行精読。
+> 根拠: `routesync.cpp` 155-164, 1389, 1424, 1562, 1667, 3389, 3441 / `orchdaemon.cpp` 312-324 / `srv6orch.cpp` 98-140, 2352-2386 / `srv6orch.h` 238-242 / `managers_srv6.py` 14-133 の。
 
 ### 全体データフロー
 
@@ -189,7 +189,7 @@ SRV6_SID_LIST_TABLE|<seg_name>
 <!-- defaults -->
 ### コード由来のデフォルト
 
-> 根拠: `srv6orch.cpp` 行 73-79, 1079-1089, 1151-1162 の全行精読。
+> 根拠: `srv6orch.cpp` 行 73-79, 1079-1089, 1151-1162 の。
 
 | フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード fallback | 実効デフォルト |
 |-----------|-------------|----------------|--------------|
@@ -252,7 +252,7 @@ SRV6_MY_SID_TABLE|<block_len>:<node_len>:<func_len>:<args_len>:<sid_ipv6_addr>
 <!-- defaults -->
 ### コード由来のデフォルト
 
-> 根拠: `srv6orch.cpp` 行 41-71, 1384-1430, 2204-2248 の全行精読。
+> 根拠: `srv6orch.cpp` 行 41-71, 1384-1430, 2204-2248 の。
 
 | フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード fallback | 実効デフォルト |
 |-----------|-------------|----------------|--------------|
@@ -300,7 +300,7 @@ PIC_CONTEXT_TABLE|<context_id>
 <!-- defaults -->
 ### コード由来のデフォルト
 
-> 根拠: `srv6orch.cpp` 行 2272-2343 の全行精読。
+> 根拠: `srv6orch.cpp` 行 2272-2343 の。
 
 | フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード fallback | 実効デフォルト |
 |-----------|-------------|----------------|--------------|
@@ -339,7 +339,7 @@ MySID の `un` / `udt46` で [IPinIP](../../reference/glossary.md#term-ipinip) �
 <!-- ordering -->
 ## 処理順序と依存関係
 
-> 根拠: `srv6orch.cpp` 行 1119–1143, 1384–1543, 2272–2342, `managers_srv6.py` 行 56–115 の全行精読。
+> 根拠: `srv6orch.cpp` 行 1119–1143, 1384–1543, 2272–2342, `managers_srv6.py` 行 56–115 の。
 
 ### 投入（SET）推奨順序
 
@@ -390,7 +390,7 @@ warm-reboot 後は swss 再起動時に APP_DB から全エントリを再読み
 <!-- cross-refs -->
 ## テーブル間暗黙参照
 
-> 根拠: `srv6orch.cpp` 行 98–117, 331–397, 430–480, 871–924, 1129–1132, 1197–1248, 1484–1542, 1639, 1683, 1644, 1689, 1815–1833, 2312, 2384 の全行精読。
+> 根拠: `srv6orch.cpp` 行 98–117, 331–397, 430–480, 871–924, 1129–1132, 1197–1248, 1484–1542, 1639, 1683, 1644, 1689, 1815–1833, 2312, 2384 の。
 
 ### SRV6_MY_SID_TABLE が参照する外部テーブル・Orch
 
@@ -713,7 +713,7 @@ CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（�
 <!-- platform -->
 ## プラットフォーム差分
 
-> 根拠: `srv6orch.cpp` (rev 4305596156d70e9797e8a881b3d19b46de0bce0d) 全行精読、`sonic-sairedis/syncd/VendorSai.cpp`、`sonic-sairedis/vslib/vpp/SwitchVppSRv6.cpp`、[SONiC](../../reference/glossary.md#term-sonic) [HLD](../../reference/glossary.md#term-hld) `doc/srv6/srv6_hld.md`、`SRv6_uSID.md`、`srv6_sid_l3adj.md`。
+> 根拠: `srv6orch.cpp` (rev 4305596156d70e9797e8a881b3d19b46de0bce0d)、`sonic-sairedis/syncd/VendorSai.cpp`、`sonic-sairedis/vslib/vpp/SwitchVppSRv6.cpp`、[SONiC](../../reference/glossary.md#term-sonic) [HLD](../../reference/glossary.md#term-hld) `doc/srv6/srv6_hld.md`、`SRv6_uSID.md`、`srv6_sid_l3adj.md`。
 
 ### SAI capability — MySID カウンタ非対応 ASIC
 

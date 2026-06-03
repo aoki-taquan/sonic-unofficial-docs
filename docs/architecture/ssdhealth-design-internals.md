@@ -97,7 +97,7 @@ flowchart LR
 
 ## 実装との乖離
 
-`monitor: evolved_beyond_hld` — `monitor: evolved_beyond_hld` の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ [SSD ヘルスチェック 内部実装 親ページ](ssdhealth-design.md) の同セクション（`## 実装との乖離` または `!!! diff` ブロック）を参照のこと。
+`monitor: evolved_beyond_hld` の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ [SSD ヘルスチェック 内部実装 親ページ](ssdhealth-design.md) の同セクション（`## 実装との乖離` または `!!! diff` ブロック）を参照のこと。
 
 ## 引用元
 

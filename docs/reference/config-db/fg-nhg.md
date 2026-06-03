@@ -473,7 +473,7 @@ FG_NHG|<name>          ← 最後に削除
 <!-- cross-refs -->
 ## 暗黙参照 (cross-table refs)
 
-> **Evidence**: `sonic-swss/orchagent/fgnhgorch.cpp` 全行精読 (2026-05-16)
+> **Evidence**: `sonic-swss/orchagent/fgnhgorch.cpp` (2026-05-16)
 
 `FG_NHG` / `FG_NHG_PREFIX` / `FG_NHG_MEMBER` テーブルは YANG leafref を最小限しか持たないが、`FgNhgOrch` の実行時に以下のテーブル・Orch を暗黙参照する。
 

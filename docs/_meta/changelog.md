@@ -2,7 +2,7 @@
 title: 変更履歴
 description: "変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。"
 verification: meta
-last_verified: 2026-06-02
+last_verified: 2026-06-03
 tags:
   - changelog
   - meta
@@ -23,6 +23,10 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-03 #5093 fix: split-child 'monitor: X — monitor: X' double-expansion in 実装との乖離 section (32 pages)
+- 2026-06-03 #5092 chore(docs): strip QA-internal 全行精読 phrasings (96 files)
+- 2026-06-03 #5091 fix: render_evidence reasoning > block-scalar parser + buildimage #11337 mislabel
+- 2026-06-02 #5090 chore(textlint): enable no-mix-dearu-desumasu; unify style to dearu in 25 pages
 - 2026-06-01 #5089 chore(typos): remove redundant short-fragment extend-words + fix 3 trafic typos
 - 2026-06-01 #5087 ci(lychee): restore RFC URL checks (datatracker / rfc-editor)
 - 2026-06-01 #5088 ci: promote heading-hierarchy check to strict (fix ntp.md)
@@ -522,8 +526,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3896 docs(config-db): add Phase D failure-behavior block to mux-cable-state
 - 2026-05-19 #3895 docs(config-db): add Phase D failure-behavior block to stp-state
 - 2026-05-19 #3893 docs(config-db): add Phase E constants block to fabric-port
-- 2026-05-19 #3892 docs(config-db): add Phase E hardcoded-constants block to SWITCH_HASH page
-- 2026-05-19 #3891 docs(config-db): add Phase C cross-refs block to NVGRE_TUNNEL
-- 2026-05-19 #3890 docs(config-db): add Phase D failure-behavior block to TC_TO_DSCP_MAP
-- 2026-05-19 #3889 docs(config-db): add Phase D failure block to mux-cable-port page
 

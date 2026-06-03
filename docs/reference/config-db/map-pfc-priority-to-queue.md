@@ -324,7 +324,7 @@ minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_co
 | `QosOrch` | `PfcToQueueHandler` | SAI object ID が NULL かつ DEL 操作 | `"Object with name not found"` ログ + `task_invalid_entry` | `sonic-swss/orchagent/qosorch.cpp:156-162` |
 | `QosOrch` | `sai_qos_map_api->create_qos_map()` | SAI 返値 ≠ `SAI_STATUS_SUCCESS` | `task_failed` | `sonic-swss/orchagent/qosorch.cpp:977,1032` |
 
-> **裏取り**: `QosOrch::PfcToQueueHandler` を全行読了、4 件分岐抽出。qos_config.j2 からの platform 別マップ書き込みは実ソースと整合。
+> **裏取り**: `QosOrch::PfcToQueueHandler` を、4 件分岐抽出。qos_config.j2 からの platform 別マップ書き込みは実ソースと整合。
 
 <!-- /handler-branching -->
 

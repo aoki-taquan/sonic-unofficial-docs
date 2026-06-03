@@ -526,7 +526,7 @@ if (gMySwitchType == "voq")
 <!-- pubsub -->
 ## Redis 通知メカニズム
 
-> **Evidence**: `fabricmgrd.cpp:27-35`; `fabricmgr.cpp:14-21`; `orchdaemon.cpp:604-610,1297-1303`; `fabricportsorch.cpp:80-133,1394-1400` 全行精読 (2026-05-19)
+> **Evidence**: `fabricmgrd.cpp:27-35`; `fabricmgr.cpp:14-21`; `orchdaemon.cpp:604-610,1297-1303`; `fabricportsorch.cpp:80-133,1394-1400` (2026-05-19)
 
 ### Producer/Consumer ペア
 

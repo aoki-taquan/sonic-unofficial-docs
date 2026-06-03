@@ -91,7 +91,7 @@ LOGGER|<component>
 <!-- ordering -->
 ## 書込み順依存
 
-`Logger::linkToDbWithOutput()` / `settingThread()` (`sonic-swss-common/common/logger.cpp`) を全行精読した結果、以下の順序依存・タイミング依存を検出した。
+`Logger::linkToDbWithOutput()` / `settingThread()` (`sonic-swss-common/common/logger.cpp`) をした結果、以下の順序依存・タイミング依存を検出した。
 
 ### 他テーブル先行必須
 
@@ -141,7 +141,7 @@ SET CONFIG_DB LOGGER|orchagent  LOGLEVEL=NOTICE
 
 YANG `sonic-logger.yang` にも `leafref` が存在せず、他モジュールへの参照依存はない。
 
-> evidence: `logger.cpp:126-149` (`linkToDbWithOutput()`)、`sonic-logger.yang` 全行精読。
+> evidence: `logger.cpp:126-149` (`linkToDbWithOutput()`)、`sonic-logger.yang`。
 
 ### LOGGER テーブルを読み取る側
 
@@ -157,7 +157,7 @@ YANG `sonic-logger.yang` にも `leafref` が存在せず、他モジュール�
 <!-- failure -->
 ## 異常系・フォールバック挙動
 
-`sonic-swss-common/common/logger.cpp` を全行精読した結果、以下の異常系・フォールバック挙動を検出した。
+`sonic-swss-common/common/logger.cpp` をした結果、以下の異常系・フォールバック挙動を検出した。
 
 ### 無効値フォールバック
 
@@ -189,7 +189,7 @@ evidence: `logger.cpp:210-241`
 <!-- constants -->
 ## ハードコード定数
 
-> **Evidence**: `sonic-swss-common/common/logger.cpp`, `logger.h`, `schema.h` 全行精読 (2026-05-19)
+> **Evidence**: `sonic-swss-common/common/logger.cpp`, `logger.h`, `schema.h` (2026-05-19)
 
 `LOGGER` テーブルの処理で使われる値のうち、CONFIG_DB フィールドで制御できずソースに固定されている定数をまとめる。
 
@@ -262,7 +262,7 @@ CONFIG_DB の `LOGGER` テーブルにエントリが存在しない場合は、
 <!-- side-effects -->
 ## 副次 DB 書込
 
-`sonic-swss-common/common/logger.cpp` および `loglevel.cpp` を全行精読した結果、`LOGGER` テーブルの処理は `CONFIG_DB` の `LOGGER` テーブル**のみ**を読み書きし、他 DB への副次書込は発生しない。
+`sonic-swss-common/common/logger.cpp` および `loglevel.cpp` をした結果、`LOGGER` テーブルの処理は `CONFIG_DB` の `LOGGER` テーブル**のみ**を読み書きし、他 DB への副次書込は発生しない。
 
 ### DB 別書込有無
 

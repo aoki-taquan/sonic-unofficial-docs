@@ -351,7 +351,7 @@ SET DASH_HA_GLOBAL_CONFIG|global  dpu_vnet=<vnet_name>  ...
 <!-- cross-refs -->
 ## 暗黙参照
 
-> **Evidence**: `src/sonic-yang-models/yang-models/sonic-smart-switch.yang` 全行精読; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:60-100`; `src/sonic-dhcp-utilities/dhcp_utilities/common/utils.py:153-161`; `src/sonic-config-engine/config_samples.py:80-157`; `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:355,749,1143,1187,1245-1270` (2026-05-17)
+> **Evidence**: `src/sonic-yang-models/yang-models/sonic-smart-switch.yang`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:60-100`; `src/sonic-dhcp-utilities/dhcp_utilities/common/utils.py:153-161`; `src/sonic-config-engine/config_samples.py:80-157`; `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:355,749,1143,1187,1245-1270` (2026-05-17)
 
 各テーブルは YANG leafref の有無とは独立して、実装レベルで以下のテーブルを暗黙参照する。
 

@@ -84,7 +84,7 @@ ROUTE_REDISTRIBUTE|<vrf_name>|<src_protocol>|<dst_protocol>|<address_family>
 <!-- ordering -->
 ## 書込み順依存
 
-`ROUTE_REDISTRIBUTE` テーブルへの書き込みには以下の順序制約がある。`frrcfgd` の実装（`frrcfgd.py`）を全行精読して確認した。
+`ROUTE_REDISTRIBUTE` テーブルへの書き込みには以下の順序制約がある。`frrcfgd` の実装（`frrcfgd.py`）をして確認した。
 
 ### 必須制約（違反すると silent drop）
 

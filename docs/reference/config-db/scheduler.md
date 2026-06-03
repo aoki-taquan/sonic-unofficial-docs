@@ -275,7 +275,7 @@ db_migrator.py での SCHEDULER マイグレーションなし
 <!-- defaults -->
 ## コード由来のデフォルト・暗黙挙動
 
-> **Evidence**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` 全行精読 + `sonic-scheduler.yang` 照合 (2026-05-14)
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` + `sonic-scheduler.yang` 照合 (2026-05-14)
 
 | フィールド | YANG default | qosorch 実装の実効デフォルト | 備考 |
 |-----------|-------------|--------------------------|------|

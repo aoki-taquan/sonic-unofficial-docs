@@ -199,7 +199,7 @@ show bmp
 
 ### grep カバレッジ
 
-- bmpcfgd.py 100 行全行読了、BMP テーブル購読: 1 件（条件なし）
+- bmpcfgd.py 100 行、BMP テーブル購読: 1 件（条件なし）
 <!-- /derivation -->
 <!-- handler-branching -->
 ### Handler メソッド内分岐
@@ -211,7 +211,7 @@ show bmp
 | `BMPCfg` | `load()` | `bgp_rib_out_table == 'true'` | `self.bgp_rib_out_table = True`（openbmpd が RIB_OUT を BMP_STATE_DB に書き込む） | `sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py:40` |
 | `BMPCfg` | `load()` | 設定変更時（常に） | `stop_bmp()` → `reset_bmp_table()` → `start_bmp()` の順で openbmpd を再起動し BMP_STATE_DB をクリア | `sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py:44-46` |
 
-> **裏取り**: `BMPCfg.load()` L34-46 全行読了。値による分岐は is_true() による bool 変換のみ。3 フィールドすべて独立して分岐（相互排他ではない）。
+> **裏取り**: `BMPCfg.load()` L34-46。値による分岐は is_true() による bool 変換のみ。3 フィールドすべて独立して分岐（相互排他ではない）。
 <!-- /handler-branching -->
 
 <!-- failure -->
