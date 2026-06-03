@@ -112,7 +112,7 @@ SAI 非対応プラットフォームでは `COUNTERS_SRV6_NAME_MAP` が作成�
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
-> 根拠: `srv6orch.cpp` L21-24, L144-155, L177-199, L251-283, `srv6stat.py` 全行精読。
+> 根拠: `srv6orch.cpp` L21-24, L144-155, L177-199, L251-283, `srv6stat.py`。
 
 | フィールド / 状態 | 省略・未対応時の実挙動 | 分類 |
 |----------------|----------------------|------|
@@ -189,7 +189,7 @@ MySID エントリを追加してから OID が [FlexCounter](../../reference/gl
 <!-- cross-refs -->
 ## テーブル間クロスリファレンス
 
-> 根拠: `srv6orch.cpp` `addMySidCounter()` L184-210、`removeMySidCounter()` L218-232、`getMySidCounterKey()` L177-182、`setCountersState()` L251-283、`schema.h` L257,313、`srv6stat.py` 全行精読。
+> 根拠: `srv6orch.cpp` `addMySidCounter()` L184-210、`removeMySidCounter()` L218-232、`getMySidCounterKey()` L177-182、`setCountersState()` L251-283、`schema.h` L257,313、`srv6stat.py`。
 
 | 参照元 | 参照先 | 種別 | 必須条件 |
 |--------|--------|------|----------|
@@ -217,7 +217,7 @@ return mysid_addr + "/" + to_string(block_len + node_len + func_len)
 <!-- failure -->
 ## 失敗挙動マトリクス
 
-> 根拠: `srv6orch.cpp` `initializeCounters()` L120-142、`queryMySidCountersCapability()` L144-155、`addMySidCounter()` L184-210、`setMySidEntryCounter()` L236-248、`setCountersState()` L251-283、`createUpdateMysidEntry()` L1589-1614 全行精読。
+> 根拠: `srv6orch.cpp` `initializeCounters()` L120-142、`queryMySidCountersCapability()` L144-155、`addMySidCounter()` L184-210、`setMySidEntryCounter()` L236-248、`setCountersState()` L251-283、`createUpdateMysidEntry()` L1589-1614。
 
 COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が自動管理するため、ユーザが直接失敗操作を行うテーブルではない。ただし以下のエラー経路がある。
 
@@ -289,7 +289,7 @@ MySID 追加から `COUNTERS:<oid>` 初回値が出現するまでの最大待�
 <!-- side-effects -->
 ## 副次 DB 書込
 
-> 根拠: `srv6orch.cpp` `addMySidCounter()` L184-210、`removeMySidCounter()` L212-234、`setMySidEntryCounter()` L236-248、`setCountersState()` L251-283、`doTask(SelectableTimer)` L286-313、`createUpdateMysidEntry()` L1589-1614 全行精読。
+> 根拠: `srv6orch.cpp` `addMySidCounter()` L184-210、`removeMySidCounter()` L212-234、`setMySidEntryCounter()` L236-248、`setCountersState()` L251-283、`doTask(SelectableTimer)` L286-313、`createUpdateMysidEntry()` L1589-1614。
 
 COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザが直接書き込むテーブルではない。`Srv6Orch` が `SRV6_MY_SIDS` ([CONFIG_DB](../../reference/glossary.md#term-config_db)) および `FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER` の変化を受けて、以下の副次書込みを実行する。
 

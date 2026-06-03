@@ -193,7 +193,7 @@ APPL_DB の `FABRIC_MONITOR_DATA` エントリが存在しない場合、`update
 <!-- cross-refs -->
 ## 暗黙参照 (cross-table refs)
 
-> **Evidence**: `fabricmgr.cpp`, `fabricportsorch.cpp` 全行精読 (2026-05-18)
+> **Evidence**: `fabricmgr.cpp`, `fabricportsorch.cpp` (2026-05-18)
 
 `FABRIC_MONITOR` テーブルは YANG leafref を持たないが、`fabricmgrd` / `FabricPortsOrch` が実行時に以下のテーブル・リソースを暗黙参照する。
 
@@ -441,7 +441,7 @@ if (gMySwitchType == "voq")
 <!-- pubsub-2 -->
 ## 通信メカニズム補足
 
-> **Evidence**: `fabricmgrd.cpp:14-72`; `fabricmgr.cpp:14-21`; `orchdaemon.cpp:604-610,1297-1303`; `fabricportsorch.cpp:80-133,1396-1400` 全行精読 (2026-05-19)
+> **Evidence**: `fabricmgrd.cpp:14-72`; `fabricmgr.cpp:14-21`; `orchdaemon.cpp:604-610,1297-1303`; `fabricportsorch.cpp:80-133,1396-1400` (2026-05-19)
 
 ### Producer/Consumer ペア
 

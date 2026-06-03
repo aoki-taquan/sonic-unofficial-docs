@@ -290,7 +290,7 @@ orchagent が [STATE_DB](../../reference/glossary.md#term-state_db) へ書き込
 <!-- cross-refs -->
 ## 暗黙参照 (cross-table refs)
 
-> **Evidence**: `orchagent/orchdaemon.cpp`, `orchagent/main.cpp`, `orchagent/portsorch.cpp`, `orchagent/fdborch.cpp`, `orchagent/vrforch.cpp`, `orchagent/macsecpost.cpp`, `common/warm_restart.cpp` 全行精読 (2026-05-18)
+> **Evidence**: `orchagent/orchdaemon.cpp`, `orchagent/main.cpp`, `orchagent/portsorch.cpp`, `orchagent/fdborch.cpp`, `orchagent/vrforch.cpp`, `orchagent/macsecpost.cpp`, `common/warm_restart.cpp` (2026-05-18)
 
 orchagent が STATE_DB へ書き込む各テーブルは、以下の上流 DB・SAI イベントを暗黙的に参照する。[YANG](../../reference/glossary.md#term-yang) leafref はいずれも存在しない。
 

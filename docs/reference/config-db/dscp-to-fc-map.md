@@ -313,7 +313,7 @@ grep -i "dscp_to_fc\|dscp.*fc" /var/log/swss/orchagent.log | tail -20
 sonic-db-cli CONFIG_DB hgetall 'DSCP_TO_FC_MAP|AZURE'
 ```
 
-> **証跡**: `QosMapHandler::processWorkItem()` qosorch.cpp:124-210 全行精読; `DscpToFcMapHandler::convertFieldValuesToAttributes()` qosorch.cpp:1039-1094; `DscpToFcMapHandler::addQosItem()` qosorch.cpp:1095-1124; `NhgMapOrch::getMaxNumFcs()` nhgmaporch.cpp:299-325。
+> **証跡**: `QosMapHandler::processWorkItem()` qosorch.cpp:124-210; `DscpToFcMapHandler::convertFieldValuesToAttributes()` qosorch.cpp:1039-1094; `DscpToFcMapHandler::addQosItem()` qosorch.cpp:1095-1124; `NhgMapOrch::getMaxNumFcs()` nhgmaporch.cpp:299-325。
 <!-- /failure -->
 
 <!-- constants -->

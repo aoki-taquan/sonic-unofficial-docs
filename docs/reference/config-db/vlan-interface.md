@@ -492,7 +492,7 @@ db_migrator.py での VLAN_INTERFACE マイグレーションなし
 <!-- cross-refs -->
 ## 暗黙参照テーブル
 
-> **Evidence**: `intfmgr.cpp`、`sonic-vlan.yang`、`dhcp4relay.cpp`、`config_interface.cpp`、`dhcp_cfggen.py`、`natconfig`、`neighbor_advertiser`、`filter_fdb_entries.py`、`xfmr_intf.go` 全行精読 (2026-05-15)
+> **Evidence**: `intfmgr.cpp`、`sonic-vlan.yang`、`dhcp4relay.cpp`、`config_interface.cpp`、`dhcp_cfggen.py`、`natconfig`、`neighbor_advertiser`、`filter_fdb_entries.py`、`xfmr_intf.go` (2026-05-15)
 
 `VLAN_INTERFACE` は YANG leafref で `VLAN`・`VRF`・`VNET` を公式参照するほか、
 実行時に以下のテーブルを**暗黙的に参照または被参照**する。
@@ -667,7 +667,7 @@ if (status != SAI_STATUS_SUCCESS)
 <!-- secondary-db-writes -->
 ## 副次 DB 書込み
 
-intfmgr が CONFIG_DB エントリを処理した結果として書き込む APPL_DB・STATE_DB のキー・フィールドを網羅的に記録する（ソース: `sonic-swss/cfgmgr/intfmgr.cpp` 全行精読 2026-05-16）。
+intfmgr が CONFIG_DB エントリを処理した結果として書き込む APPL_DB・STATE_DB のキー・フィールドを網羅的に記録する（ソース: `sonic-swss/cfgmgr/intfmgr.cpp` 2026-05-16）。
 
 ### APPL_DB — `INTF_TABLE`
 

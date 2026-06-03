@@ -202,7 +202,7 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 <!-- failure -->
 ## 失敗挙動
 
-`CbfNhgOrch::doTask(Consumer&)` (`sonic-swss/orchagent/cbf/cbfnhgorch.cpp`) を全行精読した結果、以下の失敗分岐・retry 挙動を検出した。
+`CbfNhgOrch::doTask(Consumer&)` (`sonic-swss/orchagent/cbf/cbfnhgorch.cpp`) をした結果、以下の失敗分岐・retry 挙動を検出した。
 
 ### SET 操作の失敗パターン
 

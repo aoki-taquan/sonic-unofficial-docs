@@ -315,7 +315,7 @@ APPL_DB への書き込みと常に同時に発生する。
 | `BufferMgrDynamic` | BUFFER_PG シングルポートハンドラ | `portPg.dynamic_calculated == true` | headroom を自動計算してプロファイル名を決定 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:1483` |
 | `BufferMgrDynamic` | BUFFER_PG シングルポートハンドラ | `portPg.dynamic_calculated == false` | 静的プロファイル参照として APPL_DB に直接書き込む | `sonic-swss/cfgmgr/buffermgrdyn.cpp:1515` |
 
-> **裏取り**: `handleBufferObjectTables` L3502-3553 全行読了。`handleBufferPgTable` は共通ルーターを経由。4 件分岐抽出。
+> **裏取り**: `handleBufferObjectTables` L3502-3553。`handleBufferPgTable` は共通ルーターを経由。4 件分岐抽出。
 <!-- /handler-branching -->
 <!-- constants -->
 ## ハードコード定数

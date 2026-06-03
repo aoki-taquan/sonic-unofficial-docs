@@ -143,7 +143,7 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
-以下は YANG `default` 宣言の**外**にあるコードレベルの fallback。`init_cfg.json.j2` の初期値 + ランタイム `.get`/`try-except`/`or` パターンを全行精読して導出。
+以下は YANG `default` 宣言の**外**にあるコードレベルの fallback。`init_cfg.json.j2` の初期値 + ランタイム `.get`/`try-except`/`or` パターンをして導出。
 
 ### AUTO_TECHSUPPORT|GLOBAL
 
@@ -489,7 +489,7 @@ masic suffix を除去してから (`swss0` → `swss`) `AUTO_TECHSUPPORT_FEATUR
 <!-- failure -->
 ## 失敗挙動・エラーパス
 
-> **Evidence**: `coredump_gen_handler.py`, `techsupport_cleanup.py`, `utilities_common/auto_techsupport_helper.py` 全行精読 (2026-05-15)  
+> **Evidence**: `coredump_gen_handler.py`, `techsupport_cleanup.py`, `utilities_common/auto_techsupport_helper.py` (2026-05-15)  
 
 ### techsupport 起動失敗・retry (`auto_techsupport_helper.invoke_ts_cmd`)
 

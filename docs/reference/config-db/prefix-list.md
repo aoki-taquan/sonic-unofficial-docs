@@ -171,7 +171,7 @@ PREFIX_LIST テーブルは全フィールドが key または YANG `must` 制�
 | `ip-prefix` | なし (key) | なし | key フィールド。PrefixListMgr が `netaddr.IPNetwork().cidr` で正規化するのみ |
 | `family` | なし | なし | YANG `must` で `ip-prefix` と整合チェック。FRR 展開の IPv4/IPv6 判定は `get_ip_type()` が `ip-prefix` の netaddr version から動的に導出（`family` フィールドは不使用） |
 
-> **裏取り**: `managers_prefix_list.py` L112 `data["ipv"] = self.get_ip_type(prefix)`、L138-143 `get_ip_type` 全行読了。`sonic-bgp-prefix-list.yang` の `family` leaf に `default` 文なし確認済み。
+> **裏取り**: `managers_prefix_list.py` L112 `data["ipv"] = self.get_ip_type(prefix)`、L138-143 `get_ip_type`。`sonic-bgp-prefix-list.yang` の `family` leaf に `default` 文なし確認済み。
 
 <!-- /defaults -->
 

@@ -516,7 +516,7 @@ journal.ps = journal.rc.PSubscribe(ctx, keyspace, keyevent)
 <!-- platform -->
 ## プラットフォーム差分
 
-> **Evidence**: `sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh`、`sonic-gnmi/telemetry/telemetry.go`、`sonic-gnmi/sonic_data_client/mixed_db_client.go`、`sonic-gnmi/sonic_data_client/db_client.go`、`sonic-gnmi/sonic_db_config/db_config.go` 全行精読 (2026-05-19)
+> **Evidence**: `sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh`、`sonic-gnmi/telemetry/telemetry.go`、`sonic-gnmi/sonic_data_client/mixed_db_client.go`、`sonic-gnmi/sonic_data_client/db_client.go`、`sonic-gnmi/sonic_db_config/db_config.go` (2026-05-19)
 
 ### 差異 1: SmartSwitch — ZMQ ポート自動付与
 

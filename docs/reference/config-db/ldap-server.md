@@ -334,7 +334,7 @@ hostcfgd は起動時から `LDAP` / `LDAP_SERVER` テーブルを常時購読�
 <!-- cross-refs -->
 ## 暗黙参照テーブル
 
-> **Evidence**: `sonic-host-services/scripts/hostcfgd` 全行精読 (2026-05-16)
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` (2026-05-16)
 
 `LDAP_SERVER` テーブルは YANG leafref を持たないが、`hostcfgd` の `AaaCfg` クラスが以下のテーブルを暗黙参照する。**3 テーブルが揃って初めて nslcd が起動し LDAP 認証が有効になる**。
 
@@ -394,7 +394,7 @@ hostcfgd 初期化時に `DEVICE_METADATA` から `localhost.hostname` を取得
 <!-- constants -->
 ## 実装定数一覧
 
-> **Evidence**: `sonic-host-services/scripts/ldap.py` 全行精読, `sonic-host-services/scripts/hostcfgd` L.40-43, L.106-107, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-ldap.yang`, `sonic-host-services/data/templates/nslcd.conf.j2`
+> **Evidence**: `sonic-host-services/scripts/ldap.py`, `sonic-host-services/scripts/hostcfgd` L.40-43, L.106-107, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-ldap.yang`, `sonic-host-services/data/templates/nslcd.conf.j2`
 
 ### LdapCfg クラス定数 (`ldap.py`)
 

@@ -549,7 +549,7 @@ capability 結果は `STATE_DB` の `ACL_STAGE_CAPABILITY_TABLE|{INGRESS,EGRESS}
 !!! note "range match の上限 (mellanox / clounix)"
     mellanox: `MLNX_MAX_RANGES_COUNT = 16`、clounix: `CLNX_MAX_RANGES_COUNT = 16` (`aclorch.h:109-110`)。`ACL_TABLE_TYPE` 定義で range match (`L4_SRC_PORT_RANGE` / `L4_DST_PORT_RANGE`) を含む型を作っても、配下 ACL_RULE での range オブジェクト累計が上限を超えると SAI エラーになる。ACL_TABLE_TYPE 段では検出されない。
 
-> **裏取り**: `AclOrch::init()` L3480-3720 / `initDefaultTableTypes()` L3724-3830 / `AclTableTypeParser::parseAclTableTypeActions()` L831-879 / `AclTableTypeParser::parseAclTableTypeMatches()` L796-829 / `queryAclActionCapabilities()` L3969-4053 / `putAclActionCapabilityInDB()` L4056-4101 / `orch.h:40-50` / `aclorch.h:109-110` 全行精読。
+> **裏取り**: `AclOrch::init()` L3480-3720 / `initDefaultTableTypes()` L3724-3830 / `AclTableTypeParser::parseAclTableTypeActions()` L831-879 / `AclTableTypeParser::parseAclTableTypeMatches()` L796-829 / `queryAclActionCapabilities()` L3969-4053 / `putAclActionCapabilityInDB()` L4056-4101 / `orch.h:40-50` / `aclorch.h:109-110`。
 <!-- /platform -->
 
 ---

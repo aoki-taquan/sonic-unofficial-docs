@@ -182,7 +182,7 @@ DEL NVGRE_TUNNEL|<tunnel_name>                  # その後トンネルを削除
 | `NVGRE_TUNNEL_MAP` DEL → `NVGRE_TUNNEL` DEL | 推奨 | 逆順でも [orchagent](../../reference/glossary.md#term-orchagent) は継続するが SAI エントリ孤立リスク |
 | allPortsReady | 不要 | NVGRE orch には allPortsReady ガードなし |
 
-> **裏取り**: `nvgreorch.cpp:464-508` 全行精読、`orchdaemon.cpp:361-364` 登録順確認。
+> **裏取り**: `nvgreorch.cpp:464-508`、`orchdaemon.cpp:361-364` 登録順確認。
 
 <!-- /ordering -->
 
@@ -517,7 +517,7 @@ multi-asic 構成では orchagent が `asic0`/`asic1`/... ごとに独立起動�
 | `NvgreTunnelOrch` | `addOperation()` | `isTunnelExists(tunnel_name)` = false | 新規 `NvgreTunnel` オブジェクトを作成して SAI トンネルを設定 | `nvgreorch.cpp:363` |
 | `NvgreTunnelOrch` | `delOperation()` | `!isTunnelExists(tunnel_name)` | ERROR ログ + `return true` (冪等) | `nvgreorch.cpp:374-378` |
 
-> **裏取り**: `nvgreorch.cpp:350-385` を全行読了、3 件分岐抽出。minigraph.py からの自動派生なしを確認 — 誤読なし。
+> **裏取り**: `nvgreorch.cpp:350-385` を、3 件分岐抽出。minigraph.py からの自動派生なしを確認 — 誤読なし。
 
 <!-- /handler-branching -->
 

@@ -431,7 +431,7 @@ lldp ネイバー情報の STATE_DB への書込は `lldp-syncd` が担当する
 <!-- pubsub -->
 ## 通信メカニズム
 
-> **Evidence**: `dockers/docker-lldp/lldpmgrd` 全行精読 (2026-05-18)
+> **Evidence**: `dockers/docker-lldp/lldpmgrd` (2026-05-18)
 
 `LLDP_PORT` テーブルは **`lldpmgrd` に直接購読されていない**。lldpmgrd が購読するのは `APPL_DB PORT_TABLE`・`CONFIG_DB MGMT_INTERFACE`・`CONFIG_DB DEVICE_METADATA` の 3 テーブルのみであり、`LLDP_PORT` への書き込みは lldpmgrd のイベントループに到達しない。
 

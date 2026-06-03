@@ -227,7 +227,7 @@ show dhcp_server ipv4 info
 <!-- pubsub -->
 ## 通信メカニズム (Redis PUBSUB / keyspace notification)
 
-> **Evidence**: `dhcp_utilities/common/dhcp_db_monitor.py` + `dhcp_utilities/dhcpservd/dhcpservd.py` 全行精読、`sonic-swss-common/common/subscriberstatetable.cpp` 参照 (2026-05-15)  
+> **Evidence**: `dhcp_utilities/common/dhcp_db_monitor.py` + `dhcp_utilities/dhcpservd/dhcpservd.py`、`sonic-swss-common/common/subscriberstatetable.cpp` 参照 (2026-05-15)  
 > 
 ### 購読方式
 
@@ -388,7 +388,7 @@ dhcpservd は stateless（CONFIG_DB から毎回全量 generate）。再起動�
 <!-- cross-refs -->
 ## 暗黙参照 (cross-table refs)
 
-> **Evidence**: `dhcp_cfggen.py`, `dhcprelayd.py`, `dhcp_server.py` 全行精読 (2026-05-15)  
+> **Evidence**: `dhcp_cfggen.py`, `dhcprelayd.py`, `dhcp_server.py` (2026-05-15)  
 
 `DHCP_SERVER_IPV4` テーブルは YANG leafref を最小限しか持たないが、実行時に以下のテーブルを暗黙参照する。
 
@@ -430,7 +430,7 @@ CLI `config dhcp_server` グループ入口で `FEATURE|dhcp_server.state` を�
 <!-- failure -->
 ## 失敗挙動・エラーパス
 
-> **Evidence**: `dhcp_cfggen.py`, `dhcpservd.py`, `dhcprelayd.py`, `dhcp_server.py` 全行精読 (2026-05-15)  
+> **Evidence**: `dhcp_cfggen.py`, `dhcpservd.py`, `dhcprelayd.py`, `dhcp_server.py` (2026-05-15)  
 
 ### dhcpservd プロセス起動失敗 (即時 exit)
 
@@ -482,7 +482,7 @@ CLI `config dhcp_server` グループ入口で `FEATURE|dhcp_server.state` を�
 <!-- side-effects -->
 ## 副次 DB 書込
 
-> **Evidence**: `dhcp_lease.py`, `dhcpservd.py`, `dhcp_cfggen.py` 全行精読 (2026-05-16)  
+> **Evidence**: `dhcp_lease.py`, `dhcpservd.py`, `dhcp_cfggen.py` (2026-05-16)  
 
 CONFIG_DB の `DHCP_SERVER_IPV4` を書き込むと、`dhcpservd` が以下の副次書き込みを行う。
 
@@ -596,7 +596,7 @@ YANG 未定義の `binary` / `boolean` は直接 DB 書込みによる拡張型�
 <!-- platform -->
 ## プラットフォーム差異
 
-> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py`、`common/utils.py` 全行精読 (2026-05-16)  
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py`、`common/utils.py` (2026-05-16)  
 
 ### kea-dhcp4 vs dnsmasq
 

@@ -443,7 +443,7 @@ sonic-db-cli STATE_DB keys 'MIRROR_SESSION_TABLE*'
 
 <!-- evidence: sonic-swss/orchagent/p4orch/mirror_session_manager.cpp drain() L62-119 / deserializeP4MirrorSessionAppDbEntry() L190-323 / processAddRequest() L339-363 / createMirrorSession() L365-397 / processUpdateRequest() L399-480 / setPort() L482-524 / processDeleteRequest() L733-774 / prepareSaiAttrs() L122-188 -->
 
-APPL_DB `FIXED_MIRROR_SESSION_TABLE` の書込主体である `MirrorSessionManager::drain()` / `processAddRequest()` / `processUpdateRequest()` / `processDeleteRequest()` / `deserializeP4MirrorSessionAppDbEntry()` / `prepareSaiAttrs()` (`sonic-swss/orchagent/p4orch/mirror_session_manager.cpp`) を全行精読し、失敗・retry・CRITICAL 経路を抽出した。
+APPL_DB `FIXED_MIRROR_SESSION_TABLE` の書込主体である `MirrorSessionManager::drain()` / `processAddRequest()` / `processUpdateRequest()` / `processDeleteRequest()` / `deserializeP4MirrorSessionAppDbEntry()` / `prepareSaiAttrs()` (`sonic-swss/orchagent/p4orch/mirror_session_manager.cpp`) をし、失敗・retry・CRITICAL 経路を抽出した。
 
 CONFIG_DB 側 `MirrorOrch` (`orchagent/mirrororch.cpp`) と比較すると、P4RT 経路は **Orch 共通の `m_toSync` 自動再試行機構を一切使わない fail-fast 設計**であり、port readiness / policer 未準備 / SAI 一時失敗のいずれも自動回復しない。再送責務は P4RT controller 側に集約される[^fail-1]。
 

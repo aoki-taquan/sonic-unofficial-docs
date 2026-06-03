@@ -176,7 +176,7 @@ if (SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS == queue_stats_capability.list[it].st
 <!-- failure -->
 ## 失敗挙動・エラーパス
 
-> **Evidence**: `sonic-swss/orchagent/portsorch.cpp` @ master 全行精読
+> **Evidence**: `sonic-swss/orchagent/portsorch.cpp` @ master
 
 ### SAI クエリ失敗（`sai_query_stats_capability` エラー）
 
@@ -233,7 +233,7 @@ else
 <!-- constants -->
 ## ハードコード定数
 
-> **Evidence**: `sonic-swss/orchagent/portsorch.cpp` @ master 全行精読
+> **Evidence**: `sonic-swss/orchagent/portsorch.cpp` @ master
 
 `QUEUE_COUNTER_CAPABILITIES` テーブルに関わるハードコード定数は `portsorch.cpp` の `initCounterCapabilities()` 内にすべて埋め込まれており、[YANG](../../reference/glossary.md#term-yang) / [CONFIG_DB](../../reference/glossary.md#term-config_db) に対応するスキーマ定義は存在しない。
 

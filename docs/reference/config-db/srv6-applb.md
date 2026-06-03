@@ -97,7 +97,7 @@ key 内の各長さフィールドはロケータのビット長を示し、`Srv
 <!-- ordering -->
 ## 書込み順依存
 
-> 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1511-1543、`updateNeighbor()` L1212-1341、`doTaskSidTable()` L1146-1186 全行精読。
+> 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1511-1543、`updateNeighbor()` L1212-1341、`doTaskSidTable()` L1146-1186。
 
 [APPL_DB](../../reference/glossary.md#term-appl_db) `SRV6_MY_SID_TABLE` と `SRV6_SID_LIST_TABLE` はそれぞれ独立した Consumer (`m_mysidTable` / `m_sidTable`) で処理されるが、`adj` フィールドを持つ MySID エントリには隣接 (Neighbor) 解決の順序依存がある。
 
@@ -125,7 +125,7 @@ Neighbor ADD 通知が `updateNeighbor()` に届くと、対応する pending �
 <!-- cross-refs -->
 ## 暗黙参照テーブル
 
-> 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1480-1547、`deleteMysidEntry()` L1651-1700、`createUpdateSidList()` L1020-1117、コンストラクタ L98-115 全行精読。
+> 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1480-1547、`deleteMysidEntry()` L1651-1700、`createUpdateSidList()` L1020-1117、コンストラクタ L98-115。
 
 | 参照元 | 参照先 | 種別 | 必須条件 |
 |--------|--------|------|----------|
@@ -151,7 +151,7 @@ Neighbor ADD 通知が `updateNeighbor()` に届くと、対応する pending �
 <!-- failure -->
 ## 失敗挙動マトリクス
 
-> 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1473-1576、`doTaskMySidTable()` L2228-2234、`createUpdateSidList()` L1044-1117、`deleteSidList()` L1119-1143、`doTaskSidTable()` L1146-1186 全行精読。
+> 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1473-1576、`doTaskMySidTable()` L2228-2234、`createUpdateSidList()` L1044-1117、`deleteSidList()` L1119-1143、`doTaskSidTable()` L1146-1186。
 
 ### SRV6_MY_SID_TABLE の失敗経路
 
@@ -223,7 +223,7 @@ MTU は `OVERLAY_RIF_DEFAULT_MTU = 9100` bytes に固定される (`srv6orch.cpp
 <!-- side-effects -->
 ## 副作用マトリクス
 
-> 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1589-1654、`deleteMysidEntry()` L1656-1710、`addMySidCounter()` L184-210、`removeMySidCounter()` L212-234、`deleteSidList()` L1119-1143 全行精読。
+> 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1589-1654、`deleteMysidEntry()` L1656-1710、`addMySidCounter()` L184-210、`removeMySidCounter()` L212-234、`deleteSidList()` L1119-1143。
 
 ### SRV6_MY_SID_TABLE の副作用
 

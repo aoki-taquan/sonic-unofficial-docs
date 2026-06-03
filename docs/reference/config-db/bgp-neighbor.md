@@ -280,7 +280,7 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 | `BGPPeerMgrBase` | `change_admin_status()` | `admin_status == 'down'` | FRR に `neighbor X shutdown` | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:335` |
 | `BGPPeerMgrBase` | `change_admin_status()` | `admin_status` が up/down 以外 | `log_err` のみ（処理継続） | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:337-339` |
 
-> **裏取り**: `BGPPeerMgrBase` 597 行全行読了。7 件分岐抽出。
+> **裏取り**: `BGPPeerMgrBase` 597 行。7 件分岐抽出。
 <!-- /handler-branching -->
 <!-- cross-refs -->
 ## 暗黙参照テーブル
