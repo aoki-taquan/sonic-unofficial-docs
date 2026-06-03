@@ -15,7 +15,7 @@ sources:
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 _no_related_cdb: true
 related:
-  _no_yang: true
+  _no_related_yang: true
 ---
 
 # Error Handling Framework 内部実装
