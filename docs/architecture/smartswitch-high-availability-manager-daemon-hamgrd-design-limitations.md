@@ -26,7 +26,7 @@ related:
   - config vnet
   yang:
   - sonic-vnet
-  _no_yang: true
+  _no_related_yang: true
 ---
 
 # SmartSwitch HA HAMgrD 制限事項と実装乖離

@@ -23,7 +23,7 @@ related:
   - show platform
   yang:
   - sonic-system-defaults
-  _no_yang: true
+  _no_related_yang: true
 ---
 
 <!-- topics-tip -->

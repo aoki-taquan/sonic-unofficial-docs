@@ -19,7 +19,7 @@ related:
     - ACL_RULE
   cli: []
   yang: []
-  _no_yang: true
+  _no_related_yang: true
 ---
 
 # HARDWARE テーブル

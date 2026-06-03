@@ -11,7 +11,7 @@ sources:
   path: doc/ssdhealth/ssdhealth_design.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  _no_yang: true
+  _no_related_yang: true
   config_db: []
   cli: []
   yang: []
