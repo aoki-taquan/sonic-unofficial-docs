@@ -37396,7 +37396,7 @@
 <!-- side-effects -->
 <h2 id="db_1">副次 DB 書込<a class="headerlink" href="#db_1" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>SONiC/doc/vrrp/VRRP_Adaptation_HLD.md</code> L219-232, L481-492 全行精読。</p>
+<p>根拠: <code>SONiC/doc/vrrp/VRRP_Adaptation_HLD.md</code> L219-232, L481-492。</p>
 </blockquote>
 <p><code>VRRP_TRACK</code> / <code>VRRP6_TRACK</code> への SET / DEL は <strong>他の DB（<a href="../../glossary/#term-appl_db">APPL_DB</a> / <a href="../../glossary/#term-state_db">STATE_DB</a> / <a href="../../glossary/#term-asic_db">ASIC_DB</a>）へ直接書き込まない</strong>。変更は CONFIG_DB から FRR <code>vrrpd</code> のインメモリ track 設定に反映されるのみであり、DB への副次書き込みは発生しない。</p>
 <h3 id="set">SET 時<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>

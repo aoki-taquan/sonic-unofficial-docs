@@ -37536,9 +37536,9 @@
 </ol>
 <h3 id="_10">裏取り<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>instance.conf.j2</code> 34 行全行精読: timers ハードコード、nhopself 参照なし確認</li>
-<li><code>peer-group.conf.j2</code> 36 行全行精読: soft-reconfiguration/allowas-in/send-community 常時付与確認</li>
-<li><code>managers_bgp.py</code> 598 行全行精読: local_addr warn only、check_neig_meta=False 確認</li>
+<li><code>instance.conf.j2</code> 34 行: timers ハードコード、nhopself 参照なし確認</li>
+<li><code>peer-group.conf.j2</code> 36 行: soft-reconfiguration/allowas-in/send-community 常時付与確認</li>
+<li><code>managers_bgp.py</code> 598 行: local_addr warn only、check_neig_meta=False 確認</li>
 <li><code>minigraph.py</code> L1297-1430: filter_bad_asn、admin_status='up' ハードコード確認</li>
 </ul>
 <!-- /defaults -->
@@ -37801,7 +37801,7 @@
 <!-- cross-refs -->
 <h2 id="_13">暗黙参照<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>managers_bgp.py</code>、<code>frrcfgd.py</code>、<code>policies.conf.j2</code>（internal）全行精読 (2026-05-16)</p>
+<p><strong>Evidence</strong>: <code>managers_bgp.py</code>、<code>frrcfgd.py</code>、<code>policies.conf.j2</code>（internal） (2026-05-16)</p>
 </blockquote>
 <p><code>BGP_INTERNAL_NEIGHBOR</code> テーブルは YANG leafref が最小限だが、実行時に以下のテーブルを暗黙参照する。</p>
 <table>

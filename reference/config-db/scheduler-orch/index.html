@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="orchagent QosOrch::handleSchedulerTable() が CONFIG_DB SCHEDULER テーブルを処理する際のフィールドデフォルト・YANG-実装乖離・dead field・クラッシュリスクを全行精読で解説する。">
+        <meta name="description" content="orchagent QosOrch::handleSchedulerTable() が CONFIG_DB SCHEDULER テーブルを処理する際のフィールドデフォルト・YANG-実装乖離・dead field・クラッシュリスクをで解説する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SCHEDULER — QosOrch SchedulerOrch コード由来デフォルト詳解 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="orchagent QosOrch::handleSchedulerTable() が CONFIG_DB SCHEDULER テーブルを処理する際のフィールドデフォルト・YANG-実装乖離・dead field・クラッシュリスクを全行精読で解説する。" />
+<meta property="og:description" content="orchagent QosOrch::handleSchedulerTable() が CONFIG_DB SCHEDULER テーブルを処理する際のフィールドデフォルト・YANG-実装乖離・dead field・クラッシュリスクをで解説する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/scheduler-orch.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/scheduler-orch/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SCHEDULER — QosOrch SchedulerOrch コード由来デフォルト詳解 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="orchagent QosOrch::handleSchedulerTable() が CONFIG_DB SCHEDULER テーブルを処理する際のフィールドデフォルト・YANG-実装乖離・dead field・クラッシュリスクを全行精読で解説する。" />
+<meta property="twitter:description" content="orchagent QosOrch::handleSchedulerTable() が CONFIG_DB SCHEDULER テーブルを処理する際のフィールドデフォルト・YANG-実装乖離・dead field・クラッシュリスクをで解説する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/scheduler-orch.png" />
 </head>
   
@@ -36887,7 +36887,7 @@
 <!-- defaults -->
 <h2 id="_3">コード由来のデフォルト・暗黙挙動<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/qosorch.cpp</code> <code>handleSchedulerTable()</code> L1347–1509 全行精読 + <code>qosorch.h</code> L22, 44–53 定数定義確認 + <code>sonic-scheduler.yang</code> 照合 (2026-05-15)</p>
+<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/qosorch.cpp</code> <code>handleSchedulerTable()</code> L1347–1509 + <code>qosorch.h</code> L22, 44–53 定数定義確認 + <code>sonic-scheduler.yang</code> 照合 (2026-05-15)</p>
 </blockquote>
 <table>
 <thead>

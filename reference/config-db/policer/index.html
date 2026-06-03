@@ -38048,7 +38048,7 @@
 <!-- constants -->
 <h2 id="_7">ハードコード定数<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>policerorch.cpp</code> 全行精読。</p>
+<p>根拠: <code>policerorch.cpp</code>。</p>
 </blockquote>
 <h3 id="enum-config_db-sai">enum マップ — CONFIG_DB 値 → SAI 属性<a class="headerlink" href="#enum-config_db-sai" title="Permanent link">&para;</a></h3>
 <h4 id="mode-policer_mode_map-policerorchcpp39-43">MODE (<code>policer_mode_map</code>, <code>policerorch.cpp:39-43</code>)<a class="headerlink" href="#mode-policer_mode_map-policerorchcpp39-43" title="Permanent link">&para;</a></h4>
@@ -38207,7 +38207,7 @@
 <!-- defaults -->
 <h2 id="_8">コード由来の暗黙デフォルト<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>policerorch.cpp</code> 全行精読。</p>
+<p>根拠: <code>policerorch.cpp</code>。</p>
 </blockquote>
 <table>
 <thead>
@@ -38616,14 +38616,14 @@
 </tbody>
 </table>
 <blockquote>
-<p><strong>裏取り</strong>: <code>policerorch.cpp:374-520</code> を全行読了、6 件分岐抽出。PolicerOrch が PORT_STORM_CONTROL も兼務することを確認 — 誤読なし。</p>
+<p><strong>裏取り</strong>: <code>policerorch.cpp:374-520</code> を、6 件分岐抽出。PolicerOrch が PORT_STORM_CONTROL も兼務することを確認 — 誤読なし。</p>
 </blockquote>
 <!-- /handler-branching -->
 
 <!-- platform -->
 <h2 id="_24">プラットフォーム差異<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>policerorch.cpp</code> 全行精読、<code>orchdaemon.cpp:1292-1312</code>。</p>
+<p>根拠: <code>policerorch.cpp</code>、<code>orchdaemon.cpp:1292-1312</code>。</p>
 </blockquote>
 <h3 id="sai-capability">SAI Capability クエリ<a class="headerlink" href="#sai-capability" title="Permanent link">&para;</a></h3>
 <p><code>policerorch.cpp</code> 内に <code>sai_query_attribute_capability()</code> / <code>sai_query_enum_capabilities()</code> の呼び出しは<strong>存在しない</strong>。実行時の ASIC 対応可否は SAI ライブラリ層に委ねられ、orchagent 自体は能力クエリを行わない。</p>
@@ -38741,7 +38741,7 @@
 <!-- ordering -->
 <h2 id="_25">書込み順依存<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>policerorch.cpp</code> L374-589 全行精読、<code>mirrororch.cpp</code> L432-441、<code>orchdaemon.cpp</code> L396-402。</p>
+<p>根拠: <code>policerorch.cpp</code> L374-589、<code>mirrororch.cpp</code> L432-441、<code>orchdaemon.cpp</code> L396-402。</p>
 </blockquote>
 <h3 id="_26">順序依存サマリ<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>
 <table>
@@ -38813,7 +38813,7 @@
 <!-- failure -->
 <h2 id="_28">失敗挙動<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>policerorch.cpp</code> L374-589 全行精読。</p>
+<p>根拠: <code>policerorch.cpp</code> L374-589。</p>
 </blockquote>
 <h3 id="set-create">SET (create) 失敗<a class="headerlink" href="#set-create" title="Permanent link">&para;</a></h3>
 <table>
@@ -39144,7 +39144,7 @@ MIRROR_SESSION を DEL せずに POLICER を削除しようとすると <code>m_
 <!-- side-effects -->
 <h2 id="db">副次 DB 書込<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>policerorch.cpp</code> 全行精読、<code>crmorch.cpp</code> / <code>p4orch/acl_rule_manager.cpp</code> 確認。</p>
+<p>根拠: <code>policerorch.cpp</code>、<code>crmorch.cpp</code> / <code>p4orch/acl_rule_manager.cpp</code> 確認。</p>
 </blockquote>
 <h3 id="asic_db">ASIC_DB<a class="headerlink" href="#asic_db" title="Permanent link">&para;</a></h3>
 <table>

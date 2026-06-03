@@ -36991,7 +36991,7 @@
 <!-- defaults -->
 <h2 id="_6">コード由来の暗黙デフォルト<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>bgpcfgd/managers_srv6.py</code> L135-142 (Locator クラス) および <code>sonic-srv6.yang</code> L41-91 全行精読。</p>
+<p>根拠: <code>bgpcfgd/managers_srv6.py</code> L135-142 (Locator クラス) および <code>sonic-srv6.yang</code> L41-91。</p>
 </blockquote>
 <table>
 <thead>
@@ -37048,7 +37048,7 @@
 <h2 id="_7">書込み順依存<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p><code>bgpcfgd</code> の <code>SRv6Mgr</code> は <code>SRV6_MY_LOCATORS</code> と <code>SRV6_MY_SIDS</code> を個別に購読し、SID 処理時にロケータの存在を確認する。このため書き込み順序が SID の通知タイミングに直接影響する。</p>
 <blockquote>
-<p>根拠: <code>bgpcfgd/managers_srv6.py</code> <code>sids_set_handler()</code> L62-76、<code>locators_del_handler()</code> L106-115 全行精読。</p>
+<p>根拠: <code>bgpcfgd/managers_srv6.py</code> <code>sids_set_handler()</code> L62-76、<code>locators_del_handler()</code> L106-115。</p>
 </blockquote>
 <h3 id="_8">検出された順序依存<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <table>
@@ -37153,7 +37153,7 @@
 <!-- failure -->
 <h2 id="retry-recovery">失敗挙動・retry / recovery<a class="headerlink" href="#retry-recovery" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>bgpcfgd/managers_srv6.py</code> L62-76, L106-115, L136-142 および <code>srv6orch.cpp</code> L331-338, L455-468 全行精読。</p>
+<p>根拠: <code>bgpcfgd/managers_srv6.py</code> L62-76, L106-115, L136-142 および <code>srv6orch.cpp</code> L331-338, L455-468。</p>
 </blockquote>
 <table>
 <thead>
@@ -37222,7 +37222,7 @@
 <!-- constants -->
 <h2 id="_10">ハードコード定数・上限値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> L19-24, L331-350 および <code>managers_srv6.py</code> L6-12, L37-53, L135-142 全行精読。</p>
+<p>根拠: <code>srv6orch.cpp</code> L19-24, L331-350 および <code>managers_srv6.py</code> L6-12, L37-53, L135-142。</p>
 </blockquote>
 <h3 id="srv6orchcpp">srv6orch.cpp — ロケータ長フォールバック定数<a class="headerlink" href="#srv6orchcpp" title="Permanent link">&para;</a></h3>
 <p><code>getLocatorCfgFromDb()</code> (<code>srv6orch.cpp:331-350</code>) が CONFIG_DB のロケータエントリを読み取る際、各フィールドが省略されている場合に <code>get_value_or()</code> の引数として使われる固定値。</p>
@@ -37325,7 +37325,7 @@
 <!-- side-effects -->
 <h2 id="_11">副作用・他テーブルへの波及<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>bgpcfgd/managers_srv6.py</code> L41-53, L64-68, L106-115 および <code>frrcfgd/frrcfgd.py</code> L121, L2335, L2732-2742 全行精読。</p>
+<p>根拠: <code>bgpcfgd/managers_srv6.py</code> L41-53, L64-68, L106-115 および <code>frrcfgd/frrcfgd.py</code> L121, L2335, L2732-2742。</p>
 </blockquote>
 <p><code>SRV6_MY_LOCATORS</code> の SET / DEL は CONFIG_DB の単一テーブル操作に留まらず、bgpcfgd・frrcfgd・Srv6Orch の 3 コンポーネントにわたる副作用を持つ。</p>
 <h3 id="set">SET 時の副作用<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
@@ -37398,7 +37398,7 @@ FRR 側では <code>no locator &lt;name&gt;</code> によりロケータ設定�
 <!-- pubsub -->
 <h2 id="redis">Redis 通知メカニズム<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>bgpcfgd/runner.py</code> L27,L49-51, L54-73、<code>bgpcfgd/main.py</code> L109、<code>managers_srv6.py</code> L67-68、<code>frrcfgd/frrcfgd.py</code> L121,L2335、<code>srv6orch.cpp</code> L107,L331-338、<code>subscriberstatetable.cpp</code> L17-43 全行精読。</p>
+<p>根拠: <code>bgpcfgd/runner.py</code> L27,L49-51, L54-73、<code>bgpcfgd/main.py</code> L109、<code>managers_srv6.py</code> L67-68、<code>frrcfgd/frrcfgd.py</code> L121,L2335、<code>srv6orch.cpp</code> L107,L331-338、<code>subscriberstatetable.cpp</code> L17-43。</p>
 </blockquote>
 <h3 id="_12">購読者一覧<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <table>
@@ -37449,7 +37449,7 @@ FRR 側では <code>no locator &lt;name&gt;</code> によりロケータ設定�
 <!-- platform -->
 <h2 id="_13">プラットフォーム制約<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>bgpcfgd/managers_srv6.py</code> L37-53, L47、<code>frrcfgd/frrcfgd.py</code> L2732-2744、<code>srv6orch.cpp</code> L104-107, L331-350 全行精読。</p>
+<p>根拠: <code>bgpcfgd/managers_srv6.py</code> L37-53, L47、<code>frrcfgd/frrcfgd.py</code> L2732-2744、<code>srv6orch.cpp</code> L104-107, L331-350。</p>
 </blockquote>
 <h3 id="sai">SAI 非依存テーブル（ハードウェア制約なし）<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
 <p><code>SRV6_MY_LOCATORS</code> は CONFIG_DB から FRR (zebra) へのソフトウェア通知専用テーブルであり、SAI / <a href="../../glossary/#term-asic">ASIC</a> への書込みを直接引き起こさない。<code>Srv6Orch</code> は <code>m_locatorCfgTable</code> を GET 専用（<code>Table</code> 型）でのみ保持し (<code>srv6orch.cpp:107</code>)、ロケータそのものを SAI オブジェクトとして作成・削除しない。</p>

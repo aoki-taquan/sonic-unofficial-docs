@@ -37527,7 +37527,7 @@
 </ul>
 <!-- ordering -->
 <h2 id="_8">書込み順依存<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<p><code>FdbOrch::doTask(Consumer&amp;)</code> / <code>addFdbEntry()</code> / <code>removeFdbEntry()</code> (<code>sonic-swss/orchagent/fdborch.cpp</code>) を全行精読した結果、以下の順序依存・タイミング依存を検出した。</p>
+<p><code>FdbOrch::doTask(Consumer&amp;)</code> / <code>addFdbEntry()</code> / <code>removeFdbEntry()</code> (<code>sonic-swss/orchagent/fdborch.cpp</code>) をした結果、以下の順序依存・タイミング依存を検出した。</p>
 <h3 id="_9">他テーブル先行必須<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -37945,7 +37945,7 @@
 
 <!-- failure -->
 <h2 id="_14">失敗挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
-<p>APPL_DB <code>FDB_TABLE</code> の書込主体である <code>FdbOrch::doTask(Consumer&amp;)</code> / <code>addFdbEntry()</code> / <code>removeFdbEntry()</code> (<code>sonic-swss/orchagent/fdborch.cpp</code>) を全行精読し、書込失敗・retry・silent-ignore 経路を抽出した。</p>
+<p>APPL_DB <code>FDB_TABLE</code> の書込主体である <code>FdbOrch::doTask(Consumer&amp;)</code> / <code>addFdbEntry()</code> / <code>removeFdbEntry()</code> (<code>sonic-swss/orchagent/fdborch.cpp</code>) をし、書込失敗・retry・silent-ignore 経路を抽出した。</p>
 <h3 id="_15">失敗パス一覧<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -38352,7 +38352,7 @@ origin を区別できない点に注意。</p>
 <!-- side-effects -->
 <h2 id="db">副次 DB 書込<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <p><code>FdbOrch</code> が APPL_DB <code>FDB_TABLE</code> を購読して SAI FDB を作成・削除する過程で発生する<strong>副次的な DB 書込</strong>を、
-<code>sonic-swss/orchagent/fdborch.cpp</code> の全行精読から抽出した。</p>
+<code>sonic-swss/orchagent/fdborch.cpp</code> のから抽出した。</p>
 <h3 id="_20">書込み先一覧<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
 <table>
 <thead>

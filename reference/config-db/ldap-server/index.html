@@ -38194,7 +38194,7 @@
 <!-- cross-refs -->
 <h2 id="_21">暗黙参照テーブル<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/hostcfgd</code> 全行精読 (2026-05-16)</p>
+<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/hostcfgd</code> (2026-05-16)</p>
 </blockquote>
 <p><code>LDAP_SERVER</code> テーブルは YANG leafref を持たないが、<code>hostcfgd</code> の <code>AaaCfg</code> クラスが以下のテーブルを暗黙参照する。<strong>3 テーブルが揃って初めて nslcd が起動し LDAP 認証が有効になる</strong>。</p>
 <table>
@@ -38310,7 +38310,7 @@
 <!-- constants -->
 <h2 id="_24">実装定数一覧<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/ldap.py</code> 全行精読, <code>sonic-host-services/scripts/hostcfgd</code> L.40-43, L.106-107, <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-ldap.yang</code>, <code>sonic-host-services/data/templates/nslcd.conf.j2</code></p>
+<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/ldap.py</code>, <code>sonic-host-services/scripts/hostcfgd</code> L.40-43, L.106-107, <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-ldap.yang</code>, <code>sonic-host-services/data/templates/nslcd.conf.j2</code></p>
 </blockquote>
 <h3 id="ldapcfg-ldappy">LdapCfg クラス定数 (<code>ldap.py</code>)<a class="headerlink" href="#ldapcfg-ldappy" title="Permanent link">&para;</a></h3>
 <p><code>hostcfgd</code> は <code>nslcd.conf</code> / <code>ldap.conf</code> 生成時に <code>ldap.LdapCfg</code> を Jinja2 テンプレートへ渡す (<code>hostcfgd</code> L.855, L.863)。CONFIG_DB に値が存在しないフィールドはこれらの定数で補完される。</p>

@@ -37079,7 +37079,7 @@
 <!-- failure -->
 <h2 id="_12">失敗挙動・エラーパス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>watermarkorch.cpp</code> 全行精読、<code>converter.h</code> <code>to_uint</code> 実装、<code>orch.cpp</code> <code>Consumer::drain()</code> 例外ハンドリング確認 (2026-05-18)</p>
+<p><strong>Evidence</strong>: <code>watermarkorch.cpp</code>、<code>converter.h</code> <code>to_uint</code> 実装、<code>orch.cpp</code> <code>Consumer::drain()</code> 例外ハンドリング確認 (2026-05-18)</p>
 </blockquote>
 <h3 id="interval"><code>interval</code> 値が不正な場合 — 繰り返しエラーログ + タイマー未変更<a class="headerlink" href="#interval" title="Permanent link">&para;</a></h3>
 <p><code>handleWmConfigUpdate()</code> (<code>watermarkorch.cpp:103</code>) は <code>to_uint&lt;uint32_t&gt;(i.second)</code> で文字列を変換する。非数値文字列・uint32 範囲外の値は <code>std::invalid_argument</code> を throw する (<code>converter.h:20,25</code>)。</p>
@@ -37162,7 +37162,7 @@
 <!-- constants -->
 <h2 id="_13">ハードコード定数<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/watermarkorch.cpp</code> 全行精読 (2026-05-18)</p>
+<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/watermarkorch.cpp</code> (2026-05-18)</p>
 </blockquote>
 <h3 id="watermarkorchcpp">タイマー定数 (watermarkorch.cpp)<a class="headerlink" href="#watermarkorchcpp" title="Permanent link">&para;</a></h3>
 <table>
@@ -37273,7 +37273,7 @@
 <!-- side-effects -->
 <h2 id="db">副次 DB 書込<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/watermarkorch.cpp</code> 全行精読 (2026-05-18)</p>
+<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/watermarkorch.cpp</code> (2026-05-18)</p>
 </blockquote>
 <p><code>WATERMARK_TABLE|TELEMETRY_INTERVAL</code> および <code>FLEX_COUNTER_TABLE</code> への書込みが引き起こす、CONFIG_DB 以外の DB への副次的な書込みと <a href="../../glossary/#term-sai">SAI</a> 呼び出しを示す。</p>
 <h3 id="tick-counters_db-periodic_watermarks">タイマー tick — COUNTERS_DB <code>PERIODIC_WATERMARKS</code> への自動ゼロクリア<a class="headerlink" href="#tick-counters_db-periodic_watermarks" title="Permanent link">&para;</a></h3>

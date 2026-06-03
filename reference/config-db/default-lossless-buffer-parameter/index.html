@@ -37767,7 +37767,7 @@
 </tbody>
 </table>
 <blockquote>
-<p><strong>裏取り</strong>: <code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> のハンドラパス L1894-2010 全行読了。3 件分岐抽出。</p>
+<p><strong>裏取り</strong>: <code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> のハンドラパス L1894-2010。3 件分岐抽出。</p>
 </blockquote>
 <!-- /handler-branching -->
 <!-- cross-refs -->
@@ -37814,7 +37814,7 @@
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>                        → default_dynamic_th / SHP 変化時に動的プロファイルを全件再生成
 </span></code></pre></div>
 <blockquote>
-<p><strong>裏取り</strong>: <code>handleDefaultLossLessBufferParam</code> L1978-2050 全行読了、<code>isSharedHeadroomPoolEnabledInSai</code> L2034-2050 全行読了、<code>refreshSharedHeadroomPool</code> L1592-1715 全行読了、<code>buffer_headroom_mellanox.lua</code> L100-115 読了、<code>buffer_pool_mellanox.lua</code> L255-275 読了。3 件暗黙参照抽出。</p>
+<p><strong>裏取り</strong>: <code>handleDefaultLossLessBufferParam</code> L1978-2050、<code>isSharedHeadroomPoolEnabledInSai</code> L2034-2050、<code>refreshSharedHeadroomPool</code> L1592-1715、<code>buffer_headroom_mellanox.lua</code> L100-115 読了、<code>buffer_pool_mellanox.lua</code> L255-275 読了。3 件暗黙参照抽出。</p>
 </blockquote>
 <!-- /cross-refs -->
 <!-- ordering -->
@@ -37862,7 +37862,7 @@
 <p><strong><code>m_defaultThreshold</code> 空状態での命名競合（依存 #2)</strong>: <code>m_defaultThreshold</code> が未設定（空文字列）の状態で lossless BUFFER_PROFILE を生成すると、プロファイル名に <code>_th&lt;value&gt;</code> サフィックスが付加される命名パスを辿る。後から <code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> の <code>default_dynamic_th</code> が設定されると、<code>m_defaultThreshold</code> の値次第でプロファイル名が変わり、既存の <a href="../../glossary/#term-appl_db">APPL_DB</a> エントリと内部キャッシュ <code>m_bufferProfileLookup</code> の名前が一致しなくなる可能性がある（evidence: <code>buffermgrdyn.cpp:494-496</code>）。</p>
 <p><strong>SHP 有効化の SAI 確認（依存 #3)</strong>: ポート初期化完了後（<code>m_portInitDone=true</code>）に SHP を無効→有効へ遷移させる場合（<code>over_subscribe_ratio</code> を 0 から非ゼロに変更）、<code>isSharedHeadroomPoolEnabledInSai()</code> が <code>APPL_DB</code> の <code>BUFFER_POOL_TABLE|ingress_lossless_pool</code> の <code>xoff</code> フィールドを確認する。SAI への反映が完了していなければ <code>task_need_retry</code> を返す（evidence: <code>buffermgrdyn.cpp:2019-2025</code>, <code>buffermgrdyn.cpp:2035-2046</code>）。</p>
 <blockquote>
-<p><strong>裏取り</strong>: <code>handleDefaultLossLessBufferParam</code> L1978-2046 全行読了、<code>isSharedHeadroomPoolEnabledInSai</code> L2034-2050 全行読了、<code>buffermgrdyn.cpp</code> L494-496 読了。4 件依存抽出。</p>
+<p><strong>裏取り</strong>: <code>handleDefaultLossLessBufferParam</code> L1978-2046、<code>isSharedHeadroomPoolEnabledInSai</code> L2034-2050、<code>buffermgrdyn.cpp</code> L494-496 読了。4 件依存抽出。</p>
 </blockquote>
 <!-- /ordering -->
 <!-- failure -->
@@ -38026,7 +38026,7 @@
 </table>
 <blockquote>
 <p><strong>config rollback</strong>: <code>task_failed</code> でエントリが drop されても CONFIG_DB のエントリは残る。<code>m_defaultThreshold</code> / <code>m_overSubscribeRatio</code> の内部状態は変更前のまま保持され、CONFIG_DB との乖離が生じる場合は同じ key を再 SET するか <code>buffermgrd</code> を再起動して解消する。</p>
-<p><strong>裏取り</strong>: <code>handleDefaultLossLessBufferParam</code> L1978-2033 全行読了、<code>isSharedHeadroomPoolEnabledInSai</code> L2034-2051 全行読了、<code>doTask(Consumer&amp;)</code> L3574-3610 全行読了、<code>refreshSharedHeadroomPool</code> L1592-1715 全行読了。</p>
+<p><strong>裏取り</strong>: <code>handleDefaultLossLessBufferParam</code> L1978-2033、<code>isSharedHeadroomPoolEnabledInSai</code> L2034-2051、<code>doTask(Consumer&amp;)</code> L3574-3610、<code>refreshSharedHeadroomPool</code> L1592-1715。</p>
 </blockquote>
 <!-- /failure -->
 <!-- defaults -->
@@ -38091,7 +38091,7 @@
 </tbody>
 </table>
 <blockquote>
-<p><strong>裏取り</strong>: <code>handleDefaultLossLessBufferParam</code> L1978-2033 全行読了、コンストラクタ L130-172 全行読了、<code>buffers_config.j2</code> L331-349 全行読了、<code>db_migrator.py</code> L327-416, L1075-1099 全行読了、<code>sonic-default-lossless-buffer-parameter.yang</code> 全行読了。</p>
+<p><strong>裏取り</strong>: <code>handleDefaultLossLessBufferParam</code> L1978-2033、コンストラクタ L130-172、<code>buffers_config.j2</code> L331-349、<code>db_migrator.py</code> L327-416, L1075-1099、<code>sonic-default-lossless-buffer-parameter.yang</code>。</p>
 </blockquote>
 <!-- /defaults -->
 <!-- constants -->

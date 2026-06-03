@@ -37800,7 +37800,7 @@ namespace 間の整合性 (例: 同一 <code>mirror_session_id</code> を複数 
 <h2 id="_13">失敗挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/orchagent/p4orch/mirror_session_manager.cpp drain() L62-119 / deserializeP4MirrorSessionAppDbEntry() L190-323 / processAddRequest() L339-363 / createMirrorSession() L365-397 / processUpdateRequest() L399-480 / setPort() L482-524 / processDeleteRequest() L733-774 / prepareSaiAttrs() L122-188 -->
 
-<p>APPL_DB <code>FIXED_MIRROR_SESSION_TABLE</code> の書込主体である <code>MirrorSessionManager::drain()</code> / <code>processAddRequest()</code> / <code>processUpdateRequest()</code> / <code>processDeleteRequest()</code> / <code>deserializeP4MirrorSessionAppDbEntry()</code> / <code>prepareSaiAttrs()</code> (<code>sonic-swss/orchagent/p4orch/mirror_session_manager.cpp</code>) を全行精読し、失敗・retry・CRITICAL 経路を抽出した。</p>
+<p>APPL_DB <code>FIXED_MIRROR_SESSION_TABLE</code> の書込主体である <code>MirrorSessionManager::drain()</code> / <code>processAddRequest()</code> / <code>processUpdateRequest()</code> / <code>processDeleteRequest()</code> / <code>deserializeP4MirrorSessionAppDbEntry()</code> / <code>prepareSaiAttrs()</code> (<code>sonic-swss/orchagent/p4orch/mirror_session_manager.cpp</code>) をし、失敗・retry・CRITICAL 経路を抽出した。</p>
 <p>CONFIG_DB 側 <code>MirrorOrch</code> (<code>orchagent/mirrororch.cpp</code>) と比較すると、P4RT 経路は <strong>Orch 共通の <code>m_toSync</code> 自動再試行機構を一切使わない fail-fast 設計</strong>であり、port readiness / policer 未準備 / SAI 一時失敗のいずれも自動回復しない。再送責務は P4RT controller 側に集約される<sup id="fnref:fail-1"><a class="footnote-ref" href="#fn:fail-1">7</a></sup>。</p>
 <h3 id="_14">失敗パス一覧<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <table>

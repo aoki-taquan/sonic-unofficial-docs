@@ -38114,7 +38114,7 @@ CONFIG_DB / <a href="../../glossary/#term-appl_db">APPL_DB</a> の他テーブ�
 <p>mellanox: <code>MLNX_MAX_RANGES_COUNT = 16</code>、clounix: <code>CLNX_MAX_RANGES_COUNT = 16</code> (<code>aclorch.h:109-110</code>)。<code>ACL_TABLE_TYPE</code> 定義で range match (<code>L4_SRC_PORT_RANGE</code> / <code>L4_DST_PORT_RANGE</code>) を含む型を作っても、配下 ACL_RULE での range オブジェクト累計が上限を超えると SAI エラーになる。ACL_TABLE_TYPE 段では検出されない。</p>
 </div>
 <blockquote>
-<p><strong>裏取り</strong>: <code>AclOrch::init()</code> L3480-3720 / <code>initDefaultTableTypes()</code> L3724-3830 / <code>AclTableTypeParser::parseAclTableTypeActions()</code> L831-879 / <code>AclTableTypeParser::parseAclTableTypeMatches()</code> L796-829 / <code>queryAclActionCapabilities()</code> L3969-4053 / <code>putAclActionCapabilityInDB()</code> L4056-4101 / <code>orch.h:40-50</code> / <code>aclorch.h:109-110</code> 全行精読。</p>
+<p><strong>裏取り</strong>: <code>AclOrch::init()</code> L3480-3720 / <code>initDefaultTableTypes()</code> L3724-3830 / <code>AclTableTypeParser::parseAclTableTypeActions()</code> L831-879 / <code>AclTableTypeParser::parseAclTableTypeMatches()</code> L796-829 / <code>queryAclActionCapabilities()</code> L3969-4053 / <code>putAclActionCapabilityInDB()</code> L4056-4101 / <code>orch.h:40-50</code> / <code>aclorch.h:109-110</code>。</p>
 </blockquote>
 <!-- /platform -->
 

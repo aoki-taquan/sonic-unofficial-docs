@@ -37576,7 +37576,7 @@
 <!-- cross-refs -->
 <h2 id="cross-table-refs">暗黙参照 (cross-table refs)<a class="headerlink" href="#cross-table-refs" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>containercfgd.py</code>・<code>feature.py</code>・<code>rsyslog-container.conf.j2</code> 全行精読 (2026-05-17)</p>
+<p><strong>Evidence</strong>: <code>containercfgd.py</code>・<code>feature.py</code>・<code>rsyslog-container.conf.j2</code> (2026-05-17)</p>
 </blockquote>
 <p><code>SYSLOG_CONFIG_FEATURE</code> テーブルは実行時に以下のテーブルを暗黙参照する。</p>
 <table>
@@ -37628,7 +37628,7 @@
 <!-- failure -->
 <h2 id="_14">障害モード・エラー伝播<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>containercfgd.py</code> 全行精読 (2026-05-17)</p>
+<p><strong>Evidence</strong>: <code>containercfgd.py</code> (2026-05-17)</p>
 </blockquote>
 <h3 id="_15">障害経路一覧<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <table>
@@ -37819,7 +37819,7 @@
 <!-- side-effects -->
 <h2 id="db">副次 DB 書込<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>containercfgd.py</code> 全行精読 (2026-05-18)</p>
+<p><strong>Evidence</strong>: <code>containercfgd.py</code> (2026-05-18)</p>
 </blockquote>
 <p><code>containercfgd</code> (<code>SyslogHandler</code>) は <code>SYSLOG_CONFIG_FEATURE</code> を <strong>CONFIG_DB からの読取専用</strong>で使用し、いかなる DB へも書き戻さない。副次書込はファイルシステムおよびプロセス管理に閉じる。</p>
 <h3 id="db_1">副次 DB 書込一覧<a class="headerlink" href="#db_1" title="Permanent link">&para;</a></h3>
@@ -37896,7 +37896,7 @@
 <!-- pubsub -->
 <h2 id="_21">通信メカニズム<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>containercfgd/containercfgd.py</code> 全行精読 (2026-05-18)</p>
+<p><strong>Evidence</strong>: <code>containercfgd/containercfgd.py</code> (2026-05-18)</p>
 </blockquote>
 <h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
 <p><code>SYSLOG_CONFIG_FEATURE</code> テーブルは <strong><code>containercfgd</code> (<code>SyslogHandler</code>) が <code>ConfigDBConnector.subscribe()</code> + <code>listen()</code> で常駐購読</strong> する。<code>hostcfgd</code> は本テーブルを購読しない (<code>sonic-host-services/</code> 全体で <code>SYSLOG_CONFIG_FEATURE</code> の grep 0 hit)。</p>

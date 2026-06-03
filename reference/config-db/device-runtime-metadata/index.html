@@ -37797,7 +37797,7 @@
 <!-- failure -->
 <h2 id="_25">失敗挙動・エラーパス<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic_py_common/device_info.py</code> L228-748 全行精読 (2026-05-18)</p>
+<p><strong>Evidence</strong>: <code>sonic_py_common/device_info.py</code> L228-748 (2026-05-18)</p>
 </blockquote>
 <p><code>DEVICE_RUNTIME_METADATA</code> は CONFIG_DB に永続化されない仮想テーブルであり、<code>get_device_runtime_metadata()</code> が起動時に構築する。失敗はすべて「フィールドがフォールバック値（<code>False</code>）に設定される」か「未キャッチ例外が呼び出し元に伝播する」の 2 種類に分類できる。</p>
 <h3 id="_26">プラットフォームファイル不在によるサイレントフォールバック<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>
@@ -38141,7 +38141,7 @@
 <!-- platform -->
 <h2 id="_32">プラットフォーム差<a class="headerlink" href="#_32" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic_py_common/device_info.py</code> L511-747 全行精読 (2026-05-19)</p>
+<p><strong>Evidence</strong>: <code>sonic_py_common/device_info.py</code> L511-747 (2026-05-19)</p>
 </blockquote>
 <p><code>DEVICE_RUNTIME_METADATA</code> のフィールド構造・値はすべてランタイム時の<strong>ハードウェアプラットフォーム検出結果</strong>に依存する。ASIC ベンダや YANG スキーマには依存せず、以下の 3 要素の組み合わせで決定する。</p>
 <ol>

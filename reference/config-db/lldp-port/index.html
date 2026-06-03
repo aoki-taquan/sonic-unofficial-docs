@@ -37994,7 +37994,7 @@
 <!-- pubsub -->
 <h2 id="_30">通信メカニズム<a class="headerlink" href="#_30" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>dockers/docker-lldp/lldpmgrd</code> 全行精読 (2026-05-18)</p>
+<p><strong>Evidence</strong>: <code>dockers/docker-lldp/lldpmgrd</code> (2026-05-18)</p>
 </blockquote>
 <p><code>LLDP_PORT</code> テーブルは <strong><code>lldpmgrd</code> に直接購読されていない</strong>。lldpmgrd が購読するのは <code>APPL_DB PORT_TABLE</code>・<code>CONFIG_DB MGMT_INTERFACE</code>・<code>CONFIG_DB DEVICE_METADATA</code> の 3 テーブルのみであり、<code>LLDP_PORT</code> への書き込みは lldpmgrd のイベントループに到達しない。</p>
 <h3 id="_31">購読メカニズム一覧<a class="headerlink" href="#_31" title="Permanent link">&para;</a></h3>

@@ -37047,7 +37047,7 @@
 
 <!-- ordering -->
 <h2 id="_5">書込み順依存<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p><code>Logger::linkToDbWithOutput()</code> / <code>settingThread()</code> (<code>sonic-swss-common/common/logger.cpp</code>) を全行精読した結果、以下の順序依存・タイミング依存を検出した。</p>
+<p><code>Logger::linkToDbWithOutput()</code> / <code>settingThread()</code> (<code>sonic-swss-common/common/logger.cpp</code>) をした結果、以下の順序依存・タイミング依存を検出した。</p>
 <h3 id="_6">他テーブル先行必須<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <p>LOGGER テーブルは <code>VLAN</code>・<code>PORT</code>・<code>DEVICE_METADATA</code> 等の他テーブルを参照しない。<strong>他テーブルに対する先行条件は存在しない</strong>。</p>
 <h3 id="set-vs-set">起動前 SET vs 起動後 SET<a class="headerlink" href="#set-vs-set" title="Permanent link">&para;</a></h3>
@@ -37102,7 +37102,7 @@
 <p><code>LOGGER</code> テーブルの処理コード (<code>sonic-swss-common/common/logger.cpp</code>) は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>LOGGER</code> テーブル<strong>のみ</strong>を読み書きし、他の CONFIG_DB テーブルへのアクセスは一切発生しない。</p>
 <p>YANG <code>sonic-logger.yang</code> にも <code>leafref</code> が存在せず、他モジュールへの参照依存はない。</p>
 <blockquote>
-<p>evidence: <code>logger.cpp:126-149</code> (<code>linkToDbWithOutput()</code>)、<code>sonic-logger.yang</code> 全行精読。</p>
+<p>evidence: <code>logger.cpp:126-149</code> (<code>linkToDbWithOutput()</code>)、<code>sonic-logger.yang</code>。</p>
 </blockquote>
 <h3 id="logger_1">LOGGER テーブルを読み取る側<a class="headerlink" href="#logger_1" title="Permanent link">&para;</a></h3>
 <table>
@@ -37140,7 +37140,7 @@
 
 <!-- failure -->
 <h2 id="_9">異常系・フォールバック挙動<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<p><code>sonic-swss-common/common/logger.cpp</code> を全行精読した結果、以下の異常系・フォールバック挙動を検出した。</p>
+<p><code>sonic-swss-common/common/logger.cpp</code> をした結果、以下の異常系・フォールバック挙動を検出した。</p>
 <h3 id="_10">無効値フォールバック<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -37211,7 +37211,7 @@
 <!-- constants -->
 <h2 id="_11">ハードコード定数<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-swss-common/common/logger.cpp</code>, <code>logger.h</code>, <code>schema.h</code> 全行精読 (2026-05-19)</p>
+<p><strong>Evidence</strong>: <code>sonic-swss-common/common/logger.cpp</code>, <code>logger.h</code>, <code>schema.h</code> (2026-05-19)</p>
 </blockquote>
 <p><code>LOGGER</code> テーブルの処理で使われる値のうち、CONFIG_DB フィールドで制御できずソースに固定されている定数をまとめる。</p>
 <h3 id="schemah392">テーブル名定数 (<code>schema.h:392</code>)<a class="headerlink" href="#schemah392" title="Permanent link">&para;</a></h3>
@@ -37280,7 +37280,7 @@
 
 <!-- side-effects -->
 <h2 id="db_1">副次 DB 書込<a class="headerlink" href="#db_1" title="Permanent link">&para;</a></h2>
-<p><code>sonic-swss-common/common/logger.cpp</code> および <code>loglevel.cpp</code> を全行精読した結果、<code>LOGGER</code> テーブルの処理は <code>CONFIG_DB</code> の <code>LOGGER</code> テーブル<strong>のみ</strong>を読み書きし、他 DB への副次書込は発生しない。</p>
+<p><code>sonic-swss-common/common/logger.cpp</code> および <code>loglevel.cpp</code> をした結果、<code>LOGGER</code> テーブルの処理は <code>CONFIG_DB</code> の <code>LOGGER</code> テーブル<strong>のみ</strong>を読み書きし、他 DB への副次書込は発生しない。</p>
 <h3 id="db_2">DB 別書込有無<a class="headerlink" href="#db_2" title="Permanent link">&para;</a></h3>
 <table>
 <thead>

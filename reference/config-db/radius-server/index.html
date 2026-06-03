@@ -38287,7 +38287,7 @@
 <!-- side-effects -->
 <h2 id="db">副次 DB 書込<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/hostcfgd</code> 全行精読 (2026-05-16)</p>
+<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/hostcfgd</code> (2026-05-16)</p>
 </blockquote>
 <p><code>RADIUS_SERVER</code> テーブルへの書込みが発生すると、<code>hostcfgd</code> の <code>AaaCfg.modify_conf_file()</code> が以下の副次処理を行う。DB への書込みは発生しない（すべてファイルシステム書込みと systemd サービス制御）。</p>
 <h3 id="etcpam_radius_authdip_portconfpam"><code>/etc/pam_radius_auth.d/&lt;ip&gt;_&lt;port&gt;.conf</code>（PAM 認証設定）<a class="headerlink" href="#etcpam_radius_authdip_portconfpam" title="Permanent link">&para;</a></h3>

@@ -37538,7 +37538,7 @@
 <h3 id="hw_status-trap_id_map"><code>hw_status</code> キーの導出 — <code>trap_id_map</code> 逆引き<a class="headerlink" href="#hw_status-trap_id_map" title="Permanent link">&para;</a></h3>
 <p><code>updateTrapOperStatus()</code> は <code>get_trap_name_by_type()</code> で <code>sai_hostif_trap_type_t</code> を文字列に変換する。<code>trap_id_map</code> に存在しない SAI 内部トラップ型は文字列変換に失敗し、<code>SWSS_LOG_ERROR</code> を出力したうえで <code>COPP_TRAP_TABLE</code> への書き込みをスキップする。<!-- evidence: copporch.cpp L226-231 --></p>
 <blockquote>
-<p><strong>裏取り</strong>: coppmgr.cpp L424-451 全行読了。copporch.cpp L104-300, L499-540, L1390-1420 読了。schema.h L448-450 読了。state_db.json (UT mock) 読了。発見 4 件。</p>
+<p><strong>裏取り</strong>: coppmgr.cpp L424-451。copporch.cpp L104-300, L499-540, L1390-1420 読了。schema.h L448-450 読了。state_db.json (UT mock) 読了。発見 4 件。</p>
 </blockquote>
 <!-- /defaults -->
 
@@ -37690,7 +37690,7 @@ orchagent 再起動時も <code>coppmgrd</code> は同一キーへの上書き s
 <p><code>publishTrapIdsCapability()</code> は <code>CoppOrch</code> コンストラクタ (<code>copporch.cpp:208-209</code>) で呼ばれるのみで、CONFIG_DB / APPL_DB の動的変更による再書込みは発生しない。プラットフォームの SAI 実装が変わらない限り、起動後の値は固定である。</p>
 </div>
 <blockquote>
-<p><strong>裏取り</strong>: coppmgr.cpp L296-411, L531-985 全行読了。copporch.cpp L32-36, L191-215, L240-300, L392-420, L880-960, L1370-1492 読了。cross-refs 8 件検出。</p>
+<p><strong>裏取り</strong>: coppmgr.cpp L296-411, L531-985。copporch.cpp L32-36, L191-215, L240-300, L392-420, L880-960, L1370-1492 読了。cross-refs 8 件検出。</p>
 </blockquote>
 <!-- /cross-refs -->
 
@@ -38157,7 +38157,7 @@ orchagent 再起動時も <code>coppmgrd</code> は同一キーへの上書き s
 </span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>sonic-utilities (show copp / dump copp)
 </span></code></pre></div>
 <blockquote>
-<p><strong>裏取り</strong>: <code>coppmgrd.cpp</code> L21-65 全行読了。<code>coppmgr.cpp</code> L71, L296-310, L424-451 読了。<code>copporch.cpp</code> L191-215, L880-892 読了。<code>orchdaemon.cpp</code> L341, L500 読了。<code>show/copp.py</code> L21 読了。<code>dump/plugins/copp.py</code> L109-113 読了。</p>
+<p><strong>裏取り</strong>: <code>coppmgrd.cpp</code> L21-65。<code>coppmgr.cpp</code> L71, L296-310, L424-451 読了。<code>copporch.cpp</code> L191-215, L880-892 読了。<code>orchdaemon.cpp</code> L341, L500 読了。<code>show/copp.py</code> L21 読了。<code>dump/plugins/copp.py</code> L109-113 読了。</p>
 </blockquote>
 <!-- /pubsub -->
 

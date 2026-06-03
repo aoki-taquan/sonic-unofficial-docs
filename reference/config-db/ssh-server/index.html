@@ -38058,7 +38058,7 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 <!-- platform -->
 <h2 id="_25">プラットフォーム差分<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/hostcfgd</code> 全行精読 (FipsCfg, PamLimitsCfg)、<code>sonic-buildimage/rules/sonic-fips.mk</code>、<code>data/templates/limits.conf.j2</code>、<code>sonic-ssh-server.yang</code> L77–132 (2026-05-18)</p>
+<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/hostcfgd</code> (FipsCfg, PamLimitsCfg)、<code>sonic-buildimage/rules/sonic-fips.mk</code>、<code>data/templates/limits.conf.j2</code>、<code>sonic-ssh-server.yang</code> L77–132 (2026-05-18)</p>
 </blockquote>
 <h3 id="1-fips-ssh">差異 1: FIPS モード — <code>ssh</code> サービス強制再起動<a class="headerlink" href="#1-fips-ssh" title="Permanent link">&para;</a></h3>
 <p><code>FipsCfg</code> (<code>hostcfgd:1759-1840</code>) は FIPS 有効化・無効化時に <code>DEFAULT_FIPS_RESTART_SERVICES = ['ssh', 'telemetry.service', 'restapi']</code> (hostcfgd:103) に列挙されたサービスを再起動する。</p>

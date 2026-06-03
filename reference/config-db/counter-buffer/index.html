@@ -37991,7 +37991,7 @@
 <p><code>portsorch.cpp:88</code> の <code>PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS = 60000</code> と <code>PORT_BUFFER_DROP_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS</code> (counterpoll デフォルト <code>30000</code>) は<strong>別定数</strong>。portsorch がマネージャーを初期化する際には 60000ms を投入するが、counterpoll が <code>FLEX_COUNTER_TABLE|PORT_BUFFER_DROP</code> に 30000ms を書くと上書きされる。未設定の場合は orchagent の 60000ms が有効。</p>
 </div>
 <blockquote>
-<p><strong>証跡</strong>: <code>portsorch.cpp</code> L88-93, L389-435, L733-750, L866-885, L1852-1909, L8597-8680, L8932-9051, L9138-9146 全行読了。<code>bufferorch.cpp</code> L29-32, L234-344 全行読了。<code>watermarkorch.cpp</code> L1-349 全行読了。<code>watermark_pg.lua</code> / <code>watermark_queue.lua</code> / <code>watermark_bufferpool.lua</code> 全行読了。</p>
+<p><strong>証跡</strong>: <code>portsorch.cpp</code> L88-93, L389-435, L733-750, L866-885, L1852-1909, L8597-8680, L8932-9051, L9138-9146。<code>bufferorch.cpp</code> L29-32, L234-344。<code>watermarkorch.cpp</code> L1-349。<code>watermark_pg.lua</code> / <code>watermark_queue.lua</code> / <code>watermark_bufferpool.lua</code>。</p>
 </blockquote>
 <!-- /defaults -->
 

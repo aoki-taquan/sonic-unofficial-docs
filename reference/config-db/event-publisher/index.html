@@ -37560,7 +37560,7 @@ capture サービスが NULL のままサービスが継続する (<code>eventd.
 <tr>
 <td><a href="../../glossary/#term-asic">ASIC</a> 種別 (Broadcom / Mellanox / Marvell / Cisco-8000 等)</td>
 <td>影響なし</td>
-<td><code>eventd.cpp</code> / <code>eventd.h</code> / <code>events_common.cpp</code> に <code>getenv("platform")</code> 参照・<a href="../../glossary/#term-asic">ASIC</a> 種別分岐はゼロ。SAI API 呼び出しなし (<code>eventd.cpp</code> 全行確認)</td>
+<td><code>eventd.cpp</code> / <code>eventd.h</code> / <code>events_common.cpp</code> に <code>getenv("platform")</code> 参照・<a href="../../glossary/#term-asic">ASIC</a> 種別分岐はゼロ。SAI API 呼び出しなし (<code>eventd.cpp</code>)</td>
 </tr>
 <tr>
 <td>multi-asic (<code>IS_MULTI_NPU</code>)</td>
@@ -37580,7 +37580,7 @@ capture サービスが NULL のままサービスが継続する (<code>eventd.
 <tr>
 <td>ベンダー固有 eventd プラグイン</td>
 <td>なし</td>
-<td><code>rsyslog_plugin/</code> は <code>eventd</code> 本体と別バイナリ。syslog テキストを ZMQ に変換する補助コンポーネントであり、platform 条件分岐を持たない (<code>rsyslog_plugin/rsyslog_plugin.cpp</code> 全行確認)</td>
+<td><code>rsyslog_plugin/</code> は <code>eventd</code> 本体と別バイナリ。syslog テキストを ZMQ に変換する補助コンポーネントであり、platform 条件分岐を持たない (<code>rsyslog_plugin/rsyslog_plugin.cpp</code>)</td>
 </tr>
 </tbody>
 </table>

@@ -38765,7 +38765,7 @@
 <!-- cross-refs -->
 <h2 id="_21">暗黙参照テーブル<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>intfmgr.cpp</code>、<code>sonic-vlan.yang</code>、<code>dhcp4relay.cpp</code>、<code>config_interface.cpp</code>、<code>dhcp_cfggen.py</code>、<code>natconfig</code>、<code>neighbor_advertiser</code>、<code>filter_fdb_entries.py</code>、<code>xfmr_intf.go</code> 全行精読 (2026-05-15)</p>
+<p><strong>Evidence</strong>: <code>intfmgr.cpp</code>、<code>sonic-vlan.yang</code>、<code>dhcp4relay.cpp</code>、<code>config_interface.cpp</code>、<code>dhcp_cfggen.py</code>、<code>natconfig</code>、<code>neighbor_advertiser</code>、<code>filter_fdb_entries.py</code>、<code>xfmr_intf.go</code> (2026-05-15)</p>
 </blockquote>
 <p><code>VLAN_INTERFACE</code> は YANG leafref で <code>VLAN</code>・<code>VRF</code>・<code>VNET</code> を公式参照するほか、
 実行時に以下のテーブルを<strong>暗黙的に参照または被参照</strong>する。</p>
@@ -39281,7 +39281,7 @@ VRF が未登録のままだと <code>m_toSync</code> に積まれ VRF 登録後
 
 <!-- secondary-db-writes -->
 <h2 id="db">副次 DB 書込み<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
-<p>intfmgr が CONFIG_DB エントリを処理した結果として書き込む APPL_DB・STATE_DB のキー・フィールドを網羅的に記録する（ソース: <code>sonic-swss/cfgmgr/intfmgr.cpp</code> 全行精読 2026-05-16）。</p>
+<p>intfmgr が CONFIG_DB エントリを処理した結果として書き込む APPL_DB・STATE_DB のキー・フィールドを網羅的に記録する（ソース: <code>sonic-swss/cfgmgr/intfmgr.cpp</code> 2026-05-16）。</p>
 <h3 id="appl_db-intf_table">APPL_DB — <code>INTF_TABLE</code><a class="headerlink" href="#appl_db-intf_table" title="Permanent link">&para;</a></h3>
 <p><code>intfmgrd</code> は <code>ProducerStateTable m_appIntfTableProducer(appDb, APP_INTF_TABLE_NAME)</code> を使用して書き込む。</p>
 <h4 id="intf_tablevlann">属性ロウ (<code>INTF_TABLE|Vlan&lt;N&gt;</code>)<a class="headerlink" href="#intf_tablevlann" title="Permanent link">&para;</a></h4>

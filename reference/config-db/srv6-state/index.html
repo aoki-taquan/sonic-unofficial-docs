@@ -36892,7 +36892,7 @@ SAI 非対応プラットフォームでは <code>COUNTERS_SRV6_NAME_MAP</code> 
 <!-- defaults -->
 <h2 id="_4">コード由来の暗黙デフォルト<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> L21-24, L144-155, L177-199, L251-283, <code>srv6stat.py</code> 全行精読。</p>
+<p>根拠: <code>srv6orch.cpp</code> L21-24, L144-155, L177-199, L251-283, <code>srv6stat.py</code>。</p>
 </blockquote>
 <table>
 <thead>
@@ -37008,7 +37008,7 @@ SAI 非対応プラットフォームでは <code>COUNTERS_SRV6_NAME_MAP</code> 
 <!-- cross-refs -->
 <h2 id="_10">テーブル間クロスリファレンス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> <code>addMySidCounter()</code> L184-210、<code>removeMySidCounter()</code> L218-232、<code>getMySidCounterKey()</code> L177-182、<code>setCountersState()</code> L251-283、<code>schema.h</code> L257,313、<code>srv6stat.py</code> 全行精読。</p>
+<p>根拠: <code>srv6orch.cpp</code> <code>addMySidCounter()</code> L184-210、<code>removeMySidCounter()</code> L218-232、<code>getMySidCounterKey()</code> L177-182、<code>setCountersState()</code> L251-283、<code>schema.h</code> L257,313、<code>srv6stat.py</code>。</p>
 </blockquote>
 <table>
 <thead>
@@ -37058,7 +37058,7 @@ SAI 非対応プラットフォームでは <code>COUNTERS_SRV6_NAME_MAP</code> 
 <!-- failure -->
 <h2 id="_11">失敗挙動マトリクス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> <code>initializeCounters()</code> L120-142、<code>queryMySidCountersCapability()</code> L144-155、<code>addMySidCounter()</code> L184-210、<code>setMySidEntryCounter()</code> L236-248、<code>setCountersState()</code> L251-283、<code>createUpdateMysidEntry()</code> L1589-1614 全行精読。</p>
+<p>根拠: <code>srv6orch.cpp</code> <code>initializeCounters()</code> L120-142、<code>queryMySidCountersCapability()</code> L144-155、<code>addMySidCounter()</code> L184-210、<code>setMySidEntryCounter()</code> L236-248、<code>setCountersState()</code> L251-283、<code>createUpdateMysidEntry()</code> L1589-1614。</p>
 </blockquote>
 <p>COUNTERS_DB の <code>COUNTERS_SRV6_NAME_MAP</code> / <code>COUNTERS:&lt;oid&gt;</code> は <code>Srv6Orch</code> が自動管理するため、ユーザが直接失敗操作を行うテーブルではない。ただし以下のエラー経路がある。</p>
 <h3 id="_12">失敗経路一覧<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
@@ -37206,7 +37206,7 @@ MySID 追加から <code>COUNTERS:&lt;oid&gt;</code> 初回値が出現するま
 <!-- side-effects -->
 <h2 id="db">副次 DB 書込<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> <code>addMySidCounter()</code> L184-210、<code>removeMySidCounter()</code> L212-234、<code>setMySidEntryCounter()</code> L236-248、<code>setCountersState()</code> L251-283、<code>doTask(SelectableTimer)</code> L286-313、<code>createUpdateMysidEntry()</code> L1589-1614 全行精読。</p>
+<p>根拠: <code>srv6orch.cpp</code> <code>addMySidCounter()</code> L184-210、<code>removeMySidCounter()</code> L212-234、<code>setMySidEntryCounter()</code> L236-248、<code>setCountersState()</code> L251-283、<code>doTask(SelectableTimer)</code> L286-313、<code>createUpdateMysidEntry()</code> L1589-1614。</p>
 </blockquote>
 <p>COUNTERS_DB の <code>COUNTERS_SRV6_NAME_MAP</code> / <code>COUNTERS:&lt;oid&gt;</code> はユーザが直接書き込むテーブルではない。<code>Srv6Orch</code> が <code>SRV6_MY_SIDS</code> (<a href="../../glossary/#term-config_db">CONFIG_DB</a>) および <code>FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER</code> の変化を受けて、以下の副次書込みを実行する。</p>
 <h3 id="srv6_my_sids-set-counters_db">SRV6_MY_SIDS SET → COUNTERS_DB 書込み<a class="headerlink" href="#srv6_my_sids-set-counters_db" title="Permanent link">&para;</a></h3>

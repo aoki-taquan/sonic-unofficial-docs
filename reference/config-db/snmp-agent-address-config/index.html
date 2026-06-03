@@ -38238,7 +38238,7 @@
 <!-- constants -->
 <h2 id="_26">ハードコード定数<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>snmpd.conf.j2</code> L19-34, <code>minigraph.py:2314</code>, <code>sonic-snmp.yang</code> L178-196, <code>config/main.py:4137-4186</code> 全行精読 (2026-05-17)</p>
+<p><strong>Evidence</strong>: <code>snmpd.conf.j2</code> L19-34, <code>minigraph.py:2314</code>, <code>sonic-snmp.yang</code> L178-196, <code>config/main.py:4137-4186</code> (2026-05-17)</p>
 </blockquote>
 <p><code>SNMP_AGENT_ADDRESS_CONFIG</code> テーブルおよび <code>docker-snmp</code> コンテナに存在する、CONFIG_DB で管理されないハードコード定数の一覧。</p>
 <h3 id="agentaddress_1">agentAddress フォールバック<a class="headerlink" href="#agentaddress_1" title="Permanent link">&para;</a></h3>
@@ -38375,7 +38375,7 @@
 <!-- pubsub -->
 <h2 id="_31">通信メカニズム<a class="headerlink" href="#_31" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>docker-snmp/start.sh</code>, <code>snmpd.conf.j2</code>, <code>snmp_yml_to_configdb.py</code>, <code>sonic_ax_impl/mibs/__init__.py</code>, <code>hostcfgd</code> 全行精読 (2026-05-17)</p>
+<p><strong>Evidence</strong>: <code>docker-snmp/start.sh</code>, <code>snmpd.conf.j2</code>, <code>snmp_yml_to_configdb.py</code>, <code>sonic_ax_impl/mibs/__init__.py</code>, <code>hostcfgd</code> (2026-05-17)</p>
 </blockquote>
 <h3 id="_32">購読方式: なし (起動時スナップショット読み取りのみ)<a class="headerlink" href="#_32" title="Permanent link">&para;</a></h3>
 <p><code>SNMP_AGENT_ADDRESS_CONFIG</code> を <strong>リアルタイムで購読するプロセスは存在しない</strong>。<code>docker-snmp/start.sh</code> が起動時に <code>sonic-cfggen -d</code> (CONFIG_DB への一括 HGETALL) を実行して <code>snmpd.conf.j2</code> を展開・<code>snmpd.conf</code> を生成する。<a href="../../glossary/#term-redis">Redis</a> keyspace 通知 (PSUBSCRIBE) / <code>SubscriberStateTable</code> / <code>ConsumerStateTable</code> はいずれも使用しない。</p>

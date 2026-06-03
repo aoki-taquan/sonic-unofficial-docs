@@ -37961,7 +37961,7 @@
 </tbody>
 </table>
 <blockquote>
-<p><strong>裏取り</strong>: <code>doAclTableTask()</code> L5346-5520 および <code>doAclRuleTask()</code> L5520-5700 全行読了。<code>AclTable::validate()</code> L2725-2750、<code>addAclTable()</code> L4675-4700 確認。CTRLPLANE 固有分岐 5 件抽出。<code>services</code> フィールドの <code>continue</code> は L5410-5413 で確認、コメントに <code>"TODO: validate control plane ACL table has this attribute"</code> が残存 (L5412)。</p>
+<p><strong>裏取り</strong>: <code>doAclTableTask()</code> L5346-5520 および <code>doAclRuleTask()</code> L5520-5700。<code>AclTable::validate()</code> L2725-2750、<code>addAclTable()</code> L4675-4700 確認。CTRLPLANE 固有分岐 5 件抽出。<code>services</code> フィールドの <code>continue</code> は L5410-5413 で確認、コメントに <code>"TODO: validate control plane ACL table has this attribute"</code> が残存 (L5412)。</p>
 </blockquote>
 <!-- /handler-branching -->
 
@@ -38097,7 +38097,7 @@
 </tbody>
 </table>
 <blockquote>
-<p><strong>裏取り</strong>: <code>caclmgrd L625-901</code> 全行読了。<code>caclmgrd.service</code> systemd 依存確認。</p>
+<p><strong>裏取り</strong>: <code>caclmgrd L625-901</code>。<code>caclmgrd.service</code> systemd 依存確認。</p>
 </blockquote>
 <h3 id="2-acl_rule-priority">2. ACL_RULE の PRIORITY 処理順序<a class="headerlink" href="#2-acl_rule-priority" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># caclmgrd L774, L825</span>
@@ -38213,7 +38213,7 @@
 <h3 id="orchagent">orchagent 側の参照<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
 <p><code>AclOrch</code> は CTRLPLANE テーブルを <code>m_ctrlAclTables</code> に登録するのみ。SAI / <a href="../../glossary/#term-appl_db">APPL_DB</a> への書き込みなし。他テーブルへの暗黙参照もない。</p>
 <blockquote>
-<p><strong>裏取り</strong>: <code>sonic-host-services/scripts/caclmgrd</code> 全行読了。<code>caclmgrd L77-91</code> (定数定義), <code>L165,L286-330,L729-730,L1157,L1160</code> (テーブル参照箇所) を確認。</p>
+<p><strong>裏取り</strong>: <code>sonic-host-services/scripts/caclmgrd</code>。<code>caclmgrd L77-91</code> (定数定義), <code>L165,L286-330,L729-730,L1157,L1160</code> (テーブル参照箇所) を確認。</p>
 </blockquote>
 <!-- /cross-refs -->
 

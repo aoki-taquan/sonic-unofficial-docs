@@ -38077,7 +38077,7 @@
 <!-- pubsub -->
 <h2 id="redis-pubsub-keyspace-notification">通信メカニズム (Redis PUBSUB / keyspace notification)<a class="headerlink" href="#redis-pubsub-keyspace-notification" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>dhcp_utilities/common/dhcp_db_monitor.py</code> + <code>dhcp_utilities/dhcpservd/dhcpservd.py</code> 全行精読、<code>sonic-swss-common/common/subscriberstatetable.cpp</code> 参照 (2026-05-15)<br />
+<p><strong>Evidence</strong>: <code>dhcp_utilities/common/dhcp_db_monitor.py</code> + <code>dhcp_utilities/dhcpservd/dhcpservd.py</code>、<code>sonic-swss-common/common/subscriberstatetable.cpp</code> 参照 (2026-05-15)<br />
 </p>
 </blockquote>
 <h3 id="_18">購読方式<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
@@ -38323,7 +38323,7 @@
 <!-- cross-refs -->
 <h2 id="cross-table-refs">暗黙参照 (cross-table refs)<a class="headerlink" href="#cross-table-refs" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>dhcp_cfggen.py</code>, <code>dhcprelayd.py</code>, <code>dhcp_server.py</code> 全行精読 (2026-05-15)  </p>
+<p><strong>Evidence</strong>: <code>dhcp_cfggen.py</code>, <code>dhcprelayd.py</code>, <code>dhcp_server.py</code> (2026-05-15)  </p>
 </blockquote>
 <p><code>DHCP_SERVER_IPV4</code> テーブルは YANG leafref を最小限しか持たないが、実行時に以下のテーブルを暗黙参照する。</p>
 <table>
@@ -38405,7 +38405,7 @@
 <!-- failure -->
 <h2 id="_24">失敗挙動・エラーパス<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>dhcp_cfggen.py</code>, <code>dhcpservd.py</code>, <code>dhcprelayd.py</code>, <code>dhcp_server.py</code> 全行精読 (2026-05-15)  </p>
+<p><strong>Evidence</strong>: <code>dhcp_cfggen.py</code>, <code>dhcpservd.py</code>, <code>dhcprelayd.py</code>, <code>dhcp_server.py</code> (2026-05-15)  </p>
 </blockquote>
 <h3 id="dhcpservd-exit">dhcpservd プロセス起動失敗 (即時 exit)<a class="headerlink" href="#dhcpservd-exit" title="Permanent link">&para;</a></h3>
 <table>
@@ -38561,7 +38561,7 @@
 <!-- side-effects -->
 <h2 id="db">副次 DB 書込<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>dhcp_lease.py</code>, <code>dhcpservd.py</code>, <code>dhcp_cfggen.py</code> 全行精読 (2026-05-16)  </p>
+<p><strong>Evidence</strong>: <code>dhcp_lease.py</code>, <code>dhcpservd.py</code>, <code>dhcp_cfggen.py</code> (2026-05-16)  </p>
 </blockquote>
 <p>CONFIG_DB の <code>DHCP_SERVER_IPV4</code> を書き込むと、<code>dhcpservd</code> が以下の副次書き込みを行う。</p>
 <h3 id="state_db-dhcp_server_ipv4_lease">STATE_DB: DHCP_SERVER_IPV4_LEASE<a class="headerlink" href="#state_db-dhcp_server_ipv4_lease" title="Permanent link">&para;</a></h3>
@@ -38771,7 +38771,7 @@ eth0 アドレス取得失敗時は 5 秒間隔で最大 10 回リトライ。10
 <!-- platform -->
 <h2 id="_29">プラットフォーム差異<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py</code>、<code>common/utils.py</code> 全行精読 (2026-05-16)  </p>
+<p><strong>Evidence</strong>: <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py</code>、<code>common/utils.py</code> (2026-05-16)  </p>
 </blockquote>
 <h3 id="kea-dhcp4-vs-dnsmasq">kea-dhcp4 vs dnsmasq<a class="headerlink" href="#kea-dhcp4-vs-dnsmasq" title="Permanent link">&para;</a></h3>
 <p><code>sonic-dhcp-server</code> は <strong>kea-dhcp4 のみ</strong>を DHCP バックエンドとして使用する。dnsmasq は一切使用されない（コード内に参照なし）。<code>dhcpservd</code> が Jinja2 テンプレート (<code>kea-dhcp4.conf.j2</code>) で <code>/etc/kea/kea-dhcp4.conf</code> を生成し、SIGHUP で kea-dhcp4 に再読込させる構造。プラットフォームによるバックエンド切替は存在しない。</p>

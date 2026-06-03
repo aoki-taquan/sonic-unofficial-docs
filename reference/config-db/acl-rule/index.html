@@ -39055,7 +39055,7 @@ YANG は <code>mandatory true</code> のため省略不可。</p>
 </tbody>
 </table>
 <blockquote>
-<p><strong>裏取り</strong>: <code>doAclRuleTask()</code> L5520-5700 を全行読了、7 件分岐抽出。<code>type</code> / <code>stage</code> は ACL_RULE 自体のフィールドではなく ACL_TABLE から継承した値を参照。自動派生・条件付き登録ブロックの evidence 再確認: TCP 自動付与・minigraph 派生・DTelOrch 条件起動は実ソースと整合（<code>aclorch.cpp:5632-5660</code>、<code>minigraph.py:1218-1228</code>、<code>orchdaemon.cpp:502-530</code>）— 誤読なし。</p>
+<p><strong>裏取り</strong>: <code>doAclRuleTask()</code> L5520-5700 を、7 件分岐抽出。<code>type</code> / <code>stage</code> は ACL_RULE 自体のフィールドではなく ACL_TABLE から継承した値を参照。自動派生・条件付き登録ブロックの evidence 再確認: TCP 自動付与・minigraph 派生・DTelOrch 条件起動は実ソースと整合（<code>aclorch.cpp:5632-5660</code>、<code>minigraph.py:1218-1228</code>、<code>orchdaemon.cpp:502-530</code>）— 誤読なし。</p>
 </blockquote>
 <!-- /handler-branching -->
 

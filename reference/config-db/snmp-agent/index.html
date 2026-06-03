@@ -37934,7 +37934,7 @@
 <!-- cross-refs -->
 <h2 id="cross-table-refs">暗黙参照 (cross-table refs)<a class="headerlink" href="#cross-table-refs" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>dockers/docker-snmp/snmpd.conf.j2</code>, <code>supervisord.conf.j2</code>, <code>sonic-utilities/config/main.py</code> L4095–4210 &amp; L4709–4800, <code>src/sonic-config-engine/minigraph.py</code> L2308–2324, <code>sonic-snmp.yang</code> 全行精読 (2026-05-17)</p>
+<p><strong>Evidence</strong>: <code>dockers/docker-snmp/snmpd.conf.j2</code>, <code>supervisord.conf.j2</code>, <code>sonic-utilities/config/main.py</code> L4095–4210 &amp; L4709–4800, <code>src/sonic-config-engine/minigraph.py</code> L2308–2324, <code>sonic-snmp.yang</code> (2026-05-17)</p>
 </blockquote>
 <p><code>SNMP_AGENT_ADDRESS_CONFIG</code> / <code>SNMP_USER</code> は YANG leafref を持たないが、CLI・テンプレートエンジン・minigraph の実装レベルで以下のテーブルを暗黙参照する。</p>
 <h3 id="snmp_agent_address_config_2">SNMP_AGENT_ADDRESS_CONFIG の暗黙参照<a class="headerlink" href="#snmp_agent_address_config_2" title="Permanent link">&para;</a></h3>
@@ -38131,7 +38131,7 @@
 <!-- constants -->
 <h2 id="_11">ハードコード定数<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-utilities/config/main.py</code> L4293-4369, <code>dockers/docker-snmp/snmpd.conf.j2</code> L32-33, <code>src/sonic-config-engine/minigraph.py:2314</code>, <code>sonic-snmp.yang</code> 全行精読 (2026-05-17)</p>
+<p><strong>Evidence</strong>: <code>sonic-utilities/config/main.py</code> L4293-4369, <code>dockers/docker-snmp/snmpd.conf.j2</code> L32-33, <code>src/sonic-config-engine/minigraph.py:2314</code>, <code>sonic-snmp.yang</code> (2026-05-17)</p>
 </blockquote>
 <p><code>SNMP_AGENT_ADDRESS_CONFIG</code> / <code>SNMP_USER</code> テーブルに関連して、CONFIG_DB では管理されないハードコード定数の一覧。</p>
 <h3 id="snmp_agent_address_config_4">SNMP_AGENT_ADDRESS_CONFIG の定数<a class="headerlink" href="#snmp_agent_address_config_4" title="Permanent link">&para;</a></h3>
@@ -38365,7 +38365,7 @@
 <!-- pubsub -->
 <h2 id="_12">通信メカニズム<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>docker-snmp/start.sh</code>, <code>snmpd.conf.j2</code>, <code>snmp_yml_to_configdb.py</code>, <code>sonic_ax_impl/mibs/__init__.py:497-509</code>, <code>config/main.py:4188-4209, 4787-4791</code>, <code>hostcfgd</code> 全行精読 (2026-05-17)</p>
+<p><strong>Evidence</strong>: <code>docker-snmp/start.sh</code>, <code>snmpd.conf.j2</code>, <code>snmp_yml_to_configdb.py</code>, <code>sonic_ax_impl/mibs/__init__.py:497-509</code>, <code>config/main.py:4188-4209, 4787-4791</code>, <code>hostcfgd</code> (2026-05-17)</p>
 </blockquote>
 <h3 id="_13">購読方式: なし (起動時スナップショット読み取りのみ)<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <p><code>SNMP_AGENT_ADDRESS_CONFIG</code> / <code>SNMP_USER</code> を <strong>リアルタイムで購読するプロセスは存在しない</strong>。

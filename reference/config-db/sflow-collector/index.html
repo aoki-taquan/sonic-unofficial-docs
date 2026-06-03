@@ -36837,7 +36837,7 @@
 <h2 id="_7">書込み順依存<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>SFLOW_COLLECTOR テーブルを CONFIG_DB へ書き込む際の <strong>必須・推奨順序</strong> を実装コードから導出した。</p>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-swss/cfgmgr/sflowmgr.cpp</code>, <code>sflowmgrd.cpp</code> 全行精読 + <code>sonic-utilities/config/main.py</code> sflow 周辺 + <code>sonic-sflow.yang</code> 精読 (2026-05-17)</p>
+<p><strong>Evidence</strong>: <code>sonic-swss/cfgmgr/sflowmgr.cpp</code>, <code>sflowmgrd.cpp</code> + <code>sonic-utilities/config/main.py</code> sflow 周辺 + <code>sonic-sflow.yang</code> 精読 (2026-05-17)</p>
 </blockquote>
 <h3 id="o1-mgmt_vrf_configvrf_global-sflow_collector">O1: <code>MGMT_VRF_CONFIG|vrf_global</code> → <code>SFLOW_COLLECTOR</code> (条件付き必須)<a class="headerlink" href="#o1-mgmt_vrf_configvrf_global-sflow_collector" title="Permanent link">&para;</a></h3>
 <p><code>sonic-sflow.yang:86-88</code>: <code>collector_vrf = 'mgmt'</code> を指定する場合、<code>MGMT_VRF_CONFIG.vrf_global.mgmtVrfEnabled = 'true'</code> が先行必須。YANG <code>must</code> 制約が違反時に <code>"Must condition not satisfied. Try enable Management VRF."</code> エラーを返す。<code>collector_vrf = 'default'</code> または未指定の場合、この制約は不要。</p>
@@ -36862,7 +36862,7 @@
 <h2 id="_9">暗黙参照（テーブル間依存）<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <p>SFLOW_COLLECTOR テーブルを処理する際に暗黙的に依存するテーブル・コンポーネントを実装コードから導出した。</p>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-swss/cfgmgr/sflowmgrd.cpp</code>, <code>sflowmgr.cpp</code>, <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang</code>, <code>sonic-utilities/config/main.py</code> 全行精読 (2026-05-17)</p>
+<p><strong>Evidence</strong>: <code>sonic-swss/cfgmgr/sflowmgrd.cpp</code>, <code>sflowmgr.cpp</code>, <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang</code>, <code>sonic-utilities/config/main.py</code> (2026-05-17)</p>
 </blockquote>
 <h3 id="mgmt_vrf_configcollector_vrf-mgmt">MGMT_VRF_CONFIG（<code>collector_vrf = 'mgmt'</code> 時の必須依存）<a class="headerlink" href="#mgmt_vrf_configcollector_vrf-mgmt" title="Permanent link">&para;</a></h3>
 <p><code>sonic-sflow.yang:86-88</code>: <code>collector_vrf</code> フィールドに <code>'mgmt'</code> を指定する場合、YANG <code>must</code> 制約により <code>MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled = 'true'</code> が必須。この制約は YANG バリデーション時に評価され、<code>ValidatedConfigDBConnector</code> 経由の書き込み（<code>config sflow collector add --vrf mgmt</code>）で検査される。違反時のエラーメッセージ: <code>"Must condition not satisfied. Try enable Management VRF."</code>。</p>
@@ -36908,7 +36908,7 @@
 <!-- failure -->
 <h2 id="_10">失敗挙動マトリクス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-swss/cfgmgr/sflowmgr.cpp</code>, <code>sflowmgrd.cpp</code>, <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang</code>, <code>sonic-utilities/config/main.py</code>, <code>sonic-mgmt-common/translib/transformer/xfmr_sflow.go</code> 全行精読 (2026-05-17)</p>
+<p><strong>Evidence</strong>: <code>sonic-swss/cfgmgr/sflowmgr.cpp</code>, <code>sflowmgrd.cpp</code>, <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang</code>, <code>sonic-utilities/config/main.py</code>, <code>sonic-mgmt-common/translib/transformer/xfmr_sflow.go</code> (2026-05-17)</p>
 </blockquote>
 <h3 id="set">SET 処理における失敗経路<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
 <table>
@@ -37025,7 +37025,7 @@
 <h2 id="_11">ハードコード定数<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <p><code>SFLOW_COLLECTOR</code> テーブルに関連するハードコード定数を YANG モデルおよびソースコードから抽出した。</p>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang</code>, <code>sonic-utilities/config/main.py</code> 全行精読 (2026-05-17)</p>
+<p><strong>Evidence</strong>: <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang</code>, <code>sonic-utilities/config/main.py</code> (2026-05-17)</p>
 </blockquote>
 <h3 id="yang">YANG 由来の定数<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <table>
@@ -37126,7 +37126,7 @@
 <h2 id="_12">副作用・波及変更<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <p><code>SFLOW_COLLECTOR</code> テーブルへの書き込み・削除が引き起こす downstream への副作用を実装コードから導出した。</p>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-swss/cfgmgr/sflowmgr.cpp</code>, <code>sflowmgrd.cpp</code>, <code>sonic-utilities/config/main.py</code>, <code>sonic-utilities/show/sflow.py</code>, <code>sonic-mgmt-common/translib/transformer/xfmr_sflow.go</code> 全行精読 (2026-05-17)</p>
+<p><strong>Evidence</strong>: <code>sonic-swss/cfgmgr/sflowmgr.cpp</code>, <code>sflowmgrd.cpp</code>, <code>sonic-utilities/config/main.py</code>, <code>sonic-utilities/show/sflow.py</code>, <code>sonic-mgmt-common/translib/transformer/xfmr_sflow.go</code> (2026-05-17)</p>
 </blockquote>
 <h3 id="se1-config_db">SE1: 直接副作用 — CONFIG_DB 書き込みのみ（即時・非同期なし）<a class="headerlink" href="#se1-config_db" title="Permanent link">&para;</a></h3>
 <p><code>config sflow collector add</code> は <code>config_db.mod_entry('SFLOW_COLLECTOR', name, {...})</code> を呼ぶだけで、CONFIG_DB へのエントリ書き込み以外の即時副作用はない (<code>config/main.py:9358-9363</code>)。<code>sflowmgrd</code> は <code>SFLOW_COLLECTOR</code> テーブルを購読していないため (<code>sflowmgrd.cpp:36-41</code>)、書き込み直後に downstream プロセスは何も起動しない。</p>

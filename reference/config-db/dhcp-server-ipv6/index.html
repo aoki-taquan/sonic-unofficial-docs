@@ -37080,7 +37080,7 @@ SONiC の組み込み DHCP サーバ機能は IPv4 専用（<code>DHCP_SERVER_IP
 <!-- pubsub -->
 <h2 id="_11">通信メカニズム<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp</code> 全行精読 (2026-05-16)</p>
+<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp</code> (2026-05-16)</p>
 </blockquote>
 <h3 id="dhcp_server_ipv6_1">DHCP_SERVER_IPV6 に関する結論<a class="headerlink" href="#dhcp_server_ipv6_1" title="Permanent link">&para;</a></h3>
 <p><code>DHCP_SERVER_IPV6</code> テーブルは未実装であるため、このテーブルを購読・監視するデーモンは存在しない。CONFIG_DB Subscribe、dhcrelay 制御、netlink 監視はすべて <strong><code>DHCP_RELAY</code> テーブルを対象とした <code>dhcp6relay</code> プロセス</strong>が担っている。</p>

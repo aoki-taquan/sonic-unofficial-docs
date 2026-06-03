@@ -38100,7 +38100,7 @@
 </tbody>
 </table>
 <blockquote>
-<p><strong>裏取り</strong>: <code>bgp_table_handler_common()</code> L3910 全行読了。BGP_GLOBALS 固有の追加分岐なし。keepalive/holdtime の組み合わせ制約のみ。</p>
+<p><strong>裏取り</strong>: <code>bgp_table_handler_common()</code> L3910。BGP_GLOBALS 固有の追加分岐なし。keepalive/holdtime の組み合わせ制約のみ。</p>
 </blockquote>
 <!-- /handler-branching -->
 
@@ -38214,7 +38214,7 @@
 </tbody>
 </table>
 <blockquote>
-<p><strong>裏取り</strong>: <code>frrcfgd.py</code> <code>global_key_map</code> L1784-1821 全行読了、<code>get_command_cmn()</code> L374-413 全行読了、<code>bgpd.conf.db.j2</code> 全行読了、<code>sonic-bgp-global.yang</code> 全行読了。</p>
+<p><strong>裏取り</strong>: <code>frrcfgd.py</code> <code>global_key_map</code> L1784-1821、<code>get_command_cmn()</code> L374-413、<code>bgpd.conf.db.j2</code>、<code>sonic-bgp-global.yang</code>。</p>
 </blockquote>
 <!-- /defaults -->
 <!-- ordering -->
@@ -38636,7 +38636,7 @@
 </span></code></pre></div>
 <p>これにより、BGP_GLOBALS に <code>default_ipv4_unicast</code> フィールドが設定されていなくても、<strong>デフォルトで IPv4 unicast は無効化</strong>される（<code>frrcfgd.py:2700</code>）。</p>
 <blockquote>
-<p><strong>裏取り</strong>: <code>frrcfgd.py</code> L1784-1821 (<code>global_key_map</code> 全行), L2700 (<code>no bgp default ipv4-unicast</code>), L2716, L3935-3936 確認。<code>bgpd.conf.db.j2</code> 全行確認。<code>sonic-frr/defaults.h</code> + <code>bgpd/bgpd.h</code> L1397-1434 確認。</p>
+<p><strong>裏取り</strong>: <code>frrcfgd.py</code> L1784-1821 (<code>global_key_map</code> 全行), L2700 (<code>no bgp default ipv4-unicast</code>), L2716, L3935-3936 確認。<code>bgpd.conf.db.j2</code>。<code>sonic-frr/defaults.h</code> + <code>bgpd/bgpd.h</code> L1397-1434 確認。</p>
 </blockquote>
 <!-- /constants -->
 

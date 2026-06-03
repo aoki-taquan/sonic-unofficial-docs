@@ -37846,7 +37846,7 @@ BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<co
 </table>
 <h3 id="grep">grep カバレッジ<a class="headerlink" href="#grep" title="Permanent link">&para;</a></h3>
 <ul>
-<li>bmpcfgd.py 100 行全行読了、BMP テーブル購読: 1 件（条件なし）</li>
+<li>bmpcfgd.py 100 行、BMP テーブル購読: 1 件（条件なし）</li>
 </ul>
 <!-- /derivation -->
 <!-- handler-branching -->
@@ -37893,7 +37893,7 @@ BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<co
 </tbody>
 </table>
 <blockquote>
-<p><strong>裏取り</strong>: <code>BMPCfg.load()</code> L34-46 全行読了。値による分岐は is_true() による bool 変換のみ。3 フィールドすべて独立して分岐（相互排他ではない）。</p>
+<p><strong>裏取り</strong>: <code>BMPCfg.load()</code> L34-46。値による分岐は is_true() による bool 変換のみ。3 フィールドすべて独立して分岐（相互排他ではない）。</p>
 </blockquote>
 <!-- /handler-branching -->
 

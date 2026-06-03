@@ -38013,7 +38013,7 @@
 
 <!-- defaults -->
 <h2 id="_8">コード由来の暗黙デフォルト<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<p>以下は YANG <code>default</code> 宣言の<strong>外</strong>にあるコードレベルの fallback。<code>init_cfg.json.j2</code> の初期値 + ランタイム <code>.get</code>/<code>try-except</code>/<code>or</code> パターンを全行精読して導出。</p>
+<p>以下は YANG <code>default</code> 宣言の<strong>外</strong>にあるコードレベルの fallback。<code>init_cfg.json.j2</code> の初期値 + ランタイム <code>.get</code>/<code>try-except</code>/<code>or</code> パターンをして導出。</p>
 <h3 id="auto_techsupportglobal_1">AUTO_TECHSUPPORT|GLOBAL<a class="headerlink" href="#auto_techsupportglobal_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -38648,7 +38648,7 @@ masic suffix を除去してから (<code>swss0</code> → <code>swss</code>) <c
 <!-- failure -->
 <h2 id="_26">失敗挙動・エラーパス<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>coredump_gen_handler.py</code>, <code>techsupport_cleanup.py</code>, <code>utilities_common/auto_techsupport_helper.py</code> 全行精読 (2026-05-15)  </p>
+<p><strong>Evidence</strong>: <code>coredump_gen_handler.py</code>, <code>techsupport_cleanup.py</code>, <code>utilities_common/auto_techsupport_helper.py</code> (2026-05-15)  </p>
 </blockquote>
 <h3 id="techsupport-retry-auto_techsupport_helperinvoke_ts_cmd">techsupport 起動失敗・retry (<code>auto_techsupport_helper.invoke_ts_cmd</code>)<a class="headerlink" href="#techsupport-retry-auto_techsupport_helperinvoke_ts_cmd" title="Permanent link">&para;</a></h3>
 <p><code>show techsupport</code> を <code>subprocess_exec</code> 経由で起動した直後の <code>returncode</code> を分岐させる。Python レベルの <code>subprocess.TimeoutExpired</code> は raise されず、タイムアウトは <code>--global-timeout 60</code> (CLI 側) に委ねている (<code>auto_techsupport_helper.py:71,87-94</code>)。</p>

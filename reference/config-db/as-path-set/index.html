@@ -37477,7 +37477,7 @@
 
 <!-- defaults -->
 <h2 id="_9">コード由来の暗黙デフォルト<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<p>YANG <code>default</code> 文が存在しないフィールドでもコードが暗黙の値を強制する場合がある。以下は全行精読による per-field 調査結果。</p>
+<p>YANG <code>default</code> 文が存在しないフィールドでもコードが暗黙の値を強制する場合がある。以下はによる per-field 調査結果。</p>
 <table>
 <thead>
 <tr>
@@ -37529,7 +37529,7 @@
 
 <!-- constants -->
 <h2 id="_10">ハードコード定数<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<p><code>bgpcfgd</code> (<code>AsPathMgr</code>) と <code>frrcfgd</code> (sonic-frr-mgmt-framework) の両経路を全行精読して抽出した、AS_PATH_SET 処理に埋め込まれた固定リテラル・定数。<a href="../../glossary/#term-sonic">SONiC</a> レイヤには <strong>regex 長やエントリ数の上限値は一切定義されていない</strong>（FRR <code>bgpd</code> 内部の天井に委譲）。</p>
+<p><code>bgpcfgd</code> (<code>AsPathMgr</code>) と <code>frrcfgd</code> (sonic-frr-mgmt-framework) の両経路をして抽出した、AS_PATH_SET 処理に埋め込まれた固定リテラル・定数。<a href="../../glossary/#term-sonic">SONiC</a> レイヤには <strong>regex 長やエントリ数の上限値は一切定義されていない</strong>（FRR <code>bgpd</code> 内部の天井に委譲）。</p>
 <h3 id="action-enumyang-routing-policy-action-type">action enum（YANG <code>routing-policy-action-type</code>）と実装乖離<a class="headerlink" href="#action-enumyang-routing-policy-action-type" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -37807,7 +37807,7 @@
 
 <!-- failure -->
 <h2 id="_13">失敗挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
-<p>ソース: <code>sonic-bgpcfgd/bgpcfgd/managers_as_path.py</code> (AsPathMgr, <code>DEVICE_METADATA.localhost.t2_group_asns</code> 経路) と <code>sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</code> (AS_PATH_SET テーブル経路) の 2 経路を全行精読。retry セマンティクスは <code>bgpcfgd/manager.py</code> と <code>frrcfgd.py</code> ループに依存。</p>
+<p>ソース: <code>sonic-bgpcfgd/bgpcfgd/managers_as_path.py</code> (AsPathMgr, <code>DEVICE_METADATA.localhost.t2_group_asns</code> 経路) と <code>sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</code> (AS_PATH_SET テーブル経路) の 2 経路を。retry セマンティクスは <code>bgpcfgd/manager.py</code> と <code>frrcfgd.py</code> ループに依存。</p>
 <h3 id="bgpcfgd-aspathmgr-t2_group_asns">bgpcfgd 経路 (AsPathMgr — 固定名 T2_GROUP_ASNS)<a class="headerlink" href="#bgpcfgd-aspathmgr-t2_group_asns" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -38183,7 +38183,7 @@
 
 <!-- ordering -->
 <h2 id="_23">書込み順依存<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h2>
-<p><code>AS_PATH_SET</code> テーブルは leafref 参照元 (<code>ROUTE_MAP.match_as_path</code>)・bgpd デーモン起動順・別経路 (<code>AsPathMgr</code>) の固定名予約という 3 系統の順序依存を持つ。<code>bgpcfgd</code> (<code>AsPathMgr</code> / <code>managers_as_path.py:7-66</code>) と <code>frrcfgd</code> (<code>frrcfgd.py:96, 1009-1020, 2248-2253, 3005-3011</code>) の全行精読と <code>bgpd.conf.db.j2:6-20</code>、<code>sonic-route-map.yang:263-268</code> のクロス読みで抽出。</p>
+<p><code>AS_PATH_SET</code> テーブルは leafref 参照元 (<code>ROUTE_MAP.match_as_path</code>)・bgpd デーモン起動順・別経路 (<code>AsPathMgr</code>) の固定名予約という 3 系統の順序依存を持つ。<code>bgpcfgd</code> (<code>AsPathMgr</code> / <code>managers_as_path.py:7-66</code>) と <code>frrcfgd</code> (<code>frrcfgd.py:96, 1009-1020, 2248-2253, 3005-3011</code>) のと <code>bgpd.conf.db.j2:6-20</code>、<code>sonic-route-map.yang:263-268</code> のクロス読みで抽出。</p>
 <h3 id="silent-skip">強制順序（破ると不整合・silent skip）<a class="headerlink" href="#silent-skip" title="Permanent link">&para;</a></h3>
 <table>
 <thead>

@@ -37335,7 +37335,7 @@ APP_DB 経由または <a href="../../glossary/#term-frr">FRR</a> 経由で Srv6
 <!-- pubsub -->
 <h2 id="_3">通信メカニズム<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>routesync.cpp</code> 155-164, 1389, 1424, 1562, 1667, 3389, 3441 / <code>orchdaemon.cpp</code> 312-324 / <code>srv6orch.cpp</code> 98-140, 2352-2386 / <code>srv6orch.h</code> 238-242 / <code>managers_srv6.py</code> 14-133 の全行精読。</p>
+<p>根拠: <code>routesync.cpp</code> 155-164, 1389, 1424, 1562, 1667, 3389, 3441 / <code>orchdaemon.cpp</code> 312-324 / <code>srv6orch.cpp</code> 98-140, 2352-2386 / <code>srv6orch.h</code> 238-242 / <code>managers_srv6.py</code> 14-133 の。</p>
 </blockquote>
 <h3 id="_4">全体データフロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p>SRv6 の設定は <a href="../../glossary/#term-config_db">CONFIG_DB</a> から <a href="../../glossary/#term-sai">SAI</a> まで以下の <strong>非同期パイプライン</strong> を通じて伝達される。
@@ -37537,7 +37537,7 @@ APP_DB 経由または <a href="../../glossary/#term-frr">FRR</a> 経由で Srv6
 <!-- defaults -->
 <h3 id="_6">コード由来のデフォルト<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> 行 73-79, 1079-1089, 1151-1162 の全行精読。</p>
+<p>根拠: <code>srv6orch.cpp</code> 行 73-79, 1079-1089, 1151-1162 の。</p>
 </blockquote>
 <table>
 <thead>
@@ -37725,7 +37725,7 @@ APP_DB 経由または <a href="../../glossary/#term-frr">FRR</a> 経由で Srv6
 <!-- defaults -->
 <h3 id="_8">コード由来のデフォルト<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> 行 41-71, 1384-1430, 2204-2248 の全行精読。</p>
+<p>根拠: <code>srv6orch.cpp</code> 行 41-71, 1384-1430, 2204-2248 の。</p>
 </blockquote>
 <table>
 <thead>
@@ -37809,7 +37809,7 @@ NeighOrch から neighbor 追加通知を受けた際に自動で再インスト
 <!-- defaults -->
 <h3 id="_10">コード由来のデフォルト<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> 行 2272-2343 の全行精読。</p>
+<p>根拠: <code>srv6orch.cpp</code> 行 2272-2343 の。</p>
 </blockquote>
 <table>
 <thead>
@@ -37890,7 +37890,7 @@ VPN ごとに内部識別子 <code>prefix_agg_id</code> を <code>getAggId()</co
 <!-- ordering -->
 <h2 id="_11">処理順序と依存関係<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> 行 1119–1143, 1384–1543, 2272–2342, <code>managers_srv6.py</code> 行 56–115 の全行精読。</p>
+<p>根拠: <code>srv6orch.cpp</code> 行 1119–1143, 1384–1543, 2272–2342, <code>managers_srv6.py</code> 行 56–115 の。</p>
 </blockquote>
 <h3 id="set">投入（SET）推奨順序<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>1. VRF テーブル            ← end.t / end.dt* / udt* で decap_vrf に custom VRF を使う場合
@@ -37959,7 +37959,7 @@ warm-reboot 後は swss 再起動時に APP_DB から全エントリを再読み
 <!-- cross-refs -->
 <h2 id="_13">テーブル間暗黙参照<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> 行 98–117, 331–397, 430–480, 871–924, 1129–1132, 1197–1248, 1484–1542, 1639, 1683, 1644, 1689, 1815–1833, 2312, 2384 の全行精読。</p>
+<p>根拠: <code>srv6orch.cpp</code> 行 98–117, 331–397, 430–480, 871–924, 1129–1132, 1197–1248, 1484–1542, 1639, 1683, 1644, 1689, 1815–1833, 2312, 2384 の。</p>
 </blockquote>
 <h3 id="srv6_my_sid_table-orch">SRV6_MY_SID_TABLE が参照する外部テーブル・Orch<a class="headerlink" href="#srv6_my_sid_table-orch" title="Permanent link">&para;</a></h3>
 <table>
@@ -38675,7 +38675,7 @@ CrmOrch が定期的に COUNTERS_DB <code>CRM_STATS</code> テーブルへ書き
 <!-- platform -->
 <h2 id="_22">プラットフォーム差分<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> (rev 4305596156d70e9797e8a881b3d19b46de0bce0d) 全行精読、<code>sonic-sairedis/syncd/VendorSai.cpp</code>、<code>sonic-sairedis/vslib/vpp/SwitchVppSRv6.cpp</code>、<a href="../../glossary/#term-sonic">SONiC</a> <a href="../../glossary/#term-hld">HLD</a> <code>doc/srv6/srv6_hld.md</code>、<code>SRv6_uSID.md</code>、<code>srv6_sid_l3adj.md</code>。</p>
+<p>根拠: <code>srv6orch.cpp</code> (rev 4305596156d70e9797e8a881b3d19b46de0bce0d)、<code>sonic-sairedis/syncd/VendorSai.cpp</code>、<code>sonic-sairedis/vslib/vpp/SwitchVppSRv6.cpp</code>、<a href="../../glossary/#term-sonic">SONiC</a> <a href="../../glossary/#term-hld">HLD</a> <code>doc/srv6/srv6_hld.md</code>、<code>SRv6_uSID.md</code>、<code>srv6_sid_l3adj.md</code>。</p>
 </blockquote>
 <h3 id="sai-capability-mysid-asic">SAI capability — MySID カウンタ非対応 ASIC<a class="headerlink" href="#sai-capability-mysid-asic" title="Permanent link">&para;</a></h3>
 <p><code>Srv6Orch::initializeCounters()</code>（<code>srv6orch.cpp:120-142</code>）は起動時に

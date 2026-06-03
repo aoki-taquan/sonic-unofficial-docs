@@ -38003,7 +38003,7 @@
 <!-- constants -->
 <h2 id="_9">ハードコード定数<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.h</code> 全行精読、<code>sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py</code> 精読 (2026-05-16)</p>
+<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.h</code>、<code>sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py</code> 精読 (2026-05-16)</p>
 </blockquote>
 <h3 id="dhcp4relayh">プロトコル定数 (dhcp4relay.h)<a class="headerlink" href="#dhcp4relayh" title="Permanent link">&para;</a></h3>
 <table>
@@ -38129,7 +38129,7 @@ CONFIG_DB・環境変数・設定ファイルから変更不可。
 <!-- failure -->
 <h2 id="_11">失敗挙動・リトライ・リカバリ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.cpp</code> および <code>dhcp4relay_mgr.cpp</code> 全行精読 (2026-05-18)</p>
+<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.cpp</code> および <code>dhcp4relay_mgr.cpp</code> (2026-05-18)</p>
 </blockquote>
 <h3 id="fatal-exit-exitexit_failure">起動時 — fatal exit (exit(EXIT_FAILURE))<a class="headerlink" href="#fatal-exit-exitexit_failure" title="Permanent link">&para;</a></h3>
 <p>以下の条件では <code>loop_relay()</code> が <code>exit(EXIT_FAILURE)</code> を呼び、プロセスが即終了する。supervisor が <code>docker-dhcp-relay</code> コンテナを再起動する。</p>
@@ -38325,7 +38325,7 @@ CONFIG_DB・環境変数・設定ファイルから変更不可。
 <h3 id="appl_db">APPL_DB 経由パス<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
 <p>なし。<code>DHCPV4_RELAY</code> は <a href="../../glossary/#term-appl_db">APPL_DB</a> 中継なし、<a href="../../glossary/#term-sai">SAI</a> 非経由の Linux カーネル relay であるため、<a href="../../glossary/#term-orchagent">orchagent</a> への通知は発生しない。</p>
 <blockquote>
-<p><strong>裏取り</strong>: <code>dhcp4relay_stats.cpp</code> 全行読了。<code>dhcp4relay.cpp:86-87, 591-828, 1570-1571</code> 読了。<code>dhcp4relay_stats.h:12</code> 読了。<code>dhcp4relay_mgr.cpp:56-90, 510-518, 762-771</code> 読了。副次書き込み先は <code>COUNTERS_DB.COUNTERS_DHCPV4</code> のみ確認。CONFIG_DB / <a href="../../glossary/#term-appl_db">APPL_DB</a> への書き込みなし。</p>
+<p><strong>裏取り</strong>: <code>dhcp4relay_stats.cpp</code>。<code>dhcp4relay.cpp:86-87, 591-828, 1570-1571</code> 読了。<code>dhcp4relay_stats.h:12</code> 読了。<code>dhcp4relay_mgr.cpp:56-90, 510-518, 762-771</code> 読了。副次書き込み先は <code>COUNTERS_DB.COUNTERS_DHCPV4</code> のみ確認。CONFIG_DB / <a href="../../glossary/#term-appl_db">APPL_DB</a> への書き込みなし。</p>
 </blockquote>
 <!-- /side-effects -->
 

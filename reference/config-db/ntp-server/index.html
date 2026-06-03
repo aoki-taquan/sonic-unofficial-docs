@@ -38198,7 +38198,7 @@
 <h3 id="_12">キャッシュ更新の副次的性質<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <p><code>ntp_srv_key_update()</code> は <code>systemctl restart chrony</code> が成功した場合のみ <code>self.cache['servers']</code> / <code>self.cache['keys']</code> を更新する (<code>hostcfgd:1404-1406</code>)。chrony 再起動失敗時はキャッシュが古い状態のままとなり、次回の <code>NTP_SERVER</code> / <code>NTP_KEY</code> 変更イベントで差分が残るため自動再処理が保証される設計となっている。</p>
 <blockquote>
-<p><strong>コード証跡</strong>: <code>hostcfgd:1272-1407</code> (<code>NtpCfg</code> クラス全体)、<code>caclmgrd:96-100</code> (NTP <a href="../../glossary/#term-acl">ACL</a> サービス定義)。全行精読で STATE_DB / <a href="../../glossary/#term-appl_db">APPL_DB</a> / <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> への書き込みが 0 件であることを確認。</p>
+<p><strong>コード証跡</strong>: <code>hostcfgd:1272-1407</code> (<code>NtpCfg</code> クラス全体)、<code>caclmgrd:96-100</code> (NTP <a href="../../glossary/#term-acl">ACL</a> サービス定義)。で STATE_DB / <a href="../../glossary/#term-appl_db">APPL_DB</a> / <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> への書き込みが 0 件であることを確認。</p>
 </blockquote>
 <!-- /side-effects -->
 

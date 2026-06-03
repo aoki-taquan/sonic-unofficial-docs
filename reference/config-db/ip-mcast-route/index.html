@@ -37366,7 +37366,7 @@
 <!-- ordering -->
 <h2 id="_4">書込み順依存・タイミング依存<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>ip_multicast_manager.cpp</code> <code>validateSetIpMulticastEntry()</code> L493-533、<code>validateIpMulticastEntry()</code> L471-491、<code>l3_multicast_manager.cpp</code> <code>validateReplicas()</code> L978-1057 全行精読。</p>
+<p>根拠: <code>ip_multicast_manager.cpp</code> <code>validateSetIpMulticastEntry()</code> L493-533、<code>validateIpMulticastEntry()</code> L471-491、<code>l3_multicast_manager.cpp</code> <code>validateReplicas()</code> L978-1057。</p>
 </blockquote>
 <p><a href="../../glossary/#term-p4rt">P4RT</a> フレームワークは依存オブジェクトが未存在の場合に即座に <code>SWSS_RC_NOT_FOUND</code> を返す。<strong>pending キューや自動 retry は存在しない</strong>。コントローラ (<code>p4rt-app</code>) が依存関係を守った順序で書き込む必要がある。</p>
 <h3 id="_5">検出された順序依存<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>

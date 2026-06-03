@@ -37556,7 +37556,7 @@
 <!-- ordering -->
 <h2 id="_8">書込み順依存<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>cfgmgr/vlanmgr.cpp</code>, <code>orchagent/portsorch.cpp</code> 全行精読 (2026-05-15)</p>
+<p><strong>Evidence</strong>: <code>cfgmgr/vlanmgr.cpp</code>, <code>orchagent/portsorch.cpp</code> (2026-05-15)</p>
 </blockquote>
 <h3 id="config_db-appl_db">他テーブル先行必須 (CONFIG_DB → APPL_DB 段)<a class="headerlink" href="#config_db-appl_db" title="Permanent link">&para;</a></h3>
 <p><code>vlanmgrd::doVlanMemberTask()</code> は <a href="../../glossary/#term-state_db">STATE_DB</a> 経由で先行テーブルの完了を確認するまで CONFIG_DB <code>VLAN_MEMBER</code> を APPL_DB に書かない (<code>vlanmgr.cpp:642</code>)。違反時は <code>SWSS_LOG_DEBUG("not ready, delaying")</code> のみで <code>m_toSync</code> に保留され、外部からはエラーなしの無反応に見える。</p>

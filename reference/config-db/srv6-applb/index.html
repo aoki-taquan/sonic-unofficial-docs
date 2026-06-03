@@ -37028,7 +37028,7 @@
 <!-- ordering -->
 <h2 id="_4">書込み順依存<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> <code>createUpdateMysidEntry()</code> L1511-1543、<code>updateNeighbor()</code> L1212-1341、<code>doTaskSidTable()</code> L1146-1186 全行精読。</p>
+<p>根拠: <code>srv6orch.cpp</code> <code>createUpdateMysidEntry()</code> L1511-1543、<code>updateNeighbor()</code> L1212-1341、<code>doTaskSidTable()</code> L1146-1186。</p>
 </blockquote>
 <p><a href="../../glossary/#term-appl_db">APPL_DB</a> <code>SRV6_MY_SID_TABLE</code> と <code>SRV6_SID_LIST_TABLE</code> はそれぞれ独立した Consumer (<code>m_mysidTable</code> / <code>m_sidTable</code>) で処理されるが、<code>adj</code> フィールドを持つ MySID エントリには隣接 (Neighbor) 解決の順序依存がある。</p>
 <h3 id="_5">検出された順序依存<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
@@ -37074,7 +37074,7 @@ Neighbor ADD 通知が <code>updateNeighbor()</code> に届くと、対応する
 <!-- cross-refs -->
 <h2 id="_6">暗黙参照テーブル<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> <code>createUpdateMysidEntry()</code> L1480-1547、<code>deleteMysidEntry()</code> L1651-1700、<code>createUpdateSidList()</code> L1020-1117、コンストラクタ L98-115 全行精読。</p>
+<p>根拠: <code>srv6orch.cpp</code> <code>createUpdateMysidEntry()</code> L1480-1547、<code>deleteMysidEntry()</code> L1651-1700、<code>createUpdateSidList()</code> L1020-1117、コンストラクタ L98-115。</p>
 </blockquote>
 <table>
 <thead>
@@ -37123,7 +37123,7 @@ Neighbor ADD 通知が <code>updateNeighbor()</code> に届くと、対応する
 <!-- failure -->
 <h2 id="_7">失敗挙動マトリクス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> <code>createUpdateMysidEntry()</code> L1473-1576、<code>doTaskMySidTable()</code> L2228-2234、<code>createUpdateSidList()</code> L1044-1117、<code>deleteSidList()</code> L1119-1143、<code>doTaskSidTable()</code> L1146-1186 全行精読。</p>
+<p>根拠: <code>srv6orch.cpp</code> <code>createUpdateMysidEntry()</code> L1473-1576、<code>doTaskMySidTable()</code> L2228-2234、<code>createUpdateSidList()</code> L1044-1117、<code>deleteSidList()</code> L1119-1143、<code>doTaskSidTable()</code> L1146-1186。</p>
 </blockquote>
 <h3 id="srv6_my_sid_table_1">SRV6_MY_SID_TABLE の失敗経路<a class="headerlink" href="#srv6_my_sid_table_1" title="Permanent link">&para;</a></h3>
 <table>
@@ -37309,7 +37309,7 @@ MTU は <code>OVERLAY_RIF_DEFAULT_MTU = 9100</code> bytes に固定される (<c
 <!-- side-effects -->
 <h2 id="_10">副作用マトリクス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>根拠: <code>srv6orch.cpp</code> <code>createUpdateMysidEntry()</code> L1589-1654、<code>deleteMysidEntry()</code> L1656-1710、<code>addMySidCounter()</code> L184-210、<code>removeMySidCounter()</code> L212-234、<code>deleteSidList()</code> L1119-1143 全行精読。</p>
+<p>根拠: <code>srv6orch.cpp</code> <code>createUpdateMysidEntry()</code> L1589-1654、<code>deleteMysidEntry()</code> L1656-1710、<code>addMySidCounter()</code> L184-210、<code>removeMySidCounter()</code> L212-234、<code>deleteSidList()</code> L1119-1143。</p>
 </blockquote>
 <h3 id="srv6_my_sid_table_2">SRV6_MY_SID_TABLE の副作用<a class="headerlink" href="#srv6_my_sid_table_2" title="Permanent link">&para;</a></h3>
 <table>

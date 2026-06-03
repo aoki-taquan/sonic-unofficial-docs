@@ -38475,7 +38475,7 @@
 <!-- defaults -->
 <h2 id="_15">コード由来の暗黙デフォルト (コード由来)<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp</code> 全行精読 (2026-05-14)</p>
+<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp</code> (2026-05-14)</p>
 </blockquote>
 <h3 id="rfc6939_support-true-yang-discrepancy"><code>rfc6939_support</code> — ハードコードデフォルト <code>true</code> + YANG-実装 discrepancy<a class="headerlink" href="#rfc6939_support-true-yang-discrepancy" title="Permanent link">&para;</a></h3>
 <table>
@@ -38533,7 +38533,7 @@
 <!-- constants -->
 <h2 id="_16">ハードコード定数<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp6relay/src/relay.h</code>, <code>config_interface.cpp</code>, <code>relay.cpp</code>, <code>wait_for_intf.sh.j2</code> 全行精読 (2026-05-15)</p>
+<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp6relay/src/relay.h</code>, <code>config_interface.cpp</code>, <code>relay.cpp</code>, <code>wait_for_intf.sh.j2</code> (2026-05-15)</p>
 </blockquote>
 <h3 id="relayh">プロトコル定数 (relay.h)<a class="headerlink" href="#relayh" title="Permanent link">&para;</a></h3>
 <table>
@@ -38736,7 +38736,7 @@
 <!-- pubsub -->
 <h2 id="redis-pubsub-keyspace-notification">通信メカニズム (Redis PUBSUB / keyspace notification)<a class="headerlink" href="#redis-pubsub-keyspace-notification" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp</code> 全行精読、<code>sonic-swss-common/common/subscriberstatetable.cpp</code> 参照 (2026-05-14)</p>
+<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp</code>、<code>sonic-swss-common/common/subscriberstatetable.cpp</code> 参照 (2026-05-14)</p>
 </blockquote>
 <h3 id="_21">購読方式<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
 <p><code>dhcp6relay</code> は <code>swss::SubscriberStateTable</code> を通じて CONFIG_DB の <code>DHCP_RELAY</code> テーブルを購読する。内部実装は <a href="../../glossary/#term-redis">Redis</a> の <strong>keyspace notification (PSUBSCRIBE)</strong> であり、<a href="../../glossary/#term-consumerstatetable">ConsumerStateTable</a> / NotificationConsumer は使用しない。TTL/keyspace expire 通知も使用しない。</p>
@@ -38800,7 +38800,7 @@
 <hr />
 <h3 id="dhcprelayd-python-dhcpv4">dhcprelayd (Python) — DHCPv4 リレー制御の通信メカニズム<a class="headerlink" href="#dhcprelayd-python-dhcpv4" title="Permanent link">&para;</a></h3>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py</code>、<code>dhcp_utilities/common/dhcp_db_monitor.py</code> 全行精読 (2026-05-16)</p>
+<p><strong>Evidence</strong>: <code>sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py</code>、<code>dhcp_utilities/common/dhcp_db_monitor.py</code> (2026-05-16)</p>
 </blockquote>
 <p><code>dhcprelayd</code> は DHCPv4 向け Python デーモンで、CONFIG_DB の複数テーブルを <code>swss::SubscriberStateTable</code> 経由で購読し、<code>isc-dhcp-relay</code> (<code>dhcrelay</code>) プロセスを supervisord / subprocess 経由で制御する。<code>dhcp6relay</code> (C++) とは独立した別実装。</p>
 <h4 id="checker">購読テーブルと Checker クラス<a class="headerlink" href="#checker" title="Permanent link">&para;</a></h4>
@@ -39329,7 +39329,7 @@
 <hr />
 <h3 id="dhcprelayd-ipv4">dhcprelayd (IPv4 リレー管理デーモン) の失敗挙動<a class="headerlink" href="#dhcprelayd-ipv4" title="Permanent link">&para;</a></h3>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py</code> 全行精読 (2026-05-16)</p>
+<p><strong>Evidence</strong>: <code>sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py</code> (2026-05-16)</p>
 </blockquote>
 <p><code>dhcprelayd</code> は <code>DHCP_SERVER_IPV4</code> 機能が有効な場合に <code>isc-dhcp-relay</code> (<code>dhcrelay</code>) プロセスの起動・停止を管理する Python デーモン。<code>dhcp6relay</code> とは独立した失敗経路を持つ。</p>
 <h4 id="server_ip-state_db-exit1">不正 server_ip — STATE_DB 取得失敗 → exit(1)<a class="headerlink" href="#server_ip-state_db-exit1" title="Permanent link">&para;</a></h4>
@@ -39431,7 +39431,7 @@
 <!-- side-effects -->
 <h2 id="db">副次 DB 書込・プロセス制御<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py</code> 全行精読、<code>sonic-dhcp-relay/dhcp6relay/src/relay.cpp:264-304, 1342-1401</code> (2026-05-16)</p>
+<p><strong>Evidence</strong>: <code>sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py</code>、<code>sonic-dhcp-relay/dhcp6relay/src/relay.cpp:264-304, 1342-1401</code> (2026-05-16)</p>
 </blockquote>
 <h3 id="_29">概要<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h3>
 <p><code>DHCP_RELAY</code> テーブルを起点として発生する副次的な DB 書込・プロセス制御は以下の 3 種類に分類される。</p>
@@ -39599,7 +39599,7 @@
 <!-- cross-refs -->
 <h2 id="cross-table-refs">暗黙参照 (cross-table refs)<a class="headerlink" href="#cross-table-refs" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp</code>, <code>relay.cpp</code>, <code>main.cpp</code>, <code>dhcpv6-relay.agents.j2</code>, <code>minigraph.py</code> 全行精読 (2026-05-14)</p>
+<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp</code>, <code>relay.cpp</code>, <code>main.cpp</code>, <code>dhcpv6-relay.agents.j2</code>, <code>minigraph.py</code> (2026-05-14)</p>
 </blockquote>
 <p><code>DHCP_RELAY</code> テーブルは YANG leafref を持たないが、実行時に以下のテーブルを暗黙参照する。</p>
 <table>
@@ -39667,7 +39667,7 @@
 <!-- platform -->
 <h2 id="_33">プラットフォーム差<a class="headerlink" href="#_33" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>dhcprelayd.py</code>, <code>utils.py</code>, <code>dhcp_db_monitor.py</code>, <code>dhcpv4-relay.agents.j2</code>, <code>dhcpv6-relay.agents.j2</code>, <code>docker-dhcp-relay.supervisord.conf.j2</code> 全行精読 (2026-05-16)</p>
+<p><strong>Evidence</strong>: <code>dhcprelayd.py</code>, <code>utils.py</code>, <code>dhcp_db_monitor.py</code>, <code>dhcpv4-relay.agents.j2</code>, <code>dhcpv6-relay.agents.j2</code>, <code>docker-dhcp-relay.supervisord.conf.j2</code> (2026-05-16)</p>
 </blockquote>
 <h3 id="1-smartswitch-dpu-mid-plane-bridge">1. SmartSwitch DPU — mid-plane bridge 対応<a class="headerlink" href="#1-smartswitch-dpu-mid-plane-bridge" title="Permanent link">&para;</a></h3>
 <p><code>DEVICE_METADATA.localhost.subtype == "SmartSwitch"</code> の場合、<code>dhcprelayd</code> は <code>VLAN</code> テーブルに加え <code>MID_PLANE_BRIDGE</code> テーブルも監視し、<a href="../../glossary/#term-dpu">DPU</a> 向けの IPv4 DHCP リレーを有効化する。</p>

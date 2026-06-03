@@ -38559,7 +38559,7 @@ CONFIG_DB 変更後は <code>sudo systemctl restart snmp</code> (または <code
 <!-- cross-refs -->
 <h2 id="cross-table-refs">暗黙参照 (cross-table refs)<a class="headerlink" href="#cross-table-refs" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>snmpd.conf.j2</code>, <code>supervisord.conf.j2</code>, <code>snmp_yml_to_configdb.py</code>, <code>start.sh</code> 全行精読 (2026-05-15)  </p>
+<p><strong>Evidence</strong>: <code>snmpd.conf.j2</code>, <code>supervisord.conf.j2</code>, <code>snmp_yml_to_configdb.py</code>, <code>start.sh</code> (2026-05-15)  </p>
 </blockquote>
 <p><code>SNMP</code> テーブルは YANG leafref を持たないが、<code>docker-snmp</code> コンテナ起動時テンプレートと <a href="../../glossary/#term-hostcfgd">hostcfgd</a> が以下のテーブルを暗黙参照する。</p>
 <table>
@@ -38633,7 +38633,7 @@ CONFIG_DB 変更後は <code>sudo systemctl restart snmp</code> (または <code
 <!-- pubsub -->
 <h2 id="_29">通信メカニズム<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>dockers/docker-snmp/snmp_yml_to_configdb.py</code>, <code>start.sh</code>, <code>snmpd.conf.j2</code>, <code>sonic-snmpagent/src/sonic_ax_impl/main.py</code>, <code>mibs/__init__.py</code>, <code>mibs/ietf/rfc1213.py</code>, <code>sonic-utilities/config/main.py</code> 全行精読 (2026-05-15)</p>
+<p><strong>Evidence</strong>: <code>dockers/docker-snmp/snmp_yml_to_configdb.py</code>, <code>start.sh</code>, <code>snmpd.conf.j2</code>, <code>sonic-snmpagent/src/sonic_ax_impl/main.py</code>, <code>mibs/__init__.py</code>, <code>mibs/ietf/rfc1213.py</code>, <code>sonic-utilities/config/main.py</code> (2026-05-15)</p>
 </blockquote>
 <p><code>SNMP</code> テーブル群は <strong>「ランタイム購読なし・コンテナ再起動トリガー型」</strong> で設計されている。<code>SubscriberStateTable</code> / <code>ConfigDBConnector.subscribe()</code> によるリアルタイム購読は実装されておらず、<strong>起動時一括読み込み + CLI トリガーによる <code>docker-snmp</code> 再起動</strong> で設定を反映する。</p>
 <h3 id="_30">購読メカニズム一覧<a class="headerlink" href="#_30" title="Permanent link">&para;</a></h3>
@@ -38714,7 +38714,7 @@ CONFIG_DB 変更後は <code>sudo systemctl restart snmp</code> (または <code
 <!-- platform -->
 <h2 id="_32">プラットフォーム差分<a class="headerlink" href="#_32" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Evidence</strong>: <code>supervisord.conf.j2</code>, <code>snmpd.conf.j2</code>, <code>sysDescription.j2</code>, <code>sonic_ax_impl/__main__.py</code>, <code>mibs/ietf/rfc4292.py</code>, <code>mibs/ietf/rfc1213.py</code>, <code>mibs/vendor/cisco/*.py</code>, <code>mibs/vendor/dell/force10.py</code> 全行精読 (2026-05-15)</p>
+<p><strong>Evidence</strong>: <code>supervisord.conf.j2</code>, <code>snmpd.conf.j2</code>, <code>sysDescription.j2</code>, <code>sonic_ax_impl/__main__.py</code>, <code>mibs/ietf/rfc4292.py</code>, <code>mibs/ietf/rfc1213.py</code>, <code>mibs/vendor/cisco/*.py</code>, <code>mibs/vendor/dell/force10.py</code> (2026-05-15)</p>
 </blockquote>
 <h3 id="1-switch_type-chassis-packet-snmp-subagent">差異 1: switch_type == 'chassis-packet' — snmp-subagent 動的更新周期<a class="headerlink" href="#1-switch_type-chassis-packet-snmp-subagent" title="Permanent link">&para;</a></h3>
 <p><code>supervisord.conf.j2</code> L53–57</p>
@@ -38861,7 +38861,7 @@ CONFIG_DB 変更後は <code>sudo systemctl restart snmp</code> (または <code
 <h2 id="db">副次 DB 書込<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <p><code>SNMP</code> テーブルへの書き込みが連鎖して発生するファイル書込・systemd 制御・DB 副次書込の一覧。</p>
 <blockquote>
-<p><strong>Evidence</strong>: <code>dockers/docker-snmp/start.sh</code> L14,20–24、<code>snmpd.conf.j2</code>、<code>config/main.py</code> L4189,4399–4400,4488–4489、<code>snmp_yml_to_configdb.py</code> L36–53 全行精読 (2026-05-16)</p>
+<p><strong>Evidence</strong>: <code>dockers/docker-snmp/start.sh</code> L14,20–24、<code>snmpd.conf.j2</code>、<code>config/main.py</code> L4189,4399–4400,4488–4489、<code>snmp_yml_to_configdb.py</code> L36–53 (2026-05-16)</p>
 </blockquote>
 <h3 id="_33">ファイル副次書込<a class="headerlink" href="#_33" title="Permanent link">&para;</a></h3>
 <table>
