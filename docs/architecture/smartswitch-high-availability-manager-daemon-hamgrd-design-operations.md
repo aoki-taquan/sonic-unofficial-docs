@@ -23,7 +23,7 @@ related:
   cli:
   - show platform
   yang: []
-  _no_yang: true
+  _no_related_yang: true
 ---
 
 # SmartSwitch HA HAMgrD 設定経路（CONFIG/APP/STATE_DB）

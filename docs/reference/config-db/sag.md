@@ -19,7 +19,7 @@ related:
   cli:
     - config static-anycast-gateway
     - config vlan static-anycast-gateway
-  _no_yang: true
+  _no_related_yang: true
 ---
 
 !!! warning "裏取りステータス: discrepancy-found (not_implemented)"

@@ -17,7 +17,7 @@ related:
   - show platform ssdhealth
   - ssdhealth
   - show platform
-  _no_yang: true
+  _no_related_yang: true
   yang: []
 ---
 
