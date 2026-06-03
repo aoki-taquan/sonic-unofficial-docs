@@ -25,7 +25,7 @@ related:
   - show platform
   yang:
   - sonic-system-defaults
-  _no_yang: true
+  _no_related_yang: true
 ---
 
 # SmartSwitch HA HAMgrD 内部実装
