@@ -84,7 +84,7 @@ reasoning: >
         } /* end of list PORTCHANNEL_MEMBER_LIST */
     ```
 
-    **判断根拠**: >
+    **判断根拠**: 現行 master の sonic-portchannel.yang に PORTCHANNEL_MEMBER コンテナが存在することを確認。 issue #6722 が報告した「YANG モデル欠落」警告は master では解消済みであることの裏取り。
 
 <!-- evidence-rendered:end -->
 
