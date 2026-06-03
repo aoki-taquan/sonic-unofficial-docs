@@ -444,7 +444,7 @@ NPU ブリッジ IP (`169.254.200.254`) は最大値 `.8`（`dpu7`）と衝突�
 <!-- side-effects -->
 ## 副次 DB 書込・ファイルシステム副作用
 
-> **Evidence**: `dhcpservd.py`, `dhcp_cfggen.py`, `dhcp_lease.py`, `dhcprelayd.py`, `config_samples.py` 全行精読 (2026-05-17)
+> **Evidence**: `dhcpservd.py`, `dhcp_cfggen.py`, `dhcp_lease.py`, `dhcprelayd.py`, `config_samples.py` (2026-05-17)
 
 `MID_PLANE_BRIDGE` / `DPUS` / `DHCP_SERVER_IPV4_PORT` を CONFIG_DB へ書き込むと、以下の副次書き込みが発生する。
 

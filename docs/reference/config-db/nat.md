@@ -386,7 +386,7 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 | `NatOrch` | `doNatGlobalTableTask()` | `admin_mode` が現状と同じ値 | no-op (変化なし) | `natorch.cpp:2940` |
 | `NatMgr` | `doNatGlobalTask()` | `admin_mode` が `"enabled"`/`"disabled"` 以外 | ERROR ログ + スキップ | `sonic-swss/cfgmgr/natmgr.cpp:7250-7253` |
 
-> **裏取り**: `natorch.cpp:2904-2966` + `natmgr.cpp:7115-7260` を全行読了、6 件分岐抽出 — 誤読なし。
+> **裏取り**: `natorch.cpp:2904-2966` + `natmgr.cpp:7115-7260` を、6 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
 

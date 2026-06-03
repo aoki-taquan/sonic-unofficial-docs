@@ -166,7 +166,7 @@ flowchart LR
 <!-- ordering -->
 ## 書込み順依存
 
-`FdbOrch::doTask(Consumer&)` / `addFdbEntry()` / `removeFdbEntry()` (`sonic-swss/orchagent/fdborch.cpp`) を全行精読した結果、以下の順序依存・タイミング依存を検出した。
+`FdbOrch::doTask(Consumer&)` / `addFdbEntry()` / `removeFdbEntry()` (`sonic-swss/orchagent/fdborch.cpp`) をした結果、以下の順序依存・タイミング依存を検出した。
 
 ### 他テーブル先行必須
 
@@ -439,7 +439,7 @@ APPL_DB FDB_TABLE
 <!-- failure -->
 ## 失敗挙動
 
-APPL_DB `FDB_TABLE` の書込主体である `FdbOrch::doTask(Consumer&)` / `addFdbEntry()` / `removeFdbEntry()` (`sonic-swss/orchagent/fdborch.cpp`) を全行精読し、書込失敗・retry・silent-ignore 経路を抽出した。
+APPL_DB `FDB_TABLE` の書込主体である `FdbOrch::doTask(Consumer&)` / `addFdbEntry()` / `removeFdbEntry()` (`sonic-swss/orchagent/fdborch.cpp`) をし、書込失敗・retry・silent-ignore 経路を抽出した。
 
 ### 失敗パス一覧
 
@@ -622,7 +622,7 @@ flush 系の `SAI_FDB_FLUSH_ATTR_ENTRY_TYPE` は L949-950 / L1122-1123 / L1161-1
 ## 副次 DB 書込
 
 `FdbOrch` が APPL_DB `FDB_TABLE` を購読して SAI FDB を作成・削除する過程で発生する**副次的な DB 書込**を、
-`sonic-swss/orchagent/fdborch.cpp` の全行精読から抽出した。
+`sonic-swss/orchagent/fdborch.cpp` のから抽出した。
 
 ### 書込み先一覧
 

@@ -1,6 +1,6 @@
 ---
 title: SCHEDULER — QosOrch SchedulerOrch コード由来デフォルト詳解
-description: "orchagent QosOrch::handleSchedulerTable() が CONFIG_DB SCHEDULER テーブルを処理する際のフィールドデフォルト・YANG-実装乖離・dead field・クラッシュリスクを全行精読で解説する。"
+description: "orchagent QosOrch::handleSchedulerTable() が CONFIG_DB SCHEDULER テーブルを処理する際のフィールドデフォルト・YANG-実装乖離・dead field・クラッシュリスクをで解説する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-15
@@ -51,7 +51,7 @@ flowchart LR
 <!-- defaults -->
 ## コード由来のデフォルト・暗黙挙動
 
-> **Evidence**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` L1347–1509 全行精読 + `qosorch.h` L22, 44–53 定数定義確認 + `sonic-scheduler.yang` 照合 (2026-05-15)
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` L1347–1509 + `qosorch.h` L22, 44–53 定数定義確認 + `sonic-scheduler.yang` 照合 (2026-05-15)
 
 | フィールド | YANG default | qosorch 実装の実効デフォルト | 備考 |
 |-----------|-------------|--------------------------|------|

@@ -135,7 +135,7 @@ reasoning: >
     enum FORWARD;
     ```
 
-    **判断根拠**: >
+    **判断根拠**: 現行 master の sonic-types.yang.j2 の packet action enum に ACCEPT が含まれることを確認。 issue #9638 が報告した「ACCEPT 欠落」は master では修正済みであることの裏取り。
 
 <!-- evidence-rendered:end -->
 
@@ -175,7 +175,7 @@ reasoning: >
     leaf MIRROR_EGRESS_ACTION {
     ```
 
-    **判断根拠**: >
+    **判断根拠**: 現行 master の sonic-acl.yang.j2 に MIRROR_INGRESS_ACTION / MIRROR_EGRESS_ACTION の 両 leaf が定義されていることを確認。issue #9929 の欠落は master で解消済み。
 
 <!-- evidence-rendered:end -->
 

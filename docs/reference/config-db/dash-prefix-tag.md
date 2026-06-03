@@ -265,7 +265,7 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `DashTagMgr` 内に `swsscommon::Table` / `ProducerStateTable` の write 呼出が 0 件 (`dashtagmgr.cpp` 全行精読) |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `DashTagMgr` 内に `swsscommon::Table` / `ProducerStateTable` の write 呼出が 0 件 (`dashtagmgr.cpp`) |
 | [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `DashAclOrch` コンストラクタは `app_state_db` 引数を受け取るが初期化リストで `DashTagMgr` へは渡されない (`dashaclorch.cpp:77-85`) |
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | DASH タグは SAI オブジェクト非作成。カウンタテーブルのエントリも存在しない |
 | [ASIC_DB](../../reference/glossary.md#term-asic_db) (via [CRM](../../reference/glossary.md#term-crm)) | なし | `gCrmOrch->incCrmDashAclUsedCounter()` は ACL group / rule 作成時のみ発生 (`dashaclgroupmgr.cpp:175-176, 374-376`)。タグ SET/DEL では [CRM](../../reference/glossary.md#term-crm) 更新なし |

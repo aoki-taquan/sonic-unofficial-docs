@@ -181,7 +181,7 @@ SAI capability query が失敗した場合、`neighbor_miss` は `default_suppor
 
 `updateTrapOperStatus()` は `get_trap_name_by_type()` で `sai_hostif_trap_type_t` を文字列に変換する。`trap_id_map` に存在しない SAI 内部トラップ型は文字列変換に失敗し、`SWSS_LOG_ERROR` を出力したうえで `COPP_TRAP_TABLE` への書き込みをスキップする。<!-- evidence: copporch.cpp L226-231 -->
 
-> **裏取り**: coppmgr.cpp L424-451 全行読了。copporch.cpp L104-300, L499-540, L1390-1420 読了。schema.h L448-450 読了。state_db.json (UT mock) 読了。発見 4 件。
+> **裏取り**: coppmgr.cpp L424-451。copporch.cpp L104-300, L499-540, L1390-1420 読了。schema.h L448-450 読了。state_db.json (UT mock) 読了。発見 4 件。
 <!-- /defaults -->
 
 <!-- ordering -->
@@ -282,7 +282,7 @@ orchagent が APPL_DB を処理
 !!! note "`COPP_TRAP_CAPABILITY_TABLE` は orchagent 起動時 1 回のみ更新"
     `publishTrapIdsCapability()` は `CoppOrch` コンストラクタ (`copporch.cpp:208-209`) で呼ばれるのみで、CONFIG_DB / APPL_DB の動的変更による再書込みは発生しない。プラットフォームの SAI 実装が変わらない限り、起動後の値は固定である。
 
-> **裏取り**: coppmgr.cpp L296-411, L531-985 全行読了。copporch.cpp L32-36, L191-215, L240-300, L392-420, L880-960, L1370-1492 読了。cross-refs 8 件検出。
+> **裏取り**: coppmgr.cpp L296-411, L531-985。copporch.cpp L32-36, L191-215, L240-300, L392-420, L880-960, L1370-1492 読了。cross-refs 8 件検出。
 <!-- /cross-refs -->
 
 <!-- failure -->
@@ -491,7 +491,7 @@ STATE_DB[COPP_GROUP_TABLE|*, COPP_TRAP_TABLE|*, COPP_TRAP_CAPABILITY_TABLE|traps
 sonic-utilities (show copp / dump copp)
 ```
 
-> **裏取り**: `coppmgrd.cpp` L21-65 全行読了。`coppmgr.cpp` L71, L296-310, L424-451 読了。`copporch.cpp` L191-215, L880-892 読了。`orchdaemon.cpp` L341, L500 読了。`show/copp.py` L21 読了。`dump/plugins/copp.py` L109-113 読了。
+> **裏取り**: `coppmgrd.cpp` L21-65。`coppmgr.cpp` L71, L296-310, L424-451 読了。`copporch.cpp` L191-215, L880-892 読了。`orchdaemon.cpp` L341, L500 読了。`show/copp.py` L21 読了。`dump/plugins/copp.py` L109-113 読了。
 <!-- /pubsub -->
 
 <!-- platform -->

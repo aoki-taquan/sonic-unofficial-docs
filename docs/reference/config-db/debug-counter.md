@@ -248,7 +248,7 @@ show dropcounters configuration
 | `DebugCounterOrch` | `doTask()` | `op == SET_COMMAND`（DEBUG_COUNTER テーブル） | `installDebugCounter()` 実行 | `sonic-swss/orchagent/debugcounterorch.cpp:153` |
 | `DebugCounterOrch` | `doTask()` | `op == DEL_COMMAND`（DEBUG_COUNTER テーブル） | `uninstallDebugCounter()` 実行 | `sonic-swss/orchagent/debugcounterorch.cpp:165` |
 
-> **裏取り**: `doTask` L129-220 全行読了。`allPortsReady()` ガードと 2 テーブルの dispatch 分岐が核心。5 件抽出。
+> **裏取り**: `doTask` L129-220。`allPortsReady()` ガードと 2 テーブルの dispatch 分岐が核心。5 件抽出。
 <!-- /handler-branching -->
 <!-- ordering -->
 ## 書込み順依存

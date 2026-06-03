@@ -264,7 +264,7 @@ vtysh -c 'show bgp community-list'
 | `BGPConfigDaemon` | `hdl_com_set()` | `match_action == 'all'` | `permit <all members>` を 1 行コマンドで生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:993-999` |
 | `BGPConfigDaemon` | `hdl_com_set()` | `match_action == 'any'` | member ごとに `permit <member>` を個別コマンドで生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1000-1006` |
 
-> **裏取り**: `hdl_com_set` L981-1006 全行読了。match_action ('all' vs 'any') による分岐が核心。4 件抽出。
+> **裏取り**: `hdl_com_set` L981-1006。match_action ('all' vs 'any') による分岐が核心。4 件抽出。
 <!-- /handler-branching -->
 <!-- pubsub -->
 ## CONFIG_DB 購読メカニズム

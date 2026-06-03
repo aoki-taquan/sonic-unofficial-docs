@@ -297,7 +297,7 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 <!-- failure -->
 ## 失敗挙動・エラーパス
 
-> **Evidence**: `sonic_py_common/device_info.py` L228-748 全行精読 (2026-05-18)
+> **Evidence**: `sonic_py_common/device_info.py` L228-748 (2026-05-18)
 
 `DEVICE_RUNTIME_METADATA` は CONFIG_DB に永続化されない仮想テーブルであり、`get_device_runtime_metadata()` が起動時に構築する。失敗はすべて「フィールドがフォールバック値（`False`）に設定される」か「未キャッチ例外が呼び出し元に伝播する」の 2 種類に分類できる。
 
@@ -461,7 +461,7 @@ get_path_to_port_config_file(hwsku=None, asic="0" if is_multi_npu() else None)
 <!-- platform -->
 ## プラットフォーム差
 
-> **Evidence**: `sonic_py_common/device_info.py` L511-747 全行精読 (2026-05-19)
+> **Evidence**: `sonic_py_common/device_info.py` L511-747 (2026-05-19)
 
 `DEVICE_RUNTIME_METADATA` のフィールド構造・値はすべてランタイム時の**ハードウェアプラットフォーム検出結果**に依存する。ASIC ベンダや YANG スキーマには依存せず、以下の 3 要素の組み合わせで決定する。
 

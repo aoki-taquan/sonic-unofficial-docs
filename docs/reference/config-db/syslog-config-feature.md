@@ -135,7 +135,7 @@ YANG `default` 文を持たないフィールドについて、`containercfgd` (
 <!-- cross-refs -->
 ## 暗黙参照 (cross-table refs)
 
-> **Evidence**: `containercfgd.py`・`feature.py`・`rsyslog-container.conf.j2` 全行精読 (2026-05-17)
+> **Evidence**: `containercfgd.py`・`feature.py`・`rsyslog-container.conf.j2` (2026-05-17)
 
 `SYSLOG_CONFIG_FEATURE` テーブルは実行時に以下のテーブルを暗黙参照する。
 
@@ -166,7 +166,7 @@ YANG `sonic-syslog.yang` の `leaf service` が `FEATURE_LIST.name` を `leafref
 <!-- failure -->
 ## 障害モード・エラー伝播
 
-> **Evidence**: `containercfgd.py` 全行精読 (2026-05-17)
+> **Evidence**: `containercfgd.py` (2026-05-17)
 
 ### 障害経路一覧
 
@@ -253,7 +253,7 @@ evidence: `containercfgd.py:155-159`
 <!-- side-effects -->
 ## 副次 DB 書込
 
-> **Evidence**: `containercfgd.py` 全行精読 (2026-05-18)
+> **Evidence**: `containercfgd.py` (2026-05-18)
 
 `containercfgd` (`SyslogHandler`) は `SYSLOG_CONFIG_FEATURE` を **CONFIG_DB からの読取専用**で使用し、いかなる DB へも書き戻さない。副次書込はファイルシステムおよびプロセス管理に閉じる。
 
@@ -284,7 +284,7 @@ evidence: `containercfgd.py:155-159`
 <!-- pubsub -->
 ## 通信メカニズム
 
-> **Evidence**: `containercfgd/containercfgd.py` 全行精読 (2026-05-18)
+> **Evidence**: `containercfgd/containercfgd.py` (2026-05-18)
 
 ### Redis 購読方式
 

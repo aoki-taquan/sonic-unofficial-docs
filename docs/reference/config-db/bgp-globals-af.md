@@ -337,7 +337,7 @@ vtysh -c 'show bgp l2vpn evpn summary'
 | `BGPConfigDaemon` | `bgp_af_handler()` | `ebgp_route_distance` / `ibgp_route_distance` / `local_route_distance` の 3 フィールド揃い | `comb_attr_list` 制約: 3 フィールドが揃った場合のみ FRR `distance bgp` コマンド生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3939-3941` |
 | `BGPConfigDaemon` | `bgp_af_handler()` | `route_flap_dampen_*` 3 フィールド揃い | 同様に組み合わせ制約: 揃った場合のみ FRR `bgp dampening` コマンドを生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3940` |
 
-> **裏取り**: `bgp_af_handler` L3938 全行読了。2 組の comb_attr_list 制約のみ。
+> **裏取り**: `bgp_af_handler` L3938。2 組の comb_attr_list 制約のみ。
 <!-- /handler-branching -->
 <!-- platform -->
 ## プラットフォーム差

@@ -134,7 +134,7 @@ RFC 5798 に基づき以下の仮想 MAC が使用される:
 <!-- ordering -->
 ## 書込み順依存
 
-`VRRP` / `VRRP6` テーブルはインターフェース存在・インスタンス存在・YANG leafref という 3 系統の順序依存を持つ。`sonic-utilities/config/main.py` の VRRP サブコマンド全行精読と `sonic-vrrp.yang` の leafref 確認で抽出。
+`VRRP` / `VRRP6` テーブルはインターフェース存在・インスタンス存在・YANG leafref という 3 系統の順序依存を持つ。`sonic-utilities/config/main.py` の VRRP サブコマンドと `sonic-vrrp.yang` の leafref 確認で抽出。
 
 ### 強制順序（破ると不整合・reject）
 

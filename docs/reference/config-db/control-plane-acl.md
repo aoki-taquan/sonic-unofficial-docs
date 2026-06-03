@@ -216,7 +216,7 @@ CTRLPLANE ACL は `AclOrch::doAclTableTask()` と `doAclRuleTask()` の両方で
 | `AclOrch` | `addAclTable()` | `type == TABLE_TYPE_CTRLPLANE` | SAI テーブル作成なし。`m_ctrlAclTables.emplace()` して即 return | `aclorch.cpp:4680-4684` |
 | `AclOrch` | `doAclRuleTask()` | `table_oid == SAI_NULL_OBJECT_ID` かつ `m_ctrlAclTables` にキーあり | INFO ログ `"Skip control plane ACL rule"` + erase。ルール SAI 未投入 | `aclorch.cpp:5556-5560` |
 
-> **裏取り**: `doAclTableTask()` L5346-5520 および `doAclRuleTask()` L5520-5700 全行読了。`AclTable::validate()` L2725-2750、`addAclTable()` L4675-4700 確認。CTRLPLANE 固有分岐 5 件抽出。`services` フィールドの `continue` は L5410-5413 で確認、コメントに `"TODO: validate control plane ACL table has this attribute"` が残存 (L5412)。
+> **裏取り**: `doAclTableTask()` L5346-5520 および `doAclRuleTask()` L5520-5700。`AclTable::validate()` L2725-2750、`addAclTable()` L4675-4700 確認。CTRLPLANE 固有分岐 5 件抽出。`services` フィールドの `continue` は L5410-5413 で確認、コメントに `"TODO: validate control plane ACL table has this attribute"` が残存 (L5412)。
 
 <!-- /handler-branching -->
 
@@ -251,7 +251,7 @@ CTRLPLANE ACL の実体は `caclmgrd` が管理する iptables ルール群で�
 | 18 | TTL < 2 ICMP/UDP/TCP ACCEPT (traceroute) | INPUT | 常時 |
 | 19 | デフォルト DROP (num_ctrl_plane_acl_rules > 0 の場合のみ) | INPUT | ルール 0 件なら追加しない |
 
-> **裏取り**: `caclmgrd L625-901` 全行読了。`caclmgrd.service` systemd 依存確認。
+> **裏取り**: `caclmgrd L625-901`。`caclmgrd.service` systemd 依存確認。
 
 ### 2. ACL_RULE の PRIORITY 処理順序
 
@@ -334,7 +334,7 @@ warm-reboot 時は caclmgrd が systemd によって再起動され、起動直�
 
 `AclOrch` は CTRLPLANE テーブルを `m_ctrlAclTables` に登録するのみ。SAI / [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みなし。他テーブルへの暗黙参照もない。
 
-> **裏取り**: `sonic-host-services/scripts/caclmgrd` 全行読了。`caclmgrd L77-91` (定数定義), `L165,L286-330,L729-730,L1157,L1160` (テーブル参照箇所) を確認。
+> **裏取り**: `sonic-host-services/scripts/caclmgrd`。`caclmgrd L77-91` (定数定義), `L165,L286-330,L729-730,L1157,L1160` (テーブル参照箇所) を確認。
 
 <!-- /cross-refs -->
 

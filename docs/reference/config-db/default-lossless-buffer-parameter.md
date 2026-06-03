@@ -221,7 +221,7 @@ show buffer profile
 | `BufferMgrDynamic` | `doTask()`（DEFAULT_LOSSLESS_BUFFER_PARAMETER） | `field == "default_dynamic_th"` | デフォルト閾値 `m_defaultThreshold` を更新し動的プロファイルを再計算トリガー | `sonic-swss/cfgmgr/buffermgrdyn.cpp:1993-1996` |
 | `BufferMgrDynamic` | `doTask()`（DEFAULT_LOSSLESS_BUFFER_PARAMETER） | `op == DEL_COMMAND` | `log_notice` のみ（削除操作は内部状態をリセットせず継続） | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2005` |
 
-> **裏取り**: `DEFAULT_LOSSLESS_BUFFER_PARAMETER` のハンドラパス L1894-2010 全行読了。3 件分岐抽出。
+> **裏取り**: `DEFAULT_LOSSLESS_BUFFER_PARAMETER` のハンドラパス L1894-2010。3 件分岐抽出。
 <!-- /handler-branching -->
 <!-- cross-refs -->
 ## 暗黙参照テーブル
@@ -271,7 +271,7 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
                         → default_dynamic_th / SHP 変化時に動的プロファイルを全件再生成
 ```
 
-> **裏取り**: `handleDefaultLossLessBufferParam` L1978-2050 全行読了、`isSharedHeadroomPoolEnabledInSai` L2034-2050 全行読了、`refreshSharedHeadroomPool` L1592-1715 全行読了、`buffer_headroom_mellanox.lua` L100-115 読了、`buffer_pool_mellanox.lua` L255-275 読了。3 件暗黙参照抽出。
+> **裏取り**: `handleDefaultLossLessBufferParam` L1978-2050、`isSharedHeadroomPoolEnabledInSai` L2034-2050、`refreshSharedHeadroomPool` L1592-1715、`buffer_headroom_mellanox.lua` L100-115 読了、`buffer_pool_mellanox.lua` L255-275 読了。3 件暗黙参照抽出。
 <!-- /cross-refs -->
 <!-- ordering -->
 ## 書込み順依存
@@ -295,7 +295,7 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
 
 **SHP 有効化の SAI 確認（依存 #3)**: ポート初期化完了後（`m_portInitDone=true`）に SHP を無効→有効へ遷移させる場合（`over_subscribe_ratio` を 0 から非ゼロに変更）、`isSharedHeadroomPoolEnabledInSai()` が `APPL_DB` の `BUFFER_POOL_TABLE|ingress_lossless_pool` の `xoff` フィールドを確認する。SAI への反映が完了していなければ `task_need_retry` を返す（evidence: `buffermgrdyn.cpp:2019-2025`, `buffermgrdyn.cpp:2035-2046`）。
 
-> **裏取り**: `handleDefaultLossLessBufferParam` L1978-2046 全行読了、`isSharedHeadroomPoolEnabledInSai` L2034-2050 全行読了、`buffermgrdyn.cpp` L494-496 読了。4 件依存抽出。
+> **裏取り**: `handleDefaultLossLessBufferParam` L1978-2046、`isSharedHeadroomPoolEnabledInSai` L2034-2050、`buffermgrdyn.cpp` L494-496 読了。4 件依存抽出。
 <!-- /ordering -->
 <!-- failure -->
 ## 失敗挙動
@@ -344,7 +344,7 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
 
 > **config rollback**: `task_failed` でエントリが drop されても CONFIG_DB のエントリは残る。`m_defaultThreshold` / `m_overSubscribeRatio` の内部状態は変更前のまま保持され、CONFIG_DB との乖離が生じる場合は同じ key を再 SET するか `buffermgrd` を再起動して解消する。
 
-> **裏取り**: `handleDefaultLossLessBufferParam` L1978-2033 全行読了、`isSharedHeadroomPoolEnabledInSai` L2034-2051 全行読了、`doTask(Consumer&)` L3574-3610 全行読了、`refreshSharedHeadroomPool` L1592-1715 全行読了。
+> **裏取り**: `handleDefaultLossLessBufferParam` L1978-2033、`isSharedHeadroomPoolEnabledInSai` L2034-2051、`doTask(Consumer&)` L3574-3610、`refreshSharedHeadroomPool` L1592-1715。
 <!-- /failure -->
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
@@ -366,7 +366,7 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
 | **暗黙 reset（DEL コマンド）** | DEL 受信時 `newRatio=""` に強制リセット → SHP 無効化 + `refreshSharedHeadroomPool` トリガー。エントリ削除は過去値を保持せずゼロリセット | `buffermgrdyn.cpp:2005-2008` |
 | **プラットフォーム依存（j2 テンプレート）** | `shp` 変数が Jinja コンテキストで定義されていない場合（通常）、フィールド自体が CONFIG_DB に書き込まれない（SHP デフォルト無効）。`shp` 定義時のみ固定値 `"1"` が書き込まれる | `buffers_config.j2:335-339` |
 
-> **裏取り**: `handleDefaultLossLessBufferParam` L1978-2033 全行読了、コンストラクタ L130-172 全行読了、`buffers_config.j2` L331-349 全行読了、`db_migrator.py` L327-416, L1075-1099 全行読了、`sonic-default-lossless-buffer-parameter.yang` 全行読了。
+> **裏取り**: `handleDefaultLossLessBufferParam` L1978-2033、コンストラクタ L130-172、`buffers_config.j2` L331-349、`db_migrator.py` L327-416, L1075-1099、`sonic-default-lossless-buffer-parameter.yang`。
 <!-- /defaults -->
 <!-- constants -->
 ## ハードコード定数

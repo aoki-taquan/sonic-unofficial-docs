@@ -490,7 +490,7 @@ ssh_handler(key="POLICIES", op=SET, data={inactivity_timeout:"10", ...})
 <!-- platform -->
 ## プラットフォーム差分
 
-> **Evidence**: `sonic-host-services/scripts/hostcfgd` 全行精読 (FipsCfg, PamLimitsCfg)、`sonic-buildimage/rules/sonic-fips.mk`、`data/templates/limits.conf.j2`、`sonic-ssh-server.yang` L77–132 (2026-05-18)
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` (FipsCfg, PamLimitsCfg)、`sonic-buildimage/rules/sonic-fips.mk`、`data/templates/limits.conf.j2`、`sonic-ssh-server.yang` L77–132 (2026-05-18)
 
 ### 差異 1: FIPS モード — `ssh` サービス強制再起動
 

@@ -145,7 +145,7 @@ WATERMARK_TABLE|TELEMETRY_INTERVAL (interval フィールド)
 <!-- failure -->
 ## 失敗挙動・エラーパス
 
-> **Evidence**: `watermarkorch.cpp` 全行精読、`converter.h` `to_uint` 実装、`orch.cpp` `Consumer::drain()` 例外ハンドリング確認 (2026-05-18)
+> **Evidence**: `watermarkorch.cpp`、`converter.h` `to_uint` 実装、`orch.cpp` `Consumer::drain()` 例外ハンドリング確認 (2026-05-18)
 
 ### `interval` 値が不正な場合 — 繰り返しエラーログ + タイマー未変更
 
@@ -193,7 +193,7 @@ DEL 後もタイマーは直前の周期（またはデフォルト 120 秒）�
 <!-- constants -->
 ## ハードコード定数
 
-> **Evidence**: `sonic-swss/orchagent/watermarkorch.cpp` 全行精読 (2026-05-18)
+> **Evidence**: `sonic-swss/orchagent/watermarkorch.cpp` (2026-05-18)
 
 ### タイマー定数 (watermarkorch.cpp)
 
@@ -232,7 +232,7 @@ DEL 後もタイマーは直前の周期（またはデフォルト 120 秒）�
 <!-- side-effects -->
 ## 副次 DB 書込
 
-> **Evidence**: `sonic-swss/orchagent/watermarkorch.cpp` 全行精読 (2026-05-18)
+> **Evidence**: `sonic-swss/orchagent/watermarkorch.cpp` (2026-05-18)
 
 `WATERMARK_TABLE|TELEMETRY_INTERVAL` および `FLEX_COUNTER_TABLE` への書込みが引き起こす、CONFIG_DB 以外の DB への副次的な書込みと [SAI](../../reference/glossary.md#term-sai) 呼び出しを示す。
 

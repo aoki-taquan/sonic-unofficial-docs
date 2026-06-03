@@ -226,7 +226,7 @@ show buffer profile
 | **経路依存 discrepancy** | j2 テンプレート経由では `50`、db_migrator 移行経由では `100` — 同一フィールドで経路によって初期値が異なる | `buffers_config.j2:345` / `db_migrator.py:414` |
 | **フィールド欠落時 Lua 算術エラー** | `small_packet_percentage` が `nil` の場合、乗算式 `small_packet_percentage * minimal_packet_size` が Lua 算術エラーで失敗 → YANG `mandatory true` で通常防止されるが、手動 redis-cli 書き込み時は発生する可能性 | `buffer_headroom_mellanox.lua:146` |
 
-> **裏取り**: `buffers_config.j2` L342-347 全行読了、`db_migrator.py` L414 確認、`buffer_headroom_mellanox.lua` L91-102, 146-147 全行読了、`buffer_headroom_barefoot.lua` L80-90, 114 全行読了、`sonic-lossless-traffic-pattern.yang` 全行読了。
+> **裏取り**: `buffers_config.j2` L342-347、`db_migrator.py` L414 確認、`buffer_headroom_mellanox.lua` L91-102, 146-147、`buffer_headroom_barefoot.lua` L80-90, 114、`sonic-lossless-traffic-pattern.yang`。
 <!-- /defaults -->
 
 <!-- ordering -->
@@ -336,7 +336,7 @@ LOSSLESS_TRAFFIC_PATTERN (CONFIG_DB)  ←── 読み取られる側（leafref 
   └─ [条件] CONFIG_DB.BUFFER_POOL|ingress_lossless_pool  (xoff / SHP サイズ)
 ```
 
-> **裏取り**: `buffer_headroom_mellanox.lua` L55-110 全行読了、`buffer_headroom_barefoot.lua` L55-94 全行読了、`sonic-lossless-traffic-pattern.yang` 全行読了（leafref なし確認済み）。3 件暗黙参照抽出。
+> **裏取り**: `buffer_headroom_mellanox.lua` L55-110、`buffer_headroom_barefoot.lua` L55-94、`sonic-lossless-traffic-pattern.yang`（leafref なし確認済み）。3 件暗黙参照抽出。
 <!-- /cross-refs -->
 
 <!-- failure -->
@@ -452,7 +452,7 @@ Mellanox のみ 800Gbps (`800000`) エントリを追加で保持。Barefoot は
 
 証拠: `buffer_headroom_mellanox.lua:157`, `buffer_headroom_barefoot.lua:124`
 
-> **裏取り**: `buffer_headroom_mellanox.lua` 全行読了 (L1-180)、`buffer_headroom_barefoot.lua` 全行読了 (L1-141)。物理定数 5 種・IEEE テーブル 2 種・アライメント定数 1 種を抽出。
+> **裏取り**: `buffer_headroom_mellanox.lua` (L1-180)、`buffer_headroom_barefoot.lua` (L1-141)。物理定数 5 種・IEEE テーブル 2 種・アライメント定数 1 種を抽出。
 <!-- /constants -->
 
 <!-- side-effects -->

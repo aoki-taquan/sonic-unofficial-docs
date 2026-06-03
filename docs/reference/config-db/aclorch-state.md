@@ -426,7 +426,7 @@ STATE_DB に書き出される 3 テーブル（`ACL_TABLE_TABLE` / `ACL_RULE_TA
 | vs (virtual) | `"true"` | SAI or フォールバック | **yes** | no | SAI 依存 |
 | 未知 platform | `"false"` | フォールバック (`defaultAclActionsSupported`) | no | **yes** | SAI 依存 |
 
-> **裏取り**: `AclOrch::init()` L3475–3720 / `queryAclActionCapability()` L4017–4054 / `putAclActionCapabilityInDB()` L4056–4101 / `initDefaultAclActionCapabilities()` L4104–4118 / `defaultAclActionsSupported` L168–196 / `removeAllAcl*Status()` L6116, L6128 / `setAcl*Status()` L6088, L6102 / `orch.h:40-50` / `aclorch.h:109-110, 138-148` / `orchdaemon.cpp:502-530` 全行精読。
+> **裏取り**: `AclOrch::init()` L3475–3720 / `queryAclActionCapability()` L4017–4054 / `putAclActionCapabilityInDB()` L4056–4101 / `initDefaultAclActionCapabilities()` L4104–4118 / `defaultAclActionsSupported` L168–196 / `removeAllAcl*Status()` L6116, L6128 / `setAcl*Status()` L6088, L6102 / `orch.h:40-50` / `aclorch.h:109-110, 138-148` / `orchdaemon.cpp:502-530`。
 <!-- /platform -->
 
 <!-- pubsub -->

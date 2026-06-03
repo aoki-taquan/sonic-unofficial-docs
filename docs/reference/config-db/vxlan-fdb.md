@@ -114,7 +114,7 @@ else
 <!-- ordering -->
 ## 書込み順依存
 
-`FdbOrch::doTask(Consumer&)` (`sonic-swss/orchagent/fdborch.cpp`) を全行精読した結果、以下の順序依存・タイミング依存を検出した。
+`FdbOrch::doTask(Consumer&)` (`sonic-swss/orchagent/fdborch.cpp`) をした結果、以下の順序依存・タイミング依存を検出した。
 
 ### 他テーブル先行必須
 

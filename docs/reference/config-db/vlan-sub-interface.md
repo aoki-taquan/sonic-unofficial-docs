@@ -587,7 +587,7 @@ SAI 呼び出し:
 <!-- pubsub -->
 ## 通信メカニズム (Redis Pub/Sub)
 
-> 根拠: `intfmgrd.cpp`、`intfmgr.cpp`、`intfsorch.cpp`、`orch.cpp` 全行精読 (2026-05-18)
+> 根拠: `intfmgrd.cpp`、`intfmgr.cpp`、`intfsorch.cpp`、`orch.cpp` (2026-05-18)
 
 VLAN_SUB_INTERFACE テーブルは **3 段の異なる購読方式** で CONFIG_DB → SAI まで伝搬する。
 

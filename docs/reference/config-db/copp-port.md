@@ -254,7 +254,7 @@ show copp config
 | `CoppOrch` | `processCoppTrapGroup()` | `!genetlink_attribs.empty()` | `createGenetlinkHostIf()` + `createGenetlinkHostIfTable()` を呼び出し | copporch.cpp L833-848 |
 | `CoppOrch` | `processCoppTrapGroup()` | `op == DEL_COMMAND` かつ `m_trap_group_hostif_map` に存在 | `removeGenetlinkHostIf()` で HostIf + table entry を削除 | copporch.cpp L1099-1119 |
 
-> **裏取り**: `getAttribsFromTrapGroup` L1154-1294 全行読了、`processCoppTrapGroup` L730-872 + L1099-1151 読了。4 件分岐抽出。
+> **裏取り**: `getAttribsFromTrapGroup` L1154-1294、`processCoppTrapGroup` L730-872 + L1099-1151 読了。4 件分岐抽出。
 
 <!-- /handler-branching -->
 
