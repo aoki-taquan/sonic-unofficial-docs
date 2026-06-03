@@ -481,7 +481,7 @@ CONFIG_DB `P4RT` テーブルへの変更は `p4rt` コンテナ稼働中には�
 | multi-asic 構成 | `SONIC_ASIC_ID` / `SONIC_ASIC_COUNT` 等の multi-asic 環境変数を `p4rt.sh` は参照しない。`docker-sonic-p4rt` は host namespace で 1 コンテナのみ起動 | `p4rt.sh:L1–99`; `supervisord.conf:[program:p4rt]` |
 | [SAI](../../reference/glossary.md#term-sai) / [ASIC](../../reference/glossary.md#term-asic) capability | 経路なし。CONFIG_DB `P4RT` テーブルの読み込みとバイナリ起動引数変換は host Linux プロセス管理レイヤで完結。SAI は P4 orch が APPL_DB 経由で間接利用するが、CONFIG_DB `P4RT` 読込処理とは独立 | `p4rt.sh:L99` (`exec /usr/local/bin/p4rt`) |
 | [VOQ](../../reference/glossary.md#term-voq) chassis / line card 分散 | [PINS](../../reference/glossary.md#term-pins) は現行 HLD で単一 ASIC 向けを想定。`p4rt.sh` は単一コンテナ単一バイナリ起動のみ実装。chassis 集中適用機構なし | `p4rt_app_hld.md`; `supervisord.conf` |
-| ベンダー固有分岐 | `p4rt.sh` に `broadcom` / `mellanox` / `nvidia` 等のベンダー識別コードなし | `p4rt.sh:L1–99` 全行精読 |
+| ベンダー固有分岐 | `p4rt.sh` に `broadcom` / `mellanox` / `nvidia` 等のベンダー識別コードなし | `p4rt.sh:L1–99` |
 
 !!! note "プラットフォーム差なしの根拠"
     `p4rt.sh`（L1–99）全行に `hwsku`、`asic`、`platform`、`multi_npu`、`chassis`、`voq`、`vendor` 等のキーワードはゼロヒット。`p4rt_vars.j2` も同様。CONFIG_DB `P4RT` テーブルの処理は純粋な host OS レイヤの「設定スナップショット → バイナリ引数変換 → gRPC サーバ起動」に閉じており、T0 / T1 / T2 トポロジや ASIC ベンダーに関わらず同一動作をする。

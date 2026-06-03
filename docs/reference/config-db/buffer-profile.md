@@ -71,7 +71,7 @@ BUFFER_PROFILE|<name>
 
 ### 検出種類と調査根拠
 
-全フィールドを `handleBufferProfileTable()` (buffermgrdyn.cpp L2671-2886)、`updateBufferProfileToDb()` (L890-922)、`processBufferProfile()` (bufferorch.cpp L600-880)、CLI `update_profile()` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py L8556-8632) の全行精読により調査した。
+全フィールドを `handleBufferProfileTable()` (buffermgrdyn.cpp L2671-2886)、`updateBufferProfileToDb()` (L890-922)、`processBufferProfile()` (bufferorch.cpp L600-880)、CLI `update_profile()` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py L8556-8632) のにより調査した。
 
 ### フィールド別暗黙デフォルト
 
@@ -312,7 +312,7 @@ COUNTERS_DB `COUNTERS_BUFFER_POOL_NAME_MAP` および FLEX_COUNTER_DB への書�
 | `BufferMgrDynamic` | `handleBufferProfileTable()` | `PROFILE_INITIALIZING == profileApp.state`（新規） | `dynamic_calculated = false`、`lossless = false` で初期化 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2690-2693` |
 | `BufferMgrDynamic` | `handleBufferProfileTable()` | `op == DEL_COMMAND` かつプロファイルが動的計算中 | 動的計算プロファイルは削除せず内部状態をリセット | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2934` |
 
-> **裏取り**: `handleBufferProfileTable` L2671-2935 全行読了。5 件分岐抽出。
+> **裏取り**: `handleBufferProfileTable` L2671-2935。5 件分岐抽出。
 <!-- /handler-branching -->
 
 <!-- pubsub -->

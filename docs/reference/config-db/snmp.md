@@ -428,7 +428,7 @@ CLI (`config snmp contact/location add/modify/del`) は書き込み後に常に 
 <!-- cross-refs -->
 ## 暗黙参照 (cross-table refs)
 
-> **Evidence**: `snmpd.conf.j2`, `supervisord.conf.j2`, `snmp_yml_to_configdb.py`, `start.sh` 全行精読 (2026-05-15)  
+> **Evidence**: `snmpd.conf.j2`, `supervisord.conf.j2`, `snmp_yml_to_configdb.py`, `start.sh` (2026-05-15)  
 
 `SNMP` テーブルは YANG leafref を持たないが、`docker-snmp` コンテナ起動時テンプレートと [hostcfgd](../../reference/glossary.md#term-hostcfgd) が以下のテーブルを暗黙参照する。
 
@@ -469,7 +469,7 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 <!-- pubsub -->
 ## 通信メカニズム
 
-> **Evidence**: `dockers/docker-snmp/snmp_yml_to_configdb.py`, `start.sh`, `snmpd.conf.j2`, `sonic-snmpagent/src/sonic_ax_impl/main.py`, `mibs/__init__.py`, `mibs/ietf/rfc1213.py`, `sonic-utilities/config/main.py` 全行精読 (2026-05-15)
+> **Evidence**: `dockers/docker-snmp/snmp_yml_to_configdb.py`, `start.sh`, `snmpd.conf.j2`, `sonic-snmpagent/src/sonic_ax_impl/main.py`, `mibs/__init__.py`, `mibs/ietf/rfc1213.py`, `sonic-utilities/config/main.py` (2026-05-15)
 
 `SNMP` テーブル群は **「ランタイム購読なし・コンテナ再起動トリガー型」** で設計されている。`SubscriberStateTable` / `ConfigDBConnector.subscribe()` によるリアルタイム購読は実装されておらず、**起動時一括読み込み + CLI トリガーによる `docker-snmp` 再起動** で設定を反映する。
 
@@ -512,7 +512,7 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 <!-- platform -->
 ## プラットフォーム差分
 
-> **Evidence**: `supervisord.conf.j2`, `snmpd.conf.j2`, `sysDescription.j2`, `sonic_ax_impl/__main__.py`, `mibs/ietf/rfc4292.py`, `mibs/ietf/rfc1213.py`, `mibs/vendor/cisco/*.py`, `mibs/vendor/dell/force10.py` 全行精読 (2026-05-15)
+> **Evidence**: `supervisord.conf.j2`, `snmpd.conf.j2`, `sysDescription.j2`, `sonic_ax_impl/__main__.py`, `mibs/ietf/rfc4292.py`, `mibs/ietf/rfc1213.py`, `mibs/vendor/cisco/*.py`, `mibs/vendor/dell/force10.py` (2026-05-15)
 
 ### 差異 1: switch_type == 'chassis-packet' — snmp-subagent 動的更新周期
 
@@ -594,7 +594,7 @@ MGMT_VRF が有効化されている環境 (`MGMT_VRF_CONFIG.mgmtVrfEnabled = "t
 
 `SNMP` テーブルへの書き込みが連鎖して発生するファイル書込・systemd 制御・DB 副次書込の一覧。
 
-> **Evidence**: `dockers/docker-snmp/start.sh` L14,20–24、`snmpd.conf.j2`、`config/main.py` L4189,4399–4400,4488–4489、`snmp_yml_to_configdb.py` L36–53 全行精読 (2026-05-16)
+> **Evidence**: `dockers/docker-snmp/start.sh` L14,20–24、`snmpd.conf.j2`、`config/main.py` L4189,4399–4400,4488–4489、`snmp_yml_to_configdb.py` L36–53 (2026-05-16)
 
 ### ファイル副次書込
 

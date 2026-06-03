@@ -57,7 +57,7 @@ ROUTE_MAP_SET|<name>
 
 ## 購読者
 
-なし。`frrcfgd`・`bgpcfgd`・[orchagent](../../reference/glossary.md#term-orchagent) のいずれも ROUTE_MAP_SET テーブルを購読しない（`frrcfgd.py` の `table_handler_list` および `tbl_to_key_map` に含まれないことを全行確認済み）。
+なし。`frrcfgd`・`bgpcfgd`・[orchagent](../../reference/glossary.md#term-orchagent) のいずれも ROUTE_MAP_SET テーブルを購読しない（`frrcfgd.py` の `table_handler_list` および `tbl_to_key_map` に含まれないことを済み）。
 
 ## 関連 CONFIG_DB / YANG / CLI
 

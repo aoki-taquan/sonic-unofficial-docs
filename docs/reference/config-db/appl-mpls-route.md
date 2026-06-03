@@ -217,7 +217,7 @@ if (alsv.size() == 0 && !blackhole)
 <!-- cross-refs -->
 ## 暗黙参照
 
-> **Evidence**: `mplsrouteorch.cpp`, `nhgorch.cpp`, `routeorch.cpp` の MPLS 経路を全行精読 (2026-05-15)
+> **Evidence**: `mplsrouteorch.cpp`, `nhgorch.cpp`, `routeorch.cpp` の MPLS 経路を (2026-05-15)
 
 `APPL_DB:LABEL_ROUTE_TABLE` は [YANG](../../reference/glossary.md#term-yang) モデルを持たないが、`routeorch::doLabelTask()` および `NhgOrch` の MPLS NH 分岐 (`isLabeled()`) を介して以下のオブジェクト/テーブルを実行時に暗黙参照する。
 

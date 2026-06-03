@@ -165,7 +165,7 @@ if platform_info.get('switch_type') == 'dpu':
 <!-- cross-refs -->
 ## 暗黙参照テーブル
 
-> **Evidence**: `flexcounterorch.cpp`, `dashorch.cpp`, `dashorch.h`, `dashcounter.h`, `enable_counters.py`, `device_info.py` 全行精読 (2026-05-19)  
+> **Evidence**: `flexcounterorch.cpp`, `dashorch.cpp`, `dashorch.h`, `dashcounter.h`, `enable_counters.py`, `device_info.py` (2026-05-19)  
 
 `FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` はいずれも YANG leafref を持たないが、
 実行時に以下のテーブル・リソースを暗黙参照する。
@@ -349,7 +349,7 @@ if (fc_status != prev_enabled)
 <!-- constants -->
 ## ハードコード定数
 
-> **Evidence**: `dashorch.h:29-33`, `flexcounterorch.cpp:44`, `enable_counters.py:50-63`, `schema.h:293-295`, `flex_counter_manager.cpp:54-55` 全行精読 (2026-05-19)
+> **Evidence**: `dashorch.h:29-33`, `flexcounterorch.cpp:44`, `enable_counters.py:50-63`, `schema.h:293-295`, `flex_counter_manager.cpp:54-55` (2026-05-19)
 
 `FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` に関連する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
 

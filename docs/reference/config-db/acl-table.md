@@ -194,7 +194,7 @@ DEL 受信
 
 エラーはすべて `SWSS_LOG_ERROR` でサイログ出力される。`ERROR_TABLE` への書き込みはなし。CONFIG_DB のエントリは失敗後も残る（[orchagent](../../reference/glossary.md#term-orchagent) は書き戻さない）。
 
-> **証跡**: `doAclTableTask()` L5361-5518 全行精読、`AclTable::validate()` L2725-2769、`processAclTableType()` L5819-5831、`processAclTableStage()` L5838-5853、`processAclTablePorts()` L5776-5807、`removeAclTable()` L4829-4910、`setAclTableStatus()` L6088-6093。
+> **証跡**: `doAclTableTask()` L5361-5518、`AclTable::validate()` L2725-2769、`processAclTableType()` L5819-5831、`processAclTableStage()` L5838-5853、`processAclTablePorts()` L5776-5807、`removeAclTable()` L4829-4910、`setAclTableStatus()` L6088-6093。
 <!-- /failure -->
 
 <!-- value-behavior -->
@@ -312,7 +312,7 @@ ACL_TABLE は `AclOrch::doAclTableTask()` が処理する。`type` / `stage` フ
 | `AclOrch` | `addAclTable()` | `type IN [MIRROR, MIRRORV6]` | `m_mirrorTableCapabilities[type]` で ASIC capability 確認、非サポート時 reject | `sonic-swss/orchagent/aclorch.cpp:3502-3541` |
 | `AclOrch` | `addEgrSetDscpTable()` | `type == TABLE_TYPE_EGR_SET_DSCP` | 内部で `TABLE_TYPE_MARK_META` / `TABLE_TYPE_MARK_METAV6` へ変換して SAI 投入、stage を EGRESS 固定 | `sonic-swss/orchagent/aclorch.cpp:4444-4539` |
 
-> **裏取り**: `doAclTableTask()` L5346-5520 全行読了 + `addAclTable()` / `addEgrSetDscpTable()` 参照。7 件分岐抽出。自動派生・条件付き登録ブロック再確認: minigraph.py type/stage 派生・UNDERLAY 変換・MIRROR capability check — 実ソースと整合、誤読なし。
+> **裏取り**: `doAclTableTask()` L5346-5520 + `addAclTable()` / `addEgrSetDscpTable()` 参照。7 件分岐抽出。自動派生・条件付き登録ブロック再確認: minigraph.py type/stage 派生・UNDERLAY 変換・MIRROR capability check — 実ソースと整合、誤読なし。
 
 <!-- /handler-branching -->
 
@@ -512,7 +512,7 @@ DEL ACL_TABLE_TYPE|<type_name>           # ユーザ定義 type を削除する�
 | type/stage 変更: DEL → SET | 必須 | SET のみでも動作するが配下 ACL_RULE 消失 |
 | ACL_TABLE DEL → ACL_TABLE_TYPE DEL | 推奨 | 強制ではないが論理的に必要 |
 
-> **裏取り**: `doAclTableTask()` L5346-5518 全行精読、`doAclTableTypeTask()` L5738-5774、`removeAclTable()` L4829-4910、`processAclTablePorts()` L5776-5807、`doAclRuleTask()` L5520-5566 参照。
+> **裏取り**: `doAclTableTask()` L5346-5518、`doAclTableTypeTask()` L5738-5774、`removeAclTable()` L4829-4910、`processAclTablePorts()` L5776-5807、`doAclRuleTask()` L5520-5566 参照。
 <!-- /ordering -->
 
 <!-- runtime-trace -->
@@ -680,7 +680,7 @@ ACL_RULE の `PRIORITY` フィールド (`aclorch.h:25`: `#define RULE_PRIORITY 
 
 `AclOrch::init()` 起動時に `sai_switch_api->get_switch_attribute()` で取得 (`aclorch.cpp:3689-3700`)。取得失敗時は min/max ともに 0 のまま（全 priority を reject）。CONFIG_DB に記録されるフィールドキー: `"PRIORITY"` (`aclorch.h:25`)。`setPriority()` で範囲チェックし範囲外は erase (`aclorch.cpp:1656-1662`)。
 
-> **裏取り**: `acltable.h:1-76` 全行精読、`aclorch.h:25,62-63`、`aclorch.cpp:22-23,42-44,105-106,436,448,494,523-526,603,2614-2650,2823-2847,3689-3700,6088-6105`、`schema.h:94-95,514` 確認。全マクロ 17 個 + SAI 属性 7 件 + priority 定数 2 件 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。
+> **裏取り**: `acltable.h:1-76`、`aclorch.h:25,62-63`、`aclorch.cpp:22-23,42-44,105-106,436,448,494,523-526,603,2614-2650,2823-2847,3689-3700,6088-6105`、`schema.h:94-95,514` 確認。全マクロ 17 個 + SAI 属性 7 件 + priority 定数 2 件 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。
 <!-- /constants -->
 
 <!-- platform -->
@@ -750,7 +750,7 @@ ACL_RULE の `PRIORITY` フィールド (`aclorch.h:25`: `#define RULE_PRIORITY 
 !!! note "multi-asic 環境"
     multi-asic 構成では `config acl add table` が各 namespace の CONFIG_DB に同一エントリを書き込む。`AclOrch` も namespace ごとに独立起動し、STATE_DB `ACL_STAGE_CAPABILITY_TABLE` も namespace ごとに保存される。通常は同一 ASIC 種別が前提だが、SmartSwitch / heterogeneous Multi-NPU では namespace ごとに `sub_platform` が異なる可能性があり、ACL_TABLE 作成可否が namespace 間で差異を持つことがある。
 
-> **裏取り**: `AclOrch::init()` L3480-3720 / `initDefaultTableTypes()` L3724-3830 / `AclTable::validate()` L2725-2769 / `addStageMandatoryRangeFields()` L2608-2628 / `addMandatoryActions()` L2563 / `putAclActionCapabilityInDB()` L4056-4101 / `orchdaemon.cpp:502-530` / `orch.h:40-50` / `aclorch.h:109-110` 全行精読。
+> **裏取り**: `AclOrch::init()` L3480-3720 / `initDefaultTableTypes()` L3724-3830 / `AclTable::validate()` L2725-2769 / `addStageMandatoryRangeFields()` L2608-2628 / `addMandatoryActions()` L2563 / `putAclActionCapabilityInDB()` L4056-4101 / `orchdaemon.cpp:502-530` / `orch.h:40-50` / `aclorch.h:109-110`。
 <!-- /platform -->
 
 <!-- side-effects -->
@@ -799,7 +799,7 @@ ACL_TABLE 自体は [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 
 sonic-db-cli COUNTERS_DB hgetall ACL_COUNTER_RULE_MAP
 ```
 
-> **証跡**: `setAclTableStatus()` L6088-6098、`removeAllAclTableStatus()` L6119-6125、`putAclActionCapabilityInDB()` L4056-4101、`registerFlexCounter()` L6020-6042、`deregisterFlexCounter()` L6044-6048、`incCrmAclUsedCounter()` L2855、`decCrmAclUsedCounter()` L4877。全行精読 + `schema.h:418,514` 確認。
+> **証跡**: `setAclTableStatus()` L6088-6098、`removeAllAclTableStatus()` L6119-6125、`putAclActionCapabilityInDB()` L4056-4101、`registerFlexCounter()` L6020-6042、`deregisterFlexCounter()` L6044-6048、`incCrmAclUsedCounter()` L2855、`decCrmAclUsedCounter()` L4877。 + `schema.h:418,514` 確認。
 <!-- /side-effects -->
 
 <!-- glossary-links-injected: d5320e852f7a -->

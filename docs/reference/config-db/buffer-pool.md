@@ -262,7 +262,7 @@ show buffer pool
 | `BufferMgrDynamic` | `handleBufferPoolTable()` | `xoff` フィールドあり（SHP 設定） | Shared [Headroom](../../reference/glossary.md#term-headroom) Pool サイズを計算・更新 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2539` |
 | `BufferMgrDynamic` | `handleBufferPoolTable()` | `op == DEL_COMMAND` | プールを APPL_DB から削除し内部キャッシュを更新 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2634` |
 
-> **裏取り**: `handleBufferPoolTable` L2509-2669 全行読了。dynamic_size フラグと SHP xoff フィールド有無が核心分岐。4 件抽出。
+> **裏取り**: `handleBufferPoolTable` L2509-2669。dynamic_size フラグと SHP xoff フィールド有無が核心分岐。4 件抽出。
 <!-- /handler-branching -->
 <!-- pubsub -->
 ## 通信メカニズム
@@ -381,7 +381,7 @@ processBufferPool() / handleBufferPoolTable()
   task_success       → 正常完了
 ```
 
-> **裏取り**: `buffermgrdyn.cpp` L100-123, L684-795, L2509-2669 全行読了、`bufferorch.cpp` L232-244, L286-335, L395-597 全行読了、`buffermgr.cpp` L575-590 読了。`task_need_retry` 6件、`task_invalid_entry` 4件、`task_ignore` 1件、`LOG_ERROR` 11件を抽出。
+> **裏取り**: `buffermgrdyn.cpp` L100-123, L684-795, L2509-2669、`bufferorch.cpp` L232-244, L286-335, L395-597、`buffermgr.cpp` L575-590 読了。`task_need_retry` 6件、`task_invalid_entry` 4件、`task_ignore` 1件、`LOG_ERROR` 11件を抽出。
 <!-- /failure -->
 <!-- defaults -->
 ## コード由来の暗黙デフォルト / 実装乖離
@@ -427,7 +427,7 @@ else
 | `xoff` | pass-through | SHP 計算トリガ | `SAI_BUFFER_POOL_ATTR_XOFF_SIZE` |
 | `percentage` | pass-through (無意味) | forward のみ (未読取) | LOG_ERROR + skip (SAI 非反映) |
 
-> **証跡**: `buffermgrdyn.cpp` L2509-2669 全行読了、`bufferorch.cpp` L391-596 全行読了、`buffermgr.cpp` L337-410 全行読了、`buffer_pool_mellanox.lua` L440-476 全行読了。
+> **証跡**: `buffermgrdyn.cpp` L2509-2669、`bufferorch.cpp` L391-596、`buffermgr.cpp` L337-410、`buffer_pool_mellanox.lua` L440-476。
 <!-- /defaults -->
 
 <!-- platform -->
@@ -486,7 +486,7 @@ bufferorch は静的なベンダ名判定を行わず SAI 戻り値で capabilit
 | pool SET 属性未実装 | `task_ignore` → ハードウェア非反映 |
 | VOQ chassis | BUFFER_POOL の処理は変化なし |
 
-> **証跡**: `buffermgrdyn.cpp` L68-88, L504-511, L2525, L2555-2628 / `bufferorch.cpp` L310-322, L437-471, L497-501, L506-512, L916, L1049, L1134, L1168 / `buffers_config.j2` L36-38, L265-327, L331-348 / `buffers_defaults_objects.j2` (Mellanox SN2700) / `buffers_defaults_t0.j2` (Arista 7260CX3) 全行読了。
+> **証跡**: `buffermgrdyn.cpp` L68-88, L504-511, L2525, L2555-2628 / `bufferorch.cpp` L310-322, L437-471, L497-501, L506-512, L916, L1049, L1134, L1168 / `buffers_config.j2` L36-38, L265-327, L331-348 / `buffers_defaults_objects.j2` (Mellanox SN2700) / `buffers_defaults_t0.j2` (Arista 7260CX3)。
 <!-- /platform -->
 
 <!-- cross-refs -->

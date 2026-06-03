@@ -205,7 +205,7 @@ YANG では `2..4094` だが vlanmgr 側に数値範囲チェックなし。`Vla
 <!-- ordering -->
 ## 書込み順依存
 
-> **Evidence**: `cfgmgr/vlanmgr.cpp`, `orchagent/portsorch.cpp` 全行精読 (2026-05-15)
+> **Evidence**: `cfgmgr/vlanmgr.cpp`, `orchagent/portsorch.cpp` (2026-05-15)
 
 ### 他テーブル先行必須 (CONFIG_DB → APPL_DB 段)
 

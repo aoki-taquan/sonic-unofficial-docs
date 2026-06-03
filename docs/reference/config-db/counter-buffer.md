@@ -281,7 +281,7 @@ redis.call('HSET', ..., periodic_shared_wm and math.max(...) or pg_shared_wm)
 !!! note "PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS の注意点"
     `portsorch.cpp:88` の `PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS = 60000` と `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` (counterpoll デフォルト `30000`) は**別定数**。portsorch がマネージャーを初期化する際には 60000ms を投入するが、counterpoll が `FLEX_COUNTER_TABLE|PORT_BUFFER_DROP` に 30000ms を書くと上書きされる。未設定の場合は orchagent の 60000ms が有効。
 
-> **証跡**: `portsorch.cpp` L88-93, L389-435, L733-750, L866-885, L1852-1909, L8597-8680, L8932-9051, L9138-9146 全行読了。`bufferorch.cpp` L29-32, L234-344 全行読了。`watermarkorch.cpp` L1-349 全行読了。`watermark_pg.lua` / `watermark_queue.lua` / `watermark_bufferpool.lua` 全行読了。
+> **証跡**: `portsorch.cpp` L88-93, L389-435, L733-750, L866-885, L1852-1909, L8597-8680, L8932-9051, L9138-9146。`bufferorch.cpp` L29-32, L234-344。`watermarkorch.cpp` L1-349。`watermark_pg.lua` / `watermark_queue.lua` / `watermark_bufferpool.lua`。
 <!-- /defaults -->
 
 <!-- ordering -->

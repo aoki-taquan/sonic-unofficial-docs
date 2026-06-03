@@ -286,7 +286,7 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 
 `ntp_srv_key_update()` は `systemctl restart chrony` が成功した場合のみ `self.cache['servers']` / `self.cache['keys']` を更新する (`hostcfgd:1404-1406`)。chrony 再起動失敗時はキャッシュが古い状態のままとなり、次回の `NTP_SERVER` / `NTP_KEY` 変更イベントで差分が残るため自動再処理が保証される設計となっている。
 
-> **コード証跡**: `hostcfgd:1272-1407` (`NtpCfg` クラス全体)、`caclmgrd:96-100` (NTP [ACL](../../reference/glossary.md#term-acl) サービス定義)。全行精読で STATE_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書き込みが 0 件であることを確認。
+> **コード証跡**: `hostcfgd:1272-1407` (`NtpCfg` クラス全体)、`caclmgrd:96-100` (NTP [ACL](../../reference/glossary.md#term-acl) サービス定義)。で STATE_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書き込みが 0 件であることを確認。
 
 <!-- /side-effects -->
 

@@ -194,7 +194,7 @@ DB を YANG バリデーション外で書いた場合、`servers` が空のと�
 <!-- constants -->
 ## ハードコード定数
 
-> **Evidence**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.h` 全行精読、`sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py` 精読 (2026-05-16)
+> **Evidence**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.h`、`sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py` 精読 (2026-05-16)
 
 ### プロトコル定数 (dhcp4relay.h)
 
@@ -237,7 +237,7 @@ CONFIG_DB・環境変数・設定ファイルから変更不可。
 <!-- failure -->
 ## 失敗挙動・リトライ・リカバリ
 
-> **Evidence**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.cpp` および `dhcp4relay_mgr.cpp` 全行精読 (2026-05-18)
+> **Evidence**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.cpp` および `dhcp4relay_mgr.cpp` (2026-05-18)
 
 ### 起動時 — fatal exit (exit(EXIT_FAILURE))
 
@@ -334,7 +334,7 @@ COUNTERS_DB COUNTERS_DHCPV4|<Vlan>|TX  {Discover: N, Offer: N, ..., Dropped: N}
 
 なし。`DHCPV4_RELAY` は [APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし、[SAI](../../reference/glossary.md#term-sai) 非経由の Linux カーネル relay であるため、[orchagent](../../reference/glossary.md#term-orchagent) への通知は発生しない。
 
-> **裏取り**: `dhcp4relay_stats.cpp` 全行読了。`dhcp4relay.cpp:86-87, 591-828, 1570-1571` 読了。`dhcp4relay_stats.h:12` 読了。`dhcp4relay_mgr.cpp:56-90, 510-518, 762-771` 読了。副次書き込み先は `COUNTERS_DB.COUNTERS_DHCPV4` のみ確認。CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みなし。
+> **裏取り**: `dhcp4relay_stats.cpp`。`dhcp4relay.cpp:86-87, 591-828, 1570-1571` 読了。`dhcp4relay_stats.h:12` 読了。`dhcp4relay_mgr.cpp:56-90, 510-518, 762-771` 読了。副次書き込み先は `COUNTERS_DB.COUNTERS_DHCPV4` のみ確認。CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みなし。
 <!-- /side-effects -->
 
 <!-- pubsub -->

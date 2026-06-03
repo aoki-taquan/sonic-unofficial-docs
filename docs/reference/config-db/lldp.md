@@ -469,7 +469,7 @@ lldpmgrd が行う唯一の外部副作用は **`lldpcli` サブプロセス呼�
 <!-- pubsub -->
 ## 通信メカニズム
 
-> **Evidence**: `dockers/docker-lldp/lldpmgrd` 全行精読 (2026-05-18)
+> **Evidence**: `dockers/docker-lldp/lldpmgrd` (2026-05-18)
 
 `LLDP` テーブルおよび `LLDP_PORT` テーブルは **`lldpmgrd` に直接購読されていない**。lldpmgrd が購読するのは以下の 3 テーブルのみであり、`LLDP|GLOBAL` や `LLDP_PORT|<ifname>` への書き込みは lldpmgrd のイベントループに到達しない。
 

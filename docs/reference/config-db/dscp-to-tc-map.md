@@ -275,7 +275,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 ## 書込み順依存
 
 対象テーブル: `DSCP_TO_TC_MAP`。Consumer: `QosOrch::handleDscpToTcTable()` / `handlePortQosMapTable()` (`qosorch.cpp`)。
-スキャン範囲: `qosorch.cpp` 全行精読、`tunneldecaporch.cpp:101-302`、`db_migrator.py:700-715`。
+スキャン範囲: `qosorch.cpp`、`tunneldecaporch.cpp:101-302`、`db_migrator.py:700-715`。
 
 ### SET 時の順序制約
 

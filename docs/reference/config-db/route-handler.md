@@ -375,7 +375,7 @@ Evidence: `routesync.cpp:156-164` ([ProducerStateTable](../../reference/glossary
 <!-- failure -->
 ## 失敗挙動・エラーパス
 
-> **Evidence**: `fpmsyncd/routesync.cpp` @ `4305596156d70e9797e8a881b3d19b46de0bce0d` 全行精読
+> **Evidence**: `fpmsyncd/routesync.cpp` @ `4305596156d70e9797e8a881b3d19b46de0bce0d`
 
 ### onMsgRaw() — netlink メッセージサイズ不正
 

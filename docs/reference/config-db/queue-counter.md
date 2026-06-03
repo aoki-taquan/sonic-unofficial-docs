@@ -301,7 +301,7 @@ catch(const std::system_error& e) {
 <!-- constants -->
 ## ハードコード定数
 
-> **Evidence**: `sonic-swss/orchagent/portsorch.h` L34-42、`sonic-swss/orchagent/portsorch.cpp` L90-93, L734-739、`sonic-swss/orchagent/flexcounterorch.cpp` L44-63 全行精読 (2026-05-19)
+> **Evidence**: `sonic-swss/orchagent/portsorch.h` L34-42、`sonic-swss/orchagent/portsorch.cpp` L90-93, L734-739、`sonic-swss/orchagent/flexcounterorch.cpp` L44-63 (2026-05-19)
 
 ### FlexCounter グループ名定数 (portsorch.h)
 

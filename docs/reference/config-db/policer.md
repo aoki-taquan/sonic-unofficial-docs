@@ -102,7 +102,7 @@ POLICER|<name>
 <!-- constants -->
 ## ハードコード定数
 
-> 根拠: `policerorch.cpp` 全行精読。
+> 根拠: `policerorch.cpp`。
 
 ### enum マップ — CONFIG_DB 値 → SAI 属性
 
@@ -179,7 +179,7 @@ storm-control 由来の SAI policer は `POLICER` テーブルとは独立した
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
-> 根拠: `policerorch.cpp` 全行精読。
+> 根拠: `policerorch.cpp`。
 
 | フィールド | 省略時の実挙動 | 分類 |
 |-----------|--------------|------|
@@ -405,14 +405,14 @@ minigraph.py および init_cfg.json.j2 からの `POLICER` 自動派生はな�
 | `PolicerOrch` | `doTask()` SET | フィールド名が既知の enum 外 | ERROR ログ + `continue` (フィールドスキップ) | `policerorch.cpp:478-483` |
 | `PolicerOrch` | `doTask()` DEL | ポリサーが参照カウント > 0 | ERROR ログ + it++ (参照中は削除スキップ) | `policerorch.cpp` |
 
-> **裏取り**: `policerorch.cpp:374-520` を全行読了、6 件分岐抽出。PolicerOrch が PORT_STORM_CONTROL も兼務することを確認 — 誤読なし。
+> **裏取り**: `policerorch.cpp:374-520` を、6 件分岐抽出。PolicerOrch が PORT_STORM_CONTROL も兼務することを確認 — 誤読なし。
 
 <!-- /handler-branching -->
 
 <!-- platform -->
 ## プラットフォーム差異
 
-> 根拠: `policerorch.cpp` 全行精読、`orchdaemon.cpp:1292-1312`。
+> 根拠: `policerorch.cpp`、`orchdaemon.cpp:1292-1312`。
 
 ### SAI Capability クエリ
 
@@ -472,7 +472,7 @@ storm-control UPDATE パスでは `CIR` のみ SAI に渡し、`CBS` は更新�
 <!-- ordering -->
 ## 書込み順依存
 
-> 根拠: `policerorch.cpp` L374-589 全行精読、`mirrororch.cpp` L432-441、`orchdaemon.cpp` L396-402。
+> 根拠: `policerorch.cpp` L374-589、`mirrororch.cpp` L432-441、`orchdaemon.cpp` L396-402。
 
 ### 順序依存サマリ
 
@@ -510,7 +510,7 @@ storm-control UPDATE パスでは `CIR` のみ SAI に渡し、`CBS` は更新�
 <!-- failure -->
 ## 失敗挙動
 
-> 根拠: `policerorch.cpp` L374-589 全行精読。
+> 根拠: `policerorch.cpp` L374-589。
 
 ### SET (create) 失敗
 
@@ -684,7 +684,7 @@ APP_DB への書き込みは行われない。`PolicerOrch` は生成した SAI 
 <!-- side-effects -->
 ## 副次 DB 書込
 
-> 根拠: `policerorch.cpp` 全行精読、`crmorch.cpp` / `p4orch/acl_rule_manager.cpp` 確認。
+> 根拠: `policerorch.cpp`、`crmorch.cpp` / `p4orch/acl_rule_manager.cpp` 確認。
 
 ### ASIC_DB
 
