@@ -36439,7 +36439,7 @@ reasoning: >
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>enum ACCEPT;
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>enum FORWARD;
 </span></code></pre></div>
-<p><strong>判断根拠</strong>: &gt;</p>
+<p><strong>判断根拠</strong>: 現行 master の sonic-types.yang.j2 の packet action enum に ACCEPT が含まれることを確認。 issue #9638 が報告した「ACCEPT 欠落」は master では修正済みであることの裏取り。</p>
 </details>
 <!-- evidence-rendered:end -->
 
@@ -36469,7 +36469,7 @@ reasoning: >
 <div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>leaf MIRROR_INGRESS_ACTION {
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>leaf MIRROR_EGRESS_ACTION {
 </span></code></pre></div>
-<p><strong>判断根拠</strong>: &gt;</p>
+<p><strong>判断根拠</strong>: 現行 master の sonic-acl.yang.j2 に MIRROR_INGRESS_ACTION / MIRROR_EGRESS_ACTION の 両 leaf が定義されていることを確認。issue #9929 の欠落は master で解消済み。</p>
 </details>
 <!-- evidence-rendered:end -->
 
