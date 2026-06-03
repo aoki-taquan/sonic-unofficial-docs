@@ -99,15 +99,43 @@ test plan ページは「何を検証するか」「どの topology / PTF を使
 
 ### VS test の最小回し方
 
-```text
-host$ git clone https://github.com/sonic-net/sonic-buildimage
-host$ cd sonic-buildimage/platform/vs
-host$ make sonic-vs-image
-host$ cd ../../../sonic-mgmt/tests
-host$ ./run_tests.sh -n vms-kvm-t0 -t bgp/test_bgp_fact.py
+VS image のビルドは [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) の README に従い、`make init` → `make configure PLATFORM=vs` → KVM 用 `.img.gz` ターゲット (`platform/vs/kvm-image.mk` で `SONIC_KVM_IMAGE = sonic-vs.img.gz` と定義) を作る、という 3 段構成です。`platform/vs` 配下に独立した `make sonic-vs-image` ターゲットは無く、トップレベル Makefile から target/ パスを直接指定します。
+
+```bash
+host$ git clone --recurse-submodules https://github.com/sonic-net/sonic-buildimage
+host$ cd sonic-buildimage
+host$ make init
+host$ make configure PLATFORM=vs
+host$ make SONIC_BUILD_JOBS=4 target/sonic-vs.img.gz
 ```
 
-詳細な topology / inventory / testbed の組み立ては [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt) リポジトリの README（testbed セクション）を参照します。
+テスト側 (sonic-mgmt) は、testbed を立ち上げてから sonic-mgmt コンテナの中で `tests/run_tests.sh` か `pytest` を直接叩きます。`run_tests.sh` の `-t` は test path ではなく **topology** (`t0` / `t1` / `any`)、テストケース指定は `-c` です。canonical な引数は sonic-mgmt の トップレベル `Makefile` (`make test T=...`) が出力する形と一致しています。
+
+```bash
+# sonic-mgmt コンテナ内、/data/sonic-mgmt/tests で実行
+container$ ./run_tests.sh -u \
+    -n vms-kvm-t0 \
+    -d vlab-01 \
+    -f vtestbed.yaml \
+    -i ../ansible/veos_vtb \
+    -c bgp/test_bgp_fact.py \
+    -e "--skip_sanity --disable_loganalyzer"
+```
+
+`pytest` を直接呼ぶ場合は、testbed / inventory / host-pattern を明示します。
+
+```bash
+container$ cd /data/sonic-mgmt/tests
+container$ pytest \
+    --inventory ../ansible/veos_vtb \
+    --host-pattern vlab-01 \
+    --module-path ../ansible/library \
+    --testbed vms-kvm-t0 \
+    --testbed_file ../ansible/vtestbed.yaml \
+    bgp/test_bgp_fact.py
+```
+
+詳細な topology / inventory / testbed の組み立ては [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt) リポジトリの `docs/testbed/` 配下 (`README.testbed.VsSetup.md` 等) を参照します。
 
 ## lab で起きがちな異常と対処
 
@@ -123,18 +151,23 @@ host$ ./run_tests.sh -n vms-kvm-t0 -t bgp/test_bgp_fact.py
 
 仮想 lab は壊して作り直すのが安いので、運用上の壊れ・状態の不整合は再起動より image 再生成のほうが早い場合が多いです。実機運用の手順を「lab で何度も繰り返す」のが lab の役目で、状態を温存する設計は基本的に不要です。
 
-ただし「再現に時間がかかる障害を掴んだ瞬間」は別で、そのときは下記を取ってから何もせず保全します。
+ただし「再現に時間がかかる障害を掴んだ瞬間」は別で、そのときは下記を取ってから何もせず保全します。Redis snapshot は、`sonic-utilities` の `fast-reboot` / `generate_dump` と同じパターンで、**database コンテナの中で `SAVE` (または `BGSAVE`) を発行 → サーバ側 `/var/lib/redis*/dump.rdb` を `docker cp` でホストにコピー** します。`redis-cli --rdb` をホストの sonic admin から打つ形は、SONiC の database コンテナが UNIX socket 構成かつ namespace 分離されている関係で取り違いが起きやすく、CI / techsupport では使われていません。
 
 ```bash
 admin@sonic:~$ sudo show techsupport
 admin@sonic:~$ sudo docker exec syncd syncd_dump.sh
-admin@sonic:~$ for n in 0 1 4 6 13 14; do
->   redis-cli -n $n --rdb /tmp/dump-db-$n.rdb
-> done
-admin@sonic:~$ tar czf /tmp/lab-snapshot.tgz /var/dump /var/log /tmp/dump-db-*.rdb
+
+# 各 DB instance の RDB を保存 → ホスト側にコピー
+# (single-ASIC VS なら database コンテナ 1 つ、multi-ASIC では database0/1/... を回す)
+admin@sonic:~$ sudo docker exec database sonic-db-cli APPL_DB SAVE
+admin@sonic:~$ sudo docker cp database:/var/lib/redis/dump.rdb /tmp/dump-appl.rdb
+admin@sonic:~$ sudo docker exec database sonic-db-cli CONFIG_DB SAVE
+admin@sonic:~$ sudo docker cp database:/var/lib/redis/dump.rdb /tmp/dump-config.rdb
+
+admin@sonic:~$ sudo tar czf /tmp/lab-snapshot.tgz /var/dump /var/log /tmp/dump-*.rdb
 ```
 
-これは [SWSS / SAI / Redis 章](../20-swss-sai-redis/operations.md) の techsupport / dump 取得と同じ手順です。
+これは [SWSS / SAI / Redis 章](../20-swss-sai-redis/operations.md) の techsupport / dump 取得と同じ手順です (`sonic-utilities/scripts/fast-reboot` や `scripts/generate_dump` の `Dump by using Redis SAVE.` 経路と同じパターン)。
 
 ## 仮想 lab の日常操作
 
@@ -195,4 +228,4 @@ host$ docker exec ptf_vms-kvm-t0 ip link show | grep eth
 - [BGP 章](../02-bgp/index.md) / [VLAN・LAG 章](../06-l2-vlan-lag/index.md)（VS で最初に試すと感覚が掴める）
 - 本章 [設定](setup.md)（lab の物理 / 仮想セットアップ）
 
-<!-- glossary-links-injected: 9fb3fca99a59 -->
+<!-- glossary-links-injected: 75921d013977 -->
