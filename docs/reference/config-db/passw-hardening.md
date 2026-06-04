@@ -10,7 +10,7 @@ sources:
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
   - repo: sonic-net/sonic-host-services
     path: scripts/hostcfgd
-    ref: c5bbbe8c5891a2a8e89f36b1e612345abcdef01
+    ref: c5bbbe8b07b96f078fa4b761316627404b01bd04
 related:
   config_db:
     - PASSW_HARDENING
@@ -250,7 +250,7 @@ CONFIG_DB `PASSW_HARDENING` テーブルの変更に伴って `hostcfgd` の `Pa
 |--------|---------|--------------|---------|
 | `hostcfgd` (`PasswHardening` 経由) | `ConfigDBConnector.subscribe()` | `PASSW_HARDENING` | `passwh_handler` → `passw_policies_update` |
 
-`hostcfgd` 以外で `PASSW_HARDENING` テーブルを購読するプロセスは存在しない。PAM モジュール (`pam_pwquality.so` / `pam_pwhistory.so` / `pam_cracklib.so`) は `/etc/pam.d/common-password` を認証時に読むのみで [Redis](../../reference/glossary.md#term-redis) を購読しない。
+`hostcfgd` 以外で `PASSW_HARDENING` テーブルを購読するプロセスは存在しない。PAM モジュール (`pam_pwquality.so` / `pam_pwhistory.so`) は `/etc/pam.d/common-password` を認証時に読むのみで [Redis](../../reference/glossary.md#term-redis) を購読しない[^2]。
 
 ### keyspace 通知 → ハンドラ呼び出しの流れ
 
@@ -337,8 +337,9 @@ passwh_handler(key="POLICIES", op=SET, data={state:"enabled", ...})
 
 ### boolean フィールド (`lower_class` / `upper_class` / `digits_class` / `special_class` / `reject_user_passw_match`)
 
-- `"True"` / `"true"` / `"1"` → `is_true()` で Python `True` に正規化 → PAM `pam_pwquality.so` / `pam_cracklib.so` に対応オプションを渡す
-- `"False"` / `"false"` / `"0"` → `False` → 当該クラス要件をスキップ
+- `"True"` / `"true"` → `is_true()` で Python `True` に正規化 → PAM `pam_pwquality.so` に対応オプション (`ucredit` / `lcredit` / `dcredit` / `ocredit` / `reject_username`) を渡す
+- `"False"` / `"false"` → `False` → 当該クラス要件は credit=0 として渡され実質スキップ
+- 上記以外 (`"yes"` / `"1"` / `"no"` 等) は `is_true()` が `False` を返し `LOG_ERR` を出力 (`hostcfgd:156-162`)
 
 ### 複合条件
 
@@ -357,6 +358,7 @@ passwh_handler(key="POLICIES", op=SET, data={state:"enabled", ...})
 ## 引用元
 
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-passwh.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-passwh.yang>
+[^2]: PAM テンプレート: `common-password.j2` (`pam_pwquality` / `pam_pwhistory` のみ使用、`pam_cracklib` は不使用). <https://github.com/sonic-net/sonic-host-services/blob/c5bbbe8b07b96f078fa4b761316627404b01bd04/data/templates/common-password.j2#L27-L33>
 
 ## 関連ページ
 - [CONFIG_DB index](index.md)
