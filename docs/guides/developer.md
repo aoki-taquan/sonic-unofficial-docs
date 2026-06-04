@@ -46,16 +46,16 @@ related:
     - `sonic-buildimage/src/sonic-yang-models/tests/yang_model_tests/` に正常系 / 異常系 JSON を追加し、`test_sonic_yang_models.py` で回帰確認します[^yang-tests]。
 3. **CONFIG_DB ↔ daemon の対応を決める**
     - 新 table をどの orch / daemon が subscribe するかを設計し、[CONFIG_DB ↔ orch 対応表](../reference/config-db-orch-map.md) に追記します。
-    - 主要な実装位置は `sonic-swss/orchagent/` 配下の `*orch.cpp` / `*orch.h` です（例: `aclorch.cpp`, `bufferorch.cpp`, `bfdorch.cpp`）。サブシステム固有の daemon は `sonic-swss/<feature>mgrd/`、`sonic-platform-daemons/` などに分かれます。
+    - 主要な実装位置は `sonic-swss/orchagent/` 配下の `*orch.cpp` / `*orch.h` です（例: `aclorch.cpp`, `bufferorch.cpp`, `bfdorch.cpp`）[^orch-dir]。サブシステム固有の daemon は `sonic-swss/<feature>mgrd/`、`sonic-platform-daemons/` などに分かれます。
 4. **CLI を実装する**
-    - 設定系は `sonic-utilities/config/<feature>.py`、表示系は `sonic-utilities/show/<feature>.py` に Click サブコマンドを追加します。CONFIG_DB との接続は `swsscommon.ConfigDBConnector` 経由で行い、YANG validation を意識する場合は [Config update validation via YANG](../management/sonic-config-update-validation-via-yang.md) を参照します。
+    - 設定系は `sonic-utilities/config/<feature>.py`、表示系は `sonic-utilities/show/<feature>.py` に Click サブコマンドを追加します。CONFIG_DB との接続は `swsscommon.ConfigDBConnector` 経由で行い（`config/main.py` でも `ConfigDBConnector(use_unix_socket_path=True, namespace=namespace)` 形式で利用されています[^cli-connector]）、YANG validation を意識する場合は [Config update validation via YANG](../management/sonic-config-update-validation-via-yang.md) を参照します。
     - 同 repo の `tests/<feature>_test.py` に unit test を追加します。
 5. **test plan / 結合テストを書く**
-    - HLD と並列で `*-test-plan.md` を提案するのが慣習です。当リポジトリ内の既存例は `docs/<area>/*-test-plan.md` を grep して参照し、実装テストは `sonic-mgmt` 配下の `tests/` に PR を出します。
+    - HLD と並列で `*-test-plan.md` を提案するのが慣習です。当リポジトリ内の既存例は `docs/<area>/*-test-plan.md`（例: [ACL ingress/egress test plan](../acl-qos/acl-ingress-egress-test-plan.md)、[Dataplane telemetry test plan](../system/dataplane-telemetry-test-plan.md)）を参照し、実装テストは `sonic-mgmt` 配下の `tests/` に PR を出します。
     - YANG / CLI / 単一 daemon で完結する範囲は up-front の単体テストで吸収し、複数 daemon にまたがる挙動だけを sonic-mgmt の結合テストに残すと PR レビューが軽くなります。
 6. **migration / upgrade を考慮する**
-    - CONFIG_DB schema を変更する場合、`sonic-utilities/scripts/db_migrator.py` に migration ステップを追加して minigraph / golden config から旧 schema を変換できるようにします。
-    - default config の生成は `sonic-buildimage` の `files/build_templates/` Jinja2 テンプレートに反映します。
+    - CONFIG_DB schema を変更する場合、`sonic-utilities/scripts/db_migrator.py` に migration ステップを追加して minigraph / golden config から旧 schema を変換できるようにします[^db-migrator]。
+    - default config の生成は `sonic-buildimage` の `files/build_templates/` Jinja2 テンプレートに反映します[^build-templates]。
 7. **ドキュメントに反映する**
     - 機能 HLD は `SONiC/doc/<feature>/` に置く慣習です。コミュニティ master と当ドキュメントの双方で参照しやすいよう、PR では HLD / YANG / CLI Ref / test plan のクロスリンクを最低限張ります。
     - 当リポジトリでは `docs/<area>/<slug>.md` を新設し、`docs/reference/yang/`・`docs/reference/cli/`・`docs/reference/config-db/` 側の自動生成索引が拾える形で frontmatter（`area`, `verification`, `sources`, `related`）を埋めます。詳細は [`meta/templates/SCHEMA.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/templates/SCHEMA.md) を参照してください。
@@ -67,7 +67,11 @@ related:
 
 [^schema-h]: `sonic-swss-common/common/schema.h` (約 565 行) に APP_DB / [COUNTERS_DB](../reference/glossary.md#term-counters_db) / CONFIG_DB / [STATE_DB](../reference/glossary.md#term-state_db) の table 名マクロが集約されています。例: 37 行目付近 `APP_PORT_TABLE_NAME "PORT_TABLE"`、16 行目 `#define CONFIG_DB 4`。
 [^yang-dir]: `sonic-buildimage/src/sonic-yang-models/yang-models/` 配下に `sonic-acl.yang` / `sonic-port.yang` / `sonic-bgp-*.yang` などコミュニティ標準の sonic-* YANG が並びます。
-[^yang-tests]: `sonic-buildimage/src/sonic-yang-models/tests/test_sonic_yang_models.py` と `yang_model_tests/` の JSON フィクスチャで mandatory / leafref / when 条件などを検証します。
+[^yang-tests]: `sonic-buildimage/src/sonic-yang-models/tests/test_sonic_yang_models.py` と同階層の `yang_model_tests/` の JSON フィクスチャで mandatory / leafref / when 条件などを検証します。
+[^orch-dir]: `sonic-swss/orchagent/` 直下に `aclorch.{cpp,h}` / `bufferorch.{cpp,h}` / `bfdorch.{cpp,h}` 等の orch 実装が並びます。
+[^cli-connector]: `sonic-utilities/config/main.py` で `from swsscommon.swsscommon import ... ConfigDBConnector ...` を import し、`config_db = ConfigDBConnector(use_unix_socket_path=True, namespace=namespace)` 形式で CONFIG_DB に接続します（例: 36 行目付近の import、319 / 345 / 386 行目付近の instantiation）。
+[^db-migrator]: `sonic-utilities/scripts/db_migrator.py` に世代毎の `migration_<version>` 系メソッドが集約され、`db_migrator -o migrate` 等で順次適用されます。
+[^build-templates]: `sonic-buildimage/files/build_templates/` 配下に `buffers_config.j2` / `backend_acl.j2` などの Jinja2 テンプレートが置かれ、default config 生成に使われます。
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -77,4 +81,4 @@ related:
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4a6287bc2ad2 -->
+<!-- glossary-links-injected: e2892b76fd9a -->
