@@ -84,7 +84,7 @@ related:
 |---|---|---|---|---|
 | concept | 173 | ✅ 完成 | meta | 概念・位置付け |
 | architecture | 89 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
-| setup | 217 | ✅ 完成 | meta | セットアップ手順 |
+| setup | 224 | ✅ 完成 | code-verified | セットアップ手順 |
 | operations | 183 | ✅ 完成 | meta | 運用・デバッグ |
 | internals | 139 | ✅ 完成 | meta | 内部実装 |
 | advanced | 92 | ⚠️ プレースホルダ | meta | 発展トピック |

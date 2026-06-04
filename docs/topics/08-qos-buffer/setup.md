@@ -3,9 +3,21 @@ title: QoS / Buffer の設定
 description: QoS / Buffer の設定 — 設定は「pool / profile を作る → port に classification を当てる
   → queue に scheduler / WRED を当てる → 必要なら PFC / PFCWD を有効化」の順で組むのが筋が良いです。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: code-verified
+last_verified: 2026-06-04
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: config/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-utilities
+    path: pfcwd/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-buildimage
+    path: device/common/profiles/th/gen/RDMA-CENTRIC/buffers_defaults_t0.j2
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: device/common/profiles/th/gen/RDMA-CENTRIC/pg_profile_lookup.ini
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   cli:
   - config buffer
@@ -39,9 +51,12 @@ related:
 
 ## CLI から触れる範囲
 
-- [`config buffer`](../../reference/cli/config-buffer.md) — buffer pool / profile / PG / queue の追加・削除と、shared headroom などの switch 全体属性。
-- [`config qos`](../../reference/cli/config-qos.md) — `qos reload` で `/etc/sonic/qos.json` の再展開、`qos clear`、map 系の操作。
-- [`config pfcwd`](../../reference/cli/config-pfcwd.md) — PFCWD の start/stop/interval/action とポーリング設定。
+- [`config interface buffer`](../../reference/cli/config-buffer.md) — buffer profile を port の priority group / queue にバインドする操作。実装は `config interface buffer` 配下の `priority_group lossless add|set|remove` / `queue add|set|remove` で、いずれも **dynamic buffer 有効環境専用** (`is_dynamic_buffer_enabled` チェックで弾かれる)[^cli-buffer]。
+- [`config qos`](../../reference/cli/config-qos.md) — `qos reload` でテンプレを再展開、`qos clear` で BUFFER_* / QUEUE / SCHEDULER / *_MAP 系を一掃する。
+- [`config pfcwd`](../../reference/cli/config-pfcwd.md) — PFCWD の start/start_default/stop/interval/counter_poll/big_red_switch を扱う。`start` の detection-time / restoration-time は **100〜60000ms** に validate される[^cli-pfcwd]。
+
+[^cli-buffer]: `sonic-net/sonic-utilities` `config/main.py` の `buffer` group は `@interface.group` 直下に定義されており、`is_dynamic_buffer_enabled(config_db)` が False のときは `ctx.fail("This command can only be executed on a system with dynamic buffer enabled")` で終了する (commit `39732bc`, lines 6201-6209)。`priority_group lossless add|set|remove` は同ファイル 6225-6267 行。
+[^cli-pfcwd]: `sonic-net/sonic-utilities` `pfcwd/main.py` の `start` コマンドは `--restoration-time` を `click.IntRange(100, 60000)`、位置引数 `detection-time` を `click.IntRange(100, 5000)` で受け取る (commit `39732bc`, lines 506-527)。デフォルト値は同ファイル 37-41 行で `DEFAULT_DETECTION_TIME = 200` / `DEFAULT_RESTORATION_TIME = 200` / `DEFAULT_POLL_INTERVAL = 200` / `DEFAULT_ACTION = 'drop'`。
 
 [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接編集する場合は次のテーブル群です。
 
@@ -72,14 +87,7 @@ related:
 4. `SCHEDULER` を 2 種（STRICT / DWRR）作って `QUEUE` から指す。
 5. `PORT_QOS_MAP` でポートに DSCP→TC、TC→queue を当てる。
 
-`config` CLI を使う場合の組み立て例です。
-
-```bash
-config buffer profile add ingress_lossy_profile --pool ingress_lossy_pool --xon 0 --xoff 0 --size 0 --dynamic_th 3
-config buffer profile add q_lossy_profile       --pool egress_lossy_pool  --size 0 --dynamic_th 3
-config buffer priority-group lossy add  Ethernet0 0    ingress_lossy_profile
-config buffer queue add                 Ethernet0 0-7  q_lossy_profile
-```
+最初の boot で `qos.json.j2` / `buffers.json.j2` が展開されるため、上記 5 オブジェクトのほとんどはテンプレ起源で埋まる。手作業で組むのは「テンプレ非対応 SKU」や「BUFFER_PROFILE をカスタム差し替え」など限定ケースで、その場合は `BUFFER_POOL` / `BUFFER_PROFILE` を CONFIG_DB に直接 set し、`BUFFER_PG` / `BUFFER_QUEUE` / `QUEUE` の参照を再配線する。dynamic-buffer 有効環境であれば PG / queue 側のバインドのみ `config interface buffer priority_group lossless` / `config interface buffer queue` で操作できる。
 
 CONFIG_DB に直接書くなら次のような構造になります。
 
@@ -133,11 +141,16 @@ $ show priority-group persistent-watermark headroom
 
 既存の lossy ToR に「RoCEv2 だけ lossless で運ぶ」要件を被せるパターンです。lossless は DSCP 26（IEEE 802.1 で RoCEv2 の慣例）を TC3 にマップし、PG3 / queue 3 を PFC headroom 付き profile にし、ECN を入れる流れです。
 
+lossless profile の `size` / `xon` / `xoff` は **port speed と cable length から `pg_profile_lookup.ini` で逆引き** される。例えば `sonic-buildimage` の Tomahawk RDMA-CENTRIC テンプレでは 100G / 5m なら `size=1248, xon=2288, xoff=165568`、25G / 40m なら `size=1248, xon=2288, xoff=53248` といった離散テーブルが配布されている[^pg-lookup]。下記サンプルは「100G / 短距離想定」の概算値であって、本番では必ず SKU 同梱の `pg_profile_lookup.ini` の該当行を使う。
+
 ```bash
-# 1. lossless pool (xoff 領域を含む) と profile
-config buffer profile add ingress_lossless_profile \
-  --pool ingress_lossless_pool --xon 19456 --xoff 36352 --size 55808 --dynamic_th 0
-config buffer priority-group lossless add Ethernet0 3 ingress_lossless_profile
+# 1. lossless pool (xoff 領域を含む) と profile を CONFIG_DB に直接書き込む
+#    (BUFFER_POOL / BUFFER_PROFILE の直接 add CLI は無いため redis-cli を使う)
+redis-cli -n 4 HSET 'BUFFER_POOL|ingress_lossless_pool' type ingress mode dynamic size 10875072 xoff 4194112
+redis-cli -n 4 HSET 'BUFFER_PROFILE|ingress_lossless_profile' \
+  pool ingress_lossless_pool size 1248 xon 2288 xoff 165568 dynamic_th 0
+# dynamic-buffer 有効環境のみ: profile を PG3 にバインド
+config interface buffer priority_group lossless add Ethernet0 3 ingress_lossless_profile
 
 # 2. PFC を priority 3 で enable
 config interface pfc asymmetric off Ethernet0
@@ -153,6 +166,8 @@ redis-cli -n 4 HSET 'QUEUE|Ethernet0|3' wred_profile 'AZURE_LOSSLESS'
 # 5. DSCP 26 -> TC3 を確実に
 redis-cli -n 4 HSET 'DSCP_TO_TC_MAP|AZURE' 26 3
 ```
+
+[^pg-lookup]: `sonic-net/sonic-buildimage` `device/common/profiles/th/gen/RDMA-CENTRIC/pg_profile_lookup.ini` (commit `9ea932e`)。同 RDMA-CENTRIC テンプレの `buffers_defaults_t0.j2` も `ingress_lossless_pool.size=10875072 / xoff=4194112`、`egress_lossless_pool.size=15982720` といった具体値を持つ。
 
 確認:
 
@@ -179,13 +194,15 @@ PFCWD は「PFC pause が長時間止まったままになり、[ASIC](../../ref
 
 ```bash
 # 推奨デフォルトでまとめて enable
+# (DEVICE_METADATA.localhost.default_pfcwd_status = "enable" が前提。未設定だと何もしないで戻る)
 config pfcwd start_default
 
-# ポート単位で個別 chunk チューニング
-config pfcwd start --action drop ports Ethernet0,Ethernet1 \
-  detection-time 200 --restoration-time 200
+# ポート単位で個別チューニング
+# 構文: pfcwd start [--action <drop|forward|alert>] [--restoration-time N] <ports...> <detection-time>
+# detection-time は 100〜5000ms、restoration-time は 100〜60000ms
+sudo pfcwd start --action drop --restoration-time 200 Ethernet0 Ethernet1 200
 
-# polling interval を変える (デフォルト 200ms)
+# polling interval を変える (デフォルト 200ms、最小 100ms)
 config pfcwd interval 100
 ```
 
@@ -204,7 +221,7 @@ $ show pfcwd stats
 Ethernet0:3                  0           0        0        0
 ```
 
-`Storm detected` が立ち上がるのは実際に PFC storm が起きたとき。`detection-time` を 100ms 未満にすると正常 micro-burst を storm と誤検知することがあるため、200ms を出発点に運用負荷を見て調整します。詳細は [`config pfcwd`](../../reference/cli/config-pfcwd.md) と [`PFC_WD`](../../reference/config-db/pfc-wd.md) を参照。
+`Storm detected` が立ち上がるのは実際に PFC storm が起きたとき。CLI の validation は `detection-time` を 100ms 以上に強制するので、100ms 直下まで攻めると正常 micro-burst を storm と誤検知することがあるため、デフォルトの 200ms を出発点に運用負荷を見て調整します。詳細は [`config pfcwd`](../../reference/cli/config-pfcwd.md) と [`PFC_WD`](../../reference/config-db/pfc-wd.md) を参照。
 
 ## QoS テンプレートの再展開
 
@@ -214,11 +231,13 @@ Ethernet0:3                  0           0        0        0
 # 全体再展開 (BUFFER_*, QUEUE, SCHEDULER, *_TO_*_MAP 系を含む)
 config qos reload --no-dynamic-buffer
 
-# 特定 namespace だけ
-config qos reload -n asic0
+# 特定ポートだけテンプレ再適用
+config qos reload --ports Ethernet0,Ethernet4
 ```
 
-`--no-dynamic-buffer` を付けるとテンプレ依存の dynamic buffer calculator (`buffermgrd`) を起動しません。手で BUFFER 系を細かく調整しているスイッチでは付けておくと、起動時の自動再計算で踏まれるのを防げます。
+`--no-dynamic-buffer` を付けるとテンプレ依存の dynamic buffer calculator を起動しません (mellanox / barefoot 向けのフックがスキップされる)。手で BUFFER 系を細かく調整しているスイッチでは付けておくと、起動時の自動再計算で踏まれるのを防げます。multi-ASIC 環境では `config qos reload` が内部で全 namespace を順に処理するため、namespace 指定 option は無く、特定 namespace だけ再展開したい場合は `--ports` でその ASIC 配下のポートを列挙する形になります[^qos-reload]。
+
+[^qos-reload]: `sonic-net/sonic-utilities` `config/main.py` の `qos reload` (commit `39732bc`, lines 3652-3709)。`--ports` / `--no-dynamic-buffer` / `--no-delay` / `--verbose` / `--json-data` / `--dry_run` の各 option を持ち、`multi_asic.get_num_asics() > 1` のときは `multi_asic.get_namespaces_from_linux()` で得た namespace を for ループで処理する。
 
 ## YANG / gNMI から触る場合
 
@@ -238,7 +257,7 @@ gnmi_set --replace='/sonic-buffer-profile:sonic-buffer-profile/BUFFER_PROFILE/BU
 | `show queue counters` で全ての queue が UC0 に偏る | `DSCP_TO_TC_MAP` または `TC_TO_QUEUE_MAP` が `PORT_QOS_MAP` から参照されていない | `PORT_QOS_MAP|Ethernet0` に `dscp_to_tc_map` / `tc_to_queue_map` が設定されているか確認 |
 | `Drop/pkts` が増え続ける | queue size 不足、または scheduler の極端な weight 差 | `BUFFER_PROFILE.size` 増、または DWRR weight を再配分 |
 | 再起動後に設定が消える | `config save` 忘れ、または `config qos reload` で上書きされた | `config save -y` を実行、テンプレと衝突する場合は Golden Config 側に反映 |
-| PFCWD が `start_default` で何も起動しない | lossless priority 未定義（`PORT_QOS_MAP.pfc_enable` 空） | 先に PFC 有効化、その後 `start_default` を再実行 |
+| PFCWD が `start_default` で何も起動しない | `DEVICE_METADATA.localhost.default_pfcwd_status` が `enable` でない、または `DEVICE_NEIGHBOR` が空で対象ポートが特定できない | `redis-cli -n 4 HSET 'DEVICE_METADATA|localhost' default_pfcwd_status enable` を入れて再実行。[BGP](../../reference/glossary.md#term-bgp) 隣接のないラボでは `DEVICE_NEIGHBOR` を疑似的に埋めるか、`pfcwd start` で明示的にポートを指定する |
 | dynamic buffer 環境で `BUFFER_PROFILE.size` が無視される | `buffermgrd` が dynamic mode で再計算 | `DEVICE_METADATA.localhost.buffer_model` を `traditional` に切替、または `--no-dynamic-buffer` で reload |
 
 ## 関連リファレンス
@@ -248,4 +267,4 @@ gnmi_set --replace='/sonic-buffer-profile:sonic-buffer-profile/BUFFER_PROFILE/BU
 - YANG: [sonic-buffer-pool](../../reference/yang/sonic-buffer-pool.md) / [sonic-buffer-profile](../../reference/yang/sonic-buffer-profile.md) / [sonic-pfcwd](../../reference/yang/sonic-pfcwd.md)
 - 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md)
 
-<!-- glossary-links-injected: d17c6a828148 -->
+<!-- glossary-links-injected: 1c59d90c07b4 -->
