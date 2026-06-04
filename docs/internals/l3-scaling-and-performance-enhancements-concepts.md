@@ -1,8 +1,8 @@
 ---
-title: L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+title: L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
 description: L3 Scaling と Performance 強化 HLD の概念整理。ARP/ND エントリ数と route/ECMP のスケール目標、route
-  programming 時間短縮と show コマンド応答短縮の性能目標、kernel gc tuning / sairedis bulk / fpmsyncd
-  最適化 / show arp の 4 系統の改善ポイントの位置づけ。
+  programming 時間短縮と show コマンド応答短縮の性能目標、kernel gc tuning / CoPP ARP-ND 上限 / sairedis bulk
+  route / fpmsyncd 最適化 / sairedis JSON ライブラリ更新 / show arp の 6 系統の改善ポイントの位置づけを扱う。
 area: internals
 verification: discrepancy-found
 last_verified: 2026-05-11
@@ -48,10 +48,11 @@ related:
 
 ## 3. 性能目標
 
-- IPv4 / IPv6 route programming 時間を短縮
+HLD §1.1 の性能要件と §2.2.1.1 のターゲットを以下に集約する[^1]。
+
+- IPv4 / IPv6 route programming 時間を短縮（最終ターゲットは **30% 短縮**）
 - 未知 ARP / ND 学習時間を短縮
 - `show arp` / `show ndp` の応答短縮
-- **route programming 時間 30% 短縮** を狙う[^1]
 
 ## 4. 改善 6 系統の位置づけ
 
