@@ -1,6 +1,6 @@
 ---
 title: SAI table full (route / nexthop / FDB 上限到達)
-description: "Runbook: SAI table full (route / nexthop / FDB 上限到達) — : sonic-net/sonic-swss @ 4305596 — orchagent/crmorch.cpp : sonic-net/sonic-sairedis @ 88bc51a — syncd/Sy…"
+description: "Runbook: SAI table full (route / nexthop / FDB 上限到達) の切り分けと対処。CRM threshold 越え / SAI_STATUS_TABLE_FULL ログ / ECMP next-hop group 枯渇 / FDB aging 不足 / ACL TCAM 競合を想定原因に、BGP prefix-list と aging 設定で recover する手順。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-13
@@ -82,7 +82,8 @@ show mac | wc -l
 ## 対処方法
 
 - [BGP](../../reference/glossary.md#term-bgp) inbound filter で prefix を絞る: `neighbor <peer> prefix-list PL_IN in`
-- [ECMP](../../reference/glossary.md#term-ecmp) grouping を縮小: `crm config polling interval 60` で観測しつつ調整
+- [ECMP](../../reference/glossary.md#term-ecmp) next-hop group を縮小: [BGP](../../reference/glossary.md#term-bgp) の `maximum-paths` を下げる / `bgp bestpath as-path multipath-relax` を見直す等で next-hop group 数を抑制する[^3]
+- [CRM](../../reference/glossary.md#term-crm) 観測周期を短縮して推移を追う: `crm config polling interval 60`（既定 300 秒、`CRM_POLLING_INTERVAL`）。これは観測周期の調整のみで、リソース自体は減らない[^1]
 - [FDB](../../reference/glossary.md#term-fdb) aging を有効化: `sudo config mac aging-time 600`
 - 不要 [ACL](../../reference/glossary.md#term-acl) table 削除
 
@@ -98,5 +99,6 @@ show mac | wc -l
 
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [orchagent](../../reference/glossary.md#term-orchagent)/crmorch.cpp
 [^2]: sonic-net/[sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) @ 88bc51a — [syncd](../../reference/glossary.md#term-syncd)/Syncd.cpp
+[^3]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) — crm/main.py L351-352（`crm config polling interval` は [CRM](../../reference/glossary.md#term-crm) polling interval のみ調整、[ECMP](../../reference/glossary.md#term-ecmp) 数を変更する効果はない）
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: d4c7d4df3b3a -->
