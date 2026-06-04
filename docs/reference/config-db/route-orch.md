@@ -29,7 +29,7 @@ related:
   cli:
     - flow_counters route
     - show flow_counters route
-  yang: []
+  _no_related_yang: true
 ---
 
 # FLOW_COUNTER_ROUTE_PATTERN (RouteOrch / FlowCounterRouteOrch)

@@ -5,11 +5,7 @@ description: 運用 — SRv6 / MPLS / Path Tracing の運用確認は、「設�
 area: topics
 verification: meta
 last_verified: 2026-05-11
-sources:
-- docs/routing/segment-routing-over-ipv6-srv6-hld.md
-- docs/routing/mpls-for-sonic-high-level-design-document.md
-- docs/routing/path-tracing-midpoint.md
-- docs/routing/router-interface-counters-in-sonic.md
+sources: []
 related:
   cli:
   - show interfaces

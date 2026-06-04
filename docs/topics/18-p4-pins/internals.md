@@ -5,10 +5,7 @@ description: 内部実装 — PINS の中身を読むときに、まず押さえ
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/internals/p4-orchagent.md
-- docs/management/p4rt-read-cache-hld.md
-- docs/management/p4rt-application-hld.md
+sources: []
 related:
   cli:
   - config interface

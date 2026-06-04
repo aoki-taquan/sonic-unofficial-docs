@@ -6,11 +6,7 @@ description: 設定 — Build / Packaging 章での「設定」は、機能 dock
 area: topics
 verification: meta
 last_verified: 2026-05-12
-sources:
-- docs/architecture/sonic-application-extension-infrastructure.md
-- docs/architecture/build-system-improvements.md
-- docs/reference/cli/sonic-package-manager.md
-- docs/reference/config-db/feature.md
+sources: []
 related:
   cli:
   - config feature

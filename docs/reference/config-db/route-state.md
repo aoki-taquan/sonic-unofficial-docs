@@ -20,7 +20,7 @@ related:
   cli:
     - show ip route
     - show ipv6 route
-  yang: []
+  _no_related_yang: true
 ---
 
 # ROUTE_TABLE (STATE_DB / APPL_STATE_DB)

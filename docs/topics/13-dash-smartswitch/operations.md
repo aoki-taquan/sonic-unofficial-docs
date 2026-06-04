@@ -5,13 +5,7 @@ description: HA / PMON / reboot / upgrade の運用 — SmartSwitch の運用観
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md
-- docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md
-- docs/platform/smartswitch-pmon-high-level-design.md
-- docs/system/smart-switch-reboot-high-level-design.md
-- docs/platform/smartswitch-dpu-graceful-shutdown.md
-- docs/system/independent-dpu-upgrade.md
+sources: []
 related:
   cli:
   - show platform

@@ -4,15 +4,7 @@ description: 設定 — この章の機能は CLI と CONFIG_DB の二系統か�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/config-nat.md
-- docs/reference/cli/show-nat.md
-- docs/reference/cli/config-dhcp-relay.md
-- docs/reference/config-db/nat.md
-- docs/reference/config-db/dhcpv4-relay.md
-- docs/reference/config-db/dhcp-server-ipv4.md
-- docs/reference/yang/sonic-nat.md
-- docs/reference/yang/sonic-dhcp-server.md
+sources: []
 related:
   cli:
   - config nat

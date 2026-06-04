@@ -4,12 +4,7 @@ description: DASH と SmartSwitch の考え方 — DASH と SmartSwitch は混�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/overlay/sonic-dash-hld.md
-- docs/overlay/smartswitch-eni-based-forwarding.md
-- docs/architecture/smart-switch-database-design.md
-- docs/categories/dash.md
-- docs/categories/smartswitch.md
+sources: []
 keywords:
 - DASH
 - SmartSwitch

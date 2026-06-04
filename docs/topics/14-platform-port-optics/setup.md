@@ -4,14 +4,7 @@ description: 設定 — ここでは、port 設定と platform 関連設定を�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/config-interface.md
-- docs/reference/cli/config-platform-firmware.md
-- docs/reference/cli/show-platform.md
-- docs/platform/sonic-fw-utility.md
-- docs/platform/platform-capability-file-enhancement.md
-- docs/reference/config-db/port.md
-- docs/reference/yang/sonic-port.md
+sources: []
 related:
   cli:
   - config interface

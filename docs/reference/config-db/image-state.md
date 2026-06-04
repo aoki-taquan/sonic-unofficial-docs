@@ -24,9 +24,9 @@ sources:
     path: show/main.py
     ref: 39732bc
 related:
-  config_db: []
   cli:
     - show version
+  _no_related_config_db: true
   _no_related_yang: true
 ---
 

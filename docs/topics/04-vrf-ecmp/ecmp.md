@@ -5,12 +5,7 @@ description: ECMP Family — ECMP は「複数 next hop に分散する」だけ
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/routing/sonic-fine-grained-ecmp.md
-- docs/routing/sonic-weighted-ecmp.md
-- docs/routing/high-level-design-document.md
-- docs/architecture/sonic-generic-hash.md
-- docs/routing/class-based-forwarding-enhancement.md
+sources: []
 related:
   cli:
   - show techsupport

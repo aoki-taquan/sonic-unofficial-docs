@@ -4,13 +4,7 @@ description: 設定変更の選び方 — SONiC には設定変更の入口が�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/architecture/sonic-generic-configuration-update-and-rollback.md
-- docs/architecture/json-change-application.md
-- docs/management/json-patch-ordering-using-yang-models.md
-- docs/management/config-reload-enhancement.md
-- docs/reference/cli/config-mgmt-trio.md
-- docs/reference/cli/sonic-cfggen.md
+sources: []
 related:
   cli:
   - config bgp

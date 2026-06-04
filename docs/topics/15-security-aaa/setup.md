@@ -5,17 +5,7 @@ description: 設定 — ここでは AAA バックエンドと管理面ポリシ
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/config-aaa.md
-- docs/reference/config-db/tacplus-server.md
-- docs/reference/config-db/ldap-server.md
-- docs/reference/yang/sonic-system-aaa.md
-- docs/management/tacacs-authentication.md
-- docs/management/radius-management-user-authentication.md
-- docs/management/hld-ldap.md
-- docs/management/ssh-server-global-config-hld.md
-- docs/management/serial-console-global-config-hld.md
-- docs/system/banner-messages-hld.md
+sources: []
 related:
   cli:
   - config aaa

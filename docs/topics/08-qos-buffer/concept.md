@@ -4,21 +4,7 @@ description: QoS / Buffer の概念地図 — QoS の話は語彙が多くて、
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/acl-qos/sonic-qos-scheduler-and-shaping.md
-- docs/acl-qos/wred-and-ecn-statistics.md
-- docs/acl-qos/watermark-counters-in-sonic.md
-- docs/reference/config-db/buffer-pool.md
-- docs/reference/config-db/buffer-profile.md
-- docs/reference/config-db/buffer-pg.md
-- docs/reference/config-db/buffer-queue.md
-- docs/reference/config-db/queue.md
-- docs/reference/config-db/scheduler.md
-- docs/reference/config-db/wred-profile.md
-- docs/reference/config-db/dscp-to-tc-map.md
-- docs/reference/config-db/tc-to-queue-map.md
-- docs/reference/config-db/port-qos-map.md
-- docs/reference/config-db/pfc-priority-to-priority-group-map.md
+sources: []
 keywords:
 - QoS
 - Buffer
