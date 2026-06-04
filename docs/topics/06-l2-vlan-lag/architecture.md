@@ -5,17 +5,7 @@ description: L2 のアーキテクチャ — L2 設定は、CONFIG_DB のテー�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/switching/mclag-enhancements.md
-- docs/switching/brief-introduction-of-iccp-code.md
-- docs/switching/multiple-spanning-tree-protocol.md
-- docs/switching/sonic-ip-lag-incremental-update.md
-- docs/switching/layer-2-forwarding-enhancements.md
-- docs/reference/config-db/vlan.md
-- docs/reference/config-db/vlan-member.md
-- docs/reference/config-db/portchannel.md
-- docs/reference/config-db/portchannel-member.md
-- docs/reference/config-db/vlan-interface.md
+sources: []
 related:
   cli:
   - show mclag

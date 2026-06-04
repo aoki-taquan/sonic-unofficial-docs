@@ -25,7 +25,10 @@ related:
     - DEVICE_NEIGHBOR
     - DEVICE_NEIGHBOR_METADATA
     - PORT
-  cli: []
+  cli:
+    - show interfaces neighbor expected
+    - pfcwd show ports
+    - ecnconfig
   yang:
     - sonic-device_neighbor
 ---

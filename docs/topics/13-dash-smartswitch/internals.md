@@ -5,12 +5,7 @@ description: NPU-DPU DB と ENI ベース転送の内部構造 — DASH / SmartS
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/architecture/smart-switch-database-design.md
-- docs/overlay/sonic-dash-hld.md
-- docs/overlay/smartswitch-eni-based-forwarding.md
-- docs/acl-qos/dash-acl-tags.md
-- docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md
+sources: []
 related:
   cli:
   - config vnet

@@ -5,14 +5,7 @@ description: アーキテクチャ — SRv6 / MPLS / Path Tracing は別機能�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/routing/segment-routing-over-ipv6-srv6-hld.md
-- docs/routing/sonic-usid.md
-- docs/routing/srv6-sid-l3adj.md
-- docs/routing/srv6-vpn-hld.md
-- docs/routing/static-configuration-of-srv6-in-sonic-hld.md
-- docs/routing/mpls-for-sonic-high-level-design-document.md
-- docs/routing/path-tracing-midpoint.md
+sources: []
 related:
   cli:
   - show techsupport

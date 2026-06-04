@@ -5,13 +5,7 @@ area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
-sources:
-- docs/guides/beginner.md
-- docs/guides/operator.md
-- docs/guides/developer.md
-- docs/guides/evaluator.md
-- docs/management/sonic-user-manual.md
-- docs/management/sonic-nos-configuration-methods.md
+sources: []
 keywords:
 - SONiC overview
 - 全体像

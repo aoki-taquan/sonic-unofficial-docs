@@ -5,10 +5,7 @@ description: 内部実装 — ACL action はスキーマに書けるだけでは
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/acl-qos/egress-mirroring-support-and-acl-action-capability-check.md
-- docs/acl-qos/egress-outer-dscp-change-table.md
-- docs/architecture/sonic-packet-trimming.md
+sources: []
 related:
   cli:
   - config qos

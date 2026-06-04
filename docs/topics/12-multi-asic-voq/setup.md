@@ -5,11 +5,7 @@ description: 設定 — Multi-ASIC / VOQ chassis の設定の核心は「ASIC �
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/platform/multi-asic-single-json-configuration-design.md
-- docs/platform/db-design-for-multi-asic-scenarios.md
-- docs/platform/automatic-module-provisioning-for-chassis.md
-- docs/platform/single-asic-voq-fixed-system-sonic.md
+sources: []
 related:
   cli:
   - show queue

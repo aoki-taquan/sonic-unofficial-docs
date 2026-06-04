@@ -5,13 +5,7 @@ description: 概念 — Multi-ASIC と VOQ chassis は別の話に見えて段�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/platform/1-sonic-on-multi-asic-platforms.md
-- docs/platform/voq-sonic.md
-- docs/categories/multi-asic.md
-- docs/platform/fabric-port-support-on-sonic.md
-- docs/platform/recirculation-port-support-on-voq-chassis.md
-- docs/platform/single-asic-voq-fixed-system-sonic.md
+sources: []
 keywords:
 - Multi-ASIC
 - VOQ

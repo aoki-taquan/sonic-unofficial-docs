@@ -28,7 +28,6 @@ related:
     - DEVICE_METADATA
   cli:
     - config gnmi
-  yang: []
   _no_related_yang: true
 ---
 

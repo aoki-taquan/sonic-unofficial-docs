@@ -21,9 +21,7 @@ sources:
     path: dockers/docker-database/docker-database-init.sh
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: []
-  cli: []
-  yang: []
+  _no_related: true
 ---
 
 # Redis DB 設定 (database_config.json)

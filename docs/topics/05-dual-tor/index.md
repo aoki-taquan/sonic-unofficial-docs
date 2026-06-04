@@ -5,23 +5,7 @@ area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
-sources:
-- docs/categories/dual-tor.md
-- docs/overlay/active-active-dual-tor.md
-- docs/overlay/active-standby-dual-tor.md
-- docs/management/design-doc.md
-- docs/routing/default-route.md
-- docs/routing/prefix-based-mux-neighbors.md
-- docs/routing/multiple-nexthop-route-hld.md
-- docs/reference/cli/config-muxcable.md
-- docs/reference/cli/show-muxcable.md
-- docs/reference/config-db/mux-cable.md
-- docs/reference/config-db/peer-switch.md
-- docs/platform/icmp-hardware-offload.md
-- docs/routing/bfd-hw-offload.md
-- docs/routing/bfd-hw-offload-for-bgp-session.md
-- docs/overlay/dscp-remapping-for-tunnel-traffic.md
-- docs/architecture/dhcpv6-relay-agent.md
+sources: []
 keywords:
 - Dual-ToR
 - Mux

@@ -38,7 +38,7 @@ related:
   cli:
     - show ip route
     - show ipv6 route
-  yang: []
+  _no_related_yang: true
 ---
 
 # RouteOrch event / notification

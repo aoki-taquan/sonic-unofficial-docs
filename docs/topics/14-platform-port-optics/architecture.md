@@ -4,16 +4,7 @@ description: アーキテクチャ — ここでは、ポート 1 本がリン�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/architecture/port-profile-init-hld.md
-- docs/system/sonic-dynamic-port-breakout-feature-high-level-design.md
-- docs/architecture/sonic-port-auto-negotiation-design.md
-- docs/architecture/sonic-port-link-training-design.md
-- docs/architecture/sonic-port-auto-fec-design.md
-- docs/platform/sonic-port-fec-ber.md
-- docs/platform/fec-flr-support-in-sonic.md
-- docs/platform/sonic-fast-link-up.md
-- docs/architecture/sonic-port-configuration-refactor-design.md
+sources: []
 related:
   cli:
   - show interfaces status

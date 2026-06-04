@@ -5,12 +5,7 @@ description: 運用 — AAA と管理面ポリシーは「動いている間は�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/architecture/pw-hardening-design.md
-- docs/management/default-credential-management-for-california-sb-327-conformance.md
-- docs/system/reset-local-users-passwords-during-init-hld.md
-- docs/management/tacacs-test-plan.md
-- docs/management/aaa-improvements.md
+sources: []
 related:
   cli:
   - show aaa

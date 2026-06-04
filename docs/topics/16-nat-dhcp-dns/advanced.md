@@ -5,16 +5,7 @@ description: 発展トピック — この章のメインは NAT / DHCP です�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/system/sonic-network-time-protocol-ntp-client-configuration.md
-- docs/system/sonic-migration-to-chrony.md
-- docs/system/static-dns-configuration.md
-- docs/reference/config-db/ntp-global.md
-- docs/reference/config-db/ntp-server.md
-- docs/reference/yang/sonic-ntp.md
-- docs/reference/yang/sonic-dns.md
-- docs/system/twamp-light-hld.md
-- docs/architecture/1-udev-rules-design-for-terminal-server.md
+sources: []
 related:
   cli:
   - show nat
