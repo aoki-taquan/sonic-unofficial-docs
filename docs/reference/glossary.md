@@ -1561,9 +1561,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [ROUTE_TABLE handler 分岐 (fpmsyncd / RouteSync)](config-db/route-handler.md) (35)
 - [概要](../topics/02-bgp/concept.md) (16)
+- [アーキテクチャ](../topics/02-bgp/architecture.md) (15)
 - [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (9)
 - [内部実装](../topics/02-bgp/internals.md) (8)
-- [概念](../topics/17-srv6-mpls/concept.md) (8)
 
 ### [fpmsyncd](#term-fpmsyncd)
 
