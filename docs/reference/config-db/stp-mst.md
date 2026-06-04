@@ -18,6 +18,16 @@ related:
     - STP_MST
     - STP_PORT
     - STP
+  cli:
+    - config spanning-tree enable mst
+    - config spanning-tree forward_delay
+    - config spanning-tree hello
+    - config spanning-tree max_age
+    - config spanning-tree max_hops
+    - config spanning-tree mst region-name
+    - config spanning-tree mst revision
+    - config spanning-tree mst instance
+  _no_related_yang: true
 ---
 
 # STP_MST_INST / STP_MST_PORT テーブル

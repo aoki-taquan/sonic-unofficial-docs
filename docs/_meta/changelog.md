@@ -2,7 +2,7 @@
 title: 変更履歴
 description: "変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。"
 verification: meta
-last_verified: 2026-06-03
+last_verified: 2026-06-04
 tags:
   - changelog
   - meta
@@ -23,6 +23,9 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-03 #5096 schema: add 'topics' to area enum (155 chapter pages)
+- 2026-06-03 #5095 fix(lab): correct sonic-vs build target + sonic-mgmt pytest invocation + redis snapshot procedure
+- 2026-06-03 #5094 chore(frontmatter): rename legacy _no_yang to _no_related_yang (24 files)
 - 2026-06-03 #5093 fix: split-child 'monitor: X — monitor: X' double-expansion in 実装との乖離 section (32 pages)
 - 2026-06-03 #5092 chore(docs): strip QA-internal 全行精読 phrasings (96 files)
 - 2026-06-03 #5091 fix: render_evidence reasoning > block-scalar parser + buildimage #11337 mislabel
@@ -523,7 +526,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3901 docs(config-db): add Phase F side-effects block to gnmi-counter
 - 2026-05-19 #3899 docs(config-db): add Phase D failure block to SWITCH_TRIMMING
 - 2026-05-19 #3898 docs(config-db): add Phase F side-effects block to suppress-asic-sdk-health-event
-- 2026-05-19 #3896 docs(config-db): add Phase D failure-behavior block to mux-cable-state
-- 2026-05-19 #3895 docs(config-db): add Phase D failure-behavior block to stp-state
-- 2026-05-19 #3893 docs(config-db): add Phase E constants block to fabric-port
 
