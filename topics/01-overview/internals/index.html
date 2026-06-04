@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="内部実装 — 設定基盤の内部実装は、起動時に設定をどう作るか、Redis をどう配置するか、Multi-ASIC で namespace をどう分けるか、という順に読むと全体像がつかめます。通常運用では意識しない層ですが、first boot、upgrade、Multi-ASIC、性能問題ではここが原因になります。">
+        <meta name="description" content="設定基盤の内部実装を、起動時の config 生成・Redis インスタンス配置・Multi-ASIC namespace の順で俯瞰する 01 章の hub ページ。first boot / upgrade / Multi-ASIC / 性能問題の原因切り分けに使う。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="内部実装 — 設定基盤の内部実装は、起動時に設定をどう作るか、Redis をどう配置するか、Multi-ASIC で namespace をどう分けるか、という順に読むと全体像がつかめます。通常運用では意識しない層ですが、first boot、upgrade、Multi-ASIC、性能問題ではここが原因になります。" />
+<meta property="og:description" content="設定基盤の内部実装を、起動時の config 生成・Redis インスタンス配置・Multi-ASIC namespace の順で俯瞰する 01 章の hub ページ。first boot / upgrade / Multi-ASIC / 性能問題の原因切り分けに使う。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/01-overview/internals.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/01-overview/internals/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="内部実装 — 設定基盤の内部実装は、起動時に設定をどう作るか、Redis をどう配置するか、Multi-ASIC で namespace をどう分けるか、という順に読むと全体像がつかめます。通常運用では意識しない層ですが、first boot、upgrade、Multi-ASIC、性能問題ではここが原因になります。" />
+<meta property="twitter:description" content="設定基盤の内部実装を、起動時の config 生成・Redis インスタンス配置・Multi-ASIC namespace の順で俯瞰する 01 章の hub ページ。first boot / upgrade / Multi-ASIC / 性能問題の原因切り分けに使う。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/01-overview/internals.png" />
 </head>
   
@@ -36079,7 +36079,7 @@
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>設定基盤の内部実装は、起動時に設定をどう作るか、<a href="../../../reference/glossary/#term-redis">Redis</a> をどう配置するか、<a href="../../../reference/glossary/#term-multi-asic">Multi-ASIC</a> で namespace をどう分けるか、という順に読むと全体像がつかめます。通常運用では意識しない層ですが、first boot、upgrade、Multi-<a href="../../../reference/glossary/#term-asic">ASIC</a>、性能問題ではここが原因になります。</p>
 <h2 id="first-boot-migration">first boot と migration<a class="headerlink" href="#first-boot-migration" title="Permanent link">&para;</a></h2>
-<p><a href="../../../system/sonic-configuration-setup-service/">config-setup</a> は、first boot で startup config が無い場合の factory default 生成、firmware upgrade 時の backup / restore / migration、Config DB 外の設定ファイルの扱いを集約するサービスです。</p>
+<p><a href="../../../system/sonic-configuration-setup-service/">config-setup</a> は、first boot で startup config が無い場合の factory default 生成、firmware upgrade 時の backup / restore / migration、Config DB 外の設定ファイルの扱いを集約するサービスです。<!-- evidence: sonic-buildimage/files/image_config/config-setup/config-setup L48-L65 (usage で boot / factory モードを定義), L283-L301 (minigraph 優先 → ZTP → factory default の選択), L368 (db_migrator.py -o migrate 呼び出し)。 --></p>
 <pre class="mermaid"><code>flowchart TB
   BOOT[switch boot] --&gt; EXISTS{startup config exists?}
   EXISTS --&gt;|no| FACTORY[config-setup factory]
@@ -36092,7 +36092,7 @@
   LOAD --&gt; SONIC[start SONiC services]</code></pre>
 <p><a href="../../../reference/glossary/#term-ztp">ZTP</a> が動く環境では、first boot の factory default 生成と外部 provisioning の責務がぶつからないように読む必要があります。upgrade では、古い <code>config_db.json</code> を新版の schema に合わせる migration が重要です。</p>
 <h2 id="redis">Redis インスタンスを分ける理由<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
-<p>単一 Redis に <code>APPL_DB</code>、<code>ASIC_DB</code>、<code>CONFIG_DB</code>、<code>STATE_DB</code>、<code>COUNTERS_DB</code> などを載せると、大量 route や counter 更新で hot spot になります。<a href="../../../internals/support-multiple-user-defined-redis-database-instances/">複数 Redis インスタンス</a> の設計は、<code>database_config.json</code> の <code>INSTANCES</code> と <code>DATABASES</code> で DB 名から Redis インスタンスを引けるようにし、負荷を分散するものです。</p>
+<p>単一 Redis に <code>APPL_DB</code>、<code>ASIC_DB</code>、<code>CONFIG_DB</code>、<code>STATE_DB</code>、<code>COUNTERS_DB</code> などを載せると、大量 route や counter 更新で hot spot になります。<a href="../../../internals/support-multiple-user-defined-redis-database-instances/">複数 Redis インスタンス</a> の設計は、<code>database_config.json</code> の <code>INSTANCES</code> と <code>DATABASES</code> で DB 名から Redis インスタンスを引けるようにし、負荷を分散するものです。<!-- evidence: sonic-swss-common/common/database_config.json L1-L117 が INSTANCES (redis / redis_chassis) と DATABASES (APPL_DB / ASIC_DB / CONFIG_DB ...) のリファレンス雛形。 --></p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;DATABASES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;APPL_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="p">},</span>
@@ -36103,7 +36103,7 @@
 </span></code></pre></div>
 <p>この設定は <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> テーブルではなく、database service の起動設定です。変更時は database service の再起動や downgrade 互換性を考慮します。</p>
 <h2 id="multi-asic-namespace-db">Multi-ASIC namespace の DB<a class="headerlink" href="#multi-asic-namespace-db" title="Permanent link">&para;</a></h2>
-<p><a href="../../../internals/support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis</a> は、host global namespace と <code>asic0</code>、<code>asic1</code> などの <a href="../../../reference/glossary/#term-npu">NPU</a> namespace を分けます。各 namespace は独自の <code>database_config.json</code> を持ち、host 側の <code>database_global.json</code> が全体の目録になります。</p>
+<p><a href="../../../internals/support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis</a> は、host global namespace と <code>asic0</code>、<code>asic1</code> などの <a href="../../../reference/glossary/#term-npu">NPU</a> namespace を分けます。各 namespace は独自の <code>database_config.json</code> を持ち、host 側の <code>database_global.json</code> が全体の目録になります。<!-- evidence: sonic-buildimage/dockers/docker-database/database_global.json.j2 L7-L40 で INCLUDES 配列に namespace ごとの database_config.json を列挙する jinja テンプレート (NAMESPACE_COUNT / NUM_DPU で展開) を確認。 --></p>
 <table>
 <thead>
 <tr>
@@ -36266,7 +36266,7 @@
 <ul>
 <li><strong>Redis の単一スレッド</strong>：全テーブルが redis-server の単一スレッドに直列化されるため、高 QPS 時には Redis 自体が bottleneck になりやすいです。複数インスタンス化はこのため。</li>
 <li><strong>CONFIG_DB ↔ APPL_DB の二段構造</strong>：CLI から CONFIG_DB に書いた直後に APPL_DB に同名 key が無い場合がある（<code>*mgrd</code> 経由のため）。SET 直後の STATE/APPL 確認は polling が必要。</li>
-<li><strong>ASIC_DB の write は async</strong>：sairedis の async mode により、ASIC_DB に書いた直後の SAI 反映確認は notification channel か <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> 経由でしか観測できない。</li>
+<li><strong>ASIC_DB の write は async</strong>：sairedis の async mode により、ASIC_DB に書いた直後の SAI 反映確認は notification channel か <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> 経由でしか観測できない。<!-- evidence: sonic-sairedis/syncd/Syncd.cpp L2342, L2755 で "failed in async mode" の throw 経路を確認。async mode が syncd の通常動作経路。 --></li>
 <li><strong>Multi-ASIC は namespace で分離</strong>：同名 DB が複数ある。<code>-n asicX</code> を忘れた CLI は host 側の DB を読むだけで silent に成功する事故が多発する。</li>
 </ul>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>

@@ -4781,6 +4781,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36161,6 +36172,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36248,7 +36270,7 @@
 <tbody>
 <tr>
 <td><code>PortsOrch</code> (<code>orchagent/portsorch.cpp</code>)</td>
-<td><code>PortsOrch::doTask</code>、<code>initializePort</code>、<code>setPortAdminStatus</code></td>
+<td><code>PortsOrch::initializePorts</code>、<code>PortsOrch::setPortAdminStatus</code>[^<a href="../../../reference/glossary/#term-portsorch">portsorch</a>]</td>
 <td>port SAI object 作成、speed/FEC/autoneg 設定</td>
 </tr>
 <tr>
@@ -36257,8 +36279,8 @@
 <td>kernel link state を <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> へ</td>
 </tr>
 <tr>
-<td><code>xcvrd</code> (<code>sonic-platform-daemons/sonic-xcvrd/</code>)</td>
-<td><code>xcvrd.py</code></td>
+<td><code>xcvrd</code> (<code>sonic-platform-daemons/sonic-xcvrd/xcvrd/</code>)</td>
+<td><code>xcvrd.py</code>、<code>media_settings_parser.notify_media_setting</code><sup id="fnref:xcvrd"><a class="footnote-ref" href="#fn:xcvrd">2</a></sup></td>
 <td>transceiver EEPROM 読み出し、SI 適用、TRANSCEIVER_INFO/DOM/STATUS を <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に書く</td>
 </tr>
 <tr>
@@ -36310,7 +36332,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>PORT_SERDES</code> は media-based port settings の主入口で、media type ごとに <code>media_settings.json</code> を読み xcvrd が適用要求を出します。</p>
+<p><code>PORT_SERDES</code> は media-based port settings の主入口で、media type ごとに <code>media_settings.json</code><sup id="fnref:media-settings"><a class="footnote-ref" href="#fn:media-settings">3</a></sup> を読み xcvrd が適用要求を出します。</p>
 <h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">CONFIG_DB</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">PORT, BREAKOUT_CFG, INTERFACE,</span>
@@ -36354,7 +36376,23 @@
 <li><a href="../../../platform/support-bmc-flows-in-sonic/">support BMC flows in SONiC</a></li>
 <li><a href="../../../system/sonic-bmc-platform-management-monitoring/">SONiC BMC platform management monitoring</a></li>
 </ul>
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 889740d66e5f -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:portsorch">
+<p><a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">sonic-net/sonic-swss <code>orchagent/portsorch.cpp</code> (ref <code>4305596</code>)</a> — <code>PortsOrch::initializePorts</code> (L1160) と <code>PortsOrch::setPortAdminStatus</code> (L2208) を確認。&#160;<a class="footnote-backref" href="#fnref:portsorch" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:xcvrd">
+<p><a href="https://github.com/sonic-net/sonic-platform-daemons/blob/4ba9612cb7756651062d37f977e3df17d57f740d/sonic-xcvrd/xcvrd/xcvrd.py">sonic-net/sonic-platform-daemons <code>sonic-xcvrd/xcvrd/xcvrd.py</code> (ref <code>4ba9612</code>)</a> — <code>media_settings_parser.notify_media_setting</code> 呼び出し (L338, L571, L831, L859) と TRANSCEIVER_INFO/DOM テーブル書き込み (L736-738) を確認。&#160;<a class="footnote-backref" href="#fnref:xcvrd" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:media-settings">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/device/nokia/x86_64-nokia_ixr7250e_36x400g-r0/media_settings.json">sonic-net/sonic-buildimage <code>device/nokia/x86_64-nokia_ixr7250e_36x400g-r0/media_settings.json</code> (ref <code>9ea932e</code>)</a> を例として確認 (装置 SKU ごとに同名ファイルが存在)。&#160;<a class="footnote-backref" href="#fnref:media-settings" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

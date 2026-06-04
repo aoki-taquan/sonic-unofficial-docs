@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: minigraph 適用後に reload が完了しない / 起動が固まる — : sonic-net/sonic-utilities @ 39732bceb — config/main.py : sonic-net/sonic-buildimage @ 4305596 — sonic-config…">
+        <meta name="description" content="`config load_minigraph` 実行後に reload が終わらない / swss が activating のまま固まる際の切り分け runbook。minigraph.xml 構文・hwsku 整合・port_config.ini ずれ・hostcfgd / syncd 起動順を順に確認する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="minigraph 適用後に reload が完了しない / 起動が固まる - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: minigraph 適用後に reload が完了しない / 起動が固まる — : sonic-net/sonic-utilities @ 39732bceb — config/main.py : sonic-net/sonic-buildimage @ 4305596 — sonic-config…" />
+<meta property="og:description" content="`config load_minigraph` 実行後に reload が終わらない / swss が activating のまま固まる際の切り分け runbook。minigraph.xml 構文・hwsku 整合・port_config.ini ずれ・hostcfgd / syncd 起動順を順に確認する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/minigraph-reload-stuck.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/minigraph-reload-stuck/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="minigraph 適用後に reload が完了しない / 起動が固まる - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: minigraph 適用後に reload が完了しない / 起動が固まる — : sonic-net/sonic-utilities @ 39732bceb — config/main.py : sonic-net/sonic-buildimage @ 4305596 — sonic-config…" />
+<meta property="twitter:description" content="`config load_minigraph` 実行後に reload が終わらない / swss が activating のまま固まる際の切り分け runbook。minigraph.xml 構文・hwsku 整合・port_config.ini ずれ・hostcfgd / syncd 起動順を順に確認する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/minigraph-reload-stuck.png" />
 </head>
   
@@ -35009,10 +35009,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-hostcfgd-hostcfgd" class="md-nav__link">
+  <a href="#3-hostcfgd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. hostcfgd / hostcfgd の状態
+        3. hostcfgd の状態
       
     </span>
   </a>
@@ -36003,10 +36003,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-hostcfgd-hostcfgd" class="md-nav__link">
+  <a href="#3-hostcfgd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. hostcfgd / hostcfgd の状態
+        3. hostcfgd の状態
       
     </span>
   </a>
@@ -36138,7 +36138,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>--failed
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>swss<span class="w"> </span>syncd<span class="w"> </span>database<span class="w"> </span>-n<span class="w"> </span><span class="m">20</span>
 </span></code></pre></div>
-<h3 id="3-hostcfgd-hostcfgd">3. hostcfgd / hostcfgd の状態<a class="headerlink" href="#3-hostcfgd-hostcfgd" title="Permanent link">&para;</a></h3>
+<h3 id="3-hostcfgd">3. hostcfgd の状態<a class="headerlink" href="#3-hostcfgd" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>hostcfgd<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span><span class="w"> </span>--no-pager
 </span></code></pre></div>
 <h3 id="4-config_dbjson">4. config_db.json の生成確認<a class="headerlink" href="#4-config_dbjson" title="Permanent link">&para;</a></h3>

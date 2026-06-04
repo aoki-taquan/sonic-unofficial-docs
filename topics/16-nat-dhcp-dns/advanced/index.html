@@ -36207,7 +36207,8 @@
 <h2 id="dns">静的 DNS<a class="headerlink" href="#dns" title="Permanent link">&para;</a></h2>
 <p><code>DNS_NAMESERVER</code> テーブルから <code>resolv-config.service</code> が <code>/etc/resolv.conf</code> を生成し、host と各 container に展開します。<code>config dns nameserver add &lt;ip&gt;</code> で書き込み、<code>show dns nameserver</code> で確認します。<code>update-containers</code> スクリプトが各 container の resolv.conf も更新する点が特徴で、container ごとに名前解決の挙動が変わらないよう設計されています。詳細は <a href="../../../system/static-dns-configuration/">static DNS ページ</a> と <a href="../../../reference/yang/sonic-dns/">sonic-dns YANG</a> を参照してください。</p>
 <h2 id="twamp-light">TWAMP Light<a class="headerlink" href="#twamp-light" title="Permanent link">&para;</a></h2>
-<p>TWAMP Light（RFC 5357）は data plane の双方向 latency / jitter / packet loss 測定プロトコルで、control connection を持たない軽量プロトコルです。SONiC では <a href="../../../reference/glossary/#term-asic">ASIC</a> offload（<code>SAI_TWAMP_*</code> 系 API）を想定した <a href="../../../reference/glossary/#term-hld">HLD</a> があり、<code>CFG_TWAMP_SESSION_TABLE</code> で Session-Sender / Reflector を定義する設計になっています。ただし community master では <a href="../../../reference/glossary/#term-sai">SAI</a> 拡張 / orch / CLI が未取り込みで、HLD-only ステータスです。実機検証時はまずベンダー SDK 側の TWAMP サポートを確認してください。詳細は <a href="../../../system/twamp-light-hld/">TWAMP Light HLD ページ</a> を参照してください。</p>
+<p>TWAMP Light（RFC 5357）は data plane の双方向 latency / jitter / packet loss 測定プロトコルで、control connection を持たない軽量プロトコルです。SONiC では <a href="../../../reference/glossary/#term-asic">ASIC</a> offload（<code>SAI_TWAMP_*</code> 系 API）を想定した <a href="../../../reference/glossary/#term-hld">HLD</a> があり、<code>CFG_TWAMP_SESSION_TABLE</code> で Session-Sender / Reflector を定義する設計になっています。</p>
+<p>community master の現状は段階的に整備が進んでいます。<code>CFG_TWAMP_SESSION_TABLE_NAME</code> / <code>STATE_TWAMP_SESSION_TABLE_NAME</code> / <code>COUNTERS_TWAMP_SESSION_NAME_MAP</code> の各テーブル定義は <code>sonic-swss-common/common/schema.h</code> に取り込まれ<!-- evidence: sonic-swss-common/common/schema.h L256,387,469 -->、orchagent には <code>TwampOrch</code> が組み込まれて <code>orchdaemon</code> から起動されます<!-- evidence: sonic-swss/orchagent/orchdaemon.cpp L852-855 / orchagent/twamporch.cpp -->。<code>sonic-sairedis</code> 側にも <code>NotificationTwampSessionEvent</code> ハンドラが入っています<!-- evidence: sonic-sairedis/meta/NotificationTwampSessionEvent.cpp -->。一方で <code>sonic-utilities</code> には <code>config twamp</code> / <code>show twamp</code> 系 CLI がまだ無く、<code>sonic-swss-common/yang-models</code> にも <code>sonic-twamp</code> モジュールが未追加です。実運用には JSON を <code>CONFIG_DB</code> に直接流す必要があり、ASIC 側の <code>SAI_TWAMP_*</code> 対応もベンダー依存です。実機検証時はまずベンダー SDK 側の TWAMP サポートを確認してください。詳細は <a href="../../../system/twamp-light-hld/">TWAMP Light HLD ページ</a> を参照してください。</p>
 <p><a href="../../../reference/glossary/#term-qos">QoS</a> / Observability 寄りの機能ですが、「control 接続を持たない軽量サービス」という性格上、本章の発展トピックとして置きます。</p>
 <h2 id="terminal-serverudev-rules">Terminal server（udev rules）<a class="headerlink" href="#terminal-serverudev-rules" title="Permanent link">&para;</a></h2>
 <p>ターミナルサーバ機能を持つ装置はフロントパネルに複数シリアルポートを持ち、内部で USB hub + USB-to-UART チップ（例: cp210x）経由で <code>/dev/ttyUSB&lt;N&gt;</code> に枚挙されます。デフォルトの枚挙順は単一ポート故障で詰まるため、SONiC は udev rules で物理ポート番号と symlink 名（<code>/dev/Mytty-&lt;N&gt;</code> 等）を固定する設計を採用しています。haliburton platform で <code>50-ttyUSB-C0.rules</code> として実装されています。詳細は <a href="../../../architecture/1-udev-rules-design-for-terminal-server/">udev rules ページ</a> を参照してください。</p>
@@ -36226,7 +36227,7 @@
 </ul>
 <h2 id="_3">追加の発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>NAT64 / DNS64</strong>: IPv6 専用 host から IPv4 to の通信を NAT64 + DNS64 で橋渡しする。SONiC NAT は主に IPv4 NAT に焦点が当たっており、NAT64 は ASIC capability と SAI 対応が前提。</li>
+<li><strong>NAT64 / DNS64</strong>: IPv6 専用 host から IPv4 to の通信を NAT64 + DNS64 で橋渡しする。SONiC NAT は主に IPv4 NAT に焦点が当たっており、NAT64 は ASIC capability と <a href="../../../reference/glossary/#term-sai">SAI</a> 対応が前提。</li>
 <li><strong>DHCPv4 / v6 server (in-box)</strong>: 通常は relay 用途だが、lab / mgmt 用途で in-box DHCP server を動かす構成が議論される (<code>dnsmasq</code> ベース)。</li>
 <li><strong>NTP 精度向上 (PTP との比較)</strong>: 1ms 級の同期が必要なら PTP (IEEE 1588) を使うが、SONiC PTP は HLD 段階の機能が多い。chrony で得られる精度の限界を理解しておく。</li>
 <li><strong>DHCP server identifier override</strong>: 複数 DHCP relay 装置で同じ subnet を扱うとき、server identifier override (RFC 5107) を使って応答の経路を制御する。</li>
@@ -36241,7 +36242,7 @@
 </ul>
 <h2 id="_5">将来計画 / ロードマップ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>TWAMP Light の community master 取り込み（SAI 拡張と orch / CLI）が future work。</li>
+<li>TWAMP Light の残作業: <code>sonic-utilities</code> の <code>config twamp</code> / <code>show twamp</code> CLI と <code>sonic-twamp</code> YANG モデル整備、各 SAI ベンダー実装の追随が future work（orch とテーブル定義は取り込み済み）。</li>
 <li>NAT64 / DNS64 の正式サポート議論が断続的にある。</li>
 <li>DHCP relay の YANG モデル整備と Option 79 / Option 82 の細分化拡張。</li>
 </ul>
@@ -36259,7 +36260,7 @@
 <ul>
 <li><code>sonic-buildimage</code> の chrony 移行関連 PR は完了側に入り、test plan 拡充と timezone まわりの細部修正が継続。</li>
 <li>NAT 関連は <code>natorch</code> / <code>natsyncd</code> で aging / counter / scale 改善 PR が散発的に入る。</li>
-<li>TWAMP Light は HLD のみで community PR は限定的。SAI extension の議論待ちが続く状況。</li>
+<li>TWAMP Light は orch (<code>twamporch</code>) とテーブル定義が master 入り済み (<code>sonic-swss</code> / <code>sonic-swss-common</code>)。残るは <code>sonic-utilities</code> CLI と <code>sonic-twamp</code> YANG、各 SAI ベンダーの <code>SAI_TWAMP_*</code> 実装追随。</li>
 </ul>
 <h2 id="_6">ハンドオフ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36291,7 +36292,7 @@
 <li><a href="../../07-acl-copp-mirror/">07 ACL / CoPP / Mirror: DHCP DoS 緩和との境界</a></li>
 <li><a href="../../15-security-aaa/">15 Security / AAA: mgmt VRF と service bind</a></li>
 </ul>
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: f9445b5b4106 -->
 
 
 

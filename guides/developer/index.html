@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="開発者向けガイド — SONiC に機能追加・拡張を入れたい読者を想定しています。HLD、YANG、CONFIG_DB、CLI、daemon / orch、テスト計画の対応関係を追い、実装前に関連設計を把握するための導線です。">
+        <meta name="description" content="開発者向けガイド — SONiC に機能追加・拡張を入れたい読者を想定し、HLD・YANG・CONFIG_DB・CLI・daemon / orch・テスト計画の対応関係を整理し、新機能追加時に触る層を順に並べたチェックリストを提供します。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="開発者向けガイド - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="開発者向けガイド — SONiC に機能追加・拡張を入れたい読者を想定しています。HLD、YANG、CONFIG_DB、CLI、daemon / orch、テスト計画の対応関係を追い、実装前に関連設計を把握するための導線です。" />
+<meta property="og:description" content="開発者向けガイド — SONiC に機能追加・拡張を入れたい読者を想定し、HLD・YANG・CONFIG_DB・CLI・daemon / orch・テスト計画の対応関係を整理し、新機能追加時に触る層を順に並べたチェックリストを提供します。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/guides/developer.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/guides/developer/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="開発者向けガイド - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="開発者向けガイド — SONiC に機能追加・拡張を入れたい読者を想定しています。HLD、YANG、CONFIG_DB、CLI、daemon / orch、テスト計画の対応関係を追い、実装前に関連設計を把握するための導線です。" />
+<meta property="twitter:description" content="開発者向けガイド — SONiC に機能追加・拡張を入れたい読者を想定し、HLD・YANG・CONFIG_DB・CLI・daemon / orch・テスト計画の対応関係を整理し、新機能追加時に触る層を順に並べたチェックリストを提供します。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/guides/developer.png" />
 </head>
   
@@ -836,7 +836,18 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        不足コンテンツ注記
+        新機能追加時のチェックリスト
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の不足索引
       
     </span>
   </a>
@@ -35860,7 +35871,18 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        不足コンテンツ注記
+        新機能追加時のチェックリスト
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の不足索引
       
     </span>
   </a>
@@ -35923,11 +35945,49 @@
 <li>機能領域別に <a href="../../routing/">ルーティング</a>、<a href="../../switching/">スイッチング</a>、<a href="../../acl-qos/">ACL &amp; QoS</a>、<a href="../../platform/">プラットフォーム</a> の HLD</li>
 <li>test plan がある機能では該当する <code>*-test-plan.md</code></li>
 </ol>
-<h2 id="_3">不足コンテンツ注記<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">新機能追加時のチェックリスト<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>新しい機能や設定項目を SONiC に追加する際、最低限触ることになる層を順に並べました。各項目は実装すべき repo / ファイル種別の入り口を示しており、詳細仕様は対応する管理系 HLD（<a href="../../management/sonic-yang-model-guidelines/">YANG model guidelines</a>、<a href="../../management/sonic-config-update-validation-via-yang/">Config update validation via YANG</a> など）に従ってください。</p>
+<ol>
+<li><strong>CONFIG_DB schema を決める</strong><ul>
+<li><code>sonic-swss-common/common/schema.h</code> に table 名 / key 区切り / field 名のマクロ定義を追加します。例えば PORT は <code>APP_PORT_TABLE_NAME "PORT_TABLE"</code> として APP_DB 側にも定義されています<sup id="fnref:schema-h"><a class="footnote-ref" href="#fn:schema-h">1</a></sup>。</li>
+<li>既存 table を拡張する場合は同ファイルの該当ブロックに field マクロを追加します。</li>
+</ul>
+</li>
+<li><strong>YANG モデルを追加する</strong><ul>
+<li><code>sonic-buildimage/src/sonic-yang-models/yang-models/</code> に <code>sonic-&lt;feature&gt;.yang</code> を新規追加するか、既存 yang を拡張します<sup id="fnref:yang-dir"><a class="footnote-ref" href="#fn:yang-dir">2</a></sup>。命名・grouping・leafref 規約は <a href="../../management/sonic-yang-model-guidelines/">SONiC YANG Model Guidelines</a> に従います。</li>
+<li><code>sonic-buildimage/src/sonic-yang-models/tests/yang_model_tests/</code> に正常系 / 異常系 JSON を追加し、<code>test_sonic_yang_models.py</code> で回帰確認します<sup id="fnref:yang-tests"><a class="footnote-ref" href="#fn:yang-tests">3</a></sup>。</li>
+</ul>
+</li>
+<li><strong>CONFIG_DB ↔ daemon の対応を決める</strong><ul>
+<li>新 table をどの orch / daemon が subscribe するかを設計し、<a href="../../reference/config-db-orch-map/">CONFIG_DB ↔ orch 対応表</a> に追記します。</li>
+<li>主要な実装位置は <code>sonic-swss/orchagent/</code> 配下の <code>*orch.cpp</code> / <code>*orch.h</code> です（例: <code>aclorch.cpp</code>, <code>bufferorch.cpp</code>, <code>bfdorch.cpp</code>）。サブシステム固有の daemon は <code>sonic-swss/&lt;feature&gt;mgrd/</code>、<code>sonic-platform-daemons/</code> などに分かれます。</li>
+</ul>
+</li>
+<li><strong>CLI を実装する</strong><ul>
+<li>設定系は <code>sonic-utilities/config/&lt;feature&gt;.py</code>、表示系は <code>sonic-utilities/show/&lt;feature&gt;.py</code> に Click サブコマンドを追加します。CONFIG_DB との接続は <code>swsscommon.ConfigDBConnector</code> 経由で行い、YANG validation を意識する場合は <a href="../../management/sonic-config-update-validation-via-yang/">Config update validation via YANG</a> を参照します。</li>
+<li>同 repo の <code>tests/&lt;feature&gt;_test.py</code> に unit test を追加します。</li>
+</ul>
+</li>
+<li><strong>test plan / 結合テストを書く</strong><ul>
+<li>HLD と並列で <code>*-test-plan.md</code> を提案するのが慣習です。当リポジトリ内の既存例は <code>docs/&lt;area&gt;/*-test-plan.md</code> を grep して参照し、実装テストは <code>sonic-mgmt</code> 配下の <code>tests/</code> に PR を出します。</li>
+<li>YANG / CLI / 単一 daemon で完結する範囲は up-front の単体テストで吸収し、複数 daemon にまたがる挙動だけを sonic-mgmt の結合テストに残すと PR レビューが軽くなります。</li>
+</ul>
+</li>
+<li><strong>migration / upgrade を考慮する</strong><ul>
+<li>CONFIG_DB schema を変更する場合、<code>sonic-utilities/scripts/db_migrator.py</code> に migration ステップを追加して minigraph / golden config から旧 schema を変換できるようにします。</li>
+<li>default config の生成は <code>sonic-buildimage</code> の <code>files/build_templates/</code> Jinja2 テンプレートに反映します。</li>
+</ul>
+</li>
+<li><strong>ドキュメントに反映する</strong><ul>
+<li>機能 HLD は <code>SONiC/doc/&lt;feature&gt;/</code> に置く慣習です。コミュニティ master と当ドキュメントの双方で参照しやすいよう、PR では HLD / YANG / CLI Ref / test plan のクロスリンクを最低限張ります。</li>
+<li>当リポジトリでは <code>docs/&lt;area&gt;/&lt;slug&gt;.md</code> を新設し、<code>docs/reference/yang/</code>・<code>docs/reference/cli/</code>・<code>docs/reference/config-db/</code> 側の自動生成索引が拾える形で frontmatter（<code>area</code>, <code>verification</code>, <code>sources</code>, <code>related</code>）を埋めます。詳細は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/templates/SCHEMA.md"><code>meta/templates/SCHEMA.md</code></a> を参照してください。</li>
+</ul>
+</li>
+</ol>
+<h2 id="_4">既知の不足索引<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>「新機能追加時のチェックリスト」がありません。YANG 追加、CONFIG_DB schema、CLI、orch / daemon、test plan、migration、docs 反映を 1 本の流れで示すページが必要です。</li>
-<li>「この CONFIG_DB テーブルを読む daemon はどれか」を俯瞰する索引として <a href="../../reference/config-db-orch-map/">CONFIG_DB ↔ orch 対応表</a> があります。「この CLI がどの DB を書くか」の横断索引はまだ不足しています。</li>
-<li>テスト観点の導線が area 別に散っているため、開発者向けに test plan の読み方、既存テストとの対応、検証粒度をまとめるとよいです。</li>
+<li>「この CLI がどの DB を書くか」の横断索引はまだありません。当面は <code>sonic-utilities/config/&lt;feature&gt;.py</code> 側で grep して <code>ConfigDBConnector.set_entry</code> の引数 table を追うのが実用的です。</li>
+<li>テスト観点の導線は area 別に散っており、開発者向けに test plan の読み方、既存テストとの対応、検証粒度をまとめた 1 ページがあると便利です（未整備）。</li>
 </ul>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
@@ -35937,7 +35997,22 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 4a6287bc2ad2 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:schema-h">
+<p><code>sonic-swss-common/common/schema.h</code> (約 565 行) に APP_DB / <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> / CONFIG_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> の table 名マクロが集約されています。例: 37 行目付近 <code>APP_PORT_TABLE_NAME "PORT_TABLE"</code>、16 行目 <code>#define CONFIG_DB 4</code>。&#160;<a class="footnote-backref" href="#fnref:schema-h" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:yang-dir">
+<p><code>sonic-buildimage/src/sonic-yang-models/yang-models/</code> 配下に <code>sonic-acl.yang</code> / <code>sonic-port.yang</code> / <code>sonic-bgp-*.yang</code> などコミュニティ標準の sonic-* YANG が並びます。&#160;<a class="footnote-backref" href="#fnref:yang-dir" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:yang-tests">
+<p><code>sonic-buildimage/src/sonic-yang-models/tests/test_sonic_yang_models.py</code> と <code>yang_model_tests/</code> の JSON フィクスチャで mandatory / leafref / when 条件などを検証します。&#160;<a class="footnote-backref" href="#fnref:yang-tests" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

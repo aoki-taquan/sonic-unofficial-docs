@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC Management Framework（REST / gNMI / Translib / Transformer） — sonic-mgmt-framework は外部 API（REST / gNMI / CLI）と内部 CONFIG_DB / 各種 daemon 間の モデル翻訳層 を担う。">
+        <meta name="description" content="sonic-mgmt-framework は REST/gNMI/CLI と CONFIG_DB / daemon 間の YANG モデル翻訳層。Translib App Interface、Transformer 各種 callback、Subscribe、CVL の deep-link 付き解説。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SONiC Management Framework（REST / gNMI / Translib / Transformer） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SONiC Management Framework（REST / gNMI / Translib / Transformer） — sonic-mgmt-framework は外部 API（REST / gNMI / CLI）と内部 CONFIG_DB / 各種 daemon 間の モデル翻訳層 を担う。" />
+<meta property="og:description" content="sonic-mgmt-framework は REST/gNMI/CLI と CONFIG_DB / daemon 間の YANG モデル翻訳層。Translib App Interface、Transformer 各種 callback、Subscribe、CVL の deep-link 付き解説。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/sonic-management-framework.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/management/sonic-management-framework/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SONiC Management Framework（REST / gNMI / Translib / Transformer） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SONiC Management Framework（REST / gNMI / Translib / Transformer） — sonic-mgmt-framework は外部 API（REST / gNMI / CLI）と内部 CONFIG_DB / 各種 daemon 間の モデル翻訳層 を担う。" />
+<meta property="twitter:description" content="sonic-mgmt-framework は REST/gNMI/CLI と CONFIG_DB / daemon 間の YANG モデル翻訳層。Translib App Interface、Transformer 各種 callback、Subscribe、CVL の deep-link 付き解説。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/sonic-management-framework.png" />
 </head>
   
@@ -15848,6 +15848,67 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        主要コンポーネントの深掘り
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="主要コンポーネントの深掘り">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#translib-app-interfacehld-3226" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Translib App Interface（HLD 3.2.2.6）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transformer-callback-hld-3227" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transformer callback 型（HLD 3.2.2.7）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnmi-subscribe-streamhld-3226-44" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNMI Subscribe / Stream（HLD 3.2.2.6 + 4.4）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cvl-config-validation-libraryhld-3228" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CVL (Config Validation Library)（HLD 3.2.2.8）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         主要なフロー
       
     </span>
@@ -15856,7 +15917,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定 / 関連
@@ -15884,7 +15945,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -15895,7 +15956,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -15906,7 +15967,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -15917,7 +15978,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#hld-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        開発者ワークフロー（HLD 5 章への入口）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15939,7 +16011,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -35980,6 +36052,67 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        主要コンポーネントの深掘り
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="主要コンポーネントの深掘り">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#translib-app-interfacehld-3226" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Translib App Interface（HLD 3.2.2.6）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transformer-callback-hld-3227" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transformer callback 型（HLD 3.2.2.7）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnmi-subscribe-streamhld-3226-44" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNMI Subscribe / Stream（HLD 3.2.2.6 + 4.4）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cvl-config-validation-libraryhld-3228" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CVL (Config Validation Library)（HLD 3.2.2.8）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         主要なフロー
       
     </span>
@@ -35988,7 +36121,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定 / 関連
@@ -36016,7 +36149,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -36027,7 +36160,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -36038,7 +36171,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -36049,7 +36182,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#hld-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        開発者ワークフロー（HLD 5 章への入口）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36071,7 +36215,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -36165,7 +36309,93 @@
 <li><strong>mgmt-framework container</strong>: REST / Translib / Transformer / KLISH を 1 コンテナに同居させる構成</li>
 <li><strong>認証/認可</strong>: TLS + client cert、TACACS+/<a href="../../reference/glossary/#term-radius">RADIUS</a>/LDAP は <a href="../../reference/glossary/#term-aaa">AAA</a> 改善 <a href="../../reference/glossary/#term-hld">HLD</a> に従う</li>
 </ul>
-<h2 id="_3">主要なフロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">主要コンポーネントの深掘り<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>原典 HLD は 2883 行 (170KB) ある包括設計書のため<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>、本ページでは中心となる Translib / Transformer / Subscribe / CVL の interface とソース位置のみ要点を抜く。各章の詳細は HLD 該当節 (節番号で記載) を参照のこと。</p>
+<h3 id="translib-app-interfacehld-3226">Translib App Interface（HLD 3.2.2.6）<a class="headerlink" href="#translib-app-interfacehld-3226" title="Permanent link">&para;</a></h3>
+<p>Translib は北側 (REST / gNMI / CLI) からの xpath 要求を受け取り、<code>appInterface</code> を実装する app module に dispatch する。<code>appInterface</code> は translate / process 系の対称な対を持つ<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
+<div class="language-go highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// translib/app_interface.go L96-L112</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">type</span><span class="w"> </span><span class="nx">appInterface</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nx">initialize</span><span class="p">(</span><span class="nx">data</span><span class="w"> </span><span class="nx">appData</span><span class="p">)</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nx">translateCreate</span><span class="p">(</span><span class="nx">d</span><span class="w"> </span><span class="o">*</span><span class="nx">db</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span><span class="w">  </span><span class="p">([]</span><span class="nx">db</span><span class="p">.</span><span class="nx">WatchKeys</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nx">translateUpdate</span><span class="p">(</span><span class="nx">d</span><span class="w"> </span><span class="o">*</span><span class="nx">db</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span><span class="w">  </span><span class="p">([]</span><span class="nx">db</span><span class="p">.</span><span class="nx">WatchKeys</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nx">translateReplace</span><span class="p">(</span><span class="nx">d</span><span class="w"> </span><span class="o">*</span><span class="nx">db</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span><span class="w"> </span><span class="p">([]</span><span class="nx">db</span><span class="p">.</span><span class="nx">WatchKeys</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="nx">translateDelete</span><span class="p">(</span><span class="nx">d</span><span class="w"> </span><span class="o">*</span><span class="nx">db</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span><span class="w">  </span><span class="p">([]</span><span class="nx">db</span><span class="p">.</span><span class="nx">WatchKeys</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="nx">translateGet</span><span class="p">(</span><span class="nx">dbs</span><span class="w"> </span><span class="p">[</span><span class="nx">db</span><span class="p">.</span><span class="nx">MaxDB</span><span class="p">]</span><span class="o">*</span><span class="nx">db</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="nx">translateAction</span><span class="p">(</span><span class="nx">dbs</span><span class="w"> </span><span class="p">[</span><span class="nx">db</span><span class="p">.</span><span class="nx">MaxDB</span><span class="p">]</span><span class="o">*</span><span class="nx">db</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="nx">translateSubscribe</span><span class="p">(</span><span class="nx">req</span><span class="w"> </span><span class="nx">translateSubRequest</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nx">translateSubResponse</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="nx">processCreate</span><span class="p">(</span><span class="nx">d</span><span class="w"> </span><span class="o">*</span><span class="nx">db</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span><span class="w">  </span><span class="p">(</span><span class="nx">SetResponse</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="nx">processUpdate</span><span class="p">(</span><span class="nx">d</span><span class="w"> </span><span class="o">*</span><span class="nx">db</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span><span class="w">  </span><span class="p">(</span><span class="nx">SetResponse</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="c1">// ... processReplace / processDelete / processGet / processAction / processSubscribe</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>App module は <code>register(path, info)</code> で初期化時に URL prefix を登録する<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。openconfig 系の標準 app は <code>common_app.go</code> を経由して Transformer に委譲する設計。</p>
+<ul>
+<li>App registry: <code>translib/app_interface.go</code> L115-L133 の <code>register()</code></li>
+<li>既存 app 例: <code>acl_app.go</code> / <code>lldp_app.go</code> / <code>pfm_app.go</code> / <code>sys_app.go</code> / <code>common_app.go</code></li>
+</ul>
+<h3 id="transformer-callback-hld-3227">Transformer callback 型（HLD 3.2.2.7）<a class="headerlink" href="#transformer-callback-hld-3227" title="Permanent link">&para;</a></h3>
+<p>Transformer は openconfig YANG ↔ sonic YANG / CONFIG_DB の写像を per-module Go callback で表現する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。主要な callback 型:</p>
+<table>
+<thead>
+<tr>
+<th>型</th>
+<th>用途</th>
+<th>source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>KeyXfmrYangToDb</code> / <code>KeyXfmrDbToYang</code></td>
+<td>list key 双方向写像</td>
+<td><code>xfmr_interface.go</code> L151-L157</td>
+</tr>
+<tr>
+<td><code>FieldXfmrYangToDb</code> / <code>FieldXfmrDbToYang</code></td>
+<td>leaf field 値変換</td>
+<td>L163-, L246-</td>
+</tr>
+<tr>
+<td><code>SubTreeXfmrYangToDb</code> / <code>SubTreeXfmrDbToYang</code></td>
+<td>subtree 一括変換</td>
+<td>L175-L181</td>
+</tr>
+<tr>
+<td><code>TableXfmrFunc</code></td>
+<td>動的 Redis table 決定</td>
+<td>L208</td>
+</tr>
+<tr>
+<td><code>PreXfmrFunc</code> / <code>PostXfmrFunc</code></td>
+<td>CREATE/UPDATE/DELETE 前後フック</td>
+<td>L199-, L220-</td>
+</tr>
+<tr>
+<td><code>PathXfmrDbToYangFunc</code></td>
+<td>DB key→YANG key path 変換</td>
+<td>L226</td>
+</tr>
+</tbody>
+</table>
+<p>これらは YANG 拡張 (<code>sonic-extensions</code>) の annotation で YANG モデルに紐付ける<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。詳細は HLD 3.2.2.7.5 (YANG Extensions) と 3.2.2.7.6 (Public Functions) 参照。</p>
+<h3 id="gnmi-subscribe-streamhld-3226-44">gNMI Subscribe / Stream（HLD 3.2.2.6 + 4.4）<a class="headerlink" href="#gnmi-subscribe-streamhld-3226-44" title="Permanent link">&para;</a></h3>
+<p><code>translib/subscribe.go</code> の公開 API:</p>
+<ul>
+<li><code>Subscribe(req SubscribeRequest) error</code> — 変更通知 stream (L171)<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup></li>
+<li><code>Stream(req SubscribeRequest) error</code> — 周期 push (L219)</li>
+<li><code>IsSubscribeSupported(req IsSubscribeRequest)</code> — path ごとに subscribe 可否を返す (L264)</li>
+</ul>
+<p>SAMPLE / ON_CHANGE の最小間隔は <code>apis.SAMPLE_NOTIFICATION_MIN_INTERVAL</code> に固定<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup> (<code>subscribe.go</code> L104-L107)。詳細フロー (gNMI handler → Translib → app <code>translateSubscribe</code>) は HLD 4.4 節。</p>
+<h3 id="cvl-config-validation-libraryhld-3228">CVL (Config Validation Library)（HLD 3.2.2.8）<a class="headerlink" href="#cvl-config-validation-libraryhld-3228" title="Permanent link">&para;</a></h3>
+<p>CVL は sonic-* YANG を使った CONFIG_DB 書き込み前 validation を提供する<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。主な API は <code>cvl/cvl_api.go</code>:</p>
+<ul>
+<li><code>Initialize()</code> / <code>Finish()</code> (L123, L178)</li>
+<li><code>ValidationSessOpen()</code> / <code>ValidationSessClose()</code> (L182, L202)</li>
+<li><code>ValidateConfig(jsonData)</code> (L272) — startup config 用バルク検証</li>
+<li><code>ValidateEditConfig(cfgData)</code> (L297) — <a href="../../reference/glossary/#term-orchagent">orchagent</a> 等の差分書き込み検証</li>
+<li><code>SortDepTables()</code> / <code>GetOrderedTables()</code> (L750, L767) — leafref 依存解決の topological sort</li>
+</ul>
+<p>CVL は構文 (YANG schema) / 意味 (must / when / leafref) / Platform 制約 (静的 + 動的) の三層検証を行う (HLD 3.2.2.8.2)。</p>
+<h2 id="_4">主要なフロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>sequenceDiagram
     participant C as REST client
     participant RS as REST server
@@ -36182,40 +36412,47 @@
     TF--&gt;&gt;TL: status
     TL--&gt;&gt;RS: 200/204
     RS--&gt;&gt;C: response</code></pre>
-<h2 id="_4">設定 / 関連<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">設定 / 関連<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p>このページは横断機能のため CONFIG_DB の特定テーブルには紐づかない。openconfig 各モジュール（interfaces / acl / network-instance / system 等）と sonic-* YANG が網羅対象。</p>
 <h3 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <ul>
 <li>KLISH ベースの CLI は別 docker <code>mgmt-framework</code> 内で動く（インタラクティブ shell）</li>
 <li><code>sudo sonic-cli</code> で KLISH に入る系統と、従来 <code>sonic-utilities</code>（click ベース）の系統は <strong>共存</strong> する設計</li>
 </ul>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>YANG モデルが定義されていない機能は API 化できない</strong>: 機能側で sonic-* YANG を追加する必要がある</li>
 <li><strong>transformer は per-module 実装</strong>: openconfig 側の新モジュール対応は手作業のコストが高い</li>
 <li><strong>ロールバック / 部分失敗</strong>: <a href="../../reference/glossary/#term-gcu">GCU</a> / JSON Patch ordering の HLD（同 architecture area）と組み合わせて初めて transactional になる</li>
 <li><strong>大規模 GET の性能</strong>: tree 全体取得はオブジェクト変換コストが高く、<code>fields=</code> 限定や paginate 推奨</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>gNMI Subscription</strong>: telemetry stream は同じ Translib を介する。本 HLD と並読み推奨</li>
 <li><strong>Generic Config Update / Rollback (GCU)</strong>: REST / gNMI Set のバックエンドとして動く可能性</li>
 <li><strong>AAA improvements</strong>: REST / gNMI の認証は AAA HLD に統合される</li>
 <li><strong>KLISH CLI auto-generation</strong>: KLISH コマンド定義の自動生成（同 area の別 HLD）と密に関係</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>404 が返る → URL の YANG モジュール prefix（openconfig-interfaces:）と xpath を確認</li>
 <li>400 / validation 失敗 → mgmt-framework ログで YANG エラー詳細を確認</li>
 <li>gNMI subscription が来ない → STATE_DB へ更新が出ているか、subscription path が schema 上 valid か</li>
 </ul>
 <p>確認コマンド例:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># CLI / 設定パイプライン状態確認</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>config<span class="w"> </span>save<span class="w"> </span>-y
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>diff<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span>&lt;<span class="o">(</span>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="o">)</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># CLI / 設定パイプライン状態確認</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>config<span class="w"> </span>save<span class="w"> </span>-y
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>diff<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span>&lt;<span class="o">(</span>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="o">)</span>
 </span></code></pre></div>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="hld-5">開発者ワークフロー（HLD 5 章への入口）<a class="headerlink" href="#hld-5" title="Permanent link">&para;</a></h2>
+<p>新機能の API 化フローは標準 YANG ベース / 非標準 (sonic-* YANG only) の二系統に分かれる:</p>
+<ul>
+<li><strong>非標準 (sonic-* YANG only)</strong>: HLD 5.1 節。sonic-* YANG 定義 → REST stub / Client SDK 自動生成 → Translation App (Go) 実装 → IS CLI / gNMI 配線</li>
+<li><strong>標準ベース (openconfig / IETF)</strong>: HLD 5.2 節。標準 YANG を選定 → Redis schema 設計 → sonic-* YANG 定義 → Transformer callback 実装 (上記表参照) → IS CLI / gNMI</li>
+</ul>
+<p>実装側のテンプレ・既存例は <code>sonic-mgmt-common/translib/transformer/</code> 配下 (例: <code>xfmr_intf.go</code> / <code>xfmr_sflow.go</code> / <code>xfmr_mclag.go</code> / <code>xfmr_system.go</code>) と <code>translib/*_app.go</code> を参照。</p>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - sonic-mgmt-framework / sonic-mgmt-common の現行 master 取り込み確認
 - Translib / Transformer のモジュール一覧（openconfig 各モジュールへの対応範囲）確認
@@ -36233,7 +36470,7 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-entry -->
-<h2 id="_9">運用入口<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">運用入口<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p>この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。</p>
 <h3 id="yang">関連 YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36242,13 +36479,25 @@
 </ul>
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8b4906c6c628 -->
+<!-- glossary-links-injected: e2892b76fd9a -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/mgmt/Management Framework.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/mgmt/Management Framework.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code> (2883 行の包括 HLD)&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-mgmt-common</code> <code>translib/app_interface.go</code> L45-L186 @ master (<code>appInterface</code> / <code>register()</code>)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-mgmt-common</code> <code>translib/transformer/xfmr_interface.go</code> L147-L266 @ master (callback 型定義)&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>sonic-net/sonic-mgmt-common</code> <code>translib/subscribe.go</code> L37-L270 @ master (<code>Subscribe</code> / <code>Stream</code> / <code>IsSubscribeSupported</code>)&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p><code>sonic-net/sonic-mgmt-common</code> <code>cvl/cvl_api.go</code> L123-L800 @ master (CVL session / validation API)&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

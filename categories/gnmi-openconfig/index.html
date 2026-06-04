@@ -36088,8 +36088,8 @@
 <li><a href="../../management/sonic-gnmi-server-interface-design/">SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）</a> (area: <code>management</code>, verification: <code>code-verified</code>)</li>
 <li><a href="../../management/gnmi-usage/">gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）</a> (area: <code>management</code>, verification: <code>code-verified</code>)</li>
 <li><a href="../../management/gnmi-master-arbitration-hld/">gNMI Master Arbitration（election ID と SetRequest 拡張）</a> (area: <code>management</code>, verification: <code>discrepancy-found</code>)</li>
-<li><a href="../../management/save-on-set-hld/">gNMI Save-On-Set（Set ごとの ConfigDB 永続化）</a> (area: <code>management</code>, verification: <code>hld-only</code>)</li>
-<li><a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/">SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）</a> (area: <code>management</code>, verification: <code>hld-only</code>)</li>
+<li><a href="../../management/save-on-set-hld/">gNMI Save-On-Set（Set ごとの ConfigDB 永続化）</a> (area: <code>management</code>, verification: <code>code-verified</code>)</li>
+<li><a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/">SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）</a> (area: <code>management</code>, verification: <code>discrepancy-found</code>)</li>
 <li><a href="../../management/sonic-config-update-validation-via-yang/">YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）</a> (area: <code>management</code>, verification: <code>code-verified</code>)</li>
 <li><a href="../../management/json-patch-ordering-using-yang-models/">JSON Patch ordering（YANG 制約に従う apply-patch のステップ分割）</a> (area: <code>management</code>, verification: <code>code-verified</code>)</li>
 <li><a href="../../management/sonic-cli-auto-generation-tool/">SONiC CLI 自動生成ツール（YANG → click plugin 自動生成）</a> (area: <code>management</code>, verification: <code>code-verified</code>)</li>
@@ -36173,8 +36173,8 @@
 </ul>
 <h2 id="verification">verification ステータス注意点<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>hld-only</strong>: <code>save-on-set-hld.md</code>, <code>smart-switch-gnmi-feedback-design-omit-in-toc.md</code></li>
-<li><strong>discrepancy-found</strong>: <code>gnmi-master-arbitration-hld.md</code>, <code>sonic-yang-model-guidelines.md</code>, <code>liquid-cooling-leakage-detection-in-sonic.md</code>, <code>smartswitch-dpu-graceful-shutdown.md</code>, <code>wake-on-lan-in-sonic.md</code> — <a href="../../reference/glossary/#term-hld">HLD</a> と実装に差異あり</li>
+<li><strong>discrepancy-found</strong>: <code>gnmi-master-arbitration-hld.md</code>, <code>sonic-yang-model-guidelines.md</code>, <code>smart-switch-gnmi-feedback-design-omit-in-toc.md</code>, <code>liquid-cooling-leakage-detection-in-sonic.md</code>, <code>smartswitch-dpu-graceful-shutdown.md</code>, <code>wake-on-lan-in-sonic.md</code> — <a href="../../reference/glossary/#term-hld">HLD</a> と実装に差異あり</li>
+<li>上記以外はすべて <code>code-verified</code>。本ドキュメント全体で <code>hld-only</code> のページは 0 件（裏取り完了済み）</li>
 </ul>
 <h2 id="_4">関連カテゴリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>

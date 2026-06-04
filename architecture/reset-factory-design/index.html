@@ -7255,17 +7255,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#factory-reset_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例: Factory reset 動作確認
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -36234,17 +36223,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#factory-reset_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例: Factory reset 動作確認
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -36528,15 +36506,6 @@ reasoning: 4 モードの分岐が「ステップごとに skip 条件を変え�
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>reset-factory<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span><span class="w"> </span>--no-pager
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># 残存設定の差分</span>
 </span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>sudo<span class="w"> </span>diff<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span>/etc/sonic/golden_config_db.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span></code></pre></div>
-<h3 id="factory-reset_1">コマンド例: Factory reset 動作確認<a class="headerlink" href="#factory-reset_1" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Reset factory のステータスとログ</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>show<span class="w"> </span>reboot-cause
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>reset-factory<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span><span class="w"> </span>--no-pager
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># 残存設定の差分</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>sudo<span class="w"> </span>diff<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span>/etc/sonic/golden_config_db.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span></code></pre></div>
 <h2 id="reference">関連 reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
 <ul>

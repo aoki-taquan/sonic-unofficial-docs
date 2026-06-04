@@ -10769,6 +10769,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-by-phase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        phase-by-phase 実装境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -10783,17 +10794,6 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装フェーズ境界
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         実装との乖離
       
     </span>
@@ -10802,7 +10802,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35943,6 +35943,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-by-phase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        phase-by-phase 実装境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35957,17 +35968,6 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装フェーズ境界
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         実装との乖離
       
     </span>
@@ -35976,7 +35976,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36071,6 +36071,38 @@
 <li>重複・存在チェックでエラーが出たらそこで <strong>truncate</strong>（後続スキップ）</li>
 <li>メンバ追加 (<code>config vlan member add &lt;VLAN_LIST&gt; &lt;PORT_LIST&gt;</code>) も同様に複数指定可能</li>
 </ul>
+<h2 id="phase-by-phase">phase-by-phase 実装境界<a class="headerlink" href="#phase-by-phase" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Phase / 機能</th>
+<th>実装済み (master)</th>
+<th>未実装 / HLD のみ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>access</code> / <code>trunk</code> CLI (<code>config switchport mode access\|trunk</code>)</td>
+<td>取り込み済み</td>
+<td>—</td>
+</tr>
+<tr>
+<td>複数 VLAN 一括 add/del (range / カンマ区切り)</td>
+<td>取り込み済み</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>routed</code> モードへの明示遷移コマンド</td>
+<td>—</td>
+<td>HLD 提案段階</td>
+</tr>
+<tr>
+<td>PORTCHANNEL 一括移行</td>
+<td>—</td>
+<td>HLD 提案段階</td>
+</tr>
+</tbody>
+</table>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>親 HLD: <a href="../switch-port-modes-and-vlan-cli-enhancement/">switch-port-modes-and-vlan-cli-enhancement</a></li>
@@ -36079,51 +36111,9 @@
 <li>HLD と実装の乖離: <a href="../switch-port-modes-and-vlan-cli-discrepancy/">switch-port-modes-and-vlan-cli-discrepancy</a></li>
 <li>Topics 読み物: <a href="../../topics/06-l2-vlan-lag/">06 章: L2 / VLAN / LAG</a></li>
 </ul>
-<!-- phase-boundary -->
-<h2 id="_5">実装フェーズ境界<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<div class="admonition info">
-<p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>
-<p>本ページは <code>monitor: partially_implemented</code> で、HLD で示された一連の機能
-が <strong>段階的に取り込まれている</strong> 状態を扱う。フェーズ毎の実装境界を
-1 枚の表に集約する (詳細は本ページ上部の <code>diff</code> admonition および
-<a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照)。</p>
-<table>
-<thead>
-<tr>
-<th>Phase</th>
-<th>範囲 (機能 / 段階)</th>
-<th>実装済 (master 取り込み済)</th>
-<th>未実装 (HLD 提案のみ)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Phase 1 — 基本機能</td>
-<td>HLD §概要 / §設計の中核ユースケース</td>
-<td>取り込み済 — 本ページの「実装の概観」「実装詳細」節および <code>diff</code> admonition の現状側を参照</td>
-<td>— (Phase 1 は実装済)</td>
-</tr>
-<tr>
-<td>Phase 2 — 拡張機能</td>
-<td>HLD §拡張 / §追加要件 / §周辺統合</td>
-<td>一部のみ取り込み済 — 本ページ「実装詳細」の補足参照</td>
-<td>未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および <code>diff</code> admonition の差分側に列挙</td>
-</tr>
-<tr>
-<td>Phase 3 — 将来拡張</td>
-<td>HLD §Future Work / §将来課題</td>
-<td>—</td>
-<td>未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点)</td>
-</tr>
-</tbody>
-</table>
-<p>凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。</p>
-</div>
-<!-- /phase-boundary -->
-
-<h2 id="_6">実装との乖離<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child。差分の根拠 / 影響 / 回避策は親ページの同セクションを参照のこと。</p>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_5">実装との乖離<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p><code>monitor: partially_implemented</code> — 部分実装。本ページが扱う 概念 / モード定義 / 状態遷移 / 一括 CLI のスコープのうち、<code>access</code> / <code>trunk</code> CLI と複数 VLAN 一括 add/del は master に取り込み済みだが、<code>routed</code> モードへの明示遷移と PORTCHANNEL 一括移行は HLD 提案段階に留まる。差分の根拠 / 影響 / 回避策は派生先 <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を参照。</p>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 8ba32e5aa69d -->
 
 <div class="footnote">

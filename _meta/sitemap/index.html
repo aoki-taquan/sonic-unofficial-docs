@@ -35807,7 +35807,7 @@
 <li><a href="../../guides/">読み手別ガイド</a> — [meta] 読み手別ガイド — SONiC ドキュメントを読む目的に応じて、既存ページを読む順番をまとめた入口です。area 別の章構成はそのままに、初回に見るべきページ…</li>
 <li><a href="../../guides/beginner/">初学者向けガイド</a> — [meta] 初学者向けガイド — SONiC を初めて触る読者を想定しています。ネットワーク OS としての SONiC の位置付け、コンテナ、Redis DB、SAI、…</li>
 <li><a href="../../guides/operator/">運用者向けガイド</a> — [meta] 運用者向けガイド — 既に SONiC を運用している読者を想定した入口。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show techs…</li>
-<li><a href="../../guides/developer/">開発者向けガイド</a> — [meta] 開発者向けガイド — SONiC に機能追加・拡張を入れたい読者を想定しています。HLD、YANG、CONFIG_DB、CLI、daemon / orch、テ…</li>
+<li><a href="../../guides/developer/">開発者向けガイド</a> — [meta] 開発者向けガイド — SONiC に機能追加・拡張を入れたい読者を想定し、HLD・YANG・CONFIG_DB・CLI・daemon / orch・テスト計画…</li>
 <li><a href="../../guides/evaluator/">評価者向けガイド</a> — [meta] ラボで SONiC を試用する読者向けに、仮想環境または評価機で起動し、管理 IP、ポート、VLAN、BGP などの基本設定を入れて状態確認まで辿る導線と、最…</li>
 <li><strong>読み物</strong> (<code>topics/</code>)</li>
 <li><a href="../../topics/">読み物</a> — [meta] 読み物（章立て駆動） — 機能ドメイン単位で複数の HLD・実コードを横断統合した「読み物」章群。HLD 1 件 = 1 ページの reference（doc…</li>
@@ -35818,7 +35818,7 @@
 <li><a href="../../topics/01-overview/architecture/">設定データフロー</a> — [meta] 設定データフロー — SONiC の設定を読むときは、まず CONFIG_DB を起点にします。CONFIG_DB はユーザや controller が投入し…</li>
 <li><a href="../../topics/01-overview/configuration/">設定変更の選び方</a> — [meta] 設定変更の選び方 — SONiC には設定変更の入口が複数あります。選び方の軸は「変更範囲」「停止影響」「検証と rollback が必要か」「永続化するか」…</li>
 <li><a href="../../topics/01-overview/operations/">運用入口</a> — [meta] 運用入口 — 運用時の設定基盤は、日常変更、起動時の既定値、feature service の制御、復旧操作に分けて読むと判断しやすくなります。ここでは「何を…</li>
-<li><a href="../../topics/01-overview/internals/">内部実装</a> — [meta] 内部実装 — 設定基盤の内部実装は、起動時に設定をどう作るか、Redis をどう配置するか、Multi-ASIC で namespace をどう分けるか、とい…</li>
+<li><a href="../../topics/01-overview/internals/">内部実装</a> — [meta] 設定基盤の内部実装を、起動時の config 生成・Redis インスタンス配置・Multi-ASIC namespace の順で俯瞰する 01 章の hub…</li>
 <li><a href="../../topics/01-overview/advanced/">発展トピック</a> — [meta] 発展トピック — SONiC を全体像として見たときに、初学者の足場が固まったあとで触れたい横断テーマを並べる。GCU による差分適用、warm/fast/c…</li>
 </ul>
 </li>
@@ -35965,7 +35965,7 @@
 </ul>
 </li>
 <li><strong>16-nat-dhcp-dns</strong> (<code>topics/16-nat-dhcp-dns/</code>)<ul>
-<li><a href="../../topics/16-nat-dhcp-dns/advanced/">発展トピック</a> — [meta] 発展トピック — この章のメインは NAT / DHCP ですが、付帯する管理系サービスとして time / DNS / TWAMP / terminal s…</li>
+<li><a href="../../topics/16-nat-dhcp-dns/advanced/">発展トピック</a> — [code-verified] 発展トピック — この章のメインは NAT / DHCP ですが、付帯する管理系サービスとして time / DNS / TWAMP / terminal s…</li>
 <li><a href="../../topics/16-nat-dhcp-dns/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — この章は NAT、DHCP relay、DHCP server の内部構造を「container → daemon → 設定生成 → pa…</li>
 <li><a href="../../topics/16-nat-dhcp-dns/concept/">概念</a> — [meta] 概念 — 「edge / management サービス」は、ToR や management スイッチに乗っている付帯機能の集合で、SONiC では大きく…</li>
 <li><a href="../../topics/16-nat-dhcp-dns/">NAT / DHCP Relay / Time-DNS Services</a> — [meta] NAT / DHCP Relay / Time-DNS Services — この章は、SONiC が「edge / management 側で動く付帯サービ…</li>
@@ -36033,7 +36033,7 @@
 <li><a href="../../topics/22-reference-index/advanced/">発展トピック</a> — [meta] 発展トピック — リファレンス索引 (CLI / CONFIG_DB / YANG / cross-reference) を回し続けるための index 再生…</li>
 <li><a href="../../topics/22-reference-index/cli-index/">CLI 横断索引</a> — [meta] CLI 横断索引 — docs/reference/cli/ 配下の 72 ページを、機能章でどこから引かれるかで並べ直した索引です。各 CLI ページは c…</li>
 <li><a href="../../topics/22-reference-index/config-db-index/">CONFIG_DB 横断索引</a> — [meta] CONFIG_DB 横断索引 — docs/reference/config-db/ 配下の 293 ページを、機能章ごとに table family で並べ…</li>
-<li><a href="../../topics/22-reference-index/yang-index/">YANG 横断索引</a> — [meta] YANG 横断索引 — docs/reference/yang/ 配下の 39 モジュールを、機能章ごとに並べ直した索引です。SONiC の YANG は概ね…</li>
+<li><a href="../../topics/22-reference-index/yang-index/">YANG 横断索引</a> — [meta] docs/reference/yang/ 配下に辞書化済みの 84 native SONiC YANG モジュールを、本サイトの機能章ごとに並べ直した逆引き索…</li>
 <li><a href="../../topics/22-reference-index/quality-gaps/">品質と gap</a> — [meta] 品質と gap — 本ページは、Phase 6 以降の検証作業で残った 2 種類の「不完全さ」をどこで追跡するかをまとめる。</li>
 </ul>
 </li>
@@ -36329,7 +36329,7 @@
 <li><a href="../../management/model-based-replace-delete-in-mgmt-framework-transformer/">Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE</a> — [code-verified] Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE — SONiC の Managem…</li>
 <li><a href="../../management/save-on-set-hld/">gNMI Save-On-Set（Set ごとの ConfigDB 永続化）</a> — [code-verified] gNMI Save-On-Set（Set ごとの ConfigDB 永続化） — SONiC の gNMI 実装は、gNMI.Set() で受け取った設定変更…</li>
 <li><a href="../../management/sonic-config-update-validation-via-yang/">YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）</a> — [code-verified] YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ） — SONiC では従来、config 系…</li>
-<li><a href="../../management/sonic-management-framework/">SONiC Management Framework（REST / gNMI / Translib / Transformer）</a> — [code-verified] SONiC Management Framework（REST / gNMI / Translib / Transformer） — sonic-mgmt-f…</li>
+<li><a href="../../management/sonic-management-framework/">SONiC Management Framework（REST / gNMI / Translib / Transformer）</a> — [code-verified] sonic-mgmt-framework は REST/gNMI/CLI と CONFIG_DB / daemon 間の YANG モデル翻訳層。Transl…</li>
 <li><a href="../../management/sonic-nos-configuration-methods/">SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）</a> — [discrepancy-found] SONiC NOS の設定手段一覧 — SONiC は CONFIG_DB（Redis db 4）に 複数の入口 を提供し、最終的に /etc/sonic/c…</li>
 <li><a href="../../management/sonic-yang-model-guidelines/">SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）</a> — [discrepancy-found] SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang） — SONiC の YANG モデルは ABNF.json…</li>
 <li><a href="../../management/gnmi-master-arbitration-hld/">gNMI Master Arbitration（election ID と SetRequest 拡張）</a> — [discrepancy-found] gNMI Master Arbitration（election ID と SetRequest 拡張） — gNMI Master Arbitration…</li>
@@ -36962,7 +36962,7 @@
 <li><a href="../../reference/runbooks/acl-rule-no-hit/">ACL ルールが効かない / counter が増えない</a> — [runbook-verified] Runbook: ACL ルールが効かない / counter が増えない — : sonic-net/sonic-swss @ 4305596 — orch…</li>
 <li><a href="../../reference/runbooks/interface-mtu-mismatch/">Interface MTU mismatch によるパケットドロップ</a> — [runbook-verified] Runbook: Interface MTU mismatch によるパケットドロップ — : sonic-net/sonic-swss @ 4305596…</li>
 <li><a href="../../reference/runbooks/routing-loop-detected/">Routing loop が発生している</a> — [runbook-verified] Runbook: Routing loop が発生している — : sonic-net/sonic-frr @ 799f47f — zebra/zebra_r…</li>
-<li><a href="../../reference/runbooks/minigraph-reload-stuck/">minigraph 適用後に reload が完了しない / 起動が固まる</a> — [code-verified] Runbook: minigraph 適用後に reload が完了しない / 起動が固まる — : sonic-net/sonic-utilities @…</li>
+<li><a href="../../reference/runbooks/minigraph-reload-stuck/">minigraph 適用後に reload が完了しない / 起動が固まる</a> — [code-verified] <code>config load_minigraph</code> 実行後に reload が終わらない / swss が activating のまま固まる際の切り分け run…</li>
 <li><a href="../../reference/runbooks/link-flapping/">T0/T1 リンクが flap し続ける</a> — [runbook-verified] Runbook: T0/T1 リンクが flap し続ける — : sonic-net/sonic-swss @ 4305596 — portsorch.cp…</li>
 <li><a href="../../reference/runbooks/config-db-persistence-failure/">CONFIG_DB の永続化が失敗する</a> — [code-verified] Runbook: CONFIG_DB の永続化が失敗する (config save 失敗) — : sonic-net/sonic-utilities @ 3…</li>
 <li><a href="../../reference/runbooks/container-memory-limit-exceeded/">コンテナ memory limit 超過 / OOM kill</a> — [code-verified] Runbook: コンテナ memory limit 超過 / OOM kill — : sonic-net/sonic-buildimage @ 43055…</li>
