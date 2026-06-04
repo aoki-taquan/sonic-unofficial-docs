@@ -11,6 +11,9 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/port_fec_flr/port_fec_flr.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss
+  path: orchagent/port_flr.lua
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
   - FLEX_COUNTER_TABLE
@@ -69,14 +72,14 @@ flowchart TD
     B[Δ correctable_cw\n+ Δ S0\n= 全 cw - uncorrectable] --> C
     C["CER = Δ uncorrectable / Δ total"]
     C --> D{interleaving X}
-    D -->|X=1| E1[FLR = 1.125 * CER]
-    D -->|X=2| E2[FLR = 2.125 * CER]
-    D -->|X=4| E4[FLR = 4.125 * CER]
+    D -->|X=1| E1[FLR = 1 * CER]
+    D -->|X=2| E2[FLR = 2 * CER]
+    D -->|X=4| E4[FLR = 4 * CER]
 ```
 
 1. interval ごとに各 codeword counter の差分 (`Δ`) を取る。
 2. `CER = Δ uncorrectable / Δ total`。
-3. interleaving factor X を port speed × lanes から決め、`FEC_FLR = (1 + X * MFC) / MFC * CER` で `FEC_FLR` を算出。
+3. interleaving factor X を port speed × lanes から決め、`FEC_FLR = X * CER` で `FEC_FLR` を算出する（`port_flr.lua` の `compute_observed_flr` 実装[^2]。IEEE の `(1 + X * MFC) / MFC * CER` 式ではなく、X 倍の簡略式を採用している点に注意）。
 4. 結果を `COUNTER_DB:RATES:FEC_FLR` に保存、`*_last` を更新。
 
 ## 4. Predicted FEC FLR の計算
@@ -87,7 +90,7 @@ flowchart TD
 2. `y[i] = log10( codeword_errors[i] / total_cw )`
 3. 線形回帰で `slope`, `intercept` を求める（`y = slope*x + intercept`）
 4. 16–20 symbol errors の窓で外挿: `predicted_cer = Σ_{j=16..20} 10^(j*slope + intercept)`
-5. `FEC_FLR_PREDICTED = (1.125 / 2.125 / 4.125) * predicted_cer`（X 別）
+5. `FEC_FLR_PREDICTED = (1 + X * MFC) / MFC * predicted_cer`。RS-544 の `MFC = 8` を入れると X=1/2/4 で係数はそれぞれ `1.125` / `2.125` / `4.125` となる（`extrapolate_flr_from_regression`[^2]）
 6. `COUNTER_DB:RATES` に `FEC_FLR_PREDICTED` / `FEC_FLR_R_SQUARED` / `*_last` を保存
 
 20 を超える symbol error は寄与が無視できる量なので 16–20 に窓を切る。非ゼロ bin が **2 個未満** だと回帰できないので、その場合 `FLR(P)` は `0` を表示する（`N/A` ではなく `0` にして CLI 表示の readability を優先）[^1]。
@@ -167,6 +170,7 @@ sonic-db-cli CONFIG_DB hget 'FLEX_COUNTER_TABLE|PORT' POLL_INTERVAL
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_fec_flr/port_fec_flr.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss` `orchagent/port_flr.lua` @ `4305596156d70e9797e8a881b3d19b46de0bce0d`（`compute_observed_flr` L350–392 / `extrapolate_flr_from_regression` L279–296）
 
 <!-- next-action -->
 ## このページを読んだ後の次アクション
