@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記） — 本 HLD は Midpoint の SONiC 実装を扱う。Source / Sink の HLD は別。">
+        <meta name="description" content="Path Tracing Midpoint の SONiC 実装を扱う HLD。CLI / CONFIG_DB / SAI 拡張 / Capability 取り扱いを実装裏取りで整理">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記） — 本 HLD は Midpoint の SONiC 実装を扱う。Source / Sink の HLD は別。" />
+<meta property="og:description" content="Path Tracing Midpoint の SONiC 実装を扱う HLD。CLI / CONFIG_DB / SAI 拡張 / Capability 取り扱いを実装裏取りで整理" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/path-tracing-midpoint.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/path-tracing-midpoint/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記） — 本 HLD は Midpoint の SONiC 実装を扱う。Source / Sink の HLD は別。" />
+<meta property="twitter:description" content="Path Tracing Midpoint の SONiC 実装を扱う HLD。CLI / CONFIG_DB / SAI 拡張 / Capability 取り扱いを実装裏取りで整理" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/path-tracing-midpoint.png" />
 </head>
   
@@ -10515,6 +10515,17 @@
     <span class="md-ellipsis">
       
         CONFIG_DB / APPL_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB Capability
       
     </span>
   </a>
@@ -36099,6 +36110,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#state_db-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB Capability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36286,7 +36308,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p>実装裏取り済み（下記コード位置）。Path Tracing: sonic-swss/doc/swss-schema.md:30,1026 (pt_interface_id, pt_timestamp_template) / sonic-swss/tests/test_port.py:310-412 (test_PortPathTracing, SAI_PORT_ATTR_PATH_TRACING_INTF, SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE, SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_12_19) で確認。</p>
+<p>実装裏取り済み。CLI / SAI / schema / capability は SONiC HLD <code>doc/path_tracing/path_tracing_midpoint.md</code>、<code>sonic-swss/doc/swss-schema.md:30,1026</code>、<code>sonic-swss/tests/test_port.py:385-415</code> で確認。</p>
 </div>
 <h1 id="path-tracing-midpointipv6-hbh-pt-mcd">Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）<a class="headerlink" href="#path-tracing-midpointipv6-hbh-pt-mcd" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36303,53 +36325,66 @@
 <h3 id="mcdmidpoint-compressed-data">MCD（Midpoint Compressed Data）の中身<a class="headerlink" href="#mcdmidpoint-compressed-data" title="Permanent link">&para;</a></h3>
 <p>各 midpoint は<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>outgoing interface ID</strong> (16-bit)</li>
+<li><strong>outgoing interface ID</strong> (12-bit、1-4095)</li>
 <li><strong>outgoing timestamp の truncated 形式</strong> (8-bit、選択 template による)</li>
 <li><strong>outgoing interface load</strong></li>
 </ul>
 <p>を MCD として HbH-PT に push する。1 hop 1 MCD。</p>
 <h3 id="timestamp-template4">Timestamp template（4 種固定）<a class="headerlink" href="#timestamp-template4" title="Permanent link">&para;</a></h3>
-<p><code>saiport.h</code> で 4 種定義<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>saiport.h</code> の <code>sai_port_path_tracing_timestamp_type_t</code> で 4 種定義<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
 <th>Template</th>
+<th><a href="../../reference/glossary/#term-sai">SAI</a> enum</th>
 <th>切り出すビット</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>template1</td>
+<td><code>SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_8_15</code></td>
 <td>bits 08–15</td>
 </tr>
 <tr>
 <td>template2</td>
+<td><code>SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_12_19</code></td>
 <td>bits 12–19</td>
 </tr>
 <tr>
 <td>template3</td>
+<td><code>SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_16_23</code></td>
 <td>bits 16–23</td>
 </tr>
 <tr>
 <td>template4</td>
+<td><code>SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_20_27</code></td>
 <td>bits 20–27</td>
 </tr>
 </tbody>
 </table>
-<p>ネットワーク全体の <strong>時間スケールが揃っていれば</strong> 8-bit でも一意に推定できる、という前提。SRC / Midpoint / Sink で揃える運用が望ましい。</p>
+<p>デフォルトは <strong>template3</strong> (<code>SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_16_23</code>)<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ネットワーク全体の <strong>時間スケールが揃っていれば</strong> 8-bit でも一意に推定できる、という前提。SRC / Midpoint / Sink で揃える運用が望ましい。</p>
 <h3 id="sai">SAI 拡張<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
-<p><code>SAI_OBJECT_TYPE_PORT</code> に 2 属性追加<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-c highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SAI_PORT_ATTR_PATH_TRACING_INTF_ID</span><span class="w">            </span><span class="c1">// sai_uint16_t</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TEMPLATE</span><span class="w"> </span><span class="c1">// template1..4 enum</span>
+<p><code>SAI_OBJECT_TYPE_PORT</code> に 2 属性追加<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SAI_PORT_ATTR_PATH_TRACING_INTF</span><span class="w">             </span><span class="c1">// sai_uint16_t (Interface ID)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE</span><span class="w">   </span><span class="c1">// sai_port_path_tracing_timestamp_type_t</span>
 </span></code></pre></div>
-<p>両方とも CREATE_AND_SET。port (= egress interface) 単位。</p>
+<p>両方とも CREATE_AND_SET。port (= egress interface) 単位。<code>SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE</code> のデフォルトは <code>SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_16_23</code><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>加えて SAI <a href="../../reference/glossary/#term-tam">TAM</a> <a href="../../reference/glossary/#term-int">INT</a> object に <code>SAI_TAM_INT_TYPE_PATH_TRACING</code> が追加されている<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="config_db-appl_db">CONFIG_DB / APPL_DB スキーマ<a class="headerlink" href="#config_db-appl_db" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>CONFIG_DB PORT|&lt;port_name&gt;
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  pt_interface_id        = &lt;0..65535&gt;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  pt_interface_id        = &lt;1..4095&gt;
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  pt_timestamp_template  = &quot;template1&quot; | &quot;template2&quot; | &quot;template3&quot; | &quot;template4&quot;
 </span></code></pre></div>
-<p><a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の <code>PORT_TABLE</code> にも対応 field が伝搬する（<a href="../../reference/glossary/#term-portmgrd">portmgrd</a> 経由）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の <code>PORT_TABLE</code> にも対応 field が伝搬する（<a href="../../reference/glossary/#term-portmgrd">portmgrd</a> 経由）<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<h3 id="state_db-capability">STATE_DB Capability<a class="headerlink" href="#state_db-capability" title="Permanent link">&para;</a></h3>
+<p>PortsOrch 初期化時に sairedis <code>sai_query_attribute_capability()</code> で ASIC の Path Tracing 対応を問い合わせ、結果を <a href="../../reference/glossary/#term-state_db">STATE_DB</a> <code>SWITCH_CAPABILITY</code> テーブルに格納する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>STATE_DB SWITCH_CAPABILITY|switch
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  path_tracing_capable = &quot;true&quot; | &quot;false&quot;
+</span></code></pre></div>
+<p>CLI は本属性を見て、未対応 ASIC では <code>config interface path-tracing add</code> をエラーにする<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">CLI（追加）<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p><code>config interface</code> / <code>show interfaces</code> にサブコマンド <code>path-tracing</code> を追加<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -36359,55 +36394,56 @@
 </thead>
 <tbody>
 <tr>
-<td><code>config interface pt-interface-id &lt;if&gt; &lt;id&gt;</code></td>
-<td>PT interface ID</td>
+<td><code>config interface path-tracing add &lt;if&gt; --interface-id &lt;id&gt; [--ts-template &lt;tpl&gt;]</code></td>
+<td>Path Tracing 有効化 + interface ID / timestamp template 設定</td>
 </tr>
 <tr>
-<td><code>config interface pt-timestamp-template &lt;if&gt; &lt;template1..4&gt;</code></td>
-<td>timestamp template</td>
+<td><code>config interface path-tracing del &lt;if&gt;</code></td>
+<td>Path Tracing 無効化</td>
 </tr>
 <tr>
-<td><code>show interface path-tracing</code></td>
-<td>現在の設定一覧</td>
+<td><code>show interfaces path-tracing [&lt;if&gt;]</code></td>
+<td>現在の PT Midpoint 設定一覧</td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p>具体名は HLD 文章ベースの整理。実際のサブコマンド命名は実装側で確認。</p>
-</blockquote>
+<p><code>--ts-template</code> は省略可能でデフォルト <code>template3</code>。<code>&lt;id&gt;</code> の範囲は 1-4095<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_3">全体の流れ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CFG[CONFIG_DB PORT.pt_interface_id&lt;br/&gt;PORT.pt_timestamp_template] --&gt; PMG[portmgrd]
   PMG --&gt; APPL[APPL_DB PORT_TABLE]
   APPL --&gt; ORCH[PortsOrch]
-  ORCH --&gt; SAI[SAI_PORT_ATTR_PATH_TRACING_*]
-  SAI --&gt; ASIC[ASIC&lt;br/&gt;linerate で MCD push]</code></pre>
-<p>通常の forwarding と同じ経路で programming される（<code>portsyncd</code> / <code>portmgrd</code> を経由）。Path Tracing 自体は <a href="../../reference/glossary/#term-asic">ASIC</a> で <strong>linerate 実装</strong> されることが前提<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+  ORCH --&gt; SAI[SAI_PORT_ATTR_PATH_TRACING_INTF&lt;br/&gt;SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE]
+  SAI --&gt; ASIC[ASIC&lt;br/&gt;linerate で MCD push]
+  CAP[STATE_DB SWITCH_CAPABILITY&lt;br/&gt;path_tracing_capable] -.precheck.-&gt; ORCH</code></pre>
+<p>通常の forwarding と同じ経路で programming される（<code>portsyncd</code> / <code>portmgrd</code> を経由）。Path Tracing 自体は <a href="../../reference/glossary/#term-asic">ASIC</a> で <strong>linerate 実装</strong> されることが前提<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/path_tracing/path_tracing_midpoint.md#L80-L94 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/path_tracing/path_tracing_midpoint.md#L341-L380 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Every interface of the PT Midpoint is assigned an interface ID and timestamp template.
-  The SAI Port object has been extended with two new attributes for the Interface ID and the timestamp template.
-  template1: bits 08-15 / template2: bits 12-19 / template3: bits 16-23 / template4: bits 20-27
-reasoning: SAI 属性追加と timestamp template 4 種の根拠。
+  The SAI Port object has been extended with two new attributes
+  SAI_PORT_ATTR_PATH_TRACING_INTF and SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE.
+  Enum values: SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_{8_15,12_19,16_23,20_27}.
+  Default is SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_16_23 (template3).
+reasoning: SAI 属性名・enum 値・デフォルトの根拠。
 -->
 
 <!-- evidence-rendered:start -->
 <details class="note">
-<summary>📋 検証エビデンス: sonic-net/SONiC/doc/path_tracing/path_tracing_midpoint.md#L80-L94 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/path_tracing/path_tracing_midpoint.md#L341-L380 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
 <p><strong>出典</strong>:</p>
-<p><code>sonic-net/SONiC/doc/path_tracing/path_tracing_midpoint.md#L80-L94 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><code>sonic-net/SONiC/doc/path_tracing/path_tracing_midpoint.md#L341-L380 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
 <p><strong>抜粋</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Every interface of the PT Midpoint is assigned an interface ID and timestamp template.
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>The SAI Port object has been extended with two new attributes for the Interface ID and the timestamp template.
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>template1: bits 08-15 / template2: bits 12-19 / template3: bits 16-23 / template4: bits 20-27
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>The SAI Port object has been extended with two new attributes
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>SAI_PORT_ATTR_PATH_TRACING_INTF and SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE.
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Enum values: SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_{8_15,12_19,16_23,20_27}.
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Default is SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_16_23 (template3).
 </span></code></pre></div>
-<p><strong>判断根拠</strong>: SAI 属性追加と timestamp template 4 種の根拠。</p>
+<p><strong>判断根拠</strong>: SAI 属性名・enum 値・デフォルトの根拠。</p>
 </details>
 <!-- evidence-rendered:end -->
 
 <h3 id="yang">YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-port.yang</code> に 2 leaf を追加<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: <code>pt_interface_id</code> (uint16), <code>pt_timestamp_template</code> (enum)。</p>
+<p><code>sonic-port.yang</code> に 2 leaf を追加<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: <code>pt_interface_id</code> (uint16), <code>pt_timestamp_template</code> (enum <code>path_tracing_timestamp_template</code>)。<code>pt_timestamp_template</code> は <code>when "current()/../pt_interface_id"</code> の when 条件付き（interface ID 未設定時には設定不可）。</p>
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
@@ -36422,23 +36458,34 @@ reasoning: SAI 属性追加と timestamp template 4 種の根拠。
 <tr>
 <td><code>PORT</code></td>
 <td><code>&lt;port&gt;</code></td>
-<td><code>pt_interface_id</code>, <code>pt_timestamp_template</code></td>
+<td><code>pt_interface_id</code> (1-4095), <code>pt_timestamp_template</code> (template1..4)</td>
 </tr>
 </tbody>
 </table>
 <h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
-<p>上記 3 つ（実装側で名称確認）。</p>
+<ul>
+<li><code>config interface path-tracing add &lt;if&gt; --interface-id &lt;id&gt; [--ts-template &lt;tpl&gt;]</code></li>
+<li><code>config interface path-tracing del &lt;if&gt;</code></li>
+<li><code>show interfaces path-tracing [&lt;if&gt;]</code></li>
+</ul>
 <h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Ethernet0 を PT Midpoint として ID=4242, template2 で構成</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>pt-interface-id<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">4242</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>pt-timestamp-template<span class="w"> </span>Ethernet0<span class="w"> </span>template2
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>show<span class="w"> </span>interface<span class="w"> </span>path-tracing
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Ethernet8 に interface ID=128 を割り当て (template はデフォルト = template3)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>path-tracing<span class="w"> </span>add<span class="w"> </span>Ethernet8<span class="w"> </span>--interface-id<span class="w"> </span><span class="m">128</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Ethernet9 に interface ID=129、template2 を明示指定</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>path-tracing<span class="w"> </span>add<span class="w"> </span>Ethernet9<span class="w"> </span>--interface-id<span class="w"> </span><span class="m">129</span><span class="w"> </span>--ts-template<span class="w"> </span>template2
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># 設定確認</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>show<span class="w"> </span>interfaces<span class="w"> </span>path-tracing
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1"># 無効化</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>path-tracing<span class="w"> </span>del<span class="w"> </span>Ethernet9
 </span></code></pre></div>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Source / Sink 機能は別 HLD</strong>。Midpoint だけでは PT は完結しない<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>linerate 動作には ASIC 対応が必須。Cisco Silicon One / Light Speed / Broadcom Jericho / Marvell 等が対応と HLD は列挙<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>Source / Sink 機能は別 HLD</strong>。Midpoint だけでは PT は完結しない<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>linerate 動作には ASIC 対応が必須。STATE_DB <code>SWITCH_CAPABILITY.path_tracing_capable=true</code> が出ていないと CLI 側で拒否される<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>Interface ID は 1-4095 (12-bit 表現)。0 は無効<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li>timestamp template は 4 種固定。任意の bit セレクションはできない</li>
 <li>HbH-PT の MAX hop 数は IPv6 Hop-by-Hop オプションのサイズに制約される（HLD で深くは詳述されていない）</li>
 </ul>
@@ -36450,23 +36497,23 @@ reasoning: SAI 属性追加と timestamp template 4 種の根拠。
 <li><strong>HbH header / IPv6 jumbogram</strong>: HbH オプション領域の競合に注意</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 設定の確認</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;PORT|Ethernet0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span>pt_interface_id<span class="se">\|</span>pt_timestamp_template
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># APPL_DB</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;PORT_TABLE:Ethernet0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span>pt_
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># ASIC 反映</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_PORT:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># 各 OID で SAI_PORT_ATTR_PATH_TRACING_INTF_ID 等を見る</span>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="c1"># wireshark 等で HbH-PT を確認</span>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="c1"># (Path Tracing Wireshark dissector 利用)</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Capability の確認 (前提条件)</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGET<span class="w"> </span><span class="s2">&quot;SWITCH_CAPABILITY|switch&quot;</span><span class="w"> </span>path_tracing_capable
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># 設定の確認</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;PORT|Ethernet0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;pt_interface_id|pt_timestamp_template&#39;</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># APPL_DB</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;PORT_TABLE:Ethernet0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span>pt_
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1"># ASIC 反映 (SAI_PORT_ATTR_PATH_TRACING_INTF / _TIMESTAMP_TYPE を見る)</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_PORT:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="c1"># wireshark 等で HbH-PT を確認 (Path Tracing Wireshark dissector 利用)</span>
 </span></code></pre></div>
 <h2 id="reference">関連 reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/17-srv6-mpls/">Topics: SRv6 / MPLS</a></li>
-<li><a href="../../reference/cli/show-ip/">CLI: show ip</a></li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
@@ -36476,13 +36523,16 @@ reasoning: SAI 属性追加と timestamp template 4 種の根拠。
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: c4cf37d6506c -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/path_tracing/path_tracing_midpoint.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/path_tracing/path_tracing_midpoint.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>（CLI 構文 L143-L167、ID 範囲 L151、SAI 属性 / enum / default L341-L380、SAI TAM INT L383/L429、STATE_DB capability L169-L172/L327-L337、<a href="../../reference/glossary/#term-yang">YANG</a> L455-L492）&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>doc/swss-schema.md</code> L30-L31, L1026-L1027（<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APPL_DB PORT スキーマ）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

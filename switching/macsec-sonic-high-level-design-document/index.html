@@ -36232,7 +36232,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified（基本構成のみ）</p>
-<p>現行 master の <code>sonic-swss/orchagent/macsecorch.cpp</code> で <code>PAUSE_ETHER_TYPE 0x8808</code>、<code>PFC_MODE_BYPASS</code> を確認（PFC バイパス ACL の実装）。<code>macsecmgr</code> / <code>macsecorch</code> モジュール、<code>docker-macsec/etc/wpa_supplicant.conf</code> も存在。XPN / proactive SAK refresh / 可変 max-SA の wpa_supplicant 拡張は別パッチ系列で取り込まれている。詳細は元 HLD 参照（verified at: 2026-05-09）。</p>
+<p>現行 master の <code>sonic-swss/orchagent/macsecorch.cpp</code> で <code>PAUSE_ETHER_TYPE 0x8808</code>（L26）、<code>PFC_MODE_BYPASS</code>（L29）、PFC バイパス ACL を構築する分岐（L3120, L3186）を確認<sup id="fnref:pfc-bypass"><a class="footnote-ref" href="#fn:pfc-bypass">2</a></sup>。<code>macsecmgr</code> / <code>macsecorch</code> モジュール、<code>docker-macsec/etc/wpa_supplicant.conf</code> も存在。XPN / proactive SAK refresh / 可変 max-SA の wpa_supplicant 拡張は別パッチ系列で取り込まれている。詳細は元 HLD 参照（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="macsec-on-sonicwpa_supplicant-macsec-mgrorch-sai">MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）<a class="headerlink" href="#macsec-on-sonicwpa_supplicant-macsec-mgrorch-sai" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36327,7 +36327,7 @@
 <tbody>
 <tr>
 <td><strong>PFC</strong></td>
-<td><code>ETHER_TYPE=0x8808</code> フレームを暗号化対象から外すため Ingress/Egress に PFC バイパス ACL を追加</td>
+<td><code>ETHER_TYPE=0x8808</code> フレームを暗号化対象から外すため Ingress/Egress に PFC バイパス ACL を追加<sup id="fnref2:pfc-bypass"><a class="footnote-ref" href="#fn:pfc-bypass">2</a></sup>。PFCWD / buffer-pool / buffer-profile などは MACsec とは独立に動作（本 HLD のスコープ外）</td>
 </tr>
 <tr>
 <td><strong>ACL</strong></td>
@@ -36410,6 +36410,9 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/macsec/MACsec_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:pfc-bypass">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/macsecorch.cpp</code> L26（<code>PAUSE_ETHER_TYPE 0x8808</code>）, L29（<code>PFC_MODE_BYPASS</code>）, L3120-L3186（<code>pfc_mode == PFC_MODE_BYPASS</code> 分岐で <code>SAI_ACL_ENTRY_ATTR_FIELD_ETHER_TYPE = 0x8808</code> を持つ ACL エントリを生成）&#160;<a class="footnote-backref" href="#fnref:pfc-bypass" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:pfc-bypass" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

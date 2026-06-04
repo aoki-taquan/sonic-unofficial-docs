@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SfpUtilBase クラスに実装されていない get/set 関数が残存する問題と、xcvrd 経由アクセスへの設計方針。">
+        <meta name="description" content="SfpUtilBase（sonic-platform-common, legacy sonic_sfp パッケージ）に残るモジュール制御系抽象メソッドと、xcvrd 経由アクセスへ統合すべきとされた設計方針を、該当ファイル・関数を引用して解説する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SfpUtilBase の EEPROM 解析欠損 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SfpUtilBase クラスに実装されていない get/set 関数が残存する問題と、xcvrd 経由アクセスへの設計方針。" />
+<meta property="og:description" content="SfpUtilBase（sonic-platform-common, legacy sonic_sfp パッケージ）に残るモジュール制御系抽象メソッドと、xcvrd 経由アクセスへ統合すべきとされた設計方針を、該当ファイル・関数を引用して解説する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/platform/sfp-eeprom-parsing-gaps.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sfp-eeprom-parsing-gaps/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SfpUtilBase の EEPROM 解析欠損 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SfpUtilBase クラスに実装されていない get/set 関数が残存する問題と、xcvrd 経由アクセスへの設計方針。" />
+<meta property="twitter:description" content="SfpUtilBase（sonic-platform-common, legacy sonic_sfp パッケージ）に残るモジュール制御系抽象メソッドと、xcvrd 経由アクセスへ統合すべきとされた設計方針を、該当ファイル・関数を引用して解説する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/platform/sfp-eeprom-parsing-gaps.png" />
 </head>
   
@@ -18618,10 +18618,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#sfputilbase" class="md-nav__link">
     <span class="md-ellipsis">
       
-        未実装の関数
+        SfpUtilBase に残る抽象メソッド
       
     </span>
   </a>
@@ -18629,7 +18629,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#sfpbase-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SfpBase 側のみに存在する制御 API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dom-osfp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DOM 閾値取得の OSFP 未実装パス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         設計上の留意点
@@ -18668,7 +18690,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォームプラグイン実装者への注意
@@ -18679,7 +18701,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連
@@ -35905,10 +35927,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#sfputilbase" class="md-nav__link">
     <span class="md-ellipsis">
       
-        未実装の関数
+        SfpUtilBase に残る抽象メソッド
       
     </span>
   </a>
@@ -35916,7 +35938,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#sfpbase-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SfpBase 側のみに存在する制御 API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dom-osfp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DOM 閾値取得の OSFP 未実装パス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         設計上の留意点
@@ -35955,7 +35999,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォームプラグイン実装者への注意
@@ -35966,7 +36010,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連
@@ -36042,46 +36086,158 @@
 
 <h1 id="sfputilbase-eeprom">SfpUtilBase の EEPROM 解析欠損<a class="headerlink" href="#sfputilbase-eeprom" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>sonic-platform-common</code> の <code>SfpUtilBase</code> クラスには、EEPROM データを解析するハンドラが定義されているにもかかわらず、対応する get/set 関数が未実装のまま残存している。</p>
-<h2 id="_2">未実装の関数<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p><code>SfpUtilBase</code> クラスには以下のような関数が宣言されているが、EEPROM パーサーとの対応付けが不完全な状態にある。</p>
-<ul>
-<li>ベンダー固有の拡張フィールドを読み取る関数群</li>
-<li>一部の DOM（Digital Optical Monitoring）フィールドの書き込み関数</li>
-<li>特定のコントロールレジスタ（TX Disable、Rate Select 等）の細粒度操作</li>
-</ul>
-<h2 id="_3">設計上の留意点<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>この問題の議論において、重要な設計方針が示されている。</p>
-<h3 id="xcvrd">xcvrd 経由のアクセスを推奨<a class="headerlink" href="#xcvrd" title="Permanent link">&para;</a></h3>
-<p><code>reset()</code> や <code>set_xxx()</code> のようなモジュール制御操作は、<strong>直接 <code>SfpUtilBase</code> を呼ぶのではなく、<code>xcvrd</code> 経由で行うことが推奨される</strong>。</p>
-<p>理由：
-- <code>xcvrd</code> はポート初期化やトランシーバー状態変化イベントのハンドリングを担当するデーモンである
-- 直接操作と <code>xcvrd</code> 経由操作が競合すると、状態の不整合が生じる可能性がある
-- マルチ <a href="../../reference/glossary/#term-asic">ASIC</a> 環境では、<code>xcvrd</code> がポートとトランシーバーのマッピングを管理しており、直接操作ではこのコンテキストが失われる</p>
-<h3 id="xcvrd-sfputil">xcvrd と SfpUtil の役割分担<a class="headerlink" href="#xcvrd-sfputil" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>アプリケーション
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    ↓ (Redis / D-Bus 経由)
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>xcvrd (デーモン)
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    ↓
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>SfpUtil (プラットフォームプラグイン)
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    ↓
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>EEPROM / ハードウェアレジスタ
+<p><code>sonic-platform-common</code> の legacy インタフェース <code>SfpUtilBase</code>（<code>sonic_platform_base/sonic_sfp/sfputilbase.py</code>）には、EEPROM 解析を行う <code>get_transceiver_*_dict()</code> 系メソッドが具象実装される一方、モジュール制御系（<code>reset</code> / <code>set_low_power_mode</code> / <code>get_transceiver_change_event</code> 等）は <code>@abc.abstractmethod</code> 宣言のままで、プラットフォームプラグイン側に実装責任が残されている。</p>
+<p>加えて、新世代の <code>SfpBase</code>（<code>sonic_platform_base/sfp_base.py</code>）で導入された <code>tx_disable()</code> / <code>tx_disable_channel()</code> / <code>set_lpmode()</code> / <code>set_power_override()</code> といったモジュール制御 API は <code>SfpUtilBase</code> 側には存在せず、両クラスのカバレッジに非対称が生じている。Issue #179 はこのギャップと、<code>SfpUtilBase</code> 直接呼び出しから <code>xcvrd</code> 経由 API へ移行すべきという設計方針について議論している<sup id="fnref:issue-179"><a class="footnote-ref" href="#fn:issue-179">1</a></sup>。</p>
+<h2 id="sfputilbase">SfpUtilBase に残る抽象メソッド<a class="headerlink" href="#sfputilbase" title="Permanent link">&para;</a></h2>
+<p><code>sfputilbase.py</code> 末尾に並ぶ <code>@abc.abstractmethod</code> 宣言は以下の 5 個である<sup id="fnref:sfputilbase-abstract"><a class="footnote-ref" href="#fn:sfputilbase-abstract">2</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>メソッド</th>
+<th>行</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_presence(port_num)</code></td>
+<td>L1381</td>
+<td>トランシーバー実装の有無</td>
+</tr>
+<tr>
+<td><code>get_low_power_mode(port_num)</code></td>
+<td>L1389</td>
+<td>LPMode 状態取得</td>
+</tr>
+<tr>
+<td><code>set_low_power_mode(port_num, lpmode)</code></td>
+<td>L1397</td>
+<td>LPMode 設定</td>
+</tr>
+<tr>
+<td><code>reset(port_num)</code></td>
+<td>L1406</td>
+<td>モジュールリセット</td>
+</tr>
+<tr>
+<td><code>get_transceiver_change_event(timeout=0)</code></td>
+<td>L1414</td>
+<td>プラグイン/プラグアウトイベント</td>
+</tr>
+</tbody>
+</table>
+<p>これらは <code>SfpUtilBase</code> 自身には実装されておらず、各プラットフォーム（<code>device/&lt;vendor&gt;/&lt;platform&gt;/plugins/sfputil.py</code>）でオーバーライドされる前提である。</p>
+<!-- evidence: .cache/sonic-sources/sonic-platform-common/sonic_platform_base/sonic_sfp/sfputilbase.py L1380-L1429 -->
+
+<h2 id="sfpbase-api">SfpBase 側のみに存在する制御 API<a class="headerlink" href="#sfpbase-api" title="Permanent link">&para;</a></h2>
+<p>新規プラットフォームが従うべき <code>SfpBase</code>（<code>sfp_base.py</code>）には、<code>SfpUtilBase</code> に対応物のない以下のメソッドが定義されている<sup id="fnref:sfpbase-methods"><a class="footnote-ref" href="#fn:sfpbase-methods">3</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>メソッド</th>
+<th>行</th>
+<th>SfpUtilBase 側の対応</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tx_disable(tx_disable)</code></td>
+<td>L353</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>tx_disable_channel(channel, disable)</code></td>
+<td>L366</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>set_lpmode(lpmode)</code></td>
+<td>L381</td>
+<td><code>set_low_power_mode(port_num, lpmode)</code> (粒度がポート単位)</td>
+</tr>
+<tr>
+<td><code>set_power_override(power_override, power_set)</code></td>
+<td>L406</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>get_tx_disable()</code></td>
+<td>L250</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>get_tx_disable_channel()</code></td>
+<td>L262</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<p>つまり TX Disable やレーン粒度の制御は <code>SfpBase</code> 経由でしか提供されておらず、<code>SfpUtilBase</code> のみを実装した古いプラットフォームではこれらの操作は不可能である。</p>
+<!-- evidence: .cache/sonic-sources/sonic-platform-common/sonic_platform_base/sfp_base.py L250-L420 -->
+
+<h2 id="dom-osfp">DOM 閾値取得の OSFP 未実装パス<a class="headerlink" href="#dom-osfp" title="Permanent link">&para;</a></h2>
+<p><code>SfpUtilBase.get_transceiver_dom_threshold_info_dict()</code> は QSFP / SFP については EEPROM 直読みで閾値を返すが、OSFP ポートについては以下のコメントとともに <code>N/A</code> 埋めの辞書を返すだけになっている<sup id="fnref:osfp-stub"><a class="footnote-ref" href="#fn:osfp-stub">4</a></sup>。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">if</span> <span class="n">port_num</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">osfp_ports</span><span class="p">:</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="c1"># Below part is added to avoid fail xcvrd, shall be implemented later</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">return</span> <span class="n">transceiver_dom_threshold_info_dict</span>
 </span></code></pre></div>
-<p>プラットフォームプラグイン（<code>SfpUtil</code>）を実装するベンダーは、<code>xcvrd</code> が使用する API の実装に集中し、アプリケーションは <code>xcvrd</code> のインターフェースを通じてアクセスするのが正しい設計である。</p>
-<h2 id="_4">プラットフォームプラグイン実装者への注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>新規プラットフォームで <code>SfpUtilBase</code> を実装する際：</p>
+<p>OSFP モジュールの DOM 閾値が必要な場合、legacy パスではなく <code>SfpBase</code> 系（CMIS 対応の <code>sonic_xcvr</code> パッケージ）に切り替えることが事実上必須となる。</p>
+<!-- evidence: .cache/sonic-sources/sonic-platform-common/sonic_platform_base/sonic_sfp/sfputilbase.py L1254-L1256 -->
+
+<h2 id="_2">設計上の留意点<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="xcvrd">xcvrd 経由のアクセスを推奨<a class="headerlink" href="#xcvrd" title="Permanent link">&para;</a></h3>
+<p><code>reset()</code> や <code>set_lpmode()</code> のようなモジュール制御操作は、プラットフォームプラグインを直接呼ぶのではなく、<code>xcvrd</code> を介して <a href="../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../reference/glossary/#term-redis">Redis</a> 経由で発行することが推奨される。</p>
+<p>理由は以下である。</p>
+<ul>
+<li><code>xcvrd</code> がポート初期化・CMIS state machine・トランシーバー状態変化イベントのハンドリングを担う</li>
+<li>直接操作と <code>xcvrd</code> の操作が競合すると、CMIS state machine の状態と物理状態が乖離する</li>
+<li>マルチ <a href="../../reference/glossary/#term-asic">ASIC</a> 環境では <code>xcvrd</code> がポート⇔物理ポートのマッピングを保持しており、直接 plugin 呼び出しではこのコンテキストが失われる</li>
+</ul>
+<h3 id="xcvrd-sfputil">xcvrd と SfpUtil の役割分担<a class="headerlink" href="#xcvrd-sfputil" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>アプリケーション (sfputil / CLI / SNMP / gNMI)
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    │  STATE_DB / CONFIG_DB
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    ▼
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>xcvrd (PMON コンテナ内デーモン)
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    │  SfpBase / SfpUtilBase API
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    ▼
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>プラットフォームプラグイン (device/&lt;vendor&gt;/.../sfputil.py)
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    │  i2c / sysfs
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    ▼
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>EEPROM / 制御レジスタ
+</span></code></pre></div>
+<p>プラットフォームプラグイン実装者は <code>xcvrd</code> が呼ぶ抽象 API（<code>SfpBase</code> を推奨、新規での <code>SfpUtilBase</code> 実装は非推奨）の実装に集中し、上位アプリケーションは <code>xcvrd</code> のインターフェースを通じてアクセスするのが正しい設計である。</p>
+<h2 id="_3">プラットフォームプラグイン実装者への注意<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>既存の <code>SfpUtilBase</code> 派生プラットフォームを保守する際の優先順位は以下となる。</p>
 <ol>
-<li><code>get_transceiver_info_dict()</code> および <code>get_transceiver_dom_info_dict()</code> を優先して実装する</li>
-<li><code>reset()</code> / <code>tx_disable()</code> 等の制御関数も <code>xcvrd</code> が使用するため実装が必要</li>
-<li>EEPROM の raw アクセス（<code>read_eeprom()</code> / <code>write_eeprom()</code>）を正確に実装することで、上位ハンドラが動作する</li>
+<li>EEPROM raw アクセス（<code>_read_eeprom_specific_bytes()</code> / <code>_write_eeprom_specific_bytes()</code>、L334 / L378）が正しく動くこと</li>
+<li>上記表の 5 個の <code>@abc.abstractmethod</code> を漏れなくオーバーライドすること</li>
+<li>OSFP / CMIS 世代のサポートが必要なら、<code>SfpUtilBase</code> での拡張ではなく <code>SfpBase</code> への移植を検討する</li>
 </ol>
-<h2 id="_5">関連<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">関連<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../xcvrd-cmis-mediainterface-crash/">xcvrd クラッシュ（MediaInterfaceIDApp 未定義）</a></li>
 <li><a href="../sfp-sff8472-rx-power-calibration/">SFF-8472 Rx パワーキャリブレーション問題</a></li>
 <li>GitHub Issue: <a href="https://github.com/sonic-net/sonic-platform-common/issues/179">sonic-net/sonic-platform-common#179</a></li>
 </ul>
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: 9d739814db16 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:issue-179">
+<p><a href="https://github.com/sonic-net/sonic-platform-common/issues/179">sonic-net/sonic-platform-common Issue #179 — SfpUtilBase の get/set 関数の議論</a>&#160;<a class="footnote-backref" href="#fnref:issue-179" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:sfputilbase-abstract">
+<p><code>sonic-platform-common</code> <code>sonic_platform_base/sonic_sfp/sfputilbase.py</code> L1380-L1429（<code>@abc.abstractmethod</code> ブロック）。&#160;<a class="footnote-backref" href="#fnref:sfputilbase-abstract" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:sfpbase-methods">
+<p><code>sonic-platform-common</code> <code>sonic_platform_base/sfp_base.py</code> L250-L420（<code>tx_disable</code> / <code>tx_disable_channel</code> / <code>set_lpmode</code> / <code>set_power_override</code> / <code>get_tx_disable</code> / <code>get_tx_disable_channel</code>）。&#160;<a class="footnote-backref" href="#fnref:sfpbase-methods" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:osfp-stub">
+<p><code>sonic-platform-common</code> <code>sonic_platform_base/sonic_sfp/sfputilbase.py</code> L1254-L1256（OSFP ポートでは <code>N/A</code> 埋めの dict を返すスタブ）。&#160;<a class="footnote-backref" href="#fnref:osfp-stub" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: SNMP polling が timeout する — : sonic-net/sonic-snmpagent @ 4305596 — ax_impl : sonic-net/sonic-buildimage @ 4305596 — docker-snmp config">
+        <meta name="description" content="Runbook: SNMP polling が timeout する場合の切り分けと対処 (sonic_ax_impl の hang、ACL/community ミス、bulk walk への切替を扱う)">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SNMP polling が timeout する - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: SNMP polling が timeout する — : sonic-net/sonic-snmpagent @ 4305596 — ax_impl : sonic-net/sonic-buildimage @ 4305596 — docker-snmp config" />
+<meta property="og:description" content="Runbook: SNMP polling が timeout する場合の切り分けと対処 (sonic_ax_impl の hang、ACL/community ミス、bulk walk への切替を扱う)" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/snmp-polling-timeout.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/snmp-polling-timeout/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SNMP polling が timeout する - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: SNMP polling が timeout する — : sonic-net/sonic-snmpagent @ 4305596 — ax_impl : sonic-net/sonic-buildimage @ 4305596 — docker-snmp config" />
+<meta property="twitter:description" content="Runbook: SNMP polling が timeout する場合の切り分けと対処 (sonic_ax_impl の hang、ACL/community ミス、bulk walk への切替を扱う)" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/snmp-polling-timeout.png" />
 </head>
   
@@ -36111,9 +36111,9 @@
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong><code>sonic_ax_impl</code> の hang</strong>: <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> poll で blocking</li>
+<li><strong><code>sonic_ax_impl</code> の hang</strong>: <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> poll で blocking。<code>sonic_ax_impl</code> は AgentX subagent として動作し、SIGINT/SIGTERM で shutdown するが、background task が zombie 化する既知の FIXME がある <sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong><a href="../../glossary/#term-acl">ACL</a> / management interface で <a href="../../glossary/#term-snmp">SNMP</a> port (161/udp) が遮断</strong></li>
-<li><strong>community / SNMPv3 認証ミス</strong>: net-snmp 側で reject</li>
+<li><strong>community / SNMPv3 認証ミス</strong>: net-snmp 側で reject。<code>snmpd.conf.j2</code> は <code>SNMP_COMMUNITY</code> テーブルの <code>TYPE=RO/RW</code> を <code>rocommunity</code> / <code>rwcommunity</code> directive に展開する <sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>大規模 port 数 (256+) でテーブル取得が遅い</strong></li>
 <li><strong>snmp container の CPU 飽和</strong></li>
 </ol>
@@ -36131,6 +36131,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-ulnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>:161
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span>-nn<span class="w"> </span>udp<span class="w"> </span>port<span class="w"> </span><span class="m">161</span><span class="w"> </span>-c<span class="w"> </span><span class="m">10</span>
 </span></code></pre></div>
+<p><code>SNMP_AGENT_ADDRESS_CONFIG</code> が設定されている場合、<code>snmpd.conf.j2</code> は各 (agentip, port, vrf) を個別の <code>agentAddress</code> directive として書き出す。未設定時のみ <code>udp:161</code> / <code>udp6:161</code> の wildcard listen にフォールバックする <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h3 id="2-walk">2. 簡易 walk<a class="headerlink" href="#2-walk" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>snmpwalk<span class="w"> </span>-v2c<span class="w"> </span>-c<span class="w"> </span>public<span class="w"> </span>&lt;mgmt_ip&gt;<span class="w"> </span>system
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>snmpwalk<span class="w"> </span>-v2c<span class="w"> </span>-c<span class="w"> </span>public<span class="w"> </span>&lt;mgmt_ip&gt;<span class="w"> </span>IF-MIB::ifDescr
@@ -36143,10 +36144,14 @@
 <h3 id="4-ax_impl-mib-extension">4. ax_impl の MIB extension<a class="headerlink" href="#4-ax_impl-mib-extension" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>snmp<span class="w"> </span>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;snmpd|sonic_ax&quot;</span>
 </span></code></pre></div>
+<p><code>sonic_ax_impl</code> の <code>SonicMIB</code> クラスは IF-MIB (rfc2863) / Entity-MIB (rfc2737) / IP-MIB (rfc1213) / <a href="../../glossary/#term-lldp">LLDP</a>-MIB (ieee802_1ab) / Cisco BGP4 / <a href="../../glossary/#term-pfc">PFC</a> ext 等を multiple inheritance で束ねており、background task は既定で 5 秒間隔 (<code>DEFAULT_UPDATE_FREQUENCY = 5</code>) で <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> を polling する <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="5-acl">5. ACL<a class="headerlink" href="#5-acl" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>iptables<span class="w"> </span>-L<span class="w"> </span>INPUT<span class="w"> </span>-n<span class="w"> </span>-v<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">161</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>acl<span class="w"> </span>rule
 </span></code></pre></div>
+<!-- evidence: sonic_ax_impl/main.py L18 DEFAULT_UPDATE_FREQUENCY=5 / L24-44 SonicMIB の MIB 合成 / L57-87 main() の event loop と shutdown 処理 -->
+<!-- evidence: docker-snmp/snmpd.conf.j2 L27-34 agentAddress / L48-64 rocommunity・rwcommunity 展開 -->
+
 <h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>container 再起動: <code>sudo systemctl restart snmp</code></li>
@@ -36160,17 +36165,17 @@
 <li><a href="../telemetry-dialout-not-sending/">telemetry-dialout-not-sending.md</a></li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: 2bcfb6360cc4 -->
+<p>本ページの根拠は引用元 <sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
+<!-- glossary-links-injected: 36cc31c08fc1 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-snmpagent @ 4305596 — ax_impl&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/sonic-snmpagent <code>src/sonic_ax_impl/main.py</code> @ 329f1cc L1-L87 — AgentX subagent エントリポイント、<code>SonicMIB</code> 構成、<code>DEFAULT_UPDATE_FREQUENCY=5</code> 秒&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/<a href="../../glossary/#term-sonic-buildimage">sonic-buildimage</a> @ 4305596 — docker-snmp config&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-buildimage">sonic-buildimage</a> <code>dockers/docker-snmp/snmpd.conf.j2</code> @ 9ea932e L16-L77 — <code>SNMP_AGENT_ADDRESS_CONFIG</code> と <code>SNMP_COMMUNITY</code> の Jinja 展開&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

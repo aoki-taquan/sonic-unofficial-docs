@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Reboot / Upgrade の発展トピック — warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める「express reboot」、multi-ASIC / chassis 級の同期、in-service upgrade との組合せが論点になる。">
+        <meta name="description" content="Reboot / Upgrade の発展トピック — warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める express reboot、multi-ASIC / chassis 級の同期、in-service upgrade との組合せが論点になる。express reboot は現状 Cisco 8000 系 ASIC （加えて marvell-teralynx）に限定される点が最重要の前提となる。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Reboot / Upgrade の発展トピック - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Reboot / Upgrade の発展トピック — warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める「express reboot」、multi-ASIC / chassis 級の同期、in-service upgrade との組合せが論点になる。" />
+<meta property="og:description" content="Reboot / Upgrade の発展トピック — warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める express reboot、multi-ASIC / chassis 級の同期、in-service upgrade との組合せが論点になる。express reboot は現状 Cisco 8000 系 ASIC （加えて marvell-teralynx）に限定される点が最重要の前提となる。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/11-reboot/advanced.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/11-reboot/advanced/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Reboot / Upgrade の発展トピック - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Reboot / Upgrade の発展トピック — warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める「express reboot」、multi-ASIC / chassis 級の同期、in-service upgrade との組合せが論点になる。" />
+<meta property="twitter:description" content="Reboot / Upgrade の発展トピック — warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める express reboot、multi-ASIC / chassis 級の同期、in-service upgrade との組合せが論点になる。express reboot は現状 Cisco 8000 系 ASIC （加えて marvell-teralynx）に限定される点が最重要の前提となる。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/11-reboot/advanced.png" />
 </head>
   
@@ -36130,7 +36130,7 @@
 </ul>
 <h2 id="_2">発展トピック<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Express reboot</strong>: warm reboot のさらに先にある「ASIC を温存したまま OS だけ swap する」設計。<code>fast-reboot-flow-improvements</code> と <code>express-reboot</code> <a href="../../../reference/glossary/#term-hld">HLD</a> を組み合わせて、<a href="../../../reference/glossary/#term-sai">SAI</a> 状態の export / import と <a href="../../../reference/glossary/#term-syncd">syncd</a> の handover を最小ダウンタイムで行う。</li>
+<li><strong>Express reboot</strong>: warm reboot のさらに先にある「ASIC を温存したまま OS だけ swap する」設計。<code>fast-reboot-flow-improvements</code> と <code>express-reboot</code> <a href="../../../reference/glossary/#term-hld">HLD</a> を組み合わせて、<a href="../../../reference/glossary/#term-sai">SAI</a> 状態の export / import と <a href="../../../reference/glossary/#term-syncd">syncd</a> の handover を最小ダウンタイムで行う。HLD で「express-reboot は Cisco 8000 platform 限定」と明文化されており<sup id="fnref:express-platform"><a class="footnote-ref" href="#fn:express-platform">1</a></sup>、master の <code>fast-reboot</code> script でも <code>asic_type</code> が <code>cisco-8000</code> または <code>marvell-teralynx</code> 以外なら即時 abort する<sup id="fnref:express-script"><a class="footnote-ref" href="#fn:express-script">2</a></sup>。これ以外の platform では本トピックは適用外と理解してよい。</li>
 <li><strong>System-wide warm reboot</strong>: 単一 <a href="../../../reference/glossary/#term-sonic">SONiC</a> instance ではなく、複数 ASIC / chassis 全体を 1 回の手順で warm reboot する。<code>multi-asic-warm-reboot</code> と組み合わせて line card 順序や Supervisor のロールを設計する。</li>
 <li><strong><a href="../../../reference/glossary/#term-gnoi">gNOI</a> 駆動 upgrade</strong>: <code>gnoi.os.Install</code> / <code>Activate</code> で controller から SONiC イメージを投入し、warm/fast reboot を制御 plane から発火。手動 ssh 不要化と監査ログ統合が利点。</li>
 <li><strong>graceful drain &amp; restore</strong>: reboot 前に <a href="../../../reference/glossary/#term-bgp">BGP</a> / <a href="../../../reference/glossary/#term-bfd">BFD</a> を drain し、<a href="../../../reference/glossary/#term-ecmp">ECMP</a> から外れた状態で reboot する手順。<code>config bgp shutdown all</code> / <code>reliable-tsa</code> と組合せて切替の transient を避ける。</li>
@@ -36138,8 +36138,8 @@
 <li><strong>2-stage reboot</strong>: kernel kexec → SONiC 初期化 → 経路収束、を時系列で計測し、各 stage の wall clock を切り分けると改善ポイントが見える。</li>
 </ul>
 <h2 id="express-reboot">Express reboot の内部設計<a class="headerlink" href="#express-reboot" title="Permanent link">&para;</a></h2>
-<p>Express reboot は warm reboot の延長で、SAI 状態と data plane を保持したまま control plane だけ swap する。鍵となるのは (1) <code>syncd</code> の SAI object handle dump と新 image の <code>syncd</code> での再 attach、(2) <code>orchagent</code> の internal cache を <code>APPL_STATE_DB</code> 経由でリビルド、(3) <code>bgpd</code> の GR/LLGR による経路再学習を上位 plane 側でブロックしない、という 3 つの同期点。期待ダウンタイムは &lt; 1 秒 (data plane forward 停止時間) であり、warm reboot (数秒〜十数秒) より大幅に短い。</p>
-<p>実装の依存は <a href="../../../reference/glossary/#term-asic-sdk">ASIC SDK</a> 側の <code>sai_switch_attribute_t::SAI_SWITCH_ATTR_FAST_API_ENABLE</code> と、SDK が持つ shared memory hand-off API。これに対応していない platform では express reboot は不可。</p>
+<p>Express reboot は warm reboot の延長で、SAI 状態と data plane を保持したまま control plane だけ swap する。鍵となるのは (1) <code>syncd</code> の SAI object handle dump と新 image の <code>syncd</code> での再 attach、(2) <code>orchagent</code> の internal cache を <code>APPL_STATE_DB</code> 経由でリビルド、(3) <code>bgpd</code> の GR/LLGR による経路再学習を上位 plane 側でブロックしない、という 3 つの同期点。HLD は「sub-second data plane interruption」を目標として明示しており<sup id="fnref:express-goal"><a class="footnote-ref" href="#fn:express-goal">3</a></sup>、warm reboot (数秒〜十数秒) より大幅に短いダウンタイムを狙う。</p>
+<p>実装の依存は <a href="../../../reference/glossary/#term-asic-sdk">ASIC SDK</a> 側の <code>SAI_SWITCH_ATTR_FAST_API_ENABLE</code> と、ベンダー SDK が持つ external phy 非初期化 / NPU 再 attach の機構である。HLD では <code>syncd_request_shutdown --pxe</code> で pre-shutdown を通知し、再起動後 <code>SAI_KEY_BOOT_TYPE=express</code> で syncd を立ち上げる流れが定義されている<sup id="fnref:express-syncd"><a class="footnote-ref" href="#fn:express-syncd">4</a></sup>。<code>SAI_SWITCH_ATTR_FAST_API_ENABLE</code> は元々 <code>fastfast</code> boot で導入された属性を流用したものであり、新規 attribute ではない点に注意<sup id="fnref2:express-syncd"><a class="footnote-ref" href="#fn:express-syncd">4</a></sup>。これに対応していない platform では express reboot は不可。</p>
 <h2 id="graceful-drain-tsa">graceful drain &amp; TSA 連携<a class="headerlink" href="#graceful-drain-tsa" title="Permanent link">&para;</a></h2>
 <p>reboot 前に BGP / BFD を drain する手順は <code>reliable-tsa</code> (Traffic Shift Away) HLD で形式化されている。<code>config bgp shutdown all</code> だけでは ECMP から外れるまでに peer 側の hold timer 切れを待つため、<code>graceful-shutdown</code> community (RFC 8326) を付与して即時 deprefer させる流れが推奨される。drain 後の reboot で transient を最小化できる。</p>
 <p>逆に reboot 後の <code>reliable-tso</code> (Traffic Shift Over) は、forwarding が確立してから順に peer に announce 再開する。SONiC では <code>BGP_DEVICE_GLOBAL.tsa_enabled</code> を切り替えるだけで template 経由で route-map 適用される設計。</p>
@@ -36147,7 +36147,7 @@
 <ul>
 <li><strong>Warm reboot 中の経路 stale</strong>: BGP graceful restart が機能しないと FIB が古いまま残り、収束後にループや誤転送が起こる。<a href="../../../reference/glossary/#term-frr">FRR</a> 側 GR / LLGR 設定と peer 側互換を必ず確認する。</li>
 <li><strong>Fast reboot で counter リセット</strong>: fast reboot は ASIC reset を伴うため、<code>COUNTERS_DB</code> の累積値が 0 に戻る。telemetry collector 側で counter rollover として誤検出する事例がある。</li>
-<li><strong>Express reboot の platform 依存</strong>: SAI capability に依存し、対応 ASIC が限られる。実機サポート状況を <code>sonic-platform</code> 配下の sai profile / platform docs と照合する。</li>
+<li><strong>Express reboot の platform 依存</strong>: 上述のとおり master 時点では <code>cisco-8000</code> / <code>marvell-teralynx</code> のみ通過する gating があり<sup id="fnref2:express-script"><a class="footnote-ref" href="#fn:express-script">2</a></sup>、それ以外の ASIC では script レベルで即時失敗する。導入検討時はまず実機の <code>asic_type</code> を確認する。</li>
 <li><strong><a href="../../../reference/glossary/#term-multi-asic">Multi-ASIC</a> reboot の順序</strong>: Supervisor → Line card の順を間違えると Chassis DB の整合が崩れる。<code>config chassis modules shutdown</code> / <code>startup</code> の順序を厳守する。</li>
 </ul>
 <h2 id="_4">将来計画 / ロードマップ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -36201,7 +36201,25 @@
 <li><a href="../../02-bgp/">02 BGP: graceful restart / LLGR と warm reboot の整合</a></li>
 <li><a href="../../15-security-aaa/">15 Security / AAA: secure upgrade と signed image</a></li>
 </ul>
-<!-- glossary-links-injected: 9fb3fca99a59 -->
+<!-- glossary-links-injected: f960e6599a3c -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:express-platform">
+<p>SONiC/doc/express-reboot/Cisco_8000_Express_Reboot_HLD.md L26 「Enforce express-reboot is only applicable to Cisco 8000 platforms at the moment.」&#160;<a class="footnote-backref" href="#fnref:express-platform" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:express-script">
+<p><a href="../../../reference/glossary/#term-sonic-utilities">sonic-utilities</a>/scripts/fast-reboot L931-L936 <code>asic_type</code> が <code>cisco-8000</code> でも <code>marvell-teralynx</code> でもない場合に「eXpress Boot is not supported」を出力して非ゼロ終了する gating。&#160;<a class="footnote-backref" href="#fnref:express-script" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:express-script" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:express-goal">
+<p>SONiC/doc/express-reboot/Cisco_8000_Express_Reboot_HLD.md L6 「The goal of Sonic express reboot is to be able to restart and upgrade SONiC software with sub-second data plane interruption.」&#160;<a class="footnote-backref" href="#fnref:express-goal" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:express-syncd">
+<p>SONiC/doc/express-reboot/Cisco_8000_Express_Reboot_HLD.md L27-L28, L37-L54, L106, L131-L135 — <code>syncd_request_shutdown -pxe</code> / <code>SAI_KEY_BOOT_TYPE=SAI_START_TYPE_EXPRESS_BOOT</code> / <code>SAI_SWITCH_ATTR_FAST_API_ENABLE</code> の流用についての記述。&#160;<a class="footnote-backref" href="#fnref:express-syncd" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:express-syncd" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

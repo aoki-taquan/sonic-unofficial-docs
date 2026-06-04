@@ -35922,7 +35922,7 @@
 <li><a href="../../topics/11-reboot/operations/">Reboot 運用と障害調査</a> — [meta] Reboot 運用と障害調査 — 実行前に peer と platform の前提を揃え、実行中は warm shutdown / restore の境界を見…</li>
 <li><a href="../../topics/11-reboot/internals/">内部実装</a> — [meta] 内部実装 — reboot / upgrade / lifecycle の内部実装は「どこまで data plane を生かしたまま control plan…</li>
 <li><a href="../../topics/11-reboot/upgrade/">Upgrade lifecycle</a> — [meta] Upgrade lifecycle — upgrade は reboot と同じではありません。upgrade は「どの image / package /…</li>
-<li><a href="../../topics/11-reboot/advanced/">Reboot / Upgrade の発展トピック</a> — [meta] Reboot / Upgrade の発展トピック — warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める「expr…</li>
+<li><a href="../../topics/11-reboot/advanced/">Reboot / Upgrade の発展トピック</a> — [meta] Reboot / Upgrade の発展トピック — warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める expr…</li>
 </ul>
 </li>
 <li><strong>Multi-ASIC / VOQ Chassis</strong> (<code>topics/12-multi-asic-voq/</code>)<ul>
@@ -36156,7 +36156,7 @@
 <li><a href="../../routing/gnmi-subscription-for-yang-data/">gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED）</a> — [code-verified] gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED） — gNMI Sub…</li>
 <li><a href="../../routing/high-level-design-document/">Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）</a> — [code-verified] Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定） — T0…</li>
 <li><a href="../../routing/ipv6-link-local-enhancements/">IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）</a> — [code-verified] IPv6 Link-Local アドレス管理（自動生成と use-link-local-only） — IPv6 link-local (fe80::/64…</li>
-<li><a href="../../routing/path-tracing-midpoint/">Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）</a> — [code-verified] Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記） — 本 HLD は Midpoint の SONiC 実装を扱う。S…</li>
+<li><a href="../../routing/path-tracing-midpoint/">Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）</a> — [code-verified] Path Tracing Midpoint の SONiC 実装を扱う HLD。CLI / CONFIG_DB / SAI 拡張 / Capability 取…</li>
 <li><a href="../../routing/routing-and-next-hop-table-enhancement/">NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離</a> — [code-verified] NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離 — 従来の SONiC は APP_DB.ROUTE_TABLE…</li>
 <li><strong>スイッチング</strong> (<code>switching/</code>)</li>
 <li><a href="../../switching/">スイッチング</a> — [meta] スイッチング — VLAN、LAG、MCLAG、STP、MACsec、L2 forwarding など L2 制御面を扱う章。</li>
@@ -36347,7 +36347,7 @@
 <li><a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/">SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）</a> — [discrepancy-found] SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id） — SmartSwitch アーキテクチャで…</li>
 <li><a href="../../management/sonic-gnmi-server-interface-design/">SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）</a> — [code-verified] SONiC gNMI Server インタフェース設計 — sonic-restapi は case-by-case な API で汎用性が無く、sonic-…</li>
 <li><a href="../../management/aaa-improvements/">AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）</a> — [discrepancy-found] AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール） — SONiC の AAA を Linux PAM / NS…</li>
-<li><a href="../../management/default-credential-management-for-california-sb-327-conformance/">既定パスワードの初回ログイン強制変更（California SB-327 準拠）</a> — [code-verified] 既定パスワードの初回ログイン強制変更（California SB-327 準拠） — California SB-327 は IoT 機器の既定パスワード使用…</li>
+<li><a href="../../management/default-credential-management-for-california-sb-327-conformance/">既定パスワードの初回ログイン強制変更（California SB-327 準拠）</a> — [discrepancy-found] California SB-327 準拠のため、ビルド時オプションで既定ユーザのパスワードを期限切れ化し、初回 SSH ログイン時に強制変更させる機能。HLD…</li>
 <li><a href="../../management/hld-ldap/">LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）</a> — [code-verified] LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携） — SONiC スイッチの SSH / シリアルログインを 外部 LDAP…</li>
 <li><a href="../../management/radius-management-user-authentication/">RADIUS 管理 user 認証（PAM / NSS / nss-mapper / 多サーバ priority）</a> — [code-verified] RADIUS 管理 user 認証（PAM / NSS / nss-mapper / 多サーバ priority） — SONiC 管理ユーザの SSH /…</li>
 <li><a href="../../management/sonic-tacacs-improvement/">TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus）</a> — [code-verified] TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus） — 既存の TA…</li>
@@ -36424,7 +36424,7 @@
 <li><a href="../../platform/sonic-fw-utility/">fwutil（platform component firmware の install / update / show）</a> — [code-verified] BIOS・CPLD・FPGA・BMC・SSD などのプラットフォームコンポーネントのファームウェアを統一 CLI（fwutil install / updat…</li>
 <li><a href="../../platform/sonic-sfp-refactoring/">SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）</a> — [code-verified] SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別） — SONiC の SFP 関連 platform API は PI（…</li>
 <li><a href="../../platform/sonictpidsettinghld1/">ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）</a> — [code-verified] ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8） — TPID（Tag Protocol Identifier…</li>
-<li><a href="../../platform/sfp-eeprom-parsing-gaps/">SfpUtilBase の EEPROM 解析欠損</a> — [issue-confirmed] SfpUtilBase クラスに実装されていない get/set 関数が残存する問題と、xcvrd 経由アクセスへの設計方針。</li>
+<li><a href="../../platform/sfp-eeprom-parsing-gaps/">SfpUtilBase の EEPROM 解析欠損</a> — [issue-confirmed] SfpUtilBase（sonic-platform-common, legacy sonic_sfp パッケージ）に残るモジュール制御系抽象メソッドと、xc…</li>
 <li><a href="../../platform/sfp-sff8472-rx-power-calibration/">SFF-8472 外部キャリブレーション SFP の Rx パワー変換誤り</a> — [issue-confirmed] 外部キャリブレーション方式の SFP モジュールで Rx 受信パワーの変換値が誤る問題と修正内容。</li>
 <li><a href="../../platform/thermalctld-speed-tolerance-api-change/">thermalctld の speed_tolerance API 廃止と移行</a> — [code-verified] thermalctld が speed_tolerance を STATE_DB に書き込まなくなった変更と、Fan クラスの is_under_speed…</li>
 <li><a href="../../platform/xcvrd-cmis-mediainterface-crash/">xcvrd クラッシュ（CMIS module_media_interface_id 未定義）</a> — [issue-confirmed] CMIS アプリケーション広告に media interface ID が含まれない場合に xcvrd が KeyError でクラッシュする問題と回避策。</li>
@@ -36703,7 +36703,7 @@
 <li><a href="../../reference/config-db/default-lossless-buffer-parameter/">DEFAULT_LOSSLESS_BUFFER_PARAMETER テーブル</a> — [code-verified] DEFAULT_LOSSLESS_BUFFER_PARAMETER テーブル — Dynamic buffer manager が動的に生成するロスレスバッフ…</li>
 <li><a href="../../reference/config-db/device-runtime-metadata/">DEVICE_RUNTIME_METADATA テーブル</a> — [code-verified] DEVICE_RUNTIME_METADATA テーブル — CONFIG_DB に永続化されない、起動時に計算で組み立てられる 仮想テーブル。</li>
 <li><a href="../../reference/config-db/dhcp-relay/">DHCP_RELAY テーブル</a> — [code-verified] DHCP_RELAY テーブル — dhcpv6_servers は ordered-by user で 設定順を維持 する。dhcp6relay は順序通り…</li>
-<li><a href="../../reference/config-db/dhcp-server-ipv6/">DHCP_SERVER_IPV6 テーブル</a> — [stub] DHCP_SERVER_IPV6 テーブル — 組み込み DHCPv6 サーバ機能の設定テーブル（2026-05 時点で未実装。SONiC master は…</li>
+<li><a href="../../reference/config-db/dhcp-server-ipv6/">DHCP_SERVER_IPV6 テーブル</a> — [stub] DHCP_SERVER_IPV6 テーブル — 組み込み DHCPv6 サーバ機能の設定テーブル。2026-05 時点で SONiC master には未実装…</li>
 <li><a href="../../reference/config-db/dot1p-to-pg-map/">DOT1P_TO_PG_MAP テーブル（非実在）</a> — [discrepancy-found] DOT1P_TO_PG_MAP — このテーブルは SONiC CONFIG_DB に存在しない。dot1p から Priority Group へのマッピン…</li>
 <li><a href="../../reference/config-db/dot1p-to-tc-map/">DOT1P_TO_TC_MAP テーブル</a> — [code-verified] DOT1P_TO_TC_MAP テーブル — DOT1P_TO_TC_MAP テーブルは IEEE 802.1p Priority Code Point (P…</li>
 <li><a href="../../reference/config-db/dot1x/">DOT1X / PAC テーブル</a> — [code-verified] PAC_PORT_CONFIG_TABLE と HOSTAPD_GLOBAL_CONFIG_TABLE — 802.1x / MAC Authenticati…</li>
@@ -36957,7 +36957,7 @@
 <li><a href="../../reference/runbooks/mclag-sync-failure/">MCLAG (mclagsyncd) の状態同期が止まる</a> — [runbook-verified] Runbook: MCLAG peer 同期が確立しない / state inconsistent — : sonic-net/sonic-swss @ ma…</li>
 <li><a href="../../reference/runbooks/techsupport-size-bloat/">show techsupport の出力サイズが肥大化する</a> — [runbook-verified] Runbook: show techsupport (generate_dump) のアーカイブが GB 級に肥大化 — : sonic-net/sonic-…</li>
 <li><a href="../../reference/runbooks/portchannel-lacp-not-established/">PortChannel メンバーで LACP が確立しない</a> — [runbook-verified] Runbook: PortChannel メンバーで LACP が確立しない — : sonic-net/sonic-swss @ 4305596 — cfg…</li>
-<li><a href="../../reference/runbooks/snmp-polling-timeout/">SNMP polling が timeout する</a> — [runbook-verified] Runbook: SNMP polling が timeout する — : sonic-net/sonic-snmpagent @ 4305596 — ax…</li>
+<li><a href="../../reference/runbooks/snmp-polling-timeout/">SNMP polling が timeout する</a> — [runbook-verified] Runbook: SNMP polling が timeout する場合の切り分けと対処 (sonic_ax_impl の hang、ACL/communit…</li>
 <li><a href="../../reference/runbooks/bgp-route-not-advertised/">BGP route が広告されない</a> — [runbook-verified] Runbook: BGP route が想定 peer へ広告されない事象を、FRR の Adj-RIB-Out 判定と fpmsyncd の APP_DB…</li>
 <li><a href="../../reference/runbooks/acl-rule-no-hit/">ACL ルールが効かない / counter が増えない</a> — [runbook-verified] Runbook: ACL ルールが効かない / counter が増えない — : sonic-net/sonic-swss @ 4305596 — orch…</li>
 <li><a href="../../reference/runbooks/interface-mtu-mismatch/">Interface MTU mismatch によるパケットドロップ</a> — [runbook-verified] Runbook: Interface MTU mismatch によるパケットドロップ — : sonic-net/sonic-swss @ 4305596…</li>

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="config buffer サブコマンド — config buffer は dynamic buffer が有効なシステムで、CONFIG_DB の BUFFER_PROFILE を追加・更新する CLI グループ。">
+        <meta name="description" content="config buffer サブコマンド — config buffer は dynamic buffer が有効なシステムで、CONFIG_DB の BUFFER_PROFILE を追加・更新・削除し、shared headroom pool の比率/サイズを設定する CLI グループ。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="config buffer サブコマンド - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="config buffer サブコマンド — config buffer は dynamic buffer が有効なシステムで、CONFIG_DB の BUFFER_PROFILE を追加・更新する CLI グループ。" />
+<meta property="og:description" content="config buffer サブコマンド — config buffer は dynamic buffer が有効なシステムで、CONFIG_DB の BUFFER_PROFILE を追加・更新・削除し、shared headroom pool の比率/サイズを設定する CLI グループ。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/cli/config-buffer.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-buffer/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="config buffer サブコマンド - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="config buffer サブコマンド — config buffer は dynamic buffer が有効なシステムで、CONFIG_DB の BUFFER_PROFILE を追加・更新する CLI グループ。" />
+<meta property="twitter:description" content="config buffer サブコマンド — config buffer は dynamic buffer が有効なシステムで、CONFIG_DB の BUFFER_PROFILE を追加・更新・削除し、shared headroom pool の比率/サイズを設定する CLI グループ。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/cli/config-buffer.png" />
 </head>
   
@@ -20863,6 +20863,39 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#config-buffer-profile-remove-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config buffer profile remove &lt;profile&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-buffer-shared_headroom_pool-over-subscribe-ratio-ratio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config buffer shared_headroom_pool over-subscribe-ratio &lt;ratio&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-buffer-shared_headroom_pool-size-size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config buffer shared_headroom_pool size &lt;size&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -36047,6 +36080,39 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#config-buffer-profile-remove-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config buffer profile remove &lt;profile&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-buffer-shared_headroom_pool-over-subscribe-ratio-ratio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config buffer shared_headroom_pool over-subscribe-ratio &lt;ratio&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-buffer-shared_headroom_pool-size-size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config buffer shared_headroom_pool size &lt;size&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -36212,7 +36278,7 @@
 
 <h1 id="config-buffer">config buffer サブコマンド<a class="headerlink" href="#config-buffer" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config buffer</code> は dynamic buffer が有効なシステムで、<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>BUFFER_PROFILE</code> を追加・更新する CLI グループ。グループ入口で <code>DEVICE_METADATA|localhost</code> の <code>buffer_model</code> を確認し、dynamic 以外では実行を拒否する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config buffer</code> は dynamic buffer が有効なシステムで、<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>BUFFER_PROFILE</code> を追加・更新・削除し、shared headroom pool の比率/サイズを設定する CLI グループ。グループ入口で <code>is_dynamic_buffer_enabled()</code> を呼び、dynamic でなければ実行を拒否する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36230,6 +36296,18 @@
 <td><code>config buffer profile set &lt;profile&gt; [options]</code></td>
 <td>既存 profile を更新</td>
 </tr>
+<tr>
+<td><code>config buffer profile remove &lt;profile&gt;</code></td>
+<td>既存 profile を削除</td>
+</tr>
+<tr>
+<td><code>config buffer shared_headroom_pool over-subscribe-ratio &lt;ratio&gt;</code></td>
+<td>shared headroom pool の over-subscribe 比率を設定</td>
+</tr>
+<tr>
+<td><code>config buffer shared_headroom_pool size &lt;size&gt;</code></td>
+<td>shared headroom pool の絶対サイズを設定</td>
+</tr>
 </tbody>
 </table>
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -36242,8 +36320,8 @@
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="o">[</span>--dynamic_th<span class="w"> </span>&lt;value&gt;<span class="o">]</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="o">[</span>--pool<span class="w"> </span>&lt;pool&gt;<span class="o">]</span>
 </span></code></pre></div>
-<p><code>BUFFER_PROFILE|&lt;profile&gt;</code> が既に存在する場合はエラー。存在しない場合、<code>update_profile()</code> を通じて <code>pool</code>, <code>xon</code>, <code>xoff</code>, <code>size</code>, <code>dynamic_th</code> を組み立て、<code>ValidatedConfigDBConnector</code> で <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書き込む<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
-<p><code>--pool</code> を省略すると <code>ingress_lossless_pool</code> が使われる。指定 pool は <code>BUFFER_POOL</code> に存在する必要がある。</p>
+<p><code>BUFFER_PROFILE|&lt;profile&gt;</code> が既に存在する場合はエラー。存在しない場合、<code>update_profile()</code> を呼ぶ<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。<code>update_profile()</code> 内部で <code>ConfigDBConnector</code> を <code>ValidatedConfigDBConnector</code> でラップし、<code>pool</code>, <code>xon</code>, <code>xoff</code>, <code>size</code>, <code>dynamic_th</code> を組み立てた上で <a href="../../glossary/#term-config_db">CONFIG_DB</a> に <code>set_entry</code> する<sup id="fnref:update"><a class="footnote-ref" href="#fn:update">3</a></sup>。</p>
+<p><code>--pool</code> を省略すると <code>ingress_lossless_pool</code> が使われる。指定 pool は <code>BUFFER_POOL</code> に存在する必要がある。<code>xon</code>/<code>xoff</code>/<code>size</code> をいずれも省略した場合は <code>headroom_type=dynamic</code> の profile となり、<code>--dynamic_th</code> の指定が必須となる<sup id="fnref2:update"><a class="footnote-ref" href="#fn:update">3</a></sup>.</p>
 <h3 id="config-buffer-profile-set-profile"><code>config buffer profile set &lt;profile&gt;</code><a class="headerlink" href="#config-buffer-profile-set-profile" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config<span class="w"> </span>buffer<span class="w"> </span>profile<span class="w"> </span><span class="nb">set</span><span class="w"> </span>&lt;profile&gt;
@@ -36253,7 +36331,22 @@
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="o">[</span>--dynamic_th<span class="w"> </span>&lt;value&gt;<span class="o">]</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="o">[</span>--pool<span class="w"> </span>&lt;pool&gt;<span class="o">]</span>
 </span></code></pre></div>
-<p>既存 <code>BUFFER_PROFILE|&lt;profile&gt;</code> を更新する。profile が存在しなければエラー。既存 profile が <code>xoff</code> を持たない dynamic headroom 計算型の場合、<code>--xoff</code> を指定して非 dynamic 型へ変える操作は拒否される<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
+<p>既存 <code>BUFFER_PROFILE|&lt;profile&gt;</code> を更新する。profile が存在しなければエラー。既存 profile が <code>xoff</code> を持たない dynamic headroom 計算型の場合、<code>--xoff</code> を指定して非 dynamic 型へ変える操作は拒否される<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">4</a></sup>。</p>
+<h3 id="config-buffer-profile-remove-profile"><code>config buffer profile remove &lt;profile&gt;</code><a class="headerlink" href="#config-buffer-profile-remove-profile" title="Permanent link">&para;</a></h3>
+<p><strong>用法</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config<span class="w"> </span>buffer<span class="w"> </span>profile<span class="w"> </span>remove<span class="w"> </span>&lt;profile&gt;
+</span></code></pre></div>
+<p><code>BUFFER_PROFILE|&lt;profile&gt;</code> を削除する。削除前に <code>BUFFER_PG</code> テーブル全体を走査し、いずれかの port/PG が当該 profile を参照していれば <code>Profile X is referenced by ...</code> で拒否する。profile が存在しなければ <code>Profile X doesn't exist</code> で失敗する<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">5</a></sup>。</p>
+<h3 id="config-buffer-shared_headroom_pool-over-subscribe-ratio-ratio"><code>config buffer shared_headroom_pool over-subscribe-ratio &lt;ratio&gt;</code><a class="headerlink" href="#config-buffer-shared_headroom_pool-over-subscribe-ratio-ratio" title="Permanent link">&para;</a></h3>
+<p><strong>用法</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>buffer<span class="w"> </span>shared_headroom_pool<span class="w"> </span>over-subscribe-ratio<span class="w"> </span>&lt;ratio&gt;
+</span></code></pre></div>
+<p><code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> の単一エントリに <code>over_subscribe_ratio</code> を設定する。値域は <code>[0, ポート数]</code>。<code>0</code> を指定するとキーが削除される。テーブルに 2 件以上のエントリがあると失敗する<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">6</a></sup>。</p>
+<h3 id="config-buffer-shared_headroom_pool-size-size"><code>config buffer shared_headroom_pool size &lt;size&gt;</code><a class="headerlink" href="#config-buffer-shared_headroom_pool-size-size" title="Permanent link">&para;</a></h3>
+<p><strong>用法</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>config<span class="w"> </span>buffer<span class="w"> </span>shared_headroom_pool<span class="w"> </span>size<span class="w"> </span>&lt;size&gt;
+</span></code></pre></div>
+<p><code>BUFFER_POOL|ingress_lossless_pool</code> の <code>xoff</code> を設定する。<code>STATE_DB</code> の <code>BUFFER_MAX_PARAM_TABLE|global</code> から <code>mmu_size</code> を読み、<code>size &gt; mmu_size</code> の場合は拒否される。<code>size=0</code> を指定すると既存の <code>xoff</code> キーが削除される<sup id="fnref2:5"><a class="footnote-ref" href="#fn:5">6</a></sup>.</p>
 <h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36267,17 +36360,22 @@
 <tr>
 <td><code>BUFFER_PROFILE</code></td>
 <td><code>&lt;profile&gt;</code></td>
-<td>profile の作成・更新</td>
+<td>profile の作成・更新・削除</td>
 </tr>
 <tr>
 <td><code>BUFFER_POOL</code></td>
-<td><code>&lt;pool&gt;</code></td>
-<td>指定 pool の存在確認</td>
+<td><code>&lt;pool&gt;</code> / <code>ingress_lossless_pool</code></td>
+<td>指定 pool の存在確認、shared headroom pool size の書き込み先 (<code>xoff</code>)</td>
+</tr>
+<tr>
+<td><code>BUFFER_PG</code></td>
+<td><code>&lt;port&gt;|&lt;pg&gt;</code></td>
+<td>profile 削除時の参照チェック (read-only)</td>
 </tr>
 <tr>
 <td><code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code></td>
 <td>任意</td>
-<td>shared headroom pool 判定</td>
+<td><code>over_subscribe_ratio</code> / <code>default_dynamic_th</code> の格納</td>
 </tr>
 </tbody>
 </table>
@@ -36339,9 +36437,9 @@
 <li>PG/queue から profile を外す前に profile を削除すると <a href="../../glossary/#term-orchagent">orchagent</a> が拒否する。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>buffer<span class="w"> </span>profile
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>priority-group<span class="w"> </span>persistent-watermark<span class="w"> </span>headroom
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>buffer<span class="w"> </span>pool
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>show<span class="w"> </span>buffer<span class="w"> </span>profile
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>priority-group<span class="w"> </span>persistent-watermark<span class="w"> </span>headroom
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>show<span class="w"> </span>buffer<span class="w"> </span>pool
 </span></code></pre></div>
 <!-- /ops-hint -->
 
@@ -36362,13 +36460,22 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>config buffer</code> グループ定義と dynamic buffer チェック。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8481">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8481</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>config buffer</code> グループ定義と <code>is_dynamic_buffer_enabled()</code> チェック。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8479-L8487">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8479-L8487</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>profile add</code> は既存 entry を確認してから <code>update_profile()</code> を呼ぶ。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8494">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8494</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>profile add</code> は既存 entry を確認してから <code>update_profile()</code> を呼ぶ。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8497-L8514">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8497-L8514</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:update">
+<p><code>update_profile()</code> は <code>ValidatedConfigDBConnector</code> で wrap した上で <code>BUFFER_PROFILE</code> に <code>set_entry</code> する。<code>xon</code>/<code>xoff</code>/<code>size</code> 未指定時は <code>headroom_type=dynamic</code> と扱われ、<code>dynamic_th</code> が必須となる。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8556-L8632">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8556-L8632</a>&#160;<a class="footnote-backref" href="#fnref:update" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:update" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p><code>profile set</code> の存在確認と <code>xoff</code> 変更制限。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8514">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8514</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p><code>profile set</code> の存在確認と <code>xoff</code> 変更制限。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8517-L8537">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8517-L8537</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>profile remove</code> は <code>BUFFER_PG</code> 参照チェック → <code>set_entry(..., None)</code> で削除。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8634-L8656">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8634-L8656</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p><code>shared_headroom_pool</code> グループの <code>over-subscribe-ratio</code> / <code>size</code> サブコマンド。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8658-L8730">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8658-L8730</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:5" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

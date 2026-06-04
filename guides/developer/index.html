@@ -35960,22 +35960,22 @@
 </li>
 <li><strong>CONFIG_DB ↔ daemon の対応を決める</strong><ul>
 <li>新 table をどの orch / daemon が subscribe するかを設計し、<a href="../../reference/config-db-orch-map/">CONFIG_DB ↔ orch 対応表</a> に追記します。</li>
-<li>主要な実装位置は <code>sonic-swss/orchagent/</code> 配下の <code>*orch.cpp</code> / <code>*orch.h</code> です（例: <code>aclorch.cpp</code>, <code>bufferorch.cpp</code>, <code>bfdorch.cpp</code>）。サブシステム固有の daemon は <code>sonic-swss/&lt;feature&gt;mgrd/</code>、<code>sonic-platform-daemons/</code> などに分かれます。</li>
+<li>主要な実装位置は <code>sonic-swss/orchagent/</code> 配下の <code>*orch.cpp</code> / <code>*orch.h</code> です（例: <code>aclorch.cpp</code>, <code>bufferorch.cpp</code>, <code>bfdorch.cpp</code>）<sup id="fnref:orch-dir"><a class="footnote-ref" href="#fn:orch-dir">4</a></sup>。サブシステム固有の daemon は <code>sonic-swss/&lt;feature&gt;mgrd/</code>、<code>sonic-platform-daemons/</code> などに分かれます。</li>
 </ul>
 </li>
 <li><strong>CLI を実装する</strong><ul>
-<li>設定系は <code>sonic-utilities/config/&lt;feature&gt;.py</code>、表示系は <code>sonic-utilities/show/&lt;feature&gt;.py</code> に Click サブコマンドを追加します。CONFIG_DB との接続は <code>swsscommon.ConfigDBConnector</code> 経由で行い、YANG validation を意識する場合は <a href="../../management/sonic-config-update-validation-via-yang/">Config update validation via YANG</a> を参照します。</li>
+<li>設定系は <code>sonic-utilities/config/&lt;feature&gt;.py</code>、表示系は <code>sonic-utilities/show/&lt;feature&gt;.py</code> に Click サブコマンドを追加します。CONFIG_DB との接続は <code>swsscommon.ConfigDBConnector</code> 経由で行い（<code>config/main.py</code> でも <code>ConfigDBConnector(use_unix_socket_path=True, namespace=namespace)</code> 形式で利用されています<sup id="fnref:cli-connector"><a class="footnote-ref" href="#fn:cli-connector">5</a></sup>）、YANG validation を意識する場合は <a href="../../management/sonic-config-update-validation-via-yang/">Config update validation via YANG</a> を参照します。</li>
 <li>同 repo の <code>tests/&lt;feature&gt;_test.py</code> に unit test を追加します。</li>
 </ul>
 </li>
 <li><strong>test plan / 結合テストを書く</strong><ul>
-<li>HLD と並列で <code>*-test-plan.md</code> を提案するのが慣習です。当リポジトリ内の既存例は <code>docs/&lt;area&gt;/*-test-plan.md</code> を grep して参照し、実装テストは <code>sonic-mgmt</code> 配下の <code>tests/</code> に PR を出します。</li>
+<li>HLD と並列で <code>*-test-plan.md</code> を提案するのが慣習です。当リポジトリ内の既存例は <code>docs/&lt;area&gt;/*-test-plan.md</code>（例: <a href="../../acl-qos/acl-ingress-egress-test-plan/">ACL ingress/egress test plan</a>、<a href="../../system/dataplane-telemetry-test-plan/">Dataplane telemetry test plan</a>）を参照し、実装テストは <code>sonic-mgmt</code> 配下の <code>tests/</code> に PR を出します。</li>
 <li>YANG / CLI / 単一 daemon で完結する範囲は up-front の単体テストで吸収し、複数 daemon にまたがる挙動だけを sonic-mgmt の結合テストに残すと PR レビューが軽くなります。</li>
 </ul>
 </li>
 <li><strong>migration / upgrade を考慮する</strong><ul>
-<li>CONFIG_DB schema を変更する場合、<code>sonic-utilities/scripts/db_migrator.py</code> に migration ステップを追加して minigraph / golden config から旧 schema を変換できるようにします。</li>
-<li>default config の生成は <code>sonic-buildimage</code> の <code>files/build_templates/</code> Jinja2 テンプレートに反映します。</li>
+<li>CONFIG_DB schema を変更する場合、<code>sonic-utilities/scripts/db_migrator.py</code> に migration ステップを追加して minigraph / golden config から旧 schema を変換できるようにします<sup id="fnref:db-migrator"><a class="footnote-ref" href="#fn:db-migrator">6</a></sup>。</li>
+<li>default config の生成は <code>sonic-buildimage</code> の <code>files/build_templates/</code> Jinja2 テンプレートに反映します<sup id="fnref:build-templates"><a class="footnote-ref" href="#fn:build-templates">7</a></sup>。</li>
 </ul>
 </li>
 <li><strong>ドキュメントに反映する</strong><ul>
@@ -35997,7 +35997,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4a6287bc2ad2 -->
+<!-- glossary-links-injected: e2892b76fd9a -->
 
 <div class="footnote">
 <hr />
@@ -36009,7 +36009,19 @@
 <p><code>sonic-buildimage/src/sonic-yang-models/yang-models/</code> 配下に <code>sonic-acl.yang</code> / <code>sonic-port.yang</code> / <code>sonic-bgp-*.yang</code> などコミュニティ標準の sonic-* YANG が並びます。&#160;<a class="footnote-backref" href="#fnref:yang-dir" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:yang-tests">
-<p><code>sonic-buildimage/src/sonic-yang-models/tests/test_sonic_yang_models.py</code> と <code>yang_model_tests/</code> の JSON フィクスチャで mandatory / leafref / when 条件などを検証します。&#160;<a class="footnote-backref" href="#fnref:yang-tests" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p><code>sonic-buildimage/src/sonic-yang-models/tests/test_sonic_yang_models.py</code> と同階層の <code>yang_model_tests/</code> の JSON フィクスチャで mandatory / leafref / when 条件などを検証します。&#160;<a class="footnote-backref" href="#fnref:yang-tests" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:orch-dir">
+<p><code>sonic-swss/orchagent/</code> 直下に <code>aclorch.{cpp,h}</code> / <code>bufferorch.{cpp,h}</code> / <code>bfdorch.{cpp,h}</code> 等の orch 実装が並びます。&#160;<a class="footnote-backref" href="#fnref:orch-dir" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:cli-connector">
+<p><code>sonic-utilities/config/main.py</code> で <code>from swsscommon.swsscommon import ... ConfigDBConnector ...</code> を import し、<code>config_db = ConfigDBConnector(use_unix_socket_path=True, namespace=namespace)</code> 形式で CONFIG_DB に接続します（例: 36 行目付近の import、319 / 345 / 386 行目付近の instantiation）。&#160;<a class="footnote-backref" href="#fnref:cli-connector" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:db-migrator">
+<p><code>sonic-utilities/scripts/db_migrator.py</code> に世代毎の <code>migration_&lt;version&gt;</code> 系メソッドが集約され、<code>db_migrator -o migrate</code> 等で順次適用されます。&#160;<a class="footnote-backref" href="#fnref:db-migrator" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:build-templates">
+<p><code>sonic-buildimage/files/build_templates/</code> 配下に <code>buffers_config.j2</code> / <code>backend_acl.j2</code> などの Jinja2 テンプレートが置かれ、default config 生成に使われます。&#160;<a class="footnote-backref" href="#fnref:build-templates" title="Jump back to footnote 7 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

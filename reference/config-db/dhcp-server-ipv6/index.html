@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="DHCP_SERVER_IPV6 テーブル — 組み込み DHCPv6 サーバ機能の設定テーブル（2026-05 時点で未実装。SONiC master は DHCPv6 リレーのみ対応）。">
+        <meta name="description" content="DHCP_SERVER_IPV6 テーブル — 組み込み DHCPv6 サーバ機能の設定テーブル。2026-05 時点で SONiC master には未実装であり、現状は DHCPv6 リレー (DHCP_RELAY) のみ対応する点を整理した参照用スタブ。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="DHCP_SERVER_IPV6 テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="DHCP_SERVER_IPV6 テーブル — 組み込み DHCPv6 サーバ機能の設定テーブル（2026-05 時点で未実装。SONiC master は DHCPv6 リレーのみ対応）。" />
+<meta property="og:description" content="DHCP_SERVER_IPV6 テーブル — 組み込み DHCPv6 サーバ機能の設定テーブル。2026-05 時点で SONiC master には未実装であり、現状は DHCPv6 リレー (DHCP_RELAY) のみ対応する点を整理した参照用スタブ。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/dhcp-server-ipv6.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/dhcp-server-ipv6/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="DHCP_SERVER_IPV6 テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="DHCP_SERVER_IPV6 テーブル — 組み込み DHCPv6 サーバ機能の設定テーブル（2026-05 時点で未実装。SONiC master は DHCPv6 リレーのみ対応）。" />
+<meta property="twitter:description" content="DHCP_SERVER_IPV6 テーブル — 組み込み DHCPv6 サーバ機能の設定テーブル。2026-05 時点で SONiC master には未実装であり、現状は DHCPv6 リレー (DHCP_RELAY) のみ対応する点を整理した参照用スタブ。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/dhcp-server-ipv6.png" />
 </head>
   
@@ -96,7 +96,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dhcp_server_ipv6" class="md-skip">
+        <a href="#_1" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -27467,8 +27467,6 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
-        
-      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
           
@@ -27511,8 +27509,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -27524,438 +27520,82 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="概要">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         データフロー (自動生成)
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
         <li class="md-nav__item">
+  <a href="#dhcp_server_ipv6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DHCP_SERVER_IPV6 テーブル
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DHCP_SERVER_IPV6 テーブル">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        未実装である根拠
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipv4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPv4 実装との対比
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-dhcpv6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC における DHCPv6 サポートの現状
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        フィールドデフォルト
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        書込み順依存
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="書込み順依存">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#vlan_interface" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        VLAN_INTERFACE 先行が必須
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dhcp6relay-supervisor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        dhcp6relay 起動条件（supervisor テンプレート）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#systemd-dhcp-relayservice" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        systemd 起動順（dhcp-relay.service）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        副次 DB 書込
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="副次 DB 書込">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        STATE_DB
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="STATE_DB">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#initialize_counter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        初期化（initialize_counter）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#increase_counter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        カウンタ増分（increase_counter）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定ファイル書込
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        失敗挙動
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="失敗挙動">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-server_ipdhcpv6_servers-log_warning" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. 不正 server_ip（dhcpv6_servers）→ LOG_WARNING + 不正アドレスのまま送信継続
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-vlan-log_warning-vlan" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. VLAN 未解決 → LOG_WARNING + VLAN スキップ（サービス不提供）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-dhcrelay-exitexit_failure-retry-exit" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. dhcrelay 起動失敗 → exit(EXIT_FAILURE) または retry 後 exit
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-runtime-hot-reload" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. runtime 設定変更は再起動まで反映されない（hot-reload 不可）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗黙参照テーブル
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ハードコード定数 (コード由来)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="ハードコード定数 (コード由来)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#udp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        UDP ポート定数
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ホップ上限
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        その他の主要定数
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        通信メカニズム
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="通信メカニズム">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#dhcp_server_ipv6_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DHCP_SERVER_IPV6 に関する結論
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dhcpv6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DHCPv6 リレー側の通信メカニズム（参照）
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="DHCPv6 リレー側の通信メカニズム（参照）">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db-subscribe-dhcp6relay" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB Subscribe (dhcp6relay)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dhcrelay" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        dhcrelay 制御
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#netlink" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        netlink（間接利用）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        プラットフォーム差
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="プラットフォーム差">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#dualtor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DualToR 構成の詳細
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#smartswitch-dpu-dhcpv6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SmartSwitch DPU — DHCPv6 非対応
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ipv6-lla" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IPv6 LLA 生成待機の仕組み
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dhcpv6_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DHCPv6 サポートの現状
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連ドキュメント
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス (索引)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -36227,8 +35867,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -36240,438 +35878,82 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="概要">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         データフロー (自動生成)
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
         <li class="md-nav__item">
+  <a href="#dhcp_server_ipv6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DHCP_SERVER_IPV6 テーブル
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DHCP_SERVER_IPV6 テーブル">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        未実装である根拠
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipv4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPv4 実装との対比
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-dhcpv6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC における DHCPv6 サポートの現状
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        フィールドデフォルト
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        書込み順依存
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="書込み順依存">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#vlan_interface" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        VLAN_INTERFACE 先行が必須
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dhcp6relay-supervisor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        dhcp6relay 起動条件（supervisor テンプレート）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#systemd-dhcp-relayservice" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        systemd 起動順（dhcp-relay.service）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        副次 DB 書込
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="副次 DB 書込">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        STATE_DB
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="STATE_DB">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#initialize_counter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        初期化（initialize_counter）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#increase_counter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        カウンタ増分（increase_counter）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定ファイル書込
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        失敗挙動
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="失敗挙動">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-server_ipdhcpv6_servers-log_warning" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. 不正 server_ip（dhcpv6_servers）→ LOG_WARNING + 不正アドレスのまま送信継続
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-vlan-log_warning-vlan" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. VLAN 未解決 → LOG_WARNING + VLAN スキップ（サービス不提供）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-dhcrelay-exitexit_failure-retry-exit" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. dhcrelay 起動失敗 → exit(EXIT_FAILURE) または retry 後 exit
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-runtime-hot-reload" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. runtime 設定変更は再起動まで反映されない（hot-reload 不可）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗黙参照テーブル
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ハードコード定数 (コード由来)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="ハードコード定数 (コード由来)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#udp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        UDP ポート定数
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ホップ上限
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        その他の主要定数
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        通信メカニズム
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="通信メカニズム">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#dhcp_server_ipv6_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DHCP_SERVER_IPV6 に関する結論
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dhcpv6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DHCPv6 リレー側の通信メカニズム（参照）
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="DHCPv6 リレー側の通信メカニズム（参照）">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db-subscribe-dhcp6relay" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB Subscribe (dhcp6relay)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dhcrelay" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        dhcrelay 制御
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#netlink" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        netlink（間接利用）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        プラットフォーム差
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="プラットフォーム差">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#dualtor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DualToR 構成の詳細
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#smartswitch-dpu-dhcpv6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SmartSwitch DPU — DHCPv6 非対応
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ipv6-lla" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IPv6 LLA 生成待機の仕組み
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dhcpv6_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DHCPv6 サポートの現状
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連ドキュメント
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス (索引)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -36700,18 +35982,8 @@
   
 
 
-<h1 id="dhcp_server_ipv6">DHCP_SERVER_IPV6 テーブル<a class="headerlink" href="#dhcp_server_ipv6" title="Permanent link">&para;</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">未実装</p>
-<p><code>DHCP_SERVER_IPV6</code> テーブルは <strong>2026-05-14 時点で sonic-net/sonic-buildimage master に存在しない</strong>。
-SONiC の組み込み DHCP サーバ機能は IPv4 専用（<code>DHCP_SERVER_IPV4</code>）のみ実装されている。
-このページは将来の実装に備えたプレースホルダーである。</p>
-</div>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-sonic">SONiC</a> は DHCPv6 <strong>リレー</strong>機能（<code>DHCP_RELAY</code> テーブル）を持つが、DHCPv6 <strong>サーバ</strong>機能は未実装である。IPv4 側の対応テーブルである <code>DHCP_SERVER_IPV4</code> が <code>dhcpservd</code> + kea-dhcp4 によって実装されているのに対し、kea-dhcp6 を管理するデーモンおよび対応 <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブルは存在しない。</p>
-<!-- defaults -->
 <!-- cdb-mermaid -->
-<h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<h3 id="_1">データフロー (自動生成)<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CDB[("CONFIG_DB&lt;br/&gt;DHCP_SERVER_IPV4")]
   DM["dhcpservd"]
@@ -36722,10 +35994,17 @@ SONiC の組み込み DHCP サーバ機能は IPv4 専用（<code>DHCP_SERVER_IP
 </div>
 <!-- /cdb-mermaid -->
 
-<h2 id="_3">フィールドデフォルト<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p><strong>調査結果: フィールドなし（テーブル未実装）</strong></p>
-<p><a href="../../glossary/#term-sonic">SONiC</a> master における <code>DHCP_SERVER_IPV6</code> テーブルの <a href="../../glossary/#term-yang">YANG</a> モデル、Python デーモン、CLI プラグインは確認されなかった。コード由来のデフォルト値を抽出できるフィールドが存在しない。</p>
-<p>実装済み IPv4 版との対比:</p>
+<h1 id="dhcp_server_ipv6">DHCP_SERVER_IPV6 テーブル<a class="headerlink" href="#dhcp_server_ipv6" title="Permanent link">&para;</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">未実装スタブ</p>
+<p><code>DHCP_SERVER_IPV6</code> テーブルは <strong>2026-06-04 時点で sonic-net/sonic-buildimage master に存在しない</strong>。
+<a href="../../glossary/#term-sonic">SONiC</a> の組み込み DHCP サーバ機能は IPv4 専用 (<code>DHCP_SERVER_IPV4</code>) のみ実装されている。
+本ページは将来の実装に備えたプレースホルダーであり、リレー側 (<code>DHCP_RELAY</code> / <code>dhcp6relay</code>) の詳細は本ページでは扱わない。</p>
+</div>
+<h2 id="_2">未実装である根拠<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p><code>src/sonic-yang-models/yang-models/</code> 配下には <code>sonic-dhcp-server-ipv4.yang</code> のみが存在し、<code>sonic-dhcp-server-ipv6.yang</code> に相当する <a href="../../glossary/#term-yang">YANG</a> モデルは存在しない。<a href="../../glossary/#term-hld">HLD</a> (<code>doc/dhcp_server/port_based_dhcp_server_high_level_design.md</code>) のタイトルも「IPv4 Port Based DHCP_SERVER in <a href="../../glossary/#term-sonic">SONiC</a>」であり、設計段階から IPv4 限定として始まっている。</p>
+<p><a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読する <code>dhcpservd</code> デーモン (kea-dhcp4 ラッパ) も IPv4 専用で、kea-dhcp6 を起動・管理する <a href="../../glossary/#term-sonic">SONiC</a> 側の対応デーモンは master に未存在。CLI (<code>config dhcp_server ipv4 ...</code>) も IPv4 系統のみが <code>sonic-utilities</code> に登録されている。</p>
+<h2 id="ipv4">IPv4 実装との対比<a class="headerlink" href="#ipv4" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -36742,493 +36021,46 @@ SONiC の組み込み DHCP サーバ機能は IPv4 専用（<code>DHCP_SERVER_IP
 </tr>
 <tr>
 <td>デーモン</td>
-<td><code>dhcpservd</code> (kea-dhcp4)</td>
+<td><code>dhcpservd</code> (kea-dhcp4 管理)</td>
 <td>なし</td>
 </tr>
 <tr>
 <td>CLI</td>
-<td><code>config dhcp_server ipv4</code></td>
+<td><code>config dhcp_server ipv4 ...</code></td>
 <td>なし</td>
 </tr>
 <tr>
-<td>主要フィールド</td>
-<td><code>state</code>, <code>lease_time</code>, <code>mode</code>, <code>gateway</code>, <code>netmask</code></td>
-<td>未定義</td>
+<td><a href="../../glossary/#term-hld">HLD</a></td>
+<td><code>port_based_dhcp_server_high_level_design.md</code> (IPv4 限定)</td>
+<td>なし</td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p>Evidence: <a href="../../glossary/#term-sonic-buildimage">sonic-buildimage</a>@9ea932ec — <code>src/sonic-yang-models/yang-models/</code> にて <code>sonic-dhcp-server-ipv6.yang</code> 不在を確認。<code>doc/dhcp_server/port_based_dhcp_server_high_level_design.md</code> に「IPv4 Port Based DHCP_SERVER」と明記。</p>
+<p>Evidence: <a href="../../glossary/#term-sonic-buildimage">sonic-buildimage</a>@9ea932ec — <code>src/sonic-yang-models/yang-models/</code> 配下の <a href="../../glossary/#term-yang">YANG</a> 一覧および <code>sonic-net/SONiC@master:doc/dhcp_server/port_based_dhcp_server_high_level_design.md:1</code> のタイトル行で IPv4 限定であることを確認。</p>
 </blockquote>
-<!-- /defaults -->
-
-<!-- ordering -->
-<h2 id="_4">書込み順依存<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p><code>DHCP_SERVER_IPV6</code> は未実装だが、<a href="../../glossary/#term-sonic">SONiC</a> の DHCPv6 リレー機能（<code>DHCP_RELAY</code> テーブル / <code>dhcp6relay</code> プロセス）には以下の順序依存が確認されている。将来 <code>DHCP_SERVER_IPV6</code> が実装された場合も同等の <a href="../../glossary/#term-vlan">VLAN</a> 前提条件が継承される見込み。</p>
-<h3 id="vlan_interface">VLAN_INTERFACE 先行が必須<a class="headerlink" href="#vlan_interface" title="Permanent link">&para;</a></h3>
-<p><code>dhcp6relay</code> の起動時 (<code>initialize_swss()</code> → <code>processRelayNotification()</code>) は <code>DHCP_RELAY|&lt;vlan&gt;</code> エントリを処理する際に <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>VLAN_INTERFACE|&lt;vlan&gt;|*</code> キーを検索し、<strong>IPv6 アドレス（コロン含む）が 1 件も存在しない <a href="../../glossary/#term-vlan">VLAN</a> は無条件でスキップ</strong>する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>// dhcp6relay/src/config_interface.cpp:130-148
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>const std::string match_pattern = &quot;VLAN_INTERFACE|&quot; + vlan + &quot;|*&quot;;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>auto keys = config_db-&gt;keys(match_pattern);
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>...
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>if (!has_ipv6_address) {
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    syslog(LOG_WARNING, &quot;%s doesn&#39;t have IPv6 address configured, skip it&quot;, vlan.c_str());
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    continue;
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>}
-</span></code></pre></div>
-<p>runtime 中の動的更新は「コンテナ再起動が必要」ログを出すのみで設定反映されないため、<strong>DHCP_RELAY 書込み前に VLAN_INTERFACE への IPv6 アドレス付与が完了していること</strong>が必要。</p>
-<p>推奨書込み順序:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>1. VLAN（ブリッジ定義）
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>2. VLAN_INTERFACE|&lt;vlan&gt;|&lt;ipv6-prefix&gt;  ← IPv6 グローバルアドレス
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>3. DHCP_RELAY|&lt;vlan&gt;（dhcpv6_servers を含む）
-</span></code></pre></div>
-<h3 id="dhcp6relay-supervisor">dhcp6relay 起動条件（supervisor テンプレート）<a class="headerlink" href="#dhcp6relay-supervisor" title="Permanent link">&para;</a></h3>
-<p><code>dhcpv6-relay.agents.j2</code> / <code>dhcp-relay.programs.j2</code> は supervisord エントリを Jinja2 で動的生成する。<code>dhcp6relay</code> プログラムは次の条件がすべて真のときのみ登録・起動される:</p>
+<h2 id="sonic-dhcpv6">SONiC における DHCPv6 サポートの現状<a class="headerlink" href="#sonic-dhcpv6" title="Permanent link">&para;</a></h2>
+<p><code>DHCP_SERVER_IPV6</code> ではなく、リレー側で DHCPv6 を扱う:</p>
 <ol>
-<li><code>VLAN_INTERFACE</code> にエントリが存在する</li>
-<li>当該 <a href="../../glossary/#term-vlan">VLAN</a> が <code>DHCP_RELAY</code> に存在し <code>dhcpv6_servers</code> が空でない</li>
-<li><code>dhcpv6_servers</code> に有効な IPv6 アドレスが 1 件以上含まれる</li>
+<li><strong>DHCPv6 リレー</strong> — <code>DHCP_RELAY</code> テーブル (<code>sonic-dhcpv6-relay.yang</code>)。<a href="../../glossary/#term-vlan">VLAN</a> ごとに <code>dhcpv6_servers</code> / <code>rfc6939_support</code> / <code>interface_id</code> を設定し、<code>dhcp6relay</code> プロセスが DHCPv6 RELAY-FORWARD/REPLY を上位サーバへプロキシする。</li>
+<li><strong>DHCPv6 リレーカウンタ</strong> — <code>show dhcp6relay_counters</code> CLI で <code>DHCPv6_COUNTER_TABLE</code> (<a href="../../glossary/#term-state_db">STATE_DB</a>) のメッセージ別カウンタを表示する。</li>
 </ol>
-<p>条件を満たさない状態でコンテナが起動すると <code>dhcp6relay</code> はそもそも supervisord に登録されない。</p>
-<h3 id="systemd-dhcp-relayservice">systemd 起動順（dhcp-relay.service）<a class="headerlink" href="#systemd-dhcp-relayservice" title="Permanent link">&para;</a></h3>
-<p><code>dhcp_relay.service.j2</code> は以下の <code>After=</code> を持つ:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>After=config-setup.service swss.service syncd.service teamd.service
-</span></code></pre></div>
-<p><code>teamd.service</code> が完了して VLAN インターフェースが UP し LLA が生成された後に <code>dhcp-relay</code> コンテナが起動するため、<strong>LLA 未生成によるソケット開設失敗は通常発生しない</strong>。ただし <code>After=</code> は完了順序のみ保証し、<a href="../../glossary/#term-config_db">CONFIG_DB</a> への全データ書込みは <code>config-setup.service</code> の完了に依存する。</p>
-<blockquote>
-<p>Evidence: <code>sonic-net/sonic-dhcp-relay@dhcp6relay/src/config_interface.cpp:130-148</code>、<code>sonic-net/sonic-buildimage@dockers/docker-dhcp-relay/dhcpv6-relay.agents.j2:2-10</code>、<code>sonic-net/sonic-buildimage@files/build_templates/dhcp_relay.service.j2:4</code></p>
-</blockquote>
-<!-- /ordering -->
-
-<!-- side-effects -->
-<h2 id="db">副次 DB 書込<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>ソース: <code>sonic-net/sonic-dhcp-relay dhcp6relay/src/relay.cpp</code></p>
-</blockquote>
-<p><code>DHCP_SERVER_IPV6</code> テーブルは未実装だが、DHCPv6 リレー機能を担う <code>dhcp6relay</code> プロセスは
-<code>DHCP_RELAY</code> テーブルを読み込み、<a href="../../glossary/#term-state_db">STATE_DB</a> へカウンタを書き込む。将来の <code>DHCP_SERVER_IPV6</code>
-実装時も同等のカウンタ機構が継承される見込みのため、現在の動作を記録する。</p>
-<h3 id="state_db">STATE_DB<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
-<p><code>dhcp6relay</code> は起動時および各 DHCPv6 メッセージ受信時に <code>DHCPv6_COUNTER_TABLE</code> へ書き込む。</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// dhcp6relay/src/relay.cpp:18</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">counter_table</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;DHCPv6_COUNTER_TABLE|&quot;</span><span class="p">;</span>
-</span></code></pre></div>
-<h4 id="initialize_counter">初期化（<code>initialize_counter</code>）<a class="headerlink" href="#initialize_counter" title="Permanent link">&para;</a></h4>
-<p>VLAN インターフェースの LLA が確認できたタイミングで呼び出される（<code>lla_check_callback</code> → <code>relay.cpp:1401</code>）。</p>
-<table>
-<thead>
-<tr>
-<th>テーブル</th>
-<th>キー形式</th>
-<th>書込フィールド</th>
-<th>初期値</th>
-<th>タイミング</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>DHCPv6_COUNTER_TABLE</code></td>
-<td><code>&lt;vlan_ifname&gt;</code></td>
-<td><code>Unknown</code>, <code>Solicit</code>, <code>Advertise</code>, <code>Request</code>, <code>Confirm</code>, <code>Renew</code>, <code>Rebind</code>, <code>Reply</code>, <code>Release</code>, <code>Decline</code>, <code>Reconfigure</code>, <code>Information-Request</code>, <code>Relay-Forward</code>, <code>Relay-Reply</code>, <code>Malformed</code></td>
-<td><code>"0"</code></td>
-<td><code>initialize_counter()</code> 呼び出し時（LLA 確認後）</td>
-</tr>
-</tbody>
-</table>
-<p>事前に <code>clear_counter()</code> で既存エントリ（パターン <code>DHCPv6_COUNTER_TABLE|*</code>）を全削除してから再初期化する。</p>
-<h4 id="increase_counter">カウンタ増分（<code>increase_counter</code>）<a class="headerlink" href="#increase_counter" title="Permanent link">&para;</a></h4>
-<p>各 DHCPv6 メッセージ処理時に該当フィールドをインクリメントする（<code>relay.cpp:292-305</code>）。</p>
-<table>
-<thead>
-<tr>
-<th>書込パス</th>
-<th>対象フィールド</th>
-<th>タイミング</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>relay_client()</code> — クライアント→サーバ方向</td>
-<td><code>Solicit</code> / <code>Request</code> / <code>Confirm</code> / <code>Renew</code> / <code>Rebind</code> / <code>Release</code> / <code>Decline</code> / <code>Information-Request</code> / <code>Malformed</code> のいずれか</td>
-<td>クライアントパケット受信時</td>
-</tr>
-<tr>
-<td><code>relay_relay_forw()</code> — Relay-Forward 転送</td>
-<td><code>Relay-Forward</code></td>
-<td>Relay-Forward パケットをサーバへ転送するとき</td>
-</tr>
-<tr>
-<td><code>relay_relay_reply()</code> — サーバ→クライアント方向</td>
-<td><code>Advertise</code> / <code>Reply</code> / <code>Reconfigure</code> / <code>Relay-Reply</code> / <code>Malformed</code> / <code>Unknown</code> のいずれか</td>
-<td>サーバ応答パケット受信時</td>
-</tr>
-<tr>
-<td>ループバック受信（loopback インターフェース）</td>
-<td><code>Relay-Reply</code></td>
-<td>ループバックソケットから受信時（<code>relay.cpp:1098</code>）</td>
-</tr>
-</tbody>
-</table>
-<p>書込みは <code>state_db-&gt;hset(table_name, type, toString(count + 1))</code> で行われ、
-フィールドが存在しない場合は <code>"1"</code> で新規作成される。</p>
-<h3 id="_5">設定ファイル書込<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p><code>dhcp6relay</code> は設定ファイルへの書込みを行わない。すべての状態情報は <a href="../../glossary/#term-state_db">STATE_DB</a> のみに保持される。</p>
-<blockquote>
-<p>Evidence: <code>sonic-net/sonic-dhcp-relay@dhcp6relay/src/relay.cpp:18,52-68,273-306,1342-1348,1401</code></p>
-</blockquote>
-<!-- /side-effects -->
-
-<!-- failure -->
-<h2 id="_6">失敗挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p><code>DHCP_SERVER_IPV6</code> テーブルは未実装のため直接の失敗パスは存在しないが、DHCPv6 リレー機能（<code>DHCP_RELAY</code> テーブル / <code>dhcp6relay</code> プロセス）に以下の失敗挙動が確認されている。将来 <code>DHCP_SERVER_IPV6</code> が実装された場合も同等の前提条件・失敗パスが継承される見込み。</p>
-<h3 id="1-server_ipdhcpv6_servers-log_warning">1. 不正 server_ip（<code>dhcpv6_servers</code>）→ LOG_WARNING + 不正アドレスのまま送信継続<a class="headerlink" href="#1-server_ipdhcpv6_servers-log_warning" title="Permanent link">&para;</a></h3>
-<p><code>dhcp6relay/src/relay.cpp:476-486</code> — <code>prepare_relay_config()</code>:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">if</span><span class="p">(</span><span class="n">inet_pton</span><span class="p">(</span><span class="n">AF_INET6</span><span class="p">,</span><span class="w"> </span><span class="n">server</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">tmp</span><span class="p">.</span><span class="n">sin6_addr</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="p">{</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="n">syslog</span><span class="p">(</span><span class="n">LOG_WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;inet_pton: Failed to convert IPv6 address</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">}</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1">// ★ 変換失敗しても servers_sock.push_back(tmp) は実行される</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">interface_config</span><span class="p">.</span><span class="n">servers_sock</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">tmp</span><span class="p">);</span>
-</span></code></pre></div>
-<p><code>inet_pton()</code> が 1 を返さなかった場合（不正 IPv6 文字列）でも <code>servers_sock</code> にゼロ初期化の <code>sockaddr_in6</code> がプッシュされる。<strong>エラー時に <code>continue</code> / <code>return</code> がなく、不正アドレスへの送信を試みる</strong>。送信失敗は <code>sendto()</code> で <code>LOG_ERR</code> が出るが retry なし。</p>
-<p>また <code>config_interface.cpp:176-179</code> で <code>dhcpv6_servers</code> が空の場合:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">intf</span><span class="p">.</span><span class="n">servers</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="n">syslog</span><span class="p">(</span><span class="n">LOG_WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;No servers found for VLAN %s, skipping configuration.&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">vlan</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>servers が空 VLAN はスキップ（CONFIG_DB にエントリが残存しても dhcp6relay は無視する）。</p>
-<h3 id="2-vlan-log_warning-vlan">2. VLAN 未解決 → LOG_WARNING + VLAN スキップ（サービス不提供）<a class="headerlink" href="#2-vlan-log_warning-vlan" title="Permanent link">&para;</a></h3>
-<p><code>config_interface.cpp:130-148</code> — <code>processRelayNotification()</code>:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">match_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;VLAN_INTERFACE|&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">vlan</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;|*&quot;</span><span class="p">;</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">keys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config_db</span><span class="o">-&gt;</span><span class="n">keys</span><span class="p">(</span><span class="n">match_pattern</span><span class="p">);</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="p">...</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">has_ipv6_address</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="n">syslog</span><span class="p">(</span><span class="n">LOG_WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;%s doesn&#39;t have IPv6 address configured, skip it&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">vlan</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="p">}</span>
-</span></code></pre></div>
+<p>リレーの起動順序依存・カウンタ書込・プラットフォーム差 (DualToR の <code>-u Loopback0</code> 起動など) の詳細は専用ページに集約しているため、そちらを参照すること。</p>
+<h2 id="_3">関連リファレンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>VLAN_INTERFACE</code> テーブルにキーが存在しない場合: <code>LOG_WARNING "%s doesn't exist in VLAN_INTERFACE table, skip it"</code></li>
-<li>IPv6 アドレス（<code>:</code> を含む文字列）が 1 件もない場合: <code>LOG_WARNING "%s doesn't have IPv6 address configured, skip it"</code></li>
-<li>いずれも <code>continue</code> でスキップ。<strong>該当 VLAN への DHCPv6 リレーは提供されない</strong>。rollback なし・DB 状態変更なし。</li>
-</ul>
-<h3 id="3-dhcrelay-exitexit_failure-retry-exit">3. dhcrelay 起動失敗 → exit(EXIT_FAILURE) または retry 後 exit<a class="headerlink" href="#3-dhcrelay-exitexit_failure-retry-exit" title="Permanent link">&para;</a></h3>
-<p><code>relay.cpp:588-658</code> — <code>prepare_vlan_sockets()</code>:</p>
-<ul>
-<li>VLAN ソケット（GUA/LLA）生成失敗: <code>LOG_ERR "socket: Failed to create gua/lla socket on interface %s\n"</code> → return -1</li>
-<li>GUA/LLA アドレス取得失敗: <code>LOG_WARNING "Retry #%d to bind to sockets on interface %s\n"</code> → 5 秒 sleep × 最大 6 回リトライ</li>
-<li>6 回全リトライ失敗後:</li>
-</ul>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>LOG_ERR &quot;bind: Failed to bind socket to global ipv6 address on interface %s after %d retries with %s&quot;
-</span></code></pre></div>
-<p>→ return -1 → 呼び出し元で <code>exit(EXIT_FAILURE)</code></p>
-<p><code>relay.cpp:412-434</code> — <code>sock_open()</code>:</p>
-<ul>
-<li>L2 raw ソケット生成失敗: <code>LOG_ERR "socket: Failed to create socket\n"</code> → return -1</li>
-<li>bind 失敗: <code>LOG_ERR "bind: Failed to bind to specified interface\n"</code> → close + return -1</li>
-<li>BPF filter attach 失敗: <code>LOG_ERR "setsockopt: Failed to attach filter\n"</code> → close + return -1</li>
-</ul>
-<p><strong>supervisord / systemd による自動再起動に委ねる。<code>ERROR_TABLE</code> への書き込みはなし</strong>（dhcp6relay は ERROR_TABLE を使用しない）。</p>
-<h3 id="4-runtime-hot-reload">4. runtime 設定変更は再起動まで反映されない（hot-reload 不可）<a class="headerlink" href="#4-runtime-hot-reload" title="Permanent link">&para;</a></h3>
-<p><code>config_interface.cpp:76-78</code>:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">syslog</span><span class="p">(</span><span class="n">LOG_WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;relay config changed, need restart container to take effect&quot;</span><span class="p">);</span>
-</span></code></pre></div>
-<p>CONFIG_DB の <code>dhcpv6_servers</code> を変更しても dhcp6relay は無視する。<strong>DB 状態と実動作が乖離したまま継続</strong>。再起動するまで新設定は反映されない。</p>
-<blockquote>
-<p>Evidence: <code>sonic-net/sonic-dhcp-relay@dhcp6relay/src/relay.cpp:476-486</code>、<code>dhcp6relay/src/config_interface.cpp:130-148,176-179</code></p>
-</blockquote>
-<!-- /failure -->
-
-<!-- cross-refs -->
-<h2 id="_7">暗黙参照テーブル<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p><code>DHCP_SERVER_IPV6</code> は未実装のため、DHCPv6 エコシステム（<code>DHCP_RELAY</code> / <code>dhcp6relay</code>）の暗黙参照を代理調査した結果を示す。</p>
-</blockquote>
-<p><code>dhcp6relay</code> デーモン（<code>sonic-dhcp-relay/dhcp6relay/src/</code>）は <code>DHCP_RELAY</code> テーブルを処理する際に、<a href="../../glossary/#term-yang">YANG</a> leafref 定義なしで以下の CONFIG_DB テーブルを参照する:</p>
-<table>
-<thead>
-<tr>
-<th>参照先テーブル</th>
-<th>参照方向</th>
-<th>条件</th>
-<th>証拠</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>VLAN_INTERFACE\|&lt;vlan&gt;\|*</code></td>
-<td>読み取り (IPv6 アドレス必須チェック)</td>
-<td>常時</td>
-<td><code>config_interface.cpp:130</code></td>
-</tr>
-<tr>
-<td><code>VLAN_MEMBER\|&lt;vlan&gt;\|*</code></td>
-<td>読み取り (ポートマップ構築)</td>
-<td>常時</td>
-<td><code>relay.cpp:856</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>VLAN_INTERFACE</strong>: <code>config_interface.cpp:130</code> で <code>"VLAN_INTERFACE|" + vlan + "|*"</code> パターンを CONFIG_DB 検索し、IPv6 アドレスが存在しない VLAN は警告を出してスキップする。YANG モデル（<code>sonic-dhcpv6-relay.yang</code>）には leafref なし。</p>
-<p><strong>VLAN_MEMBER</strong>: <code>relay.cpp:856</code> で <code>"VLAN_MEMBER|" + vlan + "|*"</code> を取得し、member interface → VLAN の逆引きマップを構築する。これがないとクライアントパケットの VLAN 判定が不可能。</p>
-<!-- /cross-refs -->
-
-<!-- constants -->
-<h2 id="_8">ハードコード定数 (コード由来)<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<p><code>DHCP_SERVER_IPV6</code> テーブル自体は未実装だが、DHCPv6 プロトコル処理に直接関係する定数は <strong>dhcp6relay</strong>（<code>sonic-dhcp-relay</code> リポジトリ）の <code>relay.h</code> にハードコードされている。将来の <code>DHCP_SERVER_IPV6</code> 実装でも同一ポート・hop 上限が継承される見込みのため記録する。</p>
-<h3 id="udp">UDP ポート定数<a class="headerlink" href="#udp" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>定数名</th>
-<th>値</th>
-<th>用途</th>
-<th>ソース</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>RELAY_PORT</code></td>
-<td><code>547</code></td>
-<td>DHCPv6 サーバ／リレー間 UDP ポート (RFC 8415 §7.2)</td>
-<td>relay.h L22</td>
-</tr>
-<tr>
-<td><code>CLIENT_PORT</code></td>
-<td><code>546</code></td>
-<td>DHCPv6 クライアント向け UDP ポート (RFC 8415 §7.2)</td>
-<td>relay.h L23</td>
-</tr>
-</tbody>
-</table>
-<p>BPF フィルタは <code>"udp and port 547"</code> を使用する。<code>dhcp6relay</code> は L2 ソケットを開きポート 547 宛のパケットを直接キャプチャする（<code>relay.cpp:403</code>）。</p>
-<h3 id="_9">ホップ上限<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>定数名</th>
-<th>値</th>
-<th>用途</th>
-<th>ソース</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>HOP_LIMIT</code></td>
-<td><code>8</code></td>
-<td>RELAY-FORWARD の hop_count がこの値以上のパケットはドロップ</td>
-<td>relay.h L24</td>
-</tr>
-</tbody>
-</table>
-<p>コメントに <code>"HOP_LIMIT reduced from 32 to 8 as stated in RFC8415"</code> と明記されている。ドロップ時は <code>syslog(LOG_WARNING, ...)</code> を出力する（<code>relay.cpp:747-751</code>）。新規クライアントパケットは hop_count=0 で開始し、中継ごとに +1 される（<code>relay.cpp:692, 758</code>）。<strong>CONFIG_DB から上書き不可のハードコード定数</strong>。</p>
-<h3 id="_10">その他の主要定数<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>定数名</th>
-<th>値</th>
-<th>用途</th>
-<th>ソース</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>DHCPv6_OPTION_LIMIT</code></td>
-<td><code>147</code></td>
-<td>サポートする DHCPv6 オプション上限 (IANA Option Codes 準拠)</td>
-<td>relay.h L25</td>
-</tr>
-<tr>
-<td><code>RAWSOCKET_RECV_SIZE</code></td>
-<td><code>1048576</code> (1 MiB)</td>
-<td>L2 ソケット受信バッファサイズ上限</td>
-<td>relay.h L27</td>
-</tr>
-<tr>
-<td><code>BUFFER_SIZE</code></td>
-<td><code>9200</code></td>
-<td>パケット処理バッファサイズ（ジャンボフレーム対応）</td>
-<td>relay.h L29</td>
-</tr>
-<tr>
-<td><code>OPTION_RELAY_MSG</code></td>
-<td><code>9</code></td>
-<td>DHCPv6 Option 9 (Relay Message)</td>
-<td>relay.h L33</td>
-</tr>
-<tr>
-<td><code>OPTION_INTERFACE_ID</code></td>
-<td><code>18</code></td>
-<td>DHCPv6 Option 18 (Interface-ID、RFC 3315)</td>
-<td>relay.h L34</td>
-</tr>
-<tr>
-<td><code>OPTION_CLIENT_LINKLAYER_ADDR</code></td>
-<td><code>79</code></td>
-<td>DHCPv6 Option 79 (Client Link-Layer Address、RFC 6939)</td>
-<td>relay.h L35</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>Evidence: <code>sonic-net/sonic-dhcp-relay@dhcp6relay/src/relay.h:22-37</code> (SHA: 7316417034fee6a6c6002490362c9bc75eeafde1)</p>
-</blockquote>
-<!-- /constants -->
-
-<!-- pubsub -->
-<h2 id="_11">通信メカニズム<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p><strong>Evidence</strong>: <code>sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp</code> (2026-05-16)</p>
-</blockquote>
-<h3 id="dhcp_server_ipv6_1">DHCP_SERVER_IPV6 に関する結論<a class="headerlink" href="#dhcp_server_ipv6_1" title="Permanent link">&para;</a></h3>
-<p><code>DHCP_SERVER_IPV6</code> テーブルは未実装であるため、このテーブルを購読・監視するデーモンは存在しない。CONFIG_DB Subscribe、dhcrelay 制御、netlink 監視はすべて <strong><code>DHCP_RELAY</code> テーブルを対象とした <code>dhcp6relay</code> プロセス</strong>が担っている。</p>
-<h3 id="dhcpv6">DHCPv6 リレー側の通信メカニズム（参照）<a class="headerlink" href="#dhcpv6" title="Permanent link">&para;</a></h3>
-<p><code>DHCP_SERVER_IPV6</code> が将来実装される際の参照として、現在の DHCPv6 関連実装を記録する。</p>
-<h4 id="config_db-subscribe-dhcp6relay">CONFIG_DB Subscribe (<code>dhcp6relay</code>)<a class="headerlink" href="#config_db-subscribe-dhcp6relay" title="Permanent link">&para;</a></h4>
-<p><code>dhcp6relay</code> (<code>sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp</code>) は以下の方法で CONFIG_DB を購読する:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>dhcp6relay 起動
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  └─ initialize_swss()                             (config_interface.cpp:18-29)
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>       ├─ DBConnector(&quot;CONFIG_DB&quot;, 0)               ← Redis DB #4
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>       ├─ SubscriberStateTable(db, &quot;DHCP_RELAY&quot;)   ← DHCP_RELAY テーブル購読
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>       │    └─ PSUBSCRIBE __keyspace@4__:DHCP_RELAY|*
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>       └─ swssSelect.addSelectable(&amp;ipHelpersTable)
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>            └─ get_dhcp(vlans, table, dynamic=false, config_db)
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>                 └─ swssSelect.select(timeout_ms=1000)
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>                      └─ handleRelayNotification()
-</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>                           └─ pops() → processRelayNotification()
-</span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>値</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>購読テーブル</td>
-<td><code>DHCP_RELAY</code>（<code>DHCP_SERVER_IPV6</code> は <strong>なし</strong>）</td>
-</tr>
-<tr>
-<td>SWSS abstraction</td>
-<td><code>swss::SubscriberStateTable</code> + <code>swss::Select</code></td>
-</tr>
-<tr>
-<td>PSUBSCRIBE パターン</td>
-<td><code>__keyspace@4__:DHCP_RELAY\|*</code></td>
-</tr>
-<tr>
-<td>Select timeout</td>
-<td>1000 ms</td>
-</tr>
-<tr>
-<td><a href="../../glossary/#term-consumerstatetable">ConsumerStateTable</a></td>
-<td><strong>不使用</strong></td>
-</tr>
-<tr>
-<td>NotificationConsumer</td>
-<td><strong>不使用</strong></td>
-</tr>
-<tr>
-<td>TTL / keyspace expire</td>
-<td><strong>不使用</strong></td>
-</tr>
-</tbody>
-</table>
-<h4 id="dhcrelay">dhcrelay 制御<a class="headerlink" href="#dhcrelay" title="Permanent link">&para;</a></h4>
-<p><code>dhcp6relay</code> はシグナルで制御される。<code>relay.cpp</code> で <code>libevent</code> を使って SIGINT / SIGTERM をキャッチし、<code>event_base_loopbreak()</code> でイベントループを終了する (<code>relay.cpp:1154-1220</code>)。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>SIGTERM / SIGINT 受信
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  └─ signal_callback(fd, event, base)              (relay.cpp:1214)
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>       └─ event_base_loopbreak(base)
-</span></code></pre></div>
-<p><strong>動的設定変更は非対応</strong>: <code>DHCP_RELAY</code> エントリを変更しても <code>dynamic=true</code> フラグにより無視され、<code>LOG_WARNING "relay config changed, need restart container to take effect"</code> のみ出力される。設定反映にはコンテナ再起動が必須 (<code>config_interface.cpp:76-78</code>)。</p>
-<h4 id="netlink">netlink（間接利用）<a class="headerlink" href="#netlink" title="Permanent link">&para;</a></h4>
-<p><code>dhcp6relay</code> は netlink を直接使用しない。LLA（Link Local Address）の確認は <code>ip -6 addr show &lt;vlan&gt; scope link</code> コマンドを <code>popen()</code> で呼び出す方式を採用する (<code>config_interface.cpp:196-209</code>)。インタフェースインデックスの取得のみ <code>if_nametoindex()</code> を使用する (<code>relay.cpp:829</code>)。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>// LLA 確認 (config_interface.cpp:196-209)
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>const std::string cmd = &quot;ip -6 addr show &quot; + vlan + &quot; scope link 2&gt; /dev/null&quot;;
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>popen(cmd.c_str(), &quot;r&quot;)  // netlink ソケット直接使用なし
-</span></code></pre></div>
-<!-- /pubsub -->
-
-<!-- platform -->
-<h2 id="_12">プラットフォーム差<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
-<p><code>DHCP_SERVER_IPV6</code> テーブル自体は未実装だが、DHCPv6 リレー (<code>dhcp6relay</code>) には以下のプラットフォーム差が確認された。</p>
-<table>
-<thead>
-<tr>
-<th>観点</th>
-<th>結果</th>
-<th>根拠</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>DualToR</td>
-<td><strong>差異あり</strong> — <a href="../../glossary/#term-mux">MUX</a> 状態に応じてパケット転送を制御</td>
-<td><code>DEVICE_METADATA.localhost.subtype == "DualToR"</code> の場合のみ <code>-u Loopback0</code> オプションで起動。<code>dual_tor_sock = true</code> がセットされ、<code>HW_MUX_CABLE_TABLE</code> の <code>state</code> が <code>standby</code> なら転送スキップ (<code>relay.cpp:913-921</code>)</td>
-</tr>
-<tr>
-<td><a href="../../glossary/#term-smartswitch">SmartSwitch</a> <a href="../../glossary/#term-dpu">DPU</a></td>
-<td><strong>dhcp6relay 非対応</strong> — <a href="../../glossary/#term-dpu">DPU</a> 経路実装なし</td>
-<td><code>dhcp4relay</code> は <code>is_SmartSwitch</code> フラグ・<code>DPUS</code> テーブル監視・<code>bridge-midplane</code> MAC 取得を実装するが、<code>dhcp6relay/src/</code> には <a href="../../glossary/#term-smartswitch">SmartSwitch</a>/<a href="../../glossary/#term-dpu">DPU</a> 関連コードが存在しない</td>
-</tr>
-<tr>
-<td>IPv6 link-local アドレス (LLA)</td>
-<td><strong>DHCPv6 固有の生成待機ロジック</strong></td>
-<td><code>check_is_lla_ready()</code> が <code>ip -6 addr show &lt;vlan&gt; scope link</code> で LLA 存在を確認。60 秒タイマー (<code>lla_check_callback</code>) でポーリングし、LLA 生成後にソケットを動的追加 (<code>relay.cpp:1288-1310</code>)</td>
-</tr>
-<tr>
-<td>multi-asic</td>
-<td>影響なし</td>
-<td><code>initialize_swss()</code> は <code>CONFIG_DB</code> を namespace 引数なしで接続。<code>asicN</code> namespace を iterate しない</td>
-</tr>
-<tr>
-<td><a href="../../glossary/#term-asic">ASIC</a> ベンダー</td>
-<td>影響なし</td>
-<td><code>dhcp6relay</code> は純粋 L3 UDP リレー処理。<a href="../../glossary/#term-sai">SAI</a> / <a href="../../glossary/#term-asic-sdk">ASIC SDK</a> 非経由</td>
-</tr>
-</tbody>
-</table>
-<h3 id="dualtor">DualToR 構成の詳細<a class="headerlink" href="#dualtor" title="Permanent link">&para;</a></h3>
-<p>DualToR 環境では <code>dhcpv6-relay.agents.j2:16</code> の Jinja2 条件により <code>dhcp6relay -u Loopback0</code> として起動する:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>{% if &#39;subtype&#39; in DEVICE_METADATA[&#39;localhost&#39;] and DEVICE_METADATA[&#39;localhost&#39;][&#39;subtype&#39;] == &#39;DualToR&#39; %} -u Loopback0 {% endif %}
-</span></code></pre></div>
-<p><code>-u</code> フラグが渡ると:</p>
-<ol>
-<li>Loopback0 の GUA アドレスに追加ソケットを作成（<code>prepare_lo_socket</code>）し、<code>server_callback_dualtor</code> イベントを登録する</li>
-<li>クライアントからのパケット受信時に <code>HW_MUX_CABLE_TABLE|&lt;intf&gt;</code> で <code>state</code> を確認し、<code>standby</code> の場合は転送しない（active 側のみが中継を担う）</li>
-<li>サーバからの応答は Loopback ソケット (<code>server_callback_dualtor</code>) 経由で受信し、クライアントへ中継する</li>
-</ol>
-<h3 id="smartswitch-dpu-dhcpv6">SmartSwitch DPU — DHCPv6 非対応<a class="headerlink" href="#smartswitch-dpu-dhcpv6" title="Permanent link">&para;</a></h3>
-<p>DHCPv4 側 (<code>dhcp4relay</code>) が <a href="../../glossary/#term-smartswitch">SmartSwitch</a> の <code>DPUS</code> テーブルを監視し DPU インターフェース (<code>dpu0..N</code>) 向けに <code>GIADDR</code> を書き換えるのに対し、<strong><code>dhcp6relay</code> には同等の実装がない</strong>。SmartSwitch 環境での DPU への DHCPv6 アドレス配布は community master では未サポートである。</p>
-<h3 id="ipv6-lla">IPv6 LLA 生成待機の仕組み<a class="headerlink" href="#ipv6-lla" title="Permanent link">&para;</a></h3>
-<p>VLAN インターフェースに IPv6 GUA が設定されていても kernel による LLA (<code>fe80::</code>) 生成は数ミリ秒〜数秒の遅延がある。<code>dhcp6relay</code> は起動直後に <code>lla_check_callback</code> を手動実行し (<code>relay.cpp:1310</code>)、その後 60 秒ごとにポーリングする。LLA が確認されると <code>is_lla_ready = true</code> としてソケット作成・イベント登録を行う。LLA が未生成の VLAN はソケット作成をスキップし、次回タイマーで再試行する。</p>
-<!-- /platform -->
-
-<h2 id="dhcpv6_1">DHCPv6 サポートの現状<a class="headerlink" href="#dhcpv6_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の DHCPv6 対応は次の 2 要素のみ:</p>
-<ol>
-<li><strong>DHCPv6 リレー</strong> — <code>DHCP_RELAY</code> テーブル（sonic-dhcpv6-relay.yang）。VLAN ごとに <code>dhcpv6_servers</code>、<code>rfc6939_support</code>、<code>interface_id</code> を設定し、<code>dhcrelay</code> プロセスが DHCPv6 RELAY-FORWARD/REPLY をプロキシする</li>
-<li><strong>DHCPv6 リレーカウンタ</strong> — <code>show dhcp6relay_counters</code> CLI で統計確認可能</li>
-</ol>
-<p>DHCPv6 サーバ機能（kea-dhcp6 管理、ステートフル/ステートレスアドレス配布）はコミュニティ版 master には存在しない。</p>
-<h2 id="_13">関連ドキュメント<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../dhcp-server-ipv4/">DHCP_SERVER_IPV4 テーブル</a> — 実装済み IPv4 版</li>
-<li><a href="../dhcp-relay/">DHCP_RELAY テーブル（DHCPv4）</a></li>
-<li><a href="../dhcpv4-relay/">DHCPv4 リレー テーブル</a></li>
+<li><a href="../dhcp-server-ipv4/">DHCP_SERVER_IPV4 テーブル</a> — 実装済み IPv4 版の設定テーブル。</li>
+<li><a href="../dhcp-relay/">DHCP_RELAY テーブル</a> — DHCPv6 リレーの <a href="../../glossary/#term-config_db">CONFIG_DB</a> スキーマと <code>dhcp6relay</code> の動作詳細。</li>
+<li><a href="../dhcpv4-relay/">DHCPv4 リレー テーブル</a> — DHCPv4 側リレーの比較対象。</li>
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_14">関連リファレンス<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_4">関連リファレンス (索引)<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../dhcp-server-ipv4/"><code>DHCP_SERVER_IPV4</code></a>、<a href="../dhcp-relay/"><code>DHCP_RELAY</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../dhcp-server-ipv4/"><code>DHCP_SERVER_IPV4</code></a>、<a href="../dhcp-relay/"><code>DHCP_RELAY</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<!-- glossary-links-injected: 4ad78d92b6ed -->
+<!-- glossary-links-injected: d323bb817491 -->
 
 
 

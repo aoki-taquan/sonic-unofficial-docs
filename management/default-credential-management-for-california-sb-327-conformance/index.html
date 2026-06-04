@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="既定パスワードの初回ログイン強制変更（California SB-327 準拠） — California SB-327 は IoT 機器の既定パスワード使用を制限する州法であり、初回ログイン時にユーザに強制でパスワード変更させる ことが代表的な準拠手段である。">
+        <meta name="description" content="California SB-327 準拠のため、ビルド時オプションで既定ユーザのパスワードを期限切れ化し、初回 SSH ログイン時に強制変更させる機能。HLD は `/etc/rc.local` + `chage -d 0` を提案するが、master 実装は `build_debian.sh` 内の `passwd -e` でカバーする evolved 形になっている。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="既定パスワードの初回ログイン強制変更（California SB-327 準拠） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="既定パスワードの初回ログイン強制変更（California SB-327 準拠） — California SB-327 は IoT 機器の既定パスワード使用を制限する州法であり、初回ログイン時にユーザに強制でパスワード変更させる ことが代表的な準拠手段である。" />
+<meta property="og:description" content="California SB-327 準拠のため、ビルド時オプションで既定ユーザのパスワードを期限切れ化し、初回 SSH ログイン時に強制変更させる機能。HLD は `/etc/rc.local` + `chage -d 0` を提案するが、master 実装は `build_debian.sh` 内の `passwd -e` でカバーする evolved 形になっている。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/default-credential-management-for-california-sb-327-conformance.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/management/default-credential-management-for-california-sb-327-conformance/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="既定パスワードの初回ログイン強制変更（California SB-327 準拠） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="既定パスワードの初回ログイン強制変更（California SB-327 準拠） — California SB-327 は IoT 機器の既定パスワード使用を制限する州法であり、初回ログイン時にユーザに強制でパスワード変更させる ことが代表的な準拠手段である。" />
+<meta property="twitter:description" content="California SB-327 準拠のため、ビルド時オプションで既定ユーザのパスワードを期限切れ化し、初回 SSH ログイン時に強制変更させる機能。HLD は `/etc/rc.local` + `chage -d 0` を提案するが、master 実装は `build_debian.sh` 内の `passwd -e` でカバーする evolved 形になっている。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/default-credential-management-for-california-sb-327-conformance.png" />
 </head>
   
@@ -16372,10 +16372,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#1st-boot" class="md-nav__link">
+  <a href="#1st-boot-login-master" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1st boot フロー
+        1st boot 〜 初回 login フロー（master 実装）
       
     </span>
   </a>
@@ -16424,6 +16424,17 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         設定
       
     </span>
@@ -16444,7 +16455,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -16460,7 +16471,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -16471,7 +16482,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -16482,7 +16493,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -16494,7 +16505,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例: デフォルト認証情報強制変更確認
@@ -16510,7 +16521,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36061,10 +36072,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#1st-boot" class="md-nav__link">
+  <a href="#1st-boot-login-master" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1st boot フロー
+        1st boot 〜 初回 login フロー（master 実装）
       
     </span>
   </a>
@@ -36113,6 +36124,17 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         設定
       
     </span>
@@ -36133,7 +36155,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -36149,7 +36171,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -36160,7 +36182,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -36171,7 +36193,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -36183,7 +36205,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例: デフォルト認証情報強制変更確認
@@ -36199,7 +36221,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36252,9 +36274,10 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-buildimage/rules/config</code> に <code>CHANGE_DEFAULT_PASSWORD ?= n</code> のオプション、<code>build_debian.sh</code> に <code>[[ "$CHANGE_DEFAULT_PASSWORD" == "y" ]]</code> 分岐と <code>password_expire="$( ... &amp;&amp; echo true || echo false )"</code> の export 処理を確認。<code>Makefile.work</code> / <code>slave.mk</code> でも flag を伝搬。HLD で要求された build flag の sonic-buildimage 取り込みは master で確認できた。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: discrepancy-found (evolved_beyond_hld)</p>
+<p>本機能は <strong>CONFIG_DB / CLI / YANG / SAI のいずれも持たない</strong> ビルド時オプション機能であり、frontmatter の <code>related.*</code> は全て空（<code>_no_related: true</code> で明示 opt-out）。
+HLD は「1st boot の <code>/etc/rc.local</code> から <code>chage -d 0</code> を default user に発行する」設計を提案しているが、master 実装はそれとは <strong>異なる経路</strong> を採用している。<code>sonic-buildimage</code> (<code>9ea932e</code>) では、ビルド時に <code>build_debian.sh</code> が <code>CHANGE_DEFAULT_PASSWORD == "y"</code> 分岐で <code>chroot $FILESYSTEM_ROOT passwd -e &lt;user&gt;</code> を default user に発行し、squashfs 化前のイメージで <code>/etc/shadow</code> の <code>lastchg</code> を 0 化している。<code>/etc/rc.local</code> への 1st boot hook は master では確認できない。<code>pam_unix</code> の expire 検知で初回 login 時にパスワード変更を強制する <strong>最終的な挙動は HLD と同じ</strong> だが、トリガ経路が build-time に前倒しされている点が evolved。</p>
 </div>
 <h1 id="california-sb-327">既定パスワードの初回ログイン強制変更（California SB-327 準拠）<a class="headerlink" href="#california-sb-327" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36274,120 +36297,180 @@
 <thead>
 <tr>
 <th>ツール</th>
-<th>役割</th>
+<th>HLD 案での役割</th>
+<th>master 実装での役割</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>chage</code></td>
-<td>パスワード aging。<code>-d 0</code> で <strong>last password change を 0 化</strong> = 強制 expired</td>
+<td><code>chage -d 0</code></td>
+<td>1st boot 時に <code>/etc/rc.local</code> から発行（HLD 提案）</td>
+<td>採用されず</td>
 </tr>
 <tr>
-<td><code>pam_unix_account.so</code></td>
-<td>login 時に password / account の expire を検査し change を要求</td>
+<td><code>passwd -e</code></td>
+<td>（HLD では言及なし）</td>
+<td>ビルド時に <code>chroot</code> 内で発行し <code>/etc/shadow</code> を expired 化<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>pam_unix</code> (<code>pam_unix_account.so</code> 相当)</td>
+<td>login 時に expire を検知して変更を要求</td>
+<td>同じ（最終挙動は一致）<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 </tbody>
 </table>
 <h3 id="build-flag">Build flag<a class="headerlink" href="#build-flag" title="Permanent link">&para;</a></h3>
-<p>ビルド時 flag で機能 on/off<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">CHANGE_DEFAULT_PASSWORD</span><span class="o">=</span><span class="nb">true</span><span class="w"> </span>make<span class="w"> </span>target/sonic.bin
+<p>ビルド時 flag で機能 on/off。<code>rules/config</code> で定義され、default は disable<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>:</p>
+<div class="language-makefile highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c"># rules/config</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c"># CHANGE_DEFAULT_PASSWORD - enforce default user/users to change password on 1st login</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nv">CHANGE_DEFAULT_PASSWORD</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span>n
 </span></code></pre></div>
-<p><strong>default は disable</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。runtime にこの flag を見て動作分岐する。</p>
-<h3 id="1st-boot">1st boot フロー<a class="headerlink" href="#1st-boot" title="Permanent link">&para;</a></h3>
+<!-- evidence: sonic-net/sonic-buildimage rules/config L71-L72 @ 9ea932e -->
+
+<p>有効化はビルド時に <code>y</code> を渡す（HLD 例は <code>=true</code> だが、<code>build_debian.sh</code> は <strong>文字列リテラル <code>"y"</code> でのみ分岐する</strong> ため <code>=true</code> では効かない）<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>make<span class="w"> </span><span class="nv">CHANGE_DEFAULT_PASSWORD</span><span class="o">=</span>y<span class="w"> </span>target/sonic.bin
+</span></code></pre></div>
+<h3 id="1st-boot-login-master">1st boot 〜 初回 login フロー（master 実装）<a class="headerlink" href="#1st-boot-login-master" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
+    participant Build as build_debian.sh
+    participant Img as squashfs (/etc/shadow)
     participant Inst as ONIE / sonic-installer
     participant Boot as 1st boot
-    participant RC as /etc/rc.local
-    participant CHA as chage
     participant U as user via SSH
-    participant PAM as pam_unix_account.so
-    Inst-&gt;&gt;Boot: image install / upgrade
-    Boot-&gt;&gt;RC: 起動
-    RC-&gt;&gt;RC: grep /etc/passwd で対象ユーザ列挙&lt;br/&gt;(login shell = /bin/bash or /bin/sh)
-    loop each default user
-        RC-&gt;&gt;CHA: chage -d 0 &lt;user&gt;
-    end
+    participant PAM as pam_unix
+    Build-&gt;&gt;Img: chroot passwd -e &lt;user&gt;&lt;br/&gt;(default_users を /etc/passwd から列挙)
+    Img-&gt;&gt;Inst: image install / upgrade
+    Inst-&gt;&gt;Boot: 起動
     U-&gt;&gt;PAM: ssh login
     PAM--&gt;&gt;U: "Your password has expired"&lt;br/&gt;パスワード変更を要求
     U-&gt;&gt;U: 新パスワード入力
     PAM-&gt;&gt;PAM: 更新成功 → 強制 logout
     U-&gt;&gt;U: 新パスワードで再 login</code></pre>
-<p>実装ポイント<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>master 実装ポイント<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
 <ul>
-<li>1st boot 検知は <code>/etc/rc.local</code> 上で行う（specific marker file 等で判定する想定）</li>
-<li>対象ユーザは <strong><code>/etc/passwd</code> を grep して login shell が <code>/bin/bash</code> / <code>/bin/sh</code> のもの</strong> のみ</li>
-<li>各ユーザに <code>chage -d 0 &lt;user&gt;</code> を発行</li>
-<li>次回 SSH login 時に <code>pam_unix_account.so</code> が expired を検知し change を要求</li>
+<li>ビルド時に <code>build_debian.sh</code> が <code>$FILESYSTEM_ROOT/etc/passwd</code> を走査し、<code>/home</code> を持ち login shell が <code>/bin/bash</code> または <code>/bin/sh</code> のユーザを <code>default_users</code> として抽出</li>
+<li>各ユーザに <code>chroot $FILESYSTEM_ROOT passwd -e &lt;user&gt;</code> を発行（<code>/etc/shadow</code> の <code>lastchg</code> フィールドを 0 化、<code>chage -d 0</code> と同等の効果）</li>
+<li>同じビルドステップで <code>password_expire</code> env を <code>true</code>/<code>false</code> に設定し、<code>files/build_templates/default_users.json.j2</code> 経由で <code>/etc/sonic/default_users.json</code> にも書き出す<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup></li>
+<li>次回 SSH login 時に <code>pam_unix</code> が expired を検知し change を要求</li>
 <li>変更後はユーザが <strong>強制 logout</strong> され、新パスワードで再 login</li>
 </ul>
-<h3 id="password-hardening">password hardening との独立性<a class="headerlink" href="#password-hardening" title="Permanent link">&para;</a></h3>
-<p>password hardening (<code>passw_hardening</code> 機能) には <strong>aging 期間</strong> があるが、本機能はそれに <strong>干渉しない</strong><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>chage</code> の <code>-d 0</code> は last_change を 0 化して即時 expire を起こすだけで、最大 age（<code>-M</code>）を変えないため。</p>
-<h3 id="upgrade">upgrade フロー<a class="headerlink" href="#upgrade" title="Permanent link">&para;</a></h3>
-<p><code>sonic-installer</code> で新イメージをインストールすると <strong>1st boot 扱い</strong> になり、再度パスワード変更が強制される<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="warm-fast-boot">warm / fast boot<a class="headerlink" href="#warm-fast-boot" title="Permanent link">&para;</a></h3>
-<p>機能は <strong>トラフィックに影響を与えず</strong> 、warm/fast boot 後にも triggered され得る<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="config_db-cli-yang-sai">CONFIG_DB / CLI / YANG / SAI<a class="headerlink" href="#config_db-cli-yang-sai" title="Permanent link">&para;</a></h3>
-<p><strong>いずれも変更なし</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。DB との対話を持たない設計。</p>
-<h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>通常運用は不要。SSH login 時にプロンプトで操作する例<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$ ssh admin@sonic-switch
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>admin@sonic-switch&#39;s password:
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>You are required to change your password immediately (administrator enforced).
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>WARNING: Your password has expired.
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>You must change your password now and login again!
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>Changing password for admin.
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>Current password: ****
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>New password:     ****
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>Retype new password: ****
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>passwd: password updated successfully
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>Connection to sonic-switch closed.
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>$ ssh admin@sonic-switch     # 新パスワードで再 login
-</span></code></pre></div>
-<p>ビルド時に有効化:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">CHANGE_DEFAULT_PASSWORD</span><span class="o">=</span><span class="nb">true</span><span class="w"> </span>make<span class="w"> </span>target/sonic.bin
-</span></code></pre></div>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>HLD と異なる点<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
 <ul>
-<li><strong>Remote <a href="../../reference/glossary/#term-aaa">AAA</a> (LDAP / <a href="../../reference/glossary/#term-radius">RADIUS</a> / TACACS+) では動作しない</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。リモート認証はカスタマー責務</li>
-<li><strong>build flag が必須</strong>。runtime に有効化する CLI / DB は無い</li>
-<li>機能は <strong>Linux native ツール (<code>chage</code> + <code>pam_unix_account.so</code>) に依拠</strong>。これらの挙動が変わると同期が必要</li>
-<li><code>/etc/rc.local</code> の 1st boot 検知ロジックの堅牢性は HLD では明示されていない</li>
-<li>ユーザ unit test は <strong>login と 1st boot を直接カバーしない</strong>（system test に依存）<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>パスワード変更後に <strong>強制 logout</strong> されるユーザ体験上の制約<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>HLD: 1st boot で <code>/etc/rc.local</code> から <code>chage -d 0</code> を実行 → master: ビルド時に <code>passwd -e</code> で済ませる</li>
+<li>HLD: 1st boot marker file での判定 → master: 不要（イメージに焼き込み済み）</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="password-hardening">password hardening との独立性<a class="headerlink" href="#password-hardening" title="Permanent link">&para;</a></h3>
+<p>password hardening (<code>passw_hardening</code> 機能) には <strong>aging 期間</strong> があるが、本機能はそれに <strong>干渉しない</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>passwd -e</code> / <code>chage -d 0</code> は last_change を 0 化して即時 expire を起こすだけで、最大 age（<code>-M</code>）を変えないため。</p>
+<h3 id="upgrade">upgrade フロー<a class="headerlink" href="#upgrade" title="Permanent link">&para;</a></h3>
+<p><code>sonic-installer</code> で新イメージをインストールすると、新イメージ内の <code>/etc/shadow</code> がビルド時に expired 化されているため、upgrade 後も <strong>初回 login で再度パスワード変更が強制</strong> される<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。HLD の「1st boot 扱い」とは異なる経路だが結果として要件を満たす。</p>
+<h3 id="warm-fast-boot">warm / fast boot<a class="headerlink" href="#warm-fast-boot" title="Permanent link">&para;</a></h3>
+<p>機能は <strong>トラフィックに影響を与えず</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>、warm/fast boot 後の挙動は新イメージ側の <code>/etc/shadow</code> の状態次第（CHANGE_DEFAULT_PASSWORD で焼かれていれば強制される）。</p>
+<h2 id="_3">実装との乖離<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>HLD と master 実装の差分を <code>monitor: evolved_beyond_hld</code> として記録する。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>HLD の記述<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></th>
+<th>master 実装<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></th>
+<th>評価</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>トリガ経路</td>
+<td>1st boot の <code>/etc/rc.local</code> で <code>chage -d 0</code> を発行</td>
+<td>ビルド時に <code>chroot $FILESYSTEM_ROOT passwd -e &lt;user&gt;</code> で <code>/etc/shadow</code> を expired 化</td>
+<td>evolved（最終効果は同等）</td>
+</tr>
+<tr>
+<td>build flag 値</td>
+<td>例として <code>CHANGE_DEFAULT_PASSWORD=true</code></td>
+<td><code>build_debian.sh</code> は <code>[[ "$CHANGE_DEFAULT_PASSWORD" == "y" ]]</code> で <strong><code>y</code> のみ</strong> 分岐</td>
+<td>HLD 例は誤りまたは古い</td>
+</tr>
+<tr>
+<td>1st boot marker</td>
+<td>marker file（具体名未指定）</td>
+<td>不要（イメージに焼き込み済み）</td>
+<td>簡略化</td>
+</tr>
+<tr>
+<td>対象ユーザ抽出</td>
+<td><code>/etc/passwd</code> を grep（<code>/bin/bash</code> / <code>/bin/sh</code>）</td>
+<td>同左（<code>build_debian.sh</code> 内で <code>grep "/home"</code> + <code>grep ":/bin/bash\|:/bin/sh"</code>）</td>
+<td>一致</td>
+</tr>
+<tr>
+<td><code>default_users.json</code></td>
+<td>HLD 言及なし</td>
+<td><code>files/build_templates/default_users.json.j2</code> 経由で <code>/etc/sonic/default_users.json</code> も書き出し<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+<td>追加実装</td>
+</tr>
+<tr>
+<td>最終挙動（<code>pam_unix</code> で初回 login 時に強制変更）</td>
+<td>規定どおり</td>
+<td>同左</td>
+<td>一致</td>
+</tr>
+</tbody>
+</table>
+<p>「機能としては存在するが、トリガの経路・有効化フラグ値が HLD と一致しない」ため <code>evolved_beyond_hld</code> と分類している。</p>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="config_db-cli-yang-sai">CONFIG_DB / CLI / YANG / SAI<a class="headerlink" href="#config_db-cli-yang-sai" title="Permanent link">&para;</a></h3>
+<p><strong>いずれも変更なし</strong><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。DB との対話を持たないビルド時固定機能。frontmatter で <code>related._no_related: true</code> を付けてあるのはこの理由による。</p>
+<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>通常運用は不要。SSH login 時にプロンプトで操作する例<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$ ssh admin@sonic-switch
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>admin@sonic-switch&#39;s password:
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>You are required to change your password immediately (administrator enforced).
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>WARNING: Your password has expired.
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>You must change your password now and login again!
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>Changing password for admin.
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>Current password: ****
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>New password:     ****
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>Retype new password: ****
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>passwd: password updated successfully
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>Connection to sonic-switch closed.
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>$ ssh admin@sonic-switch     # 新パスワードで再 login
+</span></code></pre></div>
+<p>ビルド時に有効化（master 実装の正しい記法）:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>make<span class="w"> </span><span class="nv">CHANGE_DEFAULT_PASSWORD</span><span class="o">=</span>y<span class="w"> </span>target/sonic.bin
+</span></code></pre></div>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Remote <a href="../../reference/glossary/#term-aaa">AAA</a> (LDAP / <a href="../../reference/glossary/#term-radius">RADIUS</a> / TACACS+) では動作しない</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。リモート認証はカスタマー責務</li>
+<li><strong>build flag が必須</strong>。runtime に有効化する CLI / DB は無い</li>
+<li>HLD 例の <code>CHANGE_DEFAULT_PASSWORD=true</code> は <strong>そのままでは動かない</strong>。<code>build_debian.sh</code> は <code>== "y"</code> で判定するため <code>=y</code> を渡す必要がある<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li>機能は <strong>Linux native ツール (<code>passwd -e</code> + <code>pam_unix</code>) に依拠</strong>。これらの挙動が変わると同期が必要</li>
+<li>HLD で言及される <code>/etc/rc.local</code> での 1st boot 検知ロジックは master には存在しない（build-time に前倒しされている）</li>
+<li>ユーザ unit test は <strong>login と 1st boot を直接カバーしない</strong>（system test に依存）<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>パスワード変更後に <strong>強制 logout</strong> されるユーザ体験上の制約<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>既存の <code>passw_hardening</code> 機能</strong>: aging とは独立。両機能を併用しても干渉しない設計</li>
-<li><strong><code>/etc/rc.local</code></strong>: 1st boot 処理の置き場</li>
-<li><strong>PAM stack</strong>: <code>pam_unix_account.so</code> の挙動に依存</li>
+<li><strong>PAM stack</strong>: <code>pam_unix</code> の expire 検知に依存</li>
 <li><strong>SSH / login shell</strong>: ログイン経路に依存</li>
-<li><strong><code>sonic-installer</code> (image upgrade)</strong>: 1st boot 再 trigger に関与</li>
+<li><strong><code>sonic-installer</code> (image upgrade)</strong>: upgrade 時に新イメージ側の <code>/etc/shadow</code> が expired 化されているため間接的に再強制</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>初回 login で expire が起きない → <code>CHANGE_DEFAULT_PASSWORD=true</code> でビルドされたか確認、<code>chage -l &lt;user&gt;</code> で <code>Last password change: never</code> 等になっているか確認</li>
+<li>初回 login で expire が起きない → <code>CHANGE_DEFAULT_PASSWORD=y</code> でビルドされたか確認、<code>chage -l &lt;user&gt;</code> で <code>Last password change: never</code> 等になっているか確認</li>
+<li><code>=true</code> を渡したのに効かない → <code>=y</code> でないと <code>build_debian.sh</code> の <code>[[ "$CHANGE_DEFAULT_PASSWORD" == "y" ]]</code> 分岐に入らない</li>
 <li>LDAP user で動かない → 仕様通り（remote AAA 非対応）</li>
 <li>強制 logout 後ループ → password hardening 側の policy（最低長 / 複雑度）にひっかかっているか syslog を確認</li>
-<li>upgrade 後に再強制されない → 1st boot marker (e.g. <code>/host/.first_boot</code> 相当) の有無、<code>/etc/rc.local</code> の処理ロジックを確認</li>
+<li>upgrade 後に再強制されない → 新イメージも <code>CHANGE_DEFAULT_PASSWORD=y</code> でビルドされていたか確認</li>
 </ul>
-<h3 id="_8">コマンド例: デフォルト認証情報強制変更確認<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 初期 admin パスワード変更を強制するフラグ</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PASSW_HARDENING|POLICIES&#39;</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>chage<span class="w"> </span>-l<span class="w"> </span>admin
+<h3 id="_9">コマンド例: デフォルト認証情報強制変更確認<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 対象ユーザの shadow 期限状態（Last password change が 1970-01-01 / Jan 01, 1970 等になっていれば expired 化済）</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>chage<span class="w"> </span>-l<span class="w"> </span>admin
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># ビルド時に書き出される default_users の json（参考。CHANGE_DEFAULT_PASSWORD=y のとき expire: true）</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/sonic/default_users.json
 </span></code></pre></div>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- CHANGE_DEFAULT_PASSWORD build flag の sonic-buildimage 取り込み確認
-- /etc/rc.local で 1st boot を判別し chage -d 0 を全 default user に適用するスクリプトの存在確認
-- pam_unix_account.so の expired 検知が現行 image の PAM 構成で有効か確認
-- /etc/passwd 走査で login shell = /bin/bash / /bin/sh ユーザのみ対象とする実装確認
-- image upgrade で 1st boot 扱いとなる仕組み（marker file 等）の現行確認
--->
-
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36401,7 +36484,16 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/California-SB237/California-SB237.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/California-SB237/California-SB237.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-buildimage</code> <code>build_debian.sh</code> L576, L859-L865 @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-buildimage</code> <code>rules/config</code> L71-L72 @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>sonic-net/sonic-buildimage</code> <code>files/build_templates/default_users.json.j2</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
