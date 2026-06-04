@@ -1,6 +1,6 @@
 ---
 title: VRF / ECMP / RIB-FIB パイプライン
-description: VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APPL_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…
+description: VRF / ECMP / RIB-FIB パイプライン — SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APPL_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種類を選ぶ」の順で読み直す章入口。
 area: topics
 verification: meta
 page_kind: chapter-index
@@ -19,28 +19,33 @@ keywords:
 related:
   cli:
   - config vrf
-  - config bgp
-  - config interface
+  - config vrf add
+  - config vrf del
+  - config vrf bind
+  - config vrf unbind
   - config route
-  - show bgp
-  - show ip
-  - show vlan
+  - config route add
+  - config route del
+  - show cli vrf
+  - show cli mgmt-vrf
+  - show cli ipv6 route
+  - clear cli flowcnt-route
   config_db:
   - VRF
-  - BGP_PEER_GROUP_AF
+  - STATIC_ROUTE
+  - FG_NHG
+  - FG_NHG_PREFIX
+  - FG_NHG_MEMBER
+  - ROUTE_REDISTRIBUTE
   - LOOPBACK_INTERFACE
-  - VLAN
-  - VLAN_INTERFACE
-  - BGP_AGGREGATE_ADDRESS
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
   yang:
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-global
-  - sonic-bgp-peerrange
-  - sonic-fine-grained-ecmp
+  - sonic-vrf
+  - sonic-mgmt_vrf
+  - sonic-static-route
   - sonic-route-common
-  - sonic-route-map
+  - sonic-fine-grained-ecmp
+  - sonic-interface
+  - sonic-loopback-interface
 ---
 
 # VRF / ECMP / RIB-FIB パイプライン
