@@ -112,7 +112,7 @@ sources: []
 | 項目 | 値 |
 |---|---:|
 | 低密度ページ残数 (link-density < 2) | 68 |
-| backlog 残数 (active) | 10 |
+| backlog 残数 (active) | 0 |
 
 ## 関連メタページ
 
