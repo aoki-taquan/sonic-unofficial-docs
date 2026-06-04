@@ -88,13 +88,18 @@ module: sonic-tunnel
 | `src_ip` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/src_ip` | `leafref` |  |  | /ps:sonic-peer-switch/PEER_SWITCH/PEER_SWITCH_LIST/address_ipv4 | Tunnel source IPv4 (= peer ToR address) |
 | `dst_ip` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/dst_ip` | `inet:ipv4-address` |  |  |  | Tunnel destination IPv4 (= this switch address) |
 | `ecn_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/ecn_mode` | `string` |  |  | standard, copy_from_outer | [ECN](../../reference/glossary.md#term-ecn) handling mode on decapsulation |
-| `encap_ecn_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/encap_ecn_mode` | `string` |  |  | standard, copy_from_inner | [ECN](../../reference/glossary.md#term-ecn) marking mode on encapsulation |
+| `encap_ecn_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/encap_ecn_mode` | `string` |  |  | standard | [ECN](../../reference/glossary.md#term-ecn) marking mode on encapsulation (上流 pattern は `standard` のみ[^1]) |
 | `ttl_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/ttl_mode` | `string` |  |  | uniform, pipe | TTL handling mode |
 | `tunnel_type` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/tunnel_type` | `string` |  |  | IPINIP | Encapsulation type |
 | `decap_dscp_to_tc_map` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/decap_dscp_to_tc_map` | `string` |  |  |  | [DSCP](../../reference/glossary.md#term-dscp)-to-TC map applied on decapsulation |
 | `decap_tc_to_pg_map` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/decap_tc_to_pg_map` | `string` |  |  |  | TC-to-PG map applied on decapsulation |
 | `encap_tc_to_dscp_map` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/encap_tc_to_dscp_map` | `string` |  |  |  | TC-to-DSCP map applied on encapsulation |
 | `encap_tc_to_queue_map` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/encap_tc_to_queue_map` | `string` |  |  |  | TC-to-queue map applied on encapsulation |
+
+!!! note "`encap_ecn_mode` の許容値について"
+    上流 YANG の pattern は `standard` のみで、`copy_from_inner` は許容されない[^1]。RFC 6040 の標準モード (inner ECN を outer に複製しつつ congestion を保持) に固定されるため、encap 時に inner ECN を無加工コピーする運用を期待する場合は事前に上流側の YANG 拡張が必要となる。
+
+<!-- evidence: src/sonic-yang-models/yang-models/sonic-tunnel.yang L67-72 -->
 
 ## leafref / 依存
 
