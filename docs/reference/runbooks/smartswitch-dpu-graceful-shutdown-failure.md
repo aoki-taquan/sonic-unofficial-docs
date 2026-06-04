@@ -1,6 +1,6 @@
 ---
 title: SmartSwitch DPU graceful shutdown が失敗する
-description: "Runbook: SmartSwitch DPU の graceful shutdown が完了しない — : sonic-net/sonic-platform-daemons @ master — chassisd : sonic-net/sonic-utilities @ master — chassis_mod…"
+description: "Runbook: SmartSwitch DPU の graceful shutdown が完了しない場合の症状・原因・切り分け・対処を、chassisd と sonic-utilities の実装に基づいて整理する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-13
@@ -38,7 +38,6 @@ related:
 
 ## 切り分け手順
 
-
 ```mermaid
 flowchart TD
     A[DPU の graceful shutdown が失敗] --> B{NPU から shutdown 要求送出?}
@@ -47,7 +46,7 @@ flowchart TD
     C -- No --> C1[PCIe / 制御チャネルの疎通確認]
     C -- Yes --> D{drain 完了したか?}
     D -- No --> D1[traffic drain の閾値・timeout を見直し]
-    D -- Yes --> E[最終的に強制 shutdown を実施]
+    D -- Yes --> E[CHASSIS_MODULE admin_status=down を再投入して chassisd の遷移を待つ]
 ```
 
 ## 確認コマンド
@@ -92,7 +91,8 @@ sudo cat /sys/class/pci_bus/.../power/control
 
 - [ENI](../../reference/glossary.md#term-eni) 残: controller 側で migration を実行、完了後に再 shutdown
 - chassisd 詰まり: `docker restart pmon` （**注意**: 他センサ / fan / xcvrd も再起動される）
-- 強制 shutdown: `config chassis modules shutdown DPU0 -f` （対応 utilities 版でのみ。**ロールバック**: `config chassis modules startup DPU0`、ただしフロー復元不可）
+- shutdown コマンドが「state transition is already in progress」で返る場合: chassisd の state machine が前回の遷移を抱えたままなので、`CHASSIS_MODULE_TABLE` の `state_transition_in_progress` を確認し、解消しないなら pmon を再起動して再投入する <!-- evidence: sonic-net/sonic-utilities config/chassis_modules.py L155-L165 ref 39732bceb8bdefe706518ab40623bbbba6ff33b9 -->
+- **強制 shutdown フラグは存在しない**: `config chassis modules shutdown <name>` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `CHASSIS_MODULE|<name>` を `admin_status=down` にセットするだけで、`-f` / `--force` 等のオプションは Click 定義に存在しない[^2]。SIGKILL 相当の即時停止が必要な場合は、ベンダ提供の platform API（`platform_chassisd --get-dpu-status` 系コマンドや SDK ツール）経由で電源・PCIe を直接落とすしかない。**ロールバック**: `config chassis modules startup DPU0`、ただし保留フローは復元不可
 - platform plugin 異常: ベンダ提供 plugin の log と GitHub Issue で確認
 
 ## 関連ページ
@@ -104,7 +104,7 @@ sudo cat /sys/class/pci_bus/.../power/control
 
 本ページの根拠は引用元 [^1][^2] を参照。
 
-[^1]: sonic-net/sonic-platform-daemons @ master — chassisd
-[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ master — chassis_modules.py
+[^1]: sonic-net/sonic-platform-daemons @ master — `sonic-chassisd/scripts/chassisd` ref `4ba9612cb7756651062d37f977e3df17d57f740d` L1120-L1220 (admin_status 監視と状態遷移)
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ master — `config/chassis_modules.py` ref `39732bceb8bdefe706518ab40623bbbba6ff33b9` L136-L172 (`shutdown` Click サブコマンド定義: 引数は `chassis_module_name` のみで `--force` 系オプション無し)
 
-<!-- glossary-links-injected: 4353e5992ae2 -->
+<!-- glossary-links-injected: 896d391185a9 -->

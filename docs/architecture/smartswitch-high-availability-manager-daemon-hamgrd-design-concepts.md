@@ -23,8 +23,7 @@ related:
   cli:
   - show bfd
   - show platform
-  yang:
-  - sonic-system-defaults
+  yang: []
   _no_related_yang: true
 ---
 
@@ -131,7 +130,7 @@ vDPU actor が物理 DPU actor に register、DPU actor が状態変化を vDPU 
 !!! tip "読み手向け"
     - **本機能を実運用で使う場合**: 実装が無いため、本機能に依存した運用は不可。代替機能 (下記リンク) で要件を満たせるか検討する
     - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
-    - **代替手段 / 関連 reference**: 本ページの frontmatter `related` が空のため、[Reference 索引](../reference/index.md) から関連テーブル / CLI / YANG を辿る
+    - **代替手段 / 関連 reference**: frontmatter `related` に列挙された CONFIG_DB テーブル（`DPU` / `CHASSIS_MODULE` / `MID_PLANE_BRIDGE` / `DPUS` / `BFD_SESSION_TABLE` / `DASH_ENI_TABLE` / `DASH_VNET`）および CLI（`show bfd` / `show platform`）から関連 reference を辿る。なお hamgrd は内部 daemon 設計のため YANG モデルは存在しない (`_no_related_yang: true`)
 
 !!! note "本ドキュメントの追跡"
     - monitor: `partially_implemented` / last_verified: `2026-05-11`

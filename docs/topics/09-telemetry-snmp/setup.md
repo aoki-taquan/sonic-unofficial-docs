@@ -1,11 +1,16 @@
 ---
 title: 設定
-description: 設定 — 監視機能の設定は経路ごとに別の CONFIG_DB table と CLI に分かれます。ここではシナリオ別の最小手順、確認用の
-  show 出力、よくある設定エラーをまとめます。項目の意味の深掘りは参照ページに任せます。
+description: 監視機能 (SNMP / sFlow / syslog / gNMI telemetry / auto-techsupport) の設定をシナリオ別最小手順、確認用 show 出力、よくある設定エラーの 3 点でまとめます。CLI 引数順は sonic-utilities config/main.py で裏取りしています。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: code-verified
+last_verified: 2026-06-04
+sources:
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/syslog.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   cli:
   - config sflow
@@ -39,16 +44,20 @@ related:
 # v2c read-only
 config snmp community add public ro
 
-# v3 priv user (auth=SHA, priv=AES)
-config snmp user add monitor priv AES 'PrivPass!2026' SHA 'AuthPass!2026' ro
+# v3 priv user — 引数順は固定: <user> <type> <permission> <auth_type> <auth_pw> <encrypt_type> <encrypt_pw>
+config snmp user add monitor Priv RO SHA 'AuthPass!2026' AES 'PrivPass!2026'
 
-# 監視メタデータ
-config snmp location "Tokyo DC1 Rack 5"
-config snmp contact admin admin@example.com
+# 監視メタデータ (location / contact はそれぞれサブグループで add が必要)
+config snmp location add "Tokyo DC1 Rack 5"
+config snmp contact add admin admin@example.com
 
 # AgentAddress を mgmt VRF 内の管理 IP に限定
 config snmp agentaddress add -p 161 -v mgmt 10.0.0.10
 ```
+
+引数順は sonic-utilities の `config/main.py` で確定的に決まっており、`AES` / `SHA` / `RO` のキーワード位置を入れ替えるとそのまま enum 不一致で reject されます。<!-- evidence: sonic-net/sonic-utilities@39732bc config/main.py:4708-4715 -->[^utilities-user]
+
+[^utilities-user]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `config/main.py` L4708–L4715 (`add_user` click 引数定義) @ `39732bceb8bdefe706518ab40623bbbba6ff33b9`
 
 CONFIG_DB 側はこういう構造になります。
 
@@ -96,8 +105,8 @@ flow ベースの可視化（NDR、Kentik など）と長期 packet sampling の
 
 ```bash
 config sflow enable
-config sflow collector add primary   192.0.2.10 6343
-config sflow collector add secondary 192.0.2.11 6343
+config sflow collector add primary   192.0.2.10 --port 6343
+config sflow collector add secondary 192.0.2.11 --port 6343
 config sflow polling-interval 20
 
 # 全ポート default で enable、上り回線だけ sample_rate を下げる
@@ -139,7 +148,9 @@ sFlow interface configurations
   ...
 ```
 
-`sample_direction` の `rx` / `tx` / `both` と、interface の `sample_rate` / `admin_state` が動作を決めます。エージェントは hsflowd で、collector 設定が消えると datagram は止まります。
+`sample_direction` の `rx` / `tx` / `both` と、interface の `sample_rate` / `admin_state` が動作を決めます。エージェントは hsflowd で、collector 設定が消えると datagram は止まります。collector の port は `--port` オプション (default 6343)、最大 2 件まで登録可能です。<!-- evidence: sonic-net/sonic-utilities@39732bc config/main.py:9336-9356 -->[^utilities-sflow]
+
+[^utilities-sflow]: sonic-net/sonic-utilities `config/main.py` L9336–L9356 (`config sflow collector add` 引数・最大 2 件チェック) @ `39732bceb8bdefe706518ab40623bbbba6ff33b9`
 
 ## シナリオ 3: Syslog を mgmt VRF 越しに 2 台へ転送
 
@@ -172,7 +183,9 @@ $ tcpdump -n -i eth0 -c 4 'udp port 514'
 13:24:15.001 IP 10.0.0.10.43211 > 192.0.2.21.514: SYSLOG ...
 ```
 
-[YANG](../../reference/glossary.md#term-yang) model は `sonic-syslog.yang`、CONFIG_DB は [`SYSLOG_SERVER`](../../reference/config-db/syslog-server.md)。
+[YANG](../../reference/glossary.md#term-yang) model は `sonic-syslog.yang`、CONFIG_DB は [`SYSLOG_SERVER`](../../reference/config-db/syslog-server.md)。`config syslog add` は `-s/--source` / `-p/--port` / `-r/--vrf` を取り、長形 `--vrf` も Click のエイリアス解決で受理されます。<!-- evidence: sonic-net/sonic-utilities@39732bc config/syslog.py:370-411 -->[^utilities-syslog]
+
+[^utilities-syslog]: sonic-net/sonic-utilities `config/syslog.py` L370–L411 (`config syslog add` 引数定義) @ `39732bceb8bdefe706518ab40623bbbba6ff33b9`
 
 ## シナリオ 4: Telemetry (gNMI server) を有効化する
 
@@ -273,4 +286,4 @@ total 24M
 - [sonic-syslog YANG](../../reference/yang/sonic-syslog.md)
 - [SNMP yml から CONFIG_DB への移行](../../system/snmp-migration-from-snmp-yml-to-configdb.md)
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: f960e6599a3c -->

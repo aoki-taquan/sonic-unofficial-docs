@@ -1,6 +1,6 @@
 ---
 title: SAI 拡張属性追加系
-description: SAI 拡張属性追加系 — このカテゴリは、SAI そのものを横断するページを集めます。
+description: SAI 拡張属性追加系 — SAI capability 問い合わせ・失敗ハンドリング・SAI POST・Generic SAI Extension CRM・SAI bulk API 系を横断する HLD 群を集めたカテゴリ index。
 area: categories
 verification: meta
 last_verified: 2026-05-10
@@ -19,7 +19,7 @@ related:
 
 このカテゴリは、SAI そのものを横断するページを集めます。**capability 問い合わせ系**（[ACL](../reference/glossary.md#term-acl) action / counter capability / API version check）・**failure handling**（dump-on-failure・virtual handleSaiStatus）・**SAI POST**（[MACsec](../reference/glossary.md#term-macsec) FIPS）・**Generic SAI Extension の [CRM](../reference/glossary.md#term-crm)**・**SAI bulk API 系**（Port Profile Init / Auto FEC）が中心です。
 
-SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応する実装が swss / sairedis / [syncd](../reference/glossary.md#term-syncd) / sonic-platform-common にまたがります。たとえば `egress mirroring + action capability check` は `aclorch` が SAI capability を見てフォールバックする実装で、`sai_query_stats_capability` は `counter caps` を `CounterCheck` 系から呼びます。
+SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応する実装が swss / sairedis / [syncd](../reference/glossary.md#term-syncd) / sonic-platform-common にまたがります。たとえば `egress mirroring + action capability check` は `aclorch` が SAI capability を見てフォールバックする実装で<!-- evidence: sonic-swss/orchagent/aclorch.cpp:4042-4160 sai_query_attribute_enum_values_capability の使用箇所 -->、`sai_query_stats_capability` は port / queue counter caps を `portsorch` から呼び出します<!-- evidence: sonic-swss/orchagent/portsorch.cpp:664,673,1882 sai_query_stats_capability(SAI_OBJECT_TYPE_PORT/QUEUE) -->。
 
 主要キーワード: `SAI`, `attribute`, `capability`, `API`, `failure handling`, `POST`, `CRM`
 
@@ -28,7 +28,7 @@ SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応す�
 ### capability / API version
 
 - [ACL の egress mirror 対応と SAI ベース action capability 問い合わせ](../acl-qos/egress-mirroring-support-and-acl-action-capability-check.md) (area: `acl-qos`, verification: `code-verified`)
-- [sai_query_stats_capability による Counter Capability 一括取得](../platform/query-stats-capability-new-sai-api-indroduction.md) (area: `platform`, verification: `code-verified`)
+- [sai_query_stats_capability による Counter Capability 一括取得](../platform/query-stats-capability-new-sai-api-indroduction.md) (area: `platform`, verification: `code-verified`) <!-- NOTE: リンク先 slug の "indroduction" は元 HLD ファイル名由来の typo (introduction の誤記)。ページ本体側で slug rename する際に同期修正予定。 -->
 - [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../platform/sai-api-version-check.md) (area: `platform`, verification: `code-verified`)
 
 ### bulk API / Port

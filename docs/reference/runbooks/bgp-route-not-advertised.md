@@ -1,6 +1,6 @@
 ---
 title: BGP route が広告されない
-description: "Runbook: BGP route が広告されない — : sonic-net/sonic-frr @ 799f47f — bgpd/bgp_route.c : sonic-net/sonic-swss @ 4305596 — fpmsyncd で zebra → APP_DB 反映"
+description: "Runbook: BGP route が想定 peer へ広告されない事象を、FRR の Adj-RIB-Out 判定と fpmsyncd の APP_DB 反映から切り分ける手順"
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
@@ -9,7 +9,7 @@ sources:
     path: bgpd/bgp_route.c
     ref: 799f47f215e4266063c4ebde0041a0c7dd2d11d0
   - repo: sonic-net/sonic-swss
-    path: fpmsyncd/fpmlink.cpp
+    path: fpmsyncd/routesync.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db: [BGP_NEIGHBOR, ROUTE_MAP, PREFIX_LIST]
@@ -114,9 +114,10 @@ sonic-db-cli CONFIG_DB keys "PREFIX_LIST|*"
 
 ## 引用元
 
-本ページの根拠は引用元 [^1][^2] を参照。
+本ページの根拠は引用元 [^1][^2][^3] を参照。Adj-RIB-Out への投入判定は [FRR](../../reference/glossary.md#term-frr) の `subgroup_announce_check()` を経由し、選定経路の APP_DB 反映は [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) の `RouteSync::onRouteMsg()` 経路で `ROUTE_TABLE` [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) に書き込まれる。
 
-[^1]: sonic-net/sonic-frr @ 799f47f — bgpd/bgp_route.c
-[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) で [zebra](../../reference/glossary.md#term-zebra) → APP_DB 反映
+[^1]: sonic-net/sonic-frr @ 799f47f — `bgpd/bgp_route.c` L1420 `subgroup_announce_check()` および L2161-2164 で outbound policy 判定後に `bgp_adj_out_set_subgroup()` で Adj-RIB-Out へ投入。
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — `fpmsyncd/routesync.cpp` L153-162 [`RouteSync`](../../reference/glossary.md#term-fpmsyncd) constructor が `APP_ROUTE_TABLE_NAME` (`ROUTE_TABLE`) の [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) を生成、L2111 `onRouteMsg()` で [zebra](../../reference/glossary.md#term-zebra) → APP_DB へ反映。
+[^3]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — `fpmsyncd/fpmlink.cpp` は [FPM](../../reference/glossary.md#term-fpm) ソケット受信のみを担当し、netlink → APP_DB 変換は `routesync.cpp` 側で行われる。
 
-<!-- glossary-links-injected: 035b99b8e325 -->
+<!-- glossary-links-injected: d1439329b8c6 -->

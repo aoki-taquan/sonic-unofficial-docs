@@ -1,33 +1,57 @@
 ---
 title: 内部実装
-description: 内部実装 — Multi-ASIC / VOQ chassis の内部実装は「namespace で分けられた Redis / orchagent
-  / syncd インスタンス」と「chassis 全体を束ねる chassis_db / database-chassis container」の二重構造で動きます。
+description: Multi-ASIC / VOQ chassis の内部実装。namespace 分割した per-ASIC Redis / orchagent
+  / syncd と、chassis 全体を束ねる CHASSIS_APP_DB / database-chassis container の二重構造、SYSTEM_PORT_TABLE
+  / SYSTEM_NEIGH_TABLE による状態同期、FabricPortsOrch の auto-isolation を解説する。
 area: topics
-verification: meta
-last_verified: 2026-05-11
-sources: []
+verification: code-verified
+last_verified: 2026-06-04
+sources:
+- repo: sonic-net/sonic-swss
+  path: orchagent/main.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/portsorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/neighorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/fabricportsorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/chassisorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-utilities
+  path: show/fabric.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/chassis_modules.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   cli:
-  - config bgp
-  - show bgp
-  - config vlan
-  - show vlan
+  - show fabric
+  - show fabric reachability
+  - show fabric isolation
+  - show chassis-modules
+  - config chassis_modules shutdown
+  - config chassis_modules startup
   config_db:
-  - VLAN
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
-  - BGP_PEER_GROUP
-  - BGP_NEIGHBOR_AF
+  - SYSTEM_PORT
+  - CHASSIS_MODULE
+  - FABRIC_MONITOR
+  - FABRIC_PORT
+  - VOQ_INBAND_INTERFACE
   yang:
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
+  - sonic-system-port
+  - sonic-chassis-module
+  - sonic-fabric-monitor
+  - sonic-fabric-port
+  - sonic-voq-inband-interface
+  - sonic-bgp-voq-chassis-neighbor
 ---
 
 # 内部実装
@@ -80,7 +104,7 @@ VOQ chassis 固有:
 
 | object | 属性 |
 | --- | --- |
-| `SAI_OBJECT_TYPE_SWITCH` | `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_VOQ`、`SAI_SWITCH_ATTR_SWITCH_ID`、`SAI_SWITCH_ATTR_MAX_SYSTEM_CORES`、`SAI_SWITCH_ATTR_SYSTEM_PORT_CONFIG_LIST` |
+| `SAI_OBJECT_TYPE_SWITCH` | `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_VOQ`、`SAI_SWITCH_ATTR_SWITCH_ID`、`SAI_SWITCH_ATTR_MAX_SYSTEM_CORES`、`SAI_SWITCH_ATTR_SYSTEM_PORT_CONFIG_LIST`[^orch-main] |
 | `SAI_OBJECT_TYPE_SYSTEM_PORT` | `SAI_SYSTEM_PORT_ATTR_CONFIG_INFO`、`SAI_SYSTEM_PORT_ATTR_ADMIN_STATE`、`SAI_SYSTEM_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` |
 | `SAI_OBJECT_TYPE_FABRIC_PORT` | `SAI_PORT_ATTR_TYPE = FABRIC`、`SAI_PORT_ATTR_FABRIC_ATTACHED`、`SAI_PORT_ATTR_FABRIC_REACHABILITY` |
 | `SAI_OBJECT_TYPE_NEIGHBOR_ENTRY` (system) | system port を nexthop とする encap 情報を含む |
@@ -104,7 +128,7 @@ Chassis global:
     HOSTNAME_ASIC_MAP
 ```
 
-各 ASIC orchagent は自身の `APPL_DB:NEIGH_TABLE` から学習した neighbor を `CHASSIS_APP_DB:SYSTEM_NEIGH_TABLE` に複製し、他 ASIC の orchagent はそれを subscribe して自身の system port nexthop に変換します。
+各 ASIC orchagent は自身の `APPL_DB:NEIGH_TABLE` から学習した neighbor を `CHASSIS_APP_DB:SYSTEM_NEIGH_TABLE` に複製し、他 ASIC の orchagent はそれを subscribe して自身の system port nexthop に変換します[^neighorch].
 
 ## ZMQ / Redis pub/sub
 
@@ -129,7 +153,7 @@ Chassis global:
 | `SYSTEM_PORT_TABLE` | chassis 全体での system port ID 割当（VOQ 設計上の必須） |
 | `SYSTEM_NEIGH_TABLE` | 全 LC 共有の neighbor entry |
 | `SYSTEM_LAG_TABLE` | chassis 跨ぎ LAG（VOQ chassis only） |
-| `SYSTEM_INTERFACE` | router-interface の system-wide view |
+| `SYSTEM_LAG_MEMBER_TABLE` | chassis 跨ぎ LAG のメンバー port 情報[^[portsorch](../../reference/glossary.md#term-portsorch)-lag] |
 
 `SystemPortOrch` / `SystemNeighOrch` が chassis_db を subscribe して、自 ASIC の `SAI_OBJECT_TYPE_SYSTEM_PORT` を作成 / 更新します。chassis_db 自体は SUP 上の Redis で、LC 側からは TCP で接続します（接続切断時は前述の段階的劣化）。
 
@@ -143,7 +167,7 @@ VOQ chassis では fabric port が線カード間の中継を担い、`FabricPor
 | `FABRIC_REACHABILITY` | 各 fabric switch への到達性 | `CHASSIS_STATE_DB:FABRIC_ASIC_TABLE` |
 | `isolated` | port が isolation domain にあるか | counter / `show fabric` |
 
-fabric link の flap は `SAI_PORT_ATTR_FABRIC_ATTACHED` の notification で `FabricPortsOrch::refreshFabricPortMonitor` に届き、閾値を超えた error count で isolation の判定がなされます。chassis 全体の health を `chassisd` が `CHASSIS_STATE_DB:LINECARD_TABLE` で集約します。
+fabric link の flap は `SAI_PORT_ATTR_FABRIC_ATTACHED` の poll で取得され、`isolationPollsCfg`（既定値 `ISOLATION_POLLS_CFG`）連続で error が観測されると auto-isolation 判定が走ります[^fabric-iso]. chassis 全体の health を `chassisd` が `CHASSIS_STATE_DB:LINECARD_TABLE` で集約します。CLI からは `show fabric reachability` / `show fabric isolation` で状態を確認できます[^show-fabric].
 
 ## per-ASIC FRR と internal BGP の構成
 
@@ -168,4 +192,10 @@ VOQ chassis では各 ASIC namespace で独立した FRR が動き、ASIC 間は
 - [Aggregate VOQ counters in SONiC](../../internals/aggregate-voq-counters-in-sonic.md)
 - [BGP setup for VOQ chassis](../../routing/bgp-setup-for-voq-chassis.md)
 
-<!-- glossary-links-injected: 5c9b3765d470 -->
+[^orch-main]: `gMySwitchType == "voq"` のとき `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_VOQ` / `SAI_SWITCH_ATTR_SWITCH_ID` / `SAI_SWITCH_ATTR_MAX_SYSTEM_CORES` / `SAI_SWITCH_ATTR_SYSTEM_PORT_CONFIG_LIST` を switch create 時に渡す。sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) `orchagent/main.cpp` L688-720 (ref `4305596156d7`).
+[^neighorch]: VOQ switch では `CHASSIS_APP_SYSTEM_NEIGH_TABLE_NAME` を `chassisAppDb` 上に open し、リモート neighbor の同期に用いる。sonic-net/sonic-swss `orchagent/neighorch.cpp` L54-61, L887 (ref `4305596156d7`).
+[^fabric-iso]: `isolationPollsCfg` のデフォルトは `ISOLATION_POLLS_CFG`、`CONFIG_DB:FABRIC_MONITOR` から override 可能。`consecutivePollsWithErrors >= isolationPollsCfg` で auto-isolation 状態に遷移する。sonic-net/sonic-swss `orchagent/fabricportsorch.cpp` L436-475, L787-906 (ref `4305596156d7`).
+[^show-fabric]: `show fabric reachability` は `fabricstat -r`、`show fabric isolation` は `fabricstat -i` を実行する click group。sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `show/fabric.py` L33-50 (ref `39732bceb8bd`).
+[^portsorch-lag]: VOQ chassis では [PortChannel](../../reference/glossary.md#term-portchannel) の add / member 変更時に `SYSTEM_LAG_TABLE` / `SYSTEM_LAG_MEMBER_TABLE` を `CHASSIS_APP_DB` 上で更新する。sonic-net/sonic-swss `orchagent/portsorch.cpp` L8037, L8114 (ref `4305596156d7`).
+
+<!-- glossary-links-injected: 4e2024452c7a -->

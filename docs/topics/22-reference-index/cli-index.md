@@ -4,6 +4,7 @@ description: docs/reference/cli/ 配下の 73 ページを機能章ごとに束�
 area: topics
 verification: meta
 last_verified: 2026-06-04
+page_kind: chapter-index
 related:
   cli:
   - config bgp
@@ -19,7 +20,8 @@ related:
   - config platform firmware
   config_db: []
   yang: []
-related_opt_out: true
+  _no_related_config_db: true
+  _no_related_yang: true
 ---
 
 # CLI 横断索引
@@ -28,7 +30,7 @@ related_opt_out: true
 
 ## 機能章別 CLI 表
 
-全章とも `docs/topics/` 配下にディレクトリが存在し、`concept` / `setup` / `operations` / `architecture` / `internals` / `advanced` の構成で公開されている。本表では機能章の主入口 (`setup.md` / `operations.md` / `index.md`) を併記する。
+各機能章は `docs/topics/NN-<slug>/` 配下に `concept` / `setup` / `operations` / `internals` / `advanced` を基本構成として公開しており、章によっては `architecture.md` を併設する。本表では機能章の主入口 (`setup.md` / `operations.md` / `index.md`) を併記する。
 
 ### 02 BGP と FRR 制御プレーン
 
@@ -118,7 +120,7 @@ related_opt_out: true
 - [sonic-installer](../../reference/cli/sonic-installer.md)
 - [sonic-package-manager](../../reference/cli/sonic-package-manager.md)
 
-入口: [11-reboot/index.md](../11-reboot/index.md)。
+入口: [11-reboot/setup.md](../11-reboot/setup.md) / [11-reboot/operations.md](../11-reboot/operations.md)。
 
 ### 14 Platform / Port / Optics
 
