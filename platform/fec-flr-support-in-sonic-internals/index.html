@@ -19439,7 +19439,7 @@
   <span class="md-ellipsis">
     
   
-    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
+    swss-common Logger の linkToDb / linkToDbNative 呼び出し順序
   
 
     
@@ -36125,13 +36125,13 @@
     B[Δ correctable_cw\n+ Δ S0\n= 全 cw - uncorrectable] --&gt; C
     C["CER = Δ uncorrectable / Δ total"]
     C --&gt; D{interleaving X}
-    D --&gt;|X=1| E1[FLR = 1.125 * CER]
-    D --&gt;|X=2| E2[FLR = 2.125 * CER]
-    D --&gt;|X=4| E4[FLR = 4.125 * CER]</code></pre>
+    D --&gt;|X=1| E1[FLR = 1 * CER]
+    D --&gt;|X=2| E2[FLR = 2 * CER]
+    D --&gt;|X=4| E4[FLR = 4 * CER]</code></pre>
 <ol>
 <li>interval ごとに各 codeword counter の差分 (<code>Δ</code>) を取る。</li>
 <li><code>CER = Δ uncorrectable / Δ total</code>。</li>
-<li>interleaving factor X を port speed × lanes から決め、<code>FEC_FLR = (1 + X * MFC) / MFC * CER</code> で <code>FEC_FLR</code> を算出。</li>
+<li>interleaving factor X を port speed × lanes から決め、<code>FEC_FLR = X * CER</code> で <code>FEC_FLR</code> を算出する（<code>port_flr.lua</code> の <code>compute_observed_flr</code> 実装<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。IEEE の <code>(1 + X * MFC) / MFC * CER</code> 式ではなく、X 倍の簡略式を採用している点に注意）。</li>
 <li>結果を <code>COUNTER_DB:RATES:FEC_FLR</code> に保存、<code>*_last</code> を更新。</li>
 </ol>
 <h2 id="4-predicted-fec-flr">4. Predicted FEC FLR の計算<a class="headerlink" href="#4-predicted-fec-flr" title="Permanent link">&para;</a></h2>
@@ -36141,7 +36141,7 @@
 <li><code>y[i] = log10( codeword_errors[i] / total_cw )</code></li>
 <li>線形回帰で <code>slope</code>, <code>intercept</code> を求める（<code>y = slope*x + intercept</code>）</li>
 <li>16–20 symbol errors の窓で外挿: <code>predicted_cer = Σ_{j=16..20} 10^(j*slope + intercept)</code></li>
-<li><code>FEC_FLR_PREDICTED = (1.125 / 2.125 / 4.125) * predicted_cer</code>（X 別）</li>
+<li><code>FEC_FLR_PREDICTED = (1 + X * MFC) / MFC * predicted_cer</code>。RS-544 の <code>MFC = 8</code> を入れると X=1/2/4 で係数はそれぞれ <code>1.125</code> / <code>2.125</code> / <code>4.125</code> となる（<code>extrapolate_flr_from_regression</code><sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>）</li>
 <li><code>COUNTER_DB:RATES</code> に <code>FEC_FLR_PREDICTED</code> / <code>FEC_FLR_R_SQUARED</code> / <code>*_last</code> を保存</li>
 </ol>
 <p>20 を超える symbol error は寄与が無視できる量なので 16–20 に窓を切る。非ゼロ bin が <strong>2 個未満</strong> だと回帰できないので、その場合 <code>FLR(P)</code> は <code>0</code> を表示する（<code>N/A</code> ではなく <code>0</code> にして CLI 表示の readability を優先）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -36257,6 +36257,9 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/port_fec_flr/port_fec_flr.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/port_flr.lua</code> @ <code>4305596156d70e9797e8a881b3d19b46de0bce0d</code>（<code>compute_observed_flr</code> L350–392 / <code>extrapolate_flr_from_regression</code> L279–296）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

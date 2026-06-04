@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="gNSI を有効化する gNMI サーバの設定フラグ、関連 OpenConfig YANG モデル、CONFIG_DB / CLI と、Certz / Credentialz の運用 rotate イメージを扱う。">
+        <meta name="description" content="gNSI を有効化する gNMI サーバの設定フラグ、関連 OpenConfig YANG モデル、CONFIG_DB / CLI と、Certz / Credentialz の運用 rotate イメージを扱う。Certz / Authz / Pathz は master 取り込み済、Credentialz は HLD 提案のみで未実装。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="gNSI 設定と運用（gNMI フラグ / YANG / 運用イメージ） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="gNSI を有効化する gNMI サーバの設定フラグ、関連 OpenConfig YANG モデル、CONFIG_DB / CLI と、Certz / Credentialz の運用 rotate イメージを扱う。" />
+<meta property="og:description" content="gNSI を有効化する gNMI サーバの設定フラグ、関連 OpenConfig YANG モデル、CONFIG_DB / CLI と、Certz / Credentialz の運用 rotate イメージを扱う。Certz / Authz / Pathz は master 取り込み済、Credentialz は HLD 提案のみで未実装。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/gnsi-hld-operations.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnsi-hld-operations/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="gNSI 設定と運用（gNMI フラグ / YANG / 運用イメージ） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="gNSI を有効化する gNMI サーバの設定フラグ、関連 OpenConfig YANG モデル、CONFIG_DB / CLI と、Certz / Credentialz の運用 rotate イメージを扱う。" />
+<meta property="twitter:description" content="gNSI を有効化する gNMI サーバの設定フラグ、関連 OpenConfig YANG モデル、CONFIG_DB / CLI と、Certz / Credentialz の運用 rotate イメージを扱う。Certz / Authz / Pathz は master 取り込み済、Credentialz は HLD 提案のみで未実装。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/gnsi-hld-operations.png" />
 </head>
   
@@ -19406,7 +19406,7 @@
   <span class="md-ellipsis">
     
   
-    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
+    swss-common Logger の linkToDb / linkToDbNative 呼び出し順序
   
 
     
@@ -36037,7 +36037,7 @@
 <p>このページは <a href="../gnsi-hld/">gNSI（概要ハブ）</a> の派生で、<strong>設定経路と運用イメージ</strong> に絞る。概念は <a href="../gnsi-hld-concepts/">gnsi-hld-concepts.md</a>、内部実装は <a href="../gnsi-hld-internals/">gnsi-hld-internals.md</a>、制限と HLD 乖離は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を参照。</p>
 <div class="admonition note">
 <p class="admonition-title">実装状況の境界（partially implemented）</p>
-<p>本ページが扱うフラグ / YANG / 運用フローのうち、<strong>Certz 系の設定経路（<code>CertCRLConfig</code> など）と Rotate / Finalize 運用は master に取り込み済</strong> で動作する。一方 <strong>Authz / Pathz / Credentialz 系のフラグ（<code>EnableAuthzPolicy</code> / <code>EnablePathzPolicy</code> / <code>SshCredMetaFile</code> など）は未実装</strong> で対応 PR が未取り込み。詳細は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を参照。</p>
+<p>本ページが扱うフラグ / YANG / 運用フローのうち、<strong>Certz / Authz / Pathz の設定フラグと server 実装は master 取り込み済</strong>（<code>sonic-gnmi</code> の <code>gnmi_server/gnsi_certz.go</code> / <code>gnsi_authz.go</code> / <code>gnsi_pathz.go</code>、および <code>Config</code> 構造体の <code>CertCRLConfig</code> / <code>AuthzPolicy</code> / <code>AuthzPolicyFile</code> / <code>AuthzMetaFile</code> / <code>PathzPolicy</code> / <code>PathzPolicyFile</code> / <code>PathzMetaFile</code>）<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。一方 <strong>Credentialz 系のフラグ（HLD 記載の <code>SshCredMetaFile</code> / <code>ConsoleCredMetaFile</code> / <code>CredEntitiesMetaFile</code>）と gNSI server 側の Credentialz ハンドラは未実装</strong> で、<code>sonic-gnmi</code> の <code>gnmi_server/</code> 配下に <code>gnsi_credentialz.go</code> が存在しない（<code>sonic_service_client/dbus_client.go</code> に dbus 経由の API stub のみ）<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。詳細は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を参照。</p>
 </div>
 <h2 id="1-gnmi-sonic-gnmi">1. gNMI / sonic-gnmi 側のフラグ追加<a class="headerlink" href="#1-gnmi-sonic-gnmi" title="Permanent link">&para;</a></h2>
 <p><a href="../../reference/glossary/#term-hld">HLD</a> は <a href="../../reference/glossary/#term-gnmi">gNMI</a> server に以下のフラグを追加する想定<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -36078,7 +36078,7 @@
 <p>state の保管先として <strong><code>STATE_DB</code></strong> にプロファイルの freshness / state を入れる（OpenConfig gNSI モデル準拠）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <div class="admonition warning">
 <p class="admonition-title">実装側のフラグ名は HLD と異なる</p>
-<p>実装での flag 名は <code>AuthzPolicy</code> / <code>PathzPolicy</code>（bool）+ <code>AuthzPolicyFile</code> / <code>PathzPolicyFile</code>（path）、CRL は <code>CertCRLConfig</code>。詳細は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を参照。</p>
+<p>実装での flag 名は <code>AuthzPolicy</code> / <code>PathzPolicy</code>（bool）+ <code>AuthzPolicyFile</code> / <code>PathzPolicyFile</code>（path）、CRL は <code>CertCRLConfig</code>、Certz メタは <code>CertzMetaFile</code>（HLD では <code>CredEntitiesMetaFile</code> 名で言及）<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。Credentialz 系の <code>SshCredMetaFile</code> / <code>ConsoleCredMetaFile</code> は <code>Config</code> 構造体に存在せず、未実装に分類される。詳細は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を参照。</p>
 </div>
 <h2 id="2-config_db">2. 関連する CONFIG_DB<a class="headerlink" href="#2-config_db" title="Permanent link">&para;</a></h2>
 <p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマの追加は HLD 上「None」<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。状態は <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のみ。</p>
@@ -36115,42 +36115,50 @@
 </span></code></pre></div>
 <h2 id="_1">実装フェーズ境界<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <div class="admonition info">
-<p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>
-<p>本ページは <code>monitor: partially_implemented</code> で、HLD で示された一連の機能
-が <strong>段階的に取り込まれている</strong> 状態を扱う。フェーズ毎の実装境界を
-1 枚の表に集約する (詳細は本ページ上部の <code>diff</code> admonition および
-<a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照)。</p>
+<p class="admonition-title">gNSI sub-service 別の実装済 / 未実装 サマリ</p>
+<p>本ページは <code>monitor: partially_implemented</code> で、HLD が提案する gNSI 4 サブサービス
+（Certz / Authz / Pathz / Credentialz）のうち <strong>取り込み状況がサブサービス単位で
+異なる</strong>。実装の有無を 1 枚の表に集約する（裏取りは <code>sonic-gnmi</code> の
+<code>gnmi_server/</code> 配下を直接確認。<a href="../../reference/verification/discrepancy-index/">discrepancy-index</a>
+も参照）。</p>
 <table>
 <thead>
 <tr>
-<th>Phase</th>
-<th>範囲 (機能 / 段階)</th>
+<th>サブサービス</th>
+<th>HLD 範囲</th>
 <th>実装済 (master 取り込み済)</th>
 <th>未実装 (HLD 提案のみ)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Phase 1 — 基本機能</td>
-<td>HLD §概要 / §設計の中核ユースケース</td>
-<td>取り込み済 — 本ページの「実装の概観」「実装詳細」節および <code>diff</code> admonition の現状側を参照</td>
-<td>— (Phase 1 は実装済)</td>
-</tr>
-<tr>
-<td>Phase 2 — 拡張機能</td>
-<td>HLD §拡張 / §追加要件 / §周辺統合</td>
-<td>一部のみ取り込み済 — 本ページ「実装詳細」の補足参照</td>
-<td>未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および <code>diff</code> admonition の差分側に列挙</td>
-</tr>
-<tr>
-<td>Phase 3 — 将来拡張</td>
-<td>HLD §Future Work / §将来課題</td>
+<td>Certz</td>
+<td><code>Rotate</code> / <code>Finalize</code> / Profiles / CRL / CSR</td>
+<td><code>gnmi_server/gnsi_certz.go</code> (1106 行) と <code>Config.CertCRLConfig</code> / <code>CertzMetaFile</code> が master にあり、CRL ディレクトリ監視と Rotate チェックポイントが動作<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 <td>—</td>
-<td>未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点)</td>
+</tr>
+<tr>
+<td>Authz</td>
+<td>gRPC メソッド単位の authz ポリシー</td>
+<td><code>gnmi_server/gnsi_authz.go</code> (292 行) と <code>Config.AuthzPolicy</code> / <code>AuthzPolicyFile</code> / <code>AuthzMetaFile</code>、<code>FileWatcher</code> による hot reload<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td>HLD が示すフラグ名 <code>EnableAuthzPolicy</code> は実装に無く、<code>AuthzPolicy</code> (bool) に rename されている</td>
+</tr>
+<tr>
+<td>Pathz</td>
+<td>gNMI path 単位の認可</td>
+<td><code>gnmi_server/gnsi_pathz.go</code> (272 行) と <code>Config.PathzPolicy</code> / <code>PathzPolicyFile</code> / <code>PathzMetaFile</code>、Get/Set 経路の policy 評価が組まれている<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td>HLD が示すフラグ名 <code>EnablePathzPolicy</code> は実装に無く、<code>PathzPolicy</code> (bool) に rename されている</td>
+</tr>
+<tr>
+<td>Credentialz</td>
+<td>SSH / Console / gRPC クレデンシャル管理</td>
+<td><code>sonic_service_client/dbus_client.go</code> の dbus API stub のみ (<code>// Credentialz service APIs</code>)<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td>gNSI server 側のハンドラ (<code>gnsi_credentialz.go</code>) が存在せず、<code>Config.SshCredMetaFile</code> / <code>ConsoleCredMetaFile</code> / <code>CredEntitiesMetaFile</code> も未追加。<code>gnsi_client credentialz ...</code> の運用フローは HLD 段階で master では未対応</td>
 </tr>
 </tbody>
 </table>
-<p>凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。</p>
+<p>凡例: 「実装済」= <code>sonic-gnmi</code> master で source path / 行数が確認できる範囲 /
+「未実装」= HLD には記載があるが対応 PR が未マージ、または server 側 code が存在しない範囲。</p>
 </div>
 <!-- /phase-boundary -->
 
@@ -36164,6 +36172,9 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/mgmt/gnmi/gnsi.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-gnmi</code> <code>gnmi_server/server.go</code> L230-L247 (<code>Config</code> 構造体)、<code>gnmi_server/gnsi_certz.go</code> / <code>gnsi_authz.go</code> / <code>gnsi_pathz.go</code>、および <code>sonic_service_client/dbus_client.go</code> L53 (<code>// Credentialz service APIs</code> のみ)。master 確認。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

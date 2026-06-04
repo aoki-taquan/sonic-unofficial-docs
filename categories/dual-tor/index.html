@@ -19232,7 +19232,7 @@
   <span class="md-ellipsis">
     
   
-    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
+    swss-common Logger の linkToDb / linkToDbNative 呼び出し順序
   
 
     
@@ -36120,7 +36120,7 @@
 </ul>
 <h3 id="routingmux-nexthop">routing（mux / nexthop）<a class="headerlink" href="#routingmux-nexthop" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../routing/default-route/">linkmgrd のデフォルトルート連動（DualToR mux 制御）</a> (area: <code>routing</code>, verification: <code>hld-only</code>)</li>
+<li><a href="../../routing/default-route/">linkmgrd のデフォルトルート連動（DualToR mux 制御）</a> (area: <code>routing</code>, verification: <code>code-verified</code>)</li>
 <li><a href="../../routing/multiple-nexthop-route-hld/">dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）</a> (area: <code>routing</code>, verification: <code>code-verified</code>)</li>
 <li><a href="../../routing/prefix-based-mux-neighbors/">プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）</a> (area: <code>routing</code>, verification: <code>code-verified</code>)</li>
 </ul>
@@ -36147,7 +36147,6 @@
 </ul>
 <h2 id="verification">verification ステータス注意点<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>hld-only</strong>: <code>default-route.md</code></li>
 <li><strong>discrepancy-found</strong>: <code>dscp-remapping-for-tunnel-traffic.md</code>（実装と HLD で挙動差異）</li>
 </ul>
 <h2 id="_4">関連カテゴリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>

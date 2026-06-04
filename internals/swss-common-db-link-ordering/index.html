@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="linkToDbNative を linkToDb より先に呼ばなければならない順序制約の理由とクラッシュパターン。">
+        <meta name="description" content="Logger::linkToDb と Logger::linkToDbNative の呼び出し順序に関する API 設計上の制約と、その意図を logger.h / logger.cpp の実コードから整理する。">
       
       
       
@@ -30,7 +30,7 @@
     
     
       
-        <title>swss-common DB リンク順序制約（linkToDbNative / linkToDb） - SONiC 非公式ドキュメント</title>
+        <title>swss-common Logger の linkToDb / linkToDbNative 呼び出し順序 - SONiC 非公式ドキュメント</title>
       
     
     
@@ -66,16 +66,16 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="swss-common DB リンク順序制約（linkToDbNative / linkToDb） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="linkToDbNative を linkToDb より先に呼ばなければならない順序制約の理由とクラッシュパターン。" />
+<meta property="og:title" content="swss-common Logger の linkToDb / linkToDbNative 呼び出し順序 - SONiC 非公式ドキュメント" />
+<meta property="og:description" content="Logger::linkToDb と Logger::linkToDbNative の呼び出し順序に関する API 設計上の制約と、その意図を logger.h / logger.cpp の実コードから整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/swss-common-db-link-ordering.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/swss-common-db-link-ordering/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="swss-common DB リンク順序制約（linkToDbNative / linkToDb） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="linkToDbNative を linkToDb より先に呼ばなければならない順序制約の理由とクラッシュパターン。" />
+<meta property="twitter:title" content="swss-common Logger の linkToDb / linkToDbNative 呼び出し順序 - SONiC 非公式ドキュメント" />
+<meta property="twitter:description" content="Logger::linkToDb と Logger::linkToDbNative の呼び出し順序に関する API 設計上の制約と、その意図を logger.h / logger.cpp の実コードから整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/swss-common-db-link-ordering.png" />
 </head>
   
@@ -96,7 +96,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#swss-common-db-linktodbnative-linktodb" class="md-skip">
+        <a href="#swss-common-logger-linktodb-linktodbnative" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -130,7 +130,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              swss-common DB リンク順序制約（linkToDbNative / linkToDb）
+              swss-common Logger の linkToDb / linkToDbNative 呼び出し順序
             
           </span>
         </div>
@@ -19244,7 +19244,7 @@
   <span class="md-ellipsis">
     
   
-    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
+    swss-common Logger の linkToDb / linkToDbNative 呼び出し順序
   
 
     
@@ -19262,7 +19262,7 @@
   <span class="md-ellipsis">
     
   
-    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
+    swss-common Logger の linkToDb / linkToDbNative 呼び出し順序
   
 
     
@@ -19299,71 +19299,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        対象クラス
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制約の内容
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        クラッシュのメカニズム
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="クラッシュのメカニズム">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#linktodbnative" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        linkToDbNative() 二重呼び出し時
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        順序が逆の場合
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#api" class="md-nav__link">
     <span class="md-ellipsis">
       
-        API 改善の議論
+        API の所在
       
     </span>
   </a>
@@ -19371,7 +19310,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        現行 master が要求する順序
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#issue-507" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue #507 の論点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         利用者への注意
@@ -19382,10 +19343,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
       
     </span>
   </a>
@@ -35902,71 +35874,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        対象クラス
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制約の内容
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        クラッシュのメカニズム
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="クラッシュのメカニズム">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#linktodbnative" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        linkToDbNative() 二重呼び出し時
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        順序が逆の場合
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#api" class="md-nav__link">
     <span class="md-ellipsis">
       
-        API 改善の議論
+        API の所在
       
     </span>
   </a>
@@ -35974,7 +35885,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        現行 master が要求する順序
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#issue-507" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue #507 の論点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         利用者への注意
@@ -35985,10 +35918,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
       
     </span>
   </a>
@@ -36023,13 +35967,6 @@
       
       
       
-        <span class="md-tag">database</span>
-      
-    
-      
-      
-      
-      
         <span class="md-tag">internal</span>
       
     
@@ -36037,7 +35974,7 @@
       
       
       
-        <span class="md-tag">producer-state-table</span>
+        <span class="md-tag">logger</span>
       
     
       
@@ -36059,58 +35996,115 @@
   
 
 
-<h1 id="swss-common-db-linktodbnative-linktodb">swss-common DB リンク順序制約（linkToDbNative / linkToDb）<a class="headerlink" href="#swss-common-db-linktodbnative-linktodb" title="Permanent link">&para;</a></h1>
+<h1 id="swss-common-logger-linktodb-linktodbnative">swss-common Logger の linkToDb / linkToDbNative 呼び出し順序<a class="headerlink" href="#swss-common-logger-linktodb-linktodbnative" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>sonic-swss-common</code> の一部クラスでは、<code>linkToDbNative()</code> を呼んだ後に <code>linkToDb()</code> を呼ぶ順序が必須となっている。順序を逆にするか、<code>linkToDbNative()</code> を 2 回呼ぶと、クラッシュやデータ競合が発生する。</p>
-<h2 id="_2">対象クラス<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>この順序制約が問題になる主なクラス：</p>
-<ul>
-<li><code>ProducerStateTable</code></li>
-<li><code>SubscriberStateTable</code></li>
-<li><code>ConsumerStateTable</code></li>
-</ul>
-<h2 id="_3">制約の内容<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// 正しい順序</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">obj</span><span class="p">.</span><span class="n">linkToDbNative</span><span class="p">(</span><span class="n">db_native</span><span class="p">);</span><span class="w">  </span><span class="c1">// 1. ネイティブ DB へのリンク</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">obj</span><span class="p">.</span><span class="n">linkToDb</span><span class="p">(</span><span class="n">db</span><span class="p">);</span><span class="w">               </span><span class="c1">// 2. DB へのリンク</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1">// 間違い: 順序が逆</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">obj</span><span class="p">.</span><span class="n">linkToDb</span><span class="p">(</span><span class="n">db</span><span class="p">);</span><span class="w">               </span><span class="c1">// エラー: linkToDbNative が先に必要</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">obj</span><span class="p">.</span><span class="n">linkToDbNative</span><span class="p">(</span><span class="n">db_native</span><span class="p">);</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1">// 間違い: 二重呼び出し</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">obj</span><span class="p">.</span><span class="n">linkToDbNative</span><span class="p">(</span><span class="n">db_native</span><span class="p">);</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">obj</span><span class="p">.</span><span class="n">linkToDbNative</span><span class="p">(</span><span class="n">db_native</span><span class="p">);</span><span class="w">  </span><span class="c1">// クラッシュ: 前のスレッドが動いているまま dtor が呼ばれる</span>
+<p><code>linkToDb()</code> と <code>linkToDbNative()</code> は <code>sonic-swss-common</code> の <code>Logger</code> クラス（<code>common/logger.h</code>）が公開する <strong>静的メソッド</strong>で、daemon の最小ログ優先度 (<code>LOGLEVEL</code>) や出力先 (<code>LOGOUTPUT</code>) を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>LOGGER</code> テーブルから動的に取得・反映するための初期化 API である。</p>
+<p>このページでは <a href="https://github.com/sonic-net/sonic-swss-common/issues/507">sonic-swss-common#507</a> で論点となった「なぜ呼び出し順序に依存するのか」を、master の実装に即して整理する。</p>
+<h2 id="api">API の所在<a class="headerlink" href="#api" title="Permanent link">&para;</a></h2>
+<p><code>linkToDb</code> / <code>linkToDbNative</code> は <strong><code>Logger</code> クラスの static メソッド</strong>であって、<code>ProducerStateTable</code> / <code>SubscriberStateTable</code> / <code>ConsumerStateTable</code> 等の table クラスには存在しない。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// common/logger.h (抜粋)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">linkToDb</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dbName</span><span class="p">,</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">                     </span><span class="k">const</span><span class="w"> </span><span class="n">PriorityChangeNotify</span><span class="o">&amp;</span><span class="w"> </span><span class="n">notify</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">                     </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">defPrio</span><span class="p">);</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1">// Must be called after all linkToDb to start select from DB</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">linkToDbNative</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dbName</span><span class="p">,</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">                           </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">defPrio</span><span class="o">=</span><span class="s">&quot;NOTICE&quot;</span><span class="p">);</span>
 </span></code></pre></div>
-<h2 id="_4">クラッシュのメカニズム<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="linktodbnative"><code>linkToDbNative()</code> 二重呼び出し時<a class="headerlink" href="#linktodbnative" title="Permanent link">&para;</a></h3>
-<p><code>linkToDbNative()</code> は内部でバックグラウンドスレッドを起動する。2 回目の呼び出し時に前のスレッドが実行中のまま destructor が呼ばれ、以下のようなクラッシュが発生する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>#0  0x00007f...raise () from /lib64/libc.so.6
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>#1  0x00007f...abort () from /lib64/libc.so.6
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>...
+<!-- evidence:
+source: sonic-net/sonic-swss-common/common/logger.h#L85-L95 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)
+excerpt: |
+  static void linkToDb(const std::string& dbName, const PriorityChangeNotify& notify, const std::string& defPrio);
+  // Must be called after all linkToDb to start select from DB
+  static void linkToDbNative(const std::string& dbName, const char * defPrio="NOTICE");
+reasoning: linkToDb / linkToDbNative は Logger の static メソッドであり、ヘッダコメントが順序制約 (linkToDbNative は linkToDb の後で呼ぶ) を明示している。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss-common/common/logger.h#L85-L95 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss-common/common/logger.h#L85-L95 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>static void linkToDb(const std::string&amp; dbName, const PriorityChangeNotify&amp; notify, const std::string&amp; defPrio);
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>// Must be called after all linkToDb to start select from DB
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>static void linkToDbNative(const std::string&amp; dbName, const char * defPrio=&quot;NOTICE&quot;);
 </span></code></pre></div>
-<h3 id="_5">順序が逆の場合<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p><code>linkToDb()</code> は <code>linkToDbNative()</code> によって初期化されたデータ構造を前提としているため、順序が逆の場合は初期化されていないポインタや構造体へのアクセスが発生する。</p>
-<h2 id="api">API 改善の議論<a class="headerlink" href="#api" title="Permanent link">&para;</a></h2>
-<p>この問題の議論で、以下の改善案が提起された。</p>
+<p><strong>判断根拠</strong>: linkToDb / linkToDbNative は Logger の static メソッドであり、ヘッダコメントが順序制約 (linkToDbNative は linkToDb の後で呼ぶ) を明示している。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<h2 id="master">現行 master が要求する順序<a class="headerlink" href="#master" title="Permanent link">&para;</a></h2>
+<p>ヘッダの <code>// Must be called after all linkToDb to start select from DB</code> というコメントどおり、現行 master では:</p>
 <ol>
-<li><strong>順序を API 内部で強制する</strong>: <code>linkToDbNative()</code> が呼ばれていない状態で <code>linkToDb()</code> が呼ばれた場合に例外を投げる</li>
-<li><strong>二重呼び出しを安全にする</strong>: 前回のスレッドを適切に停止してから新しいスレッドを起動する</li>
+<li>まず各 component について <code>Logger::linkToDb(dbName, prioNotify, defPrio)</code> を呼んで <code>PriorityChangeNotify</code> コールバックを登録する</li>
+<li>すべての component の登録を終えた後で <code>Logger::linkToDbNative(dbName)</code> を呼ぶ</li>
 </ol>
-<p>ただし、公開 API の変更はすべての呼び出し元への影響があるため、慎重な検討が必要とされている。</p>
-<h2 id="_6">利用者への注意<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p><code>swss-common</code> を使用する swss / <a href="../../reference/glossary/#term-orchagent">orchagent</a> や、カスタムエージェントを実装する際：</p>
+<p>順序になっている。<code>linkToDbNative()</code> 自身は <code>linkToDb()</code> を内部で呼んだうえで設定取得スレッド (<code>settingThread</code>) を起動するため、<code>linkToDb</code> 系の登録より先に呼ぶと「未登録 component のコールバックが呼ばれない」「コールバック登録レースが起こる」可能性がある設計になっている。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// common/logger.cpp (抜粋)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">Logger::linkToDb</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dbName</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PriorityChangeNotify</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prioNotify</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">defPrio</span><span class="p">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">linkToDbWithOutput</span><span class="p">(</span><span class="n">dbName</span><span class="p">,</span><span class="w"> </span><span class="n">prioNotify</span><span class="p">,</span><span class="w"> </span><span class="n">defPrio</span><span class="p">,</span><span class="w"> </span><span class="n">swssOutputNotify</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SYSLOG&quot;</span><span class="p">);</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">}</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="kt">void</span><span class="w"> </span><span class="nf">Logger::linkToDbNative</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dbName</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">defPrio</span><span class="p">)</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">{</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="n">linkToDb</span><span class="p">(</span><span class="n">dbName</span><span class="p">,</span><span class="w"> </span><span class="n">swssPrioNotify</span><span class="p">,</span><span class="w"> </span><span class="n">defPrio</span><span class="p">);</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="n">getInstance</span><span class="p">().</span><span class="n">restartSettingThread</span><span class="p">();</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<!-- evidence:
+source: sonic-net/sonic-swss-common/common/logger.cpp#L159-L169 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)
+excerpt: |
+  void Logger::linkToDbNative(const std::string& dbName, const char * defPrio)
+  {
+      linkToDb(dbName, swssPrioNotify, defPrio);
+      getInstance().restartSettingThread();
+  }
+reasoning: linkToDbNative は内部で linkToDb を呼んだ後に restartSettingThread() で CONFIG_DB を購読する settingThread を再起動する。これが「最後に呼ぶべき」理由である。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss-common/common/logger.cpp#L159-L169 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss-common/common/logger.cpp#L159-L169 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>void Logger::linkToDbNative(const std::string&amp; dbName, const char * defPrio)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>{
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    linkToDb(dbName, swssPrioNotify, defPrio);
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    getInstance().restartSettingThread();
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>}
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: linkToDbNative は内部で linkToDb を呼んだ後に restartSettingThread() で CONFIG_DB を購読する settingThread を再起動する。これが「最後に呼ぶべき」理由である。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<p><code>restartSettingThread()</code> が起動する <code>settingThread</code> は CONFIG_DB の <code>LOGGER</code> テーブルを <code>SubscriberStateTable</code> で購読し続け、優先度・出力先の変更通知を受け取ったら <code>linkToDb</code> で登録された <code>PriorityChangeNotify</code> / <code>OutputChangeNotify</code> を呼び出す。したがって <code>linkToDb</code> よりも先にスレッドを走らせる意味は無い。</p>
+<h2 id="issue-507">Issue #507 の論点<a class="headerlink" href="#issue-507" title="Permanent link">&para;</a></h2>
+<p><a href="https://github.com/sonic-net/sonic-swss-common/issues/507">sonic-net/sonic-swss-common#507</a> は、公開 API なのに呼び出し順序に依存しているのは設計として疑問であり、</p>
 <ul>
-<li><code>linkToDbNative()</code> と <code>linkToDb()</code> を使用する場合は必ず <code>linkToDbNative()</code> を先に呼ぶ</li>
-<li><code>linkToDbNative()</code> を複数回呼ばない</li>
-<li>オブジェクトのライフサイクル管理を適切に行い、スレッドが動作中に destructor が呼ばれないようにする</li>
+<li>順序依存を取り払う（API 内部で順序を強制する）か、</li>
+<li><code>linkToDbNative</code> を private にして公開 API としては露出させない</li>
 </ul>
-<h2 id="_7">関連<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>のどちらかで「呼び出し元が順序を意識せずに済む形」にすべきではないか、という提起である。本 issue は現時点 (master <code>158de8d3</code>) でも open であり、API は順序依存のまま運用されている。</p>
+<h2 id="_2">利用者への注意<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p><code>swss-common</code> の <code>Logger</code> 経由で CONFIG_DB 連動のログレベル動的変更を使う daemon / カスタムエージェントを書くとき:</p>
+<ul>
+<li><code>Logger::linkToDb()</code> で必要な component を全部登録してから、最後に <code>Logger::linkToDbNative()</code> を 1 回呼ぶ</li>
+<li><code>linkToDbNative()</code> は内部で <code>restartSettingThread()</code> を呼ぶため、複数回呼ぶ動機は通常無い</li>
+<li>これらは <code>Logger</code> の static メソッドであり、<code>ProducerStateTable</code> / <code>SubscriberStateTable</code> / <code>ConsumerStateTable</code> には同名 API は無い</li>
+</ul>
+<h2 id="_3">関連<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../swss-common-database-config/">swss-common データベース設定</a></li>
 <li>GitHub Issue: <a href="https://github.com/sonic-net/sonic-swss-common/issues/507">sonic-net/sonic-swss-common#507</a></li>
 </ul>
-<!-- glossary-links-injected: e2892b76fd9a -->
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/logger.h#L85-L95">sonic-swss-common <code>common/logger.h</code> (master <code>158de8d3</code>)</a></li>
+<li><a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/logger.cpp#L159-L169">sonic-swss-common <code>common/logger.cpp</code> (master <code>158de8d3</code>)</a></li>
+</ul>
+<!-- glossary-links-injected: 896d391185a9 -->
 
 
 

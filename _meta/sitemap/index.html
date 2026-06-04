@@ -19230,7 +19230,7 @@
   <span class="md-ellipsis">
     
   
-    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
+    swss-common Logger の linkToDb / linkToDbNative 呼び出し順序
   
 
     
@@ -35858,7 +35858,7 @@
 <li><a href="../../topics/05-dual-tor/concept/">Dual-ToR の考え方</a> — [meta] Dual-ToR の考え方 — Dual-ToR は「サーバを 2 台の ToR に二重接続して、ToR / リンク / ケーブルの片側障害でもサービスを継続…</li>
 <li><a href="../../topics/05-dual-tor/internals/">Mux 制御の内部構造</a> — [code-verified] linkmgrd / MuxOrch / ycabled / gRPC client が STATE_DB の MUX_CABLE_TABLE を介して連携し…</li>
 <li><a href="../../topics/05-dual-tor/setup/">Dual-ToR の設定</a> — [meta] Dual-ToR の設定 — Dual-ToR の設定は、port ごとの MUX_CABLE と peer ToR を表す PEER_SWITCH を起点に…</li>
-<li><a href="../../topics/05-dual-tor/operations/">Dual-ToR の運用</a> — [meta] Dual-ToR の運用 — Dual-ToR の障害対応では、最初に「mux がどちらを向いているか」だけを見ると誤ります。サーバ側リンク、ICMP pro…</li>
+<li><a href="../../topics/05-dual-tor/operations/">Dual-ToR の運用</a> — [code-verified] Dual-ToR の障害対応で見るべき順序 (設定 / 論理 mux state / HW direction / tunnel route / prober…</li>
 <li><a href="../../topics/05-dual-tor/advanced/">Dual-ToR の発展トピック</a> — [meta] Dual-ToR の発展トピック — Dual-ToR は mux state だけで閉じた機能ではありません。</li>
 </ul>
 </li>
@@ -36031,7 +36031,7 @@
 <li><a href="../../topics/22-reference-index/operations/">運用</a> — [meta] 運用 — リファレンス索引章での「運用」は、reference ページ / 機能章 / categories の整合を維持し、欠落と discrepancy…</li>
 <li><a href="../../topics/22-reference-index/internals/">内部実装</a> — [meta] 内部実装 — 22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / CONFIG_DB / YANG の…</li>
 <li><a href="../../topics/22-reference-index/advanced/">発展トピック</a> — [meta] 発展トピック — リファレンス索引 (CLI / CONFIG_DB / YANG / cross-reference) を回し続けるための index 再生…</li>
-<li><a href="../../topics/22-reference-index/cli-index/">CLI 横断索引</a> — [meta] CLI 横断索引 — docs/reference/cli/ 配下の 72 ページを、機能章でどこから引かれるかで並べ直した索引です。各 CLI ページは c…</li>
+<li><a href="../../topics/22-reference-index/cli-index/">CLI 横断索引</a> — [meta] docs/reference/cli/ 配下の 73 ページを機能章ごとに束ね直した索引。各 CLI ページは config- / show- / debug…</li>
 <li><a href="../../topics/22-reference-index/config-db-index/">CONFIG_DB 横断索引</a> — [meta] CONFIG_DB 横断索引 — docs/reference/config-db/ 配下の 293 ページを、機能章ごとに table family で並べ…</li>
 <li><a href="../../topics/22-reference-index/yang-index/">YANG 横断索引</a> — [meta] docs/reference/yang/ 配下に辞書化済みの 84 native SONiC YANG モジュールを、本サイトの機能章ごとに並べ直した逆引き索…</li>
 <li><a href="../../topics/22-reference-index/quality-gaps/">品質と gap</a> — [meta] 品質と gap — 本ページは、Phase 6 以降の検証作業で残った 2 種類の「不完全さ」をどこで追跡するかをまとめる。</li>
@@ -36447,7 +36447,7 @@
 <li><a href="../../internals/l3-scaling-and-performance-enhancements-limitations/">L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）</a> — [discrepancy-found] L3 Scaling と Performance 強化 HLD の制限事項。kernel メモリ消費と CPU 負荷のトレードオフ、AS7712 計測の他 A…</li>
 <li><a href="../../internals/why-need-health-check/">コンテナ health-check（k8s readiness probe）</a> — [code-verified] コンテナ health-check（k8s readiness probe） — SONiC の k8s 連携では、コンテナそのものが起動しているかどうかは…</li>
 <li><a href="../../internals/swss-common-database-config/">swss-common データベース設定（database_config.json）</a> — [issue-confirmed] database_config.json が必須となった経緯と DEFAULT_UNIXSOCKET 廃止、非標準環境での注意点。</li>
-<li><a href="../../internals/swss-common-db-link-ordering/">swss-common DB リンク順序制約（linkToDbNative / linkToDb）</a> — [issue-confirmed] linkToDbNative を linkToDb より先に呼ばなければならない順序制約の理由とクラッシュパターン。</li>
+<li><a href="../../internals/swss-common-db-link-ordering/">swss-common Logger の linkToDb / linkToDbNative 呼び出し順序</a> — [code-verified] Logger::linkToDb と Logger::linkToDbNative の呼び出し順序に関する API 設計上の制約と、その意図を logger.…</li>
 <li><strong>リファレンス</strong> (<code>reference/</code>)</li>
 <li><a href="../../reference/">リファレンス</a> — [meta] リファレンス — CLI、CONFIG_DB、YANG を機械抽出ベースで整理する参照章。</li>
 <li><strong>CLI</strong> (<code>reference/cli/</code>)<ul>
@@ -36967,7 +36967,7 @@
 <li><a href="../../reference/runbooks/config-db-persistence-failure/">CONFIG_DB の永続化が失敗する</a> — [code-verified] Runbook: CONFIG_DB の永続化が失敗する (config save 失敗) — : sonic-net/sonic-utilities @ 3…</li>
 <li><a href="../../reference/runbooks/container-memory-limit-exceeded/">コンテナ memory limit 超過 / OOM kill</a> — [code-verified] Runbook: コンテナ memory limit 超過 / OOM kill — : sonic-net/sonic-buildimage @ 43055…</li>
 <li><a href="../../reference/runbooks/config-save-diff-unexpected/">config save 後に予期しない diff が出る</a> — [code-verified] Runbook: config save 後に予期しない diff が出る — : sonic-net/sonic-utilities @ 39732bceb…</li>
-<li><a href="../../reference/runbooks/sai-table-full/">SAI table full (route / nexthop / FDB 上限到達)</a> — [code-verified] Runbook: SAI table full (route / nexthop / FDB 上限到達) — : sonic-net/sonic-swss @…</li>
+<li><a href="../../reference/runbooks/sai-table-full/">SAI table full (route / nexthop / FDB 上限到達)</a> — [code-verified] Runbook: SAI table full (route / nexthop / FDB 上限到達) の切り分けと対処。CRM threshold 越え…</li>
 <li><a href="../../reference/runbooks/smartswitch-dpu-image-install-failure/">SmartSwitch DPU image インストールが失敗する</a> — [code-verified] Runbook: SmartSwitch DPU image インストールが失敗する — : sonic-net/sonic-platform-daemons…</li>
 <li><a href="../../reference/runbooks/platform-fan-psu-anomaly/">show platform fan / psu で異常値が出る</a> — [code-verified] Runbook: show platform fan / psu で異常値が出る — : sonic-net/sonic-platform-daemons @…</li>
 <li><a href="../../reference/runbooks/interface-counters-reset/">show interfaces counters が突然リセットされる</a> — [runbook-verified] Runbook: show interfaces counters が突然リセットされる — : sonic-net/sonic-utilities @ 39…</li>

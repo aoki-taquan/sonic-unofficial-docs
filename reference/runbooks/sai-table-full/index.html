@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: SAI table full (route / nexthop / FDB 上限到達) — : sonic-net/sonic-swss @ 4305596 — orchagent/crmorch.cpp : sonic-net/sonic-sairedis @ 88bc51a — syncd/Sy…">
+        <meta name="description" content="Runbook: SAI table full (route / nexthop / FDB 上限到達) の切り分けと対処。CRM threshold 越え / SAI_STATUS_TABLE_FULL ログ / ECMP next-hop group 枯渇 / FDB aging 不足 / ACL TCAM 競合を想定原因に、BGP prefix-list と aging 設定で recover する手順。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SAI table full (route / nexthop / FDB 上限到達) - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: SAI table full (route / nexthop / FDB 上限到達) — : sonic-net/sonic-swss @ 4305596 — orchagent/crmorch.cpp : sonic-net/sonic-sairedis @ 88bc51a — syncd/Sy…" />
+<meta property="og:description" content="Runbook: SAI table full (route / nexthop / FDB 上限到達) の切り分けと対処。CRM threshold 越え / SAI_STATUS_TABLE_FULL ログ / ECMP next-hop group 枯渇 / FDB aging 不足 / ACL TCAM 競合を想定原因に、BGP prefix-list と aging 設定で recover する手順。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/sai-table-full.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/sai-table-full/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SAI table full (route / nexthop / FDB 上限到達) - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: SAI table full (route / nexthop / FDB 上限到達) — : sonic-net/sonic-swss @ 4305596 — orchagent/crmorch.cpp : sonic-net/sonic-sairedis @ 88bc51a — syncd/Sy…" />
+<meta property="twitter:description" content="Runbook: SAI table full (route / nexthop / FDB 上限到達) の切り分けと対処。CRM threshold 越え / SAI_STATUS_TABLE_FULL ログ / ECMP next-hop group 枯渇 / FDB aging 不足 / ACL TCAM 競合を想定原因に、BGP prefix-list と aging 設定で recover する手順。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/sai-table-full.png" />
 </head>
   
@@ -19232,7 +19232,7 @@
   <span class="md-ellipsis">
     
   
-    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
+    swss-common Logger の linkToDb / linkToDbNative 呼び出し順序
   
 
     
@@ -36124,7 +36124,8 @@
 <h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-bgp">BGP</a> inbound filter で prefix を絞る: <code>neighbor &lt;peer&gt; prefix-list PL_IN in</code></li>
-<li><a href="../../glossary/#term-ecmp">ECMP</a> grouping を縮小: <code>crm config polling interval 60</code> で観測しつつ調整</li>
+<li><a href="../../glossary/#term-ecmp">ECMP</a> next-hop group を縮小: <a href="../../glossary/#term-bgp">BGP</a> の <code>maximum-paths</code> を下げる / <code>bgp bestpath as-path multipath-relax</code> を見直す等で next-hop group 数を抑制する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
+<li><a href="../../glossary/#term-crm">CRM</a> 観測周期を短縮して推移を追う: <code>crm config polling interval 60</code>（既定 300 秒、<code>CRM_POLLING_INTERVAL</code>）。これは観測周期の調整のみで、リソース自体は減らない<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><a href="../../glossary/#term-fdb">FDB</a> aging を有効化: <code>sudo config mac aging-time 600</code></li>
 <li>不要 <a href="../../glossary/#term-acl">ACL</a> table 削除</li>
 </ul>
@@ -36136,16 +36137,19 @@
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: d4c7d4df3b3a -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <a href="../../glossary/#term-orchagent">orchagent</a>/crmorch.cpp&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <a href="../../glossary/#term-orchagent">orchagent</a>/crmorch.cpp&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p>sonic-net/<a href="../../glossary/#term-sonic-sairedis">sonic-sairedis</a> @ 88bc51a — <a href="../../glossary/#term-syncd">syncd</a>/Syncd.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> — crm/main.py L351-352（<code>crm config polling interval</code> は <a href="../../glossary/#term-crm">CRM</a> polling interval のみ調整、<a href="../../glossary/#term-ecmp">ECMP</a> 数を変更する効果はない）&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

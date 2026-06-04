@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="発展トピック — SONiC を全体像として見たときに、初学者の足場が固まったあとで触れたい横断テーマを並べる。GCU による差分適用、warm/fast/cold reboot の選び分け、multi-ASIC、SmartSwitch、Application Extension といった現代的な拡張軸が中心。">
+        <meta name="description" content="発展トピック — SONiC を全体像として見たときに、初学者の足場が固まったあとで触れたい横断テーマを並べる。GCU による差分適用、warm/fast/cold reboot の選び分け、multi-ASIC、SmartSwitch、Application Extension、streaming telemetry といった現代的な拡張軸を扱う。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="発展トピック - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="発展トピック — SONiC を全体像として見たときに、初学者の足場が固まったあとで触れたい横断テーマを並べる。GCU による差分適用、warm/fast/cold reboot の選び分け、multi-ASIC、SmartSwitch、Application Extension といった現代的な拡張軸が中心。" />
+<meta property="og:description" content="発展トピック — SONiC を全体像として見たときに、初学者の足場が固まったあとで触れたい横断テーマを並べる。GCU による差分適用、warm/fast/cold reboot の選び分け、multi-ASIC、SmartSwitch、Application Extension、streaming telemetry といった現代的な拡張軸を扱う。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/01-overview/advanced.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/01-overview/advanced/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="発展トピック - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="発展トピック — SONiC を全体像として見たときに、初学者の足場が固まったあとで触れたい横断テーマを並べる。GCU による差分適用、warm/fast/cold reboot の選び分け、multi-ASIC、SmartSwitch、Application Extension といった現代的な拡張軸が中心。" />
+<meta property="twitter:description" content="発展トピック — SONiC を全体像として見たときに、初学者の足場が固まったあとで触れたい横断テーマを並べる。GCU による差分適用、warm/fast/cold reboot の選び分け、multi-ASIC、SmartSwitch、Application Extension、streaming telemetry といった現代的な拡張軸を扱う。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/01-overview/advanced.png" />
 </head>
   
@@ -19460,7 +19460,7 @@
   <span class="md-ellipsis">
     
   
-    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
+    swss-common Logger の linkToDb / linkToDbNative 呼び出し順序
   
 
     
@@ -36104,10 +36104,10 @@
 <p><a href="../../../reference/glossary/#term-gcu">GCU</a> (Generic Config Updater) は <code>config apply-patch</code> / <code>config replace</code> の中身で、<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> を JSON 木として扱い RFC 6902 の JSON Patch を当てる仕組みである。</p>
 <ul>
 <li>patch は <code>sonic-yang-models</code> の <a href="../../../reference/glossary/#term-yang">YANG</a> で validate される。validation を通らない patch はそもそも適用されない。</li>
-<li>適用順序は YANG の依存 (<code>leafref</code> 等) を尊重して order を組み替える。順序依存で失敗するときは patch の中で参照が前方になっていないかを確認する。</li>
-<li>rollback 用の inverse patch が自動生成され、失敗時はそれで巻き戻す。inverse patch は CONFIG_DB の現在値に依存するため、別ホストで使い回せない。</li>
+<li>適用順序は YANG の依存 (<code>leafref</code> 等) を尊重して <code>StrictPatchSorter</code> が並び替える。順序依存で失敗するときは patch 自体の妥当性より sorter が解けない循環参照を疑う<sup id="fnref:gcu-applier"><a class="footnote-ref" href="#fn:gcu-applier">1</a></sup>。</li>
+<li>patch 適用中の自動 rollback（inverse patch）は実装されておらず、適用途中で失敗するとその時点までの変更が CONFIG_DB に残る。明示的に戻したい場合は事前に <code>config checkpoint &lt;name&gt;</code> でスナップショットを取り、<code>config rollback &lt;name&gt;</code> で <code>/etc/sonic/checkpoints/&lt;name&gt;.cp.json</code> から差分パッチを生成して当て直す方式になる<sup id="fnref:gcu-rollbacker"><a class="footnote-ref" href="#fn:gcu-rollbacker">2</a></sup>。</li>
 </ul>
-<p>実運用では、GCU を使うのは「複数機能をまたぐ大きな変更」と「自動化からの partial update」が中心。1〜2 行の変更は <code>config</code> CLI で十分。</p>
+<p>実運用では、GCU を使うのは「複数機能をまたぐ大きな変更」と「自動化からの partial update」が中心。1〜2 行の変更は <code>config</code> CLI で十分。重要な変更前は checkpoint を必ず取っておく。</p>
 <h2 id="reboot">reboot の選び分け<a class="headerlink" href="#reboot" title="Permanent link">&para;</a></h2>
 <p>SONiC の reboot は 4 種類あり、データプレーン断と再収束時間が違う。読み手はまず違いを表で頭に入れる。</p>
 <table>
@@ -36167,7 +36167,7 @@
 <ul>
 <li>telemetry 用 daemon <code>telemetry</code> (旧) と <code>gnmi</code> (新) があり、image 版で切替中。<code>show feature config</code> で確認する。</li>
 <li>subscribe path は SONiC 内部の <a href="../../../reference/glossary/#term-redis">Redis</a> path を XPath で叩く <code>SONIC-DB</code> モードと、OpenConfig YANG をマップする <code>OC</code> モードがあり、collector 側でどちらを使うか決める。</li>
-<li>secure 化は <code>config telemetry secure-mode enable</code> で TLS を有効にし、<code>/etc/sonic/telemetry/</code> の証明書ファイルを正にする。</li>
+<li>TLS の有効化は telemetry daemon 起動フラグ (<code>-server_crt</code> / <code>-server_key</code> / <code>-ca_crt</code>) で行う。専用の <code>config telemetry secure-mode</code> CLI は存在せず、<code>config telemetry</code> は watermark interval の設定 (<code>config watermark telemetry interval ...</code>) 専用である<sup id="fnref:telemetry-tls"><a class="footnote-ref" href="#fn:telemetry-tls">3</a></sup><sup id="fnref:config-telemetry"><a class="footnote-ref" href="#fn:config-telemetry">4</a></sup>。証明書の差し替えは <code>/etc/sonic/telemetry/</code> 配下、もしくは <code>/keys/server_cert.lnk</code> / <code>/keys/server_key.lnk</code> 等のシンボリックリンクの張り替えで運用する。</li>
 </ul>
 <p>詳細は <a href="../../09-telemetry-snmp/">Telemetry / gNMI 章</a> と <a href="../../10-gnmi-openconfig/">gNMI / OpenConfig 章</a>。</p>
 <h2 id="_2">観測の標準動線<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -36210,7 +36210,25 @@
 <li>個別機能の発展 → 各章の <code>advanced.md</code>。</li>
 <li>障害時の動線 → <a href="../operations/">運用入口</a> と <a href="../../11-reboot/">Reboot 章</a>。</li>
 </ul>
-<!-- glossary-links-injected: 5c9b3765d470 -->
+<!-- glossary-links-injected: f960e6599a3c -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:gcu-applier">
+<p><a href="../../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> <code>generic_config_updater/generic_updater.py</code> の <code>PatchApplier.apply</code> は patch 検証 → <code>StrictPatchSorter.sort</code> → 順次適用の流れで、途中失敗時の自動巻き戻しは実装されていない (L106-L162)。&#160;<a class="footnote-backref" href="#fnref:gcu-applier" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:gcu-rollbacker">
+<p>rollback の実体は <code>FileSystemConfigRollbacker.rollback</code> で、checkpoint JSON を読み込み <code>ConfigReplacer</code> 経由で差分パッチを当てる (<code>generic_config_updater/generic_updater.py</code> L195-L222、checkpoints は <code>/etc/sonic/checkpoints</code> 配下 L17)。&#160;<a class="footnote-backref" href="#fnref:gcu-rollbacker" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:telemetry-tls">
+<p>sonic-gnmi <code>telemetry/telemetry.go</code> の <code>setupFlags</code> で <code>server_crt</code> / <code>server_key</code> / <code>ca_crt</code> が flag.String として宣言されており (L196-L198)、<code>NoTLS</code> / <code>Insecure</code> が立っていない限り <code>serverCert</code> と <code>serverKey</code> が必須 (L256-L260)。&#160;<a class="footnote-backref" href="#fnref:telemetry-tls" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:config-telemetry">
+<p>sonic-utilities <code>config/main.py</code> の <code>telemetry</code> group は <code>watermark</code> group のサブで、<code>config watermark telemetry interval &lt;value&gt;</code> のみを実装している (L8777-L8794)。<code>secure-mode</code> 系サブコマンドは存在しない。&#160;<a class="footnote-backref" href="#fnref:config-telemetry" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

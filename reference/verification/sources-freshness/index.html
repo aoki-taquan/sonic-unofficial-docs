@@ -19232,7 +19232,7 @@
   <span class="md-ellipsis">
     
   
-    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
+    swss-common Logger の linkToDb / linkToDbNative 呼び出し順序
   
 
     
@@ -35909,11 +35909,16 @@
 <h1 id="pinned-sha-sources-freshness">ソース pinned SHA の新鮮度（sources-freshness）<a class="headerlink" href="#pinned-sha-sources-freshness" title="Permanent link">&para;</a></h1>
 <p>本サイトの各ページは frontmatter <code>sources[].ref</code> で <a href="../../glossary/#term-sonic">SONiC</a> 上流リポのコミット SHA を<strong>固定</strong>している。固定 SHA は <code>meta/index/repos.json</code> で一元管理しており、Indexer 再走時に更新される。</p>
 <p>このページは <code>meta/scripts/check_sources_freshness.py --write</code> で生成され、各対象リポについて pinned SHA と upstream HEAD の差分を可視化する。<strong>読者はサイトの記述がどの時点の SONiC master を反映しているかをここで確認できる</strong>。</p>
+<div class="admonition info">
+<p class="admonition-title">生成時刻 / generated-at</p>
+<p>この表は <strong>2026-06-04</strong> に <code>check_sources_freshness.py --write</code> で生成された。<code>cache HEAD</code> と <code>upstream HEAD</code> は <strong>生成時点</strong> のローカル shallow clone を反映する。表の <code>cache HEAD</code> 列がページ上 frontmatter <code>last_verified</code> から大きく時間が空いている場合、本ページ自体が陳腐化している可能性がある（その場合は再生成スクリプトを走らせること）。</p>
+</div>
 <h2 id="_1">サマリ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>対象リポ数: <strong>15</strong></li>
-<li>upstream より遅れているリポ: <strong>0</strong></li>
+<li>upstream より遅れているリポ: <strong>12</strong></li>
 <li>ローカル cache が見つからなかったリポ: <strong>0</strong></li>
+<li>生成日（last regenerated）: <strong>2026-06-04</strong></li>
 </ul>
 <h2 id="_2">一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -35932,9 +35937,9 @@
 <tr>
 <td><code>sonic-net/SONiC</code></td>
 <td><code>49bab5b5ff0e</code></td>
-<td><code>49bab5b5ff0e</code></td>
-<td>49bab5b5ff0e (origin/master)</td>
-<td>0</td>
+<td><code>4fda6b77e4fd</code></td>
+<td>4fda6b77e4fd (origin/master)</td>
+<td>2909</td>
 <td>2026-05-07</td>
 <td></td>
 </tr>
@@ -35942,8 +35947,8 @@
 <td><code>sonic-net/sonic-buildimage</code></td>
 <td><code>9ea932ec2e18</code></td>
 <td><code>9ea932ec2e18</code></td>
-<td>9ea932ec2e18 (origin/master)</td>
-<td>0</td>
+<td>94bbc6554fc0 (origin/master)</td>
+<td>136</td>
 <td>2026-05-08</td>
 <td></td>
 </tr>
@@ -35951,8 +35956,8 @@
 <td><code>sonic-net/sonic-utilities</code></td>
 <td><code>39732bceb8bd</code></td>
 <td><code>39732bceb8bd</code></td>
-<td>39732bceb8bd (origin/master)</td>
-<td>0</td>
+<td>28f404332291 (origin/master)</td>
+<td>14</td>
 <td>2026-05-08</td>
 <td></td>
 </tr>
@@ -35960,8 +35965,8 @@
 <td><code>sonic-net/sonic-swss</code></td>
 <td><code>4305596156d7</code></td>
 <td><code>4305596156d7</code></td>
-<td>4305596156d7 (origin/master)</td>
-<td>0</td>
+<td>70bf79ea65a1 (origin/master)</td>
+<td>16</td>
 <td>2026-05-08</td>
 <td></td>
 </tr>
@@ -35969,8 +35974,8 @@
 <td><code>sonic-net/sonic-swss-common</code></td>
 <td><code>158de8d3463f</code></td>
 <td><code>158de8d3463f</code></td>
-<td>158de8d3463f (origin/master)</td>
-<td>0</td>
+<td>4dc05d23c8b4 (origin/master)</td>
+<td>2</td>
 <td>2026-04-29</td>
 <td></td>
 </tr>
@@ -35978,8 +35983,8 @@
 <td><code>sonic-net/sonic-sairedis</code></td>
 <td><code>88bc51ae95df</code></td>
 <td><code>88bc51ae95df</code></td>
-<td>88bc51ae95df (origin/master)</td>
-<td>0</td>
+<td>340f334209b2 (origin/master)</td>
+<td>2</td>
 <td>2026-05-08</td>
 <td></td>
 </tr>
@@ -35987,8 +35992,8 @@
 <td><code>sonic-net/sonic-mgmt-common</code></td>
 <td><code>f71cf829883c</code></td>
 <td><code>f71cf829883c</code></td>
-<td>f71cf829883c (origin/master)</td>
-<td>0</td>
+<td>0728f6a07b65 (origin/master)</td>
+<td>1</td>
 <td>2026-04-16</td>
 <td></td>
 </tr>
@@ -35996,8 +36001,8 @@
 <td><code>sonic-net/sonic-platform-common</code></td>
 <td><code>64beade8cdde</code></td>
 <td><code>64beade8cdde</code></td>
-<td>64beade8cdde (origin/master)</td>
-<td>0</td>
+<td>1ae811aa4d76 (origin/master)</td>
+<td>8</td>
 <td>2026-05-07</td>
 <td></td>
 </tr>
@@ -36005,8 +36010,8 @@
 <td><code>sonic-net/sonic-platform-daemons</code></td>
 <td><code>4ba9612cb775</code></td>
 <td><code>4ba9612cb775</code></td>
-<td>4ba9612cb775 (origin/master)</td>
-<td>0</td>
+<td>506bc663c1ad (origin/master)</td>
+<td>5</td>
 <td>2026-05-07</td>
 <td></td>
 </tr>
@@ -36023,8 +36028,8 @@
 <td><code>sonic-net/sonic-dhcp-relay</code></td>
 <td><code>7316417034fe</code></td>
 <td><code>7316417034fe</code></td>
-<td>7316417034fe (origin/master)</td>
-<td>0</td>
+<td>d7a78ba48603 (origin/master)</td>
+<td>1</td>
 <td>2026-05-07</td>
 <td></td>
 </tr>
@@ -36041,8 +36046,8 @@
 <td><code>sonic-net/sonic-host-services</code></td>
 <td><code>c5bbbe8b07b9</code></td>
 <td><code>c5bbbe8b07b9</code></td>
-<td>c5bbbe8b07b9 (origin/master)</td>
-<td>0</td>
+<td>521681dd790e (origin/master)</td>
+<td>1</td>
 <td>2026-05-07</td>
 <td></td>
 </tr>
@@ -36050,8 +36055,8 @@
 <td><code>sonic-net/sonic-gnmi</code></td>
 <td><code>eb635b7679b2</code></td>
 <td><code>eb635b7679b2</code></td>
-<td>eb635b7679b2 (origin/master)</td>
-<td>0</td>
+<td>3184ef76b55f (origin/master)</td>
+<td>2</td>
 <td>2026-05-08</td>
 <td></td>
 </tr>

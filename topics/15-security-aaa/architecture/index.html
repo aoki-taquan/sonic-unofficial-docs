@@ -4845,6 +4845,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -19394,7 +19405,7 @@
   <span class="md-ellipsis">
     
   
-    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
+    swss-common Logger の linkToDb / linkToDbNative 呼び出し順序
   
 
     
@@ -35941,6 +35952,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35983,7 +36005,27 @@
   ID --&gt; SHELL[shell + sudoers]</code></pre>
 <p><code>login_method</code> の順序、エラー時のフォールバック、<code>tacacs+</code> と <code>local</code> の組み合わせの注意点は <a href="../../../management/sonic-tacacs-improvement/">SONiC TACACS+ improvement</a> に集約されています。RADIUS と LDAP の細部はそれぞれ <a href="../../../management/radius-management-user-authentication/">RADIUS management user authentication</a>、<a href="../../../management/hld-ldap/">HLD LDAP</a> を参照してください。</p>
 <h2 id="hostcfgd-config_db-etc">hostcfgd と CONFIG_DB から /etc への反映<a class="headerlink" href="#hostcfgd-config_db-etc" title="Permanent link">&para;</a></h2>
-<p>SSH の global config、serial console、banner、<a href="../../../reference/glossary/#term-aaa">AAA</a> の設定は、ユーザが直接 <code>/etc/ssh/sshd_config</code> などを編集する設計にはなっていません。<code>hostcfgd</code> が <code>CONFIG_DB</code> の該当テーブル（<code>SSH_SERVER</code>、<code>SERIAL_CONSOLE</code>、<code>BANNER_MESSAGE</code>、<code>AAA</code>、<code>TACPLUS</code>、<code>RADIUS</code>、<code>LDAP</code> など）を購読し、テンプレートからファイルを再生成して関連サービスを reload します。</p>
+<p>SSH の global config、serial console、banner、<a href="../../../reference/glossary/#term-aaa">AAA</a> の設定は、ユーザが直接 <code>/etc/ssh/sshd_config</code> などを編集する設計にはなっていません。<code>hostcfgd</code> が <code>CONFIG_DB</code> の該当テーブル（<code>SSH_SERVER</code>、<code>SERIAL_CONSOLE</code>、<code>BANNER_MESSAGE</code>、<code>AAA</code>、<code>TACPLUS</code>、<code>RADIUS</code>、<code>LDAP</code> など）を購読し、テンプレートからファイルを再生成して関連サービスを reload します<sup id="fnref:subscribe"><a class="footnote-ref" href="#fn:subscribe">1</a></sup>。</p>
+<!-- evidence
+source: sonic-net/sonic-host-services/scripts/hostcfgd#L2478-L2520 (sha: c5bbbe8b07b96f078fa4b761316627404b01bd04)
+note: HostConfigDaemon が SSH_SERVER / SERIAL_CONSOLE / BANNER_MESSAGE を subscribe しているコールバック登録箇所。
+-->
+
+<!-- evidence
+source: sonic-net/sonic-host-services/scripts/hostcfgd#L28-L51 (sha: c5bbbe8b07b96f078fa4b761316627404b01bd04)
+note: PAM_AUTH_CONF / NSS_CONF / SSH_CONFG / LDAP_CONF / ETC_PAMD_SSHD など、hostcfgd が書き換える先のファイルパス定数定義。
+-->
+
+<!-- evidence
+source: sonic-net/sonic-host-services/scripts/hostcfgd#L744-L754 (sha: c5bbbe8b07b96f078fa4b761316627404b01bd04)
+note: TACACS+ / RADIUS が有効化されたとき /etc/pam.d/sshd と /etc/pam.d/login の @include を common-auth → common-auth-sonic に書き換え、nsswitch.conf に tacplus / ldap を追記する処理。
+-->
+
+<!-- evidence
+source: sonic-net/sonic-host-services/scripts/hostcfgd#L434-L442 (sha: c5bbbe8b07b96f078fa4b761316627404b01bd04)
+note: AaaCfg.is_ldap_config_complete() が bind_dn / base_dn / bind_password / login に "ldap" を含むこと / ldap_servers の存在を確認し、揃っていれば nslcd service を制御する。
+-->
+
 <pre class="mermaid"><code>flowchart LR
   CFG[(CONFIG_DB)] --&gt; HOST[hostcfgd]
   HOST --&gt;|render| SSHCONF["/etc/ssh/sshd_config"]
@@ -35998,7 +36040,23 @@
 <p>SONiC の TACACS+ 統合は PAM と NSS の二段で実装されています。PAM 側は認証と授権・accounting、NSS 側は uid / gid の解決を担当します。passkey（共有秘密）の保存方法には平文と暗号化があり、後者の設計は <a href="../../../management/tacacs-passkey-encryption/">TACACS+ passkey encryption</a> で導入されています。動作確認のシナリオは <a href="../../../management/tacacs-test-plan/">TACACS test plan</a> に整理されています。</p>
 <h2 id="data-plane-platform">Data plane と platform 側の参照<a class="headerlink" href="#data-plane-platform" title="Permanent link">&para;</a></h2>
 <p>本ページは control plane のフローに限定しています。<a href="../../../reference/glossary/#term-macsec">MACsec</a> と MKA のホスト・<a href="../../../reference/glossary/#term-sai">SAI</a> 経路は <a href="../internals/">内部実装</a> で、OpenSSL FIPS / secure boot / secure upgrade / container hardening は <a href="../advanced/">発展トピック</a> で扱います。</p>
-<!-- glossary-links-injected: 7cebab29cbce -->
+<h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://github.com/sonic-net/sonic-host-services/blob/c5bbbe8b07b96f078fa4b761316627404b01bd04/scripts/hostcfgd">sonic-net/sonic-host-services <code>scripts/hostcfgd</code></a> — <code>HostConfigDaemon</code> が <code>SSH_SERVER</code> / <code>SERIAL_CONSOLE</code> / <code>BANNER_MESSAGE</code> / <code>AAA</code> / <code>TACPLUS</code> / <code>RADIUS</code> / <code>LDAP</code> テーブルを購読し、テンプレートから <code>/etc/ssh/sshd_config</code>、<code>/etc/pam.d/*</code>、<code>/etc/nsswitch.conf</code>、<code>/etc/tacplus_nss.conf</code> などを再生成する。</li>
+<li><a href="https://github.com/sonic-net/sonic-host-services/blob/c5bbbe8b07b96f078fa4b761316627404b01bd04/data/templates/common-auth-sonic.j2"><code>data/templates/common-auth-sonic.j2</code></a> — TACACS+ / RADIUS / LDAP / <code>pam_unix</code> の PAM <code>auth</code> スタック順序を制御する SONiC 固有テンプレート。</li>
+<li><a href="https://github.com/sonic-net/sonic-host-services/blob/c5bbbe8b07b96f078fa4b761316627404b01bd04/data/templates/tacplus_nss.conf.j2"><code>data/templates/tacplus_nss.conf.j2</code></a> — <code>libnss-tacplus</code> の設定テンプレートで、NSS 段の uid / gid 解決パラメータを与える。</li>
+<li><a href="https://github.com/sonic-net/sonic-host-services/blob/c5bbbe8b07b96f078fa4b761316627404b01bd04/data/templates/ldap.conf.j2"><code>data/templates/ldap.conf.j2</code></a> — <code>nslcd</code> 経由の LDAP NSS / PAM 統合に渡されるクライアント設定。</li>
+</ul>
+<!-- glossary-links-injected: 9bd150521228 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:subscribe">
+<p><a href="../../../reference/glossary/#term-hostcfgd">hostcfgd</a> の <code>HostConfigDaemon.register_callbacks()</code> が <code>SSH_SERVER</code> / <code>SERIAL_CONSOLE</code> / <code>BANNER_MESSAGE</code> を購読しているコールバック登録は <code>scripts/hostcfgd</code> L2478〜L2520 にあり、<code>SSH_SERVER</code> 用に <code>SshServer</code> クラス（L1045）、<code>SERIAL_CONSOLE</code> 用に <code>SerialConsoleCfg</code> クラス（L2013）、<code>BANNER_MESSAGE</code> 用に <code>BannerCfg</code> クラス（L2044）が定義されています。&#160;<a class="footnote-backref" href="#fnref:subscribe" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

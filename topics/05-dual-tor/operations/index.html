@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Dual-ToR の運用 — Dual-ToR の障害対応では、最初に「mux がどちらを向いているか」だけを見ると誤ります。サーバ側リンク、ICMP prober、Y-cable / SoC 制御、default route、MuxOrch の route programming が別々に壊れ得るためです。">
+        <meta name="description" content="Dual-ToR の障害対応で見るべき順序 (設定 / 論理 mux state / HW direction / tunnel route / prober health) と、show muxcable サブコマンド・linkmgrd / MuxOrch ログ・関連 DB テーブルの読み方を、実コードと YANG を引きながらまとめる。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Dual-ToR の運用 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Dual-ToR の運用 — Dual-ToR の障害対応では、最初に「mux がどちらを向いているか」だけを見ると誤ります。サーバ側リンク、ICMP prober、Y-cable / SoC 制御、default route、MuxOrch の route programming が別々に壊れ得るためです。" />
+<meta property="og:description" content="Dual-ToR の障害対応で見るべき順序 (設定 / 論理 mux state / HW direction / tunnel route / prober health) と、show muxcable サブコマンド・linkmgrd / MuxOrch ログ・関連 DB テーブルの読み方を、実コードと YANG を引きながらまとめる。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/05-dual-tor/operations.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/05-dual-tor/operations/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Dual-ToR の運用 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Dual-ToR の運用 — Dual-ToR の障害対応では、最初に「mux がどちらを向いているか」だけを見ると誤ります。サーバ側リンク、ICMP prober、Y-cable / SoC 制御、default route、MuxOrch の route programming が別々に壊れ得るためです。" />
+<meta property="twitter:description" content="Dual-ToR の障害対応で見るべき順序 (設定 / 論理 mux state / HW direction / tunnel route / prober health) と、show muxcable サブコマンド・linkmgrd / MuxOrch ログ・関連 DB テーブルの読み方を、実コードと YANG を引きながらまとめる。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/05-dual-tor/operations.png" />
 </head>
   
@@ -19482,7 +19482,7 @@
   <span class="md-ellipsis">
     
   
-    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
+    swss-common Logger の linkToDb / linkToDbNative 呼び出し順序
   
 
     

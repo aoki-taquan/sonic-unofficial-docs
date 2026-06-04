@@ -9520,10 +9520,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#muxorchcontainsnexthop" class="md-nav__link">
+  <a href="#muxorchcontainsnexthop-ismuxnexthops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        MuxOrch::containsNextHop()
+        MuxOrch::containsNextHop() と isMuxNexthops()
       
     </span>
   </a>
@@ -19473,7 +19473,7 @@
   <span class="md-ellipsis">
     
   
-    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
+    swss-common Logger の linkToDb / linkToDbNative 呼び出し順序
   
 
     
@@ -36022,10 +36022,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#muxorchcontainsnexthop" class="md-nav__link">
+  <a href="#muxorchcontainsnexthop-ismuxnexthops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        MuxOrch::containsNextHop()
+        MuxOrch::containsNextHop() と isMuxNexthops()
       
     </span>
   </a>
@@ -36176,7 +36176,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-swss/orchagent/muxorch.cpp</code> L1585 <code>MuxOrch::updateRoute(const IpPrefix &amp;pfx)</code>、L2058 <code>MuxOrch::containsNextHop()</code>、L1824/1926/2019/2045/2050 の <code>mux_nexthop_tb_</code> 出入り、L700 <code>MuxCable::updateRoutes()</code> / L724 <code>MuxCable::updateRoutesForNextHop()</code> から <code>mux_orch_-&gt;updateRoute(rt-&gt;prefix)</code> が駆動される経路を確認 (verified at: 2026-05-09)。</p>
+<p><code>sonic-swss/orchagent/muxorch.cpp</code> L2058 <code>MuxOrch::containsNextHop()</code>、L2069 <code>MuxOrch::isMuxNexthops(const NextHopGroupKey&amp;)</code>、<code>muxorch.h</code> L280 宣言、<code>routeorch.cpp</code> L2688 で <code>mux_orch-&gt;isMuxNexthops(nextHops)</code> を mux nexthop group の個別展開分岐の条件に使用、L2721-L2723 で route add 後に <code>mux_orch-&gt;updateRoute(ipPrefix)</code> を呼ぶ駆動経路を確認 (verified at: 2026-06-04)。</p>
 </div>
 <h1 id="dual-tor-mux-multi-nexthop-route-muxorchupdateroute">dual-tor mux 跨ぎの multi-nexthop route ループ回避（<code>MuxOrch::updateRoute</code>）<a class="headerlink" href="#dual-tor-mux-multi-nexthop-route-muxorchupdateroute" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36241,23 +36241,41 @@
     AE --&gt;|yes| TN[set sole nexthop = tunnel]</code></pre>
 <h3 id="routeorch"><code>RouteOrch</code> 側の補強<a class="headerlink" href="#routeorch" title="Permanent link">&para;</a></h3>
 <p><code>updateRoute()</code> が機能するには <code>m_nextHops</code> (Route → NextHop 群キャッシュ) に mux neighbor が <strong>個別展開</strong> されている必要がある。既存実装では group 内 next-hop は個別エントリにならず、state 遷移時にループできない<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>routeorch.cpp</code> に <code>nextHops.is_mux_nexthop()</code> 判定を追加し、mux neighbor から成る group を解凍する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-c++ highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="n">nhg_index</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">nextHops</span><span class="p">.</span><span class="n">getSize</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&amp;&amp;</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="o">!</span><span class="n">nextHops</span><span class="p">.</span><span class="n">is_overlay_nexthop</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">nextHops</span><span class="p">.</span><span class="n">is_srv6_nexthop</span><span class="p">()</span><span class="w"> </span><span class="o">||</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">nextHops</span><span class="p">.</span><span class="n">is_mux_nexthop</span><span class="p">())</span>
+<p>master 実装では <code>routeorch.cpp</code> の route add 経路に <code>mux_orch-&gt;isMuxNexthops(nextHops)</code> 判定を入れ、mux neighbor から成る group を解凍して各 nexthop ごとに <code>addNextHopRoute()</code> を呼ぶ<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
+<div class="language-c++ highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// sonic-swss/orchagent/routeorch.cpp L2688</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nextHops</span><span class="p">.</span><span class="n">getSize</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">mux_orch</span><span class="o">-&gt;</span><span class="n">isMuxNexthops</span><span class="p">(</span><span class="n">nextHops</span><span class="p">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">         </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">nextHops</span><span class="p">.</span><span class="n">is_overlay_nexthop</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">nextHops</span><span class="p">.</span><span class="n">is_srv6_nexthop</span><span class="p">())</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">{</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">nextHops</span><span class="p">.</span><span class="n">getNextHops</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">it</span><span class="p">.</span><span class="n">ip_address</span><span class="p">.</span><span class="n">isZero</span><span class="p">())</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">            </span><span class="n">addNextHopRoute</span><span class="p">(</span><span class="n">it</span><span class="p">,</span><span class="w"> </span><span class="n">r_key</span><span class="p">);</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">}</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="n">RouteKey</span><span class="w"> </span><span class="n">routekey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">vrf_id</span><span class="p">,</span><span class="w"> </span><span class="n">ipPrefix</span><span class="w"> </span><span class="p">};</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">nexthop_list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nextHops</span><span class="p">.</span><span class="n">getNextHops</span><span class="p">();</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">nh</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nexthop_list</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="w"> </span><span class="n">nh</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">nexthop_list</span><span class="p">.</span><span class="n">end</span><span class="p">();</span><span class="w"> </span><span class="n">nh</span><span class="o">++</span><span class="p">)</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">nh</span><span class="o">-&gt;</span><span class="n">ip_address</span><span class="p">.</span><span class="n">isZero</span><span class="p">())</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">        </span><span class="p">{</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">            </span><span class="n">addNextHopRoute</span><span class="p">(</span><span class="o">*</span><span class="n">nh</span><span class="p">,</span><span class="w"> </span><span class="n">routekey</span><span class="p">);</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>is_mux_nexthop()</code> は <code>NextHopGroupKey</code> のメソッドで、group 内のいずれかが mux neighbor なら true。<strong>「group の neighbor は ALL mux か NONE mux」</strong> という前提で、混在は想定しない<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="muxorchcontainsnexthop"><code>MuxOrch::containsNextHop()</code><a class="headerlink" href="#muxorchcontainsnexthop" title="Permanent link">&para;</a></h3>
-<p>mux neighbor 判定のため <code>MuxOrch</code> に追加<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-c++ highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">MuxOrch::containsNextHop</span><span class="p">(</span><span class="n">NextHopKey</span><span class="w"> </span><span class="n">nh</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mux_nexthop_tb_</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">nh</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">mux_nexthop_tb_</span><span class="p">.</span><span class="n">end</span><span class="p">();</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">}</span>
+<p>判定関数は <code>NextHopGroupKey</code> のメソッドではなく <code>MuxOrch::isMuxNexthops(const NextHopGroupKey&amp;)</code> で、内部で各 <code>NextHopKey</code> を <code>containsNextHop()</code> (= <code>mux_nexthop_tb_</code> 参照) にかけ、<strong>いずれか 1 つでも mux neighbor を含めば true</strong> を返す<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。HLD 文書では「ALL mux か NONE mux」前提（混在なし）として設計されている<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="muxorchcontainsnexthop-ismuxnexthops"><code>MuxOrch::containsNextHop()</code> と <code>isMuxNexthops()</code><a class="headerlink" href="#muxorchcontainsnexthop-ismuxnexthops" title="Permanent link">&para;</a></h3>
+<p><code>mux_nexthop_tb_</code> 参照で個別 NH が mux 配下かを判定する low-level helper と、group key 単位で判定する高位 API の 2 段構成<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
+<div class="language-c++ highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// sonic-swss/orchagent/muxorch.cpp L2058</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">MuxOrch::containsNextHop</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">NextHopKey</span><span class="o">&amp;</span><span class="w"> </span><span class="n">nexthop</span><span class="p">)</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">{</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mux_nexthop_tb_</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">nexthop</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">mux_nexthop_tb_</span><span class="p">.</span><span class="n">end</span><span class="p">();</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1">// sonic-swss/orchagent/muxorch.cpp L2069</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">MuxOrch::isMuxNexthops</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">NextHopGroupKey</span><span class="o">&amp;</span><span class="w"> </span><span class="n">nextHops</span><span class="p">)</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="p">{</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">set</span><span class="o">&lt;</span><span class="n">NextHopKey</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s_nexthops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nextHops</span><span class="p">.</span><span class="n">getNextHops</span><span class="p">();</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s_nexthops</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">s_nexthops</span><span class="p">.</span><span class="n">end</span><span class="p">();</span><span class="w"> </span><span class="n">it</span><span class="o">++</span><span class="p">)</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">containsNextHop</span><span class="p">(</span><span class="o">*</span><span class="n">it</span><span class="p">))</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="_3">駆動経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
@@ -36268,19 +36286,21 @@
     participant ASIC
     App-&gt;&gt;CDB: route 11.11.11.0/24 NH=[A,B] (mux)
     CDB-&gt;&gt;RO: notify
-    RO-&gt;&gt;RO: is_mux_nexthop() → true → 個別展開
-    RO-&gt;&gt;MO: updateRoute(R1)
+    RO-&gt;&gt;MO: isMuxNexthops(nextHops)?
+    MO--&gt;&gt;RO: true
+    RO-&gt;&gt;RO: addNextHopRoute() で個別展開
+    RO-&gt;&gt;MO: updateRoute(ipPrefix)
     MO-&gt;&gt;MO: A active? B active?
     MO-&gt;&gt;ASIC: route -&gt; active NH (or tunnel)</code></pre>
-<p><code>MuxOrch</code> は <code>linkmgrd</code> 由来の state 変化通知でも <strong>影響を受ける全 route について <code>updateRoute()</code> を再評価</strong> する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>MuxOrch</code> は <code>linkmgrd</code> 由来の state 変化通知でも <strong>影響を受ける全 route について <code>updateRoute()</code> を再評価</strong> する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI / <a href="../../reference/glossary/#term-yang">YANG</a> <strong>変更なし</strong>。dual-tor の既存設定 (<code>MUX_CABLE</code> / <code>cable_type=active-standby</code> 等) のまま、<a href="../../reference/glossary/#term-orchagent">orchagent</a> 内部挙動だけ変わる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-db-cli<span class="w"> </span>ASIC_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*11.11.11.0/24*&#39;</span>
 </span></code></pre></div>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>ECMP は実質的に無効化</strong>。active が複数あっても <strong>最初の 1 つだけ</strong> を選び、帯域は ECMP の 1/N に縮退<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>同一 group 内に mux と非 mux の混在は不可</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>ECMP は実質的に無効化</strong>。active が複数あっても <strong>最初の 1 つだけ</strong> を選び、帯域は ECMP の 1/N に縮退<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>同一 group 内に mux と非 mux の混在は不可</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>全 nexthop standby 時は <strong>tunnel route</strong> にフォールバック、peer ToR active 前提</li>
 <li>active fallback は <strong>「最初に見つかった active」</strong> で固定、負荷分散の意味なし</li>
 <li><code>m_nextHops</code> キャッシュ整合性が崩れると古い NH に traffic が流れる risk</li>
@@ -36288,7 +36308,7 @@
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>MuxOrch</code></strong>: <code>updateRoute()</code> を新設、neighbor / tunnel と密結合</li>
-<li><strong><code>RouteOrch</code></strong>: <code>is_mux_nexthop()</code> 判定で個別展開</li>
+<li><strong><code>RouteOrch</code></strong>: <code>MuxOrch::isMuxNexthops()</code> 判定で <code>addNextHopRoute()</code> 個別展開</li>
 <li><strong><code>linkmgrd</code> 状態通知</strong>: state 遷移ごとに <code>updateRoute()</code> を駆動</li>
 <li><strong><code>TunnelOrch</code></strong>: 全 standby 時の tunnel nexthop 供給</li>
 <li><strong>既存 ECMP 経路</strong>: dual-tor mux 環境では実質無効化</li>
@@ -36297,7 +36317,7 @@
 <ul>
 <li>経路ループ → <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> で nexthop が単一に絞られているか、<code>MuxOrch</code> ログで <code>updateRoute()</code> 呼び出し確認</li>
 <li>nexthop が <strong>常に tunnel</strong> → <code>show muxcable status</code> で active/standby 確認</li>
-<li>nexthop group のまま → <code>is_mux_nexthop()</code> が false。<code>mux_nexthop_tb_</code> 登録確認</li>
+<li>nexthop group のまま → <code>MuxOrch::isMuxNexthops()</code> が false。<code>mux_nexthop_tb_</code> 登録確認</li>
 <li>ECMP したい → 本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>mux nexthop ECMP を許容しない</strong> 設計</li>
 </ul>
 <h3 id="_8">コマンド例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
@@ -36314,12 +36334,13 @@
 <li><a href="../overlay-ecmp-enhancements/">overlay-ecmp-enhancements</a></li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- MuxOrch::updateRoute() の現行 master 実装存在確認 (sonic-swss/orchagent/muxorch.cpp)
-- MuxOrch::containsNextHop() と mux_nexthop_tb_ の取り込み確認
-- NextHopGroupKey::is_mux_nexthop() の存在と判定ロジック確認
-- routeorch.cpp で is_mux_nexthop() ベースに m_nextHops に個別展開する分岐の取り込み確認
-- linkmgrd の state 変化が MuxOrch::updateRoute を駆動する経路の確認
+<!-- evidence: 2026-06-04 master 直接確認
+- sonic-swss/orchagent/muxorch.h L280: `bool isMuxNexthops(const NextHopGroupKey&);` 宣言
+- sonic-swss/orchagent/muxorch.cpp L2058-2061: `MuxOrch::containsNextHop(const NextHopKey&)` 実装
+- sonic-swss/orchagent/muxorch.cpp L2069-2082: `MuxOrch::isMuxNexthops(const NextHopGroupKey&)` 実装 (group 内 any-match)
+- sonic-swss/orchagent/routeorch.cpp L2688: `else if (nextHops.getSize() > 1 && mux_orch->isMuxNexthops(nextHops) && ...)` 個別展開分岐
+- sonic-swss/orchagent/routeorch.cpp L2721-2724: `if (mux_orch->isMuxNexthops(nextHops)) { mux_orch->updateRoute(ipPrefix); }`
+- 旧記述の `NextHopGroupKey::is_mux_nexthop()` は master に存在しない (`MuxOrch::isMuxNexthops()` に統一されている)
 -->
 
 <!-- topics-back-ref -->
@@ -36335,7 +36356,10 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/dualtor/multiple_nexthop_route_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/dualtor/multiple_nexthop_route_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/muxorch.cpp</code> L2058 / L2069、<code>orchagent/muxorch.h</code> L280、<code>orchagent/routeorch.cpp</code> L2688 / L2721 @ master&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
