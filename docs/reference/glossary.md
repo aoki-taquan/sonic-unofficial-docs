@@ -1233,7 +1233,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (76)
 - [APPL_DB ACL テーブル群](config-db/appl-acl.md) (73)
 - [APPL_DB LAG_TABLE (portchannel ステータス)](config-db/portchannel-status.md) (66)
-- [サイトマップ](../_meta/sitemap.md) (59)
+- [サイトマップ](../_meta/sitemap.md) (60)
 - [FABRIC_MONITOR テーブル](config-db/fabric-monitor.md) (54)
 
 ### [ARP](#term-arp)
