@@ -1917,7 +1917,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [port_config.ini](#term-port-config-ini)
 
-- [port_config.ini パーサ統合（portconfig.py 一元化）](../architecture/sonic-port-configuration-refactor-design.md) (18)
+- [port_config.ini パーサ統合（portconfig.py 一元化）](../architecture/sonic-port-configuration-refactor-design.md) (22)
 - [SONiC ポート命名規則の変更案（et[sX]pY[abcd]）](../platform/sonic-port-naming-convention-change.md) (16)
 - [DEVICE_RUNTIME_METADATA テーブル](config-db/device-runtime-metadata.md) (16)
 - [DEVICE_NEIGHBOR テーブル](config-db/device-neighbor.md) (12)
@@ -2213,7 +2213,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (356)
+- [サイトマップ](../_meta/sitemap.md) (355)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (31)
 - [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (28)
