@@ -9,8 +9,7 @@ sources:
   path: doc/thermal-control/thermal-control-design.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  _no_related_cdb: true
+  _no_related_config_db: true
   cli:
   - show platform
   yang:
