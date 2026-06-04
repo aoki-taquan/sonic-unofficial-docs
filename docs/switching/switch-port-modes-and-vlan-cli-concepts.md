@@ -85,6 +85,15 @@ flowchart LR
 - 重複・存在チェックでエラーが出たらそこで **truncate**（後続スキップ）
 - メンバ追加 (`config vlan member add <VLAN_LIST> <PORT_LIST>`) も同様に複数指定可能
 
+## phase-by-phase 実装境界
+
+| Phase / 機能 | 実装済み (master) | 未実装 / HLD のみ |
+|--------------|-------------------|--------------------|
+| `access` / `trunk` CLI (`config switchport mode access\|trunk`) | 取り込み済み | — |
+| 複数 VLAN 一括 add/del (range / カンマ区切り) | 取り込み済み | — |
+| `routed` モードへの明示遷移コマンド | — | HLD 提案段階 |
+| PORTCHANNEL 一括移行 | — | HLD 提案段階 |
+
 ## 関連ページ
 
 - 親 HLD: [switch-port-modes-and-vlan-cli-enhancement](switch-port-modes-and-vlan-cli-enhancement.md)
