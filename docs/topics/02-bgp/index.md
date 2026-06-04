@@ -74,7 +74,7 @@ related:
 | ページ | 行数 | 状態 | verification | 主目的 |
 |---|---|---|---|---|
 | concept | 198 | ✅ 完成 | meta | 概念・位置付け |
-| architecture | 46 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
+| architecture | 184 | ✅ 完成 | code-verified | アーキテクチャ・データフロー |
 | setup | 231 | ✅ 完成 | meta | セットアップ手順 |
 | operations | 183 | ✅ 完成 | meta | 運用・デバッグ |
 | internals | 148 | ✅ 完成 | meta | 内部実装 |

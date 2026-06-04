@@ -1233,7 +1233,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (76)
 - [APPL_DB ACL テーブル群](config-db/appl-acl.md) (73)
 - [APPL_DB LAG_TABLE (portchannel ステータス)](config-db/portchannel-status.md) (66)
-- [サイトマップ](../_meta/sitemap.md) (59)
+- [サイトマップ](../_meta/sitemap.md) (60)
 - [FABRIC_MONITOR テーブル](config-db/fabric-monitor.md) (54)
 
 ### [ARP](#term-arp)
@@ -1402,16 +1402,16 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [サイトマップ](../_meta/sitemap.md) (6)
 - [DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id）](../architecture/dhcpv4-relay-agent.md) (2)
 - [DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）](../routing/dhcp-relay-per-interface-counter.md) (2)
+- [VRF / ECMP / RIB-FIB パイプライン](../topics/04-vrf-ecmp/index.md) (2)
 - [Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md) (2)
-- [NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md) (2)
 
 ### [DPU](#term-dpu)
 
 - [DPU / ENI / VDPU / REMOTE_DPU テーブル](config-db/dpu-eni.md) (193)
 - [SmartSwitch DPU テーブル群](config-db/smart-switch-dpu.md) (186)
 - [DPU テーブル](config-db/dpu.md) (174)
-- [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (107)
-- [サイトマップ](../_meta/sitemap.md) (94)
+- [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (123)
+- [サイトマップ](../_meta/sitemap.md) (96)
 
 ### [DPB](#term-dpb)
 
@@ -1561,9 +1561,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [ROUTE_TABLE handler 分岐 (fpmsyncd / RouteSync)](config-db/route-handler.md) (35)
 - [概要](../topics/02-bgp/concept.md) (16)
+- [アーキテクチャ](../topics/02-bgp/architecture.md) (15)
 - [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (9)
 - [内部実装](../topics/02-bgp/internals.md) (8)
-- [DEVICE_METADATA テーブル](config-db/device-metadata.md) (7)
 
 ### [fpmsyncd](#term-fpmsyncd)
 
@@ -1759,7 +1759,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [APPL_DB MCLAG/ICCP 関連テーブル](config-db/appl-mclag.md) (133)
 - [MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル](config-db/mclag-domain.md) (121)
 - [MCLAG_UNIQUE_IP テーブル](config-db/mclag-unique-ip.md) (113)
-- [STP / ICCP 連携 — コード由来デフォルト詳細](config-db/stp-iccp.md) (68)
+- [sonic-mclag YANG](yang/sonic-mclag.md) (87)
 
 ### [minigraph.xml](#term-minigraph.xml)
 
@@ -1866,9 +1866,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../system/smart-switch-reboot-high-level-design.md) (45)
 - [DASH と SmartSwitch の考え方](../topics/13-dash-smartswitch/concept.md) (38)
-- [サイトマップ](../_meta/sitemap.md) (27)
+- [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (29)
+- [サイトマップ](../_meta/sitemap.md) (28)
 - [ACL_TABLE (CTRLPLANE) テーブル](config-db/control-plane-acl.md) (27)
-- [DPU の IP 割当・gNMI 連携・KVM 検証](../topics/13-dash-smartswitch/setup.md) (24)
 
 ### [orchagent](#term-orchagent)
 
