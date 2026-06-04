@@ -13,10 +13,9 @@ sources:
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
-    - DASH_PREFIX_TAG_TABLE
     - DASH_ACL_IN_TABLE
     - DASH_ACL_OUT_TABLE
-  yang: []
+  _no_related_yang: true
 ---
 
 # DASH_PREFIX_TAG_TABLE テーブル
