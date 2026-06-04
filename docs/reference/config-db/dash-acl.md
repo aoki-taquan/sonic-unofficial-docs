@@ -25,8 +25,8 @@ related:
     - DASH_ACL_RULE_TABLE
     - DASH_PREFIX_TAG_TABLE
     - DASH_ENI_TABLE
-  cli: []
-  yang: []
+  _no_related_cli: true
+  _no_related_yang: true
 ---
 
 # DASH_ACL_* テーブル
