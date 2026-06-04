@@ -1563,7 +1563,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [概要](../topics/02-bgp/concept.md) (16)
 - [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (9)
 - [内部実装](../topics/02-bgp/internals.md) (8)
-- [概念](../topics/17-srv6-mpls/concept.md) (8)
+- [DEVICE_METADATA テーブル](config-db/device-metadata.md) (7)
 
 ### [fpmsyncd](#term-fpmsyncd)
 
@@ -1727,7 +1727,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [MUX_CABLE テーブル（per-port フィールド詳細）](config-db/mux-cable-port.md) (52)
 - [MUX_CABLE テーブル](config-db/mux-cable.md) (30)
 - [linkmgrd のデフォルトルート連動（DualToR mux 制御）](../routing/default-route.md) (27)
-- [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (19)
+- [Mux 制御の内部構造](../topics/05-dual-tor/internals.md) (21)
 
 ### [LLDP](#term-lldp)
 
@@ -1748,7 +1748,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [MPLS](#term-mpls)
 
 - [LABEL_ROUTE_TABLE (APPL_DB)](config-db/appl-mpls-route.md) (87)
-- [概念](../topics/17-srv6-mpls/concept.md) (51)
+- [概念](../topics/17-srv6-mpls/concept.md) (50)
 - [MPLS TC → TC map（MPLS パケットの QoS classification）](../routing/mpls-tc-to-tc-map.md) (45)
 - [SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP）](../routing/mpls-for-sonic-high-level-design-document.md) (37)
 - [内部実装](../topics/17-srv6-mpls/internals.md) (25)
@@ -2048,13 +2048,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SNMP テーブル](config-db/snmp.md) (160)
 - [SNMP_AGENT_ADDRESS_CONFIG / SNMP_USER テーブル (デフォルト詳細)](config-db/snmp-agent.md) (139)
 - [SNMP_COMMUNITY テーブル](config-db/community-list.md) (86)
+- [SNMP 設定の snmp.yml → CONFIG_DB 移行](../system/snmp-migration-from-snmp-yml-to-configdb.md) (74)
 - [sonic-snmp YANG](yang/sonic-snmp.md) (73)
-- [SNMP_AGENT_ADDRESS_CONFIG テーブル](config-db/snmp-agent-address-config.md) (72)
 
 ### [SRv6](#term-srv6)
 
-- [概念](../topics/17-srv6-mpls/concept.md) (47)
 - [発展トピック](../topics/17-srv6-mpls/advanced.md) (46)
+- [概念](../topics/17-srv6-mpls/concept.md) (45)
 - [Srv6Orch — APP_DB SRV6 テーブル](config-db/srv6-orch.md) (42)
 - [サイトマップ](../_meta/sitemap.md) (34)
 - [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../routing/srv6-vpn-hld.md) (30)
@@ -2126,10 +2126,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [sonic-sairedis](#term-sonic-sairedis)
 
 - [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../platform/sai-api-version-check.md) (16)
+- [内部実装](../topics/20-swss-sai-redis/internals.md) (10)
 - [NPU MDIO アクセスと gbsyncd 単一 docker 化](../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md) (8)
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../system/sonic-libsairedis-api-idempotence-support.md) (8)
 - [Bulk Counter（sai_bulk_object_get_stats / chunk size）](../architecture/sonic-bulk-counter-design.md) (7)
-- [DEVICE_METADATA テーブル](config-db/device-metadata.md) (5)
 
 ### [sonic-utilities](#term-sonic-utilities)
 
@@ -2185,7 +2185,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ROUTE_TABLE (STATE_DB / APPL_STATE_DB)](config-db/route-state.md) (101)
 - [FEATURE (STATE_DB)](config-db/feature-state.md) (91)
 - [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (85)
-- [サイトマップ](../_meta/sitemap.md) (80)
+- [サイトマップ](../_meta/sitemap.md) (81)
 
 ### [swssconfig](#term-swssconfig)
 
@@ -2213,19 +2213,19 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (354)
+- [サイトマップ](../_meta/sitemap.md) (355)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (31)
+- [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (28)
 - [概要](../topics/02-bgp/concept.md) (27)
-- [アーキテクチャ](../topics/21-lab-vs-developer/architecture.md) (26)
 
 ### [TAM](#term-tam)
 
 - [TAM テーブル](config-db/tam.md) (177)
+- [運用](../topics/17-srv6-mpls/operations.md) (11)
 - [変更履歴](../_meta/changelog.md) (7)
 - [Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）](../routing/path-tracing-midpoint.md) (3)
 - [内部実装](../topics/17-srv6-mpls/internals.md) (3)
-- [サイトマップ](../_meta/sitemap.md) (2)
 
 ### [TC (Traffic Class)](#term-tc)
 
@@ -2258,7 +2258,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [ToR](#term-tor)
 
-- [サイトマップ](../_meta/sitemap.md) (78)
+- [サイトマップ](../_meta/sitemap.md) (77)
 - [Dual-ToR の考え方](../topics/05-dual-tor/concept.md) (65)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (59)
 - [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (40)

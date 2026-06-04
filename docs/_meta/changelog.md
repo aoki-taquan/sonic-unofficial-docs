@@ -23,6 +23,19 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-04 #5132 fix(quality): deep rewrite topics/10-gnmi-openconfig/architecture.md Subscribe section
+- 2026-06-04 #5131 fix(quality): deep rewrite topics/08-qos-buffer/setup.md (meta→code-verified)
+- 2026-06-04 #5127 fix(quality): deep rewrite snmp-migration-from-snmp-yml-to-configdb
+- 2026-06-04 #5126 fix(quality): deep rewrite topics/20-swss-sai-redis/internals.md
+- 2026-06-04 #5125 fix(quality): deep rewrite topics/10-gnmi-openconfig/setup.md (related.yang prune)
+- 2026-06-04 #5123 fix(quality): deep rewrite 17-srv6-mpls/operations.md (verification: meta -> code-verified)
+- 2026-06-04 #5122 fix(quality): deep rewrite 17-srv6-mpls/concept.md (dedupe + citations + code fix)
+- 2026-06-04 #5121 fix(quality): deep rewrite sonic-tunnel YANG (encap_ecn_mode enum 訂正)
+- 2026-06-04 #5119 fix(quality): deep rewrite docs/topics/05-dual-tor/internals.md
+- 2026-06-04 #5118 fix(quality): simplify related opt-out on quality-gaps.md
+- 2026-06-04 #5114 docs(area-index): list split-child slugs alongside parents (systemic drift fix)
+- 2026-06-04 #5112 fix(audit): correct area prefix for 2 misplaced page references
+- 2026-06-04 #5111 fix(audit): guard aggregation against score 0 phantom entries
 - 2026-06-04 #5113 chore(backlog): detect split-page implementations + archive SmartSwitch HA 2 entries
 - 2026-06-04 #5110 docs(related): fill empty related axes + opt-out markers (batch 13)
 - 2026-06-04 #5109 chore(frontmatter): fill empty related axes / opt-outs (batch 12)
@@ -511,19 +524,6 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3939 docs(config-db): add Phase F side-effects block to warm-restart
 - 2026-05-19 #3938 docs(config-db): add Phase G pubsub block to gnmi-dialin
 - 2026-05-19 #3936 docs(config-db): add Phase F side-effects block to mux-cable-port
-- 2026-05-19 #3929 docs(config-db): add Phase F side-effects block to LOGGER table page
 - 2026-05-19 #3935 docs(config-db): add Phase G pubsub block to gnmi-counter
 - 2026-05-19 #3933 docs(config-db): add Phase E hardcoded-constants block to RESTAPI page
-- 2026-05-19 #3932 docs(config-db): add Phase H platform block to NTP_SERVER page
-- 2026-05-19 #3931 docs(config-db): add Phase F side-effects block to vnet-route
-- 2026-05-19 #3930 docs(config-db): add Phase G pubsub block to SUBNET_DECAP page
-- 2026-05-19 #3928 docs(config-db): add Phase E constants marker to nhg-table page
-- 2026-05-19 #3917 docs(config-db): add Phase E hardcoded-constants block to ssh-config-base
-- 2026-05-19 #3926 docs(config-db): add Phase H platform block to vrrp-track
-- 2026-05-19 #3925 docs(config-db): add Phase F side-effects block to log-config
-- 2026-05-19 #3924 docs(config-db): add Phase F side-effects block to IPv6 link-local page
-- 2026-05-19 #3923 docs(config-db): add Phase F side-effects block to stp-orch
-- 2026-05-19 #3922 docs(config-db): add Phase D failure-behavior block to nvgre-tunnel
-- 2026-05-19 #3919 docs(config-db): add Phase G pubsub block to STP_PORT page
-- 2026-05-19 #3918 docs(config-db): add Phase E hardcoded-constants block to TC_TO_DSCP_MAP
 

@@ -24,12 +24,6 @@ related:
   - BGP_GLOBALS_AF_NETWORK
   yang:
   - sonic-bgp-neighbor
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
 ---
 
 # 設定
