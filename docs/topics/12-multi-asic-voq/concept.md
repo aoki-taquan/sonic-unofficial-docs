@@ -3,9 +3,21 @@ title: 概念
 description: 概念 — Multi-ASIC と VOQ chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 ASIC
   を基準に、どこから「Multi-ASIC」になり、どこから「VOQ chassis」になるのかを言葉のレベルで整理します。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: hld-only
+last_verified: 2026-06-04
+sources:
+- repo: sonic-net/SONiC
+  path: doc/multi_asic/SONiC_multi_asic_hld.md
+  ref: 4fda6b77e4fda2db76591143d03544f7895df40b
+- repo: sonic-net/SONiC
+  path: doc/voq/voq_hld.md
+  ref: 4fda6b77e4fda2db76591143d03544f7895df40b
+- repo: sonic-net/SONiC
+  path: doc/voq/single_asic_voq.md
+  ref: 4fda6b77e4fda2db76591143d03544f7895df40b
+- repo: sonic-net/SONiC
+  path: doc/voq/fabric.md
+  ref: 4fda6b77e4fda2db76591143d03544f7895df40b
 keywords:
 - Multi-ASIC
 - VOQ
@@ -16,28 +28,17 @@ keywords:
 related:
   cli:
   - show interfaces
-  - show mclag
-  - config mclag
-  - config bgp
-  - show bgp
-  - config vrf
-  - config qos
+  - show platform
+  - show system-port
   config_db:
-  - VRF
+  - DEVICE_METADATA
+  - SYSTEM_PORT
   - VOQ_INBAND_INTERFACE
-  - MCLAG_DOMAIN
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
   yang:
-  - sonic-mclag
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
+  - sonic-system-port
+  - sonic-chassis-module
+  - sonic-device_metadata
+  - sonic-bgp-voq-chassis-neighbor
 ---
 
 # 概念
@@ -64,7 +65,9 @@ Multi-ASIC / VOQ は data plane の構造を反映した **全層横断のアー
 - **Redis / DB**: ASIC ごとに `redis<N>.sock` を立て、CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) をそれぞれ分離。host namespace は管理系の CONFIG_DB を別途持つ
 - **Routing**: BGP は ASIC namespace ごとに bgpd を立て、internal-BGP で各 ASIC 間を繋ぐ。[FRR](../../reference/glossary.md#term-frr) の `vrf` ではなく namespace で分離
 - **Forwarding plane**: VOQ chassis では fabric ASIC + system port + distributed VOQ により、line card 間で 1 つの論理 switch を構成
-- **CLI**: `show` 系コマンドが `--namespace` を取り、引数なしのときは全 namespace を集約。`sonic-utilities` が namespace 一覧を `/usr/share/sonic/device/.../asic.conf` から読む
+- **CLI**: `show` 系コマンドが `--namespace` を取り、引数なしのときは全 namespace を集約。`sonic-utilities` が namespace 一覧を `/usr/share/sonic/device/<platform>/asic.conf` から読む[^multi-asic-conf]
+
+[^multi-asic-conf]: namespace 生成と `asic.conf` ベースの ASIC 数検出は `SONiC/doc/multi_asic/SONiC_multi_asic_hld.md` の 94 行目（"A linux network namespace is created for every ASIC"）および 205-211 行目（"asic.conf is added" / "present in the directory `/usr/share/sonic/device/<platform>/`"）に記載。
 
 つまり Multi-ASIC / VOQ 章は、他の機能章（BGP / [VXLAN](../../reference/glossary.md#term-vxlan) / [QoS](../../reference/glossary.md#term-qos) / Reboot...）が**「1 ASIC の前提」で書かれている内容に対する例外条項集**でもあります。BGP 章の話を Multi-ASIC で適用するときに何が変わるか、というレンズで読み返すと意味が立ち上がります。
 
@@ -82,7 +85,9 @@ Multi-ASIC / VOQ は data plane の構造を反映した **全層横断のアー
 - **Recirculation port**: ASIC 内でパケットを再度パイプライン入力に戻すための内部 loop port。
 - **Chassis DB**: supervisor 上に立つ Redis インスタンスで、全 line card に共通な system port、neighbor、router 等を集約。
 - **Distributed VOQ**: ingress 側で egress system port 単位の virtual output queue を持ち、credit ベースで egress に送る仕組み。HOL blocking を回避。
-- **Switch type**: `DEVICE_METADATA.localhost.switch_type` に `chassis-packet` / `voq` / `fabric` などが入り、起動時の挙動を分岐。
+- **Switch type**: `DEVICE_METADATA.localhost.switch_type` に `voq` / `fabric` などが入り、起動時の挙動を分岐。[^switch-type]
+
+[^switch-type]: `DEVICE_METADATA` 拡張と `switch_type = "voq" | "fabric"` の定義は `SONiC/doc/voq/voq_hld.md` の 227-234 行目（"[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) table is enhanced ... switch_type"）および 296 行目（`switch_type = "voq" | "fabric"`）参照。
 
 ## Pizza-box / Multi-ASIC / VOQ Chassis の三層
 
@@ -105,7 +110,9 @@ VOQ chassis で重要なのが **system port** という概念です。
 - **front-panel port**: line card の物理ポート。従来の `Ethernet0`, `Ethernet4`, ... と同じ感覚で、各 line card が持ちます。
 - **system port**: chassis 全体で一意な論理ポート ID。`<line-card>|<asic>|<port>` のような形で命名され、Chassis DB が全 system port を保持します。
 
-データプレーン上は、ある line card に入ったパケットが宛先 system port に向けて fabric を経由して送られます。FIB は宛先 system port を解決し、egress line card の出口で実際の front-panel port にマップされます。
+データプレーン上は、ある line card に入ったパケットが宛先 system port に向けて fabric を経由して送られます。FIB は宛先 system port を解決し、egress line card の出口で実際の front-panel port にマップされます。[^system-port]
+
+[^system-port]: system port の定義（"all the system ports in the entire system. The configuration of each system port should specify - system_port_id, switch_id, cored_index, core_port_index and speed"）は `SONiC/doc/voq/voq_hld.md` 89 行目、`SYSTEM_PORT` CONFIG_DB スキーマは同 281-313 行目参照。
 
 ## Fabric Port と Recirculation Port
 
@@ -189,4 +196,4 @@ sequenceDiagram
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 - [BGP と FRR 制御プレーン](../02-bgp/index.md)
 
-<!-- glossary-links-injected: 5c9b3765d470 -->
+<!-- glossary-links-injected: 81b1fc9c897b -->

@@ -29,8 +29,8 @@ last_verified: 2026-05-11
 | runbook-verified | 27 |
 | discrepancy-found | 113 |
 | issue-confirmed | 7 |
-| hld-only | 1 |
-| meta | 194 |
+| hld-only | 2 |
+| meta | 193 |
 | stub | 1 |
 
 ## area 別マトリクス
@@ -51,6 +51,6 @@ last_verified: 2026-05-11
 | `routing` | 45 | 0 | 12 | 0 | 0 | 1 | 0 | 58 |
 | `switching` | 18 | 0 | 8 | 0 | 0 | 1 | 0 | 27 |
 | `system` | 56 | 0 | 18 | 1 | 0 | 2 | 0 | 77 |
-| `topics` | 15 | 0 | 0 | 0 | 0 | 146 | 0 | 161 |
+| `topics` | 15 | 0 | 0 | 0 | 1 | 145 | 0 | 161 |
 
 推移情報（時系列）は本ページでは扱いません。スナップショットのみ。
