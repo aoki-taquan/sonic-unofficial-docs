@@ -20,6 +20,8 @@ related:
   appl_db:
     - ROUTE_TABLE
     - CLASS_BASED_NEXT_HOP_GROUP_TABLE
+  _no_related_cli: true
+  _no_related_yang: true
 ---
 
 # NEXTHOP_GROUP_TABLE (APPL\_DB)
