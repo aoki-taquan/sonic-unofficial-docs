@@ -2117,11 +2117,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [sonic-swss-common](#term-sonic-swss-common)
 
+- [swss-common データベース設定（database_config.json）](../internals/swss-common-database-config.md) (19)
 - [swss-common Logger の linkToDb / linkToDbNative 呼び出し順序](../internals/swss-common-db-link-ordering.md) (17)
 - [LOGGER テーブル](config-db/log-config.md) (14)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (13)
 - [WARM_RESTART テーブル](config-db/warm-restart.md) (12)
-- [ALARM テーブル (EVENT_DB)](config-db/alarm-table.md) (10)
 
 ### [sonic-sairedis](#term-sonic-sairedis)
 

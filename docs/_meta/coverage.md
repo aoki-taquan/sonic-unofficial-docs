@@ -25,10 +25,10 @@ last_verified: 2026-05-11
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 761 |
+| code-verified | 762 |
 | runbook-verified | 27 |
 | discrepancy-found | 113 |
-| issue-confirmed | 7 |
+| issue-confirmed | 6 |
 | hld-only | 1 |
 | meta | 194 |
 | stub | 1 |
@@ -43,7 +43,7 @@ last_verified: 2026-05-11
 | `architecture` | 34 | 0 | 25 | 0 | 1 | 1 | 0 | 61 |
 | `categories` | 0 | 0 | 0 | 0 | 0 | 11 | 0 | 11 |
 | `guides` | 0 | 0 | 0 | 0 | 0 | 5 | 0 | 5 |
-| `internals` | 11 | 0 | 6 | 1 | 0 | 1 | 0 | 19 |
+| `internals` | 12 | 0 | 6 | 0 | 0 | 1 | 0 | 19 |
 | `management` | 32 | 0 | 16 | 2 | 0 | 1 | 0 | 51 |
 | `overlay` | 19 | 0 | 1 | 0 | 0 | 1 | 0 | 21 |
 | `platform` | 35 | 0 | 13 | 3 | 0 | 1 | 0 | 52 |
