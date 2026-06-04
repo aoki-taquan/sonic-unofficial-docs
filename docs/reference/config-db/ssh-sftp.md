@@ -16,6 +16,8 @@ related:
     - SSH_SERVER
   yang:
     - sonic-ssh-server
+  cli:
+    - config ssh-server
 ---
 
 # SSH SFTP サブシステム

@@ -5,19 +5,19 @@ area: reference
 verification: code-verified
 last_verified: 2026-05-14
 sources:
-- repo: sonic-net/sonic-buildimage
-  path: src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py
-  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
-- repo: sonic-net/sonic-buildimage
-  path: src/sonic-yang-models/yang-models/sonic-srv6.yang
-  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-srv6.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db:
-  - SRV6_MY_LOCATORS
-  - SRV6_MY_SIDS
-  cli: []
+    - SRV6_MY_LOCATORS
+    - SRV6_MY_SIDS
   yang:
-  - sonic-srv6
+    - sonic-srv6
+  _no_related_cli: true
 ---
 
 # SRV6_MY_LOCATORS テーブル
