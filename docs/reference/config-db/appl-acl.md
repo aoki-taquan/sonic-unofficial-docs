@@ -33,7 +33,7 @@ related:
     - ACL_RULE
   cli:
     - show acl
-  yang: []
+  _no_related_yang: true
 ---
 
 # APPL_DB ACL テーブル群
