@@ -13,17 +13,18 @@ sources:
   ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
 related:
   config_db:
-  - POLICER
-  - ACL_RULE
-  - COPP_GROUP
-  - PORT_STORM_CONTROL
-  - MIRROR_SESSION
-  cli: []
+    - ACL_RULE
+    - COPP_GROUP
+    - PORT_STORM_CONTROL
+    - MIRROR_SESSION
+  cli:
+    - config policer
+    - show policer
   yang:
-  - sonic-copp
-  - sonic-storm-control
-  - sonic-scheduler
-  - sonic-mirror-session
+    - sonic-copp
+    - sonic-storm-control
+    - sonic-scheduler
+    - sonic-mirror-session
 ---
 
 # POLICER テーブル
@@ -40,11 +41,15 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>POLICER")]
-  DM["PolicerOrch"]
+  CDB[("CONFIG_DB<br/>ACL_RULE")]
+  DM["AclOrch"]
   CDB --> DM
-  SAI["SAI<br/>sai_policer_api"]
-  DM --> SAI
+  APPDB[("APP_DB<br/>APP_ACL_RULE_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_acl_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
