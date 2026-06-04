@@ -21,6 +21,7 @@ related:
     - VRF
   yang:
     - sonic-srv6
+  _no_related_cli: true
 ---
 
 # SRV6_MY_SIDS テーブル
