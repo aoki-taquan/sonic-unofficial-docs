@@ -5,10 +5,7 @@ description: 概念 — ACL（Access Control List）と CoPP（Control Plane Pol
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/acl-qos/acl-in-sonic.md
-- docs/acl-qos/acl-support-in-sonic.md
-- docs/categories/sai-extensions.md
+sources: []
 keywords:
 - ACL
 - CoPP

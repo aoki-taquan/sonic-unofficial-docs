@@ -5,15 +5,7 @@ description: 内部実装 — ここでは、port / optics / PHY を「ベンダ
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/platform/media-based-port-settings-in-sonic.md
-- docs/platform/sonic-dynamic-gearbox-tuning-design-plan.md
-- docs/platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md
-- docs/platform/enhanced-lpo-debug-registers-hld.md
-- docs/platform/s3ip-sysfs-specification.md
-- docs/architecture/s3ip-sysfs-specification-and-s3ip-sysfs-framework-hld.md
-- docs/platform/support-bmc-flows-in-sonic.md
-- docs/system/sonic-bmc-platform-management-monitoring.md
+sources: []
 related:
   cli:
   - show platform

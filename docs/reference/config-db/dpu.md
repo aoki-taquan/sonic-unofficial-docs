@@ -26,6 +26,7 @@ related:
     - DASH_HA_GLOBAL_CONFIG
   yang:
     - sonic-smart-switch
+  _no_related_cli: true
 ---
 
 # DPU テーブル

@@ -5,10 +5,7 @@ description: 発展トピック — PINS は data plane を P4Runtime で書く�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/management/sonic-management-framework.md
-- docs/management/gnmi-usage.md
-- docs/management/p4rt-application-hld.md
+sources: []
 related:
   cli:
   - show acl

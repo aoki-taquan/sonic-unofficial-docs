@@ -5,13 +5,7 @@ description: Reboot 運用と障害調査 — reboot 運用で重要なのは、
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/system/reboot-cause-information-via-telemetry-agent.md
-- docs/switching/increasing-lacp-pdu-timeout-during-warm-reboot.md
-- docs/system/multi-asic-warm-reboot.md
-- docs/system/warmboot-manager-hld.md
-- docs/system/sonic-swss-docker-warm-restart.md
-- docs/system/swss-docker-warm-restart-code-reference.md
+sources: []
 related:
   cli:
   - show reboot-cause

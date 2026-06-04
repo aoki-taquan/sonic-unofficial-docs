@@ -4,25 +4,7 @@ description: L2 設定パターン — ここでは、個別 CLI の全引数で
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/config-vlan.md
-- docs/reference/cli/config-portchannel.md
-- docs/reference/cli/config-interface.md
-- docs/reference/config-db/vlan.md
-- docs/reference/config-db/vlan-member.md
-- docs/reference/config-db/vlan-interface.md
-- docs/reference/config-db/vlan-sub-interface.md
-- docs/reference/config-db/portchannel.md
-- docs/reference/config-db/portchannel-member.md
-- docs/reference/config-db/portchannel-interface.md
-- docs/reference/config-db/port.md
-- docs/reference/config-db/interface.md
-- docs/reference/yang/sonic-vlan.md
-- docs/reference/yang/sonic-vlan-sub-interface.md
-- docs/reference/yang/sonic-portchannel.md
-- docs/reference/yang/sonic-port.md
-- docs/architecture/sonic-sub-port-interface-high-level-design.md
-- docs/platform/sonictpidsettinghld1.md
+sources: []
 related:
   cli:
   - config vlan

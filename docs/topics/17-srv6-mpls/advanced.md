@@ -4,11 +4,7 @@ description: 発展トピック — base 機能の上で広がる SRv6 / MPLS / 
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/routing/segment-routing-over-ipv6-srv6-hld.md
-- docs/routing/srv6-vpn-hld.md
-- docs/routing/evpn-vxlan-hld.md
-- docs/routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md
+sources: []
 related:
   cli:
   - config bgp

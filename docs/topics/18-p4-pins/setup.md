@@ -5,10 +5,7 @@ description: 設定 — PINS は SONiC 上に P4RT サービスを追加する�
 area: topics
 verification: meta
 last_verified: 2026-05-11
-sources:
-- docs/management/pins-hld.md
-- docs/management/p4rt-application-hld.md
-- docs/management/send-to-ingress-hld.md
+sources: []
 related:
   cli:
   - config route

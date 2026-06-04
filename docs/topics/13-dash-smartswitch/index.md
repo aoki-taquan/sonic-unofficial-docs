@@ -5,24 +5,7 @@ area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
-sources:
-- docs/categories/dash.md
-- docs/categories/smartswitch.md
-- docs/overlay/sonic-dash-hld.md
-- docs/overlay/dash-sonic-kvm.md
-- docs/overlay/smartswitch-eni-based-forwarding.md
-- docs/architecture/smart-switch-database-design.md
-- docs/architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md
-- docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md
-- docs/acl-qos/dash-acl-tags.md
-- docs/system/smart-switch-ip-address-assignment.md
-- docs/management/smart-switch-gnmi-feedback-design-omit-in-toc.md
-- docs/platform/smartswitch-pmon-high-level-design.md
-- docs/system/smart-switch-reboot-high-level-design.md
-- docs/platform/smartswitch-dpu-graceful-shutdown.md
-- docs/system/independent-dpu-upgrade.md
-- docs/management/gnoi-hld-for-system-apis.md
-- docs/management/gnoi-hld-for-os-apis.md
+sources: []
 keywords:
 - DASH
 - SmartSwitch
