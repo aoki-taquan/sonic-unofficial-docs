@@ -1327,7 +1327,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [CONFIG_DB](#term-config_db)
 
-- [サイトマップ](../_meta/sitemap.md) (130)
+- [サイトマップ](../_meta/sitemap.md) (129)
 - [APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)](config-db/appl-mirror.md) (58)
 - [IPv6 Link-local モード](config-db/ipv6-link-local.md) (54)
 - [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (50)
@@ -1589,7 +1589,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [gNMI](#term-gnmi)
 
-- [サイトマップ](../_meta/sitemap.md) (74)
+- [サイトマップ](../_meta/sitemap.md) (75)
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (28)
 - [GNMI / GNMI_CLIENT_CERT テーブル](config-db/gnmi.md) (24)
 - [TELEMETRY テーブル](config-db/telemetry.md) (23)
