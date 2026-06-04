@@ -93,27 +93,9 @@ flowchart LR
 - HLD と実装の乖離: [switch-port-modes-and-vlan-cli-discrepancy](switch-port-modes-and-vlan-cli-discrepancy.md)
 - Topics 読み物: [06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md)
 
-<!-- phase-boundary -->
-## 実装フェーズ境界
-
-!!! info "Phase 別の実装済 / 未実装 サマリ"
-    本ページは `monitor: partially_implemented` で、HLD で示された一連の機能
-    が **段階的に取り込まれている** 状態を扱う。フェーズ毎の実装境界を
-    1 枚の表に集約する (詳細は本ページ上部の `diff` admonition および
-    [discrepancy-index](../reference/verification/discrepancy-index.md) を参照)。
-
-    | Phase | 範囲 (機能 / 段階) | 実装済 (master 取り込み済) | 未実装 (HLD 提案のみ) |
-    |---|---|---|---|
-    | Phase 1 — 基本機能 | HLD §概要 / §設計の中核ユースケース | 取り込み済 — 本ページの「実装の概観」「実装詳細」節および `diff` admonition の現状側を参照 | — (Phase 1 は実装済) |
-    | Phase 2 — 拡張機能 | HLD §拡張 / §追加要件 / §周辺統合 | 一部のみ取り込み済 — 本ページ「実装詳細」の補足参照 | 未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および `diff` admonition の差分側に列挙 |
-    | Phase 3 — 将来拡張 | HLD §Future Work / §将来課題 | — | 未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点) |
-
-    凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。
-<!-- /phase-boundary -->
-
 ## 実装との乖離
 
-`monitor: partially_implemented` — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child。差分の根拠 / 影響 / 回避策は親ページの同セクションを参照のこと。
+`monitor: partially_implemented` — 部分実装。本ページが扱う 概念 / モード定義 / 状態遷移 / 一括 CLI のスコープのうち、`access` / `trunk` CLI と複数 VLAN 一括 add/del は master に取り込み済みだが、`routed` モードへの明示遷移と PORTCHANNEL 一括移行は HLD 提案段階に留まる。差分の根拠 / 影響 / 回避策は派生先 [discrepancy](switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
 
 ## 引用元
 
