@@ -31,6 +31,10 @@ related:
     - BGP_NEIGHBOR
     - BGP_PEER_RANGE
     - BMP
+  cli:
+    - config bgp remove neighbor
+    - config reload
+  _no_related_yang: true
 ---
 
 # STATE_DB BGP 関連テーブル
