@@ -4,7 +4,7 @@ description: show arp サブコマンド — show arp は IPv4 の 隣接テー�
   scripts/nbrshow を -4 付きで起動する。
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-06-04
 sources:
 - repo: sonic-net/sonic-utilities
   path: show/main.py
@@ -16,7 +16,7 @@ related:
   config_db: []
   cli:
   - show arp
-  - show ip arp
+  - show ndp
   - clear arp
   yang:
   - sonic-neigh
@@ -56,7 +56,7 @@ cmd += ['-d', str(display)]
 
 ## 別名と関連
 
-`show ip arp` も同じ `arp` コマンドを `show ip` グループに `add_command` した結果として動く（cli 直下と `ip` サブ両方に同じ関数が登録される）。
+`arp` コマンドは `show` ルート (`cli` グループ) に **直接** 登録されており、`show ip` グループには `add_command` されていない[^2]。したがって、master の [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) では **`show ip arp` というサブコマンドは存在しない**（古い [HLD](../../reference/glossary.md#term-hld) やコミュニティ Q&A に `show ip arp` と書かれていることがあるが、現コードでは未登録で `Error: No such command "arp".` になる）。IPv6 側は同様の薄いラッパとして `show ndp` が `nbrshow -6` を起動する[^3]。
 
 クリア側は `sonic-clear arp [<ipaddress>] [-n <ns>]` が対称。詳細は [clear (sonic-clear) コマンド](clear.md) を参照。
 
@@ -90,6 +90,10 @@ flowchart LR
 ## 引用元
 
 [^1]: `arp` の click 定義と `nbrshow -4` 起動部分は `show/main.py` L421-L446。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L421>
+
+[^2]: `cli.add_command(...)` 登録一覧は `show/main.py` L305-L346。`arp` は `@cli.command()` デコレータで直接登録される (L421) ため別途 `add_command` 呼び出しは無く、`ip.add_command(...)` の呼び出しは `bgp` 等のみで `arp` は含まれていないことが確認できる。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1569>
+
+[^3]: `ndp` (= IPv6 隣接) の click 定義と `nbrshow -6` 起動部分は `show/main.py` L452-L474。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L452>
 
 
 <!-- usage-example -->
@@ -155,4 +159,4 @@ sonic-db-cli APPL_DB keys 'NEIGH_TABLE:*'
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 868a37d1f17d -->
+<!-- glossary-links-injected: 9bbae96420df -->
