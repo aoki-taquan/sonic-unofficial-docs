@@ -1,7 +1,7 @@
 ---
 title: Wake-on-LAN（wol CLI と SonicWolService gNOI）
-description: Wake-on-LAN（wol CLI と SonicWolService gNOI） — Wake-on-LAN (WoL) は、特殊な「Magic
-  Packet」を NIC が受信した際に対象機器を電源オン / スリープ復帰させる Ethernet 標準である。
+description: SONiC の Wake-on-LAN 機能。Rust 実装の wol CLI による Magic Packet 送出 (Ethernet
+  / UDP 両形式) と、HLD が提案している SonicWolService gNOI 経路の実装状況を整理する。
 area: switching
 verification: discrepancy-found
 monitor: partially_implemented
@@ -280,9 +280,9 @@ tcpdump -i Ethernet10 ether proto 0x0842
 
     | Phase | 範囲 (機能 / 段階) | 実装済 (master 取り込み済) | 未実装 (HLD 提案のみ) |
     |---|---|---|---|
-    | Phase 1 — 基本機能 | HLD §概要 / §設計の中核ユースケース | 取り込み済 — 本ページの「実装の概観」「実装詳細」節および `diff` admonition の現状側を参照 | — (Phase 1 は実装済) |
-    | Phase 2 — 拡張機能 | HLD §拡張 / §追加要件 / §周辺統合 | 一部のみ取り込み済 — 本ページ「実装詳細」の補足参照 | 未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および `diff` admonition の差分側に列挙 |
-    | Phase 3 — 将来拡張 | HLD §Future Work / §将来課題 | — | 未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点) |
+    | Phase 1 — 基本機能 (Ethernet payload 版 wol CLI) | HLD §概要 / §Magic Packet 形式（Ethernet ペイロード版） | 取り込み済 — `sonic-buildimage/src/sonic-nettools/wol` (Rust) として動作。本ページ「動作仕様」節および `diff` admonition の現状側を参照 | — (Phase 1 は実装済) |
+    | Phase 2 — UDP モード拡張 (`-u` / `-a` / `-t`) | HLD §Magic Packet 形式（UDP ペイロード版） | 取り込み済 — `wol.rs` L53-L63 で `udp` / `ip_address` / `udp_port` 引数として実装、IPv6 socket は `socket.rs` L242 で対応 | 一部 — gNOI `WolRequest` proto に UDP 系フィールドが未追加 |
+    | Phase 3 — gNOI 経路 (`SonicWolService` / D-Bus bridge) | HLD §gNOI サービス | — | 未実装 — `sonic-gnmi` / `sonic-host-services` master に該当 service・proto・D-Bus ハンドラが見当たらない (last_verified 時点) |
 
     凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。
 <!-- /phase-boundary -->
@@ -301,7 +301,7 @@ tcpdump -i Ethernet10 ether proto 0x0842
 !!! tip "読み手向け"
     - **本機能を実運用で使う場合**: 実装は存在するが本 HLD の記述と乖離。最新 master の動作を別途確認した上で適用する
     - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
-    - **代替手段 / 関連 reference**: 本ページの frontmatter `related` が空のため、[Reference 索引](../reference/index.md) から関連テーブル / CLI / YANG を辿る
+    - **代替手段 / 関連 reference**: frontmatter `related` の CLI (`wol` / `config interface` / `config vlan` 等) や YANG (`sonic-vlan` / `sonic-portchannel` 等) から辿るか、[Reference 索引](../reference/index.md) を起点にする
 
 !!! note "本ドキュメントの追跡"
     - monitor: `partially_implemented` / last_verified: `2026-05-09`
