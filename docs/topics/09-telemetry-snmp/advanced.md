@@ -5,16 +5,7 @@ description: 発展トピック — このページは、基本の observability
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/system/dataplane-telemetry-in-sonic.md
-- docs/system/dataplane-telemetry-test-plan.md
-- docs/architecture/sflow-high-level-design.md
-- docs/architecture/sflow-test-plan.md
-- docs/system/sonic-entity-mib-and-entity-sensor-mib-extension.md
-- docs/system/snmp-transceiver-monitoring-testbed-test-plan.md
-- docs/system/process-and-docker-stats-availability-via-telemetry-agent.md
-- docs/system/memory-statistics-feature-in-sonic.md
-- docs/system/reboot-cause-information-via-telemetry-agent.md
+sources: []
 related:
   cli:
   - config snmp

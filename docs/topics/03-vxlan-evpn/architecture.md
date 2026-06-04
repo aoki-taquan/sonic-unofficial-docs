@@ -5,13 +5,7 @@ description: Overlay アーキテクチャ — Overlay を読むときの中心�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/overlay/vxlan-sonic.md
-- docs/routing/evpn-vxlan-hld.md
-- docs/routing/evpn-vxlan-multihoming.md
-- docs/overlay/vnet-local-endpoint-forwarding.md
-- docs/routing/overlay-ecmp-with-bfd-monitoring.md
-- docs/routing/overlay-ecmp-enhancements.md
+sources: []
 related:
   cli:
   - config vnet

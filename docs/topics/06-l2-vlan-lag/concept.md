@@ -5,16 +5,7 @@ description: L2 機能の考え方 — SONiC で L2 を読むときは、最初�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/switching/layer-2-forwarding-enhancements.md
-- docs/switching/sonic-basic-l2-mode-test-plan.md
-- docs/switching/switch-port-modes-and-vlan-cli-enhancement.md
-- docs/reference/config-db/vlan.md
-- docs/reference/config-db/vlan-member.md
-- docs/reference/config-db/vlan-interface.md
-- docs/reference/config-db/port.md
-- docs/reference/config-db/portchannel.md
-- docs/architecture/sonic-sub-port-interface-high-level-design.md
+sources: []
 keywords:
 - L2
 - VLAN

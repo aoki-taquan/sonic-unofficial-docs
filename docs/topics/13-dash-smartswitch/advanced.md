@@ -5,12 +5,7 @@ description: gNOI 連携と他章との境界 — DASH / SmartSwitch は単独�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/management/gnoi-hld-for-system-apis.md
-- docs/management/gnoi-hld-for-os-apis.md
-- docs/system/independent-dpu-upgrade.md
-- docs/system/smart-switch-reboot-high-level-design.md
-- docs/platform/smartswitch-dpu-graceful-shutdown.md
+sources: []
 related:
   cli:
   - config vnet

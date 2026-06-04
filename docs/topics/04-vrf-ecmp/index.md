@@ -5,12 +5,7 @@ area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
-sources:
-- docs/routing/sonic-vrf-support-design-spec-draft.md
-- docs/routing/static-ip-route-configuration.md
-- docs/routing/routing-and-next-hop-table-enhancement.md
-- docs/routing/sonic-fine-grained-ecmp.md
-- docs/routing/sonic-weighted-ecmp.md
+sources: []
 keywords:
 - VRF
 - ECMP

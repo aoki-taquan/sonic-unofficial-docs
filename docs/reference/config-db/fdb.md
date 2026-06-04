@@ -19,7 +19,7 @@ related:
   cli:
     - show mac
     - sonic-clear fdb all
-  yang: []
+  _no_related_yang: true
 ---
 
 # FDB テーブル

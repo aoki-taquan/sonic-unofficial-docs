@@ -5,11 +5,7 @@ description: アーキテクチャ — PINS の data path は「コントロー�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/management/pins-hld.md
-- docs/management/p4rt-application-hld.md
-- docs/internals/p4-orchagent.md
-- docs/management/p4rt-read-cache-hld.md
+sources: []
 related:
   cli:
   - config interface

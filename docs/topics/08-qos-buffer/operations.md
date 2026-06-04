@@ -4,17 +4,7 @@ description: QoS / Buffer の運用 — 「アプリが詰まる」「PFC で止
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/show-buffer.md
-- docs/reference/cli/show-queue.md
-- docs/reference/cli/show-pfc.md
-- docs/reference/cli/show-priority-group.md
-- docs/acl-qos/port-buffer-drop-counters-in-sonic.md
-- docs/acl-qos/watermark-counters-in-sonic.md
-- docs/acl-qos/pfc-historical-statistics.md
-- docs/acl-qos/wred-and-ecn-statistics.md
-- docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md
-- docs/acl-qos/test-plan-for-align-watermark-flow-with-port-configuration.md
+sources: []
 related:
   cli:
   - show queue

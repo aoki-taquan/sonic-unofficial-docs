@@ -5,12 +5,7 @@ description: QoS / Buffer の発展トピック — QoS / Buffer / PFC の基本
 area: topics
 verification: meta
 last_verified: 2026-05-11
-sources:
-- docs/acl-qos/sonic-qos-scheduler-and-shaping.md
-- docs/acl-qos/wred-and-ecn-statistics.md
-- docs/acl-qos/asymmetric-pfc-test-plan.md
-- docs/acl-qos/watermark-counters-in-sonic.md
-- docs/overlay/dscp-remapping-for-tunnel-traffic.md
+sources: []
 related:
   cli:
   - clear

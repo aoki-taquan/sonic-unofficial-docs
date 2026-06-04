@@ -5,11 +5,7 @@ description: 設定 — リファレンス索引章での「設定」は、refer
 area: topics
 verification: meta
 last_verified: 2026-05-12
-sources:
-- meta/templates/SCHEMA.md
-- meta/templates/page.md
-- meta/scripts/gen_chapter_progress.py
-- meta/scripts/aggregate_queue.py
+sources: []
 keywords:
 - Reference
 - 索引

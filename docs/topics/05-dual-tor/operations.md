@@ -5,15 +5,7 @@ description: Dual-ToR の運用 — Dual-ToR の障害対応では、最初に�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/show-muxcable.md
-- docs/reference/cli/config-muxcable.md
-- docs/platform/icmp-hardware-offload.md
-- docs/routing/bfd-hw-offload.md
-- docs/routing/bfd-hw-offload-for-bgp-session.md
-- docs/routing/default-route.md
-- docs/routing/prefix-based-mux-neighbors.md
-- docs/routing/multiple-nexthop-route-hld.md
+sources: []
 related:
   cli:
   - show muxcable

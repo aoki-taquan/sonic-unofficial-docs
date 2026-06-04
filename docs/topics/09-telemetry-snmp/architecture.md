@@ -5,14 +5,7 @@ description: アーキテクチャ — 観測経路は ASIC 側で値を作り�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/internals/sonic-flexcounter-refactor.md
-- docs/internals/sonic-counter-initialization-optimization.md
-- docs/system/critical-resource-monitoring.md
-- docs/system/critical-resource-monitoring-in-sonic.md
-- docs/system/generic-sai-extension-critical-resource-monitoring-crm.md
-- docs/reference/config-db/crm.md
-- docs/reference/config-db/flex-counter-table.md
+sources: []
 related:
   cli:
   - show techsupport

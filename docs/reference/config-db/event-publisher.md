@@ -12,9 +12,7 @@ sources:
     path: src/sonic-eventd/src/eventd.cpp
     ref: master
 related:
-  config_db: []
-  cli: []
-  yang: []
+  _no_related: true
 ---
 
 # イベントパブリッシャー設定 (init_cfg events)

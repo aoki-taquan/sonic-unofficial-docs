@@ -5,18 +5,7 @@ description: 設定 — ACL の最小設定は、table を作り、rule JSON を
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/config-acl.md
-- docs/reference/cli/show-acl.md
-- docs/reference/cli/config-mirror-session.md
-- docs/reference/config-db/acl-table.md
-- docs/reference/config-db/acl-rule.md
-- docs/reference/config-db/policer.md
-- docs/reference/config-db/mirror-session.md
-- docs/reference/config-db/copp-group.md
-- docs/reference/config-db/copp-trap.md
-- docs/reference/yang/sonic-copp.md
-- docs/reference/yang/sonic-mirror-session.md
+sources: []
 related:
   cli:
   - show acl

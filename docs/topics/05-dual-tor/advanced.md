@@ -4,9 +4,7 @@ description: Dual-ToR の発展トピック — Dual-ToR は mux state だけで
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/overlay/dscp-remapping-for-tunnel-traffic.md
-- docs/architecture/dhcpv6-relay-agent.md
+sources: []
 related:
   cli:
   - clear
