@@ -1563,7 +1563,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [概要](../topics/02-bgp/concept.md) (16)
 - [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (9)
 - [内部実装](../topics/02-bgp/internals.md) (8)
-- [概念](../topics/17-srv6-mpls/concept.md) (8)
+- [DEVICE_METADATA テーブル](config-db/device-metadata.md) (7)
 
 ### [fpmsyncd](#term-fpmsyncd)
 
@@ -1748,7 +1748,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [MPLS](#term-mpls)
 
 - [LABEL_ROUTE_TABLE (APPL_DB)](config-db/appl-mpls-route.md) (87)
-- [概念](../topics/17-srv6-mpls/concept.md) (51)
+- [概念](../topics/17-srv6-mpls/concept.md) (50)
 - [MPLS TC → TC map（MPLS パケットの QoS classification）](../routing/mpls-tc-to-tc-map.md) (45)
 - [SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP）](../routing/mpls-for-sonic-high-level-design-document.md) (37)
 - [内部実装](../topics/17-srv6-mpls/internals.md) (25)
@@ -2053,8 +2053,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SRv6](#term-srv6)
 
-- [概念](../topics/17-srv6-mpls/concept.md) (47)
 - [発展トピック](../topics/17-srv6-mpls/advanced.md) (46)
+- [概念](../topics/17-srv6-mpls/concept.md) (45)
 - [Srv6Orch — APP_DB SRV6 テーブル](config-db/srv6-orch.md) (42)
 - [サイトマップ](../_meta/sitemap.md) (34)
 - [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../routing/srv6-vpn-hld.md) (30)
@@ -2213,11 +2213,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (354)
+- [サイトマップ](../_meta/sitemap.md) (355)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (31)
+- [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (28)
 - [概要](../topics/02-bgp/concept.md) (27)
-- [アーキテクチャ](../topics/21-lab-vs-developer/architecture.md) (26)
 
 ### [TAM](#term-tam)
 
