@@ -22,6 +22,7 @@ related:
   cli:
     - queuestat
     - counterpoll
+  _no_related_yang: true
 ---
 
 # COUNTERS_DB QUEUE カウンタ
