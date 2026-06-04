@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="config muxcable サブコマンド — config muxcable は Dual-ToR 構成で使用する Y-Cable (NIC ↔ ToR-A / ToR-B) の状態と低レイヤ機能 (PRBS, loopback, FW, FEC, ANLT 等) を CLI から操作する。">
+        <meta name="description" content="config muxcable は Dual-ToR 構成で使用する Y-Cable (NIC ↔ ToR-A / ToR-B) の状態と低レイヤ機能 (PRBS, loopback, FW, FEC, ANLT 等) を CLI から操作する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="config muxcable サブコマンド - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="config muxcable サブコマンド — config muxcable は Dual-ToR 構成で使用する Y-Cable (NIC ↔ ToR-A / ToR-B) の状態と低レイヤ機能 (PRBS, loopback, FW, FEC, ANLT 等) を CLI から操作する。" />
+<meta property="og:description" content="config muxcable は Dual-ToR 構成で使用する Y-Cable (NIC ↔ ToR-A / ToR-B) の状態と低レイヤ機能 (PRBS, loopback, FW, FEC, ANLT 等) を CLI から操作する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/cli/config-muxcable.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-muxcable/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="config muxcable サブコマンド - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="config muxcable サブコマンド — config muxcable は Dual-ToR 構成で使用する Y-Cable (NIC ↔ ToR-A / ToR-B) の状態と低レイヤ機能 (PRBS, loopback, FW, FEC, ANLT 等) を CLI から操作する。" />
+<meta property="twitter:description" content="config muxcable は Dual-ToR 構成で使用する Y-Cable (NIC ↔ ToR-A / ToR-B) の状態と低レイヤ機能 (PRBS, loopback, FW, FEC, ANLT 等) を CLI から操作する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/cli/config-muxcable.png" />
 </head>
   
@@ -19064,7 +19064,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
   
 
     
@@ -20016,6 +20016,50 @@
     <span class="md-ellipsis">
       
         config muxcable telemetry &lt;enable|disable&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-muxcable-kill_radv-enabledisable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config muxcable kill_radv &lt;enable|disable&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-muxcable-reset-port-target" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config muxcable reset &lt;port&gt; &lt;target&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-muxcable-set_anlt-port-target-01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config muxcable set_anlt &lt;port&gt; &lt;target&gt; &lt;0|1&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-muxcable-set_fec-port-target-012" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config muxcable set_fec &lt;port&gt; &lt;target&gt; &lt;0|1|2&gt;
       
     </span>
   </a>
@@ -36212,6 +36256,50 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#config-muxcable-kill_radv-enabledisable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config muxcable kill_radv &lt;enable|disable&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-muxcable-reset-port-target" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config muxcable reset &lt;port&gt; &lt;target&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-muxcable-set_anlt-port-target-01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config muxcable set_anlt &lt;port&gt; &lt;target&gt; &lt;0|1&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-muxcable-set_fec-port-target-012" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config muxcable set_fec &lt;port&gt; &lt;target&gt; &lt;0|1|2&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -36529,13 +36617,21 @@
 <h3 id="config-muxcable-prbs-enable-port-target-mode_value-lane_mask-prbs_direction"><code>config muxcable prbs enable &lt;port&gt; &lt;target&gt; &lt;mode_value&gt; &lt;lane_mask&gt; [&lt;prbs_direction&gt;]</code><a class="headerlink" href="#config-muxcable-prbs-enable-port-target-mode_value-lane_mask-prbs_direction" title="Permanent link">&para;</a></h3>
 <p><code>&lt;target&gt;</code> は <code>NIC</code> / <code>TORA</code> / <code>TORB</code> / <code>LOCAL</code> の 4 値、<code>&lt;lane_mask&gt;</code> はビットマスク整数、<code>&lt;prbs_direction&gt;</code> は <code>0</code> (BOTH) / <code>1</code> (GEN) / <code>2</code> (CHK)。<code>update_and_get_response_for_xcvr_cmd("prbs_enable", ...)</code> が xcvrd の CMD テーブルにジョブを書き、RSP を待つ非同期 RPC で実行する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <h3 id="config-muxcable-firmware-download-fwfile-port"><code>config muxcable firmware download &lt;fwfile&gt; &lt;port&gt;</code><a class="headerlink" href="#config-muxcable-firmware-download-fwfile-port" title="Permanent link">&para;</a></h3>
-<p>xcvrd へ "firmware_download" コマンドを発行し、応答 (RSP テーブルの <code>status</code> フィールド) を timeout 付きで待つ。<code>port = "all"</code> 指定時は順番に全ポート実行。</p>
+<p>xcvrd へ "firmware_download" コマンドを発行し、応答 (RSP テーブルの <code>status</code> フィールド) を timeout 付きで待つ。<code>port = "all"</code> 指定時は順番に全ポート実行<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</p>
 <h3 id="config-muxcable-firmware-activate-port-fwfile-nonhitless"><code>config muxcable firmware activate &lt;port&gt; [&lt;fwfile&gt;] [--nonhitless]</code><a class="headerlink" href="#config-muxcable-firmware-activate-port-fwfile-nonhitless" title="Permanent link">&para;</a></h3>
-<p>inactive bank の FW を active へ昇格させる。<code>--nonhitless</code> フラグは hitless 切替不可な場合の明示同意で、付与時は xcvrd 側で nonhitless モード経路に切り替わる。</p>
+<p>inactive bank の FW を active へ昇格させる。<code>--nonhitless</code> フラグは hitless 切替不可な場合の明示同意で、付与時は xcvrd 側で nonhitless モード経路に切り替わる<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</p>
 <h3 id="config-muxcable-hwmode-state-activestandby-port"><code>config muxcable hwmode state &lt;active|standby&gt; &lt;port&gt;</code><a class="headerlink" href="#config-muxcable-hwmode-state-activestandby-port" title="Permanent link">&para;</a></h3>
-<p>linkmgrd を経由せず xcvrd 経由で <strong>直接 Y-Cable の HW state を切り替える</strong> デバッグ向けコマンド。通常運用では <code>mode</code> を使う。</p>
+<p>linkmgrd を経由せず xcvrd 経由で <strong>直接 Y-Cable の HW state を切り替える</strong> デバッグ向けコマンド。通常運用では <code>mode</code> を使う<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>。</p>
 <h3 id="config-muxcable-telemetry-enabledisable"><code>config muxcable telemetry &lt;enable|disable&gt;</code><a class="headerlink" href="#config-muxcable-telemetry-enabledisable" title="Permanent link">&para;</a></h3>
-<p><code>XCVRD_LOG</code> 系テーブルの telemetry knob を更新する (<code>update_configdb_ycable_telemetry_data</code>)。</p>
+<p><code>XCVRD_LOG</code> テーブルの <code>disable_telemetry</code> フィールドを書き換える (<code>update_configdb_ycable_telemetry_data</code>)<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup>。</p>
+<h3 id="config-muxcable-kill_radv-enabledisable"><code>config muxcable kill_radv &lt;enable|disable&gt;</code><a class="headerlink" href="#config-muxcable-kill_radv-enabledisable" title="Permanent link">&para;</a></h3>
+<p><code>MUX_LINKMGR</code> テーブルの <code>SERVICE_MGMT</code> エントリに <code>kill_radv</code> フィールド (<code>"True"</code> / <code>"False"</code>) を書く knob。<code>enable</code> で linkmgrd 側が radv 停止時の good-bye パケット送出を抑止する設定になる。<code>MUX_LINKMGR|SERVICE_MGMT</code> を全 front-end namespace に対して <code>mod_entry</code> で更新する実装<sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup>。</p>
+<h3 id="config-muxcable-reset-port-target"><code>config muxcable reset &lt;port&gt; &lt;target&gt;</code><a class="headerlink" href="#config-muxcable-reset-port-target" title="Permanent link">&para;</a></h3>
+<p><code>&lt;target&gt;</code> は <code>NIC</code> / <code>TORA</code> / <code>TORB</code> / <code>LOCAL</code> の 4 値。<code>update_and_get_response_for_xcvr_cmd</code> を <strong>PRBS 用 CMD/RSP テーブル</strong> (<code>XCVRD_CONFIG_PRBS_CMD</code> / <code>XCVRD_CONFIG_PRBS_RSP</code>) に <code>arg="reset"</code> を載せて発行する。実行前に <code>click.confirm</code> で「トラフィックを止めてから続行するか」を確認するため、<code>--yes</code> 相当のフラグはなく必ず対話プロンプトが出る<sup id="fnref:9"><a class="footnote-ref" href="#fn:9">9</a></sup>。</p>
+<h3 id="config-muxcable-set_anlt-port-target-01"><code>config muxcable set_anlt &lt;port&gt; &lt;target&gt; &lt;0|1&gt;</code><a class="headerlink" href="#config-muxcable-set_anlt-port-target-01" title="Permanent link">&para;</a></h3>
+<p>ANLT (Auto Negotiation / Link Training) の有効・無効を切り替える。<code>&lt;mode&gt;</code> は <code>0</code> (disable) / <code>1</code> (enable)。<code>reset</code> と同様に <strong>PRBS 用 CMD/RSP テーブル</strong> を再利用し、<code>arg="anlt"</code> + <code>param_dict={"target":…, "mode":…}</code> で xcvrd へ非同期 RPC を送る。実行前に confirm プロンプトあり<sup id="fnref:10"><a class="footnote-ref" href="#fn:10">10</a></sup>。</p>
+<h3 id="config-muxcable-set_fec-port-target-012"><code>config muxcable set_fec &lt;port&gt; &lt;target&gt; &lt;0|1|2&gt;</code><a class="headerlink" href="#config-muxcable-set_fec-port-target-012" title="Permanent link">&para;</a></h3>
+<p>FEC モードを切り替える。<code>&lt;mode&gt;</code> は <code>0</code> (<code>FEC_MODE_NONE</code>) / <code>1</code> (<code>FEC_MODE_RS</code>) / <code>2</code> (<code>FEC_MODE_FC</code>)。実装上は <code>reset</code> / <code>set_anlt</code> と同じく PRBS 用 CMD/RSP テーブルを共有し、<code>arg="fec"</code> で xcvrd に dispatch される<sup id="fnref:11"><a class="footnote-ref" href="#fn:11">11</a></sup>。</p>
 <h2 id="config_db">関連する CONFIG_DB / 内部テーブル<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36566,6 +36662,7 @@
 <h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>大半の low-level コマンド (PRBS / loopback / FW / FEC / ANLT) は <strong><a href="../../glossary/#term-config_db">CONFIG_DB</a> を直接書き換えるのではなく xcvrd への async RPC</strong> で動く。タイムアウト時のリトライや RSP 不整合の検出は CLI 側のフォールバック実装を読む必要がある。</li>
+<li><code>reset</code> / <code>set_anlt</code> / <code>set_fec</code> は <strong>PRBS 用テーブル</strong> (<code>XCVRD_CONFIG_PRBS_CMD</code> / <code>XCVRD_CONFIG_PRBS_CMD_ARG</code> / <code>XCVRD_CONFIG_PRBS_RSP</code>) を共有しており、ジョブ種別は <code>update_and_get_response_for_xcvr_cmd(..., arg=...)</code> の最終引数 (<code>"reset"</code> / <code>"anlt"</code> / <code>"fec"</code>) で識別される (<code>muxcable.py</code> L1253 / L1296 / L1338)。同時実行すると RSP 取り違えのリスクがあるため逐次実行が無難。</li>
 <li><code>port = "all"</code> 指定をサポートするコマンドと、しないコマンドが混在する。CLI 引数の <code>default=None</code> と <code>MUX_CABLE</code> 全件ループ実装の有無を要確認。</li>
 </ul>
 <!-- ref-triangle:start -->
@@ -36668,6 +36765,30 @@
 </li>
 <li id="fn:3">
 <p><code>prbs.enable</code> (<code>config/muxcable.py</code> L597-L644)。&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>firmware.download</code> (<code>config/muxcable.py</code> L968-L1052)。<code>update_and_get_response_for_xcvr_cmd("download_firmware", ...)</code> を <code>XCVRD_DOWN_FW_CMD</code> / <code>XCVRD_DOWN_FW_RSP</code> 経由で発行。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L968">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L968</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p><code>firmware.activate</code> (<code>config/muxcable.py</code> L1054-L1144)。<code>update_and_get_response_for_xcvr_cmd("activate_firmware", ...)</code> を <code>XCVRD_ACTI_FW_CMD</code> / <code>XCVRD_ACTI_FW_RSP</code> 経由で発行する。<code>--nonhitless</code> 指定時は <code>param_dict</code> の <code>nonhitless</code> フラグが立ち、xcvrd 側で hitless 制約のないパスに切り替わる。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L1054">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L1054</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p><code>hwmode.state</code> (<code>config/muxcable.py</code> L789-L874)。<code>y_cable_helper.update_appdb_hwmode_state_db</code> で <code>MUX_CABLE_COMMAND</code> テーブル経由の直接切替。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L789">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L789</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7">
+<p><code>telemetry</code> (<code>config/muxcable.py</code> L1362-L1397) と <code>update_configdb_ycable_telemetry_data</code> (L1354-L1360)。<code>XCVRD_LOG|&lt;key&gt;</code> の <code>disable_telemetry</code> フィールドを書く。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L1354">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L1354</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:8">
+<p><code>kill_radv</code> (<code>config/muxcable.py</code> L509-L521)。<code>MUX_LINKMGR|SERVICE_MGMT</code> の <code>kill_radv</code> フィールドを <code>"True"</code> / <code>"False"</code> の文字列で更新する。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L509">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L509</a>&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9">
+<p><code>reset</code> (<code>config/muxcable.py</code> L1230-L1267)。PRBS 用 <code>XCVRD_CONFIG_PRBS_CMD</code> / <code>XCVRD_CONFIG_PRBS_RSP</code> を <code>arg="reset"</code> で再利用。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L1230">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L1230</a>&#160;<a class="footnote-backref" href="#fnref:9" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:10">
+<p><code>set_anlt</code> (<code>config/muxcable.py</code> L1270-L1310)。<code>arg="anlt"</code> で PRBS テーブルを共有、<code>param_dict["mode"]</code> に <code>0</code> / <code>1</code> を載せる。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L1270">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L1270</a>&#160;<a class="footnote-backref" href="#fnref:10" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:11">
+<p><code>set_fec</code> (<code>config/muxcable.py</code> L1312-L1352)。<code>arg="fec"</code> で PRBS テーブルを共有、<code>mode</code> は <code>0</code>/<code>1</code>/<code>2</code> (NONE/RS/FC)。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L1312">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L1312</a>&#160;<a class="footnote-backref" href="#fnref:11" title="Jump back to footnote 11 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

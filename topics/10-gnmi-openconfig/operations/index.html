@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collector へ push する dial-out telemetry、subscription の安定性が課題になる。">
+        <meta name="description" content="運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collector へ push する dial-out telemetry、subscription の安定性が課題になる。それぞれの HLD を一望できるようにまとめる。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="運用 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collector へ push する dial-out telemetry、subscription の安定性が課題になる。" />
+<meta property="og:description" content="運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collector へ push する dial-out telemetry、subscription の安定性が課題になる。それぞれの HLD を一望できるようにまとめる。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/10-gnmi-openconfig/operations.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/10-gnmi-openconfig/operations/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="運用 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collector へ push する dial-out telemetry、subscription の安定性が課題になる。" />
+<meta property="twitter:description" content="運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collector へ push する dial-out telemetry、subscription の安定性が課題になる。それぞれの HLD を一望できるようにまとめる。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/10-gnmi-openconfig/operations.png" />
 </head>
   
@@ -19320,7 +19320,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
   
 
     
@@ -36159,13 +36159,42 @@
 <h2 id="master-arbitration">Master arbitration<a class="headerlink" href="#master-arbitration" title="Permanent link">&para;</a></h2>
 <p>複数の NMS / 自動化 client が同じ switch に書き込むと、race condition による不整合が起きる。<a href="../../../reference/glossary/#term-sonic">SONiC</a> は gNMI master arbitration で「現在の writer は 1 つだけ」を強制できる。election ID を交換し、より大きい ID を持つ client が master になる。slave 化された client の Set は失敗で返るため、運用 script 側で master 化失敗時の fallback を書く必要がある。</p>
 <p>詳細は <a href="../../../management/gnmi-master-arbitration-hld/">gNMI master arbitration HLD</a> を参照する。election ID のリセット条件、failover の手順、observability の見方はそのページにまとまっている。</p>
+<!-- evidence:
+source: sonic-net/sonic-gnmi/gnmi_server/server.go#L1308-L1340 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+excerpt: |
+  // ReqFromMasterEnabledMA returns true if the request is sent by the master controller.
+  func ReqFromMasterEnabledMA(req *gnmipb.SetRequest, masterEID *uint128) error {
+      ...
+      ma := e.GetMasterArbitration()
+      ...
+      reqEID = uint128{High: ma.ElectionId.High, Low: ma.ElectionId.Low}
+reasoning: gNMI SetRequest の Extension に MasterArbitration を載せ、election_id (uint128) を比較して master 判定をする実装。role は未実装で codes.Unimplemented を返す。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-gnmi/gnmi_server/server.go#L1308-L1340 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-gnmi/gnmi_server/server.go#L1308-L1340 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>// ReqFromMasterEnabledMA returns true if the request is sent by the master controller.
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>func ReqFromMasterEnabledMA(req *gnmipb.SetRequest, masterEID *uint128) error {
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    ...
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    ma := e.GetMasterArbitration()
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    ...
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    reqEID = uint128{High: ma.ElectionId.High, Low: ma.ElectionId.Low}
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: gNMI SetRequest の Extension に MasterArbitration を載せ、election_id (uint128) を比較して master 判定をする実装。role は未実装で codes.Unimplemented を返す。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <p>非 master からの Set は次のような応答になるため、client 側で <code>PermissionDenied</code> を確実に拾う実装にする。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$ gnmic -a sw01:8080 set --update-path /openconfig-acl:acl/.../config/name --update-value test
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>target &quot;sw01:8080&quot;: rpc error: code = PermissionDenied
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  desc = client is not the current master (current_master_election_id=12, your_election_id=10)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$ gnmic -a sw01:8080 set --update-path /openconfig-acl:acl/.../config/name --update-value test
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>target &quot;sw01:8080&quot;: rpc error: code = PermissionDenied
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  desc = client is not the current master (current_master_election_id=12, your_election_id=10)
 </span></code></pre></div>
 <p>telemetry container 内の <code>/var/log/telemetry.log</code> には次のような行が出るので、誰が master を奪ったかを後追いできる。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>INFO master_arbitration: master changed: old_id=10 new_id=12 client=10.1.2.3:54321
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>INFO master_arbitration: master changed: old_id=10 new_id=12 client=10.1.2.3:54321
 </span></code></pre></div>
 <h2 id="save-on-set">Save-on-set による永続化<a class="headerlink" href="#save-on-set" title="Permanent link">&para;</a></h2>
 <p>gNMI Set は <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> を更新するが、CONFIG_DB は memory 上の <a href="../../../reference/glossary/#term-redis">Redis</a> のため、再起動を跨ぐと失われる可能性がある。SONiC では <code>config save</code> 相当の処理を gNMI Set のたびに自動で走らせる save-on-set モードを持つ。</p>
@@ -36174,6 +36203,48 @@
 <li>大量の Set を高頻度で打つ用途では、write amplification によりディスクへの負担が増えるため、明示的な save を使うパターンと使い分ける。</li>
 </ul>
 <p>挙動の詳細、エラー処理、<code>config save</code> との衝突回避は <a href="../../../management/save-on-set-hld/">Save-on-set HLD</a> を参照する。</p>
+<!-- evidence:
+source: sonic-net/sonic-gnmi/telemetry/telemetry.go#L183-L190 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+excerpt: |
+  WithSaveOnSet: fs.Bool("with-save-on-set", false, "Enables save-on-set."),
+reasoning: telemetry プロセスの起動フラグ `--with-save-on-set` で save-on-set が有効化される。default は false。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-gnmi/telemetry/telemetry.go#L183-L190 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-gnmi/telemetry/telemetry.go#L183-L190 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>WithSaveOnSet: fs.Bool(&quot;with-save-on-set&quot;, false, &quot;Enables save-on-set.&quot;),
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: telemetry プロセスの起動フラグ <code>--with-save-on-set</code> で save-on-set が有効化される。default は false。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-gnmi/gnmi_server/server.go#L1050-L1068 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+excerpt: |
+  // saveOnSetEnabled saves configuration to a file
+  func SaveOnSetEnabled() error { ... }
+  func saveOnSetDisabled() error { return nil }
+reasoning: SaveOnSetEnabled / saveOnSetDisabled の 2 関数を Server.SaveStartupConfig に差し込む形で実装されている。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-gnmi/gnmi_server/server.go#L1050-L1068 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-gnmi/gnmi_server/server.go#L1050-L1068 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>// saveOnSetEnabled saves configuration to a file
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>func SaveOnSetEnabled() error { ... }
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>func saveOnSetDisabled() error { return nil }
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: SaveOnSetEnabled / saveOnSetDisabled の 2 関数を Server.SaveStartupConfig に差し込む形で実装されている。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <p>設定の有無は <code>redis-cli -n 4 hgetall "DEVICE_METADATA|localhost"</code> または telemetry の起動オプションで確認する。<code>config_db.json</code> の更新タイムスタンプを <code>stat /etc/sonic/config_db.json</code> で監視すると、Set 後に永続化が走ったかを後追いできる。</p>
 <h2 id="telemetry-dial-in-dial-out">Telemetry: dial-in と dial-out<a class="headerlink" href="#telemetry-dial-in-dial-out" title="Permanent link">&para;</a></h2>
 <p>SONiC telemetry は、collector 側が gNMI Subscribe で switch から pull する <strong>dial-in</strong> が標準だが、firewall / <a href="../../../reference/glossary/#term-nat">NAT</a> 越しなどで collector へ switch から push する <strong>dial-out</strong> モードも持つ。</p>
@@ -36205,27 +36276,27 @@
 </table>
 <p>dial-out の設計は <a href="../../../system/sonic-telemetry-in-dial-out-mode/">Telemetry dial-out mode</a> と続編の <a href="../../../system/sonic-telemetry-in-dial-out-mode-2/">Telemetry dial-out mode 2</a> を参照する。再接続、buffer、batch、TLS 周りの注意点が両方に分散しているため、両方を順に読む。</p>
 <p>dial-in での確認:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>sw01:8080<span class="w"> </span>--skip-verify<span class="w"> </span>subscribe<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>--path<span class="w"> </span><span class="s1">&#39;/openconfig-interfaces:interfaces/interface[name=Ethernet0]/state/counters&#39;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--mode<span class="w"> </span>stream<span class="w"> </span>--stream-mode<span class="w"> </span>sample<span class="w"> </span>--sample-interval<span class="w"> </span>10s
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>sw01:8080<span class="w"> </span>--skip-verify<span class="w"> </span>subscribe<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>--path<span class="w"> </span><span class="s1">&#39;/openconfig-interfaces:interfaces/interface[name=Ethernet0]/state/counters&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span>--mode<span class="w"> </span>stream<span class="w"> </span>--stream-mode<span class="w"> </span>sample<span class="w"> </span>--sample-interval<span class="w"> </span>10s
 </span></code></pre></div>
 <p>応答 JSON の主要キーは <code>in-octets</code>、<code>out-octets</code>、<code>in-errors</code>、<code>out-errors</code> などで、内部的に <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> から拾われる。<code>counterpoll show</code> で PORT_STAT が enable でないとカウンタが進まないため、Subscribe が空応答ばかりになる場合はまず polling を疑う。</p>
 <p>dial-out 側は <code>/etc/sonic/telemetry/dialout.cfg</code> 相当の設定を CONFIG_DB の <code>TELEMETRY_CLIENT</code> に書く。状態は <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> の <code>TELEMETRY_CLIENT_STATE</code> を確認する。</p>
 <h2 id="_2">クライアントツールでの確認<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>実機で gNMI を試すときは <code>gnmic</code> か <code>gnmi_cli</code> を使う。telemetry container 自身に同梱されているのは <code>gnmi_get</code> / <code>gnmi_set</code> / <code>gnmi_cli</code> で、外部からは <code>gnmic</code> が読み書きしやすい。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Capability (server がどの YANG model に対応しているか)</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>sw01:8080<span class="w"> </span>--skip-verify<span class="w"> </span>capabilities<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># OpenConfig で port の admin-status を読む</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>sw01:8080<span class="w"> </span>--skip-verify<span class="w"> </span>get<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span>--path<span class="w"> </span><span class="s1">&#39;/openconfig-interfaces:interfaces/interface[name=Ethernet0]/state/admin-status&#39;</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># 同じ port を up にする</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>sw01:8080<span class="w"> </span>--skip-verify<span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span>--update<span class="w"> </span><span class="s1">&#39;/openconfig-interfaces:interfaces/interface[name=Ethernet0]/config/enabled:::json:::true&#39;</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># 装置内から (telemetry container)</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>telemetry<span class="w"> </span>gnmi_get<span class="w"> </span>-xpath<span class="w"> </span><span class="s1">&#39;/sonic-port:sonic-port/PORT/PORT_LIST&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Capability (server がどの YANG model に対応しているか)</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>sw01:8080<span class="w"> </span>--skip-verify<span class="w"> </span>capabilities<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># OpenConfig で port の admin-status を読む</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>sw01:8080<span class="w"> </span>--skip-verify<span class="w"> </span>get<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span>--path<span class="w"> </span><span class="s1">&#39;/openconfig-interfaces:interfaces/interface[name=Ethernet0]/state/admin-status&#39;</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="c1"># 同じ port を up にする</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>sw01:8080<span class="w"> </span>--skip-verify<span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">  </span>--update<span class="w"> </span><span class="s1">&#39;/openconfig-interfaces:interfaces/interface[name=Ethernet0]/config/enabled:::json:::true&#39;</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="c1"># 装置内から (telemetry container)</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>telemetry<span class="w"> </span>gnmi_get<span class="w"> </span>-xpath<span class="w"> </span><span class="s1">&#39;/sonic-port:sonic-port/PORT/PORT_LIST&#39;</span>
 </span></code></pre></div>
 <p>CONFIG_DB を直接弄りたいときは SONiC 拡張の <code>sonic-*</code> model (例: <code>/sonic-port:sonic-port/PORT/...</code>) を使い、ベンダ間互換性を取りたい場合は OpenConfig (<code>/openconfig-interfaces:interfaces/...</code>) を使う、というのが基本方針。</p>
 <h2 id="subscription">Subscription の使い方と注意<a class="headerlink" href="#subscription" title="Permanent link">&para;</a></h2>
@@ -36238,18 +36309,18 @@
 </ul>
 <h2 id="tls">TLS / 認証の確認<a class="headerlink" href="#tls" title="Permanent link">&para;</a></h2>
 <p>telemetry container は <code>/etc/sonic/telemetry/</code> 配下の cert / key で TLS する。手元から疎通確認するには:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># server cert を確認</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>openssl<span class="w"> </span>s_client<span class="w"> </span>-connect<span class="w"> </span>sw01:8080<span class="w"> </span>-showcerts<span class="w"> </span>&lt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>openssl<span class="w"> </span>x509<span class="w"> </span>-noout<span class="w"> </span>-subject<span class="w"> </span>-issuer<span class="w"> </span>-dates
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># mTLS の場合 client cert を渡す</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>sw01:8080<span class="w"> </span>--tls-cert<span class="w"> </span>client.crt<span class="w"> </span>--tls-key<span class="w"> </span>client.key<span class="w"> </span>--tls-ca<span class="w"> </span>ca.crt<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span>capabilities
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># server cert を確認</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>openssl<span class="w"> </span>s_client<span class="w"> </span>-connect<span class="w"> </span>sw01:8080<span class="w"> </span>-showcerts<span class="w"> </span>&lt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>openssl<span class="w"> </span>x509<span class="w"> </span>-noout<span class="w"> </span>-subject<span class="w"> </span>-issuer<span class="w"> </span>-dates
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># mTLS の場合 client cert を渡す</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>sw01:8080<span class="w"> </span>--tls-cert<span class="w"> </span>client.crt<span class="w"> </span>--tls-key<span class="w"> </span>client.key<span class="w"> </span>--tls-ca<span class="w"> </span>ca.crt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span>capabilities
 </span></code></pre></div>
 <p><code>certificate verify failed</code> は CA mismatch、<code>handshake failure</code> は cipher / TLS version、<code>connection refused</code> は telemetry container が起動していないか listen address が違うケース。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$ docker exec telemetry netstat -tlnp 2&gt;/dev/null | grep -E &#39;8080|50051&#39;
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>tcp 0 0 0.0.0.0:8080  LISTEN  -
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>tcp 0 0 0.0.0.0:50051 LISTEN  -
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>admin@sonic:~$ docker exec telemetry netstat -tlnp 2&gt;/dev/null | grep -E &#39;8080|50051&#39;
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>tcp 0 0 0.0.0.0:8080  LISTEN  -
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>tcp 0 0 0.0.0.0:50051 LISTEN  -
 </span></code></pre></div>
 <h2 id="_3">障害切り分け順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>gNMI の問題は、layer ごとに切り分ける。</p>
@@ -36261,10 +36332,10 @@
 <li><strong>永続化</strong>: 再起動後に消える場合は save-on-set が有効か、または明示的に <code>config save</code> を打ったかを確認する。</li>
 </ol>
 <h3 id="_4">典型ログ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>INFO telemetry: Started gNMI server on 0.0.0.0:8080
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>INFO translib: Set request for path /openconfig-interfaces:interfaces/interface[name=Ethernet0]/config/description
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>ERROR translib: validation failed: dependent key PORT|Ethernet0 not found
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>WARN telemetry: subscription cancelled by client (sid=42 path=/openconfig-platform:components)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>INFO telemetry: Started gNMI server on 0.0.0.0:8080
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>INFO translib: Set request for path /openconfig-interfaces:interfaces/interface[name=Ethernet0]/config/description
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>ERROR translib: validation failed: dependent key PORT|Ethernet0 not found
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>WARN telemetry: subscription cancelled by client (sid=42 path=/openconfig-platform:components)
 </span></code></pre></div>
 <p><code>validation failed: dependent key ... not found</code> は典型的な「親が無いところに子を作ろうとした」ケース。VLAN を作る前に member を入れた、<a href="../../../reference/glossary/#term-portchannel">PortChannel</a> を作る前に member を入れた、などが該当する。</p>
 <h2 id="_5">対応コマンド早見表<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>

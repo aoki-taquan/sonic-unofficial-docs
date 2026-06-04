@@ -3470,6 +3470,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -19347,7 +19358,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
   
 
     
@@ -36183,6 +36194,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36211,10 +36233,69 @@
 <h1 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>このページは、基本の observability 経路（CLI / counter / <a href="../../../reference/glossary/#term-snmp">SNMP</a> / <a href="../../../reference/glossary/#term-gnmi">gNMI</a> / techsupport）から外れる、専門観測機能と最近の telemetry 拡張をまとめます。設計判断に直結する局面以外は深追い不要です。</p>
 <h2 id="dataplane-telemetry-dtel">Dataplane Telemetry (DTel)<a class="headerlink" href="#dataplane-telemetry-dtel" title="Permanent link">&para;</a></h2>
-<p>DTel は In-band Network Telemetry を <a href="../../../reference/glossary/#term-sonic">SONiC</a> スイッチがエクスポートする機能です。<a href="../../../reference/glossary/#term-asic">ASIC</a> が flow ごとにスイッチ内部情報（latency、queue 状態、drop reason 等）を packet header に書き込み、<a href="../../../reference/glossary/#term-int">INT</a> report として外部 collector に送出します。SONiC は collector / report session / watchlist を <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> と APP_DB に持ち、<code>dtelorch</code> が <a href="../../../reference/glossary/#term-sai">SAI</a> DTEL object に変換します。</p>
+<p>DTel は In-band Network Telemetry を <a href="../../../reference/glossary/#term-sonic">SONiC</a> スイッチがエクスポートする機能です。<a href="../../../reference/glossary/#term-asic">ASIC</a> が flow ごとにスイッチ内部情報（latency、queue 状態、drop reason 等）を packet header に書き込み、<a href="../../../reference/glossary/#term-int">INT</a> report として外部 collector に送出します。SONiC は collector / report session / watchlist を <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> と APP_DB に持ち、<code>DTelOrch</code> が <a href="../../../reference/glossary/#term-sai">SAI</a> DTEL object に変換します<sup id="fnref:dtelorch"><a class="footnote-ref" href="#fn:dtelorch">1</a></sup>。</p>
+<!-- evidence:
+source: sonic-swss/orchagent/dtelorch.h#L1-L40
+excerpt: |
+  // class DTelOrch — orchestrator for DTel CONFIG_DB tables → SAI DTEL objects
+reasoning: DTel 関連 CONFIG_DB の処理は DTelOrch クラス（dtelorch.h / dtelorch.cpp）が担当する。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-swss/orchagent/dtelorch.h#L1-L40</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-swss/orchagent/dtelorch.h#L1-L40</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>// class DTelOrch — orchestrator for DTel CONFIG_DB tables → SAI DTEL objects
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: DTel 関連 CONFIG_DB の処理は DTelOrch クラス（dtelorch.h / dtelorch.cpp）が担当する。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <p>DTel は ASIC capability への依存が大きく、すべての platform で同じ event type / report mode が出るわけではありません。test plan ページは、SAI DTEL object と SONiC table の対応、report format の検証観点を整理しています。</p>
 <h2 id="sflow">sFlow<a class="headerlink" href="#sflow" title="Permanent link">&para;</a></h2>
-<p>sFlow は古典的なサンプリング + counter polling 型 telemetry です。hsflowd が <code>psample</code> 経由で kernel から packet sample を取り、<code>SFLOW_COLLECTOR</code> 宛に sFlow datagram を送ります。Counter polling も hsflowd が担当し、<code>SFLOW|global</code> テーブルの <code>polling_interval</code> フィールドで interval を制御します。</p>
+<p>sFlow は古典的なサンプリング + counter polling 型 telemetry です。hsflowd が <code>psample</code> 経由で kernel から packet sample を取り、<code>SFLOW_COLLECTOR</code> 宛に sFlow datagram を送ります。Counter polling も hsflowd が担当し、<code>SFLOW|global</code> テーブルの <code>polling_interval</code> フィールドで interval を制御します<sup id="fnref:sflow-polling"><a class="footnote-ref" href="#fn:sflow-polling">2</a></sup>。</p>
+<!-- evidence:
+source: sonic-utilities/show/sflow.py#L70-L85
+excerpt: |
+  if (sflow_info and 'polling_interval' in sflow_info['global']):
+      click.echo("{}".format(sflow_info['global']['polling_interval']))
+reasoning: CONFIG_DB の "SFLOW|global" hash 配下の polling_interval フィールドが show sflow で表示される。docs の主張と一致。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-utilities/show/sflow.py#L70-L85</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-utilities/show/sflow.py#L70-L85</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>if (sflow_info and &#39;polling_interval&#39; in sflow_info[&#39;global&#39;]):
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    click.echo(&quot;{}&quot;.format(sflow_info[&#39;global&#39;][&#39;polling_interval&#39;]))
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: CONFIG_DB の "SFLOW|global" hash 配下の polling_interval フィールドが show sflow で表示される。docs の主張と一致。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-buildimage/dockers/docker-sflow/base_image_files/psample#L1-L10
+excerpt: |
+  docker exec -$DOCKER_EXEC_FLAGS sflow psample "$@"
+reasoning: sflow docker に psample CLI wrapper が同梱され、kernel psample group から sample を取り出す経路であることを示す。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-buildimage/dockers/docker-sflow/base_image_files/psample#L1-L10</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-buildimage/dockers/docker-sflow/base_image_files/psample#L1-L10</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker exec -$DOCKER_EXEC_FLAGS sflow psample &quot;$@&quot;
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: sflow docker に psample CLI wrapper が同梱され、kernel psample group から sample を取り出す経路であることを示す。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <p>sFlow と DTel の住み分けは、sFlow が「サンプリングされた粗い flow telemetry」、DTel が「flow ごとの精密 in-band telemetry」と覚えると整理できます。test plan ページは collector / agent / sampling rate の確認観点をまとめます。</p>
 <h2 id="entity-mib-sensor-mib">Entity MIB と Sensor MIB<a class="headerlink" href="#entity-mib-sensor-mib" title="Permanent link">&para;</a></h2>
 <p>SONiC SNMP は標準で IF-MIB / IF-X 系を提供しますが、Entity MIB / Entity Sensor MIB 拡張により、シャーシ / module / sensor / fan / PSU の階層と sensor 値（temp、voltage、current）を SNMP で読めます。<code>entPhysicalTable</code> と <code>entitySensor</code> の OID 群が <a href="../../../reference/glossary/#term-redis">Redis</a> の platform daemon 出力（<code>STATE_DB</code> の <code>TEMPERATURE_INFO</code> / <code>FAN_INFO</code> / <code>PSU_INFO</code>）から組み立てられます。</p>
@@ -36290,7 +36371,7 @@
 </ul>
 <h2 id="_7">トラブルシュート観点<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>gNMI subscribe が応答しないときは、<code>docker exec telemetry telemetryctl status</code> で agent up、<code>/var/log/syslog</code> で TLS / cert エラーを確認する。<code>TELEMETRY|certs</code> の <code>ca_crt</code> パス、<code>gnmi.server.crt</code>/<code>key</code> の存在も併せて点検。</li>
+<li>gNMI subscribe が応答しないときは、<code>docker exec telemetry supervisorctl status telemetry</code> で agent up を確認、<code>/var/log/syslog</code> で TLS / cert エラーを確認する。<code>TELEMETRY|certs</code> (または新 docker では <code>GNMI|certs</code>) の <code>ca_crt</code> / <code>server_crt</code> / <code>server_key</code> パスの存在も併せて点検する<sup id="fnref:certs"><a class="footnote-ref" href="#fn:certs">3</a></sup>。</li>
 <li>SNMP walk が timeout する場合、<code>snmpd</code> の view <a href="../../../reference/glossary/#term-acl">ACL</a> 設定 (<code>/etc/sonic/snmp.yml</code>)、<code>SNMP_AGENT_ADDRESS_CONFIG</code> のリスン IP、<code>snmpd</code> プロセス内の MIB initialization 遅延 (起動後 30 秒程度) を疑う。</li>
 <li>sFlow sample が collector に届かないときは <code>show sflow interface</code> で sample rate、<code>config sflow polling-interval</code> の有効性、<code>SFLOW_COLLECTOR</code> の宛先到達性 (UDP 6343) を点検。</li>
 </ul>
@@ -36300,7 +36381,23 @@
 <li>SNMP scale 検証は <code>snmpwalk -t 30 -r 3</code> で entity MIB / transceiver MIB を large port count (256 ports〜) で取得する。target は 60 秒以内の完走。</li>
 <li>DTel / sFlow の sampling 精度検証は、<code>pktgen</code> で既知レートのトラフィックを流し、collector 側で sample 数 × sampling rate ≒ 実トラフィックになることを確認する。</li>
 </ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: fad4d220bc71 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:dtelorch">
+<p>DTel CONFIG_DB → SAI 変換は <code>sonic-net/sonic-swss</code> の <code>orchagent/dtelorch.{h,cpp}</code> に <code>DTelOrch</code> クラスとして実装されている。&#160;<a class="footnote-backref" href="#fnref:dtelorch" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:sflow-polling">
+<p><code>SFLOW|global</code> の <code>polling_interval</code> フィールドは <code>sonic-net/sonic-utilities</code> の <code>show/sflow.py</code> で参照され、<code>config sflow polling-interval &lt;value&gt;</code> で設定する (<code>doc/Command-Reference.md</code> §sflow)。&#160;<a class="footnote-backref" href="#fnref:sflow-polling" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:certs">
+<p>旧 <code>docker-sonic-telemetry</code> は <code>TELEMETRY|certs</code> を、新 <code>docker-sonic-gnmi</code> は <code>GNMI|certs</code> を参照する。フィールド名はいずれも <code>ca_crt</code> / <code>server_crt</code> / <code>server_key</code>（<code>telemetry.sh</code> / <code>gnmi-native.sh</code> 内 jq 抽出より）。&#160;<a class="footnote-backref" href="#fnref:certs" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

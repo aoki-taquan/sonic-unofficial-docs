@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="評価者向けガイド — ラボで SONiC を試用する読者を想定しています。仮想環境または評価機で起動し、管理 IP、ポート、VLAN、BGP などの基本設定を入れ、状態確認まで一連の流れを辿るための導線です。">
+        <meta name="description" content="ラボで SONiC を試用する読者向けに、仮想環境または評価機で起動し、管理 IP、ポート、VLAN、BGP などの基本設定を入れて状態確認まで辿る導線と、最小 bring-up 例を提供する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="評価者向けガイド - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="評価者向けガイド — ラボで SONiC を試用する読者を想定しています。仮想環境または評価機で起動し、管理 IP、ポート、VLAN、BGP などの基本設定を入れ、状態確認まで一連の流れを辿るための導線です。" />
+<meta property="og:description" content="ラボで SONiC を試用する読者向けに、仮想環境または評価機で起動し、管理 IP、ポート、VLAN、BGP などの基本設定を入れて状態確認まで辿る導線と、最小 bring-up 例を提供する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/guides/evaluator.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/guides/evaluator/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="評価者向けガイド - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="評価者向けガイド — ラボで SONiC を試用する読者を想定しています。仮想環境または評価機で起動し、管理 IP、ポート、VLAN、BGP などの基本設定を入れ、状態確認まで一連の流れを辿るための導線です。" />
+<meta property="twitter:description" content="ラボで SONiC を試用する読者向けに、仮想環境または評価機で起動し、管理 IP、ポート、VLAN、BGP などの基本設定を入れて状態確認まで辿る導線と、最小 bring-up 例を提供する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/guides/evaluator.png" />
 </head>
   
@@ -861,10 +861,32 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#bring-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        最小 bring-up 例
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        不足コンテンツ注記
+        評価シナリオ別の分岐
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知のコンテンツ不足
       
     </span>
   </a>
@@ -19163,7 +19185,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
   
 
     
@@ -35857,10 +35879,32 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#bring-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        最小 bring-up 例
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        不足コンテンツ注記
+        評価シナリオ別の分岐
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知のコンテンツ不足
       
     </span>
   </a>
@@ -35927,11 +35971,31 @@
 <li><a href="../../reference/config-db/vlan/">VLAN テーブル</a></li>
 <li><a href="../../reference/config-db/bgp-neighbor/">BGP_NEIGHBOR テーブル</a></li>
 </ol>
-<h2 id="_3">不足コンテンツ注記<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="bring-up">最小 bring-up 例<a class="headerlink" href="#bring-up" title="Permanent link">&para;</a></h2>
+<p>評価者がそのまま打てる最小構成として、image インストールから 1 物理ポート up・VLAN 作成・BGP neighbor 投入までの 4 ステップを示す。詳細パラメータは上記 reading path のリファレンスを参照すること。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 1. SONiC image をインストールして再起動</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>sonic-installer<span class="w"> </span>install<span class="w"> </span>sonic-broadcom.bin
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># 2. 物理ポートを admin-up にする</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>startup<span class="w"> </span>Ethernet0
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># 3. VLAN 100 を作成しメンバーポートを追加</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>add<span class="w"> </span><span class="m">100</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span>Ethernet0
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># 4. BGP neighbor を投入</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>neighbor<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.0.1<span class="w"> </span><span class="m">65001</span>
+</span></code></pre></div>
+<p><code>config interface startup</code> の引数は単一インタフェース名で、内部で <code>PORT</code> テーブルの <code>admin_status</code> を <code>up</code> に更新する<!-- evidence: sonic-utilities config/main.py:5184-5210 -->。<code>config vlan add</code> は <code>vlan.py</code> で実装されており、<code>VLAN</code> テーブルに <code>Vlan&lt;vid&gt;</code> エントリを作成する<!-- evidence: sonic-utilities config/vlan.py:95 -->。</p>
+<h2 id="_3">評価シナリオ別の分岐<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>「ラボ評価 30 分チュートリアル」がありません。起動、初期ログイン、管理 IP、NTP / DNS、ポート up、VLAN、BGP neighbor、確認コマンドまでの直線的なページが必要です。</li>
-<li>既存ページはリファレンスとして強い一方で、評価者がそのまま打てる最小構成例が不足しています。</li>
-<li>GNS3 / <a href="../../reference/glossary/#term-vs">VS</a> bring-up と実機評価の分岐が明示されていません。仮想評価、単体スイッチ評価、ToR 評価で reading path を少し変える案が必要です。</li>
+<li>仮想評価 (<a href="../../reference/glossary/#term-vs">SONiC-VS</a> / <a href="../../architecture/sonic-on-gns3-vm/">GNS3</a>): 上記ステップ 1 は不要で、<code>steps-to-bring-up-sonic-vs</code> の libvirt 起動から開始する。</li>
+<li>単体スイッチ評価: 上記 4 ステップが基本フロー。<code>sonic-installer install</code> 後に管理 IP / NTP / DNS を入れる。</li>
+<li>ToR 評価: VLAN / portchannel / BGP の組み合わせが必要で、reading path の portchannel と config_db の各テーブルを併読する。</li>
+</ul>
+<h2 id="_4">既知のコンテンツ不足<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li>「ラボ評価 30 分チュートリアル」専用ページは未整備で、本ページの bring-up 例はあくまで最小サブセットである。起動、初期ログイン、管理 IP、NTP / DNS、ポート up、VLAN、BGP neighbor、確認コマンドまでを直線で辿るチュートリアルは今後の整備対象。</li>
 </ul>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

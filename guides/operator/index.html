@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="運用者向けガイド — 既に SONiC を運用している読者を想定しています。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show techsupport やログ・ヘルスチェックの使い方を素早く引くための導線です。">
+        <meta name="description" content="運用者向けガイド — 既に SONiC を運用している読者を想定した入口。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show techsupport やログ・ヘルスチェックの使い方に加え、症状別の逆引き表をインラインで提供します。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="運用者向けガイド - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="運用者向けガイド — 既に SONiC を運用している読者を想定しています。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show techsupport やログ・ヘルスチェックの使い方を素早く引くための導線です。" />
+<meta property="og:description" content="運用者向けガイド — 既に SONiC を運用している読者を想定した入口。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show techsupport やログ・ヘルスチェックの使い方に加え、症状別の逆引き表をインラインで提供します。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/guides/operator.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/guides/operator/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="運用者向けガイド - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="運用者向けガイド — 既に SONiC を運用している読者を想定しています。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show techsupport やログ・ヘルスチェックの使い方を素早く引くための導線です。" />
+<meta property="twitter:description" content="運用者向けガイド — 既に SONiC を運用している読者を想定した入口。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show techsupport やログ・ヘルスチェックの使い方に加え、症状別の逆引き表をインラインで提供します。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/guides/operator.png" />
 </head>
   
@@ -794,6 +794,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        症状別の逆引き表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reading-path" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -805,10 +816,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#rollback" class="md-nav__link">
     <span class="md-ellipsis">
       
-        不足コンテンツ注記
+        設定変更時の確認 / 保存 / rollback
       
     </span>
   </a>
@@ -19163,7 +19174,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
   
 
     
@@ -35846,6 +35857,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        症状別の逆引き表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reading-path" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35857,10 +35879,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#rollback" class="md-nav__link">
     <span class="md-ellipsis">
       
-        不足コンテンツ注記
+        設定変更時の確認 / 保存 / rollback
       
     </span>
   </a>
@@ -35906,7 +35928,71 @@
 <h1 id="_1">運用者向けガイド<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <h2 id="_2">想定シナリオ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>既に <a href="../../reference/glossary/#term-sonic">SONiC</a> を運用している読者を想定しています。日々の確認、設定変更、障害調査、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の意味確認、show techsupport やログ・ヘルスチェックの使い方を素早く引くための導線です。</p>
+<h2 id="_3">症状別の逆引き表<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>現場で頻出する症状から、まず叩く CLI、確認すべき CONFIG_DB テーブル、関連 <a href="../../reference/glossary/#term-hld">HLD</a> を引くための入口を以下に並べます。各エントリは「最初の 1 コマンド + 一次情報の場所」までを目安にしており、深掘りはリンク先の各リファレンスで行ってください。</p>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>まず叩く CLI</th>
+<th>関連 CONFIG_DB</th>
+<th>関連リファレンス / HLD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../../reference/glossary/#term-bgp">BGP</a> セッションが上がらない</td>
+<td><code>show ip bgp summary</code> / <code>show ip bgp neighbors &lt;peer&gt;</code></td>
+<td><a href="../../reference/config-db/bgp-neighbor/"><code>BGP_NEIGHBOR</code></a> / <a href="../../reference/config-db/bgp-peer-range/"><code>BGP_PEER_RANGE</code></a></td>
+<td><a href="../../reference/cli/show-bgp/">show bgp</a> / <a href="../../reference/cli/config-bgp/">config bgp</a></td>
+</tr>
+<tr>
+<td>物理ポートが down のまま</td>
+<td><code>show interfaces status</code> / <code>show interfaces counters</code></td>
+<td><a href="../../reference/config-db/port/"><code>PORT</code></a> / <a href="../../reference/config-db/interface/"><code>INTERFACE</code></a></td>
+<td><a href="../../reference/cli/show-interfaces/">show interfaces</a> / <a href="../../reference/cli/config-interface/">config interface</a></td>
+</tr>
+<tr>
+<td><a href="../../reference/glossary/#term-vlan">VLAN</a> 内で疎通しない</td>
+<td><code>show vlan brief</code> / <code>show mac</code></td>
+<td><a href="../../reference/config-db/vlan/"><code>VLAN</code></a> / <a href="../../reference/config-db/vlan-member/"><code>VLAN_MEMBER</code></a> / <a href="../../reference/config-db/vlan-interface/"><code>VLAN_INTERFACE</code></a></td>
+<td><a href="../../reference/cli/config-vlan/">config vlan</a></td>
+</tr>
+<tr>
+<td>ルーティングが期待どおりでない</td>
+<td><code>show ip route</code> / <code>show ip route &lt;prefix&gt;</code></td>
+<td><a href="../../reference/config-db/interface/"><code>INTERFACE</code></a> / <a href="../../reference/config-db/"><code>STATIC_ROUTE</code></a></td>
+<td><a href="../../reference/cli/show-ip/">show ip</a></td>
+</tr>
+<tr>
+<td>ハードウェア状態を見たい</td>
+<td><code>show platform summary</code> / <code>show platform syseeprom</code></td>
+<td>（platform 依存）</td>
+<td><a href="../../reference/cli/show-platform/">show platform</a></td>
+</tr>
+<tr>
+<td>CPU / メモリ / ディスク等の health</td>
+<td><code>show system-health summary</code> / <code>show system-health detail</code></td>
+<td><a href="../../reference/config-db/"><code>SYSTEM_HEALTH_INFO</code></a></td>
+<td><a href="../../reference/cli/show-system-health/">show system-health</a> / <a href="../../system/sonic-system-health-monitor-high-level-design/">System Health Monitor 設計</a></td>
+</tr>
+<tr>
+<td>サポート依頼用の dump 取得</td>
+<td><code>show techsupport</code></td>
+<td><a href="../../reference/config-db/auto-techsupport/"><code>AUTO_TECHSUPPORT</code></a> / <a href="../../reference/config-db/auto-techsupport-feature/"><code>AUTO_TECHSUPPORT_FEATURE</code></a></td>
+<td><a href="../../reference/cli/show-techsupport/">show techsupport</a> / <a href="../../system/show-techsupport/">show techsupport 設計</a></td>
+</tr>
+<tr>
+<td><a href="../../reference/glossary/#term-frr">FRR</a> / BGP ログを直接読みたい</td>
+<td><code>show logging</code> / <code>docker exec -it bgp vtysh -c 'show bgp summary'</code></td>
+<td>—</td>
+<td><a href="../../reference/cli/show-bgp/">show bgp</a></td>
+</tr>
+</tbody>
+</table>
+<p>BGP セッション関連の状態は CONFIG_DB の <code>BGP_NEIGHBOR</code> テーブルに格納され、<code>bgpcfgd</code> (<code>BGPPeerMgrBase</code>) が <code>swsscommon.CFG_BGP_NEIGHBOR_TABLE_NAME</code> を購読して FRR (<code>vtysh</code>) 設定へ反映します<!-- evidence: sonic-net/sonic-buildimage src/sonic-bgpcfgd/bgpcfgd/main.py L87 -->。<code>show ip bgp summary</code> の実装本体は <code>sonic-utilities</code> の <code>show/bgp_frr_v4.py</code> (<code>summary</code> サブコマンド) にあり、内部で FRR の summary を全 BGP インスタンスから集約して表示します<!-- evidence: sonic-net/sonic-utilities show/bgp_frr_v4.py L36-L44 -->。CONFIG_DB に neighbor が居るのに <code>show ip bgp summary</code> に出てこない場合、<code>bgpcfgd</code> が動作していない（<code>systemctl status bgp</code>）か、FRR コンテナが落ちている疑いがあります。</p>
 <h2 id="reading-path">推奨 reading path<a class="headerlink" href="#reading-path" title="Permanent link">&para;</a></h2>
+<p>逆引き表で当たりが付いた後、面で押さえたい場合の読み順です。</p>
 <ol>
 <li><a href="../../reference/cli/">CLI リファレンス</a></li>
 <li><a href="../../reference/cli/show-interfaces/">show interfaces</a></li>
@@ -35929,12 +36015,16 @@
 <li><a href="../../system/sonic-network-time-protocol-ntp-client-configuration/">NTP client configuration</a></li>
 <li><a href="../../system/static-dns-configuration/">Static DNS configuration</a></li>
 </ol>
-<h2 id="_3">不足コンテンツ注記<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="rollback">設定変更時の確認 / 保存 / rollback<a class="headerlink" href="#rollback" title="Permanent link">&para;</a></h2>
+<p>逆引き表の対処で設定を変えた場合、最低限の運用フローは以下です。詳細手順は本ガイドの範囲を超えるため、各 CLI ページの「保存」「config reload」セクションを参照してください。</p>
 <ul>
-<li>障害別の逆引き導線が不足しています。例: 「<a href="../../reference/glossary/#term-bgp">BGP</a> が上がらない」「ポートが down」「<a href="../../reference/glossary/#term-vlan">VLAN</a> に疎通しない」「CPU / memory / disk を見たい」から CLI、CONFIG_DB、関連 <a href="../../reference/glossary/#term-hld">HLD</a> に飛ぶページが必要です。</li>
-<li>CLI と CONFIG_DB の相互参照は各リファレンスで整備されつつありますが、運用手順として「確認、変更、保存、rollback、再起動影響」をまとめた runbook 形式のページがありません。</li>
-<li><code>show techsupport</code>、system health、ログ、カウンタ、platform health をまとめたトラブルシュート入口が必要です。</li>
+<li>変更前: <code>show runningconfiguration all</code> で現状の running を控える</li>
+<li>適用: <code>config &lt;subcommand&gt;</code> で適用（即時反映、CONFIG_DB に書かれる）</li>
+<li>確認: 対応する <code>show</code> コマンドと、必要なら <code>redis-cli -n 4 hgetall '&lt;TABLE&gt;|&lt;key&gt;'</code> で CONFIG_DB を直接覗く</li>
+<li>保存: <code>config save -y</code>（<code>/etc/sonic/config_db.json</code> に永続化、再起動後も保持）</li>
+<li>rollback: 直前の <code>config_db.json</code> バックアップに対して <code>config reload -y &lt;file&gt;</code></li>
 </ul>
+<p>保存忘れによる再起動後の設定消失と、<code>config save</code> 後の意図しない state（過去の暫定設定の永続化）は運用上の頻出事故です。<code>config save</code> の前に <code>show runningconfiguration all</code> で意図したものか目視する習慣を推奨します。</p>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35943,7 +36033,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: eda153721dca -->
 
 
 

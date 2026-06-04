@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Wake-on-LAN（wol CLI と SonicWolService gNOI） — Wake-on-LAN (WoL) は、特殊な「Magic Packet」を NIC が受信した際に対象機器を電源オン / スリープ復帰させる Ethernet 標準である。">
+        <meta name="description" content="SONiC の Wake-on-LAN 機能。Rust 実装の wol CLI による Magic Packet 送出 (Ethernet / UDP 両形式) と、HLD が提案している SonicWolService gNOI 経路の実装状況を整理する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Wake-on-LAN（wol CLI と SonicWolService gNOI） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Wake-on-LAN（wol CLI と SonicWolService gNOI） — Wake-on-LAN (WoL) は、特殊な「Magic Packet」を NIC が受信した際に対象機器を電源オン / スリープ復帰させる Ethernet 標準である。" />
+<meta property="og:description" content="SONiC の Wake-on-LAN 機能。Rust 実装の wol CLI による Magic Packet 送出 (Ethernet / UDP 両形式) と、HLD が提案している SonicWolService gNOI 経路の実装状況を整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/switching/wake-on-lan-in-sonic.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/switching/wake-on-lan-in-sonic/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Wake-on-LAN（wol CLI と SonicWolService gNOI） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Wake-on-LAN（wol CLI と SonicWolService gNOI） — Wake-on-LAN (WoL) は、特殊な「Magic Packet」を NIC が受信した際に対象機器を電源オン / スリープ復帰させる Ethernet 標準である。" />
+<meta property="twitter:description" content="SONiC の Wake-on-LAN 機能。Rust 実装の wol CLI による Magic Packet 送出 (Ethernet / UDP 両形式) と、HLD が提案している SonicWolService gNOI 経路の実装状況を整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/switching/wake-on-lan-in-sonic.png" />
 </head>
   
@@ -19460,7 +19460,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
   
 
     
@@ -36721,22 +36721,22 @@ reasoning: HLD 時点の proto に UDP 拡張用フィールドが含まれて�
 </thead>
 <tbody>
 <tr>
-<td>Phase 1 — 基本機能</td>
-<td>HLD §概要 / §設計の中核ユースケース</td>
-<td>取り込み済 — 本ページの「実装の概観」「実装詳細」節および <code>diff</code> admonition の現状側を参照</td>
+<td>Phase 1 — 基本機能 (Ethernet payload 版 wol CLI)</td>
+<td>HLD §概要 / §Magic Packet 形式（Ethernet ペイロード版）</td>
+<td>取り込み済 — <code>sonic-buildimage/src/sonic-nettools/wol</code> (Rust) として動作。本ページ「動作仕様」節および <code>diff</code> admonition の現状側を参照</td>
 <td>— (Phase 1 は実装済)</td>
 </tr>
 <tr>
-<td>Phase 2 — 拡張機能</td>
-<td>HLD §拡張 / §追加要件 / §周辺統合</td>
-<td>一部のみ取り込み済 — 本ページ「実装詳細」の補足参照</td>
-<td>未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および <code>diff</code> admonition の差分側に列挙</td>
+<td>Phase 2 — UDP モード拡張 (<code>-u</code> / <code>-a</code> / <code>-t</code>)</td>
+<td>HLD §Magic Packet 形式（UDP ペイロード版）</td>
+<td>取り込み済 — <code>wol.rs</code> L53-L63 で <code>udp</code> / <code>ip_address</code> / <code>udp_port</code> 引数として実装、IPv6 socket は <code>socket.rs</code> L242 で対応</td>
+<td>一部 — gNOI <code>WolRequest</code> proto に UDP 系フィールドが未追加</td>
 </tr>
 <tr>
-<td>Phase 3 — 将来拡張</td>
-<td>HLD §Future Work / §将来課題</td>
+<td>Phase 3 — gNOI 経路 (<code>SonicWolService</code> / D-Bus bridge)</td>
+<td>HLD §gNOI サービス</td>
 <td>—</td>
-<td>未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点)</td>
+<td>未実装 — <code>sonic-gnmi</code> / <code>sonic-host-services</code> master に該当 service・proto・D-Bus ハンドラが見当たらない (last_verified 時点)</td>
 </tr>
 </tbody>
 </table>
@@ -36754,7 +36754,7 @@ reasoning: HLD 時点の proto に UDP 拡張用フィールドが含まれて�
 <ul>
 <li><strong>本機能を実運用で使う場合</strong>: 実装は存在するが本 HLD の記述と乖離。最新 master の動作を別途確認した上で適用する</li>
 <li><strong>upstream 動向を追う場合</strong>: 関連 issue / PR を <a href="https://github.com/sonic-net/SONiC">sonic-net/SONiC</a> で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）</li>
-<li><strong>代替手段 / 関連 reference</strong>: 本ページの frontmatter <code>related</code> が空のため、<a href="../../reference/">Reference 索引</a> から関連テーブル / CLI / YANG を辿る</li>
+<li><strong>代替手段 / 関連 reference</strong>: frontmatter <code>related</code> の CLI (<code>wol</code> / <code>config interface</code> / <code>config vlan</code> 等) や YANG (<code>sonic-vlan</code> / <code>sonic-portchannel</code> 等) から辿るか、<a href="../../reference/">Reference 索引</a> を起点にする</li>
 </ul>
 </div>
 <div class="admonition note">

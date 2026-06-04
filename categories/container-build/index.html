@@ -19062,7 +19062,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
   
 
     
@@ -36032,7 +36032,12 @@
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><a href="../../reference/glossary/#term-sonic">SONiC</a> は <strong><a href="../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a></strong> リポジトリで Debian ベースの host OS + 機能ごとの <strong>Docker コンテナ</strong>（swss / <a href="../../reference/glossary/#term-syncd">syncd</a> / bgp / lldp / pmon / snmp / database / <a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / dhcp_relay / nat / radv 等）を組み合わせて 1 枚のスイッチイメージを生成する大規模ビルドシステムを採用しています。<code>make</code> + <code>Dockerfile.j2</code> + <code>slave docker</code> という多段ビルドが特徴で、ビルド時間とイメージサイズの最適化が継続的な課題です。</p>
 <p>このカテゴリは container / build / image / upgrade に関わるページを area 横断でまとめます。<strong>architecture</strong>（ビルドプロファイル・ビルド時間最適化・RFS Split build）・<strong>platform</strong>（<a href="../../reference/glossary/#term-npu">NPU</a> MDIO / gbsyncd docker 化）・<strong>routing</strong>（dhcp-relay docker）・<strong>system</strong>（Process / Docker stats、Secure Upgrade、Container Hardening、Debian / docker semver、warm restart、syslog rate limit）の 14 ページが対象です。</p>
-<p>ランタイム面では <strong>container hardening</strong>（capability / read-only / privileged の段階的削減）と <strong>secure upgrade</strong>（image 署名検証）が重要な軸で、それぞれ <code>SECURE_UPGRADE_MODE</code> や docker capability 列を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に持ちます。docker warm restart は本カテゴリと <a href="../reboot/">Warm-Reboot 関連</a> の両方に出現します。</p>
+<p>ランタイム面では <strong>container hardening</strong>（capability / read-only / privileged の段階的削減）と <strong>secure upgrade</strong>（image 署名検証）が重要な軸ですが、両者の設定面は性質が異なります。</p>
+<ul>
+<li><strong>secure upgrade</strong>: <code>SECURE_UPGRADE_MODE</code> は <code>sonic-buildimage</code> の <strong>ビルド時 make 変数</strong>（<code>no_sign</code> / <code>dev</code> / <code>prod</code>）で、<code>slave.mk</code> から <code>onie-mk-demo.sh</code> 経由で渡されます<sup id="fnref:secure-upgrade-mode"><a class="footnote-ref" href="#fn:secure-upgrade-mode">1</a></sup>。secure upgrade 自体は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> に新規スキーマを追加せず、<code>sonic-installer install</code> の検証経路（<code>verify_secureboot_image</code> 系）にとどまります<sup id="fnref:secure-upgrade-configdb"><a class="footnote-ref" href="#fn:secure-upgrade-configdb">2</a></sup>。</li>
+<li><strong>container hardening</strong>: docker 単位の capability / privileged の宣言枠は <code>sonic-buildimage</code> の <code>files/build_templates/default_manifest</code> と <code>manifest.json.j2</code> 側にあり、ランタイム有効/無効の制御は CONFIG_DB の <strong><code>FEATURE</code></strong> テーブル（および application extension manifest）の領域です<sup id="fnref:hardening-feature"><a class="footnote-ref" href="#fn:hardening-feature">3</a></sup>。</li>
+</ul>
+<p>docker warm restart は本カテゴリと <a href="../reboot/">Warm-Reboot 関連</a> の両方に出現します。</p>
 <p>主要キーワード: <code>container</code>, <code>Docker</code>, <code>build</code>, <code>image</code>, <code>Debian</code>, <code>sonic-buildimage</code>, <code>secure upgrade</code>, <code>hardening</code>, <code>RFS</code></p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="architecture">architecture（ビルドシステム）<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h3>
@@ -36087,6 +36092,21 @@
 <li><a href="../gnmi-openconfig/">gNMI / gNOI / OpenConfig 関連</a></li>
 </ul>
 <!-- glossary-links-injected: 8ba32e5aa69d -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:secure-upgrade-mode">
+<p><code>sonic-buildimage/slave.mk:451</code>, <code>slave.mk:1555</code>, <code>slave.mk:1749</code> — <code>SECURE_UPGRADE_MODE</code> は make 引数として宣言・伝播され、ONIE installer 生成ステップで使用される。&#160;<a class="footnote-backref" href="#fnref:secure-upgrade-mode" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:secure-upgrade-configdb">
+<p><code>docs/system/secure-upgrade.md</code> — 「<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> への新規追加は無し。<code>sonic-installer install</code> の挙動が変わるのみ」と記載。&#160;<a class="footnote-backref" href="#fnref:secure-upgrade-configdb" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:hardening-feature">
+<p><code>docs/system/sonic-container-hardening.md</code> の frontmatter <code>related.config_db: [FEATURE]</code>、および <code>sonic-buildimage/files/build_templates/default_manifest</code> / <code>manifest.json.j2</code> における capability / privileged 宣言枠を参照。&#160;<a class="footnote-backref" href="#fnref:hardening-feature" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

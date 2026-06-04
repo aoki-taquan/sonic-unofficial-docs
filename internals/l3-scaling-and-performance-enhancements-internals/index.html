@@ -19067,7 +19067,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
   
 
     
@@ -36143,6 +36143,10 @@
 </tbody>
 </table>
 <p>burst 時の add/remove ループで entry が満杯にならない問題の解消が主眼。<a href="../../reference/glossary/#term-copp">CoPP</a> では ARP/ND の最大 600 pps → <strong>8000 pps</strong> に引き上げる提案<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="admonition warning">
+<p class="admonition-title">現行 master では未適用</p>
+<p>上表の閾値および CoPP 8000 pps はいずれも HLD 提案段階で、現行 master の既定値は <code>gc_thresh{1,2,3} = 1024/2048/4096</code>、<code>queue4_group2</code> の <code>cir</code>/<code>cbs = 600</code> のまま。詳細は本ページ末尾の「実装との乖離」節を参照。</p>
+</div>
 <h2 id="2-route-programming">2. Route programming 時間短縮<a class="headerlink" href="#2-route-programming" title="Permanent link">&para;</a></h2>
 <p>旧時計値（AS7712 / Tomahawk 上）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
@@ -36291,7 +36295,54 @@
 <!-- /phase-boundary -->
 
 <h2 id="_4">実装との乖離<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
+<p><code>monitor: partially_implemented</code> — <code>RouteOrch</code> bulk / <code>fpmsyncd</code> の <code>rt_table==0</code> skip / <code>show arp</code> の個別 <a href="../../reference/glossary/#term-fdb">FDB</a> lookup は実装済み (§2.1 / §2.2 / §3 の citation 参照) だが、<strong>HLD §1 が提案する kernel ARP/ND 閾値と CoPP pps の引き上げは現行 master に未適用</strong> という点が本 split-child 固有の差分である。</p>
+<div class="admonition diff">
+<p class="admonition-title">本ページ固有の差分 (HLD 提案 vs 現行 master)</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>HLD 提案値<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></th>
+<th>現行 master 既定値</th>
+<th>根拠 (master のソース)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>net.ipv4.neigh.default.gc_thresh1</code></td>
+<td>16000</td>
+<td><strong>1024</strong></td>
+<td><code>sonic-buildimage/files/image_config/sysctl/90-sonic.conf:21</code></td>
+</tr>
+<tr>
+<td><code>net.ipv4.neigh.default.gc_thresh2</code></td>
+<td>32000</td>
+<td><strong>2048</strong></td>
+<td><code>sonic-buildimage/files/image_config/sysctl/90-sonic.conf:23</code></td>
+</tr>
+<tr>
+<td><code>net.ipv4.neigh.default.gc_thresh3</code></td>
+<td>48000</td>
+<td><strong>4096</strong></td>
+<td><code>sonic-buildimage/files/image_config/sysctl/90-sonic.conf:25</code></td>
+</tr>
+<tr>
+<td><code>net.ipv6.neigh.default.gc_thresh{1,2,3}</code></td>
+<td>8000 / 16000 / 32000</td>
+<td><strong>1024 / 2048 / 4096</strong></td>
+<td><code>sonic-buildimage/files/image_config/sysctl/90-sonic.conf:22,24,26</code></td>
+</tr>
+<tr>
+<td>ARP/ND CoPP rate (<code>queue4_group2</code> の <code>cir</code>/<code>cbs</code>)</td>
+<td>8000 pps</td>
+<td><strong>600 pps</strong></td>
+<td><code>sonic-buildimage/files/image_config/copp/copp_cfg.j2:6-9</code> (<code>queue4_group2</code> block L21-30、<code>arp</code> trap が L100-104 で参照)</td>
+</tr>
+</tbody>
+</table>
+<p>影響: 大規模 L3 (数万 neigh) 環境では HLD が想定した burst 耐性 / GC 動作が得られない。実運用で必要な場合は <code>CONFIG_DB</code> / sysctl override で個別調整する必要がある (本ページの議論範囲外、運用詳細は <a href="../l3-scaling-and-performance-enhancements-operations/">l3-scaling-and-performance-enhancements-operations.md</a> を参照)。</p>
+<p>その他の差分 (RouteOrch bulk timer の周期や <code>nlohmann/json</code> バージョンなど、複数 split-child 共通の項目) は親ページ <a href="../l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（概要ハブ）</a> の <code>## 実装との乖離</code> を参照。</p>
+</div>
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
 <h2 id="_6">このページを読んだ後の次アクション<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -36318,7 +36369,7 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

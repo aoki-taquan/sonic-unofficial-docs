@@ -19064,7 +19064,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
   
 
     
@@ -36607,14 +36607,14 @@
   area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
 </li>
 </ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
+<p><code>monitor: partially_implemented</code> — <code>RouteOrch</code> bulk / <code>fpmsyncd</code> の <code>rt_table==0</code> skip / <code>show arp</code> の個別 <a href="../../glossary/#term-fdb">FDB</a> lookup は実装済み (§2.1 / §2.2 / §3 の citation 参照) だが、<strong>HLD §1 が提案する kernel ARP/ND 閾値と CoPP pps の引き上げは現行 master に未適用</strong> という点が本 split-child 固有の差分である。</p>
 <ul>
 <li>
 <p><a href="../../../internals/l3-scaling-and-performance-enhancements-limitations/">L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）</a><br />
   area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
 </li>
 <li>
-<p><a href="../../../internals/l3-scaling-and-performance-enhancements-concepts/">L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）</a><br />
+<p><a href="../../../internals/l3-scaling-and-performance-enhancements-concepts/">L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）</a><br />
   area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
 </li>
 </ul>
@@ -37215,14 +37215,14 @@
 <li><a href="../../../internals/l3-scaling-and-performance-enhancements-internals/">L3 Scaling と Performance 強化 内部実装（RouteOrch bulk / fpmsyncd / sairedis / show</a><br />
   area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
+<p><code>monitor: partially_implemented</code> — <code>RouteOrch</code> bulk / <code>fpmsyncd</code> の <code>rt_table==0</code> skip / <code>show arp</code> の個別 <a href="../../glossary/#term-fdb">FDB</a> lookup は実装済み (§2.1 / §2.2 / §3 の citation 参照) だが、<strong>HLD §1 が提案する kernel ARP/ND 閾値と CoPP pps の引き上げは現行 master に未適用</strong> という点が本 split-child 固有の差分である。</p>
 <ul>
 <li>
 <p><a href="../../../internals/l3-scaling-and-performance-enhancements-limitations/">L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）</a><br />
   area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
 </li>
 <li>
-<p><a href="../../../internals/l3-scaling-and-performance-enhancements-concepts/">L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）</a><br />
+<p><a href="../../../internals/l3-scaling-and-performance-enhancements-concepts/">L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）</a><br />
   area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
 </li>
 </ul>

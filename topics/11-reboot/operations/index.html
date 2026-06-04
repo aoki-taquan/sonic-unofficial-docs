@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Reboot 運用と障害調査 — reboot 運用で重要なのは、実行前に peer と platform の前提を揃えること、実行中に warm shutdown / restore の境界を見失わないこと、実行後に原因と復元結果を確認することです。">
+        <meta name="description" content="Reboot 運用と障害調査 — 実行前に peer と platform の前提を揃え、実行中は warm shutdown / restore の境界を見失わず、実行後は reboot-cause と reconciliation 状態を確認するための切り分け手順をまとめる。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Reboot 運用と障害調査 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Reboot 運用と障害調査 — reboot 運用で重要なのは、実行前に peer と platform の前提を揃えること、実行中に warm shutdown / restore の境界を見失わないこと、実行後に原因と復元結果を確認することです。" />
+<meta property="og:description" content="Reboot 運用と障害調査 — 実行前に peer と platform の前提を揃え、実行中は warm shutdown / restore の境界を見失わず、実行後は reboot-cause と reconciliation 状態を確認するための切り分け手順をまとめる。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/11-reboot/operations.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/11-reboot/operations/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Reboot 運用と障害調査 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Reboot 運用と障害調査 — reboot 運用で重要なのは、実行前に peer と platform の前提を揃えること、実行中に warm shutdown / restore の境界を見失わないこと、実行後に原因と復元結果を確認することです。" />
+<meta property="twitter:description" content="Reboot 運用と障害調査 — 実行前に peer と platform の前提を揃え、実行中は warm shutdown / restore の境界を見失わず、実行後は reboot-cause と reconciliation 状態を確認するための切り分け手順をまとめる。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/11-reboot/operations.png" />
 </head>
   
@@ -19320,7 +19320,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
   
 
     
@@ -36180,25 +36180,69 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>cat<span class="w"> </span>/host/reboot-cause/reboot-cause.txt
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>cat<span class="w"> </span>/host/reboot-cause/previous-reboot-cause.json
 </span></code></pre></div>
+<!-- evidence:
+source: sonic-net/sonic-utilities/scripts/reboot#L14 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  REBOOT_CAUSE_FILE="/host/reboot-cause/reboot-cause.txt"
+reasoning: reboot / fast-reboot / soft-reboot のいずれの wrapper script も /host/reboot-cause/reboot-cause.txt を最新 cause の生ファイルとして書き出す。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/scripts/reboot#L14 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/scripts/reboot#L14 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>REBOOT_CAUSE_FILE=&quot;/host/reboot-cause/reboot-cause.txt&quot;
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: reboot / fast-reboot / soft-reboot のいずれの wrapper script も /host/reboot-cause/reboot-cause.txt を最新 cause の生ファイルとして書き出す。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/reboot_cause.py#L13-L23 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  PREVIOUS_REBOOT_CAUSE_FILE_PATH = "/host/reboot-cause/previous-reboot-cause.json"
+  ...
+  if os.path.exists(PREVIOUS_REBOOT_CAUSE_FILE_PATH):
+      with open(PREVIOUS_REBOOT_CAUSE_FILE_PATH) as prev_reboot_cause_file:
+reasoning: show reboot-cause は前回 cause を /host/reboot-cause/previous-reboot-cause.json から JSON として読み込む。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/show/reboot_cause.py#L13-L23 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/show/reboot_cause.py#L13-L23 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>PREVIOUS_REBOOT_CAUSE_FILE_PATH = &quot;/host/reboot-cause/previous-reboot-cause.json&quot;
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>...
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>if os.path.exists(PREVIOUS_REBOOT_CAUSE_FILE_PATH):
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    with open(PREVIOUS_REBOOT_CAUSE_FILE_PATH) as prev_reboot_cause_file:
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: show reboot-cause は前回 cause を /host/reboot-cause/previous-reboot-cause.json から JSON として読み込む。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="lacp-peer">LACP と peer 側の時間<a class="headerlink" href="#lacp-peer" title="Permanent link">&para;</a></h2>
 <p>warm reboot では自装置だけでなく peer 側の待ち時間が結果を左右します。LAG peer が短い timeout で partner を落とすと、data plane を維持しても bundle が崩れます。<a href="../../../switching/increasing-lacp-pdu-timeout-during-warm-reboot/">Warm-reboot 中の LACP retry count 拡張</a> は、LACP PDU の拡張により warm reboot 中の retry count を増やす設計です。</p>
 <p>BGP も同様に <a href="../../../reference/glossary/#term-graceful-restart">Graceful Restart</a> と timer が前提です。warm reboot を有効化しても、peer が GR を許容しなければ L3 adjacency は維持されません。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sw01# show bgp neighbors 10.0.0.1 graceful-restart
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>BGP neighbor is 10.0.0.1
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  Local GR Mode : Helper*
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  Remote GR Mode: Restart
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  R bit: True
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  Configured Restart Time(sec): 240
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  Received Restart Time(sec): 240
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  ...
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sw01# show bgp neighbors 10.0.0.1 graceful-restart
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>BGP neighbor is 10.0.0.1
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  Local GR Mode : Helper*
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  Remote GR Mode: Restart
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  R bit: True
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  Configured Restart Time(sec): 240
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  Received Restart Time(sec): 240
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>  ...
 </span></code></pre></div>
 <p><code>Remote GR Mode</code> が <code>Disable</code> の peer は warm reboot 中に session を落とす可能性が高いので、対象から外すか peer 側設定を変えます。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ show warm_restart config
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>name        enable    timer_name             timer_duration
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>----------  --------  ---------------------  --------------
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>swss        true                             -
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>bgp         true      bgp_timer              180
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>teamd       true      teamsyncd_timer         30
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$ show warm_restart config
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>name        enable    timer_name             timer_duration
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>----------  --------  ---------------------  --------------
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>swss        true                             -
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>bgp         true      bgp_timer              180
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>teamd       true      teamsyncd_timer         30
 </span></code></pre></div>
 <p>LACP の retry 拡張は teamd 側のオプション化されており、warm reboot 中だけ retry を増やします。同 <a href="../../../reference/glossary/#term-hld">HLD</a> のシーケンス図と <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>WARM_RESTART_TABLE</code> を併せて読みます。</p>
 <h2 id="multi-asic-warm-reboot">multi-ASIC warm reboot<a class="headerlink" href="#multi-asic-warm-reboot" title="Permanent link">&para;</a></h2>
@@ -36208,31 +36252,79 @@
 <p>Warmboot Manager は、複数 component の shutdown orchestration と reconciliation を統一する設計です。4 phase の shutdown orchestration、component state、race condition の扱いを確認する入口は <a href="../../../system/warmboot-manager-hld/">Warmboot Manager</a> です。</p>
 <p>SWSS docker warm restart は service lifecycle の代表例です。restore、pre/post validation、sync up、失敗時 fallback を順に見ます。仕様は <a href="../../../system/sonic-swss-docker-warm-restart/">SWSS docker warm restart</a>、開発時の実装メモは <a href="../../../system/swss-docker-warm-restart-code-reference/">SWSS docker の Warm Restart 実装メモ</a> に分かれています。</p>
 <h3 id="warm-reboot">Warm reboot 実行ログの例<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$ sudo warm-reboot
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Starting warm-reboot...
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Stopping bgp service...
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Pre-shutdown BGP ... [OK]
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>Saving config to /etc/sonic/config_db.json
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>Backing up Redis to /host/warmboot/redis_db.json
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>Stopping syncd service ... [OK]
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>Stopping swss service ... [OK]
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>SAI warm shutdown ... [OK]
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>Rebooting...
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ sudo warm-reboot
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Starting warm-reboot...
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Stopping bgp service...
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>Pre-shutdown BGP ... [OK]
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>Saving config to /etc/sonic/config_db.json
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>Backing up Redis to /host/warmboot/redis_db.json
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>Stopping syncd service ... [OK]
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>Stopping swss service ... [OK]
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>SAI warm shutdown ... [OK]
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>Rebooting...
 </span></code></pre></div>
 <p>起動後の reconciliation 完了は次で確認します。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$ show warm_restart state
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>name              restore_count  state
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>----------------  -------------  ----------
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>neighsyncd                    1  reconciled
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>bgp                           1  reconciled
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>teamsyncd                     1  reconciled
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>fdbsyncd                      1  reconciled
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>natsyncd                      1  reconciled
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>admin@sonic:~$ show warm_restart state
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>name              restore_count  state
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>----------------  -------------  ----------
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>neighsyncd                    1  reconciled
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>bgp                           1  reconciled
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>teamsyncd                     1  reconciled
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>fdbsyncd                      1  reconciled
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>natsyncd                      1  reconciled
 </span></code></pre></div>
 <p><code>reconciled</code> 以外（<code>restored</code>, <code>init</code>, <code>disabled</code>）の component が残る場合、その component の syslog を見ます。<code>reconciled</code> まで届かないと EOIU (End-of-Initial-Update) が出ず、後続の clean up が走らないため、route や neighbor の幽霊が残ることがあります。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>May 10 11:01:08 sw01 INFO swss#bgpcfgd: BGP reached reconciled state
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>May 10 11:01:09 sw01 INFO swss#orchagent: EOIU received from all components
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>May 10 11:01:08 sw01 INFO swss#bgpcfgd: BGP reached reconciled state
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>May 10 11:01:09 sw01 INFO swss#orchagent: EOIU received from all components
 </span></code></pre></div>
+<!-- evidence:
+source: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: master)
+excerpt: |
+  // Wait 3 seconds after detecting EOIU reached state
+  const uint32_t DEFAULT_EOIU_HOLD_INTERVAL = 3;
+  ...
+  bgpStateTable.hget("IPv4|eoiu", "state", value);
+reasoning: fpmsyncd は STATE_DB の BGP_STATE_TABLE|<family>|eoiu を hget して reached を待つ。EOIU は警告文どおり後続 clean-up の前提となる同期点である。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: master)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: master)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>// Wait 3 seconds after detecting EOIU reached state
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>const uint32_t DEFAULT_EOIU_HOLD_INTERVAL = 3;
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>...
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>bgpStateTable.hget(&quot;IPv4|eoiu&quot;, &quot;state&quot;, value);
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: fpmsyncd は STATE_DB の BGP_STATE_TABLE|<family>|eoiu を hget して reached を待つ。EOIU は警告文どおり後続 clean-up の前提となる同期点である。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: master)
+excerpt: |
+  key             = BGP_STATE_TABLE|family|eoiu             ; family = "IPv4" / "IPv6"  ; address family.
+  state           = "unknown" / "reached" / "consumed"         ; unknown: eoiu state not fetched yet.
+                                                               ; reached: bgp eoiu done.
+reasoning: EOIU 状態は STATE_DB の BGP_STATE_TABLE で公開され、reconciliation 完了判定に使われる。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: master)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: master)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>key             = BGP_STATE_TABLE|family|eoiu             ; family = &quot;IPv4&quot; / &quot;IPv6&quot;  ; address family.
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>state           = &quot;unknown&quot; / &quot;reached&quot; / &quot;consumed&quot;         ; unknown: eoiu state not fetched yet.
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>                                                             ; reached: bgp eoiu done.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: EOIU 状態は STATE_DB の BGP_STATE_TABLE で公開され、reconciliation 完了判定に使われる。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="reboot_1">reboot 種別の使い分け早見表<a class="headerlink" href="#reboot_1" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

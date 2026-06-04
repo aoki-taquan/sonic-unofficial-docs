@@ -19062,7 +19062,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
   
 
     
@@ -35806,9 +35806,9 @@
 <li><strong>読み手別ガイド</strong> (<code>guides/</code>)</li>
 <li><a href="../../guides/">読み手別ガイド</a> — [meta] 読み手別ガイド — SONiC ドキュメントを読む目的に応じて、既存ページを読む順番をまとめた入口です。area 別の章構成はそのままに、初回に見るべきページ…</li>
 <li><a href="../../guides/beginner/">初学者向けガイド</a> — [meta] 初学者向けガイド — SONiC を初めて触る読者を想定しています。ネットワーク OS としての SONiC の位置付け、コンテナ、Redis DB、SAI、…</li>
-<li><a href="../../guides/operator/">運用者向けガイド</a> — [meta] 運用者向けガイド — 既に SONiC を運用している読者を想定しています。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show tech…</li>
+<li><a href="../../guides/operator/">運用者向けガイド</a> — [meta] 運用者向けガイド — 既に SONiC を運用している読者を想定した入口。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show techs…</li>
 <li><a href="../../guides/developer/">開発者向けガイド</a> — [meta] 開発者向けガイド — SONiC に機能追加・拡張を入れたい読者を想定しています。HLD、YANG、CONFIG_DB、CLI、daemon / orch、テ…</li>
-<li><a href="../../guides/evaluator/">評価者向けガイド</a> — [meta] 評価者向けガイド — ラボで SONiC を試用する読者を想定しています。仮想環境または評価機で起動し、管理 IP、ポート、VLAN、BGP などの基本設定を…</li>
+<li><a href="../../guides/evaluator/">評価者向けガイド</a> — [meta] ラボで SONiC を試用する読者向けに、仮想環境または評価機で起動し、管理 IP、ポート、VLAN、BGP などの基本設定を入れて状態確認まで辿る導線と、最…</li>
 <li><strong>読み物</strong> (<code>topics/</code>)</li>
 <li><a href="../../topics/">読み物</a> — [meta] 読み物（章立て駆動） — 機能ドメイン単位で複数の HLD・実コードを横断統合した「読み物」章群。HLD 1 件 = 1 ページの reference（doc…</li>
 <li><strong>SONiC 全体像と設定基盤</strong> (<code>topics/01-overview/</code>)<ul>
@@ -35885,7 +35885,7 @@
 <li><strong>QoS / Buffer / PFC / Watermark</strong> (<code>topics/08-qos-buffer/</code>)<ul>
 <li><a href="../../topics/08-qos-buffer/">QoS / Buffer / PFC / Watermark</a> — [meta] QoS / Buffer / PFC / Watermark — この章は、SONiC の「ASIC のバッファをどう分けるか」「キューをどの順で出すか」「混…</li>
 <li><a href="../../topics/08-qos-buffer/concept/">QoS / Buffer の概念地図</a> — [meta] QoS / Buffer の概念地図 — QoS の話は語彙が多くて、どこから読めばよいかが見えづらいです。ここでは「パケットが入ってから出るまで、どこで何が…</li>
-<li><a href="../../topics/08-qos-buffer/architecture/">QoS / Buffer のアーキテクチャ</a> — [meta] QoS / Buffer のアーキテクチャ — ConfigDB の QoS / buffer テーブルが、最終的に SAI のどのオブジェクトに対応するか、…</li>
+<li><a href="../../topics/08-qos-buffer/architecture/">QoS / Buffer のアーキテクチャ</a> — [code-verified] QoS / Buffer のアーキテクチャ — ConfigDB の QoS / buffer テーブルが、最終的に SAI のどのオブジェクトに対応するか、…</li>
 <li><a href="../../topics/08-qos-buffer/setup/">QoS / Buffer の設定</a> — [code-verified] QoS / Buffer の設定 — 設定は「pool / profile を作る → port に classification を当てる → queue…</li>
 <li><a href="../../topics/08-qos-buffer/operations/">QoS / Buffer の運用</a> — [meta] QoS / Buffer の運用 — 「アプリが詰まる」「PFC で止まった」「キューが捨てている」と言われたときに、どのコマンドをどの順番で叩くか、を整理し…</li>
 <li><a href="../../topics/08-qos-buffer/internals/">QoS / Buffer の内部実装</a> — [meta] QoS / Buffer の内部実装 — ここでは「設定が変わるたびに buffer がどう再計算されるか」「ポートを足したり消したりしたとき何が起きるか」「…</li>
@@ -35907,7 +35907,7 @@
 <li><a href="../../topics/10-gnmi-openconfig/concept/">概要</a> — [meta] 概要 — SONiC のモデル駆動管理は、CLI、gNMI、REST という 3 つの入口が、Translib / Transformer という共通の中間層…</li>
 <li><a href="../../topics/10-gnmi-openconfig/architecture/">アーキテクチャ</a> — [code-verified] アーキテクチャ — gNMI / REST のリクエストが CONFIG_DB に到達するまでの経路は、入口の transport が違っても中間層 (Tra…</li>
 <li><a href="../../topics/10-gnmi-openconfig/setup/">設定</a> — [meta] 設定 — gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC native…</li>
-<li><a href="../../topics/10-gnmi-openconfig/operations/">運用</a> — [meta] 運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collect…</li>
+<li><a href="../../topics/10-gnmi-openconfig/operations/">運用</a> — [code-verified] 運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collect…</li>
 <li><a href="../../topics/10-gnmi-openconfig/internals/">内部実装</a> — [meta] 内部実装 — gNMI / OpenConfig の内部実装は、telemetry コンテナの中に gNMI server があり、translib / so…</li>
 <li><a href="../../topics/10-gnmi-openconfig/gnoi-gnsi/">gNOI / gNSI</a> — [meta] gNOI / gNSI — gNOI (gRPC Network Operations Interface) は、設定読み書き (gNMI) の隣で「操作」を…</li>
 <li><a href="../../topics/10-gnmi-openconfig/yang-reference/">YANG リファレンス</a> — [meta] YANG リファレンス — このページは、機能章 (本書の章 01〜21) から YANG モジュールを逆引きするための索引です。SONiC native Y…</li>
@@ -35919,7 +35919,7 @@
 <li><a href="../../topics/11-reboot/concept/">Reboot family の選び方</a> — [meta] Reboot family の選び方 — SONiC の reboot は、単に「速い順」に並べるよりも、どの状態を保持し、どこで整合性を取り直すかで見ると判…</li>
 <li><a href="../../topics/11-reboot/architecture/">Warm path の内部構造</a> — [meta] Warm path の内部構造 — warm reboot / warm restart の中心は、停止前に「復元に必要な状態」を固定し、起動後に「旧状態と新…</li>
 <li><a href="../../topics/11-reboot/setup/">Reboot / warm restart の設定</a> — [meta] Reboot / warm restart の設定 — 設定で最初に分けるのは、OS 全体の reboot を実行するのか、service warm rest…</li>
-<li><a href="../../topics/11-reboot/operations/">Reboot 運用と障害調査</a> — [meta] Reboot 運用と障害調査 — reboot 運用で重要なのは、実行前に peer と platform の前提を揃えること、実行中に warm shutd…</li>
+<li><a href="../../topics/11-reboot/operations/">Reboot 運用と障害調査</a> — [meta] Reboot 運用と障害調査 — 実行前に peer と platform の前提を揃え、実行中は warm shutdown / restore の境界を見…</li>
 <li><a href="../../topics/11-reboot/internals/">内部実装</a> — [meta] 内部実装 — reboot / upgrade / lifecycle の内部実装は「どこまで data plane を生かしたまま control plan…</li>
 <li><a href="../../topics/11-reboot/upgrade/">Upgrade lifecycle</a> — [meta] Upgrade lifecycle — upgrade は reboot と同じではありません。upgrade は「どの image / package /…</li>
 <li><a href="../../topics/11-reboot/advanced/">Reboot / Upgrade の発展トピック</a> — [meta] Reboot / Upgrade の発展トピック — warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める「expr…</li>
@@ -36185,7 +36185,7 @@
 <li><a href="../../switching/link-event-damping-hld/">リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）</a> — [discrepancy-found] リンクイベントダンピング（AIED アルゴリズムと SyncD intercept） — HLD は config interface link_event_…</li>
 <li><a href="../../switching/sonic-bum-storm-control/">BUM ストームコントロール（PORT_STORM_CONTROL）</a> — [code-verified] BUM ストームを物理ポート単位で kbps レート制限する SONiC 機能。PORT_STORM_CONTROL 設定を PolicerOrch が受け取…</li>
 <li><a href="../../switching/layer-2-forwarding-enhancements/">L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）</a> — [discrepancy-found] SONiC 初期 L2 に欠けていた FDB flush・MAC move・aging 設定・static FDB・VLAN range CLI 等 6 項目…</li>
-<li><a href="../../switching/wake-on-lan-in-sonic/">Wake-on-LAN（wol CLI と SonicWolService gNOI）</a> — [discrepancy-found] Wake-on-LAN（wol CLI と SonicWolService gNOI） — Wake-on-LAN (WoL) は、特殊な「Magic Pac…</li>
+<li><a href="../../switching/wake-on-lan-in-sonic/">Wake-on-LAN（wol CLI と SonicWolService gNOI）</a> — [discrepancy-found] SONiC の Wake-on-LAN 機能。Rust 実装の wol CLI による Magic Packet 送出 (Ethernet / UDP 両形式…</li>
 <li><strong>オーバーレイ</strong> (<code>overlay/</code>)</li>
 <li><a href="../../overlay/">オーバーレイ</a> — [meta] オーバーレイ — VXLAN / VNet、DASH、Dual ToR、NVGRE など overlay と SmartSwitch 周辺を扱う章。</li>
 <li><a href="../../overlay/nvgre-tunnel-in-sonic/">NVGRE トンネル（nvgreorch / decap mapper）</a> — [code-verified] NVGRE トンネル（nvgreorch / decap mapper） — NVGRE (Network Virtualization using Gene…</li>
@@ -36441,7 +36441,7 @@
 <li><a href="../../internals/sonic-flexcounter-refactor/">FlexCounter リファクタ（CounterContext テンプレート化）</a> — [code-verified] FlexCounter リファクタ（CounterContext テンプレート化） — syncd の FlexCounter は port / queue…</li>
 <li><a href="../../internals/dump-utility-for-easy-debugging/">dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）</a> — [code-verified] dump state utility — SONiC の機能は 複数 DB（CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB…</li>
 <li><a href="../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）</a> — [discrepancy-found] L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp…</li>
-<li><a href="../../internals/l3-scaling-and-performance-enhancements-concepts/">L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）</a> — [discrepancy-found] L3 Scaling と Performance 強化 HLD の概念整理。ARP/ND エントリ数と route/ECMP のスケール目標、route pr…</li>
+<li><a href="../../internals/l3-scaling-and-performance-enhancements-concepts/">L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）</a> — [discrepancy-found] L3 Scaling と Performance 強化 HLD の概念整理。ARP/ND エントリ数と route/ECMP のスケール目標、route pr…</li>
 <li><a href="../../internals/l3-scaling-and-performance-enhancements-operations/">L3 Scaling と Performance 強化 設定・運用（sysctl / COPP_TABLE / show arp）</a> — [discrepancy-found] L3 Scaling と Performance 強化 HLD の設定・確認手順。kernel ARP/ND gc_thresh の sysctl 適用方法、…</li>
 <li><a href="../../internals/l3-scaling-and-performance-enhancements-internals/">L3 Scaling と Performance 強化 内部実装（RouteOrch bulk / fpmsyncd / sairedis / show arp）</a> — [discrepancy-found] L3 Scaling と Performance 強化 HLD の内部実装。RouteOrch の bulk route API (gRouteBulker)…</li>
 <li><a href="../../internals/l3-scaling-and-performance-enhancements-limitations/">L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）</a> — [discrepancy-found] L3 Scaling と Performance 強化 HLD の制限事項。kernel メモリ消費と CPU 負荷のトレードオフ、AS7712 計測の他 A…</li>
@@ -36460,7 +36460,7 @@
 <li><a href="../../reference/cli/config-kdump/">config kdump サブコマンド</a> — [code-verified] config kdump サブコマンド — config kdump は Linux kdump (panic 時のクラッシュダンプ機構) を CONFIG_…</li>
 <li><a href="../../reference/cli/config-mclag/">config mclag サブコマンド</a> — [code-verified] config mclag サブコマンド — config mclag は MCLAG (Multi-Chassis LAG) ドメイン・メンバ PortCha…</li>
 <li><a href="../../reference/cli/config-mgmt-trio/">config save / load / reload / replace / qos reload</a> — [code-verified] config save / load / reload / replace / qos reload — SONiC の設定永続化と全体差し替えを担う 5 コ…</li>
-<li><a href="../../reference/cli/config-muxcable/">config muxcable サブコマンド</a> — [discrepancy-found] config muxcable サブコマンド — config muxcable は Dual-ToR 構成で使用する Y-Cable (NIC ↔ ToR-…</li>
+<li><a href="../../reference/cli/config-muxcable/">config muxcable サブコマンド</a> — [discrepancy-found] config muxcable は Dual-ToR 構成で使用する Y-Cable (NIC ↔ ToR-A / ToR-B) の状態と低レイヤ機能 (PR…</li>
 <li><a href="../../reference/cli/config-nat/">config nat サブコマンド</a> — [code-verified] config nat サブコマンド — config nat は SONiC の NAT44 (NAT / NAPT) 機能の CONFIG_DB を直接操作…</li>
 <li><a href="../../reference/cli/config-portchannel/">config portchannel サブコマンド</a> — [code-verified] config portchannel サブコマンド — config portchannel は LACP ベースの Link Aggregation (LA…</li>
 <li><a href="../../reference/cli/config-route/">config route サブコマンド（static route）</a> — [code-verified] config route サブコマンド（static route） — config route は CONFIG_DB の STATIC_ROUTE テーブ…</li>

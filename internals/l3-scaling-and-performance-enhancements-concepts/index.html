@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="L3 Scaling と Performance 強化 HLD の概念整理。ARP/ND エントリ数と route/ECMP のスケール目標、route programming 時間短縮と show コマンド応答短縮の性能目標、kernel gc tuning / sairedis bulk / fpmsyncd 最適化 / show arp の 4 系統の改善ポイントの位置づけ。">
+        <meta name="description" content="L3 Scaling と Performance 強化 HLD の概念整理。ARP/ND エントリ数と route/ECMP のスケール目標、route programming 時間短縮と show コマンド応答短縮の性能目標、kernel gc tuning / CoPP ARP-ND 上限 / sairedis bulk route / fpmsyncd 最適化 / sairedis JSON ライブラリ更新 / show arp の 6 系統の改善ポイントの位置づけを扱う。">
       
       
       
@@ -30,7 +30,7 @@
     
     
       
-        <title>L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善） - SONiC 非公式ドキュメント</title>
+        <title>L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -66,16 +66,16 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="L3 Scaling と Performance 強化 HLD の概念整理。ARP/ND エントリ数と route/ECMP のスケール目標、route programming 時間短縮と show コマンド応答短縮の性能目標、kernel gc tuning / sairedis bulk / fpmsyncd 最適化 / show arp の 4 系統の改善ポイントの位置づけ。" />
+<meta property="og:title" content="L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善） - SONiC 非公式ドキュメント" />
+<meta property="og:description" content="L3 Scaling と Performance 強化 HLD の概念整理。ARP/ND エントリ数と route/ECMP のスケール目標、route programming 時間短縮と show コマンド応答短縮の性能目標、kernel gc tuning / CoPP ARP-ND 上限 / sairedis bulk route / fpmsyncd 最適化 / sairedis JSON ライブラリ更新 / show arp の 6 系統の改善ポイントの位置づけを扱う。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/l3-scaling-and-performance-enhancements-concepts.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/l3-scaling-and-performance-enhancements-concepts/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="L3 Scaling と Performance 強化 HLD の概念整理。ARP/ND エントリ数と route/ECMP のスケール目標、route programming 時間短縮と show コマンド応答短縮の性能目標、kernel gc tuning / sairedis bulk / fpmsyncd 最適化 / show arp の 4 系統の改善ポイントの位置づけ。" />
+<meta property="twitter:title" content="L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善） - SONiC 非公式ドキュメント" />
+<meta property="twitter:description" content="L3 Scaling と Performance 強化 HLD の概念整理。ARP/ND エントリ数と route/ECMP のスケール目標、route programming 時間短縮と show コマンド応答短縮の性能目標、kernel gc tuning / CoPP ARP-ND 上限 / sairedis bulk route / fpmsyncd 最適化 / sairedis JSON ライブラリ更新 / show arp の 6 系統の改善ポイントの位置づけを扱う。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/l3-scaling-and-performance-enhancements-concepts.png" />
 </head>
   
@@ -130,7 +130,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+              L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
             
           </span>
         </div>
@@ -19076,7 +19076,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
   
 
     
@@ -19094,7 +19094,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
   
 
     
@@ -36069,11 +36069,11 @@
 <p>注: HLD 提案の <code>gc_thresh</code> 値は現行 master に取り込まれていないため、これらのスケール値は HLD 上の目標であって実機で kernel cache が自動的に到達する値ではない（<a href="../l3-scaling-and-performance-enhancements-limitations/">limitations</a> 参照）。</p>
 </blockquote>
 <h2 id="3">3. 性能目標<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<p>HLD §1.1 の性能要件と §2.2.1.1 のターゲットを以下に集約する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <ul>
-<li>IPv4 / IPv6 route programming 時間を短縮</li>
+<li>IPv4 / IPv6 route programming 時間を短縮（最終ターゲットは <strong>30% 短縮</strong>）</li>
 <li>未知 ARP / ND 学習時間を短縮</li>
 <li><code>show arp</code> / <code>show ndp</code> の応答短縮</li>
-<li><strong>route programming 時間 30% 短縮</strong> を狙う<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="4-6">4. 改善 6 系統の位置づけ<a class="headerlink" href="#4-6" title="Permanent link">&para;</a></h2>
 <table>
@@ -36119,7 +36119,7 @@
 </table>
 <p>詳細な算術と実装ファイル位置は <a href="../l3-scaling-and-performance-enhancements-internals/">l3-scaling-and-performance-enhancements-internals.md</a> を参照。</p>
 <h2 id="5-cli-config_db-yang">5. 新規 CLI / CONFIG_DB / YANG<a class="headerlink" href="#5-cli-config_db-yang" title="Permanent link">&para;</a></h2>
-<p><strong>新規 CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> なし</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。kernel sysctl と <code>COPP_TABLE</code> 値の見直しと内部実装の改善が中心。読者にとって明示的な設定変更は通常不要だが、HLD 提案値が現行 default と乖離している点には注意（<a href="../l3-scaling-and-performance-enhancements-limitations/">limitations</a>）。</p>
+<p><strong>新規 CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> なし</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。kernel sysctl と <code>COPP_TABLE</code> 値の見直しと内部実装の改善が中心。読者にとって明示的な設定変更は通常不要だが、HLD 提案値が現行 default と乖離している点には注意（<a href="../l3-scaling-and-performance-enhancements-limitations/">limitations</a>）。</p>
 <h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（概要ハブ）</a></li>

@@ -19226,7 +19226,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）
   
 
     
@@ -36024,11 +36024,11 @@
 <p>ポイントは「ConfigDB の同じ階層構造（pool → profile → PG/queue）がそのまま SAI に届く」ことと、「PFCWD だけは別 orch」「watermark は SAI の値を <a href="../../../reference/glossary/#term-flexcounter">FlexCounter</a> が <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に書く」ことです。</p>
 <h2 id="daemon-orch">各 daemon / orch の責務<a class="headerlink" href="#daemon-orch" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>BufferOrch</strong> — <code>BUFFER_POOL</code> / <code>BUFFER_PROFILE</code> / <code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code> を SAI buffer pool / profile / PG / queue オブジェクトへ変換します。動的バッファモードのときは buffer manager から流れてくる「再計算後の profile」を扱います。</li>
-<li><strong>QosOrch</strong> — <code>QUEUE</code> / <code>SCHEDULER</code> / <code>WRED_PROFILE</code> / <code>*_TO_*_MAP</code> 系を SAI の scheduler / <a href="../../../reference/glossary/#term-wred">WRED</a> / map オブジェクト、および port qos 属性に落とします。背景は <a href="../../../acl-qos/sonic-qos-scheduler-and-shaping/">SONiC QoS scheduler and shaping</a> を参照。</li>
+<li><strong>BufferOrch</strong> — <code>BUFFER_POOL</code> / <code>BUFFER_PROFILE</code> / <code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code> を SAI buffer pool / profile / PG / queue オブジェクトへ変換します。動的バッファモードのときは buffer manager から流れてくる「再計算後の profile」を扱います。<!-- evidence: sonic-swss orchagent/bufferorch.cpp L73-L76 が APP_BUFFER_{POOL,PROFILE,QUEUE,PG}_TABLE_NAME を processBufferPool / processBufferProfile / processQueue / processPriorityGroup にディスパッチし、L527 / L572 で sai_buffer_api->create_buffer_pool / remove_buffer_pool を呼ぶ --></li>
+<li><strong>QosOrch</strong> — <code>QUEUE</code> / <code>SCHEDULER</code> / <code>WRED_PROFILE</code> / <code>*_TO_*_MAP</code> 系を SAI の scheduler / <a href="../../../reference/glossary/#term-wred">WRED</a> / map オブジェクト、および port qos 属性に落とします。背景は <a href="../../../acl-qos/sonic-qos-scheduler-and-shaping/">SONiC QoS scheduler and shaping</a> を参照。<!-- evidence: sonic-swss orchagent/qosorch.cpp L21-L24 で sai_scheduler_api / sai_wred_api / sai_scheduler_group_api を extern 宣言、L60-L69 の qos_to_attr_map が dscp_to_tc / tc_to_queue / pfc_to_pg_map / pfc_to_queue_map を SAI_PORT_ATTR_QOS_* に対応付ける --></li>
 <li><strong>PortsOrch</strong> — ポート単位の <a href="../../../reference/glossary/#term-pfc">PFC</a> enable mask、<code>PORT_QOS_MAP</code> の参照、PG/queue 数の取得など、ポート寄りの設定を扱います。</li>
-<li><strong>PfcWdOrch</strong> — <code>PFC_WD</code> テーブルを読み、queue ごとに storm 監視を仕掛けます。検出時には SAI 経由で queue を一時停止し、回復したら戻します。詳細は <a href="../../../reference/config-db/pfc-wd/"><code>PFC_WD</code></a> と上位の monitor 機構の説明を参照。</li>
-<li><strong>FlexCounterOrch</strong> — queue / PG / buffer pool 単位で SAI から counter / watermark を fetch し、STATE_DB / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> に書きます。watermark の意味は <a href="../../../acl-qos/watermark-counters-in-sonic/">watermark counters in SONiC</a>、port buffer drop counter は <a href="../../../acl-qos/port-buffer-drop-counters-in-sonic/">port buffer drop counters</a> を参照。</li>
+<li><strong>PfcWdOrch</strong> — <code>PFC_WD</code> テーブルを読み、queue ごとに storm 監視を仕掛けます。検出時には SAI 経由で queue を一時停止し、回復したら戻します。詳細は <a href="../../../reference/config-db/pfc-wd/"><code>PFC_WD</code></a> と上位の monitor 機構の説明を参照。<!-- evidence: sonic-swss orchagent/pfcwdorch.cpp L73 が CFG_PFC_WD_TABLE_NAME consumer を分岐、L528 registerInWdDb が queue ごとの監視を仕掛け、L385/L395 disableBigRedSwitchMode が回復処理を持つ --></li>
+<li><strong>FlexCounterOrch</strong> — queue / PG / buffer pool 単位で SAI から counter / watermark を fetch し、STATE_DB / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> に書きます。<!-- evidence: sonic-swss orchagent/flexcounterorch.cpp L46/L52/L53 が BUFFER_POOL_WATERMARK / QUEUE_WATERMARK / PG_WATERMARK キーを宣言、L78-L81 で対応する FLEX_COUNTER_GROUP にマップ、L287 で BufferOrch と連携して watermark の enable を制御 -->watermark の意味は <a href="../../../acl-qos/watermark-counters-in-sonic/">watermark counters in SONiC</a>、port buffer drop counter は <a href="../../../acl-qos/port-buffer-drop-counters-in-sonic/">port buffer drop counters</a> を参照。</li>
 </ul>
 <h2 id="buffer-manager">buffer manager と動的バッファモード<a class="headerlink" href="#buffer-manager" title="Permanent link">&para;</a></h2>
 <p><code>BUFFER_POOL:mode</code> が <code>dynamic</code> のとき、<a href="../../../reference/glossary/#term-sonic">SONiC</a> は buffermgrd / buffer template によって、port speed / cable length / MTU から <code>BUFFER_PROFILE</code> を実行時に再計算します。<code>config interface speed</code> で speed を変えれば profile が差し替わる、というのがこのモードの肝です。</p>
