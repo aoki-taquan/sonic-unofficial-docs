@@ -4,8 +4,29 @@ description: 発展トピック — 起動、readiness、warm reboot のよう�
   直後の動作」「warm reboot 中の差分適用」が前提として出てくるとき、ここに戻る。
 area: topics
 verification: meta
-last_verified: 2026-05-10
-sources: []
+last_verified: 2026-06-04
+sources:
+- repo: sonic-net/sonic-sairedis
+  path: https://github.com/sonic-net/sonic-sairedis/issues/1429
+  note: dummy SAI objects の削除失敗（バージョン跨ぎ warm reboot アップグレード）
+- repo: sonic-net/sonic-sairedis
+  path: https://github.com/sonic-net/sonic-sairedis/issues/1361
+  note: SAI_SWITCH_ATTR_RESTART_WARM を reconcile 後に false へ戻す必要
+- repo: sonic-net/sonic-sairedis
+  path: https://github.com/sonic-net/sonic-sairedis/issues/899
+  note: zero buffer profile attach 時の reconcile 失敗（temp asic view 重複生成）
+- repo: sonic-net/sonic-sairedis
+  path: https://github.com/sonic-net/sonic-sairedis/pull/906
+  note: issue #899 の修正 PR
+- repo: sonic-net/sonic-sairedis
+  path: https://github.com/sonic-net/sonic-sairedis/issues/862
+  note: warm reboot 後の FlexCounter による新 VID の処理失敗
+- repo: sonic-net/sonic-swss
+  path: https://github.com/sonic-net/sonic-swss/pull/1987
+  note: issue #862 関連 FlexCounter 再登録の修正 PR
+- repo: sonic-net/sonic-sairedis
+  path: https://github.com/sonic-net/sonic-sairedis/issues/449
+  note: warm reboot 後の ACL counter OID マッピングズレ
 related:
   cli:
   - show feature status
