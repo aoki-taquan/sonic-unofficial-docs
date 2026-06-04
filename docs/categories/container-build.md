@@ -19,7 +19,16 @@ related:
 
 このカテゴリは container / build / image / upgrade に関わるページを area 横断でまとめます。**architecture**（ビルドプロファイル・ビルド時間最適化・RFS Split build）・**platform**（[NPU](../reference/glossary.md#term-npu) MDIO / gbsyncd docker 化）・**routing**（dhcp-relay docker）・**system**（Process / Docker stats、Secure Upgrade、Container Hardening、Debian / docker semver、warm restart、syslog rate limit）の 14 ページが対象です。
 
-ランタイム面では **container hardening**（capability / read-only / privileged の段階的削減）と **secure upgrade**（image 署名検証）が重要な軸で、それぞれ `SECURE_UPGRADE_MODE` や docker capability 列を [CONFIG_DB](../reference/glossary.md#term-config_db) に持ちます。docker warm restart は本カテゴリと [Warm-Reboot 関連](reboot.md) の両方に出現します。
+ランタイム面では **container hardening**（capability / read-only / privileged の段階的削減）と **secure upgrade**（image 署名検証）が重要な軸ですが、両者の設定面は性質が異なります。
+
+- **secure upgrade**: `SECURE_UPGRADE_MODE` は `sonic-buildimage` の **ビルド時 make 変数**（`no_sign` / `dev` / `prod`）で、`slave.mk` から `onie-mk-demo.sh` 経由で渡されます[^secure-upgrade-mode]。secure upgrade 自体は [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) に新規スキーマを追加せず、`sonic-installer install` の検証経路（`verify_secureboot_image` 系）にとどまります[^secure-upgrade-configdb]。
+- **container hardening**: docker 単位の capability / privileged の宣言枠は `sonic-buildimage` の `files/build_templates/default_manifest` と `manifest.json.j2` 側にあり、ランタイム有効/無効の制御は CONFIG_DB の **`FEATURE`** テーブル（および application extension manifest）の領域です[^hardening-feature]。
+
+docker warm restart は本カテゴリと [Warm-Reboot 関連](reboot.md) の両方に出現します。
+
+[^secure-upgrade-mode]: `sonic-buildimage/slave.mk:451`, `slave.mk:1555`, `slave.mk:1749` — `SECURE_UPGRADE_MODE` は make 引数として宣言・伝播され、ONIE installer 生成ステップで使用される。
+[^secure-upgrade-configdb]: `docs/system/secure-upgrade.md` — 「[CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) への新規追加は無し。`sonic-installer install` の挙動が変わるのみ」と記載。
+[^hardening-feature]: `docs/system/sonic-container-hardening.md` の frontmatter `related.config_db: [FEATURE]`、および `sonic-buildimage/files/build_templates/default_manifest` / `manifest.json.j2` における capability / privileged 宣言枠を参照。
 
 主要キーワード: `container`, `Docker`, `build`, `image`, `Debian`, `sonic-buildimage`, `secure upgrade`, `hardening`, `RFS`
 
