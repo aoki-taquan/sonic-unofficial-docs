@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APPL_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…">
+        <meta name="description" content="VRF / ECMP / RIB-FIB パイプライン — SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APPL_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種類を選ぶ」の順で読み直す章入口。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="VRF / ECMP / RIB-FIB パイプライン - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APPL_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…" />
+<meta property="og:description" content="VRF / ECMP / RIB-FIB パイプライン — SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APPL_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種類を選ぶ」の順で読み直す章入口。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/04-vrf-ecmp/index.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/04-vrf-ecmp/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="VRF / ECMP / RIB-FIB パイプライン - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APPL_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…" />
+<meta property="twitter:description" content="VRF / ECMP / RIB-FIB パイプライン — SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APPL_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種類を選ぶ」の順で読み直す章入口。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/04-vrf-ecmp/index.png" />
 </head>
   
@@ -35999,21 +35999,21 @@
 </ul>
 <p><strong>関連する HLD 7 件</strong></p>
 <ul>
-<li><a href="../../routing/routing-and-next-hop-table-enhancement/">NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離</a></li>
-<li><a href="../../routing/bgp-loading-optimization-for-sonic/">BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）</a></li>
-<li><a href="../../routing/ipv6-link-local-enhancements/">IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）</a></li>
+<li><a href="../../routing/sonic-vrf-support-design-spec-draft/">VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）</a></li>
+<li><a href="../../routing/default-route/">linkmgrd のデフォルトルート連動（DualToR mux 制御）</a></li>
 <li><a href="../../routing/sonic-fine-grained-ecmp/">Fine Grained ECMP（FG_NHG / fgnhgorch）</a></li>
-<li><a href="../../routing/srv6-vpn-hld/">SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）</a></li>
-<li><a href="../../routing/bgp-prefix-independent-convergence-architecture-document/">BGP PIC（Prefix Independent Convergence / NHG 階層）</a></li>
-<li><a href="../../routing/bgp-route-install-error-handling/">BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）</a></li>
+<li><a href="../../routing/dhcp-relay-for-ipv6-hld/">DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）</a></li>
+<li><a href="../../routing/high-level-design-document/">Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）</a></li>
+<li><a href="../../routing/multiple-nexthop-route-hld/">dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）</a></li>
+<li><a href="../../routing/sonic-management-vrf-design-document-201911-release/">Management VRF 設計（201911 release / l3mdev + cgroups）</a></li>
 </ul>
 <p><strong>関連トラブルシュート 5 件</strong></p>
 <ul>
+<li><a href="../../reference/runbooks/dhcp-relay/">DHCP Relay で IP が払い出されない</a></li>
 <li><a href="../../reference/runbooks/route-not-installed-in-fib/">経路は RIB にあるが FIB / ASIC に降りない</a></li>
 <li><a href="../../reference/runbooks/appdb-asicdb-sync-lag/">APPL_DB → ASIC_DB の反映が遅延・停止する</a></li>
-<li><a href="../../reference/runbooks/swss-orchagent-busy-loop/">orchagent が CPU 100% で詰まる</a></li>
-<li><a href="../../reference/runbooks/warm-reboot-failure/">Warm Reboot が失敗 / 通信断が長引く</a></li>
-<li><a href="../../reference/runbooks/evpn-type2-not-advertised/">EVPN Type-2 route が広告されない</a></li>
+<li><a href="../../reference/runbooks/arp-entry-stuck/">ARP / Neighbor エントリが古い IP-MAC を保持し続ける</a></li>
+<li><a href="../../reference/runbooks/bgp-route-not-advertised/">BGP route が広告されない</a></li>
 </ul>
 <!-- /next-reads -->
 

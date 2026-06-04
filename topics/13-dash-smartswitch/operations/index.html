@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="HA / PMON / reboot / upgrade の運用 — SmartSwitch の運用観点は「どの障害をどの daemon が見て」「どの順序で再起動 / アップグレードするか」に集約されます。NPU / DPU で責務が分かれているため、コマンドを叩く前に経路を意識する必要があります。">
+        <meta name="description" content="SmartSwitch 上で HA / PMON / reboot / DPU 独立アップグレードを運用するための NPU / DPU 別経路と 実 CLI・実 DB テーブルの早見。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="HA / PMON / reboot / upgrade の運用 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="HA / PMON / reboot / upgrade の運用 — SmartSwitch の運用観点は「どの障害をどの daemon が見て」「どの順序で再起動 / アップグレードするか」に集約されます。NPU / DPU で責務が分かれているため、コマンドを叩く前に経路を意識する必要があります。" />
+<meta property="og:description" content="SmartSwitch 上で HA / PMON / reboot / DPU 独立アップグレードを運用するための NPU / DPU 別経路と 実 CLI・実 DB テーブルの早見。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/13-dash-smartswitch/operations.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/13-dash-smartswitch/operations/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="HA / PMON / reboot / upgrade の運用 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="HA / PMON / reboot / upgrade の運用 — SmartSwitch の運用観点は「どの障害をどの daemon が見て」「どの順序で再起動 / アップグレードするか」に集約されます。NPU / DPU で責務が分かれているため、コマンドを叩く前に経路を意識する必要があります。" />
+<meta property="twitter:description" content="SmartSwitch 上で HA / PMON / reboot / DPU 独立アップグレードを運用するための NPU / DPU 別経路と 実 CLI・実 DB テーブルの早見。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/13-dash-smartswitch/operations.png" />
 </head>
   
@@ -36269,16 +36269,16 @@
 
 
 <h1 id="ha-pmon-reboot-upgrade">HA / PMON / reboot / upgrade の運用<a class="headerlink" href="#ha-pmon-reboot-upgrade" title="Permanent link">&para;</a></h1>
-<p><a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> の運用観点は「どの障害をどの daemon が見て」「どの順序で再起動 / アップグレードするか」に集約されます。<a href="../../../reference/glossary/#term-npu">NPU</a> / <a href="../../../reference/glossary/#term-dpu">DPU</a> で責務が分かれているため、コマンドを叩く前に経路を意識する必要があります。</p>
+<p><a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> の運用観点は「どの障害をどの daemon が見て」「どの順序で再起動 / アップグレードするか」に集約される。<a href="../../../reference/glossary/#term-npu">NPU</a> / <a href="../../../reference/glossary/#term-dpu">DPU</a> で責務が分かれているため、コマンドを叩く前に経路を意識する必要がある。</p>
 <h2 id="_1">全体状態の入口<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>最初に NPU 側で全 DPU の存在と up/down を一覧します。</p>
+<p>最初に NPU 側で全 DPU の admin/oper 状態と midplane 到達性を一覧する<sup id="fnref:cli-chassis"><a class="footnote-ref" href="#fn:cli-chassis">1</a></sup>。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@smartswitch:~$<span class="w"> </span>show<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>status
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">       </span>Name<span class="w">      </span>Description<span class="w">    </span>Physical-Slot<span class="w">   </span>Oper-Status<span class="w">     </span>Admin-Status
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>-----------<span class="w">  </span>--------------<span class="w">  </span>---------------<span class="w">  </span>------------<span class="w">  </span>---------------
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>DPU0<span class="w">          </span>SmartSwitch-DPU<span class="w">            </span><span class="m">1</span><span class="w">            </span>Online<span class="w">              </span>up
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>DPU1<span class="w">          </span>SmartSwitch-DPU<span class="w">            </span><span class="m">2</span><span class="w">            </span>Online<span class="w">              </span>up
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>DPU2<span class="w">          </span>SmartSwitch-DPU<span class="w">            </span><span class="m">3</span><span class="w">        </span>Offline<span class="w">              </span>up
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>DPU3<span class="w">          </span>SmartSwitch-DPU<span class="w">            </span><span class="m">4</span><span class="w">            </span>Online<span class="w">              </span>up
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">       </span>Name<span class="w">      </span>Description<span class="w">    </span>Physical-Slot<span class="w">   </span>Oper-Status<span class="w">     </span>Admin-Status<span class="w">    </span>Serial
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>-----------<span class="w">  </span>--------------<span class="w">  </span>---------------<span class="w">  </span>------------<span class="w">  </span>---------------<span class="w">  </span>--------
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>DPU0<span class="w">          </span>SmartSwitch-DPU<span class="w">            </span><span class="m">1</span><span class="w">            </span>Online<span class="w">              </span>up<span class="w">      </span>...
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>DPU1<span class="w">          </span>SmartSwitch-DPU<span class="w">            </span><span class="m">2</span><span class="w">            </span>Online<span class="w">              </span>up<span class="w">      </span>...
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>DPU2<span class="w">          </span>SmartSwitch-DPU<span class="w">            </span><span class="m">3</span><span class="w">           </span>Offline<span class="w">            </span>down<span class="w">      </span>...
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>DPU3<span class="w">          </span>SmartSwitch-DPU<span class="w">            </span><span class="m">4</span><span class="w">            </span>Online<span class="w">              </span>up<span class="w">      </span>...
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>admin@smartswitch:~$<span class="w"> </span>show<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>midplane-status
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">       </span>Name<span class="w">        </span>IP-Address<span class="w">    </span>Reachability
@@ -36288,10 +36288,10 @@
 </span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>DPU2<span class="w">           </span><span class="m">169</span>.254.200.3<span class="w">           </span>False
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>DPU3<span class="w">           </span><span class="m">169</span>.254.200.4<span class="w">            </span>True
 </span></code></pre></div>
-<p><code>midplane-status: False</code> は最も多い「DPU が動かない」事象の入口で、原因は (a) DPU 側 <a href="../../../reference/glossary/#term-sonic">SONiC</a> が boot 途中、(b) midplane DHCP が走っていない、(c) PCI detach 中、のいずれかです。<code>docker ps | grep redisdpu</code> と NPU 側 <code>redis-cli -h redisdpu2 ping</code> を続けて叩いて、DPU 側 redis 到達性まで踏み込みます。</p>
+<p><code>Reachability: False</code> は最も多い「DPU が動かない」事象の入口で、原因は (a) DPU 側 <a href="../../../reference/glossary/#term-sonic">SONiC</a> が boot 途中、(b) midplane DHCP が走っていない、(c) PCI detach 中、のいずれか。NPU 側からは DPU ごとに別 redis インスタンス (<code>/var/run/redisdpu&lt;N&gt;/redis.sock</code>) が見えるので、<code>redis-cli -s /var/run/redisdpu2/redis.sock ping</code> で DPU 側 redis 到達性まで踏み込める<sup id="fnref:redisdpu"><a class="footnote-ref" href="#fn:redisdpu">2</a></sup>。</p>
 <h2 id="ha-dpu-scope-dpu-driven">HA: DPU-scope, DPU-driven 構成<a class="headerlink" href="#ha-dpu-scope-dpu-driven" title="Permanent link">&para;</a></h2>
-<p><a href="../../../reference/glossary/#term-dash">DASH</a>-on-SmartSwitch の HA は <strong>DPU 単位のペア（DPU-scope）</strong> で組み、フェイルオーバー判定は <strong>DPU 側のセッション状態を主入力（DPU-driven）</strong> とするのが基本形です。NPU 側 HAMgrD は外側の actor として、DPU ペアの組み合わせ・global state・peer リンクの健全性を管理します。</p>
-<p>運用時に押さえる流れは次の通りです。</p>
+<p><a href="../../../reference/glossary/#term-dash">DASH</a>-on-SmartSwitch の HA は <strong>DPU 単位のペア（DPU-scope）</strong> で組み、フェイルオーバー判定は <strong>DPU 側のセッション状態を主入力（DPU-driven）</strong> とするのが基本形である。NPU 側 HAMgrD は外側の actor として、DPU ペアの組み合わせ・global state・peer リンクの健全性を管理する<sup id="fnref:hamgrd-hld"><a class="footnote-ref" href="#fn:hamgrd-hld">3</a></sup>。</p>
+<p>運用時に押さえる流れは次の通り。</p>
 <ol>
 <li>コントローラが HA セット / HA グループを設定する。</li>
 <li>HAMgrD が peer DPU 間のセッション確立を指示する。</li>
@@ -36299,106 +36299,92 @@
 <li>障害（DPU 単体・peer リンク・NPU 経路）を検知すると HAMgrD が active / standby 切替を駆動する。</li>
 <li>復旧後はフロー再同期と active 戻し（switchback）を行う。</li>
 </ol>
-<p>実装上の細部は <a href="../../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design/">HAMgrD 設計</a> と <a href="../../../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup/">DPU-Scope DPU-Driven HA HLD</a> を参照してください。</p>
+<p>実装上の細部は <a href="../../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design/">HAMgrD 設計</a> と <a href="../../../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup/">DPU-Scope DPU-Driven HA HLD</a> を参照。</p>
 <h3 id="ha">HA 状態の確認<a class="headerlink" href="#ha" title="Permanent link">&para;</a></h3>
+<p>実 DB テーブルは <code>sonic-swss-common/common/schema.h</code> で次のように定義されている<sup id="fnref:schema"><a class="footnote-ref" href="#fn:schema">4</a></sup>。</p>
+<ul>
+<li>NPU <code>APPL_DB</code> (DB 0): <code>APP_DASH_HA_SET_CONFIG_TABLE_NAME = "DASH_HA_SET_CONFIG_TABLE"</code>, <code>APP_DASH_HA_SET_TABLE_NAME = "DASH_HA_SET_TABLE"</code>, <code>APP_DASH_HA_SCOPE_CONFIG_TABLE_NAME = "DASH_HA_SCOPE_CONFIG_TABLE"</code>, <code>APP_DASH_HA_SCOPE_TABLE_NAME = "DASH_HA_SCOPE_TABLE"</code></li>
+<li>NPU <code>CONFIG_DB</code>: <code>CFG_DASH_HA_GLOBAL_CONFIG_TABLE_NAME = "DASH_HA_GLOBAL_CONFIG"</code></li>
+<li>DPU <code>STATE_DB</code> (<code>DPU_STATE_DB</code>, DB 17): <code>STATE_DASH_HA_SET_STATE_TABLE_NAME = "DASH_HA_SET_STATE_TABLE"</code>, <code>STATE_DASH_HA_SCOPE_STATE_TABLE_NAME = "DASH_HA_SCOPE_STATE_TABLE"</code></li>
+</ul>
+<p><code>DashHaOrch</code> は HA Set の APP/STATE と HA Scope の APP/STATE 双方を購読・書き戻しする<sup id="fnref:dashhaorch"><a class="footnote-ref" href="#fn:dashhaorch">5</a></sup>。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@smartswitch:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DASH_HA_SET_TABLE:hasetA&#39;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;version&quot;</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;1&quot;</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="m">3</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;vip_v4&quot;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="m">4</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;10.1.0.100&quot;</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="m">5</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;owner&quot;</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="m">6</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;switch&quot;</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="m">7</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;scope&quot;</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="m">8</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;dpu&quot;</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="m">9</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;local_ip&quot;</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="m">10</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;10.1.0.1&quot;</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="m">11</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;peer_ip&quot;</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="m">12</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;10.1.0.2&quot;</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>admin@smartswitch:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DASH_HA_SCOPE_STATE_TABLE:hasetA&#39;</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;ha_role&quot;</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;active&quot;</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="m">3</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;last_state_change_time&quot;</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="m">4</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;1715200001&quot;</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="m">5</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;flow_sync_session_count&quot;</span>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="m">6</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;1&quot;</span>
-</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>
-</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>admin@smartswitch:~$<span class="w"> </span>docker<span class="w"> </span>logs<span class="w"> </span>hamgrd<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
-</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="m">2026</span>-05-10T03:21:01.123<span class="w"> </span>INFO<span class="w"> </span>hamgrd<span class="o">[</span>hasetA<span class="o">]</span>:<span class="w"> </span>peer<span class="w"> </span>link<span class="w"> </span>healthy,<span class="w"> </span><span class="nv">local</span><span class="o">=</span>active<span class="w"> </span><span class="nv">peer</span><span class="o">=</span>standby
-</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="m">2026</span>-05-10T03:21:11.500<span class="w"> </span>WARN<span class="w"> </span>hamgrd<span class="o">[</span>hasetA<span class="o">]</span>:<span class="w"> </span>bulk<span class="w"> </span>sync<span class="w"> </span>timeout,<span class="w"> </span>retrying
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>admin@smartswitch:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DASH_HA_SCOPE_TABLE:hasetA&#39;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>admin@smartswitch:~$<span class="w"> </span>redis-cli<span class="w"> </span>-s<span class="w"> </span>/var/run/redisdpu0/redis.sock<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DASH_HA_SCOPE_STATE_TABLE:hasetA&#39;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>admin@smartswitch:~$<span class="w"> </span>docker<span class="w"> </span>logs<span class="w"> </span>hamgrd<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
 </span></code></pre></div>
-<p><code>ha_role</code> が両側 <code>active</code> のままなら split-brain、両側 <code>standby</code> なら controller / peer link 障害です。<code>STATE_DB</code> の <code>DPU_STATE</code> も併せて確認します。</p>
-<p>DPU 側にログインして見るときは <code>redis-cli -h redisdpu0 -n 0</code> で DPU 側 <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> に直接アタッチします（<code>docker exec -it database bash</code> 経由）。</p>
+<p>DPU 側 <code>STATE_DB</code> の <code>DASH_HA_SCOPE_STATE_TABLE</code> で <code>ha_role</code> が両側 <code>active</code> のままなら split-brain、両側 <code>standby</code> なら controller / peer link 障害である。実フィールド名（<code>ha_role</code>, <code>last_state_change_time</code> 等）の正規定義は HAMgrD <a href="../../../reference/glossary/#term-hld">HLD</a> §「DASH HA Scope State」を参照（実装側のフィールド名は orch 経由でセットされるため、本ページでは具体値を例示しない）。</p>
 <h3 id="ha-db">HA 障害ドメインの DB 対応表<a class="headerlink" href="#ha-db" title="Permanent link">&para;</a></h3>
+<p>実 schema 名と対応する DB を示す。HLD 上で言及される「<a href="../../../reference/glossary/#term-eni">ENI</a> 単位 state」「flow sync counters」は master の <code>schema.h</code> には個別テーブルとして登録されていないため、<code>DashHaFlowOrch</code> 内部状態 / カウンタは <code>COUNTERS_DB</code> の <code>DASH:*</code> カウンタ系から拾うか、<code>docker exec swssdpu&lt;N&gt; ...</code> で orchagent ログを直接見る運用になる。</p>
 <table>
 <thead>
 <tr>
 <th>対象</th>
 <th>DB</th>
-<th>テーブル</th>
+<th>実テーブル名</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>HA セット定義</td>
+<td>HA グローバル設定</td>
+<td>NPU <code>CONFIG_DB</code></td>
+<td><code>DASH_HA_GLOBAL_CONFIG</code></td>
+</tr>
+<tr>
+<td>HA セット定義 (config)</td>
+<td>NPU <code>APPL_DB</code> (DB 0)</td>
+<td><code>DASH_HA_SET_CONFIG_TABLE</code></td>
+</tr>
+<tr>
+<td>HA セット result</td>
 <td>NPU <code>APPL_DB</code> (DB 0)</td>
 <td><code>DASH_HA_SET_TABLE</code></td>
 </tr>
 <tr>
-<td>HA グループ</td>
-<td>NPU <code>APPL_DB</code></td>
-<td><code>DASH_HA_GLOBAL_TABLE</code></td>
+<td>HA scope 設定</td>
+<td>NPU <code>APPL_DB</code> (DB 0)</td>
+<td><code>DASH_HA_SCOPE_CONFIG_TABLE</code></td>
+</tr>
+<tr>
+<td>HA scope result</td>
+<td>NPU <code>APPL_DB</code> (DB 0)</td>
+<td><code>DASH_HA_SCOPE_TABLE</code></td>
+</tr>
+<tr>
+<td>HA set state</td>
+<td>DPU <code>STATE_DB</code> (DB 17)</td>
+<td><code>DASH_HA_SET_STATE_TABLE</code></td>
 </tr>
 <tr>
 <td>HA scope state</td>
-<td>NPU <code>STATE_DB</code> (DB 6)</td>
+<td>DPU <code>STATE_DB</code> (DB 17)</td>
 <td><code>DASH_HA_SCOPE_STATE_TABLE</code></td>
-</tr>
-<tr>
-<td><a href="../../../reference/glossary/#term-eni">ENI</a> 単位 state</td>
-<td>DPU <code>STATE_DB</code></td>
-<td><code>DASH_ENI_STATE_TABLE</code></td>
-</tr>
-<tr>
-<td>flow sync 状況</td>
-<td>DPU <code>COUNTERS_DB</code></td>
-<td><code>DASH_HA_FLOW_SYNC_COUNTERS</code></td>
 </tr>
 </tbody>
 </table>
 <h2 id="pmon">PMON の境界<a class="headerlink" href="#pmon" title="Permanent link">&para;</a></h2>
-<p>SmartSwitch の <code>pmon</code> は NPU 側で動き、DPU を含むハードウェア全体の電源 / 温度 / リセット / PCIe / link をまとめて見ます。DPU 側で個別に走らせるのは DPU 内部の thermal / sensor 程度で、上位の運用 view は NPU 側に集約されます。</p>
-<p>確認ポイントは次の通りです。</p>
+<p>SmartSwitch の <code>pmon</code> は NPU 側で動き、<code>chassisd</code> を含むプラットフォームデーモン群で DPU の電源 / 温度 / リセット / midplane / PCIe をまとめて見る。DPU 側で個別に走らせるのは DPU 内部の thermal / sensor 程度で、上位の運用 view は NPU 側に集約される。</p>
+<p>確認ポイントは次の通り。</p>
 <ul>
 <li>DPU の link state（midplane / PCIe / boot 完了）</li>
 <li>DPU の温度・電力</li>
 <li>DPU リセット要求（HAMgrD / 手動 reboot 経由）</li>
 </ul>
-<p>詳細は <a href="../../../platform/smartswitch-pmon-high-level-design/">SmartSwitch PMON HLD</a> を参照してください。</p>
+<p>詳細は <a href="../../../platform/smartswitch-pmon-high-level-design/">SmartSwitch PMON HLD</a> を参照。</p>
 <h3 id="dpu">DPU 個別の確認コマンド<a class="headerlink" href="#dpu" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@smartswitch:~$<span class="w"> </span>show<span class="w"> </span>system-health<span class="w"> </span>dpu
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">   </span>DPU<span class="w">      </span>State<span class="w">    </span>PCI<span class="w">       </span>Midplane<span class="w">    </span>Boot<span class="w">   </span>ASIC-Temp<span class="w">    </span>Power
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>------<span class="w">  </span>-----------<span class="w">  </span>--------<span class="w">  </span>--------<span class="w">  </span>------<span class="w">  </span>----------<span class="w">  </span>--------
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>DPU0<span class="w">       </span>up<span class="w">        </span>attached<span class="w">  </span>up<span class="w">         </span><span class="k">done</span><span class="w">    </span><span class="m">65</span><span class="w"> </span>C<span class="w">         </span><span class="m">55</span><span class="w"> </span>W
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>DPU1<span class="w">       </span>up<span class="w">        </span>attached<span class="w">  </span>up<span class="w">         </span><span class="k">done</span><span class="w">    </span><span class="m">63</span><span class="w"> </span>C<span class="w">         </span><span class="m">53</span><span class="w"> </span>W
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>DPU2<span class="w">       </span>down<span class="w">      </span>detached<span class="w">  </span>down<span class="w">       </span>boot<span class="w">     </span>-<span class="w">            </span>-
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>DPU3<span class="w">       </span>up<span class="w">        </span>attached<span class="w">  </span>up<span class="w">         </span><span class="k">done</span><span class="w">    </span><span class="m">64</span><span class="w"> </span>C<span class="w">         </span><span class="m">54</span><span class="w"> </span>W
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>admin@smartswitch:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DPU_STATE|DPU2&#39;</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;id&quot;</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="m">3</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;state&quot;</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="m">4</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;rebooting&quot;</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="m">5</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;midplane_link&quot;</span>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="m">6</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;down&quot;</span>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="m">7</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;pcie_link&quot;</span>
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="m">8</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;detached&quot;</span>
-</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="m">9</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;boot_progress&quot;</span>
-</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="m">10</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;kernel&quot;</span>
+<p><code>show system-health dpu &lt;DPUx&gt;</code> は DPU を 1 台引数で指定して <code>CHASSIS_STATE_DB</code> の <code>DPU_STATE|&lt;DPUx&gt;</code> を midplane / control / data の 3 plane に分解して表示する<sup id="fnref:system-health"><a class="footnote-ref" href="#fn:system-health">6</a></sup>。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@smartswitch:~$<span class="w"> </span>show<span class="w"> </span>system-health<span class="w"> </span>dpu<span class="w"> </span>DPU2
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">   </span>Name<span class="w">        </span>Oper-Status<span class="w">    </span>State-Detail<span class="w">        </span>State-Value<span class="w">    </span>Time<span class="w">    </span>Reason
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>-------<span class="w">  </span>--------------------<span class="w">  </span>------------------<span class="w">  </span>-------------<span class="w">  </span>------<span class="w">  </span>--------
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>DPU2<span class="w">      </span>Offline<span class="w">               </span>dpu_midplane_state<span class="w">  </span>down<span class="w">           </span>...<span class="w">     </span>...
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">                                </span>dpu_control_state<span class="w">   </span>down<span class="w">           </span>...<span class="w">     </span>...
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">                                </span>dpu_data_state<span class="w">      </span>down<span class="w">           </span>...<span class="w">     </span>...
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>admin@smartswitch:~$<span class="w"> </span>redis-cli<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-p<span class="w"> </span><span class="m">6380</span><span class="w"> </span>-n<span class="w"> </span>&lt;CHASSIS_STATE_DB<span class="w"> </span>index&gt;<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DPU_STATE|DPU2&#39;</span>
 </span></code></pre></div>
-<p><code>state=rebooting</code> が数分で <code>up</code> に戻らないときは、NPU <code>pmon</code> の <code>chassisd</code> ログと、midplane に対する DPU 側 DHCP の <code>journalctl -u dhclient</code> を NPU 側で確認します。</p>
+<p><code>dpu_midplane_state</code> が <code>down</code> のまま戻らない場合は NPU 側 <code>chassisd</code> ログと、midplane DHCP の <code>journalctl -u dhclient@&lt;midplane-intf&gt;</code> を NPU 側で確認する。</p>
 <h2 id="reboot">Reboot 順序<a class="headerlink" href="#reboot" title="Permanent link">&para;</a></h2>
-<p>SmartSwitch 全体を reboot する際は、<strong>NPU と DPU を別々に・正しい順序で</strong> 落とす必要があります。データプレーンを止めずに DPU だけ入れ替える運用も想定されているため、reboot path は次の階層に分かれます。</p>
+<p>SmartSwitch 全体を reboot する際は、<strong>NPU と DPU を別々に・正しい順序で</strong> 落とす必要がある。データプレーンを止めずに DPU だけ入れ替える運用も想定されているため、reboot path は次の階層に分かれる<sup id="fnref:graceful"><a class="footnote-ref" href="#fn:graceful">7</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -36416,56 +36402,54 @@
 <tr>
 <td>全 DPU reboot</td>
 <td>全 DPU（NPU 維持）</td>
-<td>DPU ごとに <a href="../../../reference/glossary/#term-gnoi">gNOI</a> HALT → PCI detach → 個別 reboot</td>
+<td>DPU ごとに <code>config chassis modules shutdown DPUx</code></td>
 </tr>
 <tr>
 <td>個別 DPU reboot</td>
 <td>1 DPU のみ</td>
-<td>gNOI HALT → PCI detach → 該当 DPU reboot</td>
+<td><code>config chassis modules shutdown DPUx</code> → graceful shutdown → <code>startup DPUx</code></td>
 </tr>
 </tbody>
 </table>
-<p>順序の要点は次の通りです。</p>
+<p><code>config chassis modules shutdown DPUx</code> の動作は次の通り<sup id="fnref:chassis-shutdown"><a class="footnote-ref" href="#fn:chassis-shutdown">8</a></sup>。</p>
 <ol>
-<li>対象 DPU に <code>gnoi.system.Reboot</code> (HALT) を送り、停止準備を促す。</li>
-<li>DPU 上の <code>gnoi_reboot_daemon</code> が graceful shutdown を実行する。</li>
-<li>NPU 側で PCI detach する。</li>
-<li>物理的に reboot し、戻ったら PCI attach → midplane 再接続 → DPU 側 SONiC 起動。</li>
-<li>HAMgrD が当該 DPU を再度 HA セットに組み込む。</li>
+<li><code>CONFIG_DB</code> の <code>CHASSIS_MODULE|DPUx</code> の <code>admin_status</code> を <code>down</code> に書き換える。</li>
+<li>NPU の <code>gnoi_shutdown_daemon</code>（<code>sonic-host-services/scripts/gnoi_shutdown_daemon.py</code>）が <code>CHASSIS_MODULE_INFO_TABLE</code> の <code>state_transition_in_progress</code> を購読しており、<code>docker exec gnmi gnoi_client</code> 経由で DPU 側 sysmgr に <a href="../../../reference/glossary/#term-gnoi">gNOI</a> <code>Reboot{method=HALT}</code> を発行する。</li>
+<li>DPU 側でカーネル halt まで進んだ後、NPU 側で PCI detach する。</li>
+<li><code>startup DPUx</code> で逆の手順を踏み、midplane 再接続 → DPU 側 SONiC 起動 → HAMgrD が当該 DPU を再度 HA セットに組み込む。</li>
 </ol>
-<p>詳細は <a href="../../../system/smart-switch-reboot-high-level-design/">SmartSwitch reboot 順序</a> と <a href="../../../platform/smartswitch-dpu-graceful-shutdown/">DPU Graceful Shutdown</a> を参照してください。</p>
+<p>詳細は <a href="../../../system/smart-switch-reboot-high-level-design/">SmartSwitch reboot 順序</a> と <a href="../../../platform/smartswitch-dpu-graceful-shutdown/">DPU Graceful Shutdown</a> を参照。</p>
 <h3 id="reboot_1">Reboot コマンド例<a class="headerlink" href="#reboot_1" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@smartswitch:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>shutdown<span class="w"> </span>DPU2
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>admin@smartswitch:~$<span class="w"> </span>show<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>status<span class="w"> </span>DPU2
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">       </span>Name<span class="w">      </span>Description<span class="w">    </span>Physical-Slot<span class="w">   </span>Oper-Status<span class="w">     </span>Admin-Status
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>-----------<span class="w">  </span>--------------<span class="w">  </span>---------------<span class="w">  </span>------------<span class="w">  </span>---------------
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>DPU2<span class="w">          </span>SmartSwitch-DPU<span class="w">            </span><span class="m">3</span><span class="w">        </span>Offline<span class="w">             </span>down
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>admin@smartswitch:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>startup<span class="w"> </span>DPU2
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>admin@smartswitch:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>startup<span class="w"> </span>DPU2
 </span></code></pre></div>
-<p>直接 gNOI 経由で操作する場合（外部 controller から）:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$<span class="w"> </span>gnoi_cli<span class="w"> </span>-target<span class="w"> </span>smartswitch:8080<span class="w"> </span>-rpc<span class="w"> </span>Reboot<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>-jsonin<span class="w"> </span><span class="s1">&#39;{&quot;method&quot;:&quot;COLD&quot;,&quot;subcomponents&quot;:[{&quot;name&quot;:&quot;DPU2&quot;}]}&#39;</span>
+<p>外部 controller から直接 gNOI 経由で叩く場合、SONiC 同梱の <code>gnoi_client</code> を <code>gnmi</code> コンテナ内から実行する<sup id="fnref:gnoi-client"><a class="footnote-ref" href="#fn:gnoi-client">9</a></sup>。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@smartswitch:~$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>gnmi<span class="w"> </span>gnoi_client<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>-module<span class="w"> </span>System<span class="w"> </span>-rpc<span class="w"> </span>Reboot<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>-jsonin<span class="w"> </span><span class="s1">&#39;{&quot;method&quot;:&quot;HALT&quot;,&quot;subcomponents&quot;:[{&quot;name&quot;:{&quot;origin&quot;:&quot;openconfig-platform&quot;,&quot;elem&quot;:[{&quot;name&quot;:&quot;DPU2&quot;}]}}]}&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>-insecure
 </span></code></pre></div>
-<p><code>shutdown</code> を投げた DPU の HA ペアが正しく <code>active</code> 側だけ残っているか、<code>DASH_HA_SCOPE_STATE_TABLE</code> で確認してから物理 reboot に進むのが安全な手順です。</p>
+<p><code>shutdown</code> を投げた DPU の HA ペアが正しく <code>active</code> 側だけ残っているかは、NPU 側 <code>APPL_DB</code> の <code>DASH_HA_SCOPE_TABLE</code> と DPU 側 <code>STATE_DB</code> の <code>DASH_HA_SCOPE_STATE_TABLE</code> で確認してから物理 reboot に進むのが安全な手順となる。</p>
 <h2 id="dpu_1">DPU の独立アップグレード<a class="headerlink" href="#dpu_1" title="Permanent link">&para;</a></h2>
-<p>DPU 単体のソフトウェアアップグレードは「NPU を止めずに DPU だけ image 入替する」運用です。経路は gNOI 系で揃えられ、おおむね次の流れになります。</p>
+<p>DPU 単体のソフトウェアアップグレードは「NPU を止めずに DPU だけ image 入替する」運用である。経路は gNOI 系で揃えられ、おおむね次の流れ<sup id="fnref:upgrade-hld"><a class="footnote-ref" href="#fn:upgrade-hld">10</a></sup>:</p>
 <ol>
 <li>gNOI でターゲット DPU に新 image を転送する。</li>
 <li>DPU 側で activate / install する。</li>
-<li>graceful shutdown → reboot → 起動確認 → HA セット復帰。</li>
+<li><code>config chassis modules shutdown DPUx</code> で graceful shutdown → 物理 reboot → 起動確認 → HA セット復帰。</li>
 </ol>
-<p>複数 DPU を 1 台ずつ rolling で回すのが基本で、HA ペアの片側ずつ行うことでサービス継続を保ちます。詳細は <a href="../../../system/independent-dpu-upgrade/">Smart Switch DPU 独立アップグレード</a> を参照してください。</p>
+<p>複数 DPU を 1 台ずつ rolling で回すのが基本で、HA ペアの片側ずつ行うことでサービス継続を保つ。詳細は <a href="../../../system/independent-dpu-upgrade/">Smart Switch DPU 独立アップグレード</a> を参照。</p>
+<p>なお、<code>config chassis modules upgrade</code> のような専用 CLI は master の <code>sonic-utilities</code> には実装されていない（2026-06-03 時点。外部コントローラから gNOI 経由で image 配布する設計）。</p>
 <h3 id="upgrade">Upgrade 中の典型ログ<a class="headerlink" href="#upgrade" title="Permanent link">&para;</a></h3>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="l l-Scalar l-Scalar-Plain">hamgrd[hasetA]</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">switching local=active -&gt; standby for upgrade of DPU2</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="l l-Scalar l-Scalar-Plain">gnoi_reboot_daemon[DPU2]</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">received HALT, draining flows</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="nt">chassisd</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DPU2 PCI detach successful</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="nt">chassisd</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DPU2 PCI attach successful</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="l l-Scalar l-Scalar-Plain">swssdpu2#orchagent</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SAI switch init done, ports up</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="l l-Scalar l-Scalar-Plain">hamgrd[hasetA]</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">peer DPU2 re-joined ha-set, starting bulk sync</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="l l-Scalar l-Scalar-Plain">hamgrd[hasetA]</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bulk sync complete, restoring previous role distribution</span>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>gnoi_shutdown_daemon[DPU2]: state_transition_in_progress=True; sending gNOI Reboot HALT to DPU2
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>gnoi_shutdown_daemon[DPU2]: RebootStatus polling: active=True
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>chassisd: DPU2 admin_status=down, PCI detach successful
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>chassisd: DPU2 admin_status=up, PCI attach successful
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>swssdpu2#orchagent: SAI switch init done, ports up
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>hamgrd[hasetA]: peer DPU2 re-joined ha-set, starting bulk sync
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>hamgrd[hasetA]: bulk sync complete, restoring previous role distribution
 </span></code></pre></div>
-<p>bulk sync が完了しないまま次の DPU に進むと、HA ペアの両側が同時に standby に倒れる事故が起きます。<code>flow_sync_session_count</code> が peer の総 flow と一致するまで待つのが運用上の鉄則です。</p>
+<p>bulk sync が完了しないまま次の DPU に進むと、HA ペアの両側が同時に standby に倒れる事故が起きる。HA scope state が両 DPU で <code>active</code>/<code>standby</code> の正規ペアに収束するまで待つのが運用上の鉄則。</p>
 <h2 id="_2">障害ドメイン別の確認順<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36478,12 +36462,12 @@
 <tbody>
 <tr>
 <td>DPU 個別がトラフィックを処理しない</td>
-<td>NPU 側 <code>show platform</code> / PMON、midplane link、<code>redisdpuN</code> 接続</td>
+<td>NPU 側 <code>show chassis modules status</code> / <code>midplane-status</code>、<code>redisdpuN</code> socket 接続</td>
 <td>DPU 側 <code>DashOrch</code> / <a href="../../../reference/glossary/#term-sai">SAI</a> 状態、HAMgrD のセッション state</td>
 </tr>
 <tr>
 <td>HA フェイルオーバーしない</td>
-<td>HAMgrD ログ、<code>STATE_DB</code> の HA state</td>
+<td>NPU 側 <code>hamgrd</code> ログ、<code>STATE_DB</code> の <code>DASH_HA_SCOPE_STATE_TABLE</code></td>
 <td>peer link、DPU 側 <code>DashHaFlowOrch</code> の sync 状況</td>
 </tr>
 <tr>
@@ -36493,7 +36477,7 @@
 </tr>
 <tr>
 <td>Upgrade 後に DPU が戻らない</td>
-<td>gNOI ログ、PCI detach / attach、midplane DHCP</td>
+<td><code>gnoi_shutdown_daemon</code> ログ、PCI detach / attach、midplane DHCP</td>
 <td>DPU 側 boot / <code>featured</code></td>
 </tr>
 </tbody>
@@ -36524,7 +36508,7 @@
 <td>controller 側で不要 ENI を削除</td>
 </tr>
 <tr>
-<td><code>gnoi_reboot_daemon: HALT timeout</code></td>
+<td><code>gnoi_shutdown_daemon: HALT timeout</code></td>
 <td>DPU 側 graceful shutdown 不可</td>
 <td>強制 reboot を検討、要因として flow sync の停止</td>
 </tr>
@@ -36549,16 +36533,16 @@
 <td><code>sudo config chassis modules shutdown DPUx</code> → <code>startup DPUx</code></td>
 </tr>
 <tr>
-<td>HA active 強制切替</td>
-<td><code>sudo config dash ha switchover hasetA</code> （controller 推奨）</td>
+<td>DPU graceful shutdown を gNOI 直叩き</td>
+<td><code>docker exec gnmi gnoi_client -module System -rpc Reboot -jsonin '{"method":"HALT", ...}'</code></td>
 </tr>
 <tr>
-<td>HA ペアから一時除外</td>
-<td><code>sudo config dash ha exclude hasetA DPUx</code></td>
+<td>DPU 状態確認</td>
+<td><code>show chassis modules status DPUx</code> / <code>show system-health dpu DPUx</code></td>
 </tr>
 <tr>
 <td>DPU image 再投入</td>
-<td><code>sudo config chassis modules upgrade DPUx &lt;image-url&gt;</code></td>
+<td>外部 gNOI client から DPU に image 配布 → <code>config chassis modules shutdown/startup</code> で再起動</td>
 </tr>
 </tbody>
 </table>
@@ -36567,7 +36551,7 @@
 <ul>
 <li>DASH の API モデルや SAI 経路は <a href="../internals/">internals</a> を参照。</li>
 <li>初期 fabric / DPU プロビジョニングは <a href="../setup/">setup</a> を参照。</li>
-<li><a href="../../../reference/glossary/#term-asic">ASIC</a> リソースカウンタ全般は <a href="../../12-multi-asic-voq/operations/">Multi-ASIC / VOQ の運用</a> と一部重複します。</li>
+<li><a href="../../../reference/glossary/#term-asic">ASIC</a> リソースカウンタ全般は <a href="../../12-multi-asic-voq/operations/">Multi-ASIC / VOQ の運用</a> と一部重複する。</li>
 </ul>
 <h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36578,7 +36562,43 @@
 <li><a href="../../../platform/smartswitch-dpu-graceful-shutdown/">DPU Graceful Shutdown</a></li>
 <li><a href="../../../system/independent-dpu-upgrade/">DPU 独立アップグレード</a></li>
 </ul>
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 31120287100e -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:cli-chassis">
+<p><code>show chassis modules status</code> は <code>STATE_DB</code> の <code>CHASSIS_MODULE_TABLE</code> を、<code>midplane-status</code> は <code>CHASSIS_MIDPLANE_TABLE</code> を読む。<code>sonic-utilities/show/chassis_modules.py</code> L11–L122 を参照。&#160;<a class="footnote-backref" href="#fnref:cli-chassis" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:redisdpu">
+<p>NPU から見える DPU 側 redis の unix socket は <code>/var/run/redisdpu&lt;N&gt;/redis.sock</code>。<code>sonic-buildimage/dockers/docker-database/database_global.json.j2</code> および <code>SONiC/doc/smart-switch/smart-switch-database-architecture/smart-switch-database-design.md</code> を参照。&#160;<a class="footnote-backref" href="#fnref:redisdpu" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:hamgrd-hld">
+<p>HA actor / table の対応表は <code>SONiC/doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md</code> L40–L60 に整理されており、Global Config (<code>DASH_HA_GLOBAL_CONFIG_TABLE</code> / <code>DASH_HA_GLOBAL_CONFIG_STATE</code>) / HA Set (<code>DASH_HA_SET_CONFIG_TABLE</code> / <code>DASH_HA_SET_STATE</code>) / HA Scope (<code>DASH_HA_SCOPE_CONFIG_TABLE</code> / <code>DASH_HA_SCOPE_STATE</code>) の三層構造を示す。&#160;<a class="footnote-backref" href="#fnref:hamgrd-hld" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:schema">
+<p><code>sonic-swss-common/common/schema.h</code> L179–L182（APP_DB DASH HA テーブル）, L386（<code>CFG_CHASSIS_MODULE_TABLE = "CHASSIS_MODULE"</code>）, L391（<code>CFG_DASH_HA_GLOBAL_CONFIG_TABLE_NAME = "DASH_HA_GLOBAL_CONFIG"</code>）, L453–L454（<code>STATE_DASH_HA_SET_STATE_TABLE_NAME</code>, <code>STATE_DASH_HA_SCOPE_STATE_TABLE_NAME</code>）, L30（<code>DPU_STATE_DB = 17</code>）を参照。&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:dashhaorch">
+<p><code>sonic-swss/orchagent/dash/dashhaorch.cpp</code> L70（<code>APP_DASH_HA_SET_TABLE_NAME</code> 用 result table）, L79（DPU <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> 側 <code>STATE_DASH_HA_SCOPE_STATE_TABLE_NAME</code> への接続）, L1073 周辺の consumer 振り分けを参照。&#160;<a class="footnote-backref" href="#fnref:dashhaorch" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:system-health">
+<p><code>sonic-utilities/show/system_health.py</code> L172–L222 (<code>show_dpu_state</code>), L239–L248 (<code>dpu</code> サブコマンド定義) を参照。引数 <code>module_name</code> は必須で、<code>CHASSIS_STATE_DB</code> の <code>DPU_STATE|*</code> を <code>_state</code> / <code>_time</code> / <code>_reason</code> サフィックスで分解し、midplane / control / data の 3 行に展開する。&#160;<a class="footnote-backref" href="#fnref:system-health" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:graceful">
+<p><code>SONiC/doc/smart-switch/graceful-shutdown/graceful-shutdown.md</code> L31, L55, L63, L159 を参照。<code>gnoi_reboot_daemon.py</code> は HLD 上の名称で、master 実装では <code>gnoi_shutdown_daemon.py</code>（<code>sonic-host-services/scripts/</code>）として配置されている。&#160;<a class="footnote-backref" href="#fnref:graceful" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:chassis-shutdown">
+<p><code>sonic-utilities/config/chassis_modules.py</code> L136–L172 (<code>shutdown_chassis_module</code>) は <code>CHASSIS_MODULE</code> テーブルの <code>admin_status</code> を <code>down</code> に設定するのみで、graceful shutdown 自体は <code>gnoi_shutdown_daemon.py</code> が <code>CHASSIS_MODULE_INFO_TABLE</code> の <code>state_transition_in_progress</code> 変化を契機に gNOI <code>Reboot{HALT}</code> を投げる。&#160;<a class="footnote-backref" href="#fnref:chassis-shutdown" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:gnoi-client">
+<p>SONiC 同梱 CLI は <code>gnoi_client</code>（<code>gnoi_cli</code> ではない）。<code>SONiC/doc/mgmt/Management Framework.md</code> L716, L775, <code>gnoi_healthz_hld.md</code> L276 などで一貫して <code>gnoi_client</code> と表記される。<code>gnoi_shutdown_daemon.py</code> 内部でも <code>docker exec gnmi gnoi_client ...</code> の形で呼び出される（L240, L257）。&#160;<a class="footnote-backref" href="#fnref:gnoi-client" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:upgrade-hld">
+<p><code>SONiC/doc/smart-switch/upgrade/dpu-upgrade-hld.md</code> 参照。NPU を維持したまま DPU だけを image 入替する rolling upgrade として定義されている。&#160;<a class="footnote-backref" href="#fnref:upgrade-hld" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

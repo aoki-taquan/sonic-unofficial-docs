@@ -36277,7 +36277,7 @@
 </span></code></pre></div>
 <p><code>nbrshow</code> 自体は Python スクリプトで、<code>scripts/nbrshow</code> に置かれている。</p>
 <h2 id="_4">別名と関連<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p><code>show ip arp</code> も同じ <code>arp</code> コマンドを <code>show ip</code> グループに <code>add_command</code> した結果として動く（cli 直下と <code>ip</code> サブ両方に同じ関数が登録される）。</p>
+<p><code>arp</code> コマンドは <code>show</code> ルート (<code>cli</code> グループ) に <strong>直接</strong> 登録されており、<code>show ip</code> グループには <code>add_command</code> されていない<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。したがって、master の <a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> では <strong><code>show ip arp</code> というサブコマンドは存在しない</strong>（古い <a href="../../glossary/#term-hld">HLD</a> やコミュニティ Q&amp;A に <code>show ip arp</code> と書かれていることがあるが、現コードでは未登録で <code>Error: No such command "arp".</code> になる）。IPv6 側は同様の薄いラッパとして <code>show ndp</code> が <code>nbrshow -6</code> を起動する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <p>クリア側は <code>sonic-clear arp [&lt;ipaddress&gt;] [-n &lt;ns&gt;]</code> が対称。詳細は <a href="../clear/">clear (sonic-clear) コマンド</a> を参照。</p>
 <h2 id="config_db">CONFIG_DB との接点<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <p><a href="../../glossary/#term-arp">ARP</a> テーブルは <strong>kernel の neighbor table</strong>（および swss/<a href="../../glossary/#term-neighsyncd">neighsyncd</a> 経由で <a href="../../glossary/#term-appl_db">APPL_DB</a> の <code>NEIGH_TABLE</code> に同期）で管理されるため、<code>show arp</code> 自体は <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読まない。</p>
@@ -36354,13 +36354,19 @@
 </ul>
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 868a37d1f17d -->
+<!-- glossary-links-injected: 9bbae96420df -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><code>arp</code> の click 定義と <code>nbrshow -4</code> 起動部分は <code>show/main.py</code> L421-L446。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L421">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L421</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>cli.add_command(...)</code> 登録一覧は <code>show/main.py</code> L305-L346。<code>arp</code> は <code>@cli.command()</code> デコレータで直接登録される (L421) ため別途 <code>add_command</code> 呼び出しは無く、<code>ip.add_command(...)</code> の呼び出しは <code>bgp</code> 等のみで <code>arp</code> は含まれていないことが確認できる。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1569">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1569</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>ndp</code> (= IPv6 隣接) の click 定義と <code>nbrshow -6</code> 起動部分は <code>show/main.py</code> L452-L474。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L452">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L452</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

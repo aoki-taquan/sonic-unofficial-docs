@@ -35825,7 +35825,7 @@
 <li><strong>02-bgp</strong> (<code>topics/02-bgp/</code>)<ul>
 <li><a href="../../topics/02-bgp/">BGP と FRR 制御プレーン</a> — [meta] BGP と FRR 制御プレーン — この章は、SONiC の BGP を「設定を書く場所」「FRR へ渡る経路」「ASIC に入るまでの経路」「運用中に見る…</li>
 <li><a href="../../topics/02-bgp/concept/">概要</a> — [meta] 概要 — 「SONiC で BGP を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、SONiC と FRR の境界がどこにあるか…</li>
-<li><a href="../../topics/02-bgp/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — BGP route が転送可能になるまでの主経路は、FRR 内の bgpd/zebra から FPM 経由で fpmsyncd に渡り、A…</li>
+<li><a href="../../topics/02-bgp/architecture/">アーキテクチャ</a> — [code-verified] BGP 経路が転送可能になるまでの主経路と、設定反映の経路を分けて整理する。bgpd/zebra → FPM → fpmsyncd → APPL_DB → o…</li>
 <li><a href="../../topics/02-bgp/setup/">設定</a> — [meta] 設定 — BGP の設定入口は複数ある。運用コマンドで触るなら CLI、宣言的に管理するなら CONFIG_DB、外部 controller から投入するなら…</li>
 <li><a href="../../topics/02-bgp/operations/">運用</a> — [meta] 運用 — BGP の運用確認は、neighbor の状態確認だけでは足りない。route が FRR で選ばれているか、SONiC に渡っているか、ASIC…</li>
 <li><a href="../../topics/02-bgp/internals/">内部実装</a> — [meta] 内部実装 — BGP の内部実装トピックは、同じ「BGP の改善」でも狙っている問題が違う。大量 route 投入を速くするもの、障害時の収束を速くするもの、…</li>
@@ -35843,7 +35843,7 @@
 </ul>
 </li>
 <li><strong>VRF / ECMP / RIB-FIB パイプライン</strong> (<code>topics/04-vrf-ecmp/</code>)<ul>
-<li><a href="../../topics/04-vrf-ecmp/">VRF / ECMP / RIB-FIB パイプライン</a> — [meta] VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が…</li>
+<li><a href="../../topics/04-vrf-ecmp/">VRF / ECMP / RIB-FIB パイプライン</a> — [meta] VRF / ECMP / RIB-FIB パイプライン — SONiC の L3 転送を「VRF と interface を作る」「route が FRR か…</li>
 <li><a href="../../topics/04-vrf-ecmp/concept/">L3 基盤と VRF</a> — [meta] L3 基盤と VRF — SONiC で L3 を読み始めるとき、最初に route テーブルから入ると挫折しやすい構成になっています。route の振る舞い…</li>
 <li><a href="../../topics/04-vrf-ecmp/architecture/">RIB-FIB と Route Object 生成</a> — [meta] RIB-FIB と Route Object 生成 — SONiC の L3 pipeline は、FRR が持つ RIB と、orchagent / syn…</li>
 <li><a href="../../topics/04-vrf-ecmp/setup/">VRF と Static Route の設定</a> — [meta] VRF と Static Route の設定 — 設定を読む入口は 3 つあります。作業者が打つのは CLI、永続設定として残るのは CONFIG_DB、外部…</li>
@@ -35940,7 +35940,7 @@
 <li><a href="../../topics/13-dash-smartswitch/concept/">DASH と SmartSwitch の考え方</a> — [meta] DASH と SmartSwitch の考え方 — DASH と SmartSwitch は混同されやすい言葉ですが、別レイヤのものです。</li>
 <li><a href="../../topics/13-dash-smartswitch/internals/">NPU-DPU DB と ENI ベース転送の内部構造</a> — [meta] NPU-DPU DB と ENI ベース転送の内部構造 — DASH / SmartSwitch を実装視点で読むときは、「設定がコントローラから DPU の…</li>
 <li><a href="../../topics/13-dash-smartswitch/setup/">DPU の IP 割当・gNMI 連携・KVM 検証</a> — [meta] DPU の IP 割当・gNMI 連携・KVM 検証 — SmartSwitch / DASH の設定は「DPU の管理面をどう立ち上げるか」「コントローラに…</li>
-<li><a href="../../topics/13-dash-smartswitch/operations/">HA / PMON / reboot / upgrade の運用</a> — [meta] HA / PMON / reboot / upgrade の運用 — SmartSwitch の運用観点は「どの障害をどの daemon が見て」「どの順序で…</li>
+<li><a href="../../topics/13-dash-smartswitch/operations/">HA / PMON / reboot / upgrade の運用</a> — [code-verified] SmartSwitch 上で HA / PMON / reboot / DPU 独立アップグレードを運用するための NPU / DPU 別経路と 実 CLI・…</li>
 <li><a href="../../topics/13-dash-smartswitch/advanced/">gNOI 連携と他章との境界</a> — [meta] gNOI 連携と他章との境界 — DASH / SmartSwitch は単独で完結する機能ではなく、管理面 (gNMI / gNOI)、Multi-ASIC…</li>
 </ul>
 </li>
@@ -36000,7 +36000,7 @@
 <li><a href="../../topics/19-build-packaging/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — ビルド成果物が ONIE installer に収まり、ターゲット機材で立ち上がるまでの流れを、source から image までの順で…</li>
 <li><a href="../../topics/19-build-packaging/setup/">設定</a> — [meta] 設定 — Build / Packaging 章での「設定」は、機能 docker の有効化と extension のインストール、build 時の plat…</li>
 <li><a href="../../topics/19-build-packaging/operations/">設定 / 運用</a> — [meta] 設定 / 運用 — Application Extension は、3rd party / 任意の docker を inbox 機能と同じ管理面で扱うための…</li>
-<li><a href="../../topics/19-build-packaging/internals/">内部実装</a> — [meta] 内部実装 — build / packaging / application extension の内部実装は「sonic-buildimage は何を吐き出…</li>
+<li><a href="../../topics/19-build-packaging/internals/">内部実装</a> — [code-verified] sonic-buildimage が吐き出す .deb と docker image、sonic-package-manager (SPM) による exte…</li>
 <li><a href="../../topics/19-build-packaging/advanced/">発展トピック</a> — [meta] 発展トピック — リリース直前で気にする観点を 3 つ並べる。ARM 向け移植、container hardening、feature quality 定義は…</li>
 </ul>
 </li>

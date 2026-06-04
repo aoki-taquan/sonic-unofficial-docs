@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="内部実装 — build / packaging / application extension の内部実装は「sonic-buildimage は何を吐き出すか」「sonic-package-manager (SPM) はどう extension を載せるか」「image install 後にどう dockeriz…">
+        <meta name="description" content="sonic-buildimage が吐き出す .deb と docker image、sonic-package-manager (SPM) による extension の dockerize、image install 後の hostcfgd / featured 経由 systemd 起動までの内部経路を整理する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="内部実装 — build / packaging / application extension の内部実装は「sonic-buildimage は何を吐き出すか」「sonic-package-manager (SPM) はどう extension を載せるか」「image install 後にどう dockeriz…" />
+<meta property="og:description" content="sonic-buildimage が吐き出す .deb と docker image、sonic-package-manager (SPM) による extension の dockerize、image install 後の hostcfgd / featured 経由 systemd 起動までの内部経路を整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/19-build-packaging/internals.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/19-build-packaging/internals/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="内部実装 — build / packaging / application extension の内部実装は「sonic-buildimage は何を吐き出すか」「sonic-package-manager (SPM) はどう extension を載せるか」「image install 後にどう dockeriz…" />
+<meta property="twitter:description" content="sonic-buildimage が吐き出す .deb と docker image、sonic-package-manager (SPM) による extension の dockerize、image install 後の hostcfgd / featured 経由 systemd 起動までの内部経路を整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/19-build-packaging/internals.png" />
 </head>
   
@@ -36099,7 +36099,7 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>build / packaging / application extension の内部実装は「<a href="../../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> は何を吐き出すか」「sonic-package-manager (SPM) はどう extension を載せるか」「image install 後にどう dockerize されるか」の三層で見ます。docker-base / sonic-slave / sonic-build-hooks の関係を押さえると、ビルド時間とイメージサイズの分析が楽になります。</p>
+<p>build / packaging / application extension の内部実装は「<a href="../../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> は何を吐き出すか」「sonic-package-manager (SPM) はどう extension を載せるか」「image install 後にどう dockerize されるか」の三層で見る。<code>docker-base</code> / <code>sonic-slave</code> / <code>sonic-build-hooks</code> の関係を押さえると、ビルド時間とイメージサイズの分析が楽になる。</p>
 <h2 id="_2">データフロー（ビルド）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TB
   SRC["sonic-buildimage tree&lt;br/&gt;+ submodules"] --&gt; SLAVE["sonic-slave-* docker&lt;br/&gt;build container"]
@@ -36117,8 +36117,9 @@
   REG --&gt; SPM[sonic-package-manager]
   SPM --&gt; FEATURE[("CONFIG_DB&lt;br/&gt;FEATURE table")]
   SPM --&gt; SVC["/etc/systemd/system/*.service&lt;br/&gt;render"]
-  FEATURE --&gt; HOSTCFGD[hostcfgd]
-  HOSTCFGD --&gt; SYSTEMD[systemd start docker]</code></pre>
+  FEATURE --&gt; FEATURED[featured / hostcfgd]
+  FEATURED --&gt; SYSTEMD[systemd start docker]</code></pre>
+<p><code>featured</code> は <code>sonic-host-services</code> 配下の専用 daemon で、<code>FEATURE</code> テーブルを subscribe して service の enable / disable / restart を司る。汎用ホスト設定 (TACACS / SSH / syslog 等) は <code>hostcfgd</code> 側が担当する。<sup id="fnref:featured"><a class="footnote-ref" href="#fn:featured">5</a></sup></p>
 <h2 id="_3">主要コンポーネントの責務<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36130,74 +36131,82 @@
 </thead>
 <tbody>
 <tr>
-<td><code>sonic-slave-bullseye</code> / <code>sonic-slave-bookworm</code></td>
-<td><code>dockers/sonic-slave-*/</code></td>
-<td>ビルド用 docker。すべての .deb と docker image を slave 内で作る</td>
+<td><code>sonic-slave-bullseye</code> / <code>sonic-slave-bookworm</code> / <code>sonic-slave-trixie</code></td>
+<td><code>sonic-slave-*/</code> (top-level)</td>
+<td>ビルド用 docker。すべての <code>.deb</code> と docker image を slave 内で作る<sup id="fnref:slave"><a class="footnote-ref" href="#fn:slave">1</a></sup></td>
 </tr>
 <tr>
 <td><code>Makefile.work</code> / <code>slave.mk</code></td>
 <td>top-level Makefile</td>
-<td>submodule 配下の .deb / docker target を解決</td>
+<td><code>BLDENV</code> ごとの slave 切替・<code>SONIC_BUILD_JOBS</code> / <code>SONIC_DPKG_CACHE_METHOD</code> の伝搬・submodule 配下の <code>.deb</code> / docker target を解決<sup id="fnref2:makework"><a class="footnote-ref" href="#fn:makework">2</a></sup></td>
 </tr>
 <tr>
 <td><code>sonic-build-hooks</code></td>
 <td><code>src/sonic-build-hooks/</code></td>
-<td>サードパーティバイナリの取得、check sums、license の hook</td>
+<td>slave 内の <code>apt</code> / <code>dpkg</code> / <code>pip</code> / <code>curl</code> / <code>wget</code> / <code>git</code> を hook して、ビルド時に取得したパッケージとバイナリのバージョン / hash を記録する<sup id="fnref:hooks"><a class="footnote-ref" href="#fn:hooks">3</a></sup></td>
 </tr>
 <tr>
-<td><code>sonic-buildimage/files/build_templates/</code></td>
-<td>jinja2</td>
-<td>docker compose / systemd unit / supervisord conf を生成</td>
+<td><code>files/build_templates/</code></td>
+<td>jinja2 テンプレート</td>
+<td>docker compose / systemd unit / supervisord conf / package manifest を生成</td>
 </tr>
 <tr>
 <td><code>sonic-package-manager</code> (SPM)</td>
-<td><code>src/sonic-package-manager/</code></td>
-<td>extension package のライフサイクル管理（install / upgrade / remove / list）</td>
+<td><code>sonic-utilities/sonic_package_manager/</code></td>
+<td>extension package のライフサイクル管理（<code>install</code> / <code>upgrade</code> / <code>remove</code> / <code>list</code> / <code>show</code>）<sup id="fnref:spm-loc"><a class="footnote-ref" href="#fn:spm-loc">4</a></sup></td>
 </tr>
 <tr>
-<td><code>hostcfgd</code> (<code>src/sonic-host-services/</code>)</td>
-<td><code>hostcfgd.py</code></td>
-<td>FEATURE table を見て systemd service の enable/disable と reload</td>
+<td><code>featured</code> (<code>sonic-host-services</code>)</td>
+<td><code>scripts/featured</code></td>
+<td><code>FEATURE</code> テーブルを subscribe して systemd service を enable / disable / restart する<sup id="fnref2:featured"><a class="footnote-ref" href="#fn:featured">5</a></sup></td>
 </tr>
 <tr>
-<td><code>fwutil</code> / <code>sonic-installer</code></td>
+<td><code>hostcfgd</code> (<code>sonic-host-services</code>)</td>
+<td><code>scripts/hostcfgd</code></td>
+<td>TACACS / <a href="../../../reference/glossary/#term-radius">RADIUS</a> / SSH / syslog 等ホスト側設定を CONFIG_DB から反映する</td>
+</tr>
+<tr>
+<td><code>sonic-installer</code></td>
 <td>python CLI</td>
-<td>image install、show / next / cleanup</td>
+<td>image partition の install / list / set-default / set-next / cleanup</td>
 </tr>
 </tbody>
 </table>
 <h2 id="spm-feature-table">SPM / FEATURE table<a class="headerlink" href="#spm-feature-table" title="Permanent link">&para;</a></h2>
-<p><code>FEATURE</code> テーブルが SPM とランタイムの接続点です。</p>
+<p><code>FEATURE</code> テーブルが SPM とランタイムの接続点である。SPM が新規パッケージを <code>install</code> すると、<code>FeatureRegistry</code> が CONFIG_DB に以下の既定値で行を追加する。<sup id="fnref:feature-default"><a class="footnote-ref" href="#fn:feature-default">6</a></sup></p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="l l-Scalar l-Scalar-Plain">CONFIG_DB:FEATURE|&lt;name&gt;</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">state</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;enabled|disabled|always_enabled|always_disabled&quot;</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">auto_restart</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;enabled|disabled&quot;</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">high_mem_alert</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;enabled|disabled&quot;</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">set_owner</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;kube|local&quot;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">state</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;enabled|disabled|always_enabled|always_disabled&quot;</span><span class="w">  </span><span class="c1"># default: disabled</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">auto_restart</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;enabled|disabled&quot;</span><span class="w">                          </span><span class="c1"># default: enabled</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">high_mem_alert</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;enabled|disabled&quot;</span><span class="w">                        </span><span class="c1"># default: disabled</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">set_owner</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;kube|local&quot;</span><span class="w">                                   </span><span class="c1"># default: local</span>
 </span></code></pre></div>
-<p><code>set_owner = kube</code> は Kubernetes 経由デプロイ（k8s based feature management）の hint で、<code>local</code> はホスト systemd 管理です。</p>
+<p><code>set_owner = kube</code> は Kubernetes 経由デプロイ（k8s based feature management）の hint で、<code>local</code> はホスト systemd 管理である。<code>state</code> の <code>always_enabled</code> / <code>always_disabled</code> は platform 既定によって上書きを禁止する設定で、<code>featured</code> 側のステートマシンで <code>enabled</code> / <code>disabled</code> とは別経路で扱われる。<sup id="fnref:featured-states"><a class="footnote-ref" href="#fn:featured-states">7</a></sup></p>
 <h2 id="sai-redis-pubsub">SAI / Redis pub/sub の使用<a class="headerlink" href="#sai-redis-pubsub" title="Permanent link">&para;</a></h2>
-<p>ビルド・パッケージング系には <a href="../../../reference/glossary/#term-sai">SAI</a> 属性も <a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub も基本ありません（ビルド時にコードを SAI 越しに動かさない）。例外:</p>
+<p>ビルド・パッケージング系には <a href="../../../reference/glossary/#term-sai">SAI</a> 属性も <a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub も基本ない（ビルド時にコードを SAI 越しに動かさない）。例外:</p>
 <ul>
-<li>ランタイムで SPM が FEATURE table を書き、<a href="../../../reference/glossary/#term-hostcfgd">hostcfgd</a> が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> を subscribe して service を起動する経路は Redis pub/sub を使います。</li>
+<li>ランタイムで SPM が <code>FEATURE</code> テーブルを書き、<code>featured</code> が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> を subscribe して service を起動する経路は Redis pub/sub を使う。</li>
 <li><code>sonic-installer</code> は image partition の操作のみで Redis 不要。</li>
 </ul>
 <h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">CONFIG_DB</span><span class="p">:</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">FEATURE, DEVICE_METADATA (image_type / hwsku)</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nt">STATE_DB</span><span class="p">:</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">FEATURE (state は CONFIG_DB、runtime state は STATE_DB)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">FEATURE</span><span class="w">                      </span><span class="c1"># SPM が書き、featured が subscribe</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">AUTO_TECHSUPPORT_FEATURE</span><span class="w">     </span><span class="c1"># SPM が同時に書く（per-feature の techsupport 設定）</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">DEVICE_METADATA</span><span class="w">              </span><span class="c1"># image_type / hwsku</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nt">STATE_DB</span><span class="p">:</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">FEATURE</span><span class="w">                      </span><span class="c1"># featured が runtime state を反映</span>
 </span></code></pre></div>
+<p>SPM の <code>FeatureRegistry</code> は <code>FEATURE</code> 登録と同時に <code>AUTO_TECHSUPPORT_FEATURE</code> にも対応行を追加する（<code>AUTO_TECHSUPPORT|GLOBAL</code> が存在する場合）。<sup id="fnref:auto-ts"><a class="footnote-ref" href="#fn:auto-ts">8</a></sup></p>
 <h2 id="_4">既知の実装上の制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ビルドは <strong>slave docker の rebuild が高頻度で必要</strong>で、初回 build に 1〜2 時間かかります。<code>make -j</code> 並列度は host のメモリと swap に強く依存します。</li>
+<li>ビルドは <strong>slave docker の rebuild が高頻度で必要</strong>で、初回 build に 1〜2 時間かかる。<code>make -j</code> 並列度（<code>SONIC_BUILD_JOBS</code>）は host のメモリと swap に強く依存する。</li>
 <li>submodule の SHA を上げると <code>make configure</code> の再走が必要で、incremental ではなく毎回 deb 系を作り直すケースがある（<code>*.flag</code> の依存解決が conservative）。</li>
-<li>SPM の extension は <strong>公式ビルドの <a href="../../../reference/glossary/#term-sonic">SONiC</a> イメージ（PR build 含む）に対してのみテスト</strong>されており、外部派生ビルドでの互換性は保証されません。manifest の <code>min-version</code> を確認してください。</li>
-<li><code>set_owner = kube</code> 系の機能は SONiC master でも実験的扱いの箇所があり、<code>feature</code> の状態遷移が Kubernetes 側の expected とずれることがあります。</li>
-<li><code>sonic-buildimage</code> のターゲット platform は <code>PLATFORM=&lt;vendor&gt;</code> 環境変数で切替えますが、複数 platform を同時にビルドする supported workflow は無いに等しく、CI 側で逐次 build しています。</li>
-<li>application extension の docker image は SONiC の base layer に依存していると更新時にサイズが膨らみ、<code>/host</code> の空き容量に注意が必要です。</li>
+<li>SPM の extension は <strong>公式ビルドの <a href="../../../reference/glossary/#term-sonic">SONiC</a> イメージ（PR build 含む）に対してのみテスト</strong>されており、外部派生ビルドでの互換性は保証されない。manifest の <code>min-version</code> を確認すること。</li>
+<li><code>set_owner = kube</code> 系の機能は SONiC master でも実験的扱いの箇所があり、<code>featured</code> の状態遷移が Kubernetes 側の expected とずれることがある。</li>
+<li><code>sonic-buildimage</code> のターゲット platform は <code>PLATFORM=&lt;vendor&gt;</code> 環境変数で切替えるが、複数 platform を同時にビルドする supported workflow は無いに等しく、CI 側で逐次 build している。</li>
+<li>application extension の docker image は SONiC の base layer に依存していると更新時にサイズが膨らみ、<code>/host</code> の空き容量に注意が必要。</li>
 </ul>
 <h2 id="incremental-build">ビルドキャッシュと incremental build<a class="headerlink" href="#incremental-build" title="Permanent link">&para;</a></h2>
-<p><code>sonic-buildimage</code> は package ごとに <code>.flag</code> ファイルでビルド完了を記録します。submodule の HEAD SHA が変わると、その submodule 由来のすべての <code>.deb</code> と参照する docker image が rebuild 対象になります。incremental 化のために以下が用意されています。</p>
+<p><code>sonic-buildimage</code> は package ごとに <code>.flag</code> ファイルでビルド完了を記録する。submodule の HEAD SHA が変わると、その submodule 由来のすべての <code>.deb</code> と参照する docker image が rebuild 対象になる。incremental 化のために以下が用意されている。<sup id="fnref:makework"><a class="footnote-ref" href="#fn:makework">2</a></sup></p>
 <table>
 <thead>
 <tr>
@@ -36207,38 +36216,45 @@
 </thead>
 <tbody>
 <tr>
-<td><code>SONIC_DPKG_CACHE_METHOD=cache</code></td>
-<td><code>.deb</code> の hash-key ベースキャッシュ（<code>/sonic/target/cache/</code>）</td>
+<td><code>SONIC_DPKG_CACHE_METHOD={none,cache,rcache,wcache,rwcache}</code></td>
+<td><code>.deb</code> の hash-key ベースキャッシュ（<code>/sonic/target/cache/</code>）。<code>r</code> は read、<code>w</code> は write</td>
+</tr>
+<tr>
+<td><code>SONIC_DPKG_CACHE_METHOD_OVERRIDE</code></td>
+<td>per-package で cache method を上書き</td>
 </tr>
 <tr>
 <td><code>BLDENV</code> の固定</td>
-<td>slave 側 OS バージョン（bullseye / bookworm）を固定して再利用</td>
+<td>slave 側 OS バージョン（bullseye / bookworm / trixie）を固定して再利用</td>
 </tr>
 <tr>
 <td><code>SONIC_BUILD_JOBS</code></td>
 <td>並列度の制御。host CPU/RAM に応じて調整</td>
 </tr>
 <tr>
-<td><code>NOSTRETCH</code> 等の Make 変数</td>
+<td><code>PLATFORM=&lt;vendor&gt;</code></td>
 <td>不要 platform deb のスキップ</td>
 </tr>
 </tbody>
 </table>
-<p>キャッシュは個別開発者環境では効果が大きい一方、PR build（GitHub Actions）では基本クリーンビルドであり、CI 時間の大半は slave docker の起動と deb の sequential build に費やされます。</p>
+<p>キャッシュは個別開発者環境では効果が大きい一方、PR build（GitHub Actions）では基本クリーンビルドであり、CI 時間の大半は slave docker の起動と deb の sequential build に費やされる。</p>
 <h2 id="docker-image">docker image の階層<a class="headerlink" href="#docker-image" title="Permanent link">&para;</a></h2>
-<p>ランタイムの SONiC docker image は階層を持ちます。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker-base-&lt;bullseye/bookworm&gt;
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  └─ docker-config-engine
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>       └─ docker-swss
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>       └─ docker-syncd-&lt;vendor&gt;
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>       └─ docker-bgp
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>       └─ docker-teamd
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>       └─ docker-pmon
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>       └─ docker-snmp
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>       └─ docker-telemetry
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>       └─ docker-mux
+<p>ランタイムの SONiC docker image は階層を持つ。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker-base-&lt;bullseye/bookworm/trixie&gt;
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  └─ docker-config-engine-&lt;bullseye/bookworm/trixie&gt;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>       ├─ docker-orchagent  (swss)
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>       ├─ docker-syncd-&lt;vendor&gt;
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>       ├─ docker-fpm-frr   (bgp / FRR)
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>       ├─ docker-teamd
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>       ├─ docker-platform-monitor (pmon)
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>       ├─ docker-snmp
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>       ├─ docker-sonic-gnmi (旧 telemetry)
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>       ├─ docker-mux
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>       ├─ docker-nat
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>       ├─ docker-lldp
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>       └─ docker-dhcp-relay
 </span></code></pre></div>
-<p><code>docker-config-engine</code> が共通の python / sonic-py-common / supervisord 設定を持ち、機能 container はそれを base にして個別バイナリと supervisord conf を足します。新規 extension は <code>docker-base-&lt;os&gt;</code> から派生させる選択も可能ですが、サイズ削減のためには既存階層への mount が推奨されます。</p>
+<p><code>docker-config-engine-&lt;os&gt;</code> が共通の python / <code>sonic-py-common</code> / supervisord 設定を持ち、機能 container はそれを base にして個別バイナリと supervisord conf を足す。新規 extension は <code>docker-base-&lt;os&gt;</code> から派生させる選択も可能だが、サイズ削減のためには既存階層への mount が推奨される。</p>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../architecture/build-profiles/">Build profiles</a></li>
@@ -36249,7 +36265,114 @@
 <li><a href="../../../reference/cli/sonic-package-manager/">sonic-package-manager CLI</a></li>
 <li><a href="../../../system/sonic-optional-feature-control-enhancement/">SONiC optional feature control enhancement</a></li>
 </ul>
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- evidence:
+source: sonic-utilities/sonic_package_manager/service_creator/feature.py#L11-L17 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  FEATURE = 'FEATURE'
+  DEFAULT_FEATURE_CONFIG = {
+      'state': 'disabled',
+      'auto_restart': 'enabled',
+      'high_mem_alert': 'disabled',
+      'set_owner': 'local'
+  }
+reasoning: SPM が CONFIG_DB:FEATURE に書き込む既定値とキー一覧の根拠。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-utilities/sonic_package_manager/service_creator/feature.py#L11-L17 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-utilities/sonic_package_manager/service_creator/feature.py#L11-L17 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>FEATURE = &#39;FEATURE&#39;
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>DEFAULT_FEATURE_CONFIG = {
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    &#39;state&#39;: &#39;disabled&#39;,
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    &#39;auto_restart&#39;: &#39;enabled&#39;,
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    &#39;high_mem_alert&#39;: &#39;disabled&#39;,
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    &#39;set_owner&#39;: &#39;local&#39;
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>}
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: SPM が CONFIG_DB:FEATURE に書き込む既定値とキー一覧の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-host-services/scripts/featured#L78-L82 (sha: c5bbbe8b07b96f078fa4b761316627404b01bd04)
+excerpt: |
+  self.state = self._get_feature_table_key_render_value(
+      feature_cfg.get('state'), device_config or {},
+      ['enabled', 'disabled', 'always_enabled', 'always_disabled'])
+reasoning: featured 側の state 取り得る値の根拠。always_enabled / always_disabled が enabled / disabled と並列の有効な状態である。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-host-services/scripts/featured#L78-L82 (sha: c5bbbe8b07b96f078fa4b761316627404b01bd04)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-host-services/scripts/featured#L78-L82 (sha: c5bbbe8b07b96f078fa4b761316627404b01bd04)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>self.state = self._get_feature_table_key_render_value(
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    feature_cfg.get(&#39;state&#39;), device_config or {},
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    [&#39;enabled&#39;, &#39;disabled&#39;, &#39;always_enabled&#39;, &#39;always_disabled&#39;])
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: featured 側の state 取り得る値の根拠。always_enabled / always_disabled が enabled / disabled と並列の有効な状態である。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-buildimage/Makefile.work#L30-L46 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  #  * SONIC_BUILD_JOBS: Specifying number of concurrent build job(s) to run
+  #  * SONIC_DPKG_CACHE_METHOD: Specifying method of obtaining the Debian packages from cache: none, cache, rcache, wcache, rwcache
+  #  * SONIC_DPKG_CACHE_METHOD_OVERRIDE: Specifying whether to override the method used by SONIC_DPKG_CACHE_METHOD: none, rcache, wcache, rwcache
+reasoning: build キャッシュ・並列度の Make 変数の根拠と取り得る値の一覧。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-buildimage/Makefile.work#L30-L46 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-buildimage/Makefile.work#L30-L46 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>#  * SONIC_BUILD_JOBS: Specifying number of concurrent build job(s) to run
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>#  * SONIC_DPKG_CACHE_METHOD: Specifying method of obtaining the Debian packages from cache: none, cache, rcache, wcache, rwcache
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>#  * SONIC_DPKG_CACHE_METHOD_OVERRIDE: Specifying whether to override the method used by SONIC_DPKG_CACHE_METHOD: none, rcache, wcache, rwcache
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: build キャッシュ・並列度の Make 変数の根拠と取り得る値の一覧。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- glossary-links-injected: df94ce4c9c04 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:slave">
+<p><code>sonic-buildimage</code> リポジトリ直下に <code>sonic-slave-bullseye/</code> <code>sonic-slave-bookworm/</code> <code>sonic-slave-trixie/</code> 等の slave docker 定義が並ぶ。<code>Makefile.work</code> の <code>BLDENV</code> で切り替える。&#160;<a class="footnote-backref" href="#fnref:slave" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:makework">
+<p><code>sonic-buildimage/Makefile.work</code> で <code>BLDENV</code> <code>SONIC_BUILD_JOBS</code> <code>SONIC_DPKG_CACHE_METHOD</code> <code>SONIC_DPKG_CACHE_METHOD_OVERRIDE</code> が定義・伝搬される。&#160;<a class="footnote-backref" href="#fnref:makework" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:makework" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:hooks">
+<p><code>sonic-buildimage/src/sonic-build-hooks/hooks/</code> に <code>apt</code> <code>apt-get</code> <code>dpkg</code> <code>pip</code> <code>pip2</code> <code>pip3</code> <code>curl</code> <code>wget</code> <code>git</code> の wrapper が並ぶ。&#160;<a class="footnote-backref" href="#fnref:hooks" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:spm-loc">
+<p>SPM の実装は <code>sonic-buildimage</code> ではなく <code>sonic-utilities/sonic_package_manager/</code> に存在する（<code>main.py</code> / <code>manager.py</code> / <code>manifest.py</code> / <code>service_creator/</code>）。&#160;<a class="footnote-backref" href="#fnref:spm-loc" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:featured">
+<p><code>sonic-host-services/scripts/featured</code> が <code>FEATURE</code> テーブル subscribe と systemd 制御を担当する独立 daemon。<code>hostcfgd</code> は TACACS / SSH 等のホスト設定担当。&#160;<a class="footnote-backref" href="#fnref:featured" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:featured" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:feature-default">
+<p><code>sonic-utilities/sonic_package_manager/service_creator/feature.py</code> の <code>DEFAULT_FEATURE_CONFIG = {'state': 'disabled', 'auto_restart': 'enabled', 'high_mem_alert': 'disabled', 'set_owner': 'local'}</code>。&#160;<a class="footnote-backref" href="#fnref:feature-default" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:featured-states">
+<p><code>sonic-host-services/scripts/featured</code> の <code>state</code> 取り得る値は <code>['enabled', 'disabled', 'always_enabled', 'always_disabled']</code>。<code>always_*</code> は他の遷移を抑止する終端状態。&#160;<a class="footnote-backref" href="#fnref:featured-states" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:auto-ts">
+<p><code>sonic-utilities/sonic_package_manager/service_creator/feature.py</code> の <code>AUTO_TS_FEATURE = "AUTO_TECHSUPPORT_FEATURE"</code> と <code>register_auto_ts_feature</code> 系処理で同期される。&#160;<a class="footnote-backref" href="#fnref:auto-ts" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
