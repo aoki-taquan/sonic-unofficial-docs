@@ -81,15 +81,26 @@ def latest_audit() -> tuple[int, Path] | None:
 
 
 def extract_average(audit_path: Path) -> tuple[float, str] | None:
-    """returns (value, scale_label) e.g. (9.65, "10") or (4.97, "5.0")."""
+    """returns (value, scale_label) e.g. (9.65, "10") or (4.97, "5.0").
+
+    Phantom-zero guard: round 1 以降の本プロジェクトの実 audit はすべて
+    9.0+/10 または 4.5+/5 のレンジに収まっている。0.0 ぴったりにマッチ
+    した値は「未集計セルが score 0 として混入した phantom entry」もしく
+    は文中の説明的な数値（重み 0、サブ軸 0 個など）の誤マッチであり、
+    母集団平均としては無効と扱う。`meta/quality-audit-guide.md` §3.2 参照。
+    """
     text = audit_path.read_text(encoding="utf-8", errors="replace")
     m = AVG_10_RE.search(text)
     if m:
-        return float(m.group(2)), "10"
+        value = float(m.group(2))
+        if value > 0.0:
+            return value, "10"
     for pat in AVG_5_PATTERNS:
         m = pat.search(text)
         if m:
-            return float(m.group(1)), "5.0"
+            value = float(m.group(1))
+            if value > 0.0:
+                return value, "5.0"
     return None
 
 

@@ -23,6 +23,15 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-04 #5113 chore(backlog): detect split-page implementations + archive SmartSwitch HA 2 entries
+- 2026-06-04 #5110 docs(related): fill empty related axes + opt-out markers (batch 13)
+- 2026-06-04 #5109 chore(frontmatter): fill empty related axes / opt-outs (batch 12)
+- 2026-06-04 #5108 docs(config-db): fix empty related arrays / opt-out markers (batch 10)
+- 2026-06-04 #5106 fix(frontmatter): fill or opt-out empty related axes (batch 9)
+- 2026-06-04 #5102 chore(frontmatter): resolve empty related[] + opt-out markers (batch 2)
+- 2026-06-04 #5100 fix(config-db): replace empty related arrays with opt-out markers in 4 DASH pages (batch 5)
+- 2026-06-04 #5099 chore(config-db): fix empty related arrays in appl-mpls-route (batch 3)
+- 2026-06-04 #5098 docs(config-db): resolve empty related arrays in batch 4
 - 2026-06-04 #5107 fix(frontmatter): resolve empty related arrays (batch 11)
 - 2026-06-04 #5105 chore(frontmatter): clean empty related arrays + opt-out markers (config-db batch 8)
 - 2026-06-04 #5104 chore(frontmatter): resolve empty related arrays in 6 config-db pages (b7)
@@ -517,13 +526,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3922 docs(config-db): add Phase D failure-behavior block to nvgre-tunnel
 - 2026-05-19 #3919 docs(config-db): add Phase G pubsub block to STP_PORT page
 - 2026-05-19 #3918 docs(config-db): add Phase E hardcoded-constants block to TC_TO_DSCP_MAP
-- 2026-05-19 #3916 docs(config-db): add Phase E hardcoded-constants block to ip-mcast-route
-- 2026-05-19 #3912 docs(config-db): add Phase E hardcoded-constants block to MUX_CABLE port page
-- 2026-05-19 #3915 docs(config-db): add Phase H platform block to ports-status
-- 2026-05-19 #3914 docs(config-db): add Phase G pubsub block to gnmi-state
-- 2026-05-19 #3913 docs(config-db): add Phase D failure-behavior block to RESTAPI page
-- 2026-05-19 #3910 docs(config-db): add Phase E hardcoded-constants block to ipv6-link-local
-- 2026-05-19 #3908 docs(config-db): add Phase E hardcoded-constants block to PBH_TABLE page
-- 2026-05-19 #3907 docs(config-db): add Phase G pubsub block to NTP_SERVER page
-- 2026-05-19 #3905 docs(config-db): add Phase E hardcoded-constants block to redis-db-config
 
