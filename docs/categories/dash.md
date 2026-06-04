@@ -19,9 +19,16 @@ related:
 
 このカテゴリは、area の壁を越えて DASH に関わる SONiC 側のページを横断で見られるようにします。具体的には **DASH 全体アーキテクチャ**（DPU / NPU の役割分担と Disaggregated API の定義）・**DASH ACL の拡張**（`DASH_PREFIX_TAG_TABLE` などのタグベース ACL）・**仮想 DPU 環境**（BMv2 ベースのソフト DPU を sonic-vs に統合して機能検証する SONiC-DASH KVM）が中心です。
 
-DASH は実装が `sonic-dash-api` / `dash-pipeline` / `swss-common` に分散しているため、本カテゴリの 3 ページだけでは全容を掴みにくい構成です。SmartSwitch（NPU と DPU の組み合わせ）や VNET（オーバーレイのデータプレーン）、[SAI](../reference/glossary.md#term-sai) 拡張（capability 問い合わせ）と合わせて参照してください。
+DASH は実装が複数リポに分散しているため、本カテゴリの 3 ページだけでは全容を掴みにくい構成です。実装リポへの直接ポインタは以下を参照してください。
 
-主要キーワード: `DASH`, `DPU`, `ACL`, `SONiC-DASH`, `BMv2`, `DPU_APPL_DB`
+- [`sonic-net/sonic-dash-api`](https://github.com/sonic-net/sonic-dash-api) — `libdashapi` (protobuf 定義 + C++/Python バインディング)。`sonic-buildimage` が submodule として取り込み、`libdashapi_1.0.0` deb をビルドします<!-- evidence: sonic-buildimage/.gitmodules submodule "src/sonic-dash-api" + rules/sonic-dash-api.mk:1-15 -->
+- [`sonic-net/DASH`](https://github.com/sonic-net/DASH) — `dash-pipeline/` 配下に BMv2 ベースの P4 リファレンスパイプライン、`dash-sai/` 配下に DASH SAI ヘッダがあります。`sonic-buildimage` は `dash-sai` を submodule として取り込みます<!-- evidence: sonic-buildimage/rules/dash-sai.mk:1-3 "DASH SAI repo: https://github.com/sonic-net/DASH" -->
+- [`sonic-net/sonic-dash-ha`](https://github.com/sonic-net/sonic-dash-ha) — DASH HA (Active-Standby DPU 冗長) 制御プレーンの専用 submodule<!-- evidence: sonic-buildimage/.gitmodules submodule "src/sonic-dash-ha" -->
+- [`sonic-swss/orchagent/dash/`](https://github.com/sonic-net/sonic-swss/tree/master/orchagent/dash) — NPU 側で動く DASH orch 群 (`dashorch` / `dashaclorch` / `dashvnetorch` / `dashrouteorch` / `dashenifwdorch` / `dashhaorch` / `dashhafloworch` / `dashcounter` / `dashportmaporch` 等)。`APPL_DB` の `DASH_*` テーブルを SAI 経由で DPU に下ろします<!-- evidence: sonic-swss/orchagent/dash/dashaclorch.cpp etc. (30+ files) -->
+
+SmartSwitch（NPU と DPU の組み合わせ）や VNET（オーバーレイのデータプレーン）、[SAI](../reference/glossary.md#term-sai) 拡張（capability 問い合わせ）と合わせて参照してください。
+
+主要キーワード: `DASH`, `DPU`, `ACL`, `SONiC-DASH`, `BMv2`, `DPU_APPL_DB`, `libdashapi`
 
 ## 関連ページ
 
