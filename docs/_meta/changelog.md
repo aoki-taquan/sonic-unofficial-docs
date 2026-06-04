@@ -23,6 +23,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-04 #5147 fix(quality): iter1 integration (12 rewrites)
 - 2026-06-04 #5134 fix(quality): deep rewrites v2 integration (7 pages, score +0.92)
 - 2026-06-04 #5133 chore(typos): add 'delimitor' to extend-words (upstream Go variable)
 - 2026-06-04 #5132 fix(quality): deep rewrite topics/10-gnmi-openconfig/architecture.md Subscribe section
@@ -525,5 +526,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3939 docs(config-db): add Phase F side-effects block to warm-restart
 - 2026-05-19 #3938 docs(config-db): add Phase G pubsub block to gnmi-dialin
 - 2026-05-19 #3936 docs(config-db): add Phase F side-effects block to mux-cable-port
-- 2026-05-19 #3935 docs(config-db): add Phase G pubsub block to gnmi-counter
 

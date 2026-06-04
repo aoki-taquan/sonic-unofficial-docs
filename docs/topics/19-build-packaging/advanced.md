@@ -1,10 +1,9 @@
 ---
 title: 発展トピック
-description: 発展トピック — リリース直前で気にする観点を 3 つ並べる。ARM 向け移植、container hardening、feature quality
-  定義はそれぞれ別 HLD だが、リリース時にまとめて満たしておきたい条件 という共通点がある。
+description: ARM 移植・container hardening・feature quality 定義・マルチプラットフォーム並列ビルド・SDK 切替・再現可能ビルド・CVE 対応など、リリース直前にまとめて満たしておきたい横断観点を並べる章。
 area: topics
 verification: meta
-last_verified: 2026-05-10
+last_verified: 2026-06-04
 sources: []
 related:
   cli:
@@ -23,7 +22,7 @@ related:
 
 [SONiC](../../reference/glossary.md#term-sonic) の build system は元々 AMD64 中心だったため、ARM 系プラットフォームへ広げるには `sonic-slave`、`dockers/`、`rules/`、`Makefile`、`apt` repo、kernel ビルド、`onie-image-*.conf`、`installer/install.sh` などを横断的に修正する必要があった。
 
-実装では `Makefile.work` の `CONFIGURED_ARCH` / `PLATFORM_ARCH`（default `amd64`）と、`sonic-slave-<dist>` を `-march-<arch>` サフィックス付きで切り替える仕組みに収束している。HLD で示された `sonic-slave-armhf` / `sonic-slave-arm64` という固定ディレクトリ命名は廃止されている。詳細と裏取りは [ARM architecture support](../../architecture/sonic-arm-architecture-support.md) を読む。
+実装では `Makefile.work` の `CONFIGURED_ARCH` / `PLATFORM_ARCH`（default `amd64`）と、`sonic-slave-<dist>` を `-march-<arch>` サフィックス付きで切り替える仕組みに収束している<!-- evidence: sonic-net/sonic-buildimage Makefile.work:121-177 -->。HLD で示された `sonic-slave-armhf` / `sonic-slave-arm64` という固定ディレクトリ命名は廃止されている。詳細と裏取りは [ARM architecture support](../../architecture/sonic-arm-architecture-support.md) を読む。
 
 ARM 向けの注意点は次のとおり。
 
@@ -49,12 +48,13 @@ SONiC の docker は歴史的に `--privileged` が多かった。CVE 対応と�
 - 後付け配布したい → [運用](operations.md) と [Application Extension Infrastructure](../../architecture/sonic-application-extension-infrastructure.md)。
 - ARM へ移植する → [ARM architecture support](../../architecture/sonic-arm-architecture-support.md)。
 - リリース判定 → [Feature quality definition](../../system/sonic-feature-quality-definition.md)。
+- container 硬化の現状 → [Container hardening](../../system/sonic-container-hardening.md)。
 
 ## マルチプラットフォーム build の並列化
 
 `sonic-buildimage` は `PLATFORM=<vendor>` 単位で完全に独立した image を生成するため、ビルドを横方向に分割しやすい。実運用での並列化パターンは次の三段になる。
 
-- **`make -j` レベル**: 単一 platform 内で `dpkg-buildpackage` / docker build を並列化する。`SONIC_BUILD_JOBS` と `SONIC_CONFIG_BUILD_JOBS` を物理コアに合わせて指定。
+- **`make -j` レベル**: 単一 platform 内で `dpkg-buildpackage` / docker build を並列化する。`SONIC_BUILD_JOBS` と `SONIC_CONFIG_BUILD_JOBS` を物理コアに合わせて指定<!-- evidence: sonic-net/sonic-buildimage rules/config:10-20, Makefile.work:30 -->。
 - **platform レベル**: CI runner / sub-job を `PLATFORM=broadcom` / `mellanox` / `marvell` などで分割する。共通 deb (`target/debs/`) は cache で再利用し、[syncd](../../reference/glossary.md#term-syncd) と SDK 依存パッケージだけ platform 個別に作る。
 - **arch レベル**: `PLATFORM_ARCH=amd64` / `arm64` / `armhf` を別 matrix セルに展開する。`sonic-slave-<dist>-<arch>` docker を pre-pull しておくと `docker-base` のフェーズ時間が大きく短縮する。
 
@@ -73,7 +73,7 @@ vendor SDK (Broadcom [SAI](../../reference/glossary.md#term-sai) / OpenNSL、NVI
 
 ## 再現可能ビルド (reproducible build)
 
-同じ source tree からビルドして bit 一致の image を得る試み。SONiC 単体では未到達だが、debian 由来の `SOURCE_DATE_EPOCH` 伝播、deb 内の timestamp 正規化、docker layer の order 固定、`pip` wheel の hash pin など、段階的な改善が進む。`SONIC_VERSION_CACHE` を使った deb cache 再利用は build 時間短縮と再現性改善の両方に効く。完全 reproducible は kernel module の build-id と docker overlayfs の I/O 順序が残課題。
+同じ source tree からビルドして bit 一致の image を得る試み。SONiC 単体では未到達だが、debian 由来の `SOURCE_DATE_EPOCH` 伝播、deb 内の timestamp 正規化、docker layer の order 固定、`pip` wheel の hash pin など、段階的な改善が進む。`SONIC_VERSION_CACHE` を使った deb cache 再利用は build 時間短縮と再現性改善の両方に効く<!-- evidence: sonic-net/sonic-buildimage rules/config:336-343, Makefile.work:196-200 -->。完全 reproducible は kernel module の build-id と docker overlayfs の I/O 順序が残課題。
 
 ## CVE 対応のワークフロー
 
@@ -84,12 +84,6 @@ base が debian なので CVE 通知は `debian-security` announce と SBOM の�
 - syncd / kernel module 配下の CVE は vendor SAI / vendor kernel patch の追従が要るため、vendor SDK PR と組で進める。
 - 修正後は実 image build と nightly test plan で regression を見るのが原則。
 
-## 関連ページ
-
-- [ARM architecture support](../../architecture/sonic-arm-architecture-support.md)
-- [Container hardening](../../system/sonic-container-hardening.md)
-- [Feature quality definition](../../system/sonic-feature-quality-definition.md)
-- [Disk writers analysis](../../system/analysis-of-disk-writers-in-sonic-devices.md)
-
+<!-- 「章の出口」を関連ページの一覧として兼用する。重複を避けるため独立した「関連ページ」セクションは持たない。 -->
 
 <!-- glossary-links-injected: 8ba32e5aa69d -->
