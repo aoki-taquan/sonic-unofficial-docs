@@ -25,9 +25,9 @@ last_verified: 2026-05-11
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 763 |
+| code-verified | 762 |
 | runbook-verified | 27 |
-| discrepancy-found | 112 |
+| discrepancy-found | 113 |
 | issue-confirmed | 6 |
 | hld-only | 2 |
 | meta | 193 |
@@ -44,7 +44,7 @@ last_verified: 2026-05-11
 | `categories` | 0 | 0 | 0 | 0 | 0 | 11 | 0 | 11 |
 | `guides` | 0 | 0 | 0 | 0 | 0 | 5 | 0 | 5 |
 | `internals` | 13 | 0 | 5 | 0 | 0 | 1 | 0 | 19 |
-| `management` | 32 | 0 | 16 | 2 | 0 | 1 | 0 | 51 |
+| `management` | 31 | 0 | 17 | 2 | 0 | 1 | 0 | 51 |
 | `overlay` | 19 | 0 | 1 | 0 | 0 | 1 | 0 | 21 |
 | `platform` | 35 | 0 | 13 | 3 | 0 | 1 | 0 | 52 |
 | `reference` | 467 | 27 | 8 | 0 | 0 | 13 | 1 | 516 |

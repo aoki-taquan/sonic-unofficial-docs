@@ -11,7 +11,7 @@ last_verified: 2026-05-13
 
     SONiC コミュニティ master の HLD は **設計提案リポジトリ** であり、現行コードと一致しているとは限りません。本ページは「HLD だけ読んで誤解しがちな機能」を一望できる USP ページです。読み手は、まず後述の **monitor subtype 別セクション** で該当機能の乖離タイプ（未実装 / 部分実装 / 進化置換 / 廃止）を把握し、そこから個別ページへ降りて `last_verified` と「実装との乖離」セクションの裏取り根拠を確認してください。area 横断で探す場合は末尾の **area 別索引** から辿れます。
 
-`verification: discrepancy-found` が付いた全 **112** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
+`verification: discrepancy-found` が付いた全 **113** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
 
 ## サマリ
 
@@ -21,7 +21,7 @@ last_verified: 2026-05-13
 |---------|-----:|------|
 | [`not_implemented`](#monitor-not-implemented) | 18 | 未実装 |
 | [`partially_implemented`](#monitor-partially-implemented) | 60 | 部分実装 |
-| [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 31 | HLD と乖離した形で実装/進化 |
+| [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 32 | HLD と乖離した形で実装/進化 |
 | [`deprecated`](#monitor-deprecated) | 3 | deprecated（廃止予定 / 撤去済み） |
 
 ### area 別件数
@@ -31,7 +31,7 @@ last_verified: 2026-05-13
 | [`acl-qos`](#area-acl-qos) | 6 |
 | [`architecture`](#area-architecture) | 25 |
 | [`internals`](#area-internals) | 5 |
-| [`management`](#area-management) | 16 |
+| [`management`](#area-management) | 17 |
 | [`overlay`](#area-overlay) | 1 |
 | [`platform`](#area-platform) | 13 |
 | [`reference`](#area-reference) | 8 |
@@ -439,7 +439,7 @@ last_verified: 2026-05-13
   
   `monitor: partially_implemented` — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
 
-### `evolved_beyond_hld` — HLD と乖離した形で実装/進化 (31 件) {#monitor-evolved-beyond-hld}
+### `evolved_beyond_hld` — HLD と乖離した形で実装/進化 (32 件) {#monitor-evolved-beyond-hld}
 
 !!! info "HLD と乖離した形で実装/進化"
 
@@ -519,6 +519,11 @@ last_verified: 2026-05-13
   area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b76`）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという **一部のみの部分実装** 状態:
+
+- [既定パスワードの初回ログイン強制変更（California SB-327 準拠）](../../management/default-credential-management-for-california-sb-327-conformance.md)  
+  area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-06-04`
+  
+  HLD と master 実装の差分を `monitor: evolved_beyond_hld` として記録する。
 
 - [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](../../overlay/dscp-remapping-for-tunnel-traffic.md)  
   area: `overlay` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -882,6 +887,11 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b76`）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという **一部のみの部分実装** 状態:
+
+- [既定パスワードの初回ログイン強制変更（California SB-327 準拠）](../../management/default-credential-management-for-california-sb-327-conformance.md)  
+  area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-06-04`
+  
+  HLD と master 実装の差分を `monitor: evolved_beyond_hld` として記録する。
 
 ### overlay {#area-overlay}
 
