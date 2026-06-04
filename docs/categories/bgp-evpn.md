@@ -102,7 +102,12 @@ EVPN-VXLAN は [FRR](../reference/glossary.md#term-frr) の `bgpd` + `zebra` + E
 
 ## verification ステータス注意点
 
-- **discrepancy-found**: `bfd-hw-offload-for-bgp-session.md`, `bgp-route-install-error-handling.md`, `evpn-vxlan-hld.md`, `evpn-vxlan-multihoming.md` — 各ページ末尾に差分メモあり
+以下の 4 ページは現行 master との差分が確認されている。利用前に必ず各ページ末尾の差分節を参照すること。
+
+- [`bfd-hw-offload-for-bgp-session.md`](../routing/bfd-hw-offload-for-bgp-session.md) (`monitor: not_implemented`) — `bfdsyncd` プロセスおよびフィーチャフラグ分岐が BGP container の supervisord に存在せず、[HLD](../reference/glossary.md#term-hld) が示す中間プロセス経路全体が未実装。[STATE_DB](../reference/glossary.md#term-state_db) への BFD remote 属性反映パスもコードに無い
+- [`bgp-route-install-error-handling.md`](../routing/bgp-route-install-error-handling.md) (`monitor: deprecated`) — HLD が想定する `ERROR_ROUTE_TABLE` / `ErrorListener` / 双方向 [FPM](../reference/glossary.md#term-fpm) socket は未実装。現行 master は **逆方向**のアプローチ（ASIC 取り込み成功確認後に広告、suppress-fib-pending）を採用しており、失敗時挙動は「pending のまま広告しない」
+- [`evpn-vxlan-hld.md`](../routing/evpn-vxlan-hld.md) (実装あり / 名称配置の乖離) — CONFIG_DB テーブルは HLD の `EVPN_NVO` ではなく **`VXLAN_EVPN_NVO`**。EVPN 中核 orch は `vxlanorch.{h,cpp}` 内 `EvpnNvoOrch` に集約され、HLD が示す複数 orch には分散していない。FRR BGP-EVPN 設定は `frr.conf` テンプレ / `vtysh` 直叩き経由（SONiC CLI だけでは完結しない）
+- [`evpn-vxlan-multihoming.md`](../routing/evpn-vxlan-multihoming.md) (`monitor: not_implemented`) — `EVPN_ETHERNET_SEGMENT` テーブル / `EvpnMhOrch` / `L2nhgOrch` / `ShlOrch` / `config interface evpn-esi` CLI / `sonic-evpn-mh.yang` のいずれも master に存在しない（関連 PR [sonic-swss](../reference/glossary.md#term-sonic-swss) #4262 / #4206 / #4039 は open）。dual-attached host は MC-[LAG](../reference/glossary.md#term-lag) で代替する
 
 ## 関連カテゴリ
 
@@ -110,4 +115,4 @@ EVPN-VXLAN は [FRR](../reference/glossary.md#term-frr) の `bgpd` + `zebra` + E
 - [Multi-ASIC / VOQ chassis 関連](multi-asic.md)
 - [gNMI / gNOI / OpenConfig 関連](gnmi-openconfig.md)
 
-<!-- glossary-links-injected: 70074b0b38c0 -->
+<!-- glossary-links-injected: 6fc493a71451 -->

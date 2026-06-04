@@ -1271,7 +1271,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SUPPRESS_ASIC_SDK_HEALTH_EVENT テーブル](config-db/suppress-asic-sdk-health-event.md) (112)
 - [サイトマップ](../_meta/sitemap.md) (100)
 - [CHASSIS_STATE_DB テーブル群](config-db/chassis-state.md) (65)
-- [概念](../topics/12-multi-asic-voq/concept.md) (63)
+- [概念](../topics/12-multi-asic-voq/concept.md) (65)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (54)
 
 ### [BFD](#term-bfd)
@@ -1376,8 +1376,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ConsumerStateTable](#term-consumerstatetable)
 
 - [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (16)
+- [ZMQ ProducerStateTable / ConsumerStateTable 設計](../internals/zmq-producer-consumer-state-table-design.md) (15)
 - [DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)](config-db/dpu-orch.md) (13)
-- [ZMQ ProducerStateTable / ConsumerStateTable 設計](../internals/zmq-producer-consumer-state-table-design.md) (11)
 - [APPL_DB BUFFER_* テーブル群](config-db/appl-buffer.md) (10)
 - [LABEL_ROUTE_TABLE (APPL_DB)](config-db/appl-mpls-route.md) (10)
 
@@ -1621,7 +1621,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (324)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (320)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
@@ -2117,11 +2117,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [sonic-swss-common](#term-sonic-swss-common)
 
+- [swss-common データベース設定（database_config.json）](../internals/swss-common-database-config.md) (19)
 - [swss-common Logger の linkToDb / linkToDbNative 呼び出し順序](../internals/swss-common-db-link-ordering.md) (17)
 - [LOGGER テーブル](config-db/log-config.md) (14)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (13)
 - [WARM_RESTART テーブル](config-db/warm-restart.md) (12)
-- [ALARM テーブル (EVENT_DB)](config-db/alarm-table.md) (10)
 
 ### [sonic-sairedis](#term-sonic-sairedis)
 
@@ -2213,7 +2213,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (355)
+- [サイトマップ](../_meta/sitemap.md) (354)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (33)
 - [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (28)
@@ -2386,7 +2386,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [YANG](#term-yang)
 
-- [サイトマップ](../_meta/sitemap.md) (245)
+- [サイトマップ](../_meta/sitemap.md) (244)
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (52)
 - [SmartSwitch 関連テーブル (MID_PLANE_BRIDGE / DHCP_SERVER_IPV4_PORT)](config-db/smart-switch.md) (40)
 - [NTP_SERVER テーブル](config-db/ntp-server.md) (39)

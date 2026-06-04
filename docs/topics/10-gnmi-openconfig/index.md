@@ -80,7 +80,7 @@ related:
 | operations | 256 | ✅ 完成 | code-verified | 運用・デバッグ |
 | internals | 126 | ✅ 完成 | meta | 内部実装 |
 | gnoi-gnsi | 53 | ⚠️ プレースホルダ | meta | gNOI / gNSI API |
-| yang-reference | 35 | ⚠️ プレースホルダ | meta | YANG リファレンス |
+| yang-reference | 46 | ⚠️ プレースホルダ | meta | YANG リファレンス |
 | advanced | 74 | ⚠️ プレースホルダ | meta | 発展トピック |
 
 <!-- /chapter-progress -->

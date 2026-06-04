@@ -1,6 +1,6 @@
 ---
 title: CLI 横断索引
-description: docs/reference/cli/ 配下の 73 ページを機能章ごとに束ね直した索引。各 CLI ページは config- / show- / debug- の辞書ページとして独立しており、本ページでは機能章からの入口として再構成する。
+description: docs/reference/cli/ 配下の主要 CLI ページを機能章ごとに束ね直した抜粋索引。全 73 ページの辞書一覧ではなく、各機能章の主入口から引かれる代表 CLI のみを並べる。網羅索引は docs/reference/cli/index.md を参照。
 area: topics
 verification: meta
 last_verified: 2026-06-04
@@ -26,7 +26,9 @@ related:
 
 # CLI 横断索引
 
-`docs/reference/cli/` 配下の 73 ページを、機能章でどこから引かれるかで並べ直した索引である。各 CLI ページは `config-*` / `show-*` / `debug-*` のグループごとに辞書として独立しており、本ページではこれを機能章ごとに束ね直す。
+`docs/reference/cli/` 配下の主要 CLI ページを、機能章でどこから引かれるかで並べ直した抜粋索引である。各 CLI ページは `config-*` / `show-*` / `debug-*` のグループごとに辞書として独立しており、本ページでは機能章の主入口から実際に参照される代表 CLI のみを束ね直す。
+
+本ページは網羅索引ではない。辞書ページの全件一覧は [docs/reference/cli/index.md](../../reference/cli/index.md) を参照する。本ページに収録していない章・辞書ページは末尾「索引対象外」節にまとめている。
 
 ## 機能章別 CLI 表
 
@@ -161,10 +163,6 @@ related:
 
 入口: [19-build-packaging/setup.md](../19-build-packaging/setup.md) / [19-build-packaging/operations.md](../19-build-packaging/operations.md)。
 
-## 辞書から章への逆引き
-
-`docs/reference/cli/` の辞書ページに「関連章」を埋め込む変更は本章のスコープ外 (既存ページ本文不変)。代わりに、辞書側を起点に章を探す読者は本ページの上記表を逆方向に辿るか、`docs/reference/cli/index.md` のトップから本章 [index](index.md) に戻る運用を想定する。
-
 ## 補足
 
 - `show ip` / `show ipv6` ページは [BGP](../../reference/glossary.md#term-bgp) 章と [VRF](../../reference/glossary.md#term-vrf) 章の両方から参照される。主入口は VRF 章。
@@ -172,4 +170,38 @@ related:
 - `config-mgmt-trio` は management framework / [gNMI](../../reference/glossary.md#term-gnmi) 章でも扱う想定だが、CLI 入口としては 15 Security 章に集約する。
 - `show interfaces` は L2 章と Platform 章の両方から参照される。物理層の counters / FEC / transceiver 情報は Platform 章を主入口とする。
 
-<!-- glossary-links-injected: d913b2e2ebed -->
+## 索引対象外
+
+本ページは抜粋索引であり、以下は意図的に対象から外している。網羅的に CLI を辿る場合は [docs/reference/cli/index.md](../../reference/cli/index.md) を起点とする。
+
+### 収録していない機能章
+
+機能章 `docs/topics/` 配下のうち、上記表に並べていないのは次の章である。各章とも `setup.md` / `operations.md` での CLI 参照が章固有 CLI に偏らないか、汎用 CLI (`show interfaces` / `show platform` 等) で間に合うため、本表では独立節を設けていない。
+
+- `10-gnmi-openconfig` — gNMI / OpenConfig 系。`config-mgmt-trio` は 15 Security 章にまとめている。
+- `12-multi-asic-voq` — [Multi-ASIC](../../reference/glossary.md#term-multi-asic) / VoQ。専用 CLI は限定的で `show platform` / `show interfaces` が主。
+- `13-dash-smartswitch` — [DASH](../../reference/glossary.md#term-dash) / [SmartSwitch](../../reference/glossary.md#term-smartswitch)。CLI ではなく gNMI / [NPU](../../reference/glossary.md#term-npu) 直叩きが中心。
+- `17-srv6-mpls` — [SRv6](../../reference/glossary.md#term-srv6) / [MPLS](../../reference/glossary.md#term-mpls)。`config bgp` / `show ip` から派生し独立 CLI は無し。
+- `18-p4-pins` — P4 / [PINS](../../reference/glossary.md#term-pins)。CLI ではなく P4Runtime / gNMI 制御。
+- `20-swss-sai-redis` — SWSS / [SAI](../../reference/glossary.md#term-sai) / [Redis](../../reference/glossary.md#term-redis)。`swssloglevel` 等の補助コマンドは辞書に未掲載。
+- `01-overview` / `21-lab-vs-developer` / `22-reference-index` — 概説・開発者向け章で CLI 入口を持たない。
+
+### 収録していない辞書ページ
+
+`docs/reference/cli/` の辞書ページのうち、機能章入口として上記表に並べていない 23 ページは次のとおり。`show-*` のサブカテゴリで複数章から薄く参照されるものを中心に省いている。
+
+- `show-arp` / `show-ndp` / `show-mac` — L2 / VRF 章で補助参照。
+- `show-bfd` — BGP / VRF 章で補助参照。
+- `show-lldp` — Platform / L2 章で補助参照。
+- `show-flowcnt` / `show-storm-control` — [QoS](../../reference/glossary.md#term-qos) / [ACL](../../reference/glossary.md#term-acl) 章で補助参照。
+- `show-services` / `show-uptime` / `show-running-config` / `show-version` — 全章共通の運用 CLI。`show-running-config` / `show-version` のみ 19 Build 章で再掲。
+- `clear-counters` / `clear` — 全章共通の運用 CLI。`clear` のみ 09 Telemetry 章で再掲。
+- `config-banner` / `config-default-route` — 単発設定で章入口に直結しない。
+- `config-clock` / `show-clock` — 16 [NAT](../../reference/glossary.md#term-nat)/DHCP/DNS 章にまとめている (時刻系)。
+- その他 `show-snmpagentaddress` / `show-snmptrap` / `show-system-health` / `show-feature` / `show-techsupport` 等は 09 Telemetry 章に集約済み。
+
+## 辞書から章への逆引き
+
+`docs/reference/cli/` の辞書ページに「関連章」を埋め込む変更は本章のスコープ外 (既存ページ本文不変)。代わりに、辞書側を起点に章を探す読者は本ページの上記表を逆方向に辿るか、`docs/reference/cli/index.md` のトップから本章 [index](index.md) に戻る運用を想定する。
+
+<!-- glossary-links-injected: 0e7015f195c5 -->

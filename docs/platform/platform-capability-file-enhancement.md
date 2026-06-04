@@ -8,6 +8,9 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/platform-json/platform_json_enhancement.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-buildimage
+  path: device/dell/x86_64-dell_s6000_s1220-r0/platform.json
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db: []
   cli:
@@ -108,7 +111,7 @@ HLD のサンプル[^1]:
 要点[^1]:
 
 - chassis 直下の `status_led` は `colors` 列を持つ。これでアプリは「この機種で `red` を指定して良いか」を事前にバリデーションできる。
-- fan_drawer / fan には `controllable` と `speed.{minimum, maximum}` が並ぶ。speed の単位は **percentage（%）** が一般的（HLD のサンプル `40-100` から推測。HLD 本文には単位の明示はない）。
+- fan_drawer / fan には `controllable` と `speed.{minimum, maximum}` が並ぶ。speed の単位は **percentage（%）** が一般的（HLD のサンプル `40-100` から推測。HLD 本文には単位の明示はない）。実機の `device/dell/x86_64-dell_s6000_s1220-r0/platform.json` では `minimum: 40` のみ記載され `maximum` は省略されている[^2]。HLD 仕様上は両方任意で、片方のみでも有効。
 - PSU 配下の LED / fan は `controllable=false` の例として明示的にリストアップされる。NOS 側に書く API があっても **適用しない / エラーにする** べき、という属性メタデータになる。
 - thermal は読み取り専用と分かるよう `controllable=false`。
 
@@ -161,6 +164,46 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
     ```
 
     **判断根拠**: capabilities フィールドの仕様（controllable + 属性別 colors / minimum / maximum）と既定値 true の根拠。
+
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-buildimage/device/dell/x86_64-dell_s6000_s1220-r0/platform.json#L4-L28 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  "status_led": {
+      "controllable": true,
+      "colors": ["amber", "blinking amber", "green", "blinking green"]
+  },
+  ...
+  "speed": {
+      "controllable": true,
+      "minimum": 40
+  }
+reasoning: HLD で定義された capabilities フィールド (controllable / colors / minimum) が実機 platform.json に展開されている裏取り。maximum は省略可能であることもこのファイルから確認できる。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/device/dell/x86_64-dell_s6000_s1220-r0/platform.json#L4-L28 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/device/dell/x86_64-dell_s6000_s1220-r0/platform.json#L4-L28 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)`
+
+    **抜粋**:
+
+    ```text
+    "status_led": {
+        "controllable": true,
+        "colors": ["amber", "blinking amber", "green", "blinking green"]
+    },
+    ...
+    "speed": {
+        "controllable": true,
+        "minimum": 40
+    }
+    ```
+
+    **判断根拠**: HLD で定義された capabilities フィールド (controllable / colors / minimum) が実機 platform.json に展開されている裏取り。maximum は省略可能であることもこのファイルから確認できる。
 
 <!-- evidence-rendered:end -->
 
@@ -222,6 +265,7 @@ redis-cli -n 6 keys 'CHASSIS_INFO|*'
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/platform-json/platform_json_enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-buildimage` `device/dell/x86_64-dell_s6000_s1220-r0/platform.json` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` (L4-L6 chassis status_led colors / L25-L28 fan speed minimum)
 
 <!-- topics-back-ref -->
 ## 関連 Topics
