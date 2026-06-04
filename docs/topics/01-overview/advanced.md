@@ -5,11 +5,7 @@ description: 発展トピック — SONiC を全体像として見たときに�
 area: topics
 verification: meta
 last_verified: 2026-05-12
-sources:
-- docs/architecture/sonic-generic-configuration-update-and-rollback.md
-- docs/architecture/json-change-application.md
-- docs/architecture/sonic-application-extension-infrastructure.md
-- docs/management/config-reload-enhancement.md
+sources: []
 related:
   cli:
   - config apply-patch

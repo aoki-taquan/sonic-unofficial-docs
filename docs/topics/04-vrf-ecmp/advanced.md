@@ -5,10 +5,7 @@ description: 発展トピックへの橋渡し — VRF / RIF / route / NHG の�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/routing/virtual-router-redundancy-protocol-adaptation-hld.md
-- docs/architecture/sag-high-level-design-for-sonic.md
-- docs/routing/reliable-tsa.md
+sources: []
 related:
   cli:
   - config vlan

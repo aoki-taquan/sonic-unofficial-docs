@@ -5,14 +5,7 @@ description: 設定 — BGP の設定入口は複数ある。運用コマンド�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/config-bgp.md
-- docs/reference/config-db/bgp-globals.md
-- docs/reference/config-db/bgp-neighbor.md
-- docs/reference/config-db/bgp-peer-group.md
-- docs/reference/config-db/bgp-neighbor-af.md
-- docs/reference/config-db/bgp-peer-group-af.md
-- docs/reference/config-db/bgp-aggregate-address.md
+sources: []
 related:
   cli:
   - config bgp

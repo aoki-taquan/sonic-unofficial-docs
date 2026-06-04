@@ -5,10 +5,7 @@ description: 内部実装 — ここではデータプレーン側のセキュ�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/switching/macsec-sonic-high-level-design-document.md
-- docs/switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md
-- docs/switching/sonic-sai-post-support-for-macsec.md
+sources: []
 related:
   cli:
   - config macsec

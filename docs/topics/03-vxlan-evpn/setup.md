@@ -5,17 +5,7 @@ description: Overlay 設定 — Overlay の設定は、最初に「L2 VLAN-VNI �
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/config-vxlan.md
-- docs/reference/cli/config-vnet.md
-- docs/reference/config-db/vxlan-tunnel.md
-- docs/reference/config-db/vxlan-tunnel-map.md
-- docs/reference/config-db/vnet.md
-- docs/reference/config-db/tunnel.md
-- docs/reference/config-db/tunnel-decap-table.md
-- docs/reference/yang/sonic-vxlan.md
-- docs/reference/yang/sonic-vnet.md
-- docs/architecture/sonic-policy-based-hashing.md
+sources: []
 related:
   cli:
   - config vxlan

@@ -5,11 +5,7 @@ description: L2 発展トピック — このページは、通常の VLAN / Por
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/switching/openconfig-support-for-portchannel-aggregate-interface.md
-- docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md
-- docs/switching/lag-on-distributed-voq-system.md
-- docs/switching/wake-on-lan-in-sonic.md
+sources: []
 related:
   cli:
   - config portchannel

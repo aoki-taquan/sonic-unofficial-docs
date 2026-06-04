@@ -5,13 +5,7 @@ description: 設定 — 全体像章での「設定」は個別機能の手順�
 area: topics
 verification: meta
 last_verified: 2026-05-12
-sources:
-- docs/management/sonic-nos-configuration-methods.md
-- docs/management/sonic-user-manual.md
-- docs/architecture/sonic-generic-configuration-update-and-rollback.md
-- docs/reference/cli/config-mgmt-trio.md
-- docs/reference/cli/sonic-cfggen.md
-- docs/reference/config-db/device-metadata.md
+sources: []
 related:
   cli:
   - config reload

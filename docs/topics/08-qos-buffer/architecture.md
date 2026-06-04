@@ -5,15 +5,7 @@ description: QoS / Buffer のアーキテクチャ — ConfigDB の QoS / buffer
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/acl-qos/sonic-qos-scheduler-and-shaping.md
-- docs/acl-qos/watermark-counters-in-sonic.md
-- docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md
-- docs/acl-qos/pfc-historical-statistics.md
-- docs/acl-qos/port-buffer-drop-counters-in-sonic.md
-- docs/reference/config-db/buffer-pool.md
-- docs/reference/config-db/buffer-profile.md
-- docs/reference/config-db/pfc-wd.md
+sources: []
 related:
   cli:
   - config interface

@@ -5,16 +5,7 @@ description: 設定 — 監視機能の設定は経路ごとに別の CONFIG_DB 
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/config-snmp.md
-- docs/reference/cli/config-sflow.md
-- docs/reference/cli/config-syslog.md
-- docs/reference/config-db/sflow.md
-- docs/reference/config-db/syslog-server.md
-- docs/reference/config-db/telemetry.md
-- docs/reference/config-db/auto-techsupport.md
-- docs/reference/yang/sonic-syslog.md
-- docs/system/snmp-migration-from-snmp-yml-to-configdb.md
+sources: []
 related:
   cli:
   - config sflow

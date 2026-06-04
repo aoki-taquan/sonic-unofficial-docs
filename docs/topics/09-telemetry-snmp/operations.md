@@ -5,15 +5,7 @@ description: 運用 — 障害調査では「どこまで生きているか」�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/show-system-health.md
-- docs/reference/cli/show-techsupport.md
-- docs/reference/cli/show-platform.md
-- docs/system/event-driven-techsupport-invocation-coredump-mgmt.md
-- docs/system/dump-sfp-eeprom-page-data-in-show-techsupport-command.md
-- docs/system/kdump.md
-- docs/system/kdump-remote-ssh.md
-- docs/internals/dump-utility-for-easy-debugging.md
+sources: []
 related:
   cli:
   - show platform
