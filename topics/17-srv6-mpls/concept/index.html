@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="概念 — SRv6、MPLS、Path Tracing はいずれも「IPv4/IPv6 forwarding の上に、追加のラベルまたはオプションを積んで経路や挙動を決める」仕組みです。">
+        <meta name="description" content="SRv6 / MPLS / Path Tracing が SONiC の通常 routing とどこで分岐し、どの daemon と DB を増やすかを 1 章で見渡す。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="概念 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="概念 — SRv6、MPLS、Path Tracing はいずれも「IPv4/IPv6 forwarding の上に、追加のラベルまたはオプションを積んで経路や挙動を決める」仕組みです。" />
+<meta property="og:description" content="SRv6 / MPLS / Path Tracing が SONiC の通常 routing とどこで分岐し、どの daemon と DB を増やすかを 1 章で見渡す。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/17-srv6-mpls/concept.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/17-srv6-mpls/concept/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="概念 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="概念 — SRv6、MPLS、Path Tracing はいずれも「IPv4/IPv6 forwarding の上に、追加のラベルまたはオプションを積んで経路や挙動を決める」仕組みです。" />
+<meta property="twitter:description" content="SRv6 / MPLS / Path Tracing が SONiC の通常 routing とどこで分岐し、どの daemon と DB を増やすかを 1 章で見渡す。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/17-srv6-mpls/concept.png" />
 </head>
   
@@ -5445,6 +5445,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#srv6-l3vpn-sid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: SRv6 L3VPN 着信ノードでの SID 解決
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5481,100 +5492,6 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        まず読み手の質問に答える
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="まず読み手の質問に答える">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        この章はそもそも何の章か
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        何を解決するか
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SONiC 内での位置
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        用語の最短整理
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#srv6-l3vpn-sid" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        典型シーン: SRv6 L3VPN 着信ノードでの SID 解決
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        似ているが別物のもの
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        読了後にできるようになること
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         関連ページ
       
     </span>
@@ -5583,7 +5500,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章の前提知識
@@ -36201,6 +36118,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#srv6-l3vpn-sid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: SRv6 L3VPN 着信ノードでの SID 解決
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36237,100 +36165,6 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        まず読み手の質問に答える
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="まず読み手の質問に答える">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        この章はそもそも何の章か
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        何を解決するか
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SONiC 内での位置
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        用語の最短整理
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#srv6-l3vpn-sid" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        典型シーン: SRv6 L3VPN 着信ノードでの SID 解決
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        似ているが別物のもの
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        読了後にできるようになること
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         関連ページ
       
     </span>
@@ -36339,7 +36173,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章の前提知識
@@ -36377,7 +36211,7 @@
 <h1 id="_1">概念<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p><a href="../../../reference/glossary/#term-srv6">SRv6</a>、<a href="../../../reference/glossary/#term-mpls">MPLS</a>、Path Tracing はいずれも「IPv4/IPv6 forwarding の上に、追加のラベルまたはオプションを積んで経路や挙動を決める」仕組みです。<a href="../../../reference/glossary/#term-sonic">SONiC</a> で読み解く前に、まずどこで通常の routing 章（<a href="../../02-bgp/">02 BGP</a> や <a href="../../04-vrf-ecmp/">04 VRF / ECMP</a>）と分かれるかを整理します。</p>
 <h2 id="_2">この章は何のためにあるか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>通常の <a href="../../../reference/glossary/#term-bgp">BGP</a> / <a href="../../../reference/glossary/#term-vrf">VRF</a> 章では「宛先 IP に対応する nexthop を引き、L2 ヘッダを差し替えて送出する」までを扱います。本章はそこに <strong>追加のヘッダ操作（push / pop / swap）</strong> や <strong>経路情報の付加（SID リスト、HbH オプション）</strong> が入る場合、SONiC のどの daemon と DB がどう拡張されるかを読み解きます。読み手が最初に持つ疑問は次の 4 つで、本章のすべての節はそれに答える形で並んでいます。</p>
+<p>通常の <a href="../../../reference/glossary/#term-bgp">BGP</a> / <a href="../../../reference/glossary/#term-vrf">VRF</a> 章では「宛先 IP に対応する nexthop を引き、L2 ヘッダを差し替えて送出する」までを扱う。本章はそこに <strong>追加のヘッダ操作（push / pop / swap）</strong> や <strong>経路情報の付加（SID リスト、HbH オプション）</strong> が入る場合、SONiC のどの daemon と DB がどう拡張されるかを読み解く。読み手が最初に持つ疑問は次の 4 つで、本章のすべての節はそれに答える形で並ぶ。</p>
 <ol>
 <li>SRv6 / MPLS / Path Tracing は「同じ拡張ヘッダ」の仲間か、それとも別物か</li>
 <li>SONiC に入れるとき、どの daemon と DB が増えるか／流用されるか</li>
@@ -36386,30 +36220,46 @@
 </ol>
 <h2 id="_3">何を解決するか<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>traffic engineering を IGP/BGP の外側に出す</strong>: 経路を IGP メトリックではなく、operator が指定した SID リストや LSP に沿わせたい。</li>
-<li><strong>VPN を「underlay 共通」で多重化する</strong>: SRv6 L3VPN や MPLS L3VPN は、underlay を 1 本に保ったまま customer VRF を多重化する。VRF をそのまま BGP で広告する vrf-lite と違い、PE 間で経路を共有しつつ data plane で分離できる。</li>
-<li><strong>path 観測の精度を上げる</strong>: Path Tracing は「どの transit を経由したか」「各 hop の interface / timestamp は何か」を data plane に書き込む。ping / traceroute と違い、本物のトラフィックそのものに経路情報が残る。</li>
+<li><strong>traffic engineering を IGP/BGP の外側に出す</strong>: 経路を IGP メトリックではなく、operator が指定した SID リストや LSP に沿わせたい。SRv6 Policy / Binding SID で「この traffic は東経路、別 traffic は西経路」のような明示経路を作る。</li>
+<li><strong>L3VPN underlay の現代化</strong>: SRv6 L3VPN や MPLS L3VPN は、underlay を 1 本に保ったまま customer VRF を多重化する。VRF をそのまま BGP で広告する vrf-lite と違い、PE 間で経路を共有しつつ data plane で分離できる<sup id="fnref:srv6vpn"><a class="footnote-ref" href="#fn:srv6vpn">2</a></sup>。</li>
+<li><strong>既存 MPLS 網との接続</strong>: SONiC を MPLS LSR として配置し、静的 LSP で連携する<sup id="fnref3:mplshld"><a class="footnote-ref" href="#fn:mplshld">7</a></sup>。</li>
+<li><strong>path 観測の精度を上げる</strong>: Path Tracing は「どの transit を経由したか」「各 hop の interface / timestamp は何か」を data plane に書き込む<sup id="fnref4:pt"><a class="footnote-ref" href="#fn:pt">9</a></sup>。ping / traceroute と違い、本物のトラフィックそのものに経路情報が残る。</li>
 </ul>
+<p>純粋な BGP / <a href="../../../reference/glossary/#term-ecmp">ECMP</a> では表現できない「経路の制御」「経路の可観測性」を担うのがこの章。</p>
 <h2 id="sonic">SONiC 内での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
-<pre class="mermaid"><code>flowchart LR
-  subgraph CP["制御プレーン"]
-    FRR["FRR&lt;br/&gt;bgpd / staticd"]
-    BGPCFGD["bgpcfgd&lt;br/&gt;SRv6Mgr / MplsMgr"]
-    FPMSYNCD[fpmsyncd]
-  end
-  subgraph DP["データプレーン橋渡し"]
-    SRV6ORCH[srv6orch]
-    ROUTEORCH[routeorch]
-    PORTSORCH["portsorch&lt;br/&gt;PT 属性"]
-    SYNCD["syncd / SAI"]
-  end
-  FRR --&gt; FPMSYNCD --&gt; ROUTEORCH
-  BGPCFGD --&gt; SRV6ORCH
-  BGPCFGD --&gt; ROUTEORCH
-  SRV6ORCH --&gt; SYNCD
-  ROUTEORCH --&gt; SYNCD
-  PORTSORCH --&gt; SYNCD</code></pre>
-<p>通常の BGP route が <code>fpmsyncd -&gt; routeorch</code> で流れるのに対し、SRv6 の SID / Policy / Steer 情報は <code>bgpcfgd (SRv6Mgr) -&gt; srv6orch</code> で流れます。MPLS は label を持つ route として <code>LABEL_ROUTE_TABLE</code> に乗りますが、L3 nexthop は通常の routeorch と共有します。Path Tracing は forwarding そのものを変えず、port 属性として <a href="../../../reference/glossary/#term-sai">SAI</a> に渡るだけです。</p>
+<pre class="mermaid"><code>flowchart TB
+    subgraph CFG["CONFIG_DB"]
+        IF[INTERFACE.mpls]
+        LOC[SRV6_MY_LOCATORS]
+        SID[SRV6_MY_SIDS]
+        POL[SRV6_POLICY]
+        STR[SRV6_STEER]
+        PT[PORT.pt_*]
+    end
+    subgraph CTRL["制御面"]
+        FRR["FRR&lt;br/&gt;bgpd / zebra / staticd"]
+        BCFG["bgpcfgd&lt;br/&gt;SRv6Mgr"]
+        FPM[fpmsyncd]
+    end
+    subgraph SWSS["swss"]
+        SRORC[srv6orch]
+        RORC[routeorch]
+        PORTORC[portsorch]
+    end
+    subgraph SAI["SAI / syncd"]
+        MYSID[MY_SID_ENTRY]
+        SIDLIST[SRV6_SIDLIST]
+        LBL[INSEG_ENTRY]
+        PTATTR[port PT attrs]
+    end
+    LOC --&gt; BCFG --&gt; FRR --&gt; FPM --&gt; RORC --&gt; LBL
+    SID --&gt; SRORC --&gt; MYSID
+    POL --&gt; SRORC --&gt; SIDLIST
+    STR --&gt; SRORC
+    IF --&gt; RORC
+    PT --&gt; PORTORC --&gt; PTATTR
+    FRR -.AF_MPLS netlink.-&gt; FPM</code></pre>
+<p>通常の BGP route が <code>fpmsyncd -&gt; routeorch</code> で流れるのに対し、SRv6 の SID / Policy / Steer 情報は <code>bgpcfgd (SRv6Mgr) -&gt; srv6orch</code> で流れる。MPLS は label を持つ route として <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> の <code>LABEL_ROUTE_TABLE</code> に乗り、L3 nexthop は <code>routeorch</code> が SAI MPLS inseg API に翻訳する<sup id="fnref:mplshld"><a class="footnote-ref" href="#fn:mplshld">7</a></sup>（SONiC swss に独立した MplsOrch クラスは存在しない）。Path Tracing は forwarding そのものを変えず、port 属性として <a href="../../../reference/glossary/#term-sai">SAI</a> に渡るだけ<sup id="fnref:pt"><a class="footnote-ref" href="#fn:pt">9</a></sup>。</p>
 <h2 id="_4">用語の整理<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36423,42 +36273,67 @@
 <tr>
 <td>SID</td>
 <td>Segment Identifier。SRv6 では 128bit IPv6 アドレス、SR-MPLS では label。</td>
-<td><code>SRV6_MY_SID_TABLE</code> / <code>LABEL_ROUTE_TABLE</code></td>
+<td><code>SRV6_MY_SID_TABLE</code><sup id="fnref2:srv6hld"><a class="footnote-ref" href="#fn:srv6hld">1</a></sup> / <code>LABEL_ROUTE_TABLE</code><sup id="fnref8:mplshld"><a class="footnote-ref" href="#fn:mplshld">7</a></sup></td>
+</tr>
+<tr>
+<td>uSID</td>
+<td>SID を 16 / 32bit 単位に圧縮し 1 つの IPv6 アドレスに最大 6 個積む方式。</td>
+<td><code>srv6orch</code> の <code>end_behavior_map</code>（<code>un</code> / <code>ua</code> / <code>udt4</code> / <code>udt6</code> / <code>udt46</code> / <code>udx4</code> / <code>udx6</code>）</td>
 </tr>
 <tr>
 <td>Locator</td>
-<td>uSID block + node id をまとめた IPv6 prefix。</td>
+<td>uSID block + node id をまとめた IPv6 prefix。1 装置の SID 群が同じ Locator を共有する。</td>
 <td><code>SRV6_MY_LOCATORS</code></td>
 </tr>
 <tr>
 <td>Behavior</td>
-<td>SID に紐づく動作（END、END.DT4、uA など）。</td>
-<td><code>SRV6_MY_SID_TABLE.action</code></td>
+<td>SID に紐づく動作（<code>END</code> / <code>End.DT4</code> / <code>End.DT46</code> / <code>uA</code> など）。</td>
+<td><code>SRV6_MY_SID_TABLE.action</code><sup id="fnref3:srv6hld"><a class="footnote-ref" href="#fn:srv6hld">1</a></sup></td>
 </tr>
 <tr>
 <td>Policy</td>
-<td>source routing の発射台。SID list を持ち、color / endpoint で identified。</td>
-<td><code>SRV6_POLICY</code></td>
+<td>source routing の発射台。SID list を持ち、color / endpoint で identify。</td>
+<td><code>SRV6_POLICY</code><sup id="fnref4:srv6hld"><a class="footnote-ref" href="#fn:srv6hld">1</a></sup></td>
 </tr>
 <tr>
 <td>Steer</td>
 <td>どの prefix / vrf を policy に流すか。</td>
-<td><code>SRV6_STEER</code></td>
+<td><code>SRV6_STEER</code><sup id="fnref5:srv6hld"><a class="footnote-ref" href="#fn:srv6hld">1</a></sup></td>
 </tr>
 <tr>
 <td>LSP</td>
 <td>Label Switched Path。MPLS の path。</td>
-<td><code>LABEL_ROUTE_TABLE</code> の連鎖</td>
+<td><code>LABEL_ROUTE_TABLE</code> の連鎖<sup id="fnref9:mplshld"><a class="footnote-ref" href="#fn:mplshld">7</a></sup></td>
+</tr>
+<tr>
+<td>AF_MPLS</td>
+<td>Linux の MPLS address family。netlink で route が流れる。</td>
+<td><code>fpmsyncd</code> が受信して APPL_DB に展開</td>
+</tr>
+<tr>
+<td>PHP / explicit-null / implicit-null</td>
+<td>penultimate hop popping と end-of-LSP のラベル挙動。</td>
+<td><code>LABEL_ROUTE_TABLE.mpls_pop</code><sup id="fnref10:mplshld"><a class="footnote-ref" href="#fn:mplshld">7</a></sup></td>
+</tr>
+<tr>
+<td><code>MPLS_TC_TO_TC_MAP</code></td>
+<td>MPLS パケットの TC を SONiC 内部 TC に変換する QoS map。</td>
+<td><code>PORT_QOS_MAP.mpls_tc_to_tc_map</code><sup id="fnref2:mplstc"><a class="footnote-ref" href="#fn:mplstc">8</a></sup></td>
 </tr>
 <tr>
 <td>MCD</td>
 <td>Midpoint Compressed Data。Path Tracing で各 transit が書く 4 byte 情報。</td>
-<td>port 属性で hardware が生成</td>
+<td>port 属性で hardware が生成<sup id="fnref5:pt"><a class="footnote-ref" href="#fn:pt">9</a></sup></td>
 </tr>
 <tr>
 <td>HbH-PT</td>
 <td>Hop-by-Hop Path Tracing Option。IPv6 拡張ヘッダの一種。</td>
 <td>data plane でのみ参照</td>
+</tr>
+<tr>
+<td>SRC / Midpoint / SINK</td>
+<td>Path Tracing の役割。</td>
+<td>SONiC は Midpoint を実装<sup id="fnref6:pt"><a class="footnote-ref" href="#fn:pt">9</a></sup></td>
 </tr>
 </tbody>
 </table>
@@ -36480,7 +36355,7 @@
   FRR-&gt;&gt;FPM: SR-MPLS / SRv6 L3VPN route
   FPM-&gt;&gt;RO: AF_MPLS / IPv6+SRH route
   RO-&gt;&gt;SAI: label route / encap nexthop</code></pre>
-<p>ポイントは、<strong>operator が直接書く部分（locator / sid / policy / steer）</strong> と <strong><a href="../../../reference/glossary/#term-frr">FRR</a> 経由で来る部分（L3VPN route）</strong> が同じ章で扱われる点です。Phase 1 では FRR の SRv6 が未成熟なため、operator が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> を書く割合が大きくなります。</p>
+<p>ポイントは、<strong>operator が直接書く部分（locator / sid / policy / steer）</strong> と <strong><a href="../../../reference/glossary/#term-frr">FRR</a> 経由で来る部分（L3VPN route）</strong> が同じ章で扱われる点。Phase 1 では FRR の SRv6 が未成熟なため、operator が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> を書く割合が大きい<sup id="fnref:srv6static"><a class="footnote-ref" href="#fn:srv6static">4</a></sup>。</p>
 <h2 id="_5">似た機能との違い<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36492,143 +36367,70 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="../../../reference/glossary/#term-evpn">EVPN</a>-<a href="../../../reference/glossary/#term-vxlan">VXLAN</a> との違い</td>
+<td><a href="../../02-bgp/">BGP</a></td>
+<td>経路情報そのもの</td>
+<td>BGP 一般は 02 章。SRv6/MPLS で追加される BGP family（SR-MPLS / SRv6 L3VPN）の挙動は本章。</td>
+</tr>
+<tr>
+<td><a href="../../04-vrf-ecmp/">VRF / ECMP</a></td>
+<td>VRF を多重化する</td>
+<td>VRF 一般構造は 04 章。SRv6 SID と VRF の紐付け（<code>End.DT4</code> / <code>End.DT46</code>）は本章。</td>
+</tr>
+<tr>
+<td><a href="../../../reference/glossary/#term-evpn">EVPN</a>-<a href="../../../reference/glossary/#term-vxlan">VXLAN</a></td>
 <td>underlay が L3、tenant を多重化する</td>
-<td>EVPN は L2 拡張も含み、VXLAN UDP を使う。SRv6 は IPv6 SRH、MPLS は label。</td>
+<td>EVPN は L2 拡張も含み、VXLAN UDP encap を使う。SRv6 は IPv6 SRH、MPLS は label。</td>
 </tr>
 <tr>
-<td>Static route との違い</td>
+<td>Static route</td>
 <td>経路を operator が指定する</td>
-<td>static route は「次の hop」のみ指定。SRv6 / MPLS は <strong>経路全体を SID/label の列で指定</strong> できる。</td>
+<td>static route は「次の hop」のみ。SRv6 / MPLS は <strong>経路全体を SID/label の列で指定</strong> できる。</td>
 </tr>
 <tr>
-<td>GRE / <a href="../../../reference/glossary/#term-ipinip">IPinIP</a> との違い</td>
+<td>GRE / <a href="../../../reference/glossary/#term-ipinip">IPinIP</a></td>
 <td>encap で tenant を運ぶ</td>
-<td>GRE は単純な tunnel、SRv6 は SID 列で TE / VPN / function を同時に表現できる。</td>
+<td>GRE は単純な tunnel、SRv6 は SID 列で TE / VPN / function を同時に表現。</td>
 </tr>
 <tr>
-<td>Inband telemetry (<a href="../../../reference/glossary/#term-int">INT</a>) との違い</td>
-<td>data plane に観測情報を埋め込む</td>
+<td><a href="../../13-dash-smartswitch/">DASH / SmartSwitch</a></td>
+<td>tenant overlay</td>
+<td><a href="../../../reference/glossary/#term-dash">DASH</a> は per-<a href="../../../reference/glossary/#term-eni">ENI</a> overlay。SRv6 / MPLS は装置間 fabric の話。</td>
+</tr>
+<tr>
+<td>Inband telemetry (<a href="../../../reference/glossary/#term-int">INT</a>) / <a href="../../09-telemetry-snmp/">Telemetry / SNMP</a></td>
+<td>観測</td>
 <td>INT は metadata stack をパケットに積む。Path Tracing は 4 byte MCD と HbH オプションに限定。</td>
+</tr>
+<tr>
+<td>LDP / RSVP-TE</td>
+<td>動的 MPLS シグナリング</td>
+<td>SONiC は初期 scope 外、本章は静的 LSP + bulk programming のみ<sup id="fnref11:mplshld"><a class="footnote-ref" href="#fn:mplshld">7</a></sup>。</td>
 </tr>
 </tbody>
 </table>
 <h2 id="srv6">SRv6 の積み上げ順<a class="headerlink" href="#srv6" title="Permanent link">&para;</a></h2>
-<p>SRv6 は HLD が一気に揃っているわけではなく、機能ごとに別 HLD として段階的に追加されています。読む順は実装の追加順と一致させると迷いません。</p>
+<p>SRv6 は HLD が一気に揃っているわけではなく、機能ごとに別 HLD として段階的に追加されている。読む順は実装の追加順と一致させると迷わない。</p>
 <ol>
-<li><strong>SRv6 base</strong> — <code>END</code> / <code>END.DT46</code> / <code>H.Encaps.Red</code> などの基本 behavior、<code>SRV6_SID_LIST</code> / <code>SRV6_MY_SID_TABLE</code> / <code>SRV6_POLICY</code> / <code>SRV6_STEER</code> のスキーマ。Phase 1 では FRR の SRv6 が未成熟なため、静的 SID と policy を CONFIG_DB に直接書く運用が前提です。</li>
-<li><strong>uSID</strong> — 128bit IPv6 アドレスに最大 6 個の uSID を圧縮して詰める方式。SAI 変更なしで <code>srv6orch</code> の <code>end_behavior_map</code> に <code>un</code> / <code>ua</code> / <code>udt4</code> / <code>udt6</code> / <code>udt46</code> / <code>udx4</code> / <code>udx6</code> を追加する拡張です。</li>
-<li><strong>Static SID / Locator 設定</strong> — <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> を CONFIG_DB 経由で受け、<code>bgpcfgd</code> の <code>SRv6Mgr</code> が <code>vtysh</code> で FRR の <code>segment-routing srv6</code> 設定に流し込む経路です。</li>
-<li><strong>L3 隣接</strong> — <code>uA</code> / <code>End.X</code> / <code>uDX4</code> / <code>uDX6</code> / <code>End.DX4</code> / <code>End.DX6</code> のような cross-connect 系 behavior は出口の nexthop（L3 隣接）が必要で、<code>srv6orch</code> が pending queue で Neighbor 解決を待ちます。</li>
-<li><strong>VPN / Policy</strong> — L3VPN over SRv6 は <code>srv6_prefix_agg_id_table_</code> のような Prefix AGG_ID と VPN encap mapper を介して <code>vpn_sid</code> を管理し、SRv6 Policy で steering します。</li>
+<li><strong>SRv6 base</strong> — <code>END</code> / <code>END.DT46</code> / <code>H.Encaps.Red</code> などの基本 behavior、<code>SRV6_SID_LIST</code> / <code>SRV6_MY_SID_TABLE</code> / <code>SRV6_POLICY</code> / <code>SRV6_STEER</code> のスキーマ<sup id="fnref:srv6hld"><a class="footnote-ref" href="#fn:srv6hld">1</a></sup>。Phase 1 では FRR の SRv6 が未成熟なため、静的 SID と policy を CONFIG_DB に直接書く運用が前提。</li>
+<li><strong>uSID</strong> — 128bit IPv6 アドレスに最大 6 個の uSID を圧縮して詰める方式。SAI 変更なしで <code>srv6orch</code> の <code>end_behavior_map</code> に <code>un</code> / <code>ua</code> / <code>udt4</code> / <code>udt6</code> / <code>udt46</code> / <code>udx4</code> / <code>udx6</code> を追加する拡張<sup id="fnref:usid"><a class="footnote-ref" href="#fn:usid">3</a></sup>。</li>
+<li><strong>Static SID / Locator 設定</strong> — <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> を CONFIG_DB 経由で受け、<code>bgpcfgd</code> の <code>SRv6Mgr</code> が <code>vtysh</code> で FRR の <code>segment-routing srv6</code> 設定に流し込む経路<sup id="fnref2:srv6static"><a class="footnote-ref" href="#fn:srv6static">4</a></sup>。</li>
+<li><strong>L3 隣接</strong> — <code>uA</code> / <code>End.X</code> / <code>uDX4</code> / <code>uDX6</code> / <code>End.DX4</code> / <code>End.DX6</code> のような cross-connect 系 behavior は出口の nexthop（L3 隣接）が必要で、<code>srv6orch</code> が pending queue で Neighbor 解決を待つ<sup id="fnref:srv6adj"><a class="footnote-ref" href="#fn:srv6adj">5</a></sup>。Neighbor 解決前は SAI 上 Drop で programming され、解決後に Forward へ書き換わる<sup id="fnref2:srv6orchcode"><a class="footnote-ref" href="#fn:srv6orchcode">6</a></sup>。</li>
+<li><strong>VPN / Policy</strong> — L3VPN over SRv6 は <code>srv6_prefix_agg_id_table_</code> のような Prefix AGG_ID と VPN encap mapper を介して <code>vpn_sid</code> を管理し、SRv6 Policy で steering する<sup id="fnref2:srv6vpn"><a class="footnote-ref" href="#fn:srv6vpn">2</a></sup>。</li>
 </ol>
-<p>この順序を踏まえると、<code>SRV6_MY_SID_TABLE</code> の <code>action</code> 値や <code>adj</code> パラメータが「どの phase で意味を持つか」が分かれます。</p>
+<p>この順序を踏まえると、<code>SRV6_MY_SID_TABLE</code> の <code>action</code> 値や <code>adj</code> パラメータが「どの phase で意味を持つか」が分かれる。</p>
 <h2 id="mpls">MPLS の位置付け<a class="headerlink" href="#mpls" title="Permanent link">&para;</a></h2>
-<p>SONiC の MPLS は <strong>静的 LSP</strong> を前提に、IPv4/IPv6 routing インフラを MPLS にも拡張する設計です。動的シグナリング（LDP / RSVP-TE）は初期 scope 外で、以下の 4 点が基盤になります。</p>
+<p>SONiC の MPLS は <strong>静的 LSP</strong> を前提に、IPv4/IPv6 routing インフラを MPLS にも拡張する設計<sup id="fnref2:mplshld"><a class="footnote-ref" href="#fn:mplshld">7</a></sup>。動的シグナリング（LDP / RSVP-TE）は初期 scope 外で、以下の 4 点が基盤になる。</p>
 <ul>
-<li><strong>per-<a href="../../../reference/glossary/#term-rif">RIF</a> で MPLS を enable/disable</strong> — <code>INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> の <code>mpls</code> 属性で明示的に許可した interface のみ MPLS を扱う。</li>
-<li><strong>Push / Pop / Swap</strong> — implicit-null / explicit-null を含むラベル操作。</li>
-<li><strong>bulk MPLS in-segment entry の SAI programming</strong> — <code>LABEL_ROUTE_TABLE</code> を APP_DB 経由で <code>fpmsyncd</code> が <code>AF_MPLS</code> の netlink から受けて流し込む。</li>
-<li><strong><a href="../../../reference/glossary/#term-crm">CRM</a> 統合</strong> — MPLS in-segment / nexthop の使用量を Critical Resource Monitoring に乗せる。</li>
+<li><strong>per-<a href="../../../reference/glossary/#term-rif">RIF</a> で MPLS を enable/disable</strong> — <code>INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> の <code>mpls</code> 属性で明示的に許可した interface のみ MPLS を扱う<sup id="fnref4:mplshld"><a class="footnote-ref" href="#fn:mplshld">7</a></sup>。</li>
+<li><strong>Push / Pop / Swap</strong> — implicit-null / explicit-null を含むラベル操作。<code>LABEL_ROUTE_TABLE.mpls_pop</code> で pop 動作を制御する<sup id="fnref5:mplshld"><a class="footnote-ref" href="#fn:mplshld">7</a></sup>。</li>
+<li><strong>bulk MPLS in-segment entry の SAI programming</strong> — <code>LABEL_ROUTE_TABLE</code> を APPL_DB 経由で <code>fpmsyncd</code> が <code>AF_MPLS</code> の netlink から受けて流し込み、<code>routeorch</code> が SAI MPLS inseg API へ翻訳する<sup id="fnref6:mplshld"><a class="footnote-ref" href="#fn:mplshld">7</a></sup>。</li>
+<li><strong><a href="../../../reference/glossary/#term-crm">CRM</a> 統合</strong> — MPLS in-segment / nexthop の使用量を Critical Resource Monitoring に乗せる<sup id="fnref7:mplshld"><a class="footnote-ref" href="#fn:mplshld">7</a></sup>。</li>
 </ul>
-<p><a href="../../../reference/glossary/#term-qos">QoS</a> 連携は <code>MPLS_TC_TO_TC_MAP</code> と <code>PORT_QOS_MAP</code> の <code>mpls_tc_to_tc_map</code> フィールドで、MPLS パケットの TC を SONiC 内部 TC に変換します。</p>
+<p><a href="../../../reference/glossary/#term-qos">QoS</a> 連携は <code>MPLS_TC_TO_TC_MAP</code> と <code>PORT_QOS_MAP</code> の <code>mpls_tc_to_tc_map</code> フィールドで、MPLS パケットの TC を SONiC 内部 TC に変換する<sup id="fnref:mplstc"><a class="footnote-ref" href="#fn:mplstc">8</a></sup>。</p>
 <h2 id="path-tracing">Path Tracing は何を観測するか<a class="headerlink" href="#path-tracing" title="Permanent link">&para;</a></h2>
-<p>Path Tracing は IETF spring-path-tracing で定義され、各 transit が <strong>MCD（Midpoint Compressed Data）</strong> を IPv6 <strong>Hop-by-Hop Path Tracing Option (HbH-PT)</strong> に書き足していく仕組みです。SRC が probe を生成、Midpoint が MCD を追記、SINK が回収して Regional Collector で時系列に再構築します。</p>
-<p>SONiC は <strong>Midpoint</strong> を実装する側で、<code>PORT</code> テーブルの <code>pt_interface_id</code> / <code>pt_timestamp_template</code> が SAI の <code>SAI_PORT_ATTR_PATH_TRACING_INTF</code> / <code>SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE</code> に対応します。通常 IPv6 forwarding に MCD 書き込みが追加されるだけで、経路選択そのものは変えません。</p>
-<h2 id="_6">三者の境界<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<pre class="mermaid"><code>flowchart LR
-  PKT[packet] --&gt; CL{header}
-  CL --&gt;|IPv6 + SRH| SR["SRv6 endpoint&lt;br/&gt;srv6orch / MY_SID"]
-  CL --&gt;|MPLS label| MP["MPLS LSP&lt;br/&gt;LABEL_ROUTE_TABLE"]
-  CL --&gt;|IPv6 + HbH-PT| PT["Path Tracing Midpoint&lt;br/&gt;PORT attrs"]
-  SR --&gt; FWD[L3 forwarding]
-  MP --&gt; FWD
-  PT --&gt; FWD
-  FWD --&gt; OUT[egress port]</code></pre>
-<p>要点は、SRv6 と Path Tracing は IPv6 forwarding の中でそれぞれの拡張ヘッダ／オプションを処理する点が共通している一方、MPLS は AF_MPLS という別の address family で動く点です。</p>
-<h2 id="_7">読了後にできること<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<ul>
-<li>SRv6 の uSID / Locator / Behavior / Policy / Steer がそれぞれ CONFIG_DB のどのテーブルに対応するかを思い出せる。</li>
-<li>MPLS の per-RIF enable、in-segment programming、QoS map の流れを 1 本で説明できる。</li>
-<li>Path Tracing が forwarding を変えないこと、PORT 属性が SAI のどの属性に対応するかを言える。</li>
-<li>「BGP route が反映されない」「policy で steer されない」「MPLS label が pop されない」が起きたとき、<code>bgpcfgd</code> / <code>srv6orch</code> / <code>routeorch</code> のうちどれを最初に疑うかを決められる。</li>
-<li>章末の発展トピックや operations 章に進む準備が整う。</li>
-</ul>
-<h2 id="_8">他章との境界<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<ul>
-<li>BGP / FRR 連携は <a href="../../02-bgp/">02 BGP</a> の章に、SRv6 / MPLS で追加される BGP family（SR-MPLS、SRv6 L3VPN）はこの章で扱います。</li>
-<li>VRF / VPN の一般的な構造は <a href="../../04-vrf-ecmp/">04 VRF / ECMP</a> で、SRv6 VPN による L3VPN の SID マッピングはこの章です。</li>
-<li>EVPN-VXLAN は <a href="../../03-vxlan-evpn/">03 VXLAN-EVPN</a> で、SRv6 を underlay にする方向は本章の発展トピックから辿ります。</li>
-</ul>
-<h2 id="_9">まず読み手の質問に答える<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">この章はそもそも何の章か<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
-<p>「SRv6 / MPLS / Path Tracing」は <strong>IPv4/IPv6 forwarding の上に「ラベル」「セグメント」「観測メタデータ」を積む 3 種類の機能</strong> をまとめた章です。</p>
-<ul>
-<li><strong>SRv6</strong>: IPv6 アドレスを SID（Segment Identifier）として使い、経路 / VPN / Policy を表現する</li>
-<li><strong>MPLS</strong>: 4 byte ラベルを別 address family（AF_MPLS）として扱い、静的 LSP / L3VPN underlay に使う</li>
-<li><strong>Path Tracing</strong>: IPv6 HbH オプション（HbH-PT）に各 transit が MCD を書き加え、経路と遅延を観測する</li>
-</ul>
-<p>通常の routing が「どこ宛か」を決めるのに対し、この章は「どのラベル / セグメント / 観測メタを積むか」を扱います。</p>
-<h3 id="_11">何を解決するか<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>テナント / SLA 別の経路指定</strong> → SRv6 Policy / Binding SID で「この traffic は東経路、別 traffic は西経路」のような明示経路を作る</li>
-<li><strong>L3VPN / L2VPN underlay の現代化</strong> → SRv6 で IPv6 だけの underlay に L3VPN を載せる（MPLS underlay を畳む）</li>
-<li><strong>既存 MPLS 網との接続</strong> — SONiC を MPLS LSR として配置し、静的 LSP で連携する</li>
-<li><strong>障害観測の解像度向上</strong> → Path Tracing で経路上の各 hop の通過時刻と nexthop を probe 単位で取る</li>
-</ul>
-<p>純粋な BGP / <a href="../../../reference/glossary/#term-ecmp">ECMP</a> では表現できない「経路の制御」「経路の可観測性」を担うのがこの章です。</p>
-<h3 id="sonic_1">SONiC 内での位置<a class="headerlink" href="#sonic_1" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart TB
-    subgraph CFG["CONFIG_DB"]
-        IF[INTERFACE.mpls]
-        LOC[SRV6_MY_LOCATORS]
-        SID[SRV6_MY_SIDS]
-        POL[SRV6_POLICY]
-        STR[SRV6_STEER]
-        PT[PORT.pt_*]
-    end
-    subgraph CTRL["制御面"]
-        FRR["FRR&lt;br/&gt;bgpd / zebra / staticd"]
-        BCFG["bgpcfgd / SRv6Mgr"]
-        FPM[fpmsyncd]
-    end
-    subgraph SWSS["swss"]
-        SRORC[srv6orch]
-        MORC["MplsOrch / RouteOrch"]
-        PORTORC[PortOrch]
-    end
-    subgraph SAI["SAI / syncd"]
-        MYSID[MY_SID_ENTRY]
-        SIDLIST[SRV6_SIDLIST]
-        LBL[INSEG_ENTRY]
-        PTATTR[port PT attrs]
-    end
-    LOC --&gt; BCFG --&gt; FRR --&gt; FPM --&gt; SRORC --&gt; MYSID
-    SID --&gt; SRORC --&gt; SIDLIST
-    POL --&gt; SRORC
-    IF --&gt; MORC --&gt; LBL
-    PT --&gt; PORTORC --&gt; PTATTR
-    FRR -.AF_MPLS netlink.-&gt; FPM</code></pre>
-<p>「経路の決定」は FRR、「ラベル / SID の生成と SAI への落とし込み」は SONiC 内 <a href="../../../reference/glossary/#term-orchagent">orchagent</a> と分担しています。</p>
-<h3 id="_12">用語の最短整理<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>SID</strong>: Segment Identifier。SRv6 では 128bit IPv6 アドレス相当</li>
-<li><strong>uSID</strong>: SID を 16 / 32bit 単位に圧縮し 1 つの IPv6 アドレスに最大 6 個積む方式</li>
-<li><strong>Locator</strong>: SID のうち「装置を指す prefix」部分。SRv6 では 1 装置の SID 群が同じ Locator を共有する</li>
-<li><strong>Function</strong>: SID の挙動を示す部分（<code>uN</code> / <code>uA</code> / <code>uDT4</code> / <code>uDX6</code> 等）</li>
-<li><strong><code>END.X</code> / <code>End.DT4</code> / <code>End.DT46</code></strong>: SRv6 endpoint behavior。例えば <code>End.DT4</code> は SID から VRF を抜く挙動</li>
-<li><strong><code>SRV6_MY_SID_TABLE</code></strong>: 自装置が処理するべき SID を保持する APP_DB テーブル</li>
-<li><strong><code>SRV6_SID_LIST</code> / <code>SRV6_POLICY</code> / <code>SRV6_STEER</code></strong>: encap 側 SID list / Policy bind / steering rule</li>
-<li><strong><code>srv6orch</code></strong>: SRv6 関連の orchagent</li>
-<li><strong><code>LABEL_ROUTE_TABLE</code></strong>: MPLS in-segment entry の APP_DB 表現</li>
-<li><strong>AF_MPLS</strong>: Linux の MPLS address family。netlink で route が流れる</li>
-<li><strong>PHP / explicit-null / implicit-null</strong>: penultimate hop popping と end-of-LSP のラベル挙動</li>
-<li><strong><code>MPLS_TC_TO_TC_MAP</code></strong>: MPLS パケットの TC（traffic class）を SONiC 内部 TC に変換する QoS map</li>
-<li><strong>HbH-PT / MCD</strong>: IPv6 Hop-by-Hop Path Tracing Option / Midpoint Compressed Data</li>
-<li><strong>SRC / Midpoint / SINK</strong>: Path Tracing の役割。SONiC は Midpoint を実装</li>
-<li><strong>Regional Collector</strong>: SINK が集めた MCD を時系列で再構築する外部システム（HLD 外）</li>
-</ul>
-<h3 id="srv6-l3vpn-sid">典型シーン: SRv6 L3VPN 着信ノードでの SID 解決<a class="headerlink" href="#srv6-l3vpn-sid" title="Permanent link">&para;</a></h3>
+<p>Path Tracing は IETF spring-path-tracing で定義され、各 transit が <strong>MCD（Midpoint Compressed Data）</strong> を IPv6 <strong>Hop-by-Hop Path Tracing Option (HbH-PT)</strong> に書き足していく仕組み<sup id="fnref2:pt"><a class="footnote-ref" href="#fn:pt">9</a></sup>。SRC が probe を生成、Midpoint が MCD を追記、SINK が回収して Regional Collector で時系列に再構築する。</p>
+<p>SONiC は <strong>Midpoint</strong> を実装する側で、<code>PORT</code> テーブルの <code>pt_interface_id</code>（1-4095）と <code>pt_timestamp_template</code>（<code>template1</code>〜<code>template4</code>）が SAI の <code>SAI_PORT_ATTR_PATH_TRACING_INTF</code> / <code>SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE</code> に対応する<sup id="fnref3:pt"><a class="footnote-ref" href="#fn:pt">9</a></sup>。通常 IPv6 forwarding に MCD 書き込みが追加されるだけで、経路選択そのものは変えない。</p>
+<h2 id="srv6-l3vpn-sid">典型シーン: SRv6 L3VPN 着信ノードでの SID 解決<a class="headerlink" href="#srv6-l3vpn-sid" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>sequenceDiagram
     participant SRC as Ingress PE
     participant TR as Transit Router (uN)
@@ -36643,51 +36445,36 @@
     ORC-&gt;&gt;VRF: SRH 剥がす + VRF X で IPv4 lookup
     VRF--&gt;&gt;DST: nexthop = customer side
     DST-&gt;&gt;DST: SRv6 decap して IPv4 forward</code></pre>
-<p>ここで Neighbor 未解決の <code>uA</code> / <code>End.X</code> 系は <code>srv6orch</code> の pending queue で待ち、Neighbor 解決後に SAI への push がリトライされます。設定したのに動かない場合は <a href="../../../reference/glossary/#term-arp">ARP</a>/ND 状態と pending queue の双方を確認します。</p>
-<h3 id="_13">似ているが別物のもの<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>比較対象</th>
-<th>この章との違い</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="../../02-bgp/">BGP</a></td>
-<td>経路情報の交換そのもの。SRv6/MPLS で追加される BGP family（SR-MPLS / SRv6 L3VPN）の挙動は本章</td>
-</tr>
-<tr>
-<td><a href="../../04-vrf-ecmp/">VRF / ECMP</a></td>
-<td>VRF 一般構造は 04 章。SRv6 SID と VRF の紐付けは本章</td>
-</tr>
-<tr>
-<td><a href="../../03-vxlan-evpn/">VXLAN / EVPN</a></td>
-<td>overlay は UDP encap 主体。SRv6 / MPLS は IPv6 / AF_MPLS native</td>
-</tr>
-<tr>
-<td><a href="../../13-dash-smartswitch/">DASH / SmartSwitch</a></td>
-<td><a href="../../../reference/glossary/#term-dash">DASH</a> は per-<a href="../../../reference/glossary/#term-eni">ENI</a> overlay。SRv6 / MPLS は装置間 fabric の話</td>
-</tr>
-<tr>
-<td><a href="../../09-telemetry-snmp/">Telemetry / SNMP</a></td>
-<td>counter / event の収集。Path Tracing は data plane に観測ヘッダを埋める点で別軸</td>
-</tr>
-<tr>
-<td>LDP / RSVP-TE</td>
-<td>動的 MPLS シグナリング。SONiC は初期 scope 外、本章は静的 LSP + bulk programming のみ</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_14">読了後にできるようになること<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<p>ここで Neighbor 未解決の <code>uA</code> / <code>End.X</code> 系は <code>srv6orch</code> の pending queue で待ち、Neighbor 解決後に SAI への push がリトライされる<sup id="fnref:srv6orchcode"><a class="footnote-ref" href="#fn:srv6orchcode">6</a></sup>。設定したのに動かない場合は <a href="../../../reference/glossary/#term-arp">ARP</a>/ND 状態と pending queue の双方を確認する。</p>
+<h2 id="_6">三者の境界<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+  PKT[packet] --&gt; CL{header}
+  CL --&gt;|IPv6 + SRH| SR["SRv6 endpoint&lt;br/&gt;srv6orch / MY_SID"]
+  CL --&gt;|MPLS label| MP["MPLS LSP&lt;br/&gt;LABEL_ROUTE_TABLE"]
+  CL --&gt;|IPv6 + HbH-PT| PT["Path Tracing Midpoint&lt;br/&gt;PORT attrs"]
+  SR --&gt; FWD[L3 forwarding]
+  MP --&gt; FWD
+  PT --&gt; FWD
+  FWD --&gt; OUT[egress port]</code></pre>
+<p>要点は、SRv6 と Path Tracing は IPv6 forwarding の中でそれぞれの拡張ヘッダ／オプションを処理する点が共通している一方、MPLS は AF_MPLS という別の address family で動く点。</p>
+<h2 id="_7">読了後にできること<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>機能ごとの HLD（SRv6 base / uSID / static SID / L3 隣接 / VPN / MPLS / Path Tracing）が <strong>どの phase の話か</strong> を識別できる</li>
-<li><code>SRV6_MY_SID_TABLE</code> の <code>action</code> と SAI MY_SID_ENTRY の attribute の対応が読める</li>
-<li>「MPLS が forward しない」事象で per-RIF <code>mpls</code> 属性、AF_MPLS netlink、<code>INSEG_ENTRY</code> の順に切り分けできる</li>
-<li>Path Tracing を有効化するときの <code>pt_interface_id</code> / <code>pt_timestamp_template</code> の意味と SAI 対応 attribute が答えられる</li>
-<li>自社の網設計に SRv6 / MPLS / Path Tracing のどれを採用するか、設定範囲と必要 HLD を提示できる</li>
+<li>SRv6 の uSID / Locator / Behavior / Policy / Steer がそれぞれ CONFIG_DB のどのテーブルに対応するかを思い出せる。</li>
+<li>機能ごとの HLD（SRv6 base / uSID / static SID / L3 隣接 / VPN / MPLS / Path Tracing）が <strong>どの phase の話か</strong> を識別できる。</li>
+<li><code>SRV6_MY_SID_TABLE</code> の <code>action</code> と SAI <code>MY_SID_ENTRY</code> の attribute の対応が読める。</li>
+<li>MPLS の per-RIF enable、in-segment programming、QoS map の流れを 1 本で説明できる。</li>
+<li>「MPLS が forward しない」事象で per-RIF <code>mpls</code> 属性、AF_MPLS netlink、<code>INSEG_ENTRY</code> の順に切り分けできる。</li>
+<li>Path Tracing が forwarding を変えないこと、<code>pt_interface_id</code> / <code>pt_timestamp_template</code> が SAI のどの属性に対応するかを言える。</li>
+<li>「BGP route が反映されない」「policy で steer されない」「MPLS label が pop されない」が起きたとき、<code>bgpcfgd</code> / <code>srv6orch</code> / <code>routeorch</code> のうちどれを最初に疑うかを決められる。</li>
+<li>自社の網設計に SRv6 / MPLS / Path Tracing のどれを採用するか、設定範囲と必要 HLD を提示できる。</li>
 </ul>
-<h2 id="_15">関連ページ<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h2 id="_8">他章との境界<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>BGP / FRR 連携は <a href="../../02-bgp/">02 BGP</a> の章に、SRv6 / MPLS で追加される BGP family（SR-MPLS、SRv6 L3VPN）はこの章で扱う。</li>
+<li>VRF / VPN の一般的な構造は <a href="../../04-vrf-ecmp/">04 VRF / ECMP</a> で、SRv6 VPN による L3VPN の SID マッピングはこの章。</li>
+<li>EVPN-VXLAN は <a href="../../03-vxlan-evpn/">03 VXLAN-EVPN</a> で、SRv6 を underlay にする方向は本章の発展トピックから辿る。</li>
+</ul>
+<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/segment-routing-over-ipv6-srv6-hld/">SRv6 HLD</a></li>
 <li><a href="../../../routing/sonic-usid/">SRv6 uSID</a></li>
@@ -36695,14 +36482,47 @@
 <li><a href="../../../routing/path-tracing-midpoint/">Path Tracing Midpoint</a></li>
 </ul>
 <!-- xref-prereq -->
-<h2 id="_16">この章の前提知識<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<h2 id="_10">この章の前提知識<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p>この章を読み進める前に、次の章を押さえておくと迷子になりにくい。</p>
 <ul>
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
 <li><a href="../../02-bgp/">BGP と FRR 制御プレーン</a></li>
 <li><a href="../../04-vrf-ecmp/">VRF / ECMP / RIB-FIB パイプライン</a></li>
 </ul>
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 9cc90e2e6da0 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:srv6hld">
+<p>SONiC SRv6 HLD, <code>SONiC/doc/srv6/srv6_hld.md</code> lines 167-260（<code>SRV6_MY_SID_TABLE</code> / <code>SRV6_POLICY_TABLE</code> / <code>SRV6_STEER_MAP</code> schema）。&#160;<a class="footnote-backref" href="#fnref:srv6hld" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:srv6hld" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:srv6hld" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:srv6hld" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:srv6hld" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:srv6vpn">
+<p>SONiC SRv6 VPN HLD, <code>SONiC/doc/srv6/srv6_vpn.md</code>（L3VPN over SRv6 の SID マッピング / Prefix AGG_ID）。&#160;<a class="footnote-backref" href="#fnref:srv6vpn" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:srv6vpn" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:usid">
+<p>SONiC uSID HLD, <code>SONiC/doc/srv6/SRv6_uSID.md</code>（<code>srv6orch</code> の <code>end_behavior_map</code> 拡張、SAI 変更なし）。&#160;<a class="footnote-backref" href="#fnref:usid" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:srv6static">
+<p>SONiC SRv6 Static Config HLD, <code>SONiC/doc/srv6/srv6_static_config_hld.md</code>（<code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> を <code>bgpcfgd</code> SRv6Mgr が FRR に流し込む）。&#160;<a class="footnote-backref" href="#fnref:srv6static" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:srv6static" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:srv6adj">
+<p>SONiC SRv6 SID L3 Adjacency HLD, <code>SONiC/doc/srv6/srv6_sid_l3adj.md</code>（<code>uA</code> / <code>End.X</code> 系の Neighbor 解決依存）。&#160;<a class="footnote-backref" href="#fnref:srv6adj" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:srv6orchcode">
+<p><code>sonic-swss/orchagent/srv6orch.cpp</code>（<code>SRV6_MY_SID_TABLE</code> の <code>END.X</code> で IP NextHop 未解決時に Drop で programming → NeighOrch 解決後に Forward へ更新する実装、<code>srv6_hld.md</code> line 441 にも記述あり）。&#160;<a class="footnote-backref" href="#fnref:srv6orchcode" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:srv6orchcode" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:mplshld">
+<p>SONiC MPLS HLD, <code>SONiC/doc/mpls/MPLS_hld.md</code> lines 176-360（<code>LABEL_ROUTE_TABLE</code> を APPL_DB に追加、<code>RouteOrch</code> が SAI MPLS inseg API に翻訳。per-RIF <code>mpls</code> 属性、<code>mpls_pop</code>、CRM 統合、静的 LSP のみで LDP/RSVP-TE は scope 外）。&#160;<a class="footnote-backref" href="#fnref:mplshld" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:mplshld" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:mplshld" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:mplshld" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:mplshld" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:mplshld" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:mplshld" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:mplshld" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:mplshld" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:mplshld" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:mplshld" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:mplstc">
+<p>SONiC MPLS TC HLD, <code>SONiC/doc/qos/mpls_tc_to_tc_map.md</code>（<code>PORT_QOS_MAP.mpls_tc_to_tc_map</code>）。&#160;<a class="footnote-backref" href="#fnref:mplstc" title="Jump back to footnote 8 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:mplstc" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:pt">
+<p>SONiC Path Tracing Midpoint HLD, <code>SONiC/doc/path_tracing/path_tracing_midpoint.md</code> lines 260-380（<code>PORT.pt_interface_id</code> (1-4095) / <code>pt_timestamp_template</code> (template1〜4) が <code>SAI_PORT_ATTR_PATH_TRACING_INTF</code> / <code>SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE</code> に対応）。&#160;<a class="footnote-backref" href="#fnref:pt" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:pt" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:pt" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:pt" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:pt" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:pt" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

@@ -36025,9 +36025,9 @@
   Y --&gt; CDB[(CONFIG_DB)]
   CDB --&gt; SWSS[swss / orchagent]
   SWSS --&gt; SAI[syncd / SAI]
-  CDB -.subscribe.-&gt; G
-  APPL[(APPL_DB / STATE_DB / COUNTERS_DB)] -.telemetry.-&gt; G</code></pre>
-<p>REST と gNMI server は同じ telemetry container で動き、Translib 経由で OpenConfig / <a href="../../../reference/glossary/#term-sonic">SONiC</a> YANG をどちらも扱う。Subscribe (gNMI streaming) は CONFIG_DB だけでなく <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> も対象になる。</p>
+  CDB -.config subscribe.-&gt; G
+  APPL[(STATE_DB / COUNTERS_DB / APPL_DB)] -.state/telemetry stream.-&gt; G</code></pre>
+<p>REST と gNMI server は同じ telemetry container で動き、Translib 経由で OpenConfig / <a href="../../../reference/glossary/#term-sonic">SONiC</a> YANG をどちらも扱う。Subscribe (gNMI streaming) の主な対象は運用状態を持つ <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> であり、CONFIG_DB は「設定変更そのものを観測したい」ケースで使う補助的な subscribe target という位置付けになる。<code>sonic-gnmi/proto/sonic.proto</code> の <code>Target</code> enum でも APPL_DB / <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> / COUNTERS_DB / CONFIG_DB / STATE_DB / CHASSIS_STATE_DB が同列に列挙されており、DB を問わず Redis keyspace notification 経由で stream できる構造になっている<sup id="fnref:subscribe-targets"><a class="footnote-ref" href="#fn:subscribe-targets">1</a></sup>。</p>
 <p>詳細な server 内部設計は <a href="../../../management/sonic-gnmi-server-interface-design/">gNMI server interface design</a> と <a href="../../../management/sonic-management-framework/">Management Framework 全体像</a> を参照する。</p>
 <h2 id="translib-transformer">Translib と Transformer の責務<a class="headerlink" href="#translib-transformer" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36043,7 +36043,7 @@
 </ol>
 <p><a href="../../../reference/glossary/#term-gcu">GCU</a> (Generic Config Update) や JSON patch でも同じ validator を通る設計のため、入口が違っても同じ違反は同じエラーで弾かれる。validator の設計と限界は <a href="../../../management/sonic-config-update-validation-via-yang/">SONiC config update validation via YANG</a> を参照する。</p>
 <h2 id="subscribe-telemetry">Subscribe / Telemetry の経路<a class="headerlink" href="#subscribe-telemetry" title="Permanent link">&para;</a></h2>
-<p>Subscribe (ON_CHANGE / SAMPLE / TARGET_DEFINED) は gNMI server が CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB の <a href="../../../reference/glossary/#term-redis">Redis</a> keyspace notification を購読し、YANG path に変換して streaming する形になる。<a href="../../../reference/glossary/#term-frr">FRR</a> の経路を YANG で stream する仕組みは <a href="../../../routing/gnmi-subscription-for-yang-data/">gNMI subscription for YANG data</a> で <a href="../../../reference/glossary/#term-bgp">BGP</a> RIB を例に説明される。</p>
+<p>Subscribe (ON_CHANGE / SAMPLE / TARGET_DEFINED) は gNMI server が対象 DB の <a href="../../../reference/glossary/#term-redis">Redis</a> keyspace notification (<code>__keyspace@N__:TABLE|KEY</code>) を <code>PSUBSCRIBE</code> で購読し、YANG path に変換して streaming する形になる<sup id="fnref:psubscribe"><a class="footnote-ref" href="#fn:psubscribe">2</a></sup>。実装上は path から導出された DB を <code>sonic.proto</code> の <code>Target</code> enum 経由で解決するため、運用状態の subscribe は STATE_DB / COUNTERS_DB / APPL_DB に向かうことが多く、CONFIG_DB subscribe は設定差分を観測したい補助的な用途で使う。COUNTERS_DB のうち per-object key を持たないテーブル (例: <code>RATES</code>) は keyspace pattern の delimitor を省略する分岐が入っており、テーブル種別に応じて subscribe pattern が変わる点に注意する<sup id="fnref:counters-noseparator"><a class="footnote-ref" href="#fn:counters-noseparator">3</a></sup>。<a href="../../../reference/glossary/#term-frr">FRR</a> の経路を YANG で stream する仕組みは <a href="../../../routing/gnmi-subscription-for-yang-data/">gNMI subscription for YANG data</a> で <a href="../../../reference/glossary/#term-bgp">BGP</a> RIB を例に説明される。</p>
 <p>Dial-out モード (switch から collector へ push する向き) は telemetry container 内の別の経路で動作する。dial-in と dial-out の TLS / 認証境界が違う点に注意する。詳細は <a href="../operations/">運用</a> と <a href="../../../system/sonic-telemetry-in-dial-out-mode/">dial-out mode</a> を参照する。</p>
 <h2 id="cli-yang">CLI 自動生成と YANG モデル<a class="headerlink" href="#cli-yang" title="Permanent link">&para;</a></h2>
 <p>KLISH を入口にする SONiC CLI は YANG モデルから生成される。これは「CLI と gNMI の操作整合」を保つだけでなく、SONiC への CLI 追加コストを減らす目的を持つ。生成ツールの構成は <a href="../../../management/sonic-cli-auto-generation-tool/">CLI auto-generation tool</a> を参照する。</p>
@@ -36057,7 +36057,22 @@
 <li><a href="../../../management/sonic-cli-auto-generation-tool/">SONiC CLI auto-generation tool</a></li>
 <li><a href="../../../routing/gnmi-subscription-for-yang-data/">gNMI subscription for YANG data</a></li>
 </ul>
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: c22475bfc39e -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:subscribe-targets">
+<p><code>sonic-gnmi/proto/sonic.proto</code> (master) L9-L22 で <code>Target</code> enum が <code>APPL_DB / ASIC_DB / COUNTERS_DB / CONFIG_DB / STATE_DB / CHASSIS_STATE_DB</code> を定義し、DB を問わず gNMI subscribe target になる。&#160;<a class="footnote-backref" href="#fnref:subscribe-targets" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:psubscribe">
+<p><code>sonic-gnmi/sonic_data_client/db_client.go</code> (master) L1419-L1437。<code>pattern := "__keyspace@" + ... + "__:" + tableName + delimitor + key</code> を <code>redisDb.PSubscribe</code> で購読する実装。&#160;<a class="footnote-backref" href="#fnref:psubscribe" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:counters-noseparator">
+<p>同 L1422-L1426。<code>tblPath.dbName == "COUNTERS_DB" &amp;&amp; !countersDbHasTableKeys(tableName)</code> のときは delimitor を pattern に付けない分岐がある。&#160;<a class="footnote-backref" href="#fnref:counters-noseparator" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

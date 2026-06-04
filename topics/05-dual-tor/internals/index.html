@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Mux 制御の内部構造 — Dual-ToR の制御は 1 つの daemon だけでは完結しません。">
+        <meta name="description" content="linkmgrd / MuxOrch / ycabled / gRPC client が STATE_DB の MUX_CABLE_TABLE を介して連携し、Dual-ToR の per-port 状態機械を実装する内部構造を、実コード参照とともに整理する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Mux 制御の内部構造 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Mux 制御の内部構造 — Dual-ToR の制御は 1 つの daemon だけでは完結しません。" />
+<meta property="og:description" content="linkmgrd / MuxOrch / ycabled / gRPC client が STATE_DB の MUX_CABLE_TABLE を介して連携し、Dual-ToR の per-port 状態機械を実装する内部構造を、実コード参照とともに整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/05-dual-tor/internals.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/05-dual-tor/internals/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Mux 制御の内部構造 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Mux 制御の内部構造 — Dual-ToR の制御は 1 つの daemon だけでは完結しません。" />
+<meta property="twitter:description" content="linkmgrd / MuxOrch / ycabled / gRPC client が STATE_DB の MUX_CABLE_TABLE を介して連携し、Dual-ToR の per-port 状態機械を実装する内部構造を、実コード参照とともに整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/05-dual-tor/internals.png" />
 </head>
   
@@ -36184,11 +36184,11 @@
 <p>Active-Active では mux 方向ではなく、リンクごとの forwarding state が中心になります。<code>linkmgrd</code> は admin forwarding state を設定し、NIC 側は operational forwarding state として実際に転送できるかを判断します。</p>
 <h2 id="muxorch"><code>MuxOrch</code> が避ける障害<a class="headerlink" href="#muxorch" title="Permanent link">&para;</a></h2>
 <p><code>MuxOrch</code> の仕事は、mux state を ASIC の転送状態に落とすことです。Active-Standby で standby 側にサーバ宛パケットが来た場合、直接サーバへ出すのではなく MuxTunnel へ向ける必要があります。</p>
-<p>prefix-based neighbor は、この切替を軽くするための方式です。neighbor entry を作り直さず、サーバ IP の <code>/32</code> または <code>/128</code> route の nexthop だけを直接 neighbor と tunnel の間で切り替えます。大量の neighbor を持つ ToR で、状態遷移時の <a href="../../../reference/glossary/#term-sai">SAI</a> 操作を減らすための設計です。</p>
+<p>prefix-based neighbor は、この切替を軽くするための方式です。neighbor entry を作り直さず、サーバ IP の <code>/32</code> または <code>/128</code> route の nexthop だけを直接 neighbor と tunnel の間で切り替えます。大量の neighbor を持つ ToR で、状態遷移時の <a href="../../../reference/glossary/#term-sai">SAI</a> 操作を減らすための設計です。実コード上は <code>muxorch.cpp</code> L1695 で <code>Skip neighbor … treated as prefix neighbor for port …</code> の判定が、L1874-L1877 で <code>neighbor_data.prefix_route &amp;&amp; !isSkipNeighbor(...)</code> のスキップ条件が、L2242 で <code>neighbor_mode</code> 属性の読み込みが実装されている<sup id="fnref:prefix"><a class="footnote-ref" href="#fn:prefix">1</a></sup>。</p>
 <p>multi-nexthop route のループ回避も同じ文脈です。1 つの route が複数 nexthop を持ち、その一部が active、一部が standby になると、<a href="../../../reference/glossary/#term-ecmp">ECMP</a> の一部が tunnel へ入り、peer ToR 側でまた戻ってくる可能性があります。このため <code>MuxOrch</code> は active nexthop がある場合は単一 nexthop に絞り、全て standby なら tunnel を選ぶ、という動きをします。</p>
 <h2 id="default-route">default route 連動の意味<a class="headerlink" href="#default-route" title="Permanent link">&para;</a></h2>
 <p>サーバ側リンクが正常でも、ToR から上流への default route が消えていると、その ToR を active にしても上りがブラックホールになります。default route 連動は、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> が <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に公開する default route 状態を <code>linkmgrd</code> が読み、default route が無い側を standby 寄りに倒すための仕組みです。</p>
-<p>重要なのは、これは mux state machine に新しい障害源を足しているというより、「default route が無い間は heartbeat を止める」ことで既存の不健全判定に乗せる設計だという点です。manual mode では自動切替しない、両 ToR で default route を失っても揺れ続けない、という性質を守るために状態キャッシュも必要になります。</p>
+<p>重要なのは、これは mux state machine に新しい障害源を足しているというより、「default route が無い間は heartbeat を止める」ことで既存の不健全判定に乗せる設計だという点です。実コードでも <code>ActiveStandbyStateMachine::handleDefaultRouteStateNotification</code> が <code>mDefaultRouteState</code> を更新し、<code>shutdownOrRestartLinkProberOnDefaultRoute</code> が link prober の停止／再起動を呼び出す経路として実装されている<sup id="fnref:defroute"><a class="footnote-ref" href="#fn:defroute">2</a></sup>。manual mode では自動切替しない、両 ToR で default route を失っても揺れ続けない、という性質を守るために状態キャッシュも必要になります。</p>
 <h2 id="grpc-client">gRPC client はどこに入るか<a class="headerlink" href="#grpc-client" title="Permanent link">&para;</a></h2>
 <p>Active-Active では、ToR から SoC NIC へ forwarding state を問い合わせたり設定したりします。この経路が gRPC client です。<code>ycabled</code> 側から proto 生成された stub を使って SoC の service を呼び、channel state や応答を DB に反映します。</p>
 <p>Active-Standby の Y-cable 制御では I2C / xcvrd / ycabled の役割が前面に出ます。Active-Active では SoC NIC の状態を含むため、gRPC channel の疎通、TLS、keepalive、Loopback IP を送信元に使う要件が切り分けポイントになります。</p>
@@ -36203,28 +36203,28 @@
 </thead>
 <tbody>
 <tr>
-<td><code>linkmgrd</code> (<code>src/linkmgrd/</code>)</td>
-<td><code>LinkManagerStateMachineBase</code>、<code>ActiveStandbyStateMachine</code>、<code>ActiveActiveStateMachine</code></td>
+<td><code>linkmgrd</code> (<code>sonic-linkmgrd/src/link_manager/</code>)</td>
+<td><code>LinkManagerStateMachineBase</code><sup id="fnref:lmbase"><a class="footnote-ref" href="#fn:lmbase">3</a></sup>、<code>ActiveStandbyStateMachine</code>、<code>ActiveActiveStateMachine</code></td>
 <td>LinkProber / LinkState / MuxState を合成し mux 状態決定</td>
 </tr>
 <tr>
 <td><code>ycabled</code> (<code>sonic-platform-daemons/sonic-ycabled/</code>)</td>
-<td><code>y_cable_helper.py</code></td>
-<td>Y-cable I2C 操作、APP_DB/STATE_DB の mux state 反映</td>
+<td><code>ycable.py</code>、<code>y_cable_table_helper.py</code><sup id="fnref:ycabled"><a class="footnote-ref" href="#fn:ycabled">4</a></sup></td>
+<td>Y-cable I2C 操作、<code>APP_DB</code>/<code>STATE_DB</code> の <code>HW_MUX_CABLE_TABLE</code> 反映</td>
 </tr>
 <tr>
-<td><code>MuxOrch</code> (<code>orchagent/muxorch.cpp</code>)</td>
-<td><code>MuxOrch::doTask</code>、<code>MuxCable::stateActive</code>、<code>MuxCable::stateStandby</code></td>
+<td><code>MuxOrch</code> (<code>sonic-swss/orchagent/muxorch.cpp</code>)</td>
+<td><code>MuxCable::stateActive</code><sup id="fnref:muxact"><a class="footnote-ref" href="#fn:muxact">5</a></sup>、<code>MuxCable::stateStandby</code></td>
 <td>mux 状態を SAI neighbor / route / tunnel に展開</td>
 </tr>
 <tr>
 <td><code>MuxCableOrch</code></td>
-<td><code>MuxCableOrch::updateMuxState</code></td>
+<td><code>MuxCableOrch::updateMuxState</code>、<code>MuxCableOrch::addTunnelRoute</code><sup id="fnref:muxcable"><a class="footnote-ref" href="#fn:muxcable">6</a></sup></td>
 <td><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> の <code>MUX_CABLE_TABLE</code> を読み、tunnel route の付け替え</td>
 </tr>
 <tr>
 <td><code>TunnelDecapOrch</code></td>
-<td><code>TunnelDecapOrch::doTask</code></td>
+<td><code>TunnelDecapOrch::doTask</code><sup id="fnref:tundecap"><a class="footnote-ref" href="#fn:tundecap">7</a></sup></td>
 <td>active 側のサーバ IP を decap する tunnel term entry</td>
 </tr>
 <tr>
@@ -36280,8 +36280,8 @@
 </span></code></pre></div>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Dual-ToR は <strong><a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub のみ</strong>で ZMQ は使われていません。</li>
-<li><a href="../../../reference/glossary/#term-linkmgrd">linkmgrd</a> は <code>STATE_DB:MUX_CABLE_TABLE</code> を SubscriberStateTable で監視。</li>
+<li>Dual-ToR は <strong><a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub のみ</strong>で ZMQ は使われていません（mux 制御パスでの ZMQ 利用は実コード上見当たらない）。</li>
+<li><a href="../../../reference/glossary/#term-linkmgrd">linkmgrd</a> は <code>STATE_DB:MUX_CABLE_TABLE</code>（<code>STATE_MUX_CABLE_TABLE_NAME</code>、<code>schema.h</code> L457）を購読。</li>
 <li>Active-Active gRPC は SoC NIC と TLS 上で双方向 stream。 <a href="../../../reference/glossary/#term-sonic">SONiC</a> コンテナ内の <code>linkmgrd</code> プロセス自体が gRPC client。</li>
 </ul>
 <h2 id="_2">既知の実装上の制約<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -36334,7 +36334,34 @@
 <li><a href="../../../overlay/active-standby-dual-tor/">Active-Standby Dual ToR</a></li>
 <li><a href="../../../overlay/active-active-dual-tor/">Active-Active Dual ToR</a></li>
 </ul>
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: aab0df26c45b -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:prefix">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/muxorch.cpp</code> L1695 / L1874-L1877 / L2242（commit <code>4305596</code>）。&#160;<a class="footnote-backref" href="#fnref:prefix" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:defroute">
+<p><code>sonic-net/sonic-linkmgrd</code> <code>src/link_manager/LinkManagerStateMachineActiveStandby.cpp</code> L440-L441 / L775 / L835 / L905-L920（<code>ifEnableDefaultRouteFeature</code> 判定、<code>handleDefaultRouteStateNotification</code>、<code>shutdownOrRestartLinkProberOnDefaultRoute</code>、commit <code>65f5633</code>）。&#160;<a class="footnote-backref" href="#fnref:defroute" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:lmbase">
+<p><code>sonic-net/sonic-linkmgrd</code> <code>src/link_manager/LinkManagerStateMachineBase.h</code> L84-L125 にて <code>ActiveStandbyStateMachine</code> / <code>ActiveActiveStateMachine</code> の前方宣言と <code>LinkManagerStateMachineBase</code> 基底クラスを定義（commit <code>65f5633</code>）。&#160;<a class="footnote-backref" href="#fnref:lmbase" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:ycabled">
+<p><code>sonic-net/sonic-platform-daemons</code> <code>sonic-ycabled/ycable/ycable_utilities/y_cable_table_helper.py</code> L39 / L97-L101 / L268-L283 で <code>STATE_HW_MUX_CABLE_TABLE_NAME</code> / <code>HW_MUX_CABLE_TABLE_PEER</code> / <code>APP_HW_MUX_CABLE_TABLE_NAME</code> を <code>swsscommon</code> から参照（commit <code>4ba9612</code>）。&#160;<a class="footnote-backref" href="#fnref:ycabled" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:muxact">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/muxorch.cpp</code> L433-L488 で state-machine handler に <code>MUX_STATE_STANDBY_ACTIVE → stateActive</code> / <code>MUX_STATE_INIT_STANDBY</code> / <code>MUX_STATE_ACTIVE_STANDBY → stateStandby</code> をマッピング（commit <code>4305596</code>）。&#160;<a class="footnote-backref" href="#fnref:muxact" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:muxcable">
+<p>同上 <code>orchagent/muxorch.cpp</code> L2500-L2620 で <code>MuxCableOrch</code> の <code>updateMuxState</code> / <code>addTunnelRoute</code> / <code>removeTunnelRoute</code> / <code>addOperation</code> / <code>delOperation</code> が実装されている。&#160;<a class="footnote-backref" href="#fnref:muxcable" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:tundecap">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/tunneldecaporch.cpp</code> 全 1576 行で <a href="../../../reference/glossary/#term-ipinip">IPinIP</a> tunnel term entry の生成・削除を担当（commit <code>4305596</code>）。&#160;<a class="footnote-backref" href="#fnref:tundecap" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

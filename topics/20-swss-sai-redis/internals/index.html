@@ -6318,6 +6318,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36195,6 +36206,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36294,12 +36316,12 @@
 <td>CONFIG/APPL/STATE/COUNTERS の各 key 変更通知</td>
 </tr>
 <tr>
-<td><code>ASIC_STATE_CHANNEL</code></td>
-<td>orchagent → syncd への <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> write 通知</td>
+<td><code>ASIC_STATE</code> テーブル + <code>REDIS_ASIC_STATE_COMMAND_*</code> op</td>
+<td>orchagent → syncd への <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> write/get/flush コマンド<sup id="fnref:channel"><a class="footnote-ref" href="#fn:channel">1</a></sup></td>
 </tr>
 <tr>
-<td><code>ASIC_STATE_NTF_CHANNEL</code></td>
-<td>syncd → orchagent への notification（<a href="../../../reference/glossary/#term-fdb">FDB</a> / port state / <a href="../../../reference/glossary/#term-bfd">BFD</a> 等）</td>
+<td><code>NotificationProducer</code>（<code>RedisNotificationProducer</code> / <code>ZeroMQNotificationProducer</code>）</td>
+<td>syncd → orchagent への notification（<a href="../../../reference/glossary/#term-fdb">FDB</a> event / port state / <a href="../../../reference/glossary/#term-bfd">BFD</a> 等）<sup id="fnref:ntf"><a class="footnote-ref" href="#fn:ntf">2</a></sup></td>
 </tr>
 <tr>
 <td>ZMQ</td>
@@ -36307,12 +36329,25 @@
 </tr>
 </tbody>
 </table>
+<!-- evidence
+source: sonic-net/sonic-sairedis/lib/sairediscommon.h#L13
+note: `#define ASIC_STATE_TABLE "ASIC_STATE"` で、ASIC_DB の hash テーブル名は固定の `ASIC_STATE`。専用の pub/sub チャネル名ではない。
+-->
+<!-- evidence
+source: sonic-net/sonic-sairedis/lib/RedisRemoteSaiInterface.cpp#L860-L1150
+note: orchagent から見た sairedis は `m_communicationChannel->set/del/wait` を `REDIS_ASIC_STATE_COMMAND_CREATE/SET/REMOVE/GET/FLUSH` の op 文字列で叩く。チャネル名ではなく op 種別で識別する。
+-->
+<!-- evidence
+source: sonic-net/sonic-sairedis/syncd/Syncd.cpp#L141-L182
+note: syncd→sairedis の notification は ZMQ endpoint があれば `ZeroMQNotificationProducer`、なければ `RedisNotificationProducer` を選択。`NotificationProcessor` がこれを駆動する。
+-->
+
 <h2 id="_2">既知の実装上の制約（章末でも触れる）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>redis-server</code> が単一スレッドで、APPL/CONFIG/STATE/COUNTERS を集約すると hot spot。複数インスタンス化が選択肢。</li>
 <li>sairedis async モードで「ASIC_DB write 成功」と「SAI 実反映」が分離。確認は notification か <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> で。</li>
 <li>SAI capability の問い合わせを起動時に行う設計（<code>sai_query_api_version</code> / <code>sai_query_attribute_capability</code> / <code>sai_query_stats_capability</code>）が増えており、起動時間が <a href="../../../reference/glossary/#term-asic">ASIC</a> capability の数に比例して伸びる。</li>
-<li>大量 route loading で <code>gRingBuffer</code> + assistant thread が入ったが、orchagent main loop の lock contention は完全には消えていない。</li>
+<li>大量 route loading で <code>gRingBuffer</code> + assistant thread（<code>OrchDaemon::popRingBuffer</code>）が入ったが、orchagent main loop の lock contention は完全には消えていない<sup id="fnref:ring"><a class="footnote-ref" href="#fn:ring">8</a></sup>。</li>
 </ul>
 <h2 id="sai-syncd">SAI / syncd 整合性の三本柱<a class="headerlink" href="#sai-syncd" title="Permanent link">&para;</a></h2>
 <table>
@@ -36434,11 +36469,11 @@
 </tr>
 <tr>
 <td>flexcounter</td>
-<td>counter group ごとに polling し、<code>COUNTERS_DB</code> に書き込む（→ 09 章）</td>
+<td>counter group ごとに polling し、<code>COUNTERS_DB</code> に書き込む（→ 09 章）<sup id="fnref:flex"><a class="footnote-ref" href="#fn:flex">3</a></sup></td>
 </tr>
 <tr>
 <td>dump</td>
-<td><code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code> 受信時に SAI / ASIC_DB を snapshot</td>
+<td><code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code> 受信時に SAI / ASIC_DB を snapshot<sup id="fnref:dump"><a class="footnote-ref" href="#fn:dump">4</a></sup></td>
 </tr>
 </tbody>
 </table>
@@ -36451,18 +36486,20 @@
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>            └─ ASIC_DB (ASIC_STATE:*)
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                 └─ syncd (subscribe → SAI library → ASIC)
 </span></code></pre></div>
-<p>orchagent から見ると「SAI 関数を呼んでいる」が、実際は libsairedis が Redis にシリアライズして syncd に渡す非同期設計になっている。<a href="https://github.com/sonic-net/SONiC/wiki/Architecture">SONiC architecture</a> の sairedis の項を参照。</p>
+<p>orchagent から見ると「SAI 関数を呼んでいる」が、実際は libsairedis が Redis にシリアライズして syncd に渡す非同期設計になっている<sup id="fnref:sairedis"><a class="footnote-ref" href="#fn:sairedis">5</a></sup>。<a href="https://github.com/sonic-net/SONiC/wiki/Architecture">SONiC architecture</a> および <a href="https://github.com/sonic-net/SONiC/blob/master/doc/architecture/sonic_architecture.md">sonic_architecture.md</a> の sairedis の項を参照。</p>
 <h2 id="saidiscovery-applyviewtransition">SaiDiscovery と applyViewTransition の役割<a class="headerlink" href="#saidiscovery-applyviewtransition" title="Permanent link">&para;</a></h2>
-<p><strong>SaiDiscovery</strong> は syncd が warm reboot 復帰時に既存の ASIC 状態を Redis (ASIC_DB) に再構築するコンポーネントである（issue #745 の解説より）：</p>
+<p><strong>SaiDiscovery</strong> は syncd が warm reboot 復帰時に既存の ASIC 状態を Redis (ASIC_DB) に再構築するコンポーネントである<sup id="fnref:discovery"><a class="footnote-ref" href="#fn:discovery">6</a></sup>：</p>
 <ol>
-<li><code>switch</code> オブジェクトを起点に、port・neighbor・route などの全 SAI object を再帰的に walk する。</li>
+<li><code>switch</code> オブジェクトを起点に、port・neighbor・route などの全 SAI object を再帰的に walk する（<code>SaiDiscovery::discover</code>）。</li>
 <li>各 object の <code>RID</code>（Real ID）と <code>VID</code>（Virtual ID）の対応を <code>VIDTORID</code> / <code>RIDTOVID</code> マップに登録する。</li>
-<li><code>applyViewTransition</code>（<code>applyView</code>）がこの RID セットを「current view」として用いる。</li>
+<li><code>applyViewTransition</code>（<code>Syncd::applyView</code> から呼び出される）がこの RID セットを「current view」として用いる。</li>
 </ol>
-<p><strong>applyViewTransition</strong> は：
-- orchagent が送り込んだ再設定要求を「temporary view」として受け取り、
-- SaiDiscovery で作った「current view」との diff を計算し、
-- 差分（追加・削除・更新）だけを SAI に流す。</p>
+<p><strong>applyViewTransition</strong> は<sup id="fnref:applyview"><a class="footnote-ref" href="#fn:applyview">7</a></sup>：</p>
+<ul>
+<li>orchagent が送り込んだ再設定要求を「temporary view」として受け取り、</li>
+<li>SaiDiscovery で作った「current view」との diff を計算し、</li>
+<li>差分（追加・削除・更新）だけを SAI に流す。</li>
+</ul>
 <p>SaiDiscovery で列挙した RID（switch/port）は削除対象から除外されるため、これらのオブジェクトは warm reboot を跨いで保持される。</p>
 <h2 id="sai-sai_query_attribute_capability">ベンダ SAI と sai_query_attribute_capability<a class="headerlink" href="#sai-sai_query_attribute_capability" title="Permanent link">&para;</a></h2>
 <p>syncd は起動時に <code>sai_query_attribute_capability</code> を呼び、各 SAI object の attribute がそのベンダ SAI でサポートされるかを確認する。ベンダが libsai.so でこの関数を公開していない場合、syncd-vs や thirdparty syncd のビルド時にリンクエラーになる（issue #780）：</p>
@@ -36481,7 +36518,38 @@
 <li><a href="../../../internals/dump-utility-for-easy-debugging/">dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）</a></li>
 <li><a href="../../../platform/dump-on-sai-failure/">SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）</a></li>
 </ul>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 9fb3fca99a59 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:channel">
+<p>ASIC_DB の hash テーブル名は <code>ASIC_STATE</code> 固定。<code>sonic-net/sonic-sairedis/lib/sairediscommon.h</code> L13: <code>#define ASIC_STATE_TABLE "ASIC_STATE"</code>。orchagent→syncd 方向の制御は専用 channel 名ではなく <code>REDIS_ASIC_STATE_COMMAND_CREATE / SET / REMOVE / GET / FLUSH / NOTIFY</code> などの op 文字列で識別する（<code>lib/RedisRemoteSaiInterface.cpp</code> L860-L1150）。&#160;<a class="footnote-backref" href="#fnref:channel" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:ntf">
+<p>syncd→orchagent の notification は ZMQ endpoint が構成されていれば <code>ZeroMQNotificationProducer</code>、そうでなければ <code>RedisNotificationProducer</code> を使う（<code>sonic-net/sonic-sairedis/syncd/Syncd.cpp</code> L141-L182、<code>NotificationProducer.cpp</code> L11-L51）。&#160;<a class="footnote-backref" href="#fnref:ntf" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:flex">
+<p>counter group ごとに 1 つの <code>FlexCounter</code> インスタンスが起動し、<code>startFlexCounterThread</code> で <code>flexCounterThreadRunFunction</code> を spawn する（<code>sonic-net/sonic-sairedis/syncd/FlexCounter.cpp</code> L3031-L3577）。&#160;<a class="footnote-backref" href="#fnref:flex" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:dump">
+<p><code>Syncd::processNotifySyncdInRedis</code> が <code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code> を受けて dump シェル（<code>syncd_dump.sh</code> 系）を起動する（<code>sonic-net/sonic-sairedis/syncd/Syncd.cpp</code> L4491-L4493、<code>syncd/scripts/sai_failure_dump.sh</code>）。&#160;<a class="footnote-backref" href="#fnref:dump" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:sairedis">
+<p><code>RedisRemoteSaiInterface</code> が SAI create/set/remove/get を <code>ASIC_STATE</code> テーブルへの key/values と op 文字列に変換して publish し、syncd 側で順次取り出して <code>VendorSai</code> 経由で実 SAI を叩く（<code>sonic-net/sonic-sairedis/lib/RedisRemoteSaiInterface.cpp</code> L860-L970、<code>syncd/VendorSai.cpp</code> L52-L56）。&#160;<a class="footnote-backref" href="#fnref:sairedis" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:discovery">
+<p><code>sonic-net/sonic-sairedis/syncd/SaiDiscovery.cpp</code> L22-L114 の <code>SaiDiscovery::discover</code> が switch RID を起点に attribute を走査して discovered set に追加する。&#160;<a class="footnote-backref" href="#fnref:discovery" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:applyview">
+<p><code>sonic-net/sonic-sairedis/syncd/ComparisonLogic.cpp</code> L123 の <code>applyViewTransition(current, temp)</code> および L3075 以降の同関数本体で diff を計算する。<code>Syncd::applyView</code>（<code>syncd/Syncd.cpp</code> L4790）から呼ばれ、entry point は <code>Syncd.cpp</code> L4641。&#160;<a class="footnote-backref" href="#fnref:applyview" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:ring">
+<p><code>OrchDaemon::popRingBuffer</code> と <code>gRingBuffer</code> の初期化・終了制御（<code>sonic-net/sonic-swss/orchagent/orchdaemon.cpp</code> L103-L150）。PR #4400 以前は SIGTERM 時に ring thread が exit せずハングする経路があった旨が同コードのコメントで言及されている。&#160;<a class="footnote-backref" href="#fnref:ring" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

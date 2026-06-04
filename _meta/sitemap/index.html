@@ -35856,7 +35856,7 @@
 <li><strong>Dual-ToR と Mux 制御</strong> (<code>topics/05-dual-tor/</code>)<ul>
 <li><a href="../../topics/05-dual-tor/">Dual-ToR と Mux 制御</a> — [meta] Dual-ToR と Mux 制御 — この章は、SONiC の Dual-ToR 構成で「2 台の ToR と 1 台のサーバ NIC の間にある mux…</li>
 <li><a href="../../topics/05-dual-tor/concept/">Dual-ToR の考え方</a> — [meta] Dual-ToR の考え方 — Dual-ToR は「サーバを 2 台の ToR に二重接続して、ToR / リンク / ケーブルの片側障害でもサービスを継続…</li>
-<li><a href="../../topics/05-dual-tor/internals/">Mux 制御の内部構造</a> — [meta] Mux 制御の内部構造 — Dual-ToR の制御は 1 つの daemon だけでは完結しません。</li>
+<li><a href="../../topics/05-dual-tor/internals/">Mux 制御の内部構造</a> — [code-verified] linkmgrd / MuxOrch / ycabled / gRPC client が STATE_DB の MUX_CABLE_TABLE を介して連携し…</li>
 <li><a href="../../topics/05-dual-tor/setup/">Dual-ToR の設定</a> — [meta] Dual-ToR の設定 — Dual-ToR の設定は、port ごとの MUX_CABLE と peer ToR を表す PEER_SWITCH を起点に…</li>
 <li><a href="../../topics/05-dual-tor/operations/">Dual-ToR の運用</a> — [meta] Dual-ToR の運用 — Dual-ToR の障害対応では、最初に「mux がどちらを向いているか」だけを見ると誤ります。サーバ側リンク、ICMP pro…</li>
 <li><a href="../../topics/05-dual-tor/advanced/">Dual-ToR の発展トピック</a> — [meta] Dual-ToR の発展トピック — Dual-ToR は mux state だけで閉じた機能ではありません。</li>
@@ -35977,10 +35977,10 @@
 <li><strong>17-srv6-mpls</strong> (<code>topics/17-srv6-mpls/</code>)<ul>
 <li><a href="../../topics/17-srv6-mpls/advanced/">発展トピック</a> — [meta] 発展トピック — base 機能の上で広がる SRv6 / MPLS / Path Tracing 関連のトピックを、他章へのリンクと一緒にまとめます。</li>
 <li><a href="../../topics/17-srv6-mpls/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — SRv6 / MPLS / Path Tracing は別機能ですが、SONiC 内部では「CONFIG_DB → orchagent →…</li>
-<li><a href="../../topics/17-srv6-mpls/concept/">概念</a> — [meta] 概念 — SRv6、MPLS、Path Tracing はいずれも「IPv4/IPv6 forwarding の上に、追加のラベルまたはオプションを積んで経路…</li>
+<li><a href="../../topics/17-srv6-mpls/concept/">概念</a> — [code-verified] SRv6 / MPLS / Path Tracing が SONiC の通常 routing とどこで分岐し、どの daemon と DB を増やすかを 1…</li>
 <li><a href="../../topics/17-srv6-mpls/">SRv6 / MPLS / Path Tracing</a> — [meta] SRv6 / MPLS / Path Tracing — この章は、SONiC で SRv6（Segment Routing over IPv6）、MPLS、…</li>
 <li><a href="../../topics/17-srv6-mpls/internals/">内部実装</a> — [meta] 内部実装 — ここでは SRv6 / MPLS / Path Tracing の主要 daemon・ファイル・SAI 属性のうち、設計を理解する上で欠かせない…</li>
-<li><a href="../../topics/17-srv6-mpls/operations/">運用</a> — [meta] 運用 — SRv6 / MPLS / Path Tracing の運用確認は、「設定が CONFIG_DB に正しく入ったか」「FRR / netlink 経…</li>
+<li><a href="../../topics/17-srv6-mpls/operations/">運用</a> — [code-verified] SRv6 / MPLS / Path Tracing の運用確認は「設定が CONFIG_DB に正しく入ったか」「FRR / netlink 経由で APP…</li>
 <li><a href="../../topics/17-srv6-mpls/setup/">設定</a> — [meta] 設定 — SRv6 / MPLS / Path Tracing の設定は、いずれも CONFIG_DB のテーブルに置けば最小構成が組めます。</li>
 </ul>
 </li>

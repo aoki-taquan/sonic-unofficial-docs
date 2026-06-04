@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="運用 — SRv6 / MPLS / Path Tracing の運用確認は、「設定が CONFIG_DB に正しく入ったか」「FRR / netlink 経由で APP_DB に渡ったか」「SAI / ASIC に programming されたか」の三段を順に追います。">
+        <meta name="description" content="SRv6 / MPLS / Path Tracing の運用確認は「設定が CONFIG_DB に正しく入ったか」「FRR / netlink 経由で APP_DB に渡ったか」「SAI / ASIC に programming されたか」の三段を順に追います。各機能の出口（show コマンド / DB / ログ）と典型的な異常パターンを実例ベースで整理します。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="運用 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="運用 — SRv6 / MPLS / Path Tracing の運用確認は、「設定が CONFIG_DB に正しく入ったか」「FRR / netlink 経由で APP_DB に渡ったか」「SAI / ASIC に programming されたか」の三段を順に追います。" />
+<meta property="og:description" content="SRv6 / MPLS / Path Tracing の運用確認は「設定が CONFIG_DB に正しく入ったか」「FRR / netlink 経由で APP_DB に渡ったか」「SAI / ASIC に programming されたか」の三段を順に追います。各機能の出口（show コマンド / DB / ログ）と典型的な異常パターンを実例ベースで整理します。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/17-srv6-mpls/operations.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/17-srv6-mpls/operations/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="運用 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="運用 — SRv6 / MPLS / Path Tracing の運用確認は、「設定が CONFIG_DB に正しく入ったか」「FRR / netlink 経由で APP_DB に渡ったか」「SAI / ASIC に programming されたか」の三段を順に追います。" />
+<meta property="twitter:description" content="SRv6 / MPLS / Path Tracing の運用確認は「設定が CONFIG_DB に正しく入ったか」「FRR / netlink 経由で APP_DB に渡ったか」「SAI / ASIC に programming されたか」の三段を順に追います。各機能の出口（show コマンド / DB / ログ）と典型的な異常パターンを実例ベースで整理します。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/17-srv6-mpls/operations.png" />
 </head>
   
@@ -5536,10 +5536,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db-show" class="md-nav__link">
+  <a href="#config_db_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB と show
+        CONFIG_DB の確認
       
     </span>
   </a>
@@ -5589,6 +5589,17 @@
     <span class="md-ellipsis">
       
         関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
       
     </span>
   </a>
@@ -36182,10 +36193,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db-show" class="md-nav__link">
+  <a href="#config_db_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB と show
+        CONFIG_DB の確認
       
     </span>
   </a>
@@ -36241,6 +36252,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36270,6 +36292,7 @@
 <p><a href="../../../reference/glossary/#term-srv6">SRv6</a> / <a href="../../../reference/glossary/#term-mpls">MPLS</a> / Path Tracing の運用確認は、「設定が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> に正しく入ったか」「<a href="../../../reference/glossary/#term-frr">FRR</a> / netlink 経由で APP_DB に渡ったか」「<a href="../../../reference/glossary/#term-sai">SAI</a> / <a href="../../../reference/glossary/#term-asic">ASIC</a> に programming されたか」の三段を順に追います。本ページは各機能の出口（show コマンド / DB / ログ）と、よく遭遇する異常パターン、その復旧手順を実例ベースで並べます。</p>
 <h2 id="srv6">SRv6<a class="headerlink" href="#srv6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">設定が CONFIG_DB に入ったかの確認<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB のテーブル名は <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> です<sup id="fnref:schema"><a class="footnote-ref" href="#fn:schema">1</a></sup><sup id="fnref:show-srv6"><a class="footnote-ref" href="#fn:show-srv6">2</a></sup>。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;SRV6_MY_LOCATORS|*&quot;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SRV6_MY_LOCATORS|loc1&quot;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;SRV6_MY_LOCATORS|loc1&quot;</span>
@@ -36285,6 +36308,20 @@
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SRV6_MY_SIDS|loc1|fc00:0:1:e000::&quot;</span>
 </span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SRV6_MY_SIDS|loc1|fc00:0:1:e001::&quot;</span>
 </span></code></pre></div>
+<p>CLI からは <code>show srv6 locators</code> / <code>show srv6 static-sids</code> で同等の情報が取れます<sup id="fnref2:show-srv6"><a class="footnote-ref" href="#fn:show-srv6">2</a></sup>。</p>
+<!-- evidence:
+sonic-swss-common/common/schema.h L398-399 @ 158de8d3:
+  #define CFG_SRV6_MY_SID_TABLE_NAME      "SRV6_MY_SIDS"
+  #define CFG_SRV6_MY_LOCATOR_TABLE_NAME  "SRV6_MY_LOCATORS"
+sonic-utilities/show/srv6.py L10-11 @ 39732bce:
+  CONFIG_DB_MY_SID_TABLE     = 'SRV6_MY_SIDS'
+  CONFIG_DB_MY_LOCATORS_TABLE = 'SRV6_MY_LOCATORS'
+sonic-swss/orchagent/srv6orch.cpp L341-343 @ 43055961:
+  auto blen = fvsGetValue(fvs, "block_len", true);
+  auto nlen = fvsGetValue(fvs, "node_len", true);
+  auto flen = fvsGetValue(fvs, "func_len", true);
+-->
+
 <p><code>uA</code> / <code>End.X</code> の SID は <code>nexthop</code> フィールドに紐づく nexthop IP が <strong>既知の neighbor</strong> でないと FRR / <code>srv6orch</code> は pending 扱いになります。</p>
 <h3 id="frr">FRR への配線確認<a class="headerlink" href="#frr" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show segment-routing srv6 locator&quot;</span>
@@ -36302,11 +36339,13 @@
 </span></code></pre></div>
 <p><a href="../../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> 経由で <code>vtysh</code> に流れる経路は <a href="../architecture/">アーキテクチャ</a> を参照します。<code>vtysh</code> 側に出ない場合は bgpcfgd ログ（<code>/var/log/syslog</code> 内 <code>bgpcfgd</code> プレフィックス）を見ます。</p>
 <h3 id="app_db-asic_db-programming">APP_DB / ASIC_DB の programming 確認<a class="headerlink" href="#app_db-asic_db-programming" title="Permanent link">&para;</a></h3>
+<p>APP_DB のテーブル名は <code>SRV6_MY_SID_TABLE</code>、ASIC_DB は <code>SAI_OBJECT_TYPE_MY_SID_ENTRY</code> です<sup id="fnref2:schema"><a class="footnote-ref" href="#fn:schema">1</a></sup><sup id="fnref:srv6orch"><a class="footnote-ref" href="#fn:srv6orch">4</a></sup>。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;SRV6_MY_SID_TABLE:*&quot;</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SRV6_MY_SID_TABLE:32:16:16:0:fc00:0:1:e000::&quot;</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_MY_SID_ENTRY:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="m">2</span>
 </span></code></pre></div>
+<p>APP_DB のキーは <code>block_len:node_len:func_len:args_len:sid-ip</code> の形式で、<code>srv6orch</code> 内のコメント (L2210) でもこの順序が明示されています<sup id="fnref2:srv6orch"><a class="footnote-ref" href="#fn:srv6orch">4</a></sup>。</p>
 <p>APP_DB に乗っているのに <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> に出ない場合、<code>srv6orch</code> の pending queue で止まっている可能性が高いです。<code>docker exec swss supervisorctl tail -f orchagent</code> で <code>SRv6Orch</code> のログを追います。次のいずれかが典型です。</p>
 <table>
 <thead>
@@ -36335,14 +36374,14 @@
 </tbody>
 </table>
 <h3 id="_2">トラフィック観測<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
-<p>MySID 単位の counter は phase 機能で、現状の <a href="../../../reference/glossary/#term-sonic">SONiC</a> master では IPv6 forwarding 全体の <a href="../../../reference/glossary/#term-rif">RIF</a> counter で代用するのが現実的です。</p>
+<p>MySID 単位の counter は <code>show srv6 stats</code> で参照できますが<sup id="fnref:show-srv6-stats"><a class="footnote-ref" href="#fn:show-srv6-stats">3</a></sup>、forwarding 量の概観には IPv6 全体の <a href="../../../reference/glossary/#term-rif">RIF</a> counter が手早く有効です。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$<span class="w"> </span>sonic-clear<span class="w"> </span>counters
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>admin@sonic:~$<span class="w"> </span>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span>rif
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span>IFACE<span class="w">    </span>RX_OK<span class="w">    </span>RX_BPS<span class="w">    </span>RX_PPS<span class="w">  </span>...
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>---------<span class="w">  </span>-------<span class="w">  </span>--------<span class="w">  </span>--------<span class="w">  </span>...
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>Ethernet0<span class="w">      </span><span class="m">120</span><span class="w">    </span><span class="m">9</span>.6<span class="w"> </span>KB<span class="w">        </span><span class="m">80</span><span class="w">  </span>...
 </span></code></pre></div>
-<p>uA / End.X が forwarding しているかを概観するには十分です。ヘッダ単位の観察が必要なら <code>tcpdump -i &lt;intf&gt; -nn ip6 proto 43</code> で SRH を見ます。</p>
+<p>ヘッダ単位の観察が必要なら <code>tcpdump -i &lt;intf&gt; -nn ip6 proto 43</code> で SRH を見ます。</p>
 <h2 id="mpls">MPLS<a class="headerlink" href="#mpls" title="Permanent link">&para;</a></h2>
 <h3 id="per-rif">per-RIF 有効化の確認<a class="headerlink" href="#per-rif" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGET<span class="w"> </span><span class="s2">&quot;INTERFACE|Ethernet0&quot;</span><span class="w"> </span>mpls
@@ -36351,7 +36390,7 @@
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>mpls
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nb">enable</span>
 </span></code></pre></div>
-<p><code>show interfaces mpls</code> 系 CLI の提供範囲は実装依存です。<code>show runningconfiguration</code> で <code>mpls</code> 行が出れば CONFIG_DB には入っています。</p>
+<p><code>show runningconfiguration</code> で <code>mpls</code> 行が出れば CONFIG_DB には入っています。<code>show interfaces</code> 系で MPLS 専用サブコマンドは現状提供されていません。</p>
 <h3 id="frr-lsp">FRR / LSP の確認<a class="headerlink" href="#frr-lsp" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show mpls table&quot;</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w"> </span>Inbound<span class="w"> </span>Label<span class="w">  </span>Type<span class="w">        </span>Nexthop<span class="w">         </span>Outbound<span class="w"> </span>Label
@@ -36361,6 +36400,7 @@
 </span></code></pre></div>
 <p>LSP が消えるパターンは多くが LDP / <a href="../../../reference/glossary/#term-bgp">BGP</a>-LU の neighbor down です。<code>vtysh -c "show mpls ldp neighbor"</code> / <code>vtysh -c "show bgp ipv4 labeled-unicast summary"</code> を最初に見ます。</p>
 <h3 id="app_db-asic_db">APP_DB と ASIC_DB<a class="headerlink" href="#app_db-asic_db" title="Permanent link">&para;</a></h3>
+<p>APP_DB は <code>LABEL_ROUTE_TABLE</code><sup id="fnref:schema-mpls"><a class="footnote-ref" href="#fn:schema-mpls">5</a></sup>、ASIC_DB は <code>SAI_OBJECT_TYPE_INSEG_ENTRY</code> です。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;LABEL_ROUTE_TABLE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;LABEL_ROUTE_TABLE:16&quot;</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;LABEL_ROUTE_TABLE:17&quot;</span>
@@ -36385,27 +36425,39 @@
 </span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>crm<span class="w"> </span>thresholds<span class="w"> </span>mpls<span class="w"> </span>inseg<span class="w"> </span><span class="nb">type</span><span class="w"> </span>percentage
 </span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>crm<span class="w"> </span>thresholds<span class="w"> </span>mpls<span class="w"> </span>inseg<span class="w"> </span>high<span class="w"> </span><span class="m">85</span>
 </span></code></pre></div>
-<p>大規模静的 LSP では事前に threshold を設定すると、<code>/var/log/syslog</code> に <a href="../../../reference/glossary/#term-crm">CRM</a> の警告が出ます。<a href="../../../reference/glossary/#term-qos">QoS</a> が効かないときは <code>MPLS_TC_TO_TC_MAP</code> → <code>PORT_QOS_MAP</code> の参照を CONFIG_DB から辿ります。</p>
+<p><code>crmorch</code> は <code>CRM_MPLS_INSEG</code> を <code>SAI_OBJECT_TYPE_INSEG_ENTRY</code> にマッピングしてカウントします<sup id="fnref:crm"><a class="footnote-ref" href="#fn:crm">6</a></sup>。大規模静的 LSP では事前に threshold を設定すると、<code>/var/log/syslog</code> に <a href="../../../reference/glossary/#term-crm">CRM</a> の警告が出ます。<a href="../../../reference/glossary/#term-qos">QoS</a> が効かないときは <code>MPLS_TC_TO_TC_MAP</code> → <code>PORT_QOS_MAP</code> の参照を CONFIG_DB から辿ります。</p>
 <h2 id="path-tracing">Path Tracing<a class="headerlink" href="#path-tracing" title="Permanent link">&para;</a></h2>
-<h3 id="config_db-show">CONFIG_DB と show<a class="headerlink" href="#config_db-show" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>admin@sonic:~$<span class="w"> </span>show<span class="w"> </span>interface<span class="w"> </span>path-tracing
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span>Interface<span class="w">    </span>PT<span class="w"> </span>Interface<span class="w"> </span>ID<span class="w">    </span>PT<span class="w"> </span>Timestamp<span class="w"> </span>Template
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>-----------<span class="w">  </span>-----------------<span class="w">  </span>-----------------------
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>Ethernet0<span class="w">    </span><span class="m">513</span><span class="w">                </span>template3
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;PORT|Ethernet0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span>pt_
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>pt_interface_id
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="m">513</span>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>pt_timestamp_template
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>template3
+<h3 id="config_db_1">CONFIG_DB の確認<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
+<p>Path Tracing の per-port 設定は <code>PORT</code> テーブルの <code>pt_interface_id</code> / <code>pt_timestamp_template</code> フィールドで持ちます<sup id="fnref:pt-schema"><a class="footnote-ref" href="#fn:pt-schema">7</a></sup><sup id="fnref:portsorch-pt"><a class="footnote-ref" href="#fn:portsorch-pt">8</a></sup>。<code>show interfaces path-tracing</code> 相当の専用 CLI は現行 master の <code>sonic-utilities</code> には未実装で、確認は <code>redis-cli</code> か <code>show runningconfiguration</code> で行います。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;PORT|Ethernet0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span>pt_
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>pt_interface_id
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="m">513</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>pt_timestamp_template
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>template3
 </span></code></pre></div>
 <h3 id="asic-programming">ASIC programming<a class="headerlink" href="#asic-programming" title="Permanent link">&para;</a></h3>
+<p><code>portsorch</code> が <code>SAI_PORT_ATTR_PATH_TRACING_INTF</code> および <code>SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE</code> を Port に書き込みます[^<a href="../../../reference/glossary/#term-portsorch">portsorch</a>-pt]。timestamp の <code>template1</code>〜<code>template4</code> は <code>SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_*_*</code> にマッピングされます<sup id="fnref:portsorch-pt-map"><a class="footnote-ref" href="#fn:portsorch-pt-map">9</a></sup>。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x...&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span>PATH_TRACING
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>SAI_PORT_ATTR_PATH_TRACING_INTF
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="m">513</span>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE
 </span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_TEMPLATE3
 </span></code></pre></div>
-<p>probe 生成・回収は SONiC 外側（PT Source / Sink / Regional Collector）の仕事です。SONiC は midpoint として <strong>HbH-PT の MCD を書き足す</strong> だけなので、検証は経路上で実トラフィックをキャプチャして MCD が増えているかを確認するのが手っ取り早いです。</p>
+<!-- evidence:
+sonic-swss/orchagent/portsorch.cpp L213-218 @ 43055961:
+  static map<string, sai_port_path_tracing_timestamp_type_t> pt_timestamp_template_map =
+  {
+    { "template1", SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_8_15  },
+    { "template2", SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_12_19 },
+    { "template3", SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_16_23 },
+    { "template4", SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_20_27 }
+  };
+sonic-swss/orchagent/portsorch.cpp L11487, L11507 @ 43055961:
+  attr.id = SAI_PORT_ATTR_PATH_TRACING_INTF;
+  attr.id = SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE;
+-->
+
+<p>probe 生成・回収は <a href="../../../reference/glossary/#term-sonic">SONiC</a> 外側（PT Source / Sink / Regional Collector）の仕事です。SONiC は midpoint として <strong>HbH-PT の MCD を書き足す</strong> だけなので、検証は経路上で実トラフィックをキャプチャして MCD が増えているかを確認するのが手っ取り早いです。</p>
 <p>SRv6 <code>H.Encaps.Red</code> と Path Tracing を併用するときは、外側 IPv6 の HbH-PT が内側にどう写るかが ASIC 実装依存で、<a href="../../../reference/glossary/#term-hld">HLD</a> の前提と乖離していることがあります（<a href="../../../routing/path-tracing-midpoint/">discrepancy</a> 参照）。</p>
 <h2 id="_3">障害切り分けの順序（共通）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>機能を問わず、次の順で潰すと迷いにくくなります。</p>
@@ -36466,7 +36518,41 @@
 <li><a href="../../04-vrf-ecmp/">VRF / ECMP 章</a>（next-hop / nexthop group の確認）</li>
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 章</a>（共通の SAI 失敗観察）</li>
 </ul>
-<!-- glossary-links-injected: ec18b66e3507 -->
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 4e8b9837844c -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:schema">
+<p><code>sonic-net/sonic-swss-common</code> <code>common/schema.h</code> L169, L398-399 @ <code>158de8d3</code> — <code>CFG_SRV6_MY_LOCATOR_TABLE_NAME = "SRV6_MY_LOCATORS"</code>、<code>CFG_SRV6_MY_SID_TABLE_NAME = "SRV6_MY_SIDS"</code>、<code>APP_SRV6_MY_SID_TABLE_NAME = "SRV6_MY_SID_TABLE"</code>。&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:schema" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:show-srv6">
+<p><code>sonic-net/sonic-utilities</code> <code>show/srv6.py</code> L10-11, L51-58 @ <code>39732bce</code> — <code>show srv6 locators</code> が <code>SRV6_MY_LOCATORS</code> を、<code>show srv6 static-sids</code> が <code>SRV6_MY_SIDS</code> / <code>SRV6_MY_SID_TABLE</code> を読みます。&#160;<a class="footnote-backref" href="#fnref:show-srv6" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:show-srv6" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:show-srv6-stats">
+<p><code>sonic-net/sonic-utilities</code> <code>show/srv6.py</code> L150-151 @ <code>39732bce</code> — <code>show srv6 stats</code> サブコマンド。&#160;<a class="footnote-backref" href="#fnref:show-srv6-stats" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:srv6orch">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/srv6orch.cpp</code> L104-107, L1453-1454, L2210 @ <code>43055961</code> — APP_DB / CONFIG_DB の両 SRv6 テーブルを購読し、MySID キーを <code>block_len:node_len:function_len:args_len:sid-ip</code> の順で分解します。&#160;<a class="footnote-backref" href="#fnref:srv6orch" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:srv6orch" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:schema-mpls">
+<p><code>sonic-net/sonic-swss-common</code> <code>common/schema.h</code> L48 @ <code>158de8d3</code> — <code>APP_LABEL_ROUTE_TABLE_NAME = "LABEL_ROUTE_TABLE"</code>。&#160;<a class="footnote-backref" href="#fnref:schema-mpls" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:crm">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/crmorch.cpp</code> L113 @ <code>43055961</code> — <code>CRM_MPLS_INSEG</code> を <code>SAI_OBJECT_TYPE_INSEG_ENTRY</code> にマッピング。&#160;<a class="footnote-backref" href="#fnref:crm" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:pt-schema">
+<p><code>sonic-net/sonic-swss</code> <code>doc/swss-schema.md</code> L30, L1026 @ <code>43055961</code> — <code>PORT</code> テーブルの <code>pt_interface_id</code> (1-4095) と <code>pt_timestamp_template</code> フィールド定義。&#160;<a class="footnote-backref" href="#fnref:pt-schema" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:portsorch-pt">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/portsorch.cpp</code> L1420, L1435, L11484-11507 @ <code>43055961</code> — <code>portsorch</code> が <code>SAI_PORT_ATTR_PATH_TRACING_INTF</code> / <code>SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE</code> を Port に設定。&#160;<a class="footnote-backref" href="#fnref:portsorch-pt" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:portsorch-pt-map">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/portsorch.cpp</code> L213-218 @ <code>43055961</code> — <code>template1</code>〜<code>template4</code> の文字列を <code>SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_*_*</code> にマッピング。&#160;<a class="footnote-backref" href="#fnref:portsorch-pt-map" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SNMP 設定の snmp.yml → CONFIG_DB 移行 — /etc/sonic/snmp.yml には community / location が、CONFIG_DB には ACL のみが入る、という分散した SNMP 設定状態を解消し、全 SNMP 設定を CONFIG_DB に集約 するための移行設…">
+        <meta name="description" content="SNMP 設定の snmp.yml → CONFIG_DB 移行 — /etc/sonic/snmp.yml には community / location が、CONFIG_DB には ACL のみが入る、という分散した SNMP 設定状態を解消し、全 SNMP 設定を CONFIG_DB に集約するための移行設計。SNMP / SNMP_COMMUNITY / SNMP_USER / SNMP_AGENT_ADDRESS_CONFIG の YANG 整合と SNMP_TRAP_CONFIG の YANG 未対応も併せて整理する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SNMP 設定の snmp.yml → CONFIG_DB 移行 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SNMP 設定の snmp.yml → CONFIG_DB 移行 — /etc/sonic/snmp.yml には community / location が、CONFIG_DB には ACL のみが入る、という分散した SNMP 設定状態を解消し、全 SNMP 設定を CONFIG_DB に集約 するための移行設…" />
+<meta property="og:description" content="SNMP 設定の snmp.yml → CONFIG_DB 移行 — /etc/sonic/snmp.yml には community / location が、CONFIG_DB には ACL のみが入る、という分散した SNMP 設定状態を解消し、全 SNMP 設定を CONFIG_DB に集約するための移行設計。SNMP / SNMP_COMMUNITY / SNMP_USER / SNMP_AGENT_ADDRESS_CONFIG の YANG 整合と SNMP_TRAP_CONFIG の YANG 未対応も併せて整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/snmp-migration-from-snmp-yml-to-configdb.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/system/snmp-migration-from-snmp-yml-to-configdb/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SNMP 設定の snmp.yml → CONFIG_DB 移行 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SNMP 設定の snmp.yml → CONFIG_DB 移行 — /etc/sonic/snmp.yml には community / location が、CONFIG_DB には ACL のみが入る、という分散した SNMP 設定状態を解消し、全 SNMP 設定を CONFIG_DB に集約 するための移行設…" />
+<meta property="twitter:description" content="SNMP 設定の snmp.yml → CONFIG_DB 移行 — /etc/sonic/snmp.yml には community / location が、CONFIG_DB には ACL のみが入る、という分散した SNMP 設定状態を解消し、全 SNMP 設定を CONFIG_DB に集約するための移行設計。SNMP / SNMP_COMMUNITY / SNMP_USER / SNMP_AGENT_ADDRESS_CONFIG の YANG 整合と SNMP_TRAP_CONFIG の YANG 未対応も併せて整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/snmp-migration-from-snmp-yml-to-configdb.png" />
 </head>
   
@@ -36210,7 +36210,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified（基本構成のみ）</p>
-<p>現行 master で <code>config snmp</code> グループ (<code>sonic-utilities/config/main.py:4261</code>)、<code>docker-snmp/snmpd.conf.j2</code> の CONFIG_DB ベース設定、<code>sonic-yang-models</code> の <code>sonic-snmp.yang</code> を確認。SNMP / SNMP_COMMUNITY / SNMP_USER テーブルは現行 yang に取り込まれている。<code>snmp.yml</code> → CONFIG_DB ワンタイム変換スクリプトの場所は明示できなかったが、CONFIG_DB ベース運用は標準化済み（verified at: 2026-05-09）。</p>
+<p>現行 master で <code>config snmp</code> グループ (<code>sonic-utilities/config/main.py:4261</code>)、<code>docker-snmp/snmpd.conf.j2</code> の CONFIG_DB ベース設定、<code>sonic-yang-models</code> の <code>sonic-snmp.yang</code> を確認。<code>SNMP</code> / <code>SNMP_COMMUNITY</code> / <code>SNMP_USER</code> / <code>SNMP_AGENT_ADDRESS_CONFIG</code> の 4 container は現行 YANG に取り込まれている<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。一方、<code>config snmptrap</code> が書く <code>SNMP_TRAP_CONFIG</code> テーブル<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>は CONFIG_DB に存在するが <code>sonic-snmp.yang</code> 側に対応 container は無く、YANG カバレッジは未達。<code>snmp.yml</code> → CONFIG_DB ワンタイム変換スクリプトの場所は明示できなかったが、CONFIG_DB ベース運用は標準化済み（verified at: 2026-06-04）。</p>
 </div>
 <h1 id="snmp-snmpyml-config_db">SNMP 設定の snmp.yml → CONFIG_DB 移行<a class="headerlink" href="#snmp-snmpyml-config_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36253,6 +36253,7 @@
 <th>Table</th>
 <th>Key</th>
 <th>説明</th>
+<th>YANG</th>
 </tr>
 </thead>
 <tbody>
@@ -36260,16 +36261,31 @@
 <td><code>SNMP</code></td>
 <td><code>LOCATION</code> / <code>CONTACT</code></td>
 <td>ロケーション / コンタクト</td>
+<td>あり (<code>sonic-snmp:SNMP</code>)<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
 <td><code>SNMP_COMMUNITY</code></td>
 <td><code>&lt;community&gt;</code></td>
 <td>RO/RW community 定義</td>
+<td>あり (<code>sonic-snmp:SNMP_COMMUNITY</code>)<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
 <td><code>SNMP_USER</code></td>
 <td><code>&lt;user&gt;</code></td>
 <td>SNMPv3 ユーザ（auth/priv 含む）</td>
+<td>あり (<code>sonic-snmp:SNMP_USER</code>)<sup id="fnref8:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>SNMP_AGENT_ADDRESS_CONFIG</code></td>
+<td><code>&lt;ip&gt;\|&lt;port&gt;\|&lt;vrf&gt;</code></td>
+<td>snmpd の listen IP / port / <a href="../../reference/glossary/#term-vrf">VRF</a></td>
+<td>あり (<code>sonic-snmp:SNMP_AGENT_ADDRESS_CONFIG</code>)<sup id="fnref9:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>SNMP_TRAP_CONFIG</code></td>
+<td><code>v1TrapDest</code> / <code>v2TrapDest</code> / <code>v3TrapDest</code></td>
+<td>SNMP trap 送信先 (<code>DestIp</code>, <code>DestPort</code>, <code>vrf</code>, <code>Community</code>)<sup id="fnref4:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+<td><strong>無</strong> (sonic-snmp.yang に対応 container 無し)</td>
 </tr>
 </tbody>
 </table>
@@ -36288,10 +36304,59 @@
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    &lt;MD5|SHA|HMAC-SHA-2&gt; &lt;auth_password&gt; &lt;DES|AES&gt; &lt;encrypt_password&gt;
 </span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>config snmp user del &lt;user&gt;
 </span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>show run snmp [community|contact|location|user] [--json]
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a># 別グループ（同じ snmp.yml 撤去スコープ。本 HLD のスキーマ追加範囲外だが現行 utilities に実装あり）
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>config snmpagentaddress add &lt;agentip&gt; [-p &lt;port&gt;] [-v &lt;vrf&gt;]   # SNMP_AGENT_ADDRESS_CONFIG[^4]
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>config snmpagentaddress del &lt;agentip&gt; [-p &lt;port&gt;] [-v &lt;vrf&gt;]
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>config snmptrap modify &lt;1|2|3&gt; &lt;serverip&gt; [-p &lt;port&gt;] [-v &lt;vrf&gt;] [-c &lt;comm&gt;]  # SNMP_TRAP_CONFIG[^3]
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>config snmptrap del &lt;1|2|3&gt;
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>show run snmp [community|contact|location|user] [--json]
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>show snmpagentaddress
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>show snmptrap
 </span></code></pre></div>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><a href="../../reference/glossary/#term-hld">HLD</a> に <a href="../../reference/glossary/#term-yang">YANG</a> 追加の記述は無い（<code>snmp-schema-addition.md</code> 側で示唆されるのみ）。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> 本文自体には <a href="../../reference/glossary/#term-yang">YANG</a> 追加の明示記述は無い（<code>snmp-schema-addition.md</code> 側で示唆されるのみ）。実装側では <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-snmp.yang</code><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> が以下の container を提供し、本 HLD の CONFIG_DB スキーマと整合する:</p>
+<table>
+<thead>
+<tr>
+<th>YANG container</th>
+<th>対応 CONFIG_DB</th>
+<th>主な leaf</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sonic-snmp:SNMP/CONTACT</code></td>
+<td><code>SNMP\|CONTACT</code></td>
+<td><code>Contact</code> (string, 1..255)<sup id="fnref10:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>sonic-snmp:SNMP/LOCATION</code></td>
+<td><code>SNMP\|LOCATION</code></td>
+<td><code>Location</code> (string, 1..255)<sup id="fnref11:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>sonic-snmp:SNMP_COMMUNITY/SNMP_COMMUNITY_LIST</code></td>
+<td><code>SNMP_COMMUNITY\|&lt;name&gt;</code></td>
+<td><code>name</code> (key), <code>TYPE</code> (enum RO/RW)<sup id="fnref12:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>sonic-snmp:SNMP_USER/SNMP_USER_LIST</code></td>
+<td><code>SNMP_USER\|&lt;name&gt;</code></td>
+<td><code>SNMP_USER_TYPE</code> (noAuthNoPriv/AuthNoPriv/Priv, mandatory), <code>SNMP_USER_PERMISSION</code> (RO/RW, mandatory), <code>SNMP_USER_AUTH_TYPE</code> (MD5/SHA/HMAC-SHA-2), <code>SNMP_USER_AUTH_PASSWORD</code>, <code>SNMP_USER_ENCRYPTION_TYPE</code> (DES/AES), <code>SNMP_USER_ENCRYPTION_PASSWORD</code> (mandatory)<sup id="fnref13:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>sonic-snmp:SNMP_AGENT_ADDRESS_CONFIG/SNMP_AGENT_ADDRESS_CONFIG_LIST</code></td>
+<td><code>SNMP_AGENT_ADDRESS_CONFIG\|&lt;ip&gt;\|&lt;port&gt;\|&lt;vrf&gt;</code></td>
+<td><code>agent_ip</code> (key), <code>port</code> (key), <code>vrf_name</code> (key)<sup id="fnref14:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p>注意:</p>
+<ul>
+<li><code>sonic-snmp.yang</code> の現 revision (<code>2022-05-13</code>)<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup> に <code>SNMP_TRAP_CONFIG</code> 用の container は <strong>無い</strong>。<code>config snmptrap</code> (<code>sonic-utilities/config/main.py:4213</code>)<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup> が書き込む同テーブルは YANG 経由の validation を受けず、CONFIG_DB 生 schema のみで運用される。</li>
+<li><code>SNMP_USER_AUTH_PASSWORD</code> / <code>SNMP_USER_ENCRYPTION_PASSWORD</code> には <code>SNMP_USER_TYPE</code> に応じた <code>must</code> 制約があり、<code>AuthNoPriv</code> / <code>Priv</code> で最低 8 文字を要求する<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
+</ul>
 <h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>snmp<span class="w"> </span>location<span class="w"> </span>add<span class="w"> </span><span class="s2">&quot;Emerald City&quot;</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>snmp<span class="w"> </span>contact<span class="w"> </span>add<span class="w"> </span>joe<span class="w"> </span>joe@contoso.com
@@ -36309,7 +36374,7 @@
 <ul>
 <li><strong>既存 ACL の <code>SNMP_ACL</code></strong>: 本機能とは独立に CONFIG_DB に存在する。SNMP デーモンの ACL 部分は本機能の対象外。</li>
 <li><strong><code>docker-snmp</code> 起動順</strong>: CONFIG_DB が先に上がっていることが前提。<code>hostcfgd</code> の起動依存は変更されない。</li>
-<li><strong>Watchdog / SNMP trap</strong>: trap は別途 <code>SNMP_TRAP_CONFIG</code> テーブル等で管理（本 HLD のスコープ外）。</li>
+<li><strong>SNMP trap</strong>: trap は <code>SNMP_TRAP_CONFIG</code> テーブルで管理され、<code>v1TrapDest</code> / <code>v2TrapDest</code> / <code>v3TrapDest</code> の 3 key に <code>DestIp</code> / <code>DestPort</code> / <code>vrf</code> / <code>Community</code> を持つ<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。本 HLD のスキーマ追加スコープ外であり、現行 <code>sonic-snmp.yang</code> にも対応 container は無い<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36332,13 +36397,22 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: a44572fede5f -->
+<!-- glossary-links-injected: 8b572e7ecef7 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/snmp/snmp-configdb-migration-hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-snmp.yang</code> (<code>container sonic-snmp</code> 配下の <code>SNMP</code> L25-50 / <code>SNMP_COMMUNITY</code> L52-79 / <code>SNMP_USER</code> L80-166 / <code>SNMP_AGENT_ADDRESS_CONFIG</code> L167-202、revision <code>2022-05-13</code>)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-utilities</code> <code>config/main.py</code> <code>def snmptrap(...)</code> L4213 から <code>snmptrap.command('del')</code> L4256（<code>SNMP_TRAP_CONFIG</code> テーブルへの <code>v1TrapDest</code> / <code>v2TrapDest</code> / <code>v3TrapDest</code> 書き込み）&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>sonic-net/sonic-utilities</code> <code>config/main.py</code> <code>def snmpagentaddress(...)</code> L4129 から <code>snmpagentaddress.command('del')</code> L4207（<code>SNMP_AGENT_ADDRESS_CONFIG</code> テーブルへの <code>ip|port|vrf</code> 書き込み）&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

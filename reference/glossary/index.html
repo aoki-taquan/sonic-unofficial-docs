@@ -45305,7 +45305,7 @@
 <li><a href="../../topics/02-bgp/concept/">概要</a> (16)</li>
 <li><a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/">fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）</a> (9)</li>
 <li><a href="../../topics/02-bgp/internals/">内部実装</a> (8)</li>
-<li><a href="../../topics/17-srv6-mpls/concept/">概念</a> (8)</li>
+<li><a href="../config-db/device-metadata/">DEVICE_METADATA テーブル</a> (7)</li>
 </ul>
 <h3 id="fpmsyncd"><a href="#term-fpmsyncd">fpmsyncd</a><a class="headerlink" href="#fpmsyncd" title="Permanent link">&para;</a></h3>
 <ul>
@@ -45469,7 +45469,7 @@
 <li><a href="../config-db/mux-cable-port/">MUX_CABLE テーブル（per-port フィールド詳細）</a> (52)</li>
 <li><a href="../config-db/mux-cable/">MUX_CABLE テーブル</a> (30)</li>
 <li><a href="../../routing/default-route/">linkmgrd のデフォルトルート連動（DualToR mux 制御）</a> (27)</li>
-<li><a href="../../overlay/active-standby-dual-tor/">Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）</a> (19)</li>
+<li><a href="../../topics/05-dual-tor/internals/">Mux 制御の内部構造</a> (21)</li>
 </ul>
 <h3 id="lldp"><a href="#term-lldp">LLDP</a><a class="headerlink" href="#lldp" title="Permanent link">&para;</a></h3>
 <ul>
@@ -45490,7 +45490,7 @@
 <h3 id="mpls"><a href="#term-mpls">MPLS</a><a class="headerlink" href="#mpls" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../config-db/appl-mpls-route/">LABEL_ROUTE_TABLE (APPL_DB)</a> (87)</li>
-<li><a href="../../topics/17-srv6-mpls/concept/">概念</a> (51)</li>
+<li><a href="../../topics/17-srv6-mpls/concept/">概念</a> (50)</li>
 <li><a href="../../routing/mpls-tc-to-tc-map/">MPLS TC → TC map（MPLS パケットの QoS classification）</a> (45)</li>
 <li><a href="../../routing/mpls-for-sonic-high-level-design-document/">SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP）</a> (37)</li>
 <li><a href="../../topics/17-srv6-mpls/internals/">内部実装</a> (25)</li>
@@ -45790,13 +45790,13 @@
 <li><a href="../config-db/snmp/">SNMP テーブル</a> (160)</li>
 <li><a href="../config-db/snmp-agent/">SNMP_AGENT_ADDRESS_CONFIG / SNMP_USER テーブル (デフォルト詳細)</a> (139)</li>
 <li><a href="../config-db/community-list/">SNMP_COMMUNITY テーブル</a> (86)</li>
+<li><a href="../../system/snmp-migration-from-snmp-yml-to-configdb/">SNMP 設定の snmp.yml → CONFIG_DB 移行</a> (74)</li>
 <li><a href="../yang/sonic-snmp/">sonic-snmp YANG</a> (73)</li>
-<li><a href="../config-db/snmp-agent-address-config/">SNMP_AGENT_ADDRESS_CONFIG テーブル</a> (72)</li>
 </ul>
 <h3 id="srv6"><a href="#term-srv6">SRv6</a><a class="headerlink" href="#srv6" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../topics/17-srv6-mpls/concept/">概念</a> (47)</li>
 <li><a href="../../topics/17-srv6-mpls/advanced/">発展トピック</a> (46)</li>
+<li><a href="../../topics/17-srv6-mpls/concept/">概念</a> (45)</li>
 <li><a href="../config-db/srv6-orch/">Srv6Orch — APP_DB SRV6 テーブル</a> (42)</li>
 <li><a href="../../_meta/sitemap/">サイトマップ</a> (34)</li>
 <li><a href="../../routing/srv6-vpn-hld/">SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）</a> (30)</li>
@@ -45868,10 +45868,10 @@
 <h3 id="sonic-sairedis"><a href="#term-sonic-sairedis">sonic-sairedis</a><a class="headerlink" href="#sonic-sairedis" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../platform/sai-api-version-check/">SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）</a> (16)</li>
+<li><a href="../../topics/20-swss-sai-redis/internals/">内部実装</a> (10)</li>
 <li><a href="../../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/">NPU MDIO アクセスと gbsyncd 単一 docker 化</a> (8)</li>
 <li><a href="../../system/sonic-libsairedis-api-idempotence-support/">libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）</a> (8)</li>
 <li><a href="../../architecture/sonic-bulk-counter-design/">Bulk Counter（sai_bulk_object_get_stats / chunk size）</a> (7)</li>
-<li><a href="../config-db/device-metadata/">DEVICE_METADATA テーブル</a> (5)</li>
 </ul>
 <h3 id="sonic-utilities"><a href="#term-sonic-utilities">sonic-utilities</a><a class="headerlink" href="#sonic-utilities" title="Permanent link">&para;</a></h3>
 <ul>
@@ -45927,7 +45927,7 @@
 <li><a href="../config-db/route-state/">ROUTE_TABLE (STATE_DB / APPL_STATE_DB)</a> (101)</li>
 <li><a href="../config-db/feature-state/">FEATURE (STATE_DB)</a> (91)</li>
 <li><a href="../config-db/route-cache/">APPL_STATE_DB ROUTE_TABLE (route offload cache)</a> (85)</li>
-<li><a href="../../_meta/sitemap/">サイトマップ</a> (80)</li>
+<li><a href="../../_meta/sitemap/">サイトマップ</a> (81)</li>
 </ul>
 <h3 id="swssconfig"><a href="#term-swssconfig">swssconfig</a><a class="headerlink" href="#swssconfig" title="Permanent link">&para;</a></h3>
 <ul>
@@ -45955,19 +45955,19 @@
 </ul>
 <h3 id="sonic"><a href="#term-sonic">SONiC</a><a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../_meta/sitemap/">サイトマップ</a> (354)</li>
+<li><a href="../../_meta/sitemap/">サイトマップ</a> (355)</li>
 <li><a href="../verification/discrepancy-index/">HLD と実装の乖離 一覧（discrepancy-index）</a> (31)</li>
+<li><a href="../../topics/17-srv6-mpls/concept/">概念</a> (31)</li>
 <li><a href="../../topics/10-gnmi-openconfig/concept/">概要</a> (28)</li>
 <li><a href="../../topics/02-bgp/concept/">概要</a> (27)</li>
-<li><a href="../../topics/21-lab-vs-developer/architecture/">アーキテクチャ</a> (26)</li>
 </ul>
 <h3 id="tam"><a href="#term-tam">TAM</a><a class="headerlink" href="#tam" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../config-db/tam/">TAM テーブル</a> (177)</li>
+<li><a href="../../topics/17-srv6-mpls/operations/">運用</a> (11)</li>
 <li><a href="../../_meta/changelog/">変更履歴</a> (7)</li>
 <li><a href="../../routing/path-tracing-midpoint/">Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）</a> (3)</li>
 <li><a href="../../topics/17-srv6-mpls/internals/">内部実装</a> (3)</li>
-<li><a href="../../_meta/sitemap/">サイトマップ</a> (2)</li>
 </ul>
 <h3 id="tc-traffic-class"><a href="#term-tc">TC (Traffic Class)</a><a class="headerlink" href="#tc-traffic-class" title="Permanent link">&para;</a></h3>
 <ul>
@@ -46000,7 +46000,7 @@
 </ul>
 <h3 id="tor"><a href="#term-tor">ToR</a><a class="headerlink" href="#tor" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../_meta/sitemap/">サイトマップ</a> (78)</li>
+<li><a href="../../_meta/sitemap/">サイトマップ</a> (77)</li>
 <li><a href="../../topics/05-dual-tor/concept/">Dual-ToR の考え方</a> (65)</li>
 <li><a href="../config-db/device-metadata/">DEVICE_METADATA テーブル</a> (59)</li>
 <li><a href="../../overlay/active-standby-dual-tor/">Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）</a> (40)</li>
