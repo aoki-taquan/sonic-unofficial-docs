@@ -87,23 +87,21 @@ flowchart LR
 | `config interface breakout <port> <mode>` | breakout 変更 |
 | `config interface breakout <port> <mode> -f` | force |
 
-## 4. 制限事項と干渉する機能
+## 4. 干渉・連携する機能
 
-- **対応 platform のみ**: `platform.json` に modes 記載が必要
-- **依存設定の自動再生は無し**: 削除はするが再構築はユーザ責任
-- **link 一時断**: SAI port create/remove のため link が切れる
-- **fabric port** など特殊 port には適用しない
+breakout 操作と整合を取る必要がある周辺機能・サブシステム。
+
 - **port-profile-init / fast-link-up**: port 起動シーケンスと整合が要る
 - **media-based-port-settings**: SI 設定と連携
 - **multi-asic / single-json**: per-asic で breakout を扱う場合の整合
 - **CMIS / ZR**: ZR は固定 application-select で breakout 自由度低
+- **fabric port** など特殊 port には適用しない
 
 ## 5. トラブルシューティング
 
 - **変更が拒否される** → `platform.json` の supported modes、依存設定の有無
 - **一部 port だけ up しない** → 物理 lane mapping、SI 設定、[ASIC](../reference/glossary.md#term-asic) 側 lane 割当
 - **関連設定が消えた** → 依存解決で削除済み。再投入が必要
-
 
 ### コマンド例
 
@@ -116,11 +114,14 @@ redis-cli -n 4 hgetall 'BREAKOUT_CFG|Ethernet0'
 show platform summary
 ```
 
-## 制限事項
+## 6. 運用上の注意 / 既知の制約
 
-- breakout 可能なポート組合せは platform.json の `interfaces` キーに定義された範囲に限られ、[HLD](../reference/glossary.md#term-hld) 記述よりも実機サポート範囲が狭い場合がある。
-- breakout 実行時は対象ポートが一時的に down し、隣接機器の [LLDP](../reference/glossary.md#term-lldp) / LAG メンバーシップが flap する点を運用で考慮する。
-- 動的 breakout 中に CONFIG_DB が中間状態となるため、並行して `config save` を実行すると不整合な config が保存される。
+機能としての適用範囲・実機運用上の留意点。
+
+- **対応 platform のみ**: `platform.json` に modes 記載が必要。breakout 可能なポート組合せは `interfaces` キーに定義された範囲に限られ、[HLD](../reference/glossary.md#term-hld) 記述よりも実機サポート範囲が狭い場合がある
+- **依存設定の自動再生は無し**: 削除はするが再構築はユーザ責任
+- **link 一時断**: SAI port create/remove のため link が切れ、隣接機器の [LLDP](../reference/glossary.md#term-lldp) / LAG メンバーシップが flap する
+- **中間状態での config save 禁止**: 動的 breakout 中に CONFIG_DB が中間状態となるため、並行して `config save` を実行すると不整合な config が保存される
 
 ## 引用元
 
