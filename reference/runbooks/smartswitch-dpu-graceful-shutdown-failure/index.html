@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: SmartSwitch DPU の graceful shutdown が完了しない — : sonic-net/sonic-platform-daemons @ master — chassisd : sonic-net/sonic-utilities @ master — chassis_mod…">
+        <meta name="description" content="Runbook: SmartSwitch DPU の graceful shutdown が完了しない場合の症状・原因・切り分け・対処を、chassisd と sonic-utilities の実装に基づいて整理する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SmartSwitch DPU graceful shutdown が失敗する - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: SmartSwitch DPU の graceful shutdown が完了しない — : sonic-net/sonic-platform-daemons @ master — chassisd : sonic-net/sonic-utilities @ master — chassis_mod…" />
+<meta property="og:description" content="Runbook: SmartSwitch DPU の graceful shutdown が完了しない場合の症状・原因・切り分け・対処を、chassisd と sonic-utilities の実装に基づいて整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/smartswitch-dpu-graceful-shutdown-failure.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/smartswitch-dpu-graceful-shutdown-failure/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SmartSwitch DPU graceful shutdown が失敗する - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: SmartSwitch DPU の graceful shutdown が完了しない — : sonic-net/sonic-platform-daemons @ master — chassisd : sonic-net/sonic-utilities @ master — chassis_mod…" />
+<meta property="twitter:description" content="Runbook: SmartSwitch DPU の graceful shutdown が完了しない場合の症状・原因・切り分け・対処を、chassisd と sonic-utilities の実装に基づいて整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/smartswitch-dpu-graceful-shutdown-failure.png" />
 </head>
   
@@ -36125,7 +36125,7 @@
     C -- No --&gt; C1[PCIe / 制御チャネルの疎通確認]
     C -- Yes --&gt; D{drain 完了したか?}
     D -- No --&gt; D1[traffic drain の閾値・timeout を見直し]
-    D -- Yes --&gt; E[最終的に強制 shutdown を実施]</code></pre>
+    D -- Yes --&gt; E[CHASSIS_MODULE admin_status=down を再投入して chassisd の遷移を待つ]</code></pre>
 <h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1">1. 現状<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>status
@@ -36152,7 +36152,8 @@
 <ul>
 <li><a href="../../glossary/#term-eni">ENI</a> 残: controller 側で migration を実行、完了後に再 shutdown</li>
 <li>chassisd 詰まり: <code>docker restart pmon</code> （<strong>注意</strong>: 他センサ / fan / xcvrd も再起動される）</li>
-<li>強制 shutdown: <code>config chassis modules shutdown DPU0 -f</code> （対応 utilities 版でのみ。<strong>ロールバック</strong>: <code>config chassis modules startup DPU0</code>、ただしフロー復元不可）</li>
+<li>shutdown コマンドが「state transition is already in progress」で返る場合: chassisd の state machine が前回の遷移を抱えたままなので、<code>CHASSIS_MODULE_TABLE</code> の <code>state_transition_in_progress</code> を確認し、解消しないなら pmon を再起動して再投入する <!-- evidence: sonic-net/sonic-utilities config/chassis_modules.py L155-L165 ref 39732bceb8bdefe706518ab40623bbbba6ff33b9 --></li>
+<li><strong>強制 shutdown フラグは存在しない</strong>: <code>config chassis modules shutdown &lt;name&gt;</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>CHASSIS_MODULE|&lt;name&gt;</code> を <code>admin_status=down</code> にセットするだけで、<code>-f</code> / <code>--force</code> 等のオプションは Click 定義に存在しない<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。SIGKILL 相当の即時停止が必要な場合は、ベンダ提供の platform API（<code>platform_chassisd --get-dpu-status</code> 系コマンドや SDK ツール）経由で電源・PCIe を直接落とすしかない。<strong>ロールバック</strong>: <code>config chassis modules startup DPU0</code>、ただし保留フローは復元不可</li>
 <li>platform plugin 異常: ベンダ提供 plugin の log と GitHub Issue で確認</li>
 </ul>
 <h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -36162,16 +36163,16 @@
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: 4353e5992ae2 -->
+<!-- glossary-links-injected: 896d391185a9 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-platform-daemons @ master — chassisd&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/sonic-platform-daemons @ master — <code>sonic-chassisd/scripts/chassisd</code> ref <code>4ba9612cb7756651062d37f977e3df17d57f740d</code> L1120-L1220 (admin_status 監視と状態遷移)&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ master — chassis_modules.py&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ master — <code>config/chassis_modules.py</code> ref <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code> L136-L172 (<code>shutdown</code> Click サブコマンド定義: 引数は <code>chassis_module_name</code> のみで <code>--force</code> 系オプション無し)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

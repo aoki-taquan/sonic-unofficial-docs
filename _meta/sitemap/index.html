@@ -35896,7 +35896,7 @@
 <li><a href="../../topics/09-telemetry-snmp/">Telemetry / SNMP / Observability</a> — [meta] Telemetry / SNMP / Observability — この章は、SONiC で「いまスイッチが何をしているか」「壊れたとき何が起きたか」を読む…</li>
 <li><a href="../../topics/09-telemetry-snmp/concept/">概念</a> — [meta] 概念 — SONiC の observability は、用途ごとに別のサブシステムが担当します。読み解くときは「いま何が起きているか」「変化点をどう受け取る…</li>
 <li><a href="../../topics/09-telemetry-snmp/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — 観測経路は ASIC 側で値を作り、syncd / orchagent / 各 daemon が Redis に書き、上から SNMP /…</li>
-<li><a href="../../topics/09-telemetry-snmp/setup/">設定</a> — [meta] 設定 — 監視機能の設定は経路ごとに別の CONFIG_DB table と CLI に分かれます。ここではシナリオ別の最小手順、確認用の show 出力、よ…</li>
+<li><a href="../../topics/09-telemetry-snmp/setup/">設定</a> — [code-verified] 監視機能 (SNMP / sFlow / syslog / gNMI telemetry / auto-techsupport) の設定をシナリオ別最小手順、…</li>
 <li><a href="../../topics/09-telemetry-snmp/operations/">運用</a> — [meta] 運用 — 障害調査では「どこまで生きているか」「いつから壊れたか」「保全は取れたか」の順で見ます。SONiC は調べる対象によって CLI が分かれているので…</li>
 <li><a href="../../topics/09-telemetry-snmp/internals/">内部実装</a> — [meta] 内部実装 — このページは、observability のうち SONiC 内部で「いつ何のスレッドが値を書いているか」を整理します。設定や運用の入口は前後の…</li>
 <li><a href="../../topics/09-telemetry-snmp/advanced/">発展トピック</a> — [meta] 発展トピック — このページは、基本の observability 経路（CLI / counter / SNMP / gNMI / techsupport）…</li>
@@ -35931,7 +35931,7 @@
 <li><a href="../../topics/12-multi-asic-voq/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — ここでは「supervisor の Chassis DB」「各 ASIC namespace の Redis」「fabric を介した d…</li>
 <li><a href="../../topics/12-multi-asic-voq/setup/">設定</a> — [meta] 設定 — Multi-ASIC / VOQ chassis の設定の核心は「ASIC ごとに別 JSON を持つのではなく、1 枚の Golden Confi…</li>
 <li><a href="../../topics/12-multi-asic-voq/operations/">運用</a> — [meta] 運用 — Multi-ASIC / VOQ chassis の運用調査は、pizza-box と比べて「どこから見るか」が増えます。supervisor から…</li>
-<li><a href="../../topics/12-multi-asic-voq/internals/">内部実装</a> — [meta] 内部実装 — Multi-ASIC / VOQ chassis の内部実装は「namespace で分けられた Redis / orchagent / syn…</li>
+<li><a href="../../topics/12-multi-asic-voq/internals/">内部実装</a> — [code-verified] Multi-ASIC / VOQ chassis の内部実装。namespace 分割した per-ASIC Redis / orchagent / sync…</li>
 <li><a href="../../topics/12-multi-asic-voq/advanced/">発展トピック</a> — [meta] 発展トピック — VOQ chassis 固有の機能は、BGP・LAG・Everflow・TSA・warm reboot のような既存機能領域ごとに別 HLD…</li>
 </ul>
 </li>
@@ -36132,7 +36132,7 @@
 <li><a href="../../routing/test-plan-for-inner-packet-hashing-in-ecmp/">ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）</a> — [code-verified] ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ） — ECMP ne…</li>
 <li><a href="../../routing/virtual-router-redundancy-protocol-adaptation-hld/">VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking）</a> — [code-verified] VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking） — VRRP (RFC 5798) は 複数ルータが 1 つ…</li>
 <li><a href="../../routing/segment-routing-over-ipv6-srv6-hld/">SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）</a> — [code-verified] SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） — IETF RFC 8754 / 898…</li>
-<li><a href="../../routing/sonic-usid/">SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）</a> — [code-verified] SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張） — uSID（micro-SID）は IETF Compressed SRv6…</li>
+<li><a href="../../routing/sonic-usid/">SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）</a> — [discrepancy-found] SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）。SONiC の srv6orch が APPL_DB SRV6_MY_SID_T…</li>
 <li><a href="../../routing/srv6-sid-l3adj/">SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）</a> — [code-verified] SONiC の SRv6 SID L3 隣接拡張を解説する。cross-connect 系 behavior（uA / End.X / uDX4 / uDX6…</li>
 <li><a href="../../routing/srv6-vpn-hld/">SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）</a> — [code-verified] SRv6 VPN（L3VPN over SRv6 と SRv6 Policy） — Alibaba がエッジルータ用ホワイトボックス SONiC で運用してい…</li>
 <li><a href="../../routing/static-configuration-of-srv6-in-sonic-hld/">SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）</a> — [code-verified] SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR） — SRv6 SDN を BGP に頼らず構築する…</li>
@@ -36949,7 +36949,7 @@
 <li><a href="../../reference/runbooks/asic-link-autoneg-mismatch/">ASIC link が UP しない (autoneg / FEC / speed mismatch)</a> — [code-verified] Runbook: ASIC port が UP しない (autoneg / speed / FEC 不整合) — : sonic-net/sonic-sws…</li>
 <li><a href="../../reference/runbooks/macsec-mka-not-established/">MACsec MKA セッションが確立しない</a> — [code-verified] Runbook: MACsec が UP しない / MKA セッション確立失敗 — : sonic-net/sonic-swss @ master — ma…</li>
 <li><a href="../../reference/runbooks/dash-eni-down/">DASH ENI が down する / トラフィック止まる</a> — [code-verified] Runbook: DASH ENI が admin_state=up に遷移しない / トラフィック断 — : sonic-net/sonic-dash-ap…</li>
-<li><a href="../../reference/runbooks/smartswitch-dpu-graceful-shutdown-failure/">SmartSwitch DPU graceful shutdown が失敗する</a> — [code-verified] Runbook: SmartSwitch DPU の graceful shutdown が完了しない — : sonic-net/sonic-platfor…</li>
+<li><a href="../../reference/runbooks/smartswitch-dpu-graceful-shutdown-failure/">SmartSwitch DPU graceful shutdown が失敗する</a> — [code-verified] Runbook: SmartSwitch DPU の graceful shutdown が完了しない場合の症状・原因・切り分け・対処を、chassisd と…</li>
 <li><a href="../../reference/runbooks/appdb-asicdb-sync-lag/">APPL_DB → ASIC_DB の反映が遅延・停止する</a> — [code-verified] Runbook: APPL_DB の更新が ASIC_DB（syncd）に反映されない — : sonic-net/sonic-swss @ master —…</li>
 <li><a href="../../reference/runbooks/snmpv3-auth-failure/">SNMPv3 ユーザー認証が失敗する</a> — [code-verified] Runbook: SNMPv3 user 認証 / 暗号化が失敗する — : sonic-net/sonic-snmpagent @ master — mai…</li>
 <li><a href="../../reference/runbooks/nat-translation-miss/">NAT translation が一部漏れる</a> — [code-verified] Runbook: NAT translation が一部のフローで効かない — : sonic-net/sonic-swss @ master — nator…</li>
@@ -36958,7 +36958,7 @@
 <li><a href="../../reference/runbooks/techsupport-size-bloat/">show techsupport の出力サイズが肥大化する</a> — [runbook-verified] Runbook: show techsupport (generate_dump) のアーカイブが GB 級に肥大化 — : sonic-net/sonic-…</li>
 <li><a href="../../reference/runbooks/portchannel-lacp-not-established/">PortChannel メンバーで LACP が確立しない</a> — [runbook-verified] Runbook: PortChannel メンバーで LACP が確立しない — : sonic-net/sonic-swss @ 4305596 — cfg…</li>
 <li><a href="../../reference/runbooks/snmp-polling-timeout/">SNMP polling が timeout する</a> — [runbook-verified] Runbook: SNMP polling が timeout する — : sonic-net/sonic-snmpagent @ 4305596 — ax…</li>
-<li><a href="../../reference/runbooks/bgp-route-not-advertised/">BGP route が広告されない</a> — [runbook-verified] Runbook: BGP route が広告されない — : sonic-net/sonic-frr @ 799f47f — bgpd/bgp_route.c…</li>
+<li><a href="../../reference/runbooks/bgp-route-not-advertised/">BGP route が広告されない</a> — [runbook-verified] Runbook: BGP route が想定 peer へ広告されない事象を、FRR の Adj-RIB-Out 判定と fpmsyncd の APP_DB…</li>
 <li><a href="../../reference/runbooks/acl-rule-no-hit/">ACL ルールが効かない / counter が増えない</a> — [runbook-verified] Runbook: ACL ルールが効かない / counter が増えない — : sonic-net/sonic-swss @ 4305596 — orch…</li>
 <li><a href="../../reference/runbooks/interface-mtu-mismatch/">Interface MTU mismatch によるパケットドロップ</a> — [runbook-verified] Runbook: Interface MTU mismatch によるパケットドロップ — : sonic-net/sonic-swss @ 4305596…</li>
 <li><a href="../../reference/runbooks/routing-loop-detected/">Routing loop が発生している</a> — [runbook-verified] Runbook: Routing loop が発生している — : sonic-net/sonic-frr @ 799f47f — zebra/zebra_r…</li>
@@ -36983,12 +36983,12 @@
 <li><strong>横断カテゴリ</strong> (<code>categories/</code>)</li>
 <li><a href="../../categories/">横断カテゴリ</a> — [meta] 横断カテゴリ — このドキュメントの本体は architecture / overlay / routing / switching / platform /…</li>
 <li><a href="../../categories/dash/">DASH 関連</a> — [meta] DASH 関連 — このカテゴリは、area の壁を越えて DASH に関わる SONiC 側のページを横断で見られるようにします。</li>
-<li><a href="../../categories/smartswitch/">SmartSwitch 関連</a> — [meta] SmartSwitch 関連 — このカテゴリでは、SmartSwitch を横断するページを NPU 側設計（CONFIG_DB / APPL_DB の D…</li>
+<li><a href="../../categories/smartswitch/">SmartSwitch 関連</a> — [meta] SmartSwitch カテゴリの索引。NPU 側設計（CONFIG_DB / APPL_DB の DPU overlay と HA actor）・DPU 管…</li>
 <li><a href="../../categories/dual-tor/">Dual-ToR 関連</a> — [meta] Dual-ToR 関連 — このカテゴリは Dual-ToR に関わるページを area 横断でまとめます。</li>
 <li><a href="../../categories/reboot/">Warm-Reboot / Fast-Reboot 関連</a> — [meta] Warm-Reboot / Fast-Reboot 関連 — このカテゴリは、warm/fast reboot に関わるページを area 横断でまとめます。</li>
 <li><a href="../../categories/multi-asic/">Multi-ASIC / VOQ chassis 関連</a> — [meta] Multi-ASIC / VOQ chassis 関連 — このカテゴリは Multi-ASIC と VOQ chassis に関わるページを area 横断…</li>
 <li><a href="../../categories/bgp-evpn/">BGP / EVPN 関連</a> — [meta] BGP / EVPN 関連 — SONiC のルーティングは FRRouting (FRR) を中心に構築されており、その大部分が BGP / EVPN-VX…</li>
-<li><a href="../../categories/sai-extensions/">SAI 拡張属性追加系</a> — [meta] SAI 拡張属性追加系 — このカテゴリは、SAI そのものを横断するページを集めます。</li>
+<li><a href="../../categories/sai-extensions/">SAI 拡張属性追加系</a> — [meta] SAI 拡張属性追加系 — SAI capability 問い合わせ・失敗ハンドリング・SAI POST・Generic SAI Extension CRM・…</li>
 <li><a href="../../categories/mib-snmp/">MIB / SNMP 関連</a> — [meta] SONiC の SNMP エージェントは Net-SNMP + sonic_ax_impl (AgentX subagent) で構成され、snmpd が標準…</li>
 <li><a href="../../categories/gnmi-openconfig/">gNMI / gNOI / OpenConfig 関連</a> — [meta] gNMI / gNOI / OpenConfig 関連 — SONiC の管理プレーンは Management Framework（REST / gNMI /…</li>
 <li><a href="../../categories/container-build/">Container / Build system 関連</a> — [meta] SONiC の container / build / image / upgrade に関わるページを area 横断でまとめたカテゴリ索引。sonic-b…</li>

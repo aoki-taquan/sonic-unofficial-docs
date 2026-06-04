@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張） — uSID（micro-SID）は IETF Compressed SRv6 Segment List Encoding と SRv6 uSID instructions で定義される、SRv6 SID を 16 bit などに圧縮 する…">
+        <meta name="description" content="SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）。SONiC の srv6orch が APPL_DB SRV6_MY_SID_TABLE の action として un / ua / udt4 / udt6 / udt46 / udx4 / udx6 を受け、uSID 専用の SAI my_sid_entry endpoint behavior enum にマップする実装と HLD 原文との差分を整理する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張） — uSID（micro-SID）は IETF Compressed SRv6 Segment List Encoding と SRv6 uSID instructions で定義される、SRv6 SID を 16 bit などに圧縮 する…" />
+<meta property="og:description" content="SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）。SONiC の srv6orch が APPL_DB SRV6_MY_SID_TABLE の action として un / ua / udt4 / udt6 / udt46 / udx4 / udx6 を受け、uSID 専用の SAI my_sid_entry endpoint behavior enum にマップする実装と HLD 原文との差分を整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/sonic-usid.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/sonic-usid/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張） — uSID（micro-SID）は IETF Compressed SRv6 Segment List Encoding と SRv6 uSID instructions で定義される、SRv6 SID を 16 bit などに圧縮 する…" />
+<meta property="twitter:description" content="SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）。SONiC の srv6orch が APPL_DB SRV6_MY_SID_TABLE の action として un / ua / udt4 / udt6 / udt46 / udx4 / udx6 を受け、uSID 専用の SAI my_sid_entry endpoint behavior enum にマップする実装と HLD 原文との差分を整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/sonic-usid.png" />
 </head>
   
@@ -9897,6 +9897,34 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         制限事項
       
     </span>
@@ -9905,7 +9933,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -9916,7 +9944,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -9928,7 +9956,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -9944,7 +9972,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36108,6 +36136,34 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         制限事項
       
     </span>
@@ -36116,7 +36172,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -36127,7 +36183,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -36139,7 +36195,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -36155,7 +36211,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36208,16 +36264,22 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-swss/orchagent/srv6orch.cpp</code> L41-62 の <code>end_behavior_map</code> に <code>un / ua / udt4 / udt6 / udt46 / udx4 / udx6</code> 等が登録され、<code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</code>・<code>UA</code>・<code>UDT*</code>・<code>UDX*</code> を参照していることを確認。L1369-1410 で behavior 別の VRF / nexthop バリデーションも分岐済み（verified at: 2026-05-09）。FRR 系 SRv6 制御プレーンは引き続き本 HLD のスコープ外。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: discrepancy-found (monitor: evolved_beyond_hld)</p>
+<p><code>sonic-swss/orchagent/srv6orch.cpp</code> L55-69 の <code>end_behavior_map</code> / <code>end_flavor_map</code> を実コードで確認したところ、HLD 原文（<code>sonic-net/SONiC/doc/srv6/SRv6_uSID.md</code>）と master 実装で 2 点乖離あり（verified at: 2026-06-04）:</p>
+<ol>
+<li>HLD は「SAI は既存 <code>BEHAVIOR_DT*/DX*</code> enum で表現できる」と書いているが、master 実装は <strong>uSID 専用の <code>BEHAVIOR_UDT4/UDT6/UDT46/UDX4/UDX6</code></strong> にマップする</li>
+<li>HLD は「<code>uN</code> / <code>uA</code> は flavor <code>PSP_AND_USD</code>」と書いているが、master 実装の <code>uN</code> は <code>FLAVOR_NONE</code>、<code>uA</code> のみ <code>PSP_AND_USD</code></li>
+</ol>
+<p>詳細は本文「追加される end behavior」表参照。FRR 系 SRv6 制御プレーンは引き続き本 HLD のスコープ外。</p>
 </div>
 <h1 id="srv6-usidsrv6orch-unuaudtudx">SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）<a class="headerlink" href="#srv6-usidsrv6orch-unuaudtudx" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>uSID（micro-SID）は IETF <a href="https://datatracker.ietf.org/doc/draft-ietf-spring-srv6-srh-compression/">Compressed SRv6 Segment List Encoding</a> と <a href="https://datatracker.ietf.org/doc/draft-filsfils-spring-net-pgm-extension-srv6-usid/">SRv6 uSID instructions</a> で定義される、<a href="../../reference/glossary/#term-srv6">SRv6</a> SID を <strong>16 bit などに圧縮</strong> する仕組みである。完全な 128bit IPv6 を SID として使う通常の SRv6 と異なり、1 つの 128bit IPv6 アドレス（uSID carrier）に <strong>最大 6 個の uSID</strong> を詰められる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。MTU オーバヘッドを抑えつつ、長いセグメントリストを表現できる。</p>
-<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <a href="../../reference/glossary/#term-sonic">SONiC</a> の既存 <code>srv6orch</code>（<a href="https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md">SRv6 HLD</a> 系）に対し、<strong>uSID 用の新しい end behavior（uN / uA / uDT / uDX）を追加</strong> する拡張のみを定義する。<a href="../../reference/glossary/#term-sai">SAI</a> API は既存の <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*</code> ですべて表現できるため、SAI の変更は不要である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC の <a href="../../reference/glossary/#term-frr">FRR</a> 系は本 HLD 時点で SRv6 ルーティングプロトコル機能を持たないため、ルーティング層への対応は本 HLD のスコープ外。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <a href="../../reference/glossary/#term-sonic">SONiC</a> の既存 <code>srv6orch</code>（<a href="https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md">SRv6 HLD</a> 系）に対し、<strong>uSID 用の新しい end behavior（uN / uA / uDT / uDX）を追加</strong> する拡張を定義する。HLD 原文は「<a href="../../reference/glossary/#term-sai">SAI</a> は既存 enum で表現できるため SAI 変更は不要」と記述しているが<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>、master の <code>srv6orch.cpp</code> 実装では <strong>uSID 専用の SAI enum</strong>（<code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</code> / <code>UA</code> / <code>UDT4</code> / <code>UDT6</code> / <code>UDT46</code> / <code>UDX4</code> / <code>UDX6</code>）に分岐済み<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>で、HLD 記述と実装は乖離している（後述の表参照）。SONiC の <a href="../../reference/glossary/#term-frr">FRR</a> 系は本 HLD 時点で SRv6 ルーティングプロトコル機能を持たないため、ルーティング層への対応は本 HLD のスコープ外。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="end-behavior">追加される end behavior<a class="headerlink" href="#end-behavior" title="Permanent link">&para;</a></h3>
+<p><strong>実装ベース</strong>（<code>sonic-swss/orchagent/srv6orch.cpp</code> L55-61, L65-69）:</p>
 <table>
 <thead>
 <tr>
@@ -36230,7 +36292,7 @@
 <tr>
 <td><code>un</code></td>
 <td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</code></td>
-<td><code>PSP_AND_USD</code></td>
+<td><code>FLAVOR_NONE</code></td>
 </tr>
 <tr>
 <td><code>ua</code></td>
@@ -36239,35 +36301,36 @@
 </tr>
 <tr>
 <td><code>udt4</code></td>
-<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT4</code></td>
-<td>(既存 End.DT4 と同じ)</td>
+<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT4</code></td>
+<td>（flavor map なし）</td>
 </tr>
 <tr>
 <td><code>udt6</code></td>
-<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT6</code></td>
-<td>同 End.DT6</td>
+<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT6</code></td>
+<td>（flavor map なし）</td>
 </tr>
 <tr>
 <td><code>udt46</code></td>
-<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT46</code></td>
-<td>同 End.DT46</td>
+<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT46</code></td>
+<td>（flavor map なし）</td>
 </tr>
 <tr>
 <td><code>udx4</code></td>
-<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX4</code></td>
-<td>同 End.DX4</td>
+<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDX4</code></td>
+<td>（flavor map なし）</td>
 </tr>
 <tr>
 <td><code>udx6</code></td>
-<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX6</code></td>
-<td>同 End.DX6</td>
+<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDX6</code></td>
+<td>（flavor map なし）</td>
 </tr>
 </tbody>
 </table>
 <p>要点:</p>
 <ul>
-<li><code>uN</code> / <code>uA</code> は <strong>PSP（Penultimate Segment Pop）と USD（Ultimate Segment Decapsulation）の両方を持つ flavor</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>uDT*</code> / <code>uDX*</code> は SAI レイヤでは既存の End.DT<em> / End.DX</em> と完全に同じ。<a href="../../reference/glossary/#term-orchagent">orchagent</a> の文字列マッピングだけが追加される</li>
+<li>HLD 原文<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup> は「<code>uN</code> / <code>uA</code> は <strong>PSP（Penultimate Segment Pop）と USD（Ultimate Segment Decapsulation）の両方を持つ flavor</strong>」と書いているが、master 実装<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup> では <code>uN</code> の flavor は <code>FLAVOR_NONE</code>、<code>uA</code> のみ <code>PSP_AND_USD</code> で、HLD と乖離している</li>
+<li><code>uDT*</code> / <code>uDX*</code> は HLD 原文では「既存 End.DT<em> / End.DX</em> と同じ SAI enum を使う」とされていたが、master 実装<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup> では <strong>uSID 専用の SAI enum</strong>（<code>UDT4</code> / <code>UDT6</code> / <code>UDT46</code> / <code>UDX4</code> / <code>UDX6</code>）が新設され、それぞれ専用 enum にマップされる。これらは SAI 側の uSID サポート ASIC で必要となる</li>
+<li><a href="../../reference/glossary/#term-orchagent">orchagent</a> の文字列パースは <code>end.dx6</code> などのドット区切り既存表記と並んで <code>udx6</code> 等のドットなし表記も受理する<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
 <h3 id="orchagent">orchagent 側変更<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -36275,39 +36338,61 @@
     ORCH --&gt;|behavior + flavor 解決| MAP{end_behavior_map\nend_flavor_map}
     MAP --&gt; SAI[SAI my_sid_entry create]
     SAI --&gt; ASIC[ASIC]</code></pre>
-<p><code>srv6orch</code> は <code>APPL_DB.SRV6_MY_SID_TABLE</code> を購読する。HLD は新しい <code>action</code> 文字列（<code>un</code>, <code>ua</code>, <code>udt4</code>, <code>udt6</code>, <code>udt46</code>, <code>udx4</code>, <code>udx6</code>）を <strong>既存の <code>end_behavior_map</code> / <code>end_flavor_map</code> に追記する</strong> だけの変更とする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-appl_db">APPL_DB</a> スキーマ自体に変更は無い。</p>
-<p>具体的なマップ追記内容（HLD 抜粋）:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// end_behavior_map に追加</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="p">{</span><span class="s">&quot;udx6&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX6</span><span class="p">},</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">{</span><span class="s">&quot;udx4&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX4</span><span class="p">},</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">{</span><span class="s">&quot;udt6&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT6</span><span class="p">},</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">{</span><span class="s">&quot;udt4&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT4</span><span class="p">},</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">{</span><span class="s">&quot;udt46&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT46</span><span class="p">},</span>
+<p><code>srv6orch</code> は <code>APPL_DB.SRV6_MY_SID_TABLE</code> を購読する。HLD は新しい <code>action</code> 文字列（<code>un</code>, <code>ua</code>, <code>udt4</code>, <code>udt6</code>, <code>udt46</code>, <code>udx4</code>, <code>udx6</code>）を <strong>既存の <code>end_behavior_map</code> / <code>end_flavor_map</code> に追記する</strong> 変更とする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-appl_db">APPL_DB</a> スキーマ自体に変更は無い。</p>
+<p>具体的なマップ追記内容（<strong>master 実装</strong>の抜粋、<code>sonic-swss/orchagent/srv6orch.cpp</code> L55-69）<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// end_behavior_map に追加（uSID 専用 SAI enum）</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="p">{</span><span class="s">&quot;udx6&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDX6</span><span class="p">},</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">{</span><span class="s">&quot;udx4&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDX4</span><span class="p">},</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">{</span><span class="s">&quot;udt6&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT6</span><span class="p">},</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">{</span><span class="s">&quot;udt4&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT4</span><span class="p">},</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">{</span><span class="s">&quot;udt46&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT46</span><span class="p">},</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">{</span><span class="s">&quot;un&quot;</span><span class="p">,</span><span class="w">    </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</span><span class="p">},</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">{</span><span class="s">&quot;ua&quot;</span><span class="p">,</span><span class="w">    </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UA</span><span class="p">}</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1">// end_flavor_map に追加（uN, uA は PSP_AND_USD）</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">{</span><span class="s">&quot;un&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_PSP_AND_USD</span><span class="p">},</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1">// end_flavor_map に追加（uN は NONE、uA のみ PSP_AND_USD）</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">{</span><span class="s">&quot;un&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_NONE</span><span class="p">},</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">{</span><span class="s">&quot;ua&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_PSP_AND_USD</span><span class="p">}</span>
 </span></code></pre></div>
 <!-- evidence:
-source: sonic-net/SONiC/doc/srv6/SRv6_uSID.md#L34-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/sonic-swss/orchagent/srv6orch.cpp#L41-L69 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
 excerpt: |
-  Changes in orchagent,
-  - While processing MYSID entries, from SRV6_MY_SID_TABLE off of APPDB, handling of new actions uN, uA, uDT and uDX added in srv6orch. No APPDB schema changes required.
-reasoning: APPL_DB スキーマ無変更・マップ追加だけ、という最小実装方針の根拠。
+  const map<string, sai_my_sid_entry_endpoint_behavior_t> end_behavior_map = {
+      ...
+      {"udx6", SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDX6},
+      {"udx4", SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDX4},
+      {"udt6", SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT6},
+      {"udt4", SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT4},
+      {"udt46", SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT46},
+      {"un", SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN},
+      {"ua", SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UA}};
+  const map<string, ..._flavor_t> end_flavor_map = {
+      ...
+      {"un", SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_NONE},
+      {"ua", SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_PSP_AND_USD}};
+reasoning: master 実装が HLD 原文と異なり、uSID 専用 SAI enum (UDX*/UDT*) と uN=FLAVOR_NONE を使うことを示す。HLD 表記と乖離している箇所の裏取り。
 -->
 
 <!-- evidence-rendered:start -->
 <details class="note">
-<summary>📋 検証エビデンス: sonic-net/SONiC/doc/srv6/SRv6_uSID.md#L34-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/orchagent/srv6orch.cpp#L41-L69 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</summary>
 <p><strong>出典</strong>:</p>
-<p><code>sonic-net/SONiC/doc/srv6/SRv6_uSID.md#L34-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><code>sonic-net/sonic-swss/orchagent/srv6orch.cpp#L41-L69 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</code></p>
 <p><strong>抜粋</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Changes in orchagent,
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>- While processing MYSID entries, from SRV6_MY_SID_TABLE off of APPDB, handling of new actions uN, uA, uDT and uDX added in srv6orch. No APPDB schema changes required.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>const map&lt;string, sai_my_sid_entry_endpoint_behavior_t&gt; end_behavior_map = {
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    ...
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    {&quot;udx6&quot;, SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDX6},
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    {&quot;udx4&quot;, SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDX4},
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    {&quot;udt6&quot;, SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT6},
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    {&quot;udt4&quot;, SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT4},
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    {&quot;udt46&quot;, SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT46},
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    {&quot;un&quot;, SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN},
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    {&quot;ua&quot;, SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UA}};
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>const map&lt;string, ..._flavor_t&gt; end_flavor_map = {
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    ...
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    {&quot;un&quot;, SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_NONE},
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    {&quot;ua&quot;, SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_PSP_AND_USD}};
 </span></code></pre></div>
-<p><strong>判断根拠</strong>: APPL_DB スキーマ無変更・マップ追加だけ、という最小実装方針の根拠。</p>
+<p><strong>判断根拠</strong>: master 実装が HLD 原文と異なり、uSID 専用 SAI enum (UDX<em>/UDT</em>) と uN=FLAVOR_NONE を使うことを示す。HLD 表記と乖離している箇所の裏取り。</p>
 </details>
 <!-- evidence-rendered:end -->
 
@@ -36374,30 +36459,69 @@ reasoning: APPL_DB スキーマ無変更・マップ追加だけ、という最�
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">実装との乖離<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>HLD 原文（<code>sonic-net/SONiC</code> <code>doc/srv6/SRv6_uSID.md</code> @ <code>49bab5b5...</code>）と master 実装（<code>sonic-swss/orchagent/srv6orch.cpp</code> L41-69 @ <code>4305596...</code>）の差分。<strong>monitor: evolved_beyond_hld</strong>（実装が HLD の素朴な記述を超え、SAI 側に専用 enum を追加する形に進化）。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>HLD 原文の記述<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></th>
+<th>master 実装<sup id="fnref8:2"><a class="footnote-ref" href="#fn:2">2</a></sup></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>uDT*</code> / <code>uDX*</code> の SAI mapping</td>
+<td>既存の <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT4/DT6/DT46/DX4/DX6</code> を再利用（SAI 変更不要）</td>
+<td>uSID 専用 enum <code>BEHAVIOR_UDT4/UDT6/UDT46/UDX4/UDX6</code> を新設し、それぞれにマップ</td>
+</tr>
+<tr>
+<td><code>uN</code> の flavor</td>
+<td><code>PSP_AND_USD</code></td>
+<td><code>FLAVOR_NONE</code></td>
+</tr>
+<tr>
+<td><code>uA</code> の flavor</td>
+<td><code>PSP_AND_USD</code></td>
+<td><code>PSP_AND_USD</code>（一致）</td>
+</tr>
+<tr>
+<td>文字列パース</td>
+<td><code>un / ua / udt4 / udt6 / udt46 / udx4 / udx6</code> を追加</td>
+<td>同上（ドットなし表記）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">影響<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>SAI 実装の前提が変わった</strong>: HLD 当初は「SAI に手を入れずに済む」が売りだったが、現状は SAI 側に <code>UDT*/UDX*</code> enum と対応するベンダー実装が必要。これらを未実装の ASIC では <code>action: udt*/udx*</code> が <code>SAI_STATUS_NOT_SUPPORTED</code> で拒否される</li>
+<li><strong>uN の flavor 差</strong>: <code>FLAVOR_NONE</code> は SAI 仕様上「フレーバを指定しない」意味で、PSP / USD の挙動は SAI / ASIC 側のデフォルトに依存する。<code>uN</code> を transit / encap シナリオで使う場合、ASIC ベンダー実装のデフォルト挙動を確認する必要がある</li>
+</ul>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>本 HLD のスコープは <strong>データプレーン programming のみ</strong>。SONiC の FRR は SRv6 制御プレーンを持たないため、uSID を含む経路を <a href="../../reference/glossary/#term-bgp">BGP</a> / IS-IS で配布する経路は別問題<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>uN / uA は flavor が <strong>PSP_AND_USD 固定</strong>。他の flavor を選びたいユースケースは現状非対応</li>
+<li>master 実装では <code>uN</code> の flavor は <code>NONE</code>、<code>uA</code> は <code>PSP_AND_USD</code> で <strong>固定</strong><sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。他の flavor を選びたいユースケースは現状非対応</li>
+<li><code>uDT*</code> / <code>uDX*</code> は専用 SAI enum (<code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT*</code> / <code>UDX*</code>) を要求するため、これらを未実装の SAI バックエンドでは SET が拒否される<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li>ベース SRv6 HLD 由来の制約（locator パース、locator_block_len 等の事前合意値）はそのまま継承する</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>既存 SRv6 機能（End / End.X / End.DT<em> / End.DX</em> / End.B6.*）</strong>: 同じ <code>SRV6_MY_SID_TABLE</code> を共有する。<code>action</code> 文字列で区別する</li>
 <li><strong>VRF</strong>: <code>udt4</code> / <code>udt6</code> / <code>udt46</code> は <code>vrf</code> フィールドで宛先 VRF を指定する</li>
-<li><strong>SAI 実装</strong>: SAI 側に <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</code> / <code>UA</code> を実装していない <a href="../../reference/glossary/#term-asic">ASIC</a> では <code>un</code> / <code>ua</code> が拒否される</li>
+<li><strong>SAI 実装</strong>: SAI 側に <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</code> / <code>UA</code> / <code>UDT4</code> / <code>UDT6</code> / <code>UDT46</code> / <code>UDX4</code> / <code>UDX6</code> を実装していない <a href="../../reference/glossary/#term-asic">ASIC</a> では対応する <code>action</code> が <code>SAI_STATUS_NOT_SUPPORTED</code> で拒否される</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>un</code> / <code>ua</code> を SET したのに ASIC に入らない場合、まず <code>srv6orch</code> のログで behavior マップヒットを確認。SAI から <code>SAI_STATUS_NOT_SUPPORTED</code> が返ってきている場合は ASIC ベンダーの SAI 実装が UN/UA 未対応の可能性</li>
 <li>uSID carrier の解釈ずれは locator_block_len 等の合意値が一致しているかを確認</li>
 </ul>
-<h3 id="_8">コマンド例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h3 id="_10">コマンド例<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <p>SRv6 uSID locator / SID list を確認する。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>show<span class="w"> </span>srv6<span class="w"> </span>sid
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>show<span class="w"> </span>srv6<span class="w"> </span>locator
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show segment-routing srv6 locator&#39;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span></code></pre></div>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - srv6orch の end_behavior_map に un/ua/udt*/udx* が現行 master で追加されているか
 - SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN / UA が community SAI で利用可能か
@@ -36412,13 +36536,16 @@ reasoning: APPL_DB スキーマ無変更・マップ追加だけ、という最�
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: f9445b5b4106 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/srv6/SRv6_uSID.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/srv6/SRv6_uSID.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/srv6orch.cpp</code> L41-L69 @ <code>4305596156d70e9797e8a881b3d19b46de0bce0d</code>（<code>end_behavior_map</code> と <code>end_flavor_map</code> の master 実装）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

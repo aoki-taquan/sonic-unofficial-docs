@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SAI 拡張属性追加系 — このカテゴリは、SAI そのものを横断するページを集めます。">
+        <meta name="description" content="SAI 拡張属性追加系 — SAI capability 問い合わせ・失敗ハンドリング・SAI POST・Generic SAI Extension CRM・SAI bulk API 系を横断する HLD 群を集めたカテゴリ index。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SAI 拡張属性追加系 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SAI 拡張属性追加系 — このカテゴリは、SAI そのものを横断するページを集めます。" />
+<meta property="og:description" content="SAI 拡張属性追加系 — SAI capability 問い合わせ・失敗ハンドリング・SAI POST・Generic SAI Extension CRM・SAI bulk API 系を横断する HLD 群を集めたカテゴリ index。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/categories/sai-extensions.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/categories/sai-extensions/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SAI 拡張属性追加系 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SAI 拡張属性追加系 — このカテゴリは、SAI そのものを横断するページを集めます。" />
+<meta property="twitter:description" content="SAI 拡張属性追加系 — SAI capability 問い合わせ・失敗ハンドリング・SAI POST・Generic SAI Extension CRM・SAI bulk API 系を横断する HLD 群を集めたカテゴリ index。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/categories/sai-extensions.png" />
 </head>
   
@@ -36056,13 +36056,13 @@
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><strong><a href="../../reference/glossary/#term-sai">SAI</a> (Switch Abstraction Interface)</strong> は OCP が定義する <a href="../../reference/glossary/#term-asic">ASIC</a> 抽象 API で、<a href="../../reference/glossary/#term-sonic">SONiC</a> は <code>libsairedis</code> + <code>syncd</code> を経由して SAI を叩き、<code>orchagent</code> がアプリケーション層との橋渡しをします。SAI は version ごとに新しい属性 / API が追加されるため、SONiC 側でも <strong>capability 問い合わせ</strong>（<code>sai_query_attribute_enum_values_capability</code> / <code>sai_query_stats_capability</code> / <code>sai_query_api_version</code>）や <strong>失敗時のハンドリング</strong>（<code>handleSai*Status</code> / <code>ERROR_DB</code> / dump 取得）が独立した <a href="../../reference/glossary/#term-hld">HLD</a> として整備されています。</p>
 <p>このカテゴリは、SAI そのものを横断するページを集めます。<strong>capability 問い合わせ系</strong>（<a href="../../reference/glossary/#term-acl">ACL</a> action / counter capability / API version check）・<strong>failure handling</strong>（dump-on-failure・virtual handleSaiStatus）・<strong>SAI POST</strong>（<a href="../../reference/glossary/#term-macsec">MACsec</a> FIPS）・<strong>Generic SAI Extension の <a href="../../reference/glossary/#term-crm">CRM</a></strong>・<strong>SAI bulk API 系</strong>（Port Profile Init / Auto FEC）が中心です。</p>
-<p>SAI 拡張の HLD は <code>sonic-net/SONiC</code> の <code>doc/</code> 配下に多く、対応する実装が swss / sairedis / <a href="../../reference/glossary/#term-syncd">syncd</a> / sonic-platform-common にまたがります。たとえば <code>egress mirroring + action capability check</code> は <code>aclorch</code> が SAI capability を見てフォールバックする実装で、<code>sai_query_stats_capability</code> は <code>counter caps</code> を <code>CounterCheck</code> 系から呼びます。</p>
+<p>SAI 拡張の HLD は <code>sonic-net/SONiC</code> の <code>doc/</code> 配下に多く、対応する実装が swss / sairedis / <a href="../../reference/glossary/#term-syncd">syncd</a> / sonic-platform-common にまたがります。たとえば <code>egress mirroring + action capability check</code> は <code>aclorch</code> が SAI capability を見てフォールバックする実装で<!-- evidence: sonic-swss/orchagent/aclorch.cpp:4042-4160 sai_query_attribute_enum_values_capability の使用箇所 -->、<code>sai_query_stats_capability</code> は port / queue counter caps を <code>portsorch</code> から呼び出します<!-- evidence: sonic-swss/orchagent/portsorch.cpp:664,673,1882 sai_query_stats_capability(SAI_OBJECT_TYPE_PORT/QUEUE) -->。</p>
 <p>主要キーワード: <code>SAI</code>, <code>attribute</code>, <code>capability</code>, <code>API</code>, <code>failure handling</code>, <code>POST</code>, <code>CRM</code></p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="capability-api-version">capability / API version<a class="headerlink" href="#capability-api-version" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../acl-qos/egress-mirroring-support-and-acl-action-capability-check/">ACL の egress mirror 対応と SAI ベース action capability 問い合わせ</a> (area: <code>acl-qos</code>, verification: <code>code-verified</code>)</li>
-<li><a href="../../platform/query-stats-capability-new-sai-api-indroduction/">sai_query_stats_capability による Counter Capability 一括取得</a> (area: <code>platform</code>, verification: <code>code-verified</code>)</li>
+<li><a href="../../platform/query-stats-capability-new-sai-api-indroduction/">sai_query_stats_capability による Counter Capability 一括取得</a> (area: <code>platform</code>, verification: <code>code-verified</code>) <!-- NOTE: リンク先 slug の "indroduction" は元 HLD ファイル名由来の typo (introduction の誤記)。ページ本体側で slug rename する際に同期修正予定。 --></li>
 <li><a href="../../platform/sai-api-version-check/">SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）</a> (area: <code>platform</code>, verification: <code>code-verified</code>)</li>
 </ul>
 <h3 id="bulk-api-port">bulk API / Port<a class="headerlink" href="#bulk-api-port" title="Permanent link">&para;</a></h3>

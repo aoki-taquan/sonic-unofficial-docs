@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="内部実装 — Multi-ASIC / VOQ chassis の内部実装は「namespace で分けられた Redis / orchagent / syncd インスタンス」と「chassis 全体を束ねる chassis_db / database-chassis container」の二重構造で動きます。">
+        <meta name="description" content="Multi-ASIC / VOQ chassis の内部実装。namespace 分割した per-ASIC Redis / orchagent / syncd と、chassis 全体を束ねる CHASSIS_APP_DB / database-chassis container の二重構造、SYSTEM_PORT_TABLE / SYSTEM_NEIGH_TABLE による状態同期、FabricPortsOrch の auto-isolation を解説する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="内部実装 — Multi-ASIC / VOQ chassis の内部実装は「namespace で分けられた Redis / orchagent / syncd インスタンス」と「chassis 全体を束ねる chassis_db / database-chassis container」の二重構造で動きます。" />
+<meta property="og:description" content="Multi-ASIC / VOQ chassis の内部実装。namespace 分割した per-ASIC Redis / orchagent / syncd と、chassis 全体を束ねる CHASSIS_APP_DB / database-chassis container の二重構造、SYSTEM_PORT_TABLE / SYSTEM_NEIGH_TABLE による状態同期、FabricPortsOrch の auto-isolation を解説する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/12-multi-asic-voq/internals.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/12-multi-asic-voq/internals/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="内部実装 — Multi-ASIC / VOQ chassis の内部実装は「namespace で分けられた Redis / orchagent / syncd インスタンス」と「chassis 全体を束ねる chassis_db / database-chassis container」の二重構造で動きます。" />
+<meta property="twitter:description" content="Multi-ASIC / VOQ chassis の内部実装。namespace 分割した per-ASIC Redis / orchagent / syncd と、chassis 全体を束ねる CHASSIS_APP_DB / database-chassis container の二重構造、SYSTEM_PORT_TABLE / SYSTEM_NEIGH_TABLE による状態同期、FabricPortsOrch の auto-isolation を解説する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/12-multi-asic-voq/internals.png" />
 </head>
   
@@ -36183,7 +36183,7 @@
 <tbody>
 <tr>
 <td><code>SAI_OBJECT_TYPE_SWITCH</code></td>
-<td><code>SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_VOQ</code>、<code>SAI_SWITCH_ATTR_SWITCH_ID</code>、<code>SAI_SWITCH_ATTR_MAX_SYSTEM_CORES</code>、<code>SAI_SWITCH_ATTR_SYSTEM_PORT_CONFIG_LIST</code></td>
+<td><code>SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_VOQ</code>、<code>SAI_SWITCH_ATTR_SWITCH_ID</code>、<code>SAI_SWITCH_ATTR_MAX_SYSTEM_CORES</code>、<code>SAI_SWITCH_ATTR_SYSTEM_PORT_CONFIG_LIST</code><sup id="fnref:orch-main"><a class="footnote-ref" href="#fn:orch-main">1</a></sup></td>
 </tr>
 <tr>
 <td><code>SAI_OBJECT_TYPE_SYSTEM_PORT</code></td>
@@ -36214,7 +36214,7 @@
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">FABRIC_ASIC_TABLE</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">HOSTNAME_ASIC_MAP</span>
 </span></code></pre></div>
-<p>各 ASIC orchagent は自身の <code>APPL_DB:NEIGH_TABLE</code> から学習した neighbor を <code>CHASSIS_APP_DB:SYSTEM_NEIGH_TABLE</code> に複製し、他 ASIC の orchagent はそれを subscribe して自身の system port nexthop に変換します。</p>
+<p>各 ASIC orchagent は自身の <code>APPL_DB:NEIGH_TABLE</code> から学習した neighbor を <code>CHASSIS_APP_DB:SYSTEM_NEIGH_TABLE</code> に複製し、他 ASIC の orchagent はそれを subscribe して自身の system port nexthop に変換します<sup id="fnref:neighorch"><a class="footnote-ref" href="#fn:neighorch">2</a></sup>.</p>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
 <li>chassis 内通信は <strong>Redis pub/sub のみ</strong>で、inband (cpu) や fabric 専用回線を経由した IP 接続上で chassis_db redis サーバに接続します。</li>
@@ -36252,8 +36252,8 @@
 <td>chassis 跨ぎ LAG（VOQ chassis only）</td>
 </tr>
 <tr>
-<td><code>SYSTEM_INTERFACE</code></td>
-<td>router-interface の system-wide view</td>
+<td><code>SYSTEM_LAG_MEMBER_TABLE</code></td>
+<td>chassis 跨ぎ LAG のメンバー port 情報[^<a href="../../../reference/glossary/#term-portsorch">portsorch</a>-lag]</td>
 </tr>
 </tbody>
 </table>
@@ -36286,7 +36286,7 @@
 </tr>
 </tbody>
 </table>
-<p>fabric link の flap は <code>SAI_PORT_ATTR_FABRIC_ATTACHED</code> の notification で <code>FabricPortsOrch::refreshFabricPortMonitor</code> に届き、閾値を超えた error count で isolation の判定がなされます。chassis 全体の health を <code>chassisd</code> が <code>CHASSIS_STATE_DB:LINECARD_TABLE</code> で集約します。</p>
+<p>fabric link の flap は <code>SAI_PORT_ATTR_FABRIC_ATTACHED</code> の poll で取得され、<code>isolationPollsCfg</code>（既定値 <code>ISOLATION_POLLS_CFG</code>）連続で error が観測されると auto-isolation 判定が走ります<sup id="fnref:fabric-iso"><a class="footnote-ref" href="#fn:fabric-iso">3</a></sup>. chassis 全体の health を <code>chassisd</code> が <code>CHASSIS_STATE_DB:LINECARD_TABLE</code> で集約します。CLI からは <code>show fabric reachability</code> / <code>show fabric isolation</code> で状態を確認できます<sup id="fnref:show-fabric"><a class="footnote-ref" href="#fn:show-fabric">4</a></sup>.</p>
 <h2 id="per-asic-frr-internal-bgp">per-ASIC FRR と internal BGP の構成<a class="headerlink" href="#per-asic-frr-internal-bgp" title="Permanent link">&para;</a></h2>
 <p>VOQ chassis では各 ASIC namespace で独立した FRR が動き、ASIC 間は internal BGP（多くは iBGP over loopback over inband）でつなぐ構成が標準です。</p>
 <table>
@@ -36326,7 +36326,28 @@
 <li><a href="../../../internals/aggregate-voq-counters-in-sonic/">Aggregate VOQ counters in SONiC</a></li>
 <li><a href="../../../routing/bgp-setup-for-voq-chassis/">BGP setup for VOQ chassis</a></li>
 </ul>
-<!-- glossary-links-injected: 5c9b3765d470 -->
+<!-- glossary-links-injected: 4e2024452c7a -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:orch-main">
+<p><code>gMySwitchType == "voq"</code> のとき <code>SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_VOQ</code> / <code>SAI_SWITCH_ATTR_SWITCH_ID</code> / <code>SAI_SWITCH_ATTR_MAX_SYSTEM_CORES</code> / <code>SAI_SWITCH_ATTR_SYSTEM_PORT_CONFIG_LIST</code> を switch create 時に渡す。sonic-net/<a href="../../../reference/glossary/#term-sonic-swss">sonic-swss</a> <code>orchagent/main.cpp</code> L688-720 (ref <code>4305596156d7</code>).&#160;<a class="footnote-backref" href="#fnref:orch-main" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:neighorch">
+<p>VOQ switch では <code>CHASSIS_APP_SYSTEM_NEIGH_TABLE_NAME</code> を <code>chassisAppDb</code> 上に open し、リモート neighbor の同期に用いる。sonic-net/sonic-swss <code>orchagent/neighorch.cpp</code> L54-61, L887 (ref <code>4305596156d7</code>).&#160;<a class="footnote-backref" href="#fnref:neighorch" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:fabric-iso">
+<p><code>isolationPollsCfg</code> のデフォルトは <code>ISOLATION_POLLS_CFG</code>、<code>CONFIG_DB:FABRIC_MONITOR</code> から override 可能。<code>consecutivePollsWithErrors &gt;= isolationPollsCfg</code> で auto-isolation 状態に遷移する。sonic-net/sonic-swss <code>orchagent/fabricportsorch.cpp</code> L436-475, L787-906 (ref <code>4305596156d7</code>).&#160;<a class="footnote-backref" href="#fnref:fabric-iso" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:show-fabric">
+<p><code>show fabric reachability</code> は <code>fabricstat -r</code>、<code>show fabric isolation</code> は <code>fabricstat -i</code> を実行する click group。sonic-net/<a href="../../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> <code>show/fabric.py</code> L33-50 (ref <code>39732bceb8bd</code>).&#160;<a class="footnote-backref" href="#fnref:show-fabric" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:portsorch-lag">
+<p>VOQ chassis では <a href="../../../reference/glossary/#term-portchannel">PortChannel</a> の add / member 変更時に <code>SYSTEM_LAG_TABLE</code> / <code>SYSTEM_LAG_MEMBER_TABLE</code> を <code>CHASSIS_APP_DB</code> 上で更新する。sonic-net/sonic-swss <code>orchagent/portsorch.cpp</code> L8037, L8114 (ref <code>4305596156d7</code>).&#160;<a class="footnote-backref" href="#fnref:portsorch-lag" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

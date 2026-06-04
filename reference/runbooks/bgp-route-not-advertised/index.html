@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: BGP route が広告されない — : sonic-net/sonic-frr @ 799f47f — bgpd/bgp_route.c : sonic-net/sonic-swss @ 4305596 — fpmsyncd で zebra → APP_DB 反映">
+        <meta name="description" content="Runbook: BGP route が想定 peer へ広告されない事象を、FRR の Adj-RIB-Out 判定と fpmsyncd の APP_DB 反映から切り分ける手順">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="BGP route が広告されない - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: BGP route が広告されない — : sonic-net/sonic-frr @ 799f47f — bgpd/bgp_route.c : sonic-net/sonic-swss @ 4305596 — fpmsyncd で zebra → APP_DB 反映" />
+<meta property="og:description" content="Runbook: BGP route が想定 peer へ広告されない事象を、FRR の Adj-RIB-Out 判定と fpmsyncd の APP_DB 反映から切り分ける手順" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/bgp-route-not-advertised.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/bgp-route-not-advertised/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="BGP route が広告されない - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: BGP route が広告されない — : sonic-net/sonic-frr @ 799f47f — bgpd/bgp_route.c : sonic-net/sonic-swss @ 4305596 — fpmsyncd で zebra → APP_DB 反映" />
+<meta property="twitter:description" content="Runbook: BGP route が想定 peer へ広告されない事象を、FRR の Adj-RIB-Out 判定と fpmsyncd の APP_DB 反映から切り分ける手順" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/bgp-route-not-advertised.png" />
 </head>
   
@@ -36194,17 +36194,20 @@
 <li><a href="../../config-db/route-map/">../config-db/route-map.md</a></li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: 035b99b8e325 -->
+<p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup> を参照。Adj-RIB-Out への投入判定は <a href="../../glossary/#term-frr">FRR</a> の <code>subgroup_announce_check()</code> を経由し、選定経路の APP_DB 反映は <a href="../../glossary/#term-fpmsyncd">fpmsyncd</a> の <code>RouteSync::onRouteMsg()</code> 経路で <code>ROUTE_TABLE</code> <a href="../../glossary/#term-producerstatetable">ProducerStateTable</a> に書き込まれる。</p>
+<!-- glossary-links-injected: d1439329b8c6 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-frr @ 799f47f — bgpd/bgp_route.c&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/sonic-frr @ 799f47f — <code>bgpd/bgp_route.c</code> L1420 <code>subgroup_announce_check()</code> および L2161-2164 で outbound policy 判定後に <code>bgp_adj_out_set_subgroup()</code> で Adj-RIB-Out へ投入。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <a href="../../glossary/#term-fpmsyncd">fpmsyncd</a> で <a href="../../glossary/#term-zebra">zebra</a> → APP_DB 反映&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <code>fpmsyncd/routesync.cpp</code> L153-162 <a href="../../glossary/#term-fpmsyncd"><code>RouteSync</code></a> constructor が <code>APP_ROUTE_TABLE_NAME</code> (<code>ROUTE_TABLE</code>) の <a href="../../glossary/#term-producerstatetable">ProducerStateTable</a> を生成、L2111 <code>onRouteMsg()</code> で <a href="../../glossary/#term-zebra">zebra</a> → APP_DB へ反映。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <code>fpmsyncd/fpmlink.cpp</code> は <a href="../../glossary/#term-fpm">FPM</a> ソケット受信のみを担当し、netlink → APP_DB 変換は <code>routesync.cpp</code> 側で行われる。&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

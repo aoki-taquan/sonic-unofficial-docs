@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="設定 — 監視機能の設定は経路ごとに別の CONFIG_DB table と CLI に分かれます。ここではシナリオ別の最小手順、確認用の show 出力、よくある設定エラーをまとめます。項目の意味の深掘りは参照ページに任せます。">
+        <meta name="description" content="監視機能 (SNMP / sFlow / syslog / gNMI telemetry / auto-techsupport) の設定をシナリオ別最小手順、確認用 show 出力、よくある設定エラーの 3 点でまとめます。CLI 引数順は sonic-utilities config/main.py で裏取りしています。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="設定 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="設定 — 監視機能の設定は経路ごとに別の CONFIG_DB table と CLI に分かれます。ここではシナリオ別の最小手順、確認用の show 出力、よくある設定エラーをまとめます。項目の意味の深掘りは参照ページに任せます。" />
+<meta property="og:description" content="監視機能 (SNMP / sFlow / syslog / gNMI telemetry / auto-techsupport) の設定をシナリオ別最小手順、確認用 show 出力、よくある設定エラーの 3 点でまとめます。CLI 引数順は sonic-utilities config/main.py で裏取りしています。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/09-telemetry-snmp/setup.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/09-telemetry-snmp/setup/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="設定 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="設定 — 監視機能の設定は経路ごとに別の CONFIG_DB table と CLI に分かれます。ここではシナリオ別の最小手順、確認用の show 出力、よくある設定エラーをまとめます。項目の意味の深掘りは参照ページに任せます。" />
+<meta property="twitter:description" content="監視機能 (SNMP / sFlow / syslog / gNMI telemetry / auto-techsupport) の設定をシナリオ別最小手順、確認用 show 出力、よくある設定エラーの 3 点でまとめます。CLI 引数順は sonic-utilities config/main.py で裏取りしています。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/09-telemetry-snmp/setup.png" />
 </head>
   
@@ -36061,16 +36061,17 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># v2c read-only</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>snmp<span class="w"> </span>community<span class="w"> </span>add<span class="w"> </span>public<span class="w"> </span>ro
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># v3 priv user (auth=SHA, priv=AES)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>config<span class="w"> </span>snmp<span class="w"> </span>user<span class="w"> </span>add<span class="w"> </span>monitor<span class="w"> </span>priv<span class="w"> </span>AES<span class="w"> </span><span class="s1">&#39;PrivPass!2026&#39;</span><span class="w"> </span>SHA<span class="w"> </span><span class="s1">&#39;AuthPass!2026&#39;</span><span class="w"> </span>ro
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># v3 priv user — 引数順は固定: &lt;user&gt; &lt;type&gt; &lt;permission&gt; &lt;auth_type&gt; &lt;auth_pw&gt; &lt;encrypt_type&gt; &lt;encrypt_pw&gt;</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>config<span class="w"> </span>snmp<span class="w"> </span>user<span class="w"> </span>add<span class="w"> </span>monitor<span class="w"> </span>Priv<span class="w"> </span>RO<span class="w"> </span>SHA<span class="w"> </span><span class="s1">&#39;AuthPass!2026&#39;</span><span class="w"> </span>AES<span class="w"> </span><span class="s1">&#39;PrivPass!2026&#39;</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># 監視メタデータ</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>config<span class="w"> </span>snmp<span class="w"> </span>location<span class="w"> </span><span class="s2">&quot;Tokyo DC1 Rack 5&quot;</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>config<span class="w"> </span>snmp<span class="w"> </span>contact<span class="w"> </span>admin<span class="w"> </span>admin@example.com
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># 監視メタデータ (location / contact はそれぞれサブグループで add が必要)</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>config<span class="w"> </span>snmp<span class="w"> </span>location<span class="w"> </span>add<span class="w"> </span><span class="s2">&quot;Tokyo DC1 Rack 5&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>config<span class="w"> </span>snmp<span class="w"> </span>contact<span class="w"> </span>add<span class="w"> </span>admin<span class="w"> </span>admin@example.com
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># AgentAddress を mgmt VRF 内の管理 IP に限定</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>config<span class="w"> </span>snmp<span class="w"> </span>agentaddress<span class="w"> </span>add<span class="w"> </span>-p<span class="w"> </span><span class="m">161</span><span class="w"> </span>-v<span class="w"> </span>mgmt<span class="w"> </span><span class="m">10</span>.0.0.10
 </span></code></pre></div>
+<p>引数順は sonic-utilities の <code>config/main.py</code> で確定的に決まっており、<code>AES</code> / <code>SHA</code> / <code>RO</code> のキーワード位置を入れ替えるとそのまま enum 不一致で reject されます。<!-- evidence: sonic-net/sonic-utilities@39732bc config/main.py:4708-4715 --><sup id="fnref:utilities-user"><a class="footnote-ref" href="#fn:utilities-user">1</a></sup></p>
 <p>CONFIG_DB 側はこういう構造になります。</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;SNMP_COMMUNITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;public&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RO&quot;</span><span class="p">}},</span>
@@ -36107,8 +36108,8 @@
 <h2 id="2-sflow-2-collector">シナリオ 2: sFlow を 2 collector に同時に送る<a class="headerlink" href="#2-sflow-2-collector" title="Permanent link">&para;</a></h2>
 <p>flow ベースの可視化（NDR、Kentik など）と長期 packet sampling の両方を並行運用するパターン。<a href="../../../reference/glossary/#term-sonic">SONiC</a> の sFlow は global、collector、per-port の 3 段で構成され、collector は最大 2 つまで登録できます。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>sflow<span class="w"> </span><span class="nb">enable</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>sflow<span class="w"> </span>collector<span class="w"> </span>add<span class="w"> </span>primary<span class="w">   </span><span class="m">192</span>.0.2.10<span class="w"> </span><span class="m">6343</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>config<span class="w"> </span>sflow<span class="w"> </span>collector<span class="w"> </span>add<span class="w"> </span>secondary<span class="w"> </span><span class="m">192</span>.0.2.11<span class="w"> </span><span class="m">6343</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>sflow<span class="w"> </span>collector<span class="w"> </span>add<span class="w"> </span>primary<span class="w">   </span><span class="m">192</span>.0.2.10<span class="w"> </span>--port<span class="w"> </span><span class="m">6343</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>config<span class="w"> </span>sflow<span class="w"> </span>collector<span class="w"> </span>add<span class="w"> </span>secondary<span class="w"> </span><span class="m">192</span>.0.2.11<span class="w"> </span>--port<span class="w"> </span><span class="m">6343</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>config<span class="w"> </span>sflow<span class="w"> </span>polling-interval<span class="w"> </span><span class="m">20</span>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># 全ポート default で enable、上り回線だけ sample_rate を下げる</span>
@@ -36143,7 +36144,7 @@
 </span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">  </span>Ethernet1<span class="w">     </span>up<span class="w">             </span><span class="m">50000</span>
 </span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">  </span>...
 </span></code></pre></div>
-<p><code>sample_direction</code> の <code>rx</code> / <code>tx</code> / <code>both</code> と、interface の <code>sample_rate</code> / <code>admin_state</code> が動作を決めます。エージェントは hsflowd で、collector 設定が消えると datagram は止まります。</p>
+<p><code>sample_direction</code> の <code>rx</code> / <code>tx</code> / <code>both</code> と、interface の <code>sample_rate</code> / <code>admin_state</code> が動作を決めます。エージェントは hsflowd で、collector 設定が消えると datagram は止まります。collector の port は <code>--port</code> オプション (default 6343)、最大 2 件まで登録可能です。<!-- evidence: sonic-net/sonic-utilities@39732bc config/main.py:9336-9356 --><sup id="fnref:utilities-sflow"><a class="footnote-ref" href="#fn:utilities-sflow">2</a></sup></p>
 <h2 id="3-syslog-mgmt-vrf-2">シナリオ 3: Syslog を mgmt VRF 越しに 2 台へ転送<a class="headerlink" href="#3-syslog-mgmt-vrf-2" title="Permanent link">&para;</a></h2>
 <p>mgmt <a href="../../../reference/glossary/#term-vrf">VRF</a> 経由で外部 SIEM に syslog を送る構成。management VRF を有効にしてある box では <code>--vrf mgmt</code> 指定が必須で、忘れると default VRF から DNS lookup が走って到達不能になります。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>config<span class="w"> </span>syslog<span class="w"> </span>add<span class="w"> </span><span class="m">192</span>.0.2.20<span class="w"> </span>--vrf<span class="w"> </span>mgmt
@@ -36168,7 +36169,7 @@
 </span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="m">13</span>:24:15.001<span class="w"> </span>IP<span class="w"> </span><span class="m">10</span>.0.0.10.43210<span class="w"> </span>&gt;<span class="w"> </span><span class="m">192</span>.0.2.20.514:<span class="w"> </span>SYSLOG<span class="w"> </span>...
 </span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="m">13</span>:24:15.001<span class="w"> </span>IP<span class="w"> </span><span class="m">10</span>.0.0.10.43211<span class="w"> </span>&gt;<span class="w"> </span><span class="m">192</span>.0.2.21.514:<span class="w"> </span>SYSLOG<span class="w"> </span>...
 </span></code></pre></div>
-<p><a href="../../../reference/glossary/#term-yang">YANG</a> model は <code>sonic-syslog.yang</code>、CONFIG_DB は <a href="../../../reference/config-db/syslog-server/"><code>SYSLOG_SERVER</code></a>。</p>
+<p><a href="../../../reference/glossary/#term-yang">YANG</a> model は <code>sonic-syslog.yang</code>、CONFIG_DB は <a href="../../../reference/config-db/syslog-server/"><code>SYSLOG_SERVER</code></a>。<code>config syslog add</code> は <code>-s/--source</code> / <code>-p/--port</code> / <code>-r/--vrf</code> を取り、長形 <code>--vrf</code> も Click のエイリアス解決で受理されます。<!-- evidence: sonic-net/sonic-utilities@39732bc config/syslog.py:370-411 --><sup id="fnref:utilities-syslog"><a class="footnote-ref" href="#fn:utilities-syslog">3</a></sup></p>
 <h2 id="4-telemetry-gnmi-server">シナリオ 4: Telemetry (gNMI server) を有効化する<a class="headerlink" href="#4-telemetry-gnmi-server" title="Permanent link">&para;</a></h2>
 <p>dial-in / dial-out 両方をサポートする <a href="../../../reference/glossary/#term-gnmi">gNMI</a> server を立ち上げます。証明書は通常 <code>/etc/sonic/telemetry/</code> 配下に置きます。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># 証明書配置</span>
@@ -36286,7 +36287,22 @@
 <li><a href="../../../reference/yang/sonic-syslog/">sonic-syslog YANG</a></li>
 <li><a href="../../../system/snmp-migration-from-snmp-yml-to-configdb/">SNMP yml から CONFIG_DB への移行</a></li>
 </ul>
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: f960e6599a3c -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:utilities-user">
+<p>sonic-net/<a href="../../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> <code>config/main.py</code> L4708–L4715 (<code>add_user</code> click 引数定義) @ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:utilities-user" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:utilities-sflow">
+<p>sonic-net/sonic-utilities <code>config/main.py</code> L9336–L9356 (<code>config sflow collector add</code> 引数・最大 2 件チェック) @ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:utilities-sflow" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:utilities-syslog">
+<p>sonic-net/sonic-utilities <code>config/syslog.py</code> L370–L411 (<code>config syslog add</code> 引数定義) @ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:utilities-syslog" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
