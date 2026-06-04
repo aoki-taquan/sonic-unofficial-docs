@@ -41,7 +41,7 @@ round 8 で v1.0 公開可（9.74）と判定後、追加で Topics 7 章構造�
 | H3 | `docs/switching/layer-2-forwarding-enhancements.md` | 200+ | code-verified |
 | H4 | `docs/system/hld-secure-boot.md` | 200+ | code-verified |
 | H5 | `docs/internals/dump-utility-for-easy-debugging.md` | 133 | code-verified |
-| H6 | `docs/overlay/evpn-vxlan-multihoming.md`（or routing 配置） | 200+ | discrepancy-found |
+| H6 | `docs/routing/evpn-vxlan-multihoming.md` | 200+ | discrepancy-found |
 
 ### Topics（6 件・章別深掘り）
 
