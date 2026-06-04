@@ -2386,7 +2386,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [YANG](#term-yang)
 
-- [サイトマップ](../_meta/sitemap.md) (245)
+- [サイトマップ](../_meta/sitemap.md) (244)
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (52)
 - [SmartSwitch 関連テーブル (MID_PLANE_BRIDGE / DHCP_SERVER_IPV4_PORT)](config-db/smart-switch.md) (40)
 - [NTP_SERVER テーブル](config-db/ntp-server.md) (39)
