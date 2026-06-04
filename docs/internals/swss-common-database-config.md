@@ -60,7 +60,7 @@ last_verified: 2026-06-04
 
 ## DEFAULT_UNIXSOCKET の廃止経緯
 
-以前の `swss-common` では `database_config.json` が無い場合に `DEFAULT_UNIXSOCKET` (`/var/run/redis/redis.sock`) で暗黙フォールバック接続を行うコードパスが存在した。しかし issue [#322](https://github.com/sonic-net/sonic-swss-common/issues/322) で「DB 接続設定はすべて `database_config.json` から読み取る方針に統一する」ことが合意され、現在は `SonicDBConfig::initialize()` を経由して JSON を読まないと `DBConnector` 系コンストラクタが利用できない設計になっている[^init-required]。`RedisContext::DEFAULT_UNIXSOCKET` という定数自体は `RedisContext` 内部のデフォルト値として残るが、ユーザーが意識する暗黙フォールバックとしての役割は持たない[^default-unixsocket-const]。
+以前の `swss-common` では `database_config.json` が無い場合に `DEFAULT_UNIXSOCKET` (`/var/run/redis/redis.sock`) で暗黙フォールバック接続を行うコードパスが存在した。しかし issue [#322](https://github.com/sonic-net/sonic-swss-common/issues/322) で「DB 接続設定はすべて `database_config.json` から読み取る方針に統一する」ことが合意され、現在は `SonicDBConfig::initialize()` を経由して JSON を読まないと `DBConnector` 系コンストラクタが利用できない設計になっている[^init-required]。`RedisContext::DEFAULT_UNIXSOCKET` という定数自体は `RedisContext` 内部のデフォルト値として残るが、ユーザが意識する暗黙フォールバックとしての役割は持たない[^default-unixsocket-const]。
 
 [^init-required]: `common/dbconnector.cpp` の `DBConnector` 各コンストラクタは `SonicDBConfig::isInit()` が false の場合に `initialize(DEFAULT_SONIC_DB_CONFIG_FILE)` を呼ぶ ([sonic-swss-common common/dbconnector.cpp L250-L290](https://github.com/sonic-net/sonic-swss-common/blob/master/common/dbconnector.cpp#L250-L290))。ファイルが無ければここで例外が投げられる。
 
