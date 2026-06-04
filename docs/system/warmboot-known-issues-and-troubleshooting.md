@@ -10,8 +10,7 @@ sources:
   - repo: sonic-net/sonic-buildimage
     ref: master
     note: >
-      issues #6723, #6726, #6773, #7071, #7094, #7127, #7140, #7262, #7266, #7516,
-      #7518, #7523, #7627, #7637, #9899, #10076, #12512
+      issues #6723, #6726, #6773, #6866, #7071, #7094, #7127, #7140, #7518, #9899, #12512
 related:
   config_db:
     - WARM_RESTART
@@ -33,8 +32,8 @@ related:
 
 [SONiC](../reference/glossary.md#term-sonic) のウォームブート（warm-reboot）・高速リブート（fast-reboot）は複数の
 サブシステムが協調する複雑なシーケンスを持つ。本ページは
-[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) issue tracker (#6723 〜 #12512 の範囲) に記録された
-実環境での既知問題と対処法をまとめる。
+[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) issue tracker に記録された
+実環境での既知問題と対処法をまとめる（取り上げる issue は #6723, #6726, #6773, #6866, #7071, #7094, #7127, #7140, #7518, #9899, #12512）。
 
 ---
 
