@@ -51,6 +51,27 @@ excerpt: |
 reasoning: gNMI SetRequest の Extension に MasterArbitration を載せ、election_id (uint128) を比較して master 判定をする実装。role は未実装で codes.Unimplemented を返す。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-gnmi/gnmi_server/server.go#L1308-L1340 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)"
+
+    **出典**:
+
+    `sonic-net/sonic-gnmi/gnmi_server/server.go#L1308-L1340 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)`
+
+    **抜粋**:
+
+    ```text
+    // ReqFromMasterEnabledMA returns true if the request is sent by the master controller.
+    func ReqFromMasterEnabledMA(req *gnmipb.SetRequest, masterEID *uint128) error {
+        ...
+        ma := e.GetMasterArbitration()
+        ...
+        reqEID = uint128{High: ma.ElectionId.High, Low: ma.ElectionId.Low}
+    ```
+
+    **判断根拠**: gNMI SetRequest の Extension に MasterArbitration を載せ、election_id (uint128) を比較して master 判定をする実装。role は未実装で codes.Unimplemented を返す。
+
+<!-- evidence-rendered:end -->
 
 非 master からの Set は次のような応答になるため、client 側で `PermissionDenied` を確実に拾う実装にする。
 
@@ -81,6 +102,24 @@ excerpt: |
   WithSaveOnSet: fs.Bool("with-save-on-set", false, "Enables save-on-set."),
 reasoning: telemetry プロセスの起動フラグ `--with-save-on-set` で save-on-set が有効化される。default は false。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-gnmi/telemetry/telemetry.go#L183-L190 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)"
+
+    **出典**:
+
+    `sonic-net/sonic-gnmi/telemetry/telemetry.go#L183-L190 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)`
+
+    **抜粋**:
+
+    ```text
+    WithSaveOnSet: fs.Bool("with-save-on-set", false, "Enables save-on-set."),
+    ```
+
+    **判断根拠**: telemetry プロセスの起動フラグ `--with-save-on-set` で save-on-set が有効化される。default は false。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-net/sonic-gnmi/gnmi_server/server.go#L1050-L1068 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
 excerpt: |
@@ -90,6 +129,24 @@ excerpt: |
 reasoning: SaveOnSetEnabled / saveOnSetDisabled の 2 関数を Server.SaveStartupConfig に差し込む形で実装されている。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-gnmi/gnmi_server/server.go#L1050-L1068 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)"
+
+    **出典**:
+
+    `sonic-net/sonic-gnmi/gnmi_server/server.go#L1050-L1068 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)`
+
+    **抜粋**:
+
+    ```text
+    // saveOnSetEnabled saves configuration to a file
+    func SaveOnSetEnabled() error { ... }
+    func saveOnSetDisabled() error { return nil }
+    ```
+
+    **判断根拠**: SaveOnSetEnabled / saveOnSetDisabled の 2 関数を Server.SaveStartupConfig に差し込む形で実装されている。
+
+<!-- evidence-rendered:end -->
 
 設定の有無は `redis-cli -n 4 hgetall "DEVICE_METADATA|localhost"` または telemetry の起動オプションで確認する。`config_db.json` の更新タイムスタンプを `stat /etc/sonic/config_db.json` で監視すると、Set 後に永続化が走ったかを後追いできる。
 

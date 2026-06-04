@@ -59,6 +59,24 @@ excerpt: |
   REBOOT_CAUSE_FILE="/host/reboot-cause/reboot-cause.txt"
 reasoning: reboot / fast-reboot / soft-reboot のいずれの wrapper script も /host/reboot-cause/reboot-cause.txt を最新 cause の生ファイルとして書き出す。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/scripts/reboot#L14 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/scripts/reboot#L14 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    REBOOT_CAUSE_FILE="/host/reboot-cause/reboot-cause.txt"
+    ```
+
+    **判断根拠**: reboot / fast-reboot / soft-reboot のいずれの wrapper script も /host/reboot-cause/reboot-cause.txt を最新 cause の生ファイルとして書き出す。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-net/sonic-utilities/show/reboot_cause.py#L13-L23 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
 excerpt: |
@@ -69,6 +87,25 @@ excerpt: |
 reasoning: show reboot-cause は前回 cause を /host/reboot-cause/previous-reboot-cause.json から JSON として読み込む。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/reboot_cause.py#L13-L23 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/reboot_cause.py#L13-L23 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    PREVIOUS_REBOOT_CAUSE_FILE_PATH = "/host/reboot-cause/previous-reboot-cause.json"
+    ...
+    if os.path.exists(PREVIOUS_REBOOT_CAUSE_FILE_PATH):
+        with open(PREVIOUS_REBOOT_CAUSE_FILE_PATH) as prev_reboot_cause_file:
+    ```
+
+    **判断根拠**: show reboot-cause は前回 cause を /host/reboot-cause/previous-reboot-cause.json から JSON として読み込む。
+
+<!-- evidence-rendered:end -->
 
 ## LACP と peer 側の時間
 
@@ -156,6 +193,27 @@ excerpt: |
   bgpStateTable.hget("IPv4|eoiu", "state", value);
 reasoning: fpmsyncd は STATE_DB の BGP_STATE_TABLE|<family>|eoiu を hget して reached を待つ。EOIU は警告文どおり後続 clean-up の前提となる同期点である。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: master)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: master)`
+
+    **抜粋**:
+
+    ```text
+    // Wait 3 seconds after detecting EOIU reached state
+    const uint32_t DEFAULT_EOIU_HOLD_INTERVAL = 3;
+    ...
+    bgpStateTable.hget("IPv4|eoiu", "state", value);
+    ```
+
+    **判断根拠**: fpmsyncd は STATE_DB の BGP_STATE_TABLE|<family>|eoiu を hget して reached を待つ。EOIU は警告文どおり後続 clean-up の前提となる同期点である。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: master)
 excerpt: |
@@ -165,6 +223,24 @@ excerpt: |
 reasoning: EOIU 状態は STATE_DB の BGP_STATE_TABLE で公開され、reconciliation 完了判定に使われる。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: master)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: master)`
+
+    **抜粋**:
+
+    ```text
+    key             = BGP_STATE_TABLE|family|eoiu             ; family = "IPv4" / "IPv6"  ; address family.
+    state           = "unknown" / "reached" / "consumed"         ; unknown: eoiu state not fetched yet.
+                                                                 ; reached: bgp eoiu done.
+    ```
+
+    **判断根拠**: EOIU 状態は STATE_DB の BGP_STATE_TABLE で公開され、reconciliation 完了判定に使われる。
+
+<!-- evidence-rendered:end -->
 
 ## reboot 種別の使い分け早見表
 

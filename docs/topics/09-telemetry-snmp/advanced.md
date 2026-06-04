@@ -35,6 +35,23 @@ excerpt: |
 reasoning: DTel 関連 CONFIG_DB の処理は DTelOrch クラス（dtelorch.h / dtelorch.cpp）が担当する。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-swss/orchagent/dtelorch.h#L1-L40"
+
+    **出典**:
+
+    `sonic-swss/orchagent/dtelorch.h#L1-L40`
+
+    **抜粋**:
+
+    ```text
+    // class DTelOrch — orchestrator for DTel CONFIG_DB tables → SAI DTEL objects
+    ```
+
+    **判断根拠**: DTel 関連 CONFIG_DB の処理は DTelOrch クラス（dtelorch.h / dtelorch.cpp）が担当する。
+
+<!-- evidence-rendered:end -->
+
 DTel は ASIC capability への依存が大きく、すべての platform で同じ event type / report mode が出るわけではありません。test plan ページは、SAI DTEL object と SONiC table の対応、report format の検証観点を整理しています。
 
 ## sFlow
@@ -48,12 +65,48 @@ excerpt: |
       click.echo("{}".format(sflow_info['global']['polling_interval']))
 reasoning: CONFIG_DB の "SFLOW|global" hash 配下の polling_interval フィールドが show sflow で表示される。docs の主張と一致。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-utilities/show/sflow.py#L70-L85"
+
+    **出典**:
+
+    `sonic-utilities/show/sflow.py#L70-L85`
+
+    **抜粋**:
+
+    ```text
+    if (sflow_info and 'polling_interval' in sflow_info['global']):
+        click.echo("{}".format(sflow_info['global']['polling_interval']))
+    ```
+
+    **判断根拠**: CONFIG_DB の "SFLOW|global" hash 配下の polling_interval フィールドが show sflow で表示される。docs の主張と一致。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-buildimage/dockers/docker-sflow/base_image_files/psample#L1-L10
 excerpt: |
   docker exec -$DOCKER_EXEC_FLAGS sflow psample "$@"
 reasoning: sflow docker に psample CLI wrapper が同梱され、kernel psample group から sample を取り出す経路であることを示す。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-buildimage/dockers/docker-sflow/base_image_files/psample#L1-L10"
+
+    **出典**:
+
+    `sonic-buildimage/dockers/docker-sflow/base_image_files/psample#L1-L10`
+
+    **抜粋**:
+
+    ```text
+    docker exec -$DOCKER_EXEC_FLAGS sflow psample "$@"
+    ```
+
+    **判断根拠**: sflow docker に psample CLI wrapper が同梱され、kernel psample group から sample を取り出す経路であることを示す。
+
+<!-- evidence-rendered:end -->
 
 sFlow と DTel の住み分けは、sFlow が「サンプリングされた粗い flow telemetry」、DTel が「flow ごとの精密 in-band telemetry」と覚えると整理できます。test plan ページは collector / agent / sampling rate の確認観点をまとめます。
 

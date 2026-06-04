@@ -83,7 +83,7 @@ related:
 | setup | 248 | ✅ 完成 | meta | セットアップ手順 |
 | operations | 187 | ✅ 完成 | meta | 運用・デバッグ |
 | internals | 129 | ✅ 完成 | meta | 内部実装 |
-| advanced | 138 | ✅ 完成 | meta | 発展トピック |
+| advanced | 191 | ✅ 完成 | meta | 発展トピック |
 
 <!-- /chapter-progress -->
 
