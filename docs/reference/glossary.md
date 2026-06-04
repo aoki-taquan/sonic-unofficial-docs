@@ -1233,7 +1233,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (76)
 - [APPL_DB ACL テーブル群](config-db/appl-acl.md) (73)
 - [APPL_DB LAG_TABLE (portchannel ステータス)](config-db/portchannel-status.md) (66)
-- [サイトマップ](../_meta/sitemap.md) (60)
+- [サイトマップ](../_meta/sitemap.md) (61)
 - [FABRIC_MONITOR テーブル](config-db/fabric-monitor.md) (54)
 
 ### [ARP](#term-arp)
@@ -1621,7 +1621,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (318)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (324)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
@@ -1856,8 +1856,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [NDP](#term-ndp)
 
+- [SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）](../routing/sonic-usid.md) (39)
 - [Srv6Orch — APP_DB SRV6 テーブル](config-db/srv6-orch.md) (28)
-- [SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）](../routing/sonic-usid.md) (20)
 - [APPL_DB SRV6テーブル (SRV6_MY_SID_TABLE / SRV6_SID_LIST_TABLE)](config-db/srv6-applb.md) (19)
 - [VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）](../overlay/vnet-local-endpoint-forwarding.md) (8)
 - [NEIGH テーブル](config-db/neigh.md) (6)
@@ -2056,7 +2056,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [発展トピック](../topics/17-srv6-mpls/advanced.md) (46)
 - [概念](../topics/17-srv6-mpls/concept.md) (45)
 - [Srv6Orch — APP_DB SRV6 テーブル](config-db/srv6-orch.md) (42)
-- [サイトマップ](../_meta/sitemap.md) (34)
+- [サイトマップ](../_meta/sitemap.md) (33)
 - [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../routing/srv6-vpn-hld.md) (30)
 
 ### [SAI](#term-sai)
@@ -2213,8 +2213,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (354)
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (31)
+- [サイトマップ](../_meta/sitemap.md) (355)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (33)
 - [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (28)
 - [概要](../topics/02-bgp/concept.md) (27)
