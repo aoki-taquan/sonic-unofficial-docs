@@ -17,7 +17,7 @@ related:
   - CHASSIS_MODULE
   - MID_PLANE_BRIDGE
   - DPUS
-  cli: []
+  _no_related_cli: true
   yang:
   - sonic-smart-switch
   - sonic-chassis-module

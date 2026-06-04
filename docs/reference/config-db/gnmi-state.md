@@ -21,7 +21,6 @@ related:
     - TELEMETRY_CONNECTIONS
   cli:
     - show gnmi
-  yang: []
   _no_related_yang: true
 ---
 

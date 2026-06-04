@@ -5,34 +5,7 @@ description: QoS / Buffer の設定 — 設定は「pool / profile を作る →
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/config-buffer.md
-- docs/reference/cli/config-qos.md
-- docs/reference/cli/config-pfcwd.md
-- docs/reference/config-db/buffer-pool.md
-- docs/reference/config-db/buffer-profile.md
-- docs/reference/config-db/buffer-pg.md
-- docs/reference/config-db/buffer-queue.md
-- docs/reference/config-db/queue.md
-- docs/reference/config-db/scheduler.md
-- docs/reference/config-db/wred-profile.md
-- docs/reference/config-db/dscp-to-tc-map.md
-- docs/reference/config-db/tc-to-queue-map.md
-- docs/reference/config-db/port-qos-map.md
-- docs/reference/config-db/pfc-priority-to-priority-group-map.md
-- docs/reference/config-db/pfc-wd.md
-- docs/reference/yang/sonic-buffer-pool.md
-- docs/reference/yang/sonic-buffer-profile.md
-- docs/reference/yang/sonic-buffer-pg.md
-- docs/reference/yang/sonic-buffer-queue.md
-- docs/reference/yang/sonic-queue.md
-- docs/reference/yang/sonic-scheduler.md
-- docs/reference/yang/sonic-pfcwd.md
-- docs/reference/yang/sonic-port-qos-map.md
-- docs/reference/yang/sonic-tc-queue-map.md
-- docs/reference/yang/sonic-wred-profile.md
-- docs/reference/yang/sonic-dscp-tc-map.md
-- docs/reference/yang/sonic-pfc-priority-priority-group-map.md
+sources: []
 related:
   cli:
   - config buffer

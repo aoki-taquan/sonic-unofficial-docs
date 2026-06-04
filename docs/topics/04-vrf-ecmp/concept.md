@@ -5,11 +5,7 @@ description: L3 基盤と VRF — SONiC で L3 を読み始めるとき、最初
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/routing/sonic-vrf-support-design-spec-draft.md
-- docs/routing/static-ip-route-configuration.md
-- docs/routing/ipv6-link-local-enhancements.md
-- docs/routing/sonic-management-vrf-design-document-201911-release.md
+sources: []
 keywords:
 - VRF
 - L3

@@ -5,13 +5,7 @@ description: QoS / Buffer の内部実装 — ここでは「設定が変わる�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/acl-qos/reclaim-reserved-buffer.md
-- docs/acl-qos/reclaim-reserved-buffer-sequence-flow.md
-- docs/acl-qos/dynamically-headroom-calculation.md
-- docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md
-- docs/acl-qos/port-buffer-drop-counters-in-sonic.md
-- docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md
+sources: []
 related:
   cli:
   - config interface

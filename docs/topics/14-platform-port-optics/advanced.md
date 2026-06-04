@@ -5,10 +5,7 @@ description: 発展トピック — ここでは、port / platform 章の中で�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/platform/1-6t-support-in-sonic.md
-- docs/platform/sonic-port-naming-convention-change.md
-- docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md
+sources: []
 related:
   cli:
   - show interfaces transceiver

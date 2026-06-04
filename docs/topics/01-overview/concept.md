@@ -4,15 +4,7 @@ description: 概念と読み始め方 — この章は「SONiC をこれから�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/guides/index.md
-- docs/guides/beginner.md
-- docs/guides/operator.md
-- docs/guides/developer.md
-- docs/guides/evaluator.md
-- docs/categories/index.md
-- docs/management/sonic-user-manual.md
-- docs/management/sonic-nos-configuration-methods.md
+sources: []
 keywords:
 - SONiC
 - 概念

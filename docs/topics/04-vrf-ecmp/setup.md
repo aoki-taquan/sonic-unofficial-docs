@@ -5,18 +5,7 @@ description: VRF と Static Route の設定 — 設定を読む入口は 3 つ�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/config-vrf.md
-- docs/reference/cli/config-route.md
-- docs/reference/config-db/vrf.md
-- docs/reference/config-db/interface.md
-- docs/reference/config-db/loopback-interface.md
-- docs/reference/config-db/static-route.md
-- docs/reference/config-db/fg-nhg.md
-- docs/reference/yang/sonic-vrf.md
-- docs/reference/yang/sonic-interface.md
-- docs/reference/yang/sonic-static-route.md
-- docs/reference/yang/sonic-route-common.md
+sources: []
 related:
   cli:
   - config route

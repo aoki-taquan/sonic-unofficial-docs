@@ -5,12 +5,7 @@ description: 概念 — 「edge / management サービス」は、ToR や manage
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/architecture/nat-in-sonic.md
-- docs/architecture/dhcpv4-relay-agent.md
-- docs/architecture/dhcpv6-relay-agent.md
-- docs/routing/dhcp-relay-for-ipv6-hld.md
-- docs/management/ipv4-port-based-dhcp-server-in-sonic.md
+sources: []
 keywords:
 - NAT
 - DHCP Relay

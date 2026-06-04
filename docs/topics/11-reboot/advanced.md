@@ -5,12 +5,7 @@ description: Reboot / Upgrade の発展トピック — warm / fast / cold reboo
 area: topics
 verification: meta
 last_verified: 2026-05-11
-sources:
-- docs/system/sonic-warm-reboot.md
-- docs/system/fast-reboot-flow-improvements-hld.md
-- docs/system/sonic-express-reboot-hld-spec.md
-- docs/system/system-wide-warmboot.md
-- docs/system/multi-asic-warm-reboot.md
+sources: []
 related:
   cli:
   - warm-reboot

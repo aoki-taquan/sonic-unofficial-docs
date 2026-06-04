@@ -5,13 +5,7 @@ description: 運用 — リファレンス索引章での「運用」は、refer
 area: topics
 verification: meta
 last_verified: 2026-05-12
-sources:
-- meta/templates/SCHEMA.md
-- meta/scripts/gen_chapter_progress.py
-- meta/scripts/aggregate_queue.py
-- meta/prompts/indexer.md
-- meta/prompts/writer.md
-- meta/prompts/verifier.md
+sources: []
 keywords:
 - Reference
 - 運用

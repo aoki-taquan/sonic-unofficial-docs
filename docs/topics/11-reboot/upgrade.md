@@ -5,12 +5,7 @@ description: Upgrade lifecycle — upgrade は reboot と同じではありま�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/sonic-installer.md
-- docs/system/secure-upgrade.md
-- docs/system/sonic-debian-upgrade-cadence.md
-- docs/system/sonic-os-sonic-docker-images-versioning.md
-- docs/system/independent-dpu-upgrade.md
+sources: []
 related:
   cli:
   - config warm_restart
