@@ -30,11 +30,11 @@ sources:
     path: common/schema.h
     ref: HEAD
 related:
-  config_db: []
   cli:
     - show warm_restart
     - show interfaces status
     - show mac
+  _no_related_config_db: true
   _no_related_yang: true
 ---
 
