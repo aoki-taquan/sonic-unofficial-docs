@@ -3,9 +3,21 @@ title: QoS / Buffer のアーキテクチャ
 description: QoS / Buffer のアーキテクチャ — ConfigDB の QoS / buffer テーブルが、最終的に SAI のどのオブジェクトに対応するか、そしてどの
   daemon が橋渡しをしているかをまとめます。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: code-verified
+last_verified: 2026-06-04
+sources:
+- repo: sonic-net/sonic-swss
+  path: orchagent/bufferorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/qosorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/pfcwdorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/flexcounterorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   cli:
   - config interface
@@ -97,11 +109,11 @@ flowchart LR
 
 ## 各 daemon / orch の責務
 
-- **BufferOrch** — `BUFFER_POOL` / `BUFFER_PROFILE` / `BUFFER_PG` / `BUFFER_QUEUE` を SAI buffer pool / profile / PG / queue オブジェクトへ変換します。動的バッファモードのときは buffer manager から流れてくる「再計算後の profile」を扱います。
-- **QosOrch** — `QUEUE` / `SCHEDULER` / `WRED_PROFILE` / `*_TO_*_MAP` 系を SAI の scheduler / [WRED](../../reference/glossary.md#term-wred) / map オブジェクト、および port qos 属性に落とします。背景は [SONiC QoS scheduler and shaping](../../acl-qos/sonic-qos-scheduler-and-shaping.md) を参照。
+- **BufferOrch** — `BUFFER_POOL` / `BUFFER_PROFILE` / `BUFFER_PG` / `BUFFER_QUEUE` を SAI buffer pool / profile / PG / queue オブジェクトへ変換します。動的バッファモードのときは buffer manager から流れてくる「再計算後の profile」を扱います。<!-- evidence: sonic-swss orchagent/bufferorch.cpp L73-L76 が APP_BUFFER_{POOL,PROFILE,QUEUE,PG}_TABLE_NAME を processBufferPool / processBufferProfile / processQueue / processPriorityGroup にディスパッチし、L527 / L572 で sai_buffer_api->create_buffer_pool / remove_buffer_pool を呼ぶ -->
+- **QosOrch** — `QUEUE` / `SCHEDULER` / `WRED_PROFILE` / `*_TO_*_MAP` 系を SAI の scheduler / [WRED](../../reference/glossary.md#term-wred) / map オブジェクト、および port qos 属性に落とします。背景は [SONiC QoS scheduler and shaping](../../acl-qos/sonic-qos-scheduler-and-shaping.md) を参照。<!-- evidence: sonic-swss orchagent/qosorch.cpp L21-L24 で sai_scheduler_api / sai_wred_api / sai_scheduler_group_api を extern 宣言、L60-L69 の qos_to_attr_map が dscp_to_tc / tc_to_queue / pfc_to_pg_map / pfc_to_queue_map を SAI_PORT_ATTR_QOS_* に対応付ける -->
 - **PortsOrch** — ポート単位の [PFC](../../reference/glossary.md#term-pfc) enable mask、`PORT_QOS_MAP` の参照、PG/queue 数の取得など、ポート寄りの設定を扱います。
-- **PfcWdOrch** — `PFC_WD` テーブルを読み、queue ごとに storm 監視を仕掛けます。検出時には SAI 経由で queue を一時停止し、回復したら戻します。詳細は [`PFC_WD`](../../reference/config-db/pfc-wd.md) と上位の monitor 機構の説明を参照。
-- **FlexCounterOrch** — queue / PG / buffer pool 単位で SAI から counter / watermark を fetch し、STATE_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に書きます。watermark の意味は [watermark counters in SONiC](../../acl-qos/watermark-counters-in-sonic.md)、port buffer drop counter は [port buffer drop counters](../../acl-qos/port-buffer-drop-counters-in-sonic.md) を参照。
+- **PfcWdOrch** — `PFC_WD` テーブルを読み、queue ごとに storm 監視を仕掛けます。検出時には SAI 経由で queue を一時停止し、回復したら戻します。詳細は [`PFC_WD`](../../reference/config-db/pfc-wd.md) と上位の monitor 機構の説明を参照。<!-- evidence: sonic-swss orchagent/pfcwdorch.cpp L73 が CFG_PFC_WD_TABLE_NAME consumer を分岐、L528 registerInWdDb が queue ごとの監視を仕掛け、L385/L395 disableBigRedSwitchMode が回復処理を持つ -->
+- **FlexCounterOrch** — queue / PG / buffer pool 単位で SAI から counter / watermark を fetch し、STATE_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に書きます。<!-- evidence: sonic-swss orchagent/flexcounterorch.cpp L46/L52/L53 が BUFFER_POOL_WATERMARK / QUEUE_WATERMARK / PG_WATERMARK キーを宣言、L78-L81 で対応する FLEX_COUNTER_GROUP にマップ、L287 で BufferOrch と連携して watermark の enable を制御 -->watermark の意味は [watermark counters in SONiC](../../acl-qos/watermark-counters-in-sonic.md)、port buffer drop counter は [port buffer drop counters](../../acl-qos/port-buffer-drop-counters-in-sonic.md) を参照。
 
 ## buffer manager と動的バッファモード
 
