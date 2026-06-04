@@ -75,7 +75,7 @@ related:
 | advanced | 155 | ✅ 完成 | meta | 発展トピック |
 | architecture | 90 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
 | concept | 156 | ✅ 完成 | meta | 概念・位置付け |
-| internals | 163 | ✅ 完成 | meta | 内部実装 |
+| internals | 189 | ✅ 完成 | meta | 内部実装 |
 | operations | 230 | ✅ 完成 | meta | 運用・デバッグ |
 | setup | 275 | ✅ 完成 | meta | セットアップ手順 |
 

@@ -2126,10 +2126,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [sonic-sairedis](#term-sonic-sairedis)
 
 - [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../platform/sai-api-version-check.md) (16)
+- [内部実装](../topics/20-swss-sai-redis/internals.md) (10)
 - [NPU MDIO アクセスと gbsyncd 単一 docker 化](../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md) (8)
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../system/sonic-libsairedis-api-idempotence-support.md) (8)
 - [Bulk Counter（sai_bulk_object_get_stats / chunk size）](../architecture/sonic-bulk-counter-design.md) (7)
-- [DEVICE_METADATA テーブル](config-db/device-metadata.md) (5)
 
 ### [sonic-utilities](#term-sonic-utilities)
 
