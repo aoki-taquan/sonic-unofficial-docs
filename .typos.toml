@@ -142,6 +142,7 @@ deprecat = "deprecat"         # script 内の正規表現 prefix
 mis = "mis"                   # "mis-parsed" コメント
 ubernetes = "ubernetes"       # k(ubernetes|vm) regex
 infor = "infor"               # MCLAG infor_len フィールド名
+delimitor = "delimitor"   # sonic-gnmi の Go 変数名 (upstream に実在)
 
 # NOTE: cell 幅切り出し残骸 (GitHub issue 一覧テーブルや sitemap description の
 # truncated word) はこの extend-words ではなく [files] extend-exclude で対象
