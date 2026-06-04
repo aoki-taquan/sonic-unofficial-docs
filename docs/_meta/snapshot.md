@@ -20,9 +20,9 @@ sources: []
 
 | verification | 件数 |
 |---|---:|
-| code-verified | 759 |
+| code-verified | 758 |
 | runbook-verified | 27 |
-| discrepancy-found | 112 |
+| discrepancy-found | 113 |
 | issue-confirmed | 7 |
 | hld-only | 1 |
 | meta | 197 |
@@ -35,9 +35,9 @@ sources: []
 
 | バケツ | 件数 |
 |---|---:|
-| 今日 (0d) | 32 |
+| 今日 (0d) | 33 |
 | 7 日以内 (1-7d) | 2 |
-| 30 日以内 (8-30d) | 1067 |
+| 30 日以内 (8-30d) | 1066 |
 | 30 日超 / 古い | 0 |
 | 不明 / パース不可 | 3 |
 
