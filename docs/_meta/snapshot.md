@@ -20,12 +20,12 @@ sources: []
 
 | verification | 件数 |
 |---|---:|
-| code-verified | 760 |
+| code-verified | 761 |
 | runbook-verified | 27 |
 | discrepancy-found | 113 |
 | issue-confirmed | 7 |
 | hld-only | 1 |
-| meta | 195 |
+| meta | 194 |
 | stub | 1 |
 | **合計** | **1104** |
 
