@@ -76,7 +76,7 @@ flowchart LR
 | `files/build_templates/` | jinja2 テンプレート | docker compose / systemd unit / supervisord conf / package manifest を生成 |
 | `sonic-package-manager` (SPM) | `sonic-utilities/sonic_package_manager/` | extension package のライフサイクル管理（`install` / `upgrade` / `remove` / `list` / `show`）[^spm-loc] |
 | `featured` (`sonic-host-services`) | `scripts/featured` | `FEATURE` テーブルを subscribe して systemd service を enable / disable / restart する[^featured] |
-| `hostcfgd` (`sonic-host-services`) | `scripts/hostcfgd` | TACACS / RADIUS / SSH / syslog 等ホスト側設定を CONFIG_DB から反映する |
+| `hostcfgd` (`sonic-host-services`) | `scripts/hostcfgd` | TACACS / [RADIUS](../../reference/glossary.md#term-radius) / SSH / syslog 等ホスト側設定を CONFIG_DB から反映する |
 | `sonic-installer` | python CLI | image partition の install / list / set-default / set-next / cleanup |
 
 ## SPM / FEATURE table
@@ -269,4 +269,4 @@ reasoning: build キャッシュ・並列度の Make 変数の根拠と取り得
 
 <!-- evidence-rendered:end -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: df94ce4c9c04 -->
