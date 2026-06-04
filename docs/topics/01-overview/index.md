@@ -88,7 +88,7 @@ related:
 | configuration | 61 | ⚠️ プレースホルダ | meta | 設定手段の選び方 |
 | operations | 181 | ✅ 完成 | meta | 運用・デバッグ |
 | internals | 137 | ✅ 完成 | meta | 内部実装 |
-| advanced | 104 | ✅ 完成 | meta | 発展トピック |
+| advanced | 110 | ✅ 完成 | meta | 発展トピック |
 
 <!-- /chapter-progress -->
 
