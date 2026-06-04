@@ -78,7 +78,7 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 
 | ページ | 行数 | 状態 | verification | 主目的 |
 |---|---|---|---|---|
-| advanced | 120 | ✅ 完成 | meta | 発展トピック |
+| advanced | 122 | ✅ 完成 | code-verified | 発展トピック |
 | architecture | 90 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
 | concept | 187 | ✅ 完成 | meta | 概念・位置付け |
 | internals | 128 | ✅ 完成 | meta | 内部実装 |
