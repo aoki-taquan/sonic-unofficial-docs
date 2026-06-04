@@ -4,12 +4,31 @@ description: 運用 — AAA と管理面ポリシーは「動いている間は�
   password、default credential、reset、フォールバック確認の四つを順に扱います。
 area: topics
 verification: meta
-last_verified: 2026-05-10
-sources: []
+last_verified: 2026-06-04
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/passw_hardening/hld_password_hardening.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+  - repo: sonic-net/SONiC
+    path: doc/California-SB237/California-SB237.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+  - repo: sonic-net/SONiC
+    path: doc/password-reset/SONiC_local_users_password_reset_hld.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+  - repo: sonic-net/SONiC
+    path: doc/aaa/TACACS+ Test Plan.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+  - repo: sonic-net/SONiC
+    path: doc/aaa/AAA Improvements/AAA Improvements.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   cli:
   - show aaa
   - config aaa
+  - config tacacs
+  - show tacacs
+  - config passw-hardening
+  - show passw-hardening
   - config vrf
   - show acl
   - config acl
@@ -17,12 +36,17 @@ related:
   - AAA
   - VRF
   - TACPLUS_SERVER
-  - ACL_RULE
-  - ACL_TABLE
   - TACPLUS
   - RADIUS
+  - RADIUS_SERVER
+  - PASSW_HARDENING
+  - ACL_RULE
+  - ACL_TABLE
   yang:
   - sonic-vrf
+  - sonic-system-aaa
+  - sonic-system-tacacs
+  - sonic-passw-hardening
 ---
 
 # 運用
@@ -67,7 +91,7 @@ local user のパスワードに対する最低長、強度、履歴、有効期
 ### password policy / lockout 確認
 
 ```bash
-admin@sonic:~$ show passw policy
+admin@sonic:~$ show passw-hardening policies
 Lockout: enabled
 Lockout threshold: 5
 Lockout duration: 600

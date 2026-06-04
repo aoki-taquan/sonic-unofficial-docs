@@ -3,9 +3,18 @@ title: 発展トピック
 description: 発展トピック — この章のメインは NAT / DHCP ですが、付帯する管理系サービスとして time / DNS / TWAMP /
   terminal server を同じ章でまとめて読みます。OS daemon と CONFIG_DB のテンプレート生成パスを共通言語にすると、各機能が並列に見えてきます。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: code-verified
+last_verified: 2026-06-04
+sources:
+  - repo: sonic-net/sonic-swss
+    path: orchagent/orchdaemon.cpp
+    lines: 852-855
+  - repo: sonic-net/sonic-swss
+    path: orchagent/twamporch.cpp
+    lines: 1-1053
+  - repo: sonic-net/sonic-swss-common
+    path: common/schema.h
+    lines: 387-469
 related:
   cli:
   - show nat
@@ -53,7 +62,9 @@ CLI は `chronyc sources` / `chronyc tracking` で同期状況を見ます。`sh
 
 ## TWAMP Light
 
-TWAMP Light（RFC 5357）は data plane の双方向 latency / jitter / packet loss 測定プロトコルで、control connection を持たない軽量プロトコルです。SONiC では [ASIC](../../reference/glossary.md#term-asic) offload（`SAI_TWAMP_*` 系 API）を想定した [HLD](../../reference/glossary.md#term-hld) があり、`CFG_TWAMP_SESSION_TABLE` で Session-Sender / Reflector を定義する設計になっています。ただし community master では [SAI](../../reference/glossary.md#term-sai) 拡張 / orch / CLI が未取り込みで、HLD-only ステータスです。実機検証時はまずベンダー SDK 側の TWAMP サポートを確認してください。詳細は [TWAMP Light HLD ページ](../../system/twamp-light-hld.md) を参照してください。
+TWAMP Light（RFC 5357）は data plane の双方向 latency / jitter / packet loss 測定プロトコルで、control connection を持たない軽量プロトコルです。SONiC では [ASIC](../../reference/glossary.md#term-asic) offload（`SAI_TWAMP_*` 系 API）を想定した [HLD](../../reference/glossary.md#term-hld) があり、`CFG_TWAMP_SESSION_TABLE` で Session-Sender / Reflector を定義する設計になっています。
+
+community master の現状は段階的に整備が進んでいます。`CFG_TWAMP_SESSION_TABLE_NAME` / `STATE_TWAMP_SESSION_TABLE_NAME` / `COUNTERS_TWAMP_SESSION_NAME_MAP` の各テーブル定義は `sonic-swss-common/common/schema.h` に取り込まれ<!-- evidence: sonic-swss-common/common/schema.h L256,387,469 -->、orchagent には `TwampOrch` が組み込まれて `orchdaemon` から起動されます<!-- evidence: sonic-swss/orchagent/orchdaemon.cpp L852-855 / orchagent/twamporch.cpp -->。`sonic-sairedis` 側にも `NotificationTwampSessionEvent` ハンドラが入っています<!-- evidence: sonic-sairedis/meta/NotificationTwampSessionEvent.cpp -->。一方で `sonic-utilities` には `config twamp` / `show twamp` 系 CLI がまだ無く、`sonic-swss-common/yang-models` にも `sonic-twamp` モジュールが未追加です。実運用には JSON を `CONFIG_DB` に直接流す必要があり、ASIC 側の `SAI_TWAMP_*` 対応もベンダー依存です。実機検証時はまずベンダー SDK 側の TWAMP サポートを確認してください。詳細は [TWAMP Light HLD ページ](../../system/twamp-light-hld.md) を参照してください。
 
 [QoS](../../reference/glossary.md#term-qos) / Observability 寄りの機能ですが、「control 接続を持たない軽量サービス」という性格上、本章の発展トピックとして置きます。
 
@@ -77,7 +88,7 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 
 ## 追加の発展トピック
 
-- **NAT64 / DNS64**: IPv6 専用 host から IPv4 to の通信を NAT64 + DNS64 で橋渡しする。SONiC NAT は主に IPv4 NAT に焦点が当たっており、NAT64 は ASIC capability と SAI 対応が前提。
+- **NAT64 / DNS64**: IPv6 専用 host から IPv4 to の通信を NAT64 + DNS64 で橋渡しする。SONiC NAT は主に IPv4 NAT に焦点が当たっており、NAT64 は ASIC capability と [SAI](../../reference/glossary.md#term-sai) 対応が前提。
 - **DHCPv4 / v6 server (in-box)**: 通常は relay 用途だが、lab / mgmt 用途で in-box DHCP server を動かす構成が議論される (`dnsmasq` ベース)。
 - **NTP 精度向上 (PTP との比較)**: 1ms 級の同期が必要なら PTP (IEEE 1588) を使うが、SONiC PTP は HLD 段階の機能が多い。chrony で得られる精度の限界を理解しておく。
 - **DHCP server identifier override**: 複数 DHCP relay 装置で同じ subnet を扱うとき、server identifier override (RFC 5107) を使って応答の経路を制御する。
@@ -92,7 +103,7 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 
 ## 将来計画 / ロードマップ
 
-- TWAMP Light の community master 取り込み（SAI 拡張と orch / CLI）が future work。
+- TWAMP Light の残作業: `sonic-utilities` の `config twamp` / `show twamp` CLI と `sonic-twamp` YANG モデル整備、各 SAI ベンダー実装の追随が future work（orch とテーブル定義は取り込み済み）。
 - NAT64 / DNS64 の正式サポート議論が断続的にある。
 - DHCP relay の YANG モデル整備と Option 79 / Option 82 の細分化拡張。
 
@@ -110,7 +121,7 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 
 - `sonic-buildimage` の chrony 移行関連 PR は完了側に入り、test plan 拡充と timezone まわりの細部修正が継続。
 - NAT 関連は `natorch` / `natsyncd` で aging / counter / scale 改善 PR が散発的に入る。
-- TWAMP Light は HLD のみで community PR は限定的。SAI extension の議論待ちが続く状況。
+- TWAMP Light は orch (`twamporch`) とテーブル定義が master 入り済み (`sonic-swss` / `sonic-swss-common`)。残るは `sonic-utilities` CLI と `sonic-twamp` YANG、各 SAI ベンダーの `SAI_TWAMP_*` 実装追随。
 
 ## ハンドオフ
 
@@ -142,4 +153,4 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 - [07 ACL / CoPP / Mirror: DHCP DoS 緩和との境界](../07-acl-copp-mirror/index.md)
 - [15 Security / AAA: mgmt VRF と service bind](../15-security-aaa/index.md)
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: f9445b5b4106 -->

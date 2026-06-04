@@ -1,7 +1,7 @@
 ---
 title: minigraph 適用後に reload が完了しない / 起動が固まる
-description: 'Runbook: minigraph 適用後に reload が完了しない / 起動が固まる — : sonic-net/sonic-utilities
-  @ 39732bceb — config/main.py : sonic-net/sonic-buildimage @ 4305596 — sonic-config…'
+description: '`config load_minigraph` 実行後に reload が終わらない / swss が activating
+  のまま固まる際の切り分け runbook。minigraph.xml 構文・hwsku 整合・port_config.ini ずれ・hostcfgd / syncd 起動順を順に確認する。'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
@@ -79,7 +79,7 @@ sudo systemctl --failed
 sudo systemctl status swss syncd database -n 20
 ```
 
-### 3. hostcfgd / hostcfgd の状態
+### 3. hostcfgd の状態
 
 ```bash
 sudo journalctl -u hostcfgd -n 100 --no-pager

@@ -1,14 +1,27 @@
 ---
 title: 内部実装
-description: 内部実装 — 設定基盤の内部実装は、起動時に設定をどう作るか、Redis をどう配置するか、Multi-ASIC で namespace
-  をどう分けるか、という順に読むと全体像がつかめます。通常運用では意識しない層ですが、first boot、upgrade、Multi-ASIC、性能問題ではここが原因になります。
+description: 設定基盤の内部実装を、起動時の config 生成・Redis インスタンス配置・Multi-ASIC namespace の順で俯瞰する 01
+  章の hub ページ。first boot / upgrade / Multi-ASIC / 性能問題の原因切り分けに使う。
 area: topics
 verification: meta
-last_verified: 2026-05-10
-sources: []
+last_verified: 2026-06-04
+sources:
+- repo: sonic-net/sonic-swss-common
+  path: common/database_config.json
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-buildimage
+  path: dockers/docker-database/database_global.json.j2
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: files/image_config/config-setup/config-setup
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-sairedis
+  path: syncd/Syncd.cpp
+  ref: 88bc51ae95df66977601957515e5527119ffd4c5
 related:
   cli:
-  - config vnet
+  - config save
+  - config reload
   config_db: []
   yang: []
   _no_related_config_db: true
@@ -21,7 +34,7 @@ related:
 
 ## first boot と migration
 
-[config-setup](../../system/sonic-configuration-setup-service.md) は、first boot で startup config が無い場合の factory default 生成、firmware upgrade 時の backup / restore / migration、Config DB 外の設定ファイルの扱いを集約するサービスです。
+[config-setup](../../system/sonic-configuration-setup-service.md) は、first boot で startup config が無い場合の factory default 生成、firmware upgrade 時の backup / restore / migration、Config DB 外の設定ファイルの扱いを集約するサービスです。<!-- evidence: sonic-buildimage/files/image_config/config-setup/config-setup L48-L65 (usage で boot / factory モードを定義), L283-L301 (minigraph 優先 → ZTP → factory default の選択), L368 (db_migrator.py -o migrate 呼び出し)。 -->
 
 ```mermaid
 flowchart TB
@@ -40,7 +53,7 @@ flowchart TB
 
 ## Redis インスタンスを分ける理由
 
-単一 Redis に `APPL_DB`、`ASIC_DB`、`CONFIG_DB`、`STATE_DB`、`COUNTERS_DB` などを載せると、大量 route や counter 更新で hot spot になります。[複数 Redis インスタンス](../../internals/support-multiple-user-defined-redis-database-instances.md) の設計は、`database_config.json` の `INSTANCES` と `DATABASES` で DB 名から Redis インスタンスを引けるようにし、負荷を分散するものです。
+単一 Redis に `APPL_DB`、`ASIC_DB`、`CONFIG_DB`、`STATE_DB`、`COUNTERS_DB` などを載せると、大量 route や counter 更新で hot spot になります。[複数 Redis インスタンス](../../internals/support-multiple-user-defined-redis-database-instances.md) の設計は、`database_config.json` の `INSTANCES` と `DATABASES` で DB 名から Redis インスタンスを引けるようにし、負荷を分散するものです。<!-- evidence: sonic-swss-common/common/database_config.json L1-L117 が INSTANCES (redis / redis_chassis) と DATABASES (APPL_DB / ASIC_DB / CONFIG_DB ...) のリファレンス雛形。 -->
 
 ```json
 {
@@ -56,7 +69,7 @@ flowchart TB
 
 ## Multi-ASIC namespace の DB
 
-[Multi-ASIC 名前空間の Redis](../../internals/support-redis-databases-in-multiple-namespaces.md) は、host global namespace と `asic0`、`asic1` などの [NPU](../../reference/glossary.md#term-npu) namespace を分けます。各 namespace は独自の `database_config.json` を持ち、host 側の `database_global.json` が全体の目録になります。
+[Multi-ASIC 名前空間の Redis](../../internals/support-redis-databases-in-multiple-namespaces.md) は、host global namespace と `asic0`、`asic1` などの [NPU](../../reference/glossary.md#term-npu) namespace を分けます。各 namespace は独自の `database_config.json` を持ち、host 側の `database_global.json` が全体の目録になります。<!-- evidence: sonic-buildimage/dockers/docker-database/database_global.json.j2 L7-L40 で INCLUDES 配列に namespace ごとの database_config.json を列挙する jinja テンプレート (NAMESPACE_COUNT / NUM_DPU で展開) を確認。 -->
 
 | 層 | 持つもの | 読む場面 |
 | --- | --- | --- |
@@ -140,7 +153,7 @@ ZMQ は SONiC master でも増えつつある経路で、章ごとに使用有�
 
 - **Redis の単一スレッド**：全テーブルが redis-server の単一スレッドに直列化されるため、高 QPS 時には Redis 自体が bottleneck になりやすいです。複数インスタンス化はこのため。
 - **CONFIG_DB ↔ APPL_DB の二段構造**：CLI から CONFIG_DB に書いた直後に APPL_DB に同名 key が無い場合がある（`*mgrd` 経由のため）。SET 直後の STATE/APPL 確認は polling が必要。
-- **ASIC_DB の write は async**：sairedis の async mode により、ASIC_DB に書いた直後の SAI 反映確認は notification channel か [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 経由でしか観測できない。
+- **ASIC_DB の write は async**：sairedis の async mode により、ASIC_DB に書いた直後の SAI 反映確認は notification channel か [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 経由でしか観測できない。<!-- evidence: sonic-sairedis/syncd/Syncd.cpp L2342, L2755 で "failed in async mode" の throw 経路を確認。async mode が syncd の通常動作経路。 -->
 - **Multi-ASIC は namespace で分離**：同名 DB が複数ある。`-n asicX` を忘れた CLI は host 側の DB を読むだけで silent に成功する事故が多発する。
 
 ## 関連ページ

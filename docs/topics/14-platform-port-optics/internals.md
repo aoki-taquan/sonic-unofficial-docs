@@ -4,8 +4,20 @@ description: 内部実装 — ここでは、port / optics / PHY を「ベンダ
   driver の責任分担、Gearbox 接続、sysfs / BMC 経由の管理を 1 枚にして読みます。
 area: topics
 verification: meta
-last_verified: 2026-05-10
-sources: []
+last_verified: 2026-06-04
+sources:
+- repo: sonic-net/sonic-swss
+  path: orchagent/portsorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-platform-daemons
+  path: sonic-xcvrd/xcvrd/xcvrd.py
+  ref: 4ba9612cb7756651062d37f977e3df17d57f740d
+- repo: sonic-net/sonic-platform-daemons
+  path: sonic-xcvrd/xcvrd/xcvrd_utilities/media_settings_parser.py
+  ref: 4ba9612cb7756651062d37f977e3df17d57f740d
+- repo: sonic-net/sonic-buildimage
+  path: device/nokia/x86_64-nokia_ixr7250e_36x400g-r0/media_settings.json
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   cli:
   - show platform
@@ -92,9 +104,9 @@ flowchart LR
 
 | コンポーネント | 主実体 | 責務 |
 | --- | --- | --- |
-| `PortsOrch` (`orchagent/portsorch.cpp`) | `PortsOrch::doTask`、`initializePort`、`setPortAdminStatus` | port SAI object 作成、speed/FEC/autoneg 設定 |
+| `PortsOrch` (`orchagent/portsorch.cpp`) | `PortsOrch::initializePorts`、`PortsOrch::setPortAdminStatus`[^[portsorch](../../reference/glossary.md#term-portsorch)] | port SAI object 作成、speed/FEC/autoneg 設定 |
 | `portsyncd` | netlink listener | kernel link state を [APPL_DB](../../reference/glossary.md#term-appl_db) へ |
-| `xcvrd` (`sonic-platform-daemons/sonic-xcvrd/`) | `xcvrd.py` | transceiver EEPROM 読み出し、SI 適用、TRANSCEIVER_INFO/DOM/STATUS を [STATE_DB](../../reference/glossary.md#term-state_db) に書く |
+| `xcvrd` (`sonic-platform-daemons/sonic-xcvrd/xcvrd/`) | `xcvrd.py`、`media_settings_parser.notify_media_setting`[^xcvrd] | transceiver EEPROM 読み出し、SI 適用、TRANSCEIVER_INFO/DOM/STATUS を [STATE_DB](../../reference/glossary.md#term-state_db) に書く |
 | `thermalctld` | platform plugin で温度センサ取得 | thermal policy 反映 |
 | `psud`、`pcied`、`syseepromd`、`ledd` | 各種 sensor / FRU | STATE_DB に状況書き込み |
 | `gbsyncd` | Gearbox 用 [syncd](../../reference/glossary.md#term-syncd) | NPU 経由の PHY MDIO |
@@ -109,7 +121,7 @@ flowchart LR
 | `SAI_OBJECT_TYPE_GEARBOX` 系 | Gearbox model object（experimental） |
 | `SAI_OBJECT_TYPE_HOSTIF` | `SAI_HOSTIF_ATTR_TYPE = NETDEV`、`OPER_STATUS` |
 
-`PORT_SERDES` は media-based port settings の主入口で、media type ごとに `media_settings.json` を読み xcvrd が適用要求を出します。
+`PORT_SERDES` は media-based port settings の主入口で、media type ごとに `media_settings.json`[^media-settings] を読み xcvrd が適用要求を出します。
 
 ## Redis テーブル参照関係
 
@@ -157,4 +169,10 @@ ASIC_DB:
 - [support BMC flows in SONiC](../../platform/support-bmc-flows-in-sonic.md)
 - [SONiC BMC platform management monitoring](../../system/sonic-bmc-platform-management-monitoring.md)
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+## 引用元
+
+[^portsorch]: [sonic-net/sonic-swss `orchagent/portsorch.cpp` (ref `4305596`)](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp) — `PortsOrch::initializePorts` (L1160) と `PortsOrch::setPortAdminStatus` (L2208) を確認。
+[^xcvrd]: [sonic-net/sonic-platform-daemons `sonic-xcvrd/xcvrd/xcvrd.py` (ref `4ba9612`)](https://github.com/sonic-net/sonic-platform-daemons/blob/4ba9612cb7756651062d37f977e3df17d57f740d/sonic-xcvrd/xcvrd/xcvrd.py) — `media_settings_parser.notify_media_setting` 呼び出し (L338, L571, L831, L859) と TRANSCEIVER_INFO/DOM テーブル書き込み (L736-738) を確認。
+[^media-settings]: [sonic-net/sonic-buildimage `device/nokia/x86_64-nokia_ixr7250e_36x400g-r0/media_settings.json` (ref `9ea932e`)](https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/device/nokia/x86_64-nokia_ixr7250e_36x400g-r0/media_settings.json) を例として確認 (装置 SKU ごとに同名ファイルが存在)。
+
+<!-- glossary-links-injected: 889740d66e5f -->

@@ -249,19 +249,6 @@ sudo journalctl -u reset-factory -n 100 --no-pager
 sudo diff /etc/sonic/config_db.json /etc/sonic/golden_config_db.json | head
 ```
 
-### コマンド例: Factory reset 動作確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# Reset factory のステータスとログ
-sudo show reboot-cause
-sudo journalctl -u reset-factory -n 100 --no-pager
-# 残存設定の差分
-sudo diff /etc/sonic/config_db.json /etc/sonic/golden_config_db.json | head
-```
-
 ## 関連 reference
 
 - [CLI: sonic-installer](../reference/cli/sonic-installer.md)
