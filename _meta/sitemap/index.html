@@ -35886,7 +35886,7 @@
 <li><a href="../../topics/08-qos-buffer/">QoS / Buffer / PFC / Watermark</a> — [meta] QoS / Buffer / PFC / Watermark — この章は、SONiC の「ASIC のバッファをどう分けるか」「キューをどの順で出すか」「混…</li>
 <li><a href="../../topics/08-qos-buffer/concept/">QoS / Buffer の概念地図</a> — [meta] QoS / Buffer の概念地図 — QoS の話は語彙が多くて、どこから読めばよいかが見えづらいです。ここでは「パケットが入ってから出るまで、どこで何が…</li>
 <li><a href="../../topics/08-qos-buffer/architecture/">QoS / Buffer のアーキテクチャ</a> — [meta] QoS / Buffer のアーキテクチャ — ConfigDB の QoS / buffer テーブルが、最終的に SAI のどのオブジェクトに対応するか、…</li>
-<li><a href="../../topics/08-qos-buffer/setup/">QoS / Buffer の設定</a> — [meta] QoS / Buffer の設定 — 設定は「pool / profile を作る → port に classification を当てる → queue…</li>
+<li><a href="../../topics/08-qos-buffer/setup/">QoS / Buffer の設定</a> — [code-verified] QoS / Buffer の設定 — 設定は「pool / profile を作る → port に classification を当てる → queue…</li>
 <li><a href="../../topics/08-qos-buffer/operations/">QoS / Buffer の運用</a> — [meta] QoS / Buffer の運用 — 「アプリが詰まる」「PFC で止まった」「キューが捨てている」と言われたときに、どのコマンドをどの順番で叩くか、を整理し…</li>
 <li><a href="../../topics/08-qos-buffer/internals/">QoS / Buffer の内部実装</a> — [meta] QoS / Buffer の内部実装 — ここでは「設定が変わるたびに buffer がどう再計算されるか」「ポートを足したり消したりしたとき何が起きるか」「…</li>
 <li><a href="../../topics/08-qos-buffer/advanced/">QoS / Buffer の発展トピック</a> — [meta] QoS / Buffer の発展トピック — QoS / Buffer / PFC の基本（scheduler、queue map、PG、watermark）…</li>
@@ -35905,7 +35905,7 @@
 <li><strong>10-gnmi-openconfig</strong> (<code>topics/10-gnmi-openconfig/</code>)<ul>
 <li><a href="../../topics/10-gnmi-openconfig/">gNMI / gNOI / OpenConfig / YANG</a> — [meta] gNMI / gNOI / OpenConfig / YANG — この章は、SONiC の「モデル駆動管理」を、リクエストが入る入口から ConfigDB…</li>
 <li><a href="../../topics/10-gnmi-openconfig/concept/">概要</a> — [meta] 概要 — SONiC のモデル駆動管理は、CLI、gNMI、REST という 3 つの入口が、Translib / Transformer という共通の中間層…</li>
-<li><a href="../../topics/10-gnmi-openconfig/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — gNMI / REST のリクエストが CONFIG_DB に到達するまでの経路は、入口の transport が違っても中間層 (Tra…</li>
+<li><a href="../../topics/10-gnmi-openconfig/architecture/">アーキテクチャ</a> — [code-verified] アーキテクチャ — gNMI / REST のリクエストが CONFIG_DB に到達するまでの経路は、入口の transport が違っても中間層 (Tra…</li>
 <li><a href="../../topics/10-gnmi-openconfig/setup/">設定</a> — [meta] 設定 — gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC native…</li>
 <li><a href="../../topics/10-gnmi-openconfig/operations/">運用</a> — [meta] 運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collect…</li>
 <li><a href="../../topics/10-gnmi-openconfig/internals/">内部実装</a> — [meta] 内部実装 — gNMI / OpenConfig の内部実装は、telemetry コンテナの中に gNMI server があり、translib / so…</li>
