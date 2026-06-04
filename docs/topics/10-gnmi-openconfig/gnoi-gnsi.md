@@ -1,11 +1,55 @@
 ---
 title: gNOI / gNSI
 description: gNOI / gNSI — gNOI (gRPC Network Operations Interface) は、設定読み書き (gNMI)
-  の隣で「操作」を担当する。
+  の隣で reboot / OS install / file transfer / factory reset / healthz といった操作 RPC を担当し、gNSI
+  (gRPC Network Security Interface) が証明書配布・認可・attestation を担う。SONiC では telemetry container
+  内の gNMI server に同居する。
 area: topics
 verification: meta
-last_verified: 2026-05-10
-sources: []
+last_verified: 2026-06-04
+sources:
+- repo: sonic-net/SONiC
+  path: doc/mgmt/gnmi/gnoi_system_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/gnmi/gnoi_os_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/gnmi/gnoi_file_factory_reset_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/gnmi/gnoi_healthz_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/gnmi/gnsi.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-gnmi
+  path: gnmi_server/gnoi.go
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-gnmi
+  path: gnmi_server/gnoi_system.go
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-gnmi
+  path: gnmi_server/gnoi_os.go
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-gnmi
+  path: gnmi_server/gnoi_file.go
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-gnmi
+  path: gnmi_server/gnoi_reset.go
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-gnmi
+  path: gnmi_server/gnoi_healthz.go
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-gnmi
+  path: gnmi_server/gnsi_certz.go
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-gnmi
+  path: gnmi_server/gnsi_authz.go
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-gnmi
+  path: gnmi_server/gnsi_pathz.go
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
 related:
   cli:
   - config warm_restart
