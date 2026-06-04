@@ -29,6 +29,8 @@ related:
     - VIP_TABLE
   cli: []
   yang: []
+  _no_related_cli: true
+  _no_related_yang: true
 ---
 
 # DPU / ENI / VDPU / REMOTE_DPU テーブル

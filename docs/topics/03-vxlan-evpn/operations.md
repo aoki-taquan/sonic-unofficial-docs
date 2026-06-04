@@ -5,13 +5,7 @@ description: Overlay 運用 — Overlay の障害切り分けは、underlay、VT
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/routing/overlay-ecmp-with-bfd-monitoring.md
-- docs/routing/overlay-ecmp-enhancements.md
-- docs/overlay/dscp-remapping-for-tunnel-traffic.md
-- docs/routing/test-plan-for-inner-packet-hashing-in-ecmp.md
-- docs/routing/local-ars-hld.md
-- docs/architecture/sonic-policy-based-hashing.md
+sources: []
 related:
   cli:
   - show bgp

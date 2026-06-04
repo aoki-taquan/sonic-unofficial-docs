@@ -17,7 +17,7 @@ related:
     - DASH_ENI_TABLE
     - DASH_VNET_TABLE
     - DASH_PREFIX_TAG_TABLE
-  yang: []
+  _no_related_yang: true
 ---
 
 # DASH_ROUTE_RULE_TABLE テーブル

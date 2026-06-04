@@ -5,12 +5,7 @@ description: 運用 — NAT / DHCP relay / DHCP server / DoS 緩和は、CPU 経
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/show-nat.md
-- docs/routing/dhcp-relay-per-interface-counter.md
-- docs/acl-qos/dhcp-dos-mitigation-in-sonic.md
-- docs/architecture/dhcpv4-relay-agent.md
-- docs/architecture/dhcpv6-relay-agent.md
+sources: []
 related:
   cli:
   - show nat

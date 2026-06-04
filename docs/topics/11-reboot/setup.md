@@ -5,10 +5,7 @@ description: Reboot / warm restart の設定 — 設定で最初に分けるの�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/reboot-fast-warm.md
-- docs/reference/cli/config-warm_restart.md
-- docs/system/reboot-support-blockingmode-in-sonic.md
+sources: []
 related:
   cli:
   - show warm_restart

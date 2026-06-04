@@ -5,11 +5,7 @@ description: RIB-FIB と Route Object 生成 — SONiC の L3 pipeline は、FRR
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/routing/routing-and-next-hop-table-enhancement.md
-- docs/routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md
-- docs/routing/new-frr-sonic-communication-channel.md
-- docs/internals/l3-scaling-and-performance-enhancements.md
+sources: []
 related:
   cli:
   - show arp

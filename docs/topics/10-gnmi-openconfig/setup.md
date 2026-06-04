@@ -5,12 +5,7 @@ description: 設定 — gNMI からの Get / Set / Subscribe は、対象の YAN
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/management/gnmi-usage.md
-- docs/management/openconfig-support-for-ethernet-interfaces.md
-- docs/management/sonic-yang-model-guidelines.md
-- docs/management/model-based-replace-delete-in-mgmt-framework-transformer.md
-- docs/reference/config-db/telemetry.md
+sources: []
 related:
   cli:
   - show ip

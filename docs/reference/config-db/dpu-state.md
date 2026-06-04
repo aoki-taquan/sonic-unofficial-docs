@@ -18,7 +18,6 @@ related:
     - CHASSIS_MODULE
   cli:
     - show dpu
-  yang: []
   _no_related_yang: true
 ---
 

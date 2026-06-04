@@ -5,32 +5,7 @@ area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
-sources:
-- docs/management/aaa-improvements.md
-- docs/architecture/pw-hardening-design.md
-- docs/system/sonic-container-hardening.md
-- docs/management/tacacs-authentication.md
-- docs/management/sonic-tacacs-improvement.md
-- docs/management/tacacs-test-plan.md
-- docs/management/tacacs-passkey-encryption.md
-- docs/management/radius-management-user-authentication.md
-- docs/management/hld-ldap.md
-- docs/management/default-credential-management-for-california-sb-327-conformance.md
-- docs/reference/cli/config-aaa.md
-- docs/reference/config-db/tacplus-server.md
-- docs/reference/config-db/ldap-server.md
-- docs/reference/yang/sonic-system-aaa.md
-- docs/management/ssh-server-global-config-hld.md
-- docs/management/serial-console-global-config-hld.md
-- docs/system/banner-messages-hld.md
-- docs/system/reset-local-users-passwords-during-init-hld.md
-- docs/switching/macsec-sonic-high-level-design-document.md
-- docs/switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md
-- docs/switching/sonic-sai-post-support-for-macsec.md
-- docs/system/sonic-openssl-fips-140-3-hld.md
-- docs/system/sonic-fips-deployment.md
-- docs/system/hld-secure-boot.md
-- docs/system/secure-upgrade.md
+sources: []
 keywords:
 - Security
 - AAA

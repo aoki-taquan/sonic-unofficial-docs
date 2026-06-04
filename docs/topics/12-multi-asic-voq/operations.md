@@ -5,11 +5,7 @@ description: 運用 — Multi-ASIC / VOQ chassis の運用調査は、pizza-box 
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/internals/aggregate-voq-counters-in-sonic.md
-- docs/system/platform-monitor-design-for-multi-asic-platforms.md
-- docs/system/platform-monitor-requirement-for-chassis-subsystem.md
-- docs/system/sonic-entity-mib-and-entity-sensor-mib-extension.md
+sources: []
 related:
   cli:
   - show queue

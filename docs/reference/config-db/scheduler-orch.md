@@ -19,7 +19,8 @@ related:
     - SCHEDULER
     - QUEUE
     - PORT_QOS_MAP
-  cli: []
+  cli:
+    - config qos reload
   yang:
     - sonic-scheduler
 ---

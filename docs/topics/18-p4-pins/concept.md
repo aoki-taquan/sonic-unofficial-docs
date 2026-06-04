@@ -5,9 +5,7 @@ description: 概念 — PINS は SONiC に「外部の SDN コントローラが
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/management/pins-hld.md
-- docs/management/p4rt-application-hld.md
+sources: []
 keywords:
 - P4
 - PINS

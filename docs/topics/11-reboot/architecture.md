@@ -4,12 +4,7 @@ description: Warm path の内部構造 — warm reboot / warm restart の中心�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/switching/view-switching-in-producerstatetable.md
-- docs/system/sonic-libsairedis-api-idempotence-support.md
-- docs/system/system-wide-warmboot.md
-- docs/system/what-are-the-development-phases-and-scope-for-warm-reboot.md
-- docs/system/sonic-warm-reboot.md
+sources: []
 related:
   cli:
   - config bgp
