@@ -1950,8 +1950,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [Policer](#term-policer)
 
 - [PORT_STORM_CONTROL テーブル — 暗黙デフォルト詳細](config-db/storm-control.md) (43)
-- [POLICER テーブル](config-db/policer.md) (42)
-- [PORT_STORM_CONTROL テーブル](config-db/port-storm-control.md) (26)
+- [POLICER テーブル](config-db/policer.md) (41)
+- [PORT_STORM_CONTROL テーブル](config-db/port-storm-control.md) (25)
 - [APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)](config-db/appl-mirror.md) (9)
 - [MIRROR_SESSION (ERSPAN 種別)](config-db/erspan.md) (9)
 
