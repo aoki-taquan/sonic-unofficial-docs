@@ -87,7 +87,7 @@ related:
 | operations | 294 | ✅ 完成 | meta | 運用・デバッグ |
 | internals | 121 | ✅ 完成 | meta | 内部実装 |
 | upgrade | 47 | ⚠️ プレースホルダ | meta | アップグレード手順 |
-| advanced | 91 | ⚠️ プレースホルダ | meta | 発展トピック |
+| advanced | 96 | ⚠️ プレースホルダ | meta | 発展トピック |
 
 <!-- /chapter-progress -->
 
