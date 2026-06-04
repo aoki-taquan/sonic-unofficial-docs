@@ -1,8 +1,8 @@
 ---
 title: VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）
-description: VRF サポート（vrfmgrd / vrforch / FRR vrf-aware） — SONiC の VRF サポートは、Linux
-  kernel の VRF master device を基盤に、FRR (zebra / bgpd) を vrf-aware 化し、SONiC 側に vrfmgrd
-  / vrfo…
+description: SONiC の VRF サポートは、Linux kernel の VRF master device を基盤に、FRR (zebra / bgpd)
+  を vrf-aware 化し、SONiC 側に vrfmgrd / vrforch を新設して L3 interface・static route・BGP セッション・ACL
+  redirect の VRF binding を一気通貫で扱う。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -79,12 +79,12 @@ flowchart TB
 
 | モジュール | 役割 |
 |-----------|------|
-| `vrfmgrd` | `CONFIG_DB.VRF` 購読 → Linux VRF master device 作成 / 削除 |
+| `vrfmgrd` | `CONFIG_DB.VRF` 購読 → Linux VRF master device 作成 / 削除、`STATE_VRF_TABLE` で状態同期<!-- evidence: sonic-net/sonic-swss cfgmgr/vrfmgr.cpp:22-25 (m_appVrfTableProducer / m_stateVrfTable), :292 (CFG_VRF_TABLE_NAME consumer) --> |
 | `intfsmgrd` | interface を VRF master に enslave（IP 一旦剥がして再付与）。Loopback も対象 |
 | `nbrmgrd` | neighbor 学習を vrf-scope で APP_DB へ |
 | `fpmsyncd` | [FPM](../reference/glossary.md#term-fpm) 経由 route を `ROUTE_TABLE:<vrf>:<prefix>` で書く |
 | `bgpcfgd` (`frrcfgd`) | `BGP_NEIGHBOR.vrf` から FRR 設定生成 |
-| `vrforch` | `APP_DB.VRF_TABLE` を [SAI](../reference/glossary.md#term-sai) Virtual Router に mapping、OID 払い出し |
+| `vrforch` | `APP_DB.VRF_TABLE` を [SAI](../reference/glossary.md#term-sai) Virtual Router に mapping、OID 払い出し（`sai_virtual_router_api->create_virtual_router` を `VrfOrch` 内で発行）<!-- evidence: sonic-net/sonic-swss orchagent/vrforch.cpp:20,93 (create_virtual_router 呼び出し) --> |
 | `intfsorch` / `routeorch` / `neighorch` / `aclorch` | OID 引いて vrf-scope で SAI 設定 |
 
 ## CONFIG_DB / APPL_DB スキーマ要点
