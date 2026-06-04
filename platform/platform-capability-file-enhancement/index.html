@@ -36373,7 +36373,7 @@
 <p>要点<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>chassis 直下の <code>status_led</code> は <code>colors</code> 列を持つ。これでアプリは「この機種で <code>red</code> を指定して良いか」を事前にバリデーションできる。</li>
-<li>fan_drawer / fan には <code>controllable</code> と <code>speed.{minimum, maximum}</code> が並ぶ。speed の単位は <strong>percentage（%）</strong> が一般的（HLD のサンプル <code>40-100</code> から推測。HLD 本文には単位の明示はない）。</li>
+<li>fan_drawer / fan には <code>controllable</code> と <code>speed.{minimum, maximum}</code> が並ぶ。speed の単位は <strong>percentage（%）</strong> が一般的（HLD のサンプル <code>40-100</code> から推測。HLD 本文には単位の明示はない）。実機の <code>device/dell/x86_64-dell_s6000_s1220-r0/platform.json</code> では <code>minimum: 40</code> のみ記載され <code>maximum</code> は省略されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。HLD 仕様上は両方任意で、片方のみでも有効。</li>
 <li>PSU 配下の LED / fan は <code>controllable=false</code> の例として明示的にリストアップされる。NOS 側に書く API があっても <strong>適用しない / エラーにする</strong> べき、という属性メタデータになる。</li>
 <li>thermal は読み取り専用と分かるよう <code>controllable=false</code>。</li>
 </ul>
@@ -36418,6 +36418,41 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
 </details>
 <!-- evidence-rendered:end -->
 
+<!-- evidence:
+source: sonic-net/sonic-buildimage/device/dell/x86_64-dell_s6000_s1220-r0/platform.json#L4-L28 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  "status_led": {
+      "controllable": true,
+      "colors": ["amber", "blinking amber", "green", "blinking green"]
+  },
+  ...
+  "speed": {
+      "controllable": true,
+      "minimum": 40
+  }
+reasoning: HLD で定義された capabilities フィールド (controllable / colors / minimum) が実機 platform.json に展開されている裏取り。maximum は省略可能であることもこのファイルから確認できる。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-buildimage/device/dell/x86_64-dell_s6000_s1220-r0/platform.json#L4-L28 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-buildimage/device/dell/x86_64-dell_s6000_s1220-r0/platform.json#L4-L28 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>&quot;status_led&quot;: {
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    &quot;controllable&quot;: true,
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    &quot;colors&quot;: [&quot;amber&quot;, &quot;blinking amber&quot;, &quot;green&quot;, &quot;blinking green&quot;]
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>},
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>...
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>&quot;speed&quot;: {
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    &quot;controllable&quot;: true,
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    &quot;minimum&quot;: 40
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>}
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: HLD で定義された capabilities フィールド (controllable / colors / minimum) が実機 platform.json に展開されている裏取り。maximum は省略可能であることもこのファイルから確認できる。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="_5">想定ユースケース<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>status LED 色のバリデーション</strong>: ユーザが <code>config platform led set &lt;color&gt;</code> のような操作を試みた際、<code>platform.json</code> の <code>colors</code> リストに無い色なら CLI が拒否する。</li>
@@ -36453,10 +36488,10 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
 </ul>
 <h3 id="_10">コマンド例<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <p>platform capability ファイルを確認する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Platform capability</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>cat<span class="w"> </span>/usr/share/sonic/device/<span class="k">$(</span>show<span class="w"> </span>platform<span class="w"> </span>summary<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;/Platform/{print $2}&#39;</span><span class="k">)</span>/platform.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>platform<span class="w"> </span>summary
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;CHASSIS_INFO|*&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Platform capability</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>cat<span class="w"> </span>/usr/share/sonic/device/<span class="k">$(</span>show<span class="w"> </span>platform<span class="w"> </span>summary<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;/Platform/{print $2}&#39;</span><span class="k">)</span>/platform.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>platform<span class="w"> </span>summary
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;CHASSIS_INFO|*&#39;</span>
 </span></code></pre></div>
 <h2 id="_11">参考リンク<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36488,6 +36523,9 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/platform-json/platform_json_enhancement.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-buildimage</code> <code>device/dell/x86_64-dell_s6000_s1220-r0/platform.json</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code> (L4-L6 chassis status_led colors / L25-L28 fan speed minimum)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="ZMQ ProducerStateTable / ConsumerStateTable 設計 — 通常の ProducerStateTable / ConsumerStateTable は Redis 経由でメッセージを運ぶ。">
+        <meta name="description" content="ZMQ ProducerStateTable / ConsumerStateTable 設計 — 通常の ProducerStateTable / ConsumerStateTable は Redis 経由でメッセージを運ぶが、ZMQ 版は Redis を経由せず低レイテンシで直接プロセス間メッセージングを行うバリエーション。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="ZMQ ProducerStateTable / ConsumerStateTable 設計 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="ZMQ ProducerStateTable / ConsumerStateTable 設計 — 通常の ProducerStateTable / ConsumerStateTable は Redis 経由でメッセージを運ぶ。" />
+<meta property="og:description" content="ZMQ ProducerStateTable / ConsumerStateTable 設計 — 通常の ProducerStateTable / ConsumerStateTable は Redis 経由でメッセージを運ぶが、ZMQ 版は Redis を経由せず低レイテンシで直接プロセス間メッセージングを行うバリエーション。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/zmq-producer-consumer-state-table-design.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/zmq-producer-consumer-state-table-design/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="ZMQ ProducerStateTable / ConsumerStateTable 設計 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="ZMQ ProducerStateTable / ConsumerStateTable 設計 — 通常の ProducerStateTable / ConsumerStateTable は Redis 経由でメッセージを運ぶ。" />
+<meta property="twitter:description" content="ZMQ ProducerStateTable / ConsumerStateTable 設計 — 通常の ProducerStateTable / ConsumerStateTable は Redis 経由でメッセージを運ぶが、ZMQ 版は Redis を経由せず低レイテンシで直接プロセス間メッセージングを行うバリエーション。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/zmq-producer-consumer-state-table-design.png" />
 </head>
   
@@ -18987,6 +18987,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Consumer 側の二系統通知">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#select-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select 通知と DB 書込みの順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バックプレッシャと pop バッチ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -19084,28 +19112,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装フェーズ境界
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離 / 補足
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -19117,7 +19123,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36053,6 +36059,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Consumer 側の二系統通知">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#select-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select 通知と DB 書込みの順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バックプレッシャと pop バッチ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -36150,28 +36184,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装フェーズ境界
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離 / 補足
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36183,7 +36195,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36225,9 +36237,9 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: Discrepancy-found</p>
-<p><code>sonic-swss-common/common/zmq{client,server,producerstatetable,consumerstatetable}.{h,cpp}</code> を確認。<code>ZmqProducerStateTable : public ProducerStateTable</code> と <code>ZmqClient&amp;</code> メンバ、コンストラクタ既定 <code>dbPersistence = true</code> (Producer) / <code>false</code> (Consumer)、フラグに応じた DB 書き込み分岐を確認。Python は <code>pyext/swsscommon.i</code> L296-346 で <code>ZmqProducerStateTable</code> director 化と <code>zmqWait</code> ヘルパを確認。その後 2026-05-13 に discrepancy-found へ降格（詳細は本文末尾の「実装との乖離 / 補足」節を参照）。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-swss-common/common/zmq{client,server,producerstatetable,consumerstatetable}.{h,cpp}</code> と <code>asyncdbupdater.{h,cpp}</code> を確認。<code>ZmqProducerStateTable : public ProducerStateTable</code> と <code>ZmqClient&amp;</code> メンバ、コンストラクタ既定 <code>dbPersistence = true</code> (Producer) / <code>false</code> (Consumer)、フラグに応じた DB 書き込み分岐を確認。Python は <code>pyext/swsscommon.i</code> で <code>ZmqProducerStateTable</code> director 化と <code>zmqWait</code> ヘルパを確認。HLD 公開時の「DB 更新スレッド」(<code>m_dbUpdateThread</code> / <code>m_DbUpdateDataQueue</code>) は master では <code>AsyncDBUpdater</code> クラス (<code>asyncdbupdater.{h,cpp}</code>) に分離されており、<code>ZmqConsumerStateTable</code> は <code>std::unique_ptr&lt;AsyncDBUpdater&gt; m_asyncDBUpdater</code> を保持する形に refactor 済み (機能等価)。</p>
 </div>
 <h1 id="zmq-producerstatetable-consumerstatetable">ZMQ ProducerStateTable / ConsumerStateTable 設計<a class="headerlink" href="#zmq-producerstatetable-consumerstatetable" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36250,15 +36262,15 @@
     ZPST --&gt; ZC[ZmqClient]
     ZC --&gt;|ZMQ socket| ZS[ZmqServer&lt;br/&gt;m_mqPollThread]
     ZS --&gt; ZCST[ZmqConsumerStateTable]
-    ZCST --&gt; SEL[m_receivedQueue&lt;br/&gt;→ select]
-    ZCST --&gt;|optional| DBT[m_dbUpdateThread]
+    ZCST --&gt; SEL[m_receivedOperationQueue&lt;br/&gt;→ select]
+    ZCST --&gt;|optional| DBT[AsyncDBUpdater&lt;br/&gt;m_dbUpdateThread]
     DBT --&gt; REDIS[(Redis)]
     SEL --&gt; APP2[App pops]</code></pre>
 <p>要点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><code>ZmqClient</code> は <strong>複数の <code>ZmqProducerStateTable</code> から共有</strong> 可能。<code>sendMsg()</code> は thread safe &amp; async</li>
 <li><code>ZmqServer</code> は <code>m_mqPollThread</code> 1 本で受信し、payload に含まれる <strong>DB 名 + テーブル名</strong> で対応する <code>ZmqConsumerStateTable</code> に振り分け</li>
-<li><code>ZmqConsumerStateTable</code> は select 通知用 <code>m_receivedQueue</code> と Redis 書込み用 <code>m_dbUpdateThread</code> の二系統。後者は構築時フラグで on/off</li>
+<li><code>ZmqConsumerStateTable</code> は select 通知用 <code>m_receivedOperationQueue</code> と Redis 書込み用 <code>AsyncDBUpdater</code> の二系統。後者は構築時フラグで on/off</li>
 </ul>
 <h2 id="producer-api">Producer 側 API<a class="headerlink" href="#producer-api" title="Permanent link">&para;</a></h2>
 <p>既存 <code>ProducerStateTable</code> と <strong>同形シグネチャ</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -36313,19 +36325,31 @@
 </table>
 <p>リトライ後も失敗、もしくは connection が完全切断のままなら <strong>例外を投げる</strong>。アプリ側で握りつぶす設計ではない<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="server">Server 側ディスパッチ<a class="headerlink" href="#server" title="Permanent link">&para;</a></h2>
-<p><code>(db_name, table_name) → ZmqConsumerStateTable</code> のマップを持ち、payload から両者を取り出して該当 Consumer に投げる。Consumer は最初に Server に自分を register することでマップに載る<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Handler 内では長時間ブロックせず、ディスパッチ後すぐ次の受信に戻る。</p>
+<p><code>(db_name, table_name) → ZmqConsumerStateTable</code> のマップを持ち、payload から両者を取り出して該当 Consumer に投げる。Consumer は構築時に <code>ZmqServer::registerMessageHandler(dbName, tableName, this)</code> を呼んでマップに登録される<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。Handler 内では長時間ブロックせず、ディスパッチ後すぐ次の受信に戻る<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="consumer">Consumer 側の二系統通知<a class="headerlink" href="#consumer" title="Permanent link">&para;</a></h2>
-<p>受信メッセージは 2 か所に流れる<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>受信メッセージは <code>ZmqConsumerStateTable::handleReceivedData()</code> で次の順序で処理される<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
 <ol>
-<li><strong>select event 通知</strong> — <code>m_receivedQueue</code> に積み、アプリは <code>pops()</code> で取り出す（Redis 版と同じ抽象）</li>
-<li><strong>DB 更新スレッド</strong> — <code>m_DbUpdateDataQueue</code> に積み、<code>m_dbUpdateThread</code> が Redis に書く。<strong>configurable で off 可</strong></li>
+<li>（DB 永続化が有効な場合のみ）受信した <code>KeyOpFieldsValuesTuple</code> を <code>std::make_shared</code> で <strong>複製</strong>。これはアプリが pops 後に値を破壊的に変更しうるため、DB 書込み側が独立した snapshot を持つ必要があるからである</li>
+<li><strong><code>m_receivedOperationQueue</code> に push</strong>（<code>m_receivedQueueMutex</code> で保護）。アプリは <code>pops()</code> で取り出す（Redis 版と同じ抽象）</li>
+<li>（DB 永続化が有効な場合のみ）<code>m_asyncDBUpdater-&gt;update(clone)</code> で <strong><code>AsyncDBUpdater::m_dbUpdateDataQueue</code> に push</strong> し、condition variable で <code>dbUpdateThread</code> を起こす<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
+<li>全件処理後に <code>m_selectableEvent.notify()</code> で epoll を起こす</li>
 </ol>
 <blockquote>
-<p>"This is a configurable feature, could turn on/off this feature in use cases requiring less memory consumption or higher performance." <sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>"This is a configurable feature, could turn on/off this feature in use cases requiring less memory consumption or higher performance." <sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 </blockquote>
 <p>DB 更新を切ると Redis に痕跡が残らない。観測性は失うが Redis を完全に外せるため最速。</p>
+<h3 id="select-db">select 通知と DB 書込みの順序<a class="headerlink" href="#select-db" title="Permanent link">&para;</a></h3>
+<p>実装上 <code>m_receivedOperationQueue</code> への push は <code>m_asyncDBUpdater-&gt;update()</code> より <strong>先に行われる</strong><sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。つまり、<code>m_selectableEvent.notify()</code> が走った時点で:</p>
+<ul>
+<li>アプリは <code>pops()</code> 可能 (受信キュー側は push 完了)</li>
+<li>対応する Redis 書込みは <strong>まだ完了していない可能性が高い</strong>。<code>AsyncDBUpdater::dbUpdateThread</code> は別スレッドかつ <code>sched_get_priority_min(policy) + 1</code> という最低クラスの優先度で動くため、ポーリングスレッドを阻害しない代わりに DB 反映は遅延しうる<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
+</ul>
+<p>このため、<code>ZmqConsumerStateTable</code> 経由で受け取った値を直後に <code>redis-cli</code> で検証してもまだ反映されていないことがある。一貫性が必要なら <code>dbUpdaterQueueSize()</code> で残件を確認するか、アプリ層で完了同期を取る。</p>
+<h3 id="pop">バックプレッシャと pop バッチ<a class="headerlink" href="#pop" title="Permanent link">&para;</a></h3>
+<p><code>m_receivedOperationQueue</code> と <code>m_dbUpdateDataQueue</code> はいずれも <strong><code>std::queue</code> で上限を持たない</strong><sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。フロー制御は ZMQ socket の送信キュー側のみで、Consumer 側にはバックプレッシャ機構がない。</p>
+<p><code>pops()</code> は <code>m_popBatchSize</code>（既定 128、コンストラクタ引数で変更可）件ずつ返す。キュー残量がバッチサイズを超えていれば、最後に再度 <code>m_selectableEvent.notify()</code> を発行してアプリにループ再エントリを促す<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>ライブラリレベル API のため <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI による直接の制御点は HLD に無い。DB 更新 on/off は <strong>コード側で <code>ZmqConsumerStateTable</code> 構築時に指定</strong>。</p>
+<p>ライブラリレベル API のため <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI による直接の制御点は HLD に無い。DB 更新 on/off は <strong>コード側で <code>ZmqConsumerStateTable</code> 構築時の <code>dbPersistence</code> 引数で指定</strong>（Consumer の既定は <code>false</code>）<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="_4">既知の問題<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="docker-sonic-vs-zmq_swss-orchagent-crash">docker-sonic-vs: /zmq_swss ディレクトリ不在による orchagent crash<a class="headerlink" href="#docker-sonic-vs-zmq_swss-orchagent-crash" title="Permanent link">&para;</a></h3>
 <p><strong>症状</strong>: <code>docker-sonic-vs</code> で起動した orchagent が即座に crash し大半のサービスが起動しない。ログに以下が出る:
@@ -36351,68 +36375,40 @@
 <li><code>ZmqClient::sendMsg</code> はリトライ失敗で <strong>例外</strong>。呼出し側で握る前提</li>
 <li>ZMQ は <strong>永続化・観測性が無い</strong>。DB 更新 off では <code>redis-cli</code> でも覗けない</li>
 <li>HA / failover や複数 ZmqServer のロードバランシングは HLD 範囲外（1:1 ないし 1:多の単純トポロジ）</li>
-<li>select 通知と DB 書き込みの <strong>順序保証</strong> は HLD で明示されていない</li>
+<li>Consumer 側のキュー（<code>m_receivedOperationQueue</code> / <code>m_dbUpdateDataQueue</code>）は <strong>上限なし</strong>。長時間消費が滞ると常駐メモリが増える。フロー制御は ZMQ socket 側のみ<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref4:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>既存 <code>ProducerStateTable</code> / <code>ConsumerStateTable</code></strong>: API 互換だが、DB 更新 off で Redis に乗らないテーブルが混ざると他コンポーネントとの食い違いが起き得る</li>
 <li><strong>orchagent 起動順序</strong>: ZMQ は永続化されないため、Producer 起動前に Consumer が立っていないとメッセージ落ち</li>
-<li><strong>select イベントループ</strong>: <code>m_receivedQueue</code> / <code>m_DbUpdateDataQueue</code> のバックプレッシャ挙動は要確認</li>
+<li><strong>select イベントループ</strong>: 受信通知は <code>pops()</code> ですぐ取れるが、対応する Redis 書込みは <code>AsyncDBUpdater</code> スレッド側で遅延しうる（select 通知時点で DB は古い）</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Producer 例外 → Server <code>m_mqPollThread</code> の停止 / 対向プロセス生存を確認</li>
 <li>Consumer に到達しない → <code>(db_name, table_name)</code> の register 漏れ。未登録メッセージは Server で行き場を失う</li>
-<li>期待値が Redis に無い → DB 更新が off の可能性。<code>ZmqConsumerStateTable</code> 構築時フラグを確認</li>
+<li>期待値が Redis に無い → DB 更新が off の可能性。<code>ZmqConsumerStateTable</code> 構築時 <code>dbPersistence</code> 引数を確認。on でも <code>AsyncDBUpdater</code> が低優先度スレッドのため <code>dbUpdaterQueueSize()</code> に残っている可能性</li>
 <li>順序が乱れる → 複数 Producer が同じ Client を共有する場合、ネットワーク側キューと dispatch ループで Consumer 視点の順序が変わり得る</li>
-</ul>
-<!-- demoted-by:q52-az-b-demote -->
-<h2 id="_8">実装フェーズ境界<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<p>本ページは <code>monitor: partially_implemented</code> のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。</p>
-<table>
-<thead>
-<tr>
-<th>Phase</th>
-<th>実装済</th>
-<th>未実装</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Phase 1: Producer / Server / Consumer API</td>
-<td>実装済（HLD 記載の関数群が master に取り込み済）</td>
-<td>—</td>
-</tr>
-<tr>
-<td>Phase 2: select イベントループ統合</td>
-<td>基本フローは実装済</td>
-<td>バックプレッシャ・キュー溢れ時の挙動は未確認 / 未実装の可能性</td>
-</tr>
-<tr>
-<td>Phase 3: メトリクス / 可観測性</td>
-<td>—</td>
-<td>通知欠落の検出・カウンタ整備は未実装</td>
-</tr>
-</tbody>
-</table>
-<h2 id="_9">実装との乖離 / 補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<ul>
-<li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。select イベントループのバックプレッシャ挙動など、HLD で詳細が省略されている部分を本文で「要確認」と明示している。実装側の確定は裏取り課題。</li>
-<li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>
 </ul>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/20-swss-sai-redis/internals/">Topic 20 SWSS/SAI/Redis - internals</a></li>
 <li><a href="../../topics/20-swss-sai-redis/architecture/">Topic 20 SWSS/SAI/Redis - architecture</a></li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 9fb3fca99a59 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/sonic-swss-common/ZMQ producer-consumer state table design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/sonic-swss-common/ZMQ producer-consumer state table design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss-common</code> <code>common/zmqconsumerstatetable.cpp</code> L20-L110 (<code>ZmqConsumerStateTable</code> ctor / <code>handleReceivedData</code> / <code>pops</code>) および <code>common/zmqconsumerstatetable.h</code> L20-L88 (<code>DEFAULT_POP_BATCH_SIZE = 128</code> / <code>m_receivedOperationQueue</code> 型 / <code>m_asyncDBUpdater</code> メンバ)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-swss-common</code> <code>common/asyncdbupdater.cpp</code> L36-L119 (<code>update()</code> で <code>m_dbUpdateDataQueue</code> への push、<code>dbUpdateThread</code> での <code>pthread_setschedprio(.., min_priority + 1)</code> と Table::set/del 反映)&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

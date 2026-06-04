@@ -11834,10 +11834,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-verifier-hint" class="md-nav__link">
+  <a href="#2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. 既知の懸念点（Verifier hint）
+        2. 追加検証対象
       
     </span>
   </a>
@@ -35877,10 +35877,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-verifier-hint" class="md-nav__link">
+  <a href="#2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. 既知の懸念点（Verifier hint）
+        2. 追加検証対象
       
     </span>
   </a>
@@ -35957,15 +35957,16 @@
 <li>y-cable I2C 失敗時の MUX_FAIL 復旧シナリオは HLD 上限定的</li>
 <li>LinkManager は LinkProber より低頻度（hysteresis 抑制）</li>
 </ul>
-<h2 id="2-verifier-hint">2. 既知の懸念点（Verifier hint）<a class="headerlink" href="#2-verifier-hint" title="Permanent link">&para;</a></h2>
+<h2 id="2">2. 追加検証対象<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<p>HLD と実装の照合で確定済 / 未確定な項目を整理する。</p>
 <ul>
-<li><a href="../../reference/glossary/#term-linkmgrd">linkmgrd</a> の LinkProber / MuxState / LinkState / LinkManager 4 サブモジュールの現行実装確認 — 実装の構成は <code>link_prober/</code> / <code>mux_state/</code> / <code>link_manager/</code> の 3 ディレクトリ + <code>DbInterface.cpp</code> で概ね一致を確認済</li>
-<li>MuxOrch の neighbor handling 3 案のうちどれが採用されているか確認 — <code>createStandaloneTunnelRoute</code> / <code>removeStandaloneTunnelRoute</code> 案で確定</li>
-<li>ycabled の I2C リトライ + MUX_FAIL 報告ロジック実装確認</li>
-<li>Loopback0 宛 encap パケット listen + ping 駆動 service の所在確認（HLD §6.3.5.1 相当）</li>
-<li>zero mac neighbor + tunnel route 自動 install の <a href="../../reference/glossary/#term-neighsyncd">neighsyncd</a> / <a href="../../reference/glossary/#term-muxorch">muxorch</a> 実装確認（HLD §6.3.5.2 相当）</li>
-<li>arp_update の FAILED → INCOMPLETE 書き換えの取り込み確認</li>
-<li>accept_untracked_na の kernel backport 状況確認</li>
+<li><a href="../../reference/glossary/#term-linkmgrd">linkmgrd</a> のサブモジュール構成は <code>link_prober/</code> / <code>mux_state/</code> / <code>link_state/</code> / <code>link_manager/</code> の 4 ディレクトリ + <code>DbInterface.cpp</code> で構成される<!-- evidence: sonic-linkmgrd/src/ ディレクトリ構成 --></li>
+<li>MuxOrch の neighbor handling は <code>createStandaloneTunnelRoute</code> / <code>removeStandaloneTunnelRoute</code> 経由の standalone tunnel route 案で確定<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li>arp_update の FAILED / INCOMPLETE neighbor 書き換えロジックは buildimage 同梱スクリプトで実装済<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
+<li>ycabled の I2C リトライ + MUX_FAIL 報告ロジック詳細（<code>sonic-platform-daemons/sonic-ycabled/</code> 配下）は別ページで取り扱う</li>
+<li>Loopback0 宛 encap パケット listen + ping 駆動 service の所在は HLD §6.3.5.1 相当として要追跡</li>
+<li>zero mac neighbor + tunnel route 自動 install の <a href="../../reference/glossary/#term-neighsyncd">neighsyncd</a> / <a href="../../reference/glossary/#term-muxorch">muxorch</a> 実装は HLD §6.3.5.2 相当として要追跡</li>
+<li><code>accept_untracked_na</code> の kernel backport 状況は kernel-config 依存のため要追跡</li>
 </ul>
 <h2 id="3">3. 干渉する機能<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35991,6 +35992,12 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/dualtor/dualtor_active_standby_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/muxorch.cpp</code> L1968 / L1983 / L2442 / L2455（<code>createStandaloneTunnelRoute</code> / <code>removeStandaloneTunnelRoute</code> 呼び出しと定義）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-buildimage</code> <code>files/scripts/arp_update</code> L182-L210（IPv6 FAILED/INCOMPLETE neighbor の zero MAC 経由再解決と permanent INCOMPLETE 設定）&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

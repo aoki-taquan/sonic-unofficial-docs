@@ -36499,7 +36499,7 @@
 </tr>
 </tbody>
 </table>
-<p>完全な leaf 一覧は <a href="../../glossary/#term-yang">YANG</a> ソース（37 リソースクラス × 3 + <code>polling_interval</code> ＝ 約 112 リーフ）を直接参照のこと。</p>
+<p>完全な leaf 一覧は <a href="../../glossary/#term-yang">YANG</a> ソース（35 リソースクラス × 3 + <code>polling_interval</code> ＝ 106 リーフ）を直接参照のこと<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="must">must / 制約<a class="headerlink" href="#must" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>&lt;resource&gt;_high_threshold &gt; &lt;resource&gt;_low_threshold</code> を全リソースに対して要求</li>
@@ -36564,6 +36564,9 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-crm.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>同上ソースファイル全体（L1-970）。<code>leaf &lt;name&gt;_threshold_type</code> 35 個、<code>leaf &lt;name&gt;_high_threshold</code> 35 個、<code>leaf &lt;name&gt;_low_threshold</code> 35 個、加えて <code>leaf polling_interval</code> 1 個（重複 <code>grep -oE "leaf [a-zA-Z0-9_]+" | sort -u</code> で確認）。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -33708,7 +33708,7 @@
   <a href="#monitor-partially-implemented" class="md-nav__link">
     <span class="md-ellipsis">
       
-        partially_implemented — 部分実装 (61 件)
+        partially_implemented — 部分実装 (60 件)
       
     </span>
   </a>
@@ -36112,7 +36112,7 @@
   <a href="#monitor-partially-implemented" class="md-nav__link">
     <span class="md-ellipsis">
       
-        partially_implemented — 部分実装 (61 件)
+        partially_implemented — 部分実装 (60 件)
       
     </span>
   </a>
@@ -36325,7 +36325,7 @@
 <p class="admonition-title">このページの使い方</p>
 <p>SONiC コミュニティ master の HLD は <strong>設計提案リポジトリ</strong> であり、現行コードと一致しているとは限りません。本ページは「HLD だけ読んで誤解しがちな機能」を一望できる USP ページです。読み手は、まず後述の <strong>monitor subtype 別セクション</strong> で該当機能の乖離タイプ（未実装 / 部分実装 / 進化置換 / 廃止）を把握し、そこから個別ページへ降りて <code>last_verified</code> と「実装との乖離」セクションの裏取り根拠を確認してください。area 横断で探す場合は末尾の <strong>area 別索引</strong> から辿れます。</p>
 </div>
-<p><code>verification: discrepancy-found</code> が付いた全 <strong>113</strong> ページを自動収集しています。本ページは <code>meta/scripts/gen_discrepancy_index.py</code> が生成し、CI (<code>--check</code>) で常時鮮度を保証します。</p>
+<p><code>verification: discrepancy-found</code> が付いた全 <strong>112</strong> ページを自動収集しています。本ページは <code>meta/scripts/gen_discrepancy_index.py</code> が生成し、CI (<code>--check</code>) で常時鮮度を保証します。</p>
 <h2 id="_1">サマリ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <h3 id="monitor-subtype">monitor subtype 別件数<a class="headerlink" href="#monitor-subtype" title="Permanent link">&para;</a></h3>
 <table>
@@ -36344,7 +36344,7 @@
 </tr>
 <tr>
 <td><a href="#monitor-partially-implemented"><code>partially_implemented</code></a></td>
-<td style="text-align: right;">61</td>
+<td style="text-align: right;">60</td>
 <td>部分実装</td>
 </tr>
 <tr>
@@ -36378,7 +36378,7 @@
 </tr>
 <tr>
 <td><a href="#area-internals"><code>internals</code></a></td>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">5</td>
 </tr>
 <tr>
 <td><a href="#area-management"><code>management</code></a></td>
@@ -36507,7 +36507,7 @@
   area: <code>system</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
-<h3 id="monitor-partially-implemented"><code>partially_implemented</code> — 部分実装 (61 件)<a class="headerlink" href="#monitor-partially-implemented" title="Permanent link">&para;</a></h3>
+<h3 id="monitor-partially-implemented"><code>partially_implemented</code> — 部分実装 (60 件)<a class="headerlink" href="#monitor-partially-implemented" title="Permanent link">&para;</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">部分実装</p>
 <p>HLD のスコープのうち<strong>一部の構成要素だけ</strong>が現行 master に取り込まれているページ群。データ層 / CLI / orch のどれが欠けているかは個別ページで明示。</p>
@@ -36630,17 +36630,8 @@
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。</p>
 <ul>
-<li>
-<p><a href="../../../internals/zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a><br />
-  area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></p>
-</li>
-<li>
-<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。select イベントループのバックプレッシャ挙動など、HLD で詳細が省略されている部分を本文で「要確認」と明示している。実装側の確定は裏取り課題。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
-</li>
-<li>
-<p><a href="../../../management/aaa-improvements/">AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）</a><br />
-  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></p>
-</li>
+<li><a href="../../../management/aaa-improvements/">AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）</a><br />
+  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></li>
 </ul>
 <p>本ページの monitor は <code>partially_implemented</code>。HLD は AAA を PAM / NSS / D-Bus / RBAC 多重ロールで再設計する提案だが、現行 master では既存 <code>AAA</code> / <code>RADIUS</code> / <code>TACPLUS</code> CONFIG_DB テーブルと従来の PAM スタックがそのまま使われており、D-Bus 経由の NSS / 多重 role / <code>sudoers</code> NOPASSWD 撤去などの中心要素は取り込まれていない。HLD は設計議論文書として参照し、実装の振る舞いは個別の AAA 関連ページと <code>.cache/sonic-sources/sonic-buildimage/files/image_config/</code> の PAM / NSS 設定で裏取りすること。</p>
 <ul>
@@ -37242,15 +37233,6 @@
   area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。</p>
-<ul>
-<li>
-<p><a href="../../../internals/zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a><br />
-  area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></p>
-</li>
-<li>
-<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。select イベントループのバックプレッシャ挙動など、HLD で詳細が省略されている部分を本文で「要確認」と明示している。実装側の確定は裏取り課題。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
-</li>
-</ul>
 <h3 id="area-management">management<a class="headerlink" href="#area-management" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../../management/aaa-improvements/">AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）</a><br />

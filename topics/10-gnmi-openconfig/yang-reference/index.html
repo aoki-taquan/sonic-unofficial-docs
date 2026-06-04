@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="YANG リファレンス — このページは、機能章 (本書の章 01〜21) から YANG モジュールを逆引きするための索引です。SONiC native YANG のページは docs/reference/yang/*.md に並んでおり、CONFIG_DB のテーブルスキーマと 1:1 対応します。">
+        <meta name="description" content="本書の機能章 01〜21 から SONiC native YANG モジュールを逆引きするための索引。各章にどの sonic-*.yang が対応するかを 1 表で示し、`docs/reference/yang/*.md` の個別ページに接続する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="YANG リファレンス - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="YANG リファレンス — このページは、機能章 (本書の章 01〜21) から YANG モジュールを逆引きするための索引です。SONiC native YANG のページは docs/reference/yang/*.md に並んでおり、CONFIG_DB のテーブルスキーマと 1:1 対応します。" />
+<meta property="og:description" content="本書の機能章 01〜21 から SONiC native YANG モジュールを逆引きするための索引。各章にどの sonic-*.yang が対応するかを 1 表で示し、`docs/reference/yang/*.md` の個別ページに接続する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/10-gnmi-openconfig/yang-reference.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/10-gnmi-openconfig/yang-reference/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="YANG リファレンス - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="YANG リファレンス — このページは、機能章 (本書の章 01〜21) から YANG モジュールを逆引きするための索引です。SONiC native YANG のページは docs/reference/yang/*.md に並んでおり、CONFIG_DB のテーブルスキーマと 1:1 対応します。" />
+<meta property="twitter:description" content="本書の機能章 01〜21 から SONiC native YANG モジュールを逆引きするための索引。各章にどの sonic-*.yang が対応するかを 1 表で示し、`docs/reference/yang/*.md` の個別ページに接続する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/10-gnmi-openconfig/yang-reference.png" />
 </head>
   
@@ -35946,6 +35946,7 @@
 
 <h1 id="yang">YANG リファレンス<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h1>
 <p>このページは、機能章 (本書の章 01〜21) から <a href="../../../reference/glossary/#term-yang">YANG</a> モジュールを逆引きするための索引である。<a href="../../../reference/glossary/#term-sonic">SONiC</a> native YANG のページは <code>docs/reference/yang/*.md</code> に並んでおり、<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> のテーブルスキーマと 1:1 対応する。OpenConfig 側のマップ範囲は、機能ごとに <a href="../concept/">概要</a> の表と、各機能 <a href="../../../reference/glossary/#term-hld">HLD</a> を参照する。</p>
+<p>native YANG のソースは <code>sonic-buildimage</code> リポジトリの <code>src/sonic-yang-models/yang-models/</code> 配下にまとまっている <!-- evidence: sonic-net/sonic-buildimage src/sonic-yang-models/yang-models @9ea932ec --> 。本ページに挙げる sonic-*.yang はすべてここに実在するモジュールに対応する。個別ページが未整備のモジュールは <code>.yang</code> のパス表記のままにしてある。</p>
 <h2 id="yang_1">機能章別 YANG モジュール<a class="headerlink" href="#yang_1" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -35958,67 +35959,112 @@
 <tbody>
 <tr>
 <td>01 全体像・設定基盤</td>
-<td><a href="../../../reference/yang/sonic-device_metadata/">sonic-device_metadata</a>, <a href="../../../reference/yang/sonic-feature/">sonic-feature</a></td>
-<td>device 識別、機能 enable / disable</td>
+<td><a href="../../../reference/yang/sonic-device_metadata/">sonic-device_metadata</a>, <a href="../../../reference/yang/sonic-feature/">sonic-feature</a>, <a href="../../../reference/yang/sonic-versions/">sonic-versions</a>, <a href="../../../reference/yang/sonic-system-defaults/">sonic-system-defaults</a></td>
+<td>device 識別、機能 enable / disable、versions / system defaults</td>
 </tr>
 <tr>
 <td>02 <a href="../../../reference/glossary/#term-bgp">BGP</a> / <a href="../../../reference/glossary/#term-frr">FRR</a></td>
-<td><a href="../../../reference/yang/sonic-bgp-global/">sonic-bgp-global</a>, <a href="../../../reference/yang/sonic-bgp-neighbor/">sonic-bgp-neighbor</a>, <a href="../../../reference/yang/sonic-bgp-peergroup/">sonic-bgp-peergroup</a>, <a href="../../../reference/yang/sonic-bgp-aggregate-address/">sonic-bgp-aggregate-address</a>, <a href="../../../reference/yang/sonic-route-map/">sonic-route-map</a>, <a href="../../../reference/yang/sonic-route-common/">sonic-route-common</a>, <a href="../../../reference/yang/sonic-static-route/">sonic-static-route</a></td>
-<td>BGP 設定、route map、static route</td>
+<td><a href="../../../reference/yang/sonic-bgp-global/">sonic-bgp-global</a>, <a href="../../../reference/yang/sonic-bgp-neighbor/">sonic-bgp-neighbor</a>, <a href="../../../reference/yang/sonic-bgp-peergroup/">sonic-bgp-peergroup</a>, <a href="../../../reference/yang/sonic-bgp-peerrange/">sonic-bgp-peerrange</a>, <a href="../../../reference/yang/sonic-bgp-aggregate-address/">sonic-bgp-aggregate-address</a>, <a href="../../../reference/yang/sonic-bgp-bbr/">sonic-bgp-bbr</a>, <a href="../../../reference/yang/sonic-bgp-device-global/">sonic-bgp-device-global</a>, <a href="../../../reference/yang/sonic-bgp-monitor/">sonic-bgp-monitor</a>, <a href="../../../reference/yang/sonic-bgp-sentinel/">sonic-bgp-sentinel</a>, <a href="../../../reference/yang/sonic-route-map/">sonic-route-map</a>, <a href="../../../reference/yang/sonic-route-common/">sonic-route-common</a>, <a href="../../../reference/yang/sonic-static-route/">sonic-static-route</a>, <a href="../../../reference/yang/sonic-bmp/">sonic-bmp</a></td>
+<td>BGP / FRR 設定、route map、static route、BMP</td>
 </tr>
 <tr>
 <td>03 <a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-evpn">EVPN</a> / <a href="../../../reference/glossary/#term-vnet">VNET</a></td>
-<td><a href="../../../reference/yang/sonic-vxlan/">sonic-vxlan</a>, <a href="../../../reference/yang/sonic-vnet/">sonic-vnet</a></td>
-<td>VXLAN tunnel、VNET overlay</td>
+<td><a href="../../../reference/yang/sonic-vxlan/">sonic-vxlan</a>, <a href="../../../reference/yang/sonic-vnet/">sonic-vnet</a>, <a href="../../../reference/yang/sonic-tunnel/">sonic-tunnel</a>, <a href="../../../reference/yang/sonic-nvgre-tunnel/">sonic-nvgre-tunnel</a></td>
+<td>VXLAN / NVGRE tunnel、VNET overlay</td>
 </tr>
 <tr>
 <td>04 <a href="../../../reference/glossary/#term-vrf">VRF</a> / <a href="../../../reference/glossary/#term-ecmp">ECMP</a></td>
-<td><a href="../../../reference/yang/sonic-vrf/">sonic-vrf</a></td>
-<td>VRF テーブル</td>
+<td><a href="../../../reference/yang/sonic-vrf/">sonic-vrf</a>, <a href="../../../reference/yang/sonic-fine-grained-ecmp/">sonic-fine-grained-ecmp</a>, <a href="../../../reference/yang/sonic-hash/">sonic-hash</a></td>
+<td>VRF テーブル、fine-grained ECMP、hash 制御</td>
 </tr>
 <tr>
 <td>05 Dual-ToR</td>
-<td>（該当 YANG モジュールなし。設定は <code>MUX_CABLE</code> / <code>MUX_LINKMGR</code> / <code>TUNNEL</code> 等の CONFIG_DB 直接記述）</td>
+<td><a href="../../../reference/yang/sonic-mux-cable/">sonic-mux-cable</a> （その他、<code>MUX_LINKMGR</code> / <code>TUNNEL</code> 等の CONFIG_DB 直接記述で補う）</td>
 <td>Dual-ToR / MuxCable 設定</td>
 </tr>
 <tr>
 <td>06 L2 / <a href="../../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../../reference/glossary/#term-lag">LAG</a> / MC-LAG</td>
-<td><a href="../../../reference/yang/sonic-vlan/">sonic-vlan</a>, <a href="../../../reference/yang/sonic-vlan-sub-interface/">sonic-vlan-sub-interface</a>, <a href="../../../reference/yang/sonic-portchannel/">sonic-portchannel</a>, <a href="../../../reference/yang/sonic-mclag/">sonic-mclag</a>, <a href="../../../reference/yang/sonic-lldp/">sonic-lldp</a></td>
-<td>L2 / LAG / MC-LAG 設定</td>
+<td><a href="../../../reference/yang/sonic-vlan/">sonic-vlan</a>, <a href="../../../reference/yang/sonic-vlan-sub-interface/">sonic-vlan-sub-interface</a>, <a href="../../../reference/yang/sonic-portchannel/">sonic-portchannel</a>, <a href="../../../reference/yang/sonic-mclag/">sonic-mclag</a>, <a href="../../../reference/yang/sonic-lldp/">sonic-lldp</a>, <a href="../../../reference/yang/sonic-spanning-tree/">sonic-spanning-tree</a>, <a href="../../../reference/yang/sonic-storm-control/">sonic-storm-control</a>, <a href="../../../reference/yang/sonic-neigh/">sonic-neigh</a></td>
+<td>L2 / LAG / MC-LAG / STP / storm control / neighbor</td>
 </tr>
 <tr>
 <td>07 <a href="../../../reference/glossary/#term-acl">ACL</a> / <a href="../../../reference/glossary/#term-copp">CoPP</a> / Mirror</td>
 <td><a href="../../../reference/yang/sonic-copp/">sonic-copp</a>, <a href="../../../reference/yang/sonic-mirror-session/">sonic-mirror-session</a>, <a href="../../../reference/yang/sonic-pbh/">sonic-pbh</a></td>
-<td>CoPP、mirror、PBH</td>
+<td>CoPP、mirror、PBH (ACL は CONFIG_DB 直記述で sonic-acl YANG は無し)</td>
 </tr>
 <tr>
 <td>08 <a href="../../../reference/glossary/#term-qos">QoS</a> / Buffer / <a href="../../../reference/glossary/#term-pfc">PFC</a></td>
-<td><a href="../../../reference/yang/sonic-buffer-pool/">sonic-buffer-pool</a>, <a href="../../../reference/yang/sonic-buffer-profile/">sonic-buffer-profile</a>, <a href="../../../reference/yang/sonic-buffer-pg/">sonic-buffer-pg</a>, <a href="../../../reference/yang/sonic-buffer-queue/">sonic-buffer-queue</a>, <a href="../../../reference/yang/sonic-queue/">sonic-queue</a>, <a href="../../../reference/yang/sonic-scheduler/">sonic-scheduler</a>, <a href="../../../reference/yang/sonic-dscp-tc-map/">sonic-dscp-tc-map</a>, <a href="../../../reference/yang/sonic-tc-queue-map/">sonic-tc-queue-map</a>, <a href="../../../reference/yang/sonic-port-qos-map/">sonic-port-qos-map</a>, <a href="../../../reference/yang/sonic-pfcwd/">sonic-pfcwd</a></td>
-<td>QoS / Buffer / PFCWD</td>
+<td><a href="../../../reference/yang/sonic-buffer-pool/">sonic-buffer-pool</a>, <a href="../../../reference/yang/sonic-buffer-profile/">sonic-buffer-profile</a>, <a href="../../../reference/yang/sonic-buffer-pg/">sonic-buffer-pg</a>, <a href="../../../reference/yang/sonic-buffer-queue/">sonic-buffer-queue</a>, <a href="../../../reference/yang/sonic-queue/">sonic-queue</a>, <a href="../../../reference/yang/sonic-scheduler/">sonic-scheduler</a>, <a href="../../../reference/yang/sonic-dscp-tc-map/">sonic-dscp-tc-map</a>, <a href="../../../reference/yang/sonic-tc-queue-map/">sonic-tc-queue-map</a>, <a href="../../../reference/yang/sonic-port-qos-map/">sonic-port-qos-map</a>, <a href="../../../reference/yang/sonic-pfcwd/">sonic-pfcwd</a>, <a href="../../../reference/yang/sonic-trimming/">sonic-trimming</a></td>
+<td>QoS / Buffer / PFCWD / packet trimming</td>
 </tr>
 <tr>
 <td>09 Telemetry / <a href="../../../reference/glossary/#term-snmp">SNMP</a></td>
-<td><a href="../../../reference/yang/sonic-syslog/">sonic-syslog</a></td>
-<td>syslog</td>
+<td><a href="../../../reference/yang/sonic-snmp/">sonic-snmp</a>, <a href="../../../reference/yang/sonic-syslog/">sonic-syslog</a>, <a href="../../../reference/yang/sonic-sflow/">sonic-sflow</a>, <a href="../../../reference/yang/sonic-flex_counter/">sonic-flex_counter</a>, <a href="../../../reference/yang/sonic-debug-counter/">sonic-debug-counter</a>, <a href="../../../reference/yang/sonic-crm/">sonic-crm</a>, <a href="../../../reference/yang/sonic-fabric-monitor/">sonic-fabric-monitor</a></td>
+<td>SNMP / syslog / sFlow / counter 系</td>
+</tr>
+<tr>
+<td>10 <a href="../../../reference/glossary/#term-gnmi">gNMI</a> / OpenConfig</td>
+<td><code>sonic-gnmi.yang</code>, <code>sonic-telemetry.yang</code>, <code>sonic-telemetry_client.yang</code>, <code>sonic-grpcclient.yang</code>, <code>sonic-high-frequency-telemetry.yang</code> (個別ページは未整備、source: <code>src/sonic-yang-models/yang-models/</code>)</td>
+<td>gNMI / streaming telemetry / gRPC client 設定</td>
+</tr>
+<tr>
+<td>11 Reboot / Warm-restart</td>
+<td><a href="../../../reference/yang/sonic-warm-restart/">sonic-warm-restart</a>, <a href="../../../reference/yang/sonic-kdump/">sonic-kdump</a></td>
+<td>warm / fast reboot、kernel dump</td>
+</tr>
+<tr>
+<td>12 <a href="../../../reference/glossary/#term-multi-asic">Multi-ASIC</a> / <a href="../../../reference/glossary/#term-voq">VOQ</a></td>
+<td><a href="../../../reference/yang/sonic-fabric-port/">sonic-fabric-port</a>, <a href="../../../reference/yang/sonic-fabric-monitor/">sonic-fabric-monitor</a>, <code>sonic-system-port.yang</code>, <code>sonic-voq-inband-interface.yang</code>, <code>sonic-chassis-module.yang</code> (個別ページは未整備)</td>
+<td>Multi-<a href="../../../reference/glossary/#term-asic">ASIC</a> / VOQ chassis / system port</td>
+</tr>
+<tr>
+<td>13 <a href="../../../reference/glossary/#term-dash">DASH</a> / <a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a></td>
+<td><code>sonic-dash.yang</code>, <code>sonic-smart-switch.yang</code> (個別ページは未整備、source: <code>src/sonic-yang-models/yang-models/</code>)</td>
+<td>DASH / SmartSwitch overlay 設定</td>
 </tr>
 <tr>
 <td>14 Platform / Port / Optics</td>
-<td><a href="../../../reference/yang/sonic-port/">sonic-port</a>, <a href="../../../reference/yang/sonic-interface/">sonic-interface</a>, <a href="../../../reference/yang/sonic-loopback-interface/">sonic-loopback-interface</a></td>
-<td>port / interface</td>
+<td><a href="../../../reference/yang/sonic-port/">sonic-port</a>, <a href="../../../reference/yang/sonic-interface/">sonic-interface</a>, <a href="../../../reference/yang/sonic-loopback-interface/">sonic-loopback-interface</a>, <a href="../../../reference/yang/sonic-breakout_cfg/">sonic-breakout_cfg</a>, <a href="../../../reference/yang/sonic-mgmt_interface/">sonic-mgmt_interface</a>, <a href="../../../reference/yang/sonic-mgmt_port/">sonic-mgmt_port</a>, <a href="../../../reference/yang/sonic-mgmt_vrf/">sonic-mgmt_vrf</a></td>
+<td>port / interface / breakout / mgmt</td>
 </tr>
 <tr>
 <td>15 Security / <a href="../../../reference/glossary/#term-aaa">AAA</a></td>
-<td><a href="../../../reference/yang/sonic-system-aaa/">sonic-system-aaa</a></td>
-<td>AAA</td>
+<td><a href="../../../reference/yang/sonic-system-aaa/">sonic-system-aaa</a>, <a href="../../../reference/yang/sonic-system-tacacs/">sonic-system-tacacs</a>, <a href="../../../reference/yang/sonic-system-radius/">sonic-system-radius</a>, <a href="../../../reference/yang/sonic-system-ldap/">sonic-system-ldap</a>, <a href="../../../reference/yang/sonic-passw-hardening/">sonic-passw-hardening</a>, <a href="../../../reference/yang/sonic-ssh-server/">sonic-ssh-server</a>, <a href="../../../reference/yang/sonic-fips/">sonic-fips</a>, <a href="../../../reference/yang/sonic-macsec/">sonic-macsec</a>, <a href="../../../reference/yang/sonic-banner/">sonic-banner</a></td>
+<td>AAA / TACACS / <a href="../../../reference/glossary/#term-radius">RADIUS</a> / LDAP / password / SSH / FIPS / <a href="../../../reference/glossary/#term-macsec">MACsec</a> / banner</td>
 </tr>
 <tr>
 <td>16 <a href="../../../reference/glossary/#term-nat">NAT</a> / DHCP / Time / DNS</td>
-<td><a href="../../../reference/yang/sonic-nat/">sonic-nat</a>, <a href="../../../reference/yang/sonic-dhcp-server/">sonic-dhcp-server</a>, <a href="../../../reference/yang/sonic-ntp/">sonic-ntp</a>, <a href="../../../reference/yang/sonic-dns/">sonic-dns</a></td>
-<td>NAT / DHCP / NTP / DNS</td>
+<td><a href="../../../reference/yang/sonic-nat/">sonic-nat</a>, <a href="../../../reference/yang/sonic-dhcp-server/">sonic-dhcp-server</a>, <a href="../../../reference/yang/sonic-ntp/">sonic-ntp</a>, <a href="../../../reference/yang/sonic-dns/">sonic-dns</a>, <a href="../../../reference/yang/sonic-restapi/">sonic-restapi</a></td>
+<td>NAT / DHCP / NTP / DNS / REST API</td>
+</tr>
+<tr>
+<td>17 <a href="../../../reference/glossary/#term-srv6">SRv6</a> / <a href="../../../reference/glossary/#term-mpls">MPLS</a></td>
+<td><a href="../../../reference/yang/sonic-srv6/">sonic-srv6</a> (MPLS 側は CONFIG_DB 直記述で sonic-mpls YANG は無し)</td>
+<td>SRv6 sid / locator</td>
+</tr>
+<tr>
+<td>18 P4 / <a href="../../../reference/glossary/#term-pins">PINS</a></td>
+<td>（該当する <code>sonic-p4*.yang</code> / <code>sonic-pins*.yang</code> は master の yang-models 配下に存在しない。PINS 側スキーマは別リポ sonic-net/sonic-pins を参照）</td>
+<td>P4 / PINS は YANG ではなく gNMI/P4Runtime で扱われる</td>
+</tr>
+<tr>
+<td>19 Build / Packaging</td>
+<td>（該当 YANG モジュールなし。build / packaging はリポジトリ構造とビルドスクリプトのスコープ）</td>
+<td>build / packaging は YANG 対象外</td>
+</tr>
+<tr>
+<td>20 SWSS / <a href="../../../reference/glossary/#term-sai">SAI</a> / <a href="../../../reference/glossary/#term-redis">Redis</a></td>
+<td>（該当 YANG モジュールなし。SWSS / SAI / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> の内部スキーマは YANG で定義されない）</td>
+<td>SWSS / SAI 内部レイヤは YANG 対象外</td>
+</tr>
+<tr>
+<td>21 Lab / Developer</td>
+<td>（該当 YANG モジュールなし。lab / developer 用途では既存 YANG を利用）</td>
+<td>lab セットアップは既存 YANG を流用</td>
 </tr>
 </tbody>
 </table>
-<p><code>docs/reference/yang/index.md</code> から全モジュールの一覧を参照できる。サブ章でカバーされていない module は <a href="../../../reference/yang/">YANG index</a> を直接見る。</p>
+<p><code>docs/reference/yang/index.md</code> から全モジュールの一覧を参照できる。本表でカバーされていない module や個別ページが未整備の module は <a href="../../../reference/yang/">YANG index</a> と上記 <code>yang-models/</code> ソースを直接見る。</p>
 <h2 id="yang_2">YANG モジュールを読む順<a class="headerlink" href="#yang_2" title="Permanent link">&para;</a></h2>
 <p>各 YANG ページは「テーブル → leaf 一覧 → 型と制約 → 関連 CONFIG_DB / CLI」という共通形式で書いてある。最初の table 名と key で CONFIG_DB を当てに行くのが速い。次に leaf 単位の型・range・must / when を読む。CLI から書く場合の対応は <code>docs/reference/cli/*.md</code> を参照する。</p>
 <h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36027,7 +36073,7 @@
 <li><a href="../../../management/sonic-yang-model-guidelines/">SONiC YANG model guidelines</a></li>
 <li><a href="../../../management/sonic-config-update-validation-via-yang/">SONiC config update validation via YANG</a></li>
 </ul>
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: e26f59110781 -->
 
 
 

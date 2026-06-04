@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="database_config.json が必須となった経緯と DEFAULT_UNIXSOCKET 廃止、非標準環境での注意点。">
+        <meta name="description" content="database_config.json が必須となった経緯と DEFAULT_UNIXSOCKET 廃止、非標準環境での読み込みパス指定方法。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="swss-common データベース設定（database_config.json） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="database_config.json が必須となった経緯と DEFAULT_UNIXSOCKET 廃止、非標準環境での注意点。" />
+<meta property="og:description" content="database_config.json が必須となった経緯と DEFAULT_UNIXSOCKET 廃止、非標準環境での読み込みパス指定方法。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/swss-common-database-config.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/swss-common-database-config/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="swss-common データベース設定（database_config.json） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="database_config.json が必須となった経緯と DEFAULT_UNIXSOCKET 廃止、非標準環境での注意点。" />
+<meta property="twitter:description" content="database_config.json が必須となった経緯と DEFAULT_UNIXSOCKET 廃止、非標準環境での読み込みパス指定方法。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/swss-common-database-config.png" />
 </head>
   
@@ -19308,7 +19308,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        環境変数による指定
+        デフォルトパスに配置する
       
     </span>
   </a>
@@ -19317,6 +19317,17 @@
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        明示的に初期化する（推奨）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         単体テスト用の最小設定例
@@ -19335,7 +19346,7 @@
   <a href="#db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        マルチ DB 構成
+        マルチ DB / マルチネームスペース構成
       
     </span>
   </a>
@@ -19343,7 +19354,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連
@@ -35928,7 +35939,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        環境変数による指定
+        デフォルトパスに配置する
       
     </span>
   </a>
@@ -35937,6 +35948,17 @@
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        明示的に初期化する（推奨）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         単体テスト用の最小設定例
@@ -35955,7 +35977,7 @@
   <a href="#db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        マルチ DB 構成
+        マルチ DB / マルチネームスペース構成
       
     </span>
   </a>
@@ -35963,7 +35985,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連
@@ -36039,9 +36061,9 @@
 
 <h1 id="swss-common-database_configjson">swss-common データベース設定（database_config.json）<a class="headerlink" href="#swss-common-database_configjson" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>sonic-swss-common</code> は <a href="../../reference/glossary/#term-redis">Redis</a> への接続情報を <code>database_config.json</code> から読み取る設計に移行しており、かつての <code>DEFAULT_UNIXSOCKET</code> による接続方式は廃止予定（または廃止済み）である。</p>
+<p><code>sonic-swss-common</code> は <a href="../../reference/glossary/#term-redis">Redis</a> への接続情報を <code>database_config.json</code> から読み取る設計に統一されており、かつての <code>DEFAULT_UNIXSOCKET</code> ベースの暗黙フォールバック接続は廃止されている。デフォルトの読み込みパスはコード上の定数 <code>DEFAULT_SONIC_DB_CONFIG_FILE</code> で固定されている<sup id="fnref:default-const"><a class="footnote-ref" href="#fn:default-const">1</a></sup>。</p>
 <h2 id="database_configjson">database_config.json の役割<a class="headerlink" href="#database_configjson" title="Permanent link">&para;</a></h2>
-<p><code>database_config.json</code> は <code>swss-common</code> が使用する Redis データベースの接続設定を定義するファイルである。標準的な <a href="../../reference/glossary/#term-sonic">SONiC</a> イメージでは <code>/var/run/redis/sonic-db/database_config.json</code> に配置される。</p>
+<p><code>database_config.json</code> は <code>swss-common</code> が使用する Redis データベースの接続設定を定義するファイルである。標準的な <a href="../../reference/glossary/#term-sonic">SONiC</a> イメージでは <code>/var/run/redis/sonic-db/database_config.json</code> に配置される<sup id="fnref2:default-const"><a class="footnote-ref" href="#fn:default-const">1</a></sup>。リポジトリにもリファレンス用の最小構成 (<code>common/database_config.json</code>) が同梱されている<sup id="fnref:repo-sample"><a class="footnote-ref" href="#fn:repo-sample">2</a></sup>。</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="nt">&quot;INSTANCES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">        </span><span class="nt">&quot;redis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -36061,59 +36083,91 @@
 </span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">            </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span>
 </span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">            </span><span class="nt">&quot;instance&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span>
 </span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">        </span><span class="err">...</span>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">    </span><span class="nt">&quot;VERSION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
 </span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="p">}</span>
 </span></code></pre></div>
 <h2 id="default_unixsocket">DEFAULT_UNIXSOCKET の廃止経緯<a class="headerlink" href="#default_unixsocket" title="Permanent link">&para;</a></h2>
-<p>以前の <code>swss-common</code> では、<code>database_config.json</code> が存在しない場合にデフォルトの Unix ソケットパス（<code>/var/run/redis/redis.sock</code>）を使ってフォールバック接続を行っていた。</p>
-<p>しかし、開発チームの方針として：</p>
-<blockquote>
-<p>「今後は <code>DEFAULT_UNIXSOCKET</code> は使用しない。DB 関連の設定はすべてデフォルトでビルドされる <code>database_config.json</code> から読み取る。」</p>
-</blockquote>
-<p>この方針変更により、<code>database_config.json</code> が存在しない環境では <code>swss-common</code> を使用するコンポーネントが起動に失敗するようになった。</p>
+<p>以前の <code>swss-common</code> では <code>database_config.json</code> が無い場合に <code>DEFAULT_UNIXSOCKET</code> (<code>/var/run/redis/redis.sock</code>) で暗黙フォールバック接続を行うコードパスが存在した。しかし issue <a href="https://github.com/sonic-net/sonic-swss-common/issues/322">#322</a> で「DB 接続設定はすべて <code>database_config.json</code> から読み取る方針に統一する」ことが合意され、現在は <code>SonicDBConfig::initialize()</code> を経由して JSON を読まないと <code>DBConnector</code> 系コンストラクタが利用できない設計になっている<sup id="fnref:init-required"><a class="footnote-ref" href="#fn:init-required">3</a></sup>。<code>RedisContext::DEFAULT_UNIXSOCKET</code> という定数自体は <code>RedisContext</code> 内部のデフォルト値として残るが、ユーザが意識する暗黙フォールバックとしての役割は持たない<sup id="fnref:default-unixsocket-const"><a class="footnote-ref" href="#fn:default-unixsocket-const">4</a></sup>。</p>
 <h2 id="_2">非標準環境での利用<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>公式 SONiC コンテナイメージを使用しない場合（カスタムコンテナ、開発環境、単体テスト等）、<code>database_config.json</code> を適切に配置するか、環境変数で場所を指定する必要がある。</p>
-<h3 id="_3">環境変数による指定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SONIC_DB_CONFIG_FILE</span><span class="o">=</span>/path/to/database_config.json
+<p>公式 SONiC コンテナイメージを使用しない場合（カスタムコンテナ、開発環境、単体テスト等）、<code>database_config.json</code> を以下のいずれかの方法で読み込ませる必要がある。<code>swss-common</code> 自体には設定ファイル位置を切り替える環境変数は無い<sup id="fnref:no-env-var"><a class="footnote-ref" href="#fn:no-env-var">5</a></sup>ため、ファイル配置 または 明示的初期化呼び出し のいずれかが必要となる。</p>
+<h3 id="_3">デフォルトパスに配置する<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>最も単純な方法は、デフォルトの読み込みパス <code>/var/run/redis/sonic-db/database_config.json</code> にファイルを配置することである。これにより <code>DBConnector</code> 初回利用時に自動的に読み込まれる<sup id="fnref2:init-required"><a class="footnote-ref" href="#fn:init-required">3</a></sup>。</p>
+<h3 id="_4">明示的に初期化する（推奨）<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>任意の場所に置いた JSON を読ませる場合は、<code>DBConnector</code> を生成する前に <code>SonicDBConfig</code> の初期化 API をアプリケーション側から呼ぶ<sup id="fnref:init-api"><a class="footnote-ref" href="#fn:init-api">6</a></sup>。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// C++ 例</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">swss</span><span class="o">::</span><span class="n">SonicDBConfig</span><span class="o">::</span><span class="n">initialize</span><span class="p">(</span><span class="s">&quot;/path/to/database_config.json&quot;</span><span class="p">);</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">swss</span><span class="o">::</span><span class="n">DBConnector</span><span class="w"> </span><span class="n">db</span><span class="p">(</span><span class="s">&quot;APPL_DB&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 </span></code></pre></div>
-<h3 id="_4">単体テスト用の最小設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nt">&quot;INSTANCES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="nt">&quot;redis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">            </span><span class="nt">&quot;hostname&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">            </span><span class="nt">&quot;port&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">6379</span><span class="p">,</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">            </span><span class="nt">&quot;unix_socket_path&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/tmp/redis.sock&quot;</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="p">},</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nt">&quot;DATABASES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">        </span><span class="nt">&quot;APPL_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">        </span><span class="nt">&quot;ASIC_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">        </span><span class="nt">&quot;COUNTERS_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">        </span><span class="nt">&quot;LOGLEVEL_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">        </span><span class="nt">&quot;CONFIG_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">        </span><span class="nt">&quot;PFC_WD_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">        </span><span class="nt">&quot;STATE_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">        </span><span class="nt">&quot;SNMP_OVERLAY_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">    </span><span class="p">},</span>
-</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">    </span><span class="nt">&quot;VERSION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
-</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="p">}</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Python 例</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">swsscommon</span><span class="w"> </span><span class="kn">import</span> <span class="n">swsscommon</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">swsscommon</span><span class="o">.</span><span class="n">SonicDBConfig</span><span class="o">.</span><span class="n">load_sonic_db_config</span><span class="p">(</span><span class="s2">&quot;/path/to/database_config.json&quot;</span><span class="p">)</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">db</span> <span class="o">=</span> <span class="n">swsscommon</span><span class="o">.</span><span class="n">DBConnector</span><span class="p">(</span><span class="s2">&quot;APPL_DB&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 </span></code></pre></div>
-<h2 id="db">マルチ DB 構成<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
-<p>大規模 SONiC 構成では、複数の Redis インスタンスに DB を分散配置することが可能である。<code>database_config.json</code> の <code>INSTANCES</code> セクションに複数のインスタンスを定義し、各 DB を異なるインスタンスに割り当てる。</p>
+<h3 id="_5">単体テスト用の最小設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="nt">&quot;INSTANCES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">        </span><span class="nt">&quot;redis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;hostname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6379</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;unix_socket_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/run/redis/redis.sock&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">        </span><span class="nt">&quot;redis_chassis_db&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;hostname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;127.100.1.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6380</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;unix_socket_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">}</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">        </span><span class="nt">&quot;redis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">            </span><span class="nt">&quot;hostname&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">            </span><span class="nt">&quot;port&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">            </span><span class="nt">&quot;unix_socket_path&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/tmp/redis.sock&quot;</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="nt">&quot;DATABASES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">        </span><span class="nt">&quot;APPL_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">        </span><span class="nt">&quot;ASIC_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">        </span><span class="nt">&quot;COUNTERS_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">        </span><span class="nt">&quot;LOGLEVEL_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">        </span><span class="nt">&quot;CONFIG_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">        </span><span class="nt">&quot;PFC_WD_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">        </span><span class="nt">&quot;STATE_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">        </span><span class="nt">&quot;SNMP_OVERLAY_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="w">    </span><span class="nt">&quot;VERSION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="p">}</span>
 </span></code></pre></div>
-<h2 id="_5">関連<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="db">マルチ DB / マルチネームスペース構成<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
+<p>大規模 SONiC 構成（chassis / multi-<a href="../../reference/glossary/#term-asic">ASIC</a>）では、複数の Redis インスタンスに DB を分散配置できる。<code>database_config.json</code> の <code>INSTANCES</code> セクションに複数のインスタンスを定義し、各 DB を異なるインスタンスに割り当てる。さらにネームスペース横断の構成は <code>database_global.json</code>（デフォルト <code>/var/run/redis/sonic-db/database_global.json</code>）から読み込まれる<sup id="fnref:global-config"><a class="footnote-ref" href="#fn:global-config">7</a></sup>。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="nt">&quot;INSTANCES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="nt">&quot;redis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;hostname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6379</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;unix_socket_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/run/redis/redis.sock&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">        </span><span class="nt">&quot;redis_chassis_db&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;hostname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;127.100.1.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6380</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;unix_socket_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_6">関連<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../swss-common-db-link-ordering/">swss-common DB リンク順序制約</a></li>
 <li>GitHub Issue: <a href="https://github.com/sonic-net/sonic-swss-common/issues/322">sonic-net/sonic-swss-common#322</a></li>
 </ul>
-<!-- glossary-links-injected: 3605a1b8842c -->
+<!-- glossary-links-injected: c006405759d8 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:default-const">
+<p><code>common/dbconnector.h</code> の <code>SonicDBConfig</code> クラスは <code>static constexpr const char *DEFAULT_SONIC_DB_CONFIG_FILE = "/var/run/redis/sonic-db/database_config.json";</code> を宣言し、<code>initialize()</code> の引数デフォルトとしてこの定数を使う (<a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/dbconnector.h#L90-L92">sonic-swss-common common/dbconnector.h L90-L92</a>)。&#160;<a class="footnote-backref" href="#fnref:default-const" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:default-const" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:repo-sample">
+<p>swss-common リポジトリ内のサンプル: <a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/database_config.json">sonic-swss-common common/database_config.json</a>。&#160;<a class="footnote-backref" href="#fnref:repo-sample" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:init-required">
+<p><code>common/dbconnector.cpp</code> の <code>DBConnector</code> 各コンストラクタは <code>SonicDBConfig::isInit()</code> が false の場合に <code>initialize(DEFAULT_SONIC_DB_CONFIG_FILE)</code> を呼ぶ (<a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/dbconnector.cpp#L250-L290">sonic-swss-common common/dbconnector.cpp L250-L290</a>)。ファイルが無ければここで例外が投げられる。&#160;<a class="footnote-backref" href="#fnref:init-required" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:init-required" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:default-unixsocket-const">
+<p><code>RedisContext</code> クラスは <code>static constexpr const char *DEFAULT_UNIXSOCKET = "/var/run/redis/redis.sock";</code> を保持するが、<code>SonicDBConfig</code> 初期化失敗時のフォールバック接続には使われない (<a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/dbconnector.h#L169">sonic-swss-common common/dbconnector.h L169</a>)。&#160;<a class="footnote-backref" href="#fnref:default-unixsocket-const" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:no-env-var">
+<p><code>common/dbconnector.{h,cpp}</code> 内に <code>getenv("SONIC_DB_CONFIG_FILE")</code> のような環境変数読み取りは存在せず、<code>DEFAULT_SONIC_DB_CONFIG_FILE</code> 定数のみがデフォルトパスとして使われる (<a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/dbconnector.h#L90">sonic-swss-common common/dbconnector.h L90</a>, <a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/dbconnector.cpp#L240-L475">common/dbconnector.cpp L240-L475</a>)。&#160;<a class="footnote-backref" href="#fnref:no-env-var" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:init-api">
+<p>C++ 側は <code>SonicDBConfig::initialize(file)</code> (<a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/dbconnector.h#L92">common/dbconnector.h L92</a>)。Python 側は SWIG バインディングが提供する <code>SonicDBConfig.load_sonic_db_config(path)</code> (<a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/dbconnector.h#L96-L99">common/dbconnector.h L96-L99</a>)。&#160;<a class="footnote-backref" href="#fnref:init-api" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:global-config">
+<p><code>SonicDBConfig::initializeGlobalConfig()</code> は <code>DEFAULT_SONIC_DB_GLOBAL_CONFIG_FILE = "/var/run/redis/sonic-db/database_global.json"</code> をデフォルトとして使う (<a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/dbconnector.h#L91-L102">sonic-swss-common common/dbconnector.h L91, L102</a>)。&#160;<a class="footnote-backref" href="#fnref:global-config" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

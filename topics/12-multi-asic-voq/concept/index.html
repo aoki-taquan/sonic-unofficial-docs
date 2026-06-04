@@ -36205,7 +36205,7 @@
 <li><strong>Redis / DB</strong>: ASIC ごとに <code>redis&lt;N&gt;.sock</code> を立て、CONFIG_DB / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> をそれぞれ分離。host namespace は管理系の CONFIG_DB を別途持つ</li>
 <li><strong>Routing</strong>: BGP は ASIC namespace ごとに bgpd を立て、internal-BGP で各 ASIC 間を繋ぐ。<a href="../../../reference/glossary/#term-frr">FRR</a> の <code>vrf</code> ではなく namespace で分離</li>
 <li><strong>Forwarding plane</strong>: VOQ chassis では fabric ASIC + system port + distributed VOQ により、line card 間で 1 つの論理 switch を構成</li>
-<li><strong>CLI</strong>: <code>show</code> 系コマンドが <code>--namespace</code> を取り、引数なしのときは全 namespace を集約。<code>sonic-utilities</code> が namespace 一覧を <code>/usr/share/sonic/device/.../asic.conf</code> から読む</li>
+<li><strong>CLI</strong>: <code>show</code> 系コマンドが <code>--namespace</code> を取り、引数なしのときは全 namespace を集約。<code>sonic-utilities</code> が namespace 一覧を <code>/usr/share/sonic/device/&lt;platform&gt;/asic.conf</code> から読む<sup id="fnref:multi-asic-conf"><a class="footnote-ref" href="#fn:multi-asic-conf">1</a></sup></li>
 </ul>
 <p>つまり Multi-ASIC / VOQ 章は、他の機能章（BGP / <a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-qos">QoS</a> / Reboot...）が<strong>「1 ASIC の前提」で書かれている内容に対する例外条項集</strong>でもあります。BGP 章の話を Multi-ASIC で適用するときに何が変わるか、というレンズで読み返すと意味が立ち上がります。</p>
 <h2 id="_2">用語の定義<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -36222,7 +36222,7 @@
 <li><strong>Recirculation port</strong>: ASIC 内でパケットを再度パイプライン入力に戻すための内部 loop port。</li>
 <li><strong>Chassis DB</strong>: supervisor 上に立つ Redis インスタンスで、全 line card に共通な system port、neighbor、router 等を集約。</li>
 <li><strong>Distributed VOQ</strong>: ingress 側で egress system port 単位の virtual output queue を持ち、credit ベースで egress に送る仕組み。HOL blocking を回避。</li>
-<li><strong>Switch type</strong>: <code>DEVICE_METADATA.localhost.switch_type</code> に <code>chassis-packet</code> / <code>voq</code> / <code>fabric</code> などが入り、起動時の挙動を分岐。</li>
+<li><strong>Switch type</strong>: <code>DEVICE_METADATA.localhost.switch_type</code> に <code>voq</code> / <code>fabric</code> などが入り、起動時の挙動を分岐。<sup id="fnref:switch-type"><a class="footnote-ref" href="#fn:switch-type">2</a></sup></li>
 </ul>
 <h2 id="pizza-box-multi-asic-voq-chassis">Pizza-box / Multi-ASIC / VOQ Chassis の三層<a class="headerlink" href="#pizza-box-multi-asic-voq-chassis" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36240,7 +36240,7 @@
 <li><strong>front-panel port</strong>: line card の物理ポート。従来の <code>Ethernet0</code>, <code>Ethernet4</code>, ... と同じ感覚で、各 line card が持ちます。</li>
 <li><strong>system port</strong>: chassis 全体で一意な論理ポート ID。<code>&lt;line-card&gt;|&lt;asic&gt;|&lt;port&gt;</code> のような形で命名され、Chassis DB が全 system port を保持します。</li>
 </ul>
-<p>データプレーン上は、ある line card に入ったパケットが宛先 system port に向けて fabric を経由して送られます。FIB は宛先 system port を解決し、egress line card の出口で実際の front-panel port にマップされます。</p>
+<p>データプレーン上は、ある line card に入ったパケットが宛先 system port に向けて fabric を経由して送られます。FIB は宛先 system port を解決し、egress line card の出口で実際の front-panel port にマップされます。<sup id="fnref:system-port"><a class="footnote-ref" href="#fn:system-port">3</a></sup></p>
 <h2 id="fabric-port-recirculation-port">Fabric Port と Recirculation Port<a class="headerlink" href="#fabric-port-recirculation-port" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>fabric port</strong>: line card と fabric card を結ぶ内部 port です。fabric ASIC は L2 / L3 forwarding をせず、cell ベースで line card 間をつなぐスイッチング機構を提供します。</li>
@@ -36335,7 +36335,22 @@
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 <li><a href="../../02-bgp/">BGP と FRR 制御プレーン</a></li>
 </ul>
-<!-- glossary-links-injected: 5c9b3765d470 -->
+<!-- glossary-links-injected: 81b1fc9c897b -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:multi-asic-conf">
+<p>namespace 生成と <code>asic.conf</code> ベースの ASIC 数検出は <code>SONiC/doc/multi_asic/SONiC_multi_asic_hld.md</code> の 94 行目（"A linux network namespace is created for every ASIC"）および 205-211 行目（"asic.conf is added" / "present in the directory <code>/usr/share/sonic/device/&lt;platform&gt;/</code>"）に記載。&#160;<a class="footnote-backref" href="#fnref:multi-asic-conf" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:switch-type">
+<p><code>DEVICE_METADATA</code> 拡張と <code>switch_type = "voq" | "fabric"</code> の定義は <code>SONiC/doc/voq/voq_hld.md</code> の 227-234 行目（"<a href="../../../reference/glossary/#term-device_metadata">DEVICE_METADATA</a> table is enhanced ... switch_type"）および 296 行目（<code>switch_type = "voq" | "fabric"</code>）参照。&#160;<a class="footnote-backref" href="#fnref:switch-type" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:system-port">
+<p>system port の定義（"all the system ports in the entire system. The configuration of each system port should specify - system_port_id, switch_id, cored_index, core_port_index and speed"）は <code>SONiC/doc/voq/voq_hld.md</code> 89 行目、<code>SYSTEM_PORT</code> CONFIG_DB スキーマは同 281-313 行目参照。&#160;<a class="footnote-backref" href="#fnref:system-port" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

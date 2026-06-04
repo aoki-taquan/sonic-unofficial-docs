@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="VRF サポート（vrfmgrd / vrforch / FRR vrf-aware） — SONiC の VRF サポートは、Linux kernel の VRF master device を基盤に、FRR (zebra / bgpd) を vrf-aware 化し、SONiC 側に vrfmgrd / vrfo…">
+        <meta name="description" content="SONiC の VRF サポートは、Linux kernel の VRF master device を基盤に、FRR (zebra / bgpd) を vrf-aware 化し、SONiC 側に vrfmgrd / vrforch を新設して L3 interface・static route・BGP セッション・ACL redirect の VRF binding を一気通貫で扱う。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="VRF サポート（vrfmgrd / vrforch / FRR vrf-aware） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="VRF サポート（vrfmgrd / vrforch / FRR vrf-aware） — SONiC の VRF サポートは、Linux kernel の VRF master device を基盤に、FRR (zebra / bgpd) を vrf-aware 化し、SONiC 側に vrfmgrd / vrfo…" />
+<meta property="og:description" content="SONiC の VRF サポートは、Linux kernel の VRF master device を基盤に、FRR (zebra / bgpd) を vrf-aware 化し、SONiC 側に vrfmgrd / vrforch を新設して L3 interface・static route・BGP セッション・ACL redirect の VRF binding を一気通貫で扱う。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/sonic-vrf-support-design-spec-draft.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/sonic-vrf-support-design-spec-draft/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="VRF サポート（vrfmgrd / vrforch / FRR vrf-aware） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="VRF サポート（vrfmgrd / vrforch / FRR vrf-aware） — SONiC の VRF サポートは、Linux kernel の VRF master device を基盤に、FRR (zebra / bgpd) を vrf-aware 化し、SONiC 側に vrfmgrd / vrfo…" />
+<meta property="twitter:description" content="SONiC の VRF サポートは、Linux kernel の VRF master device を基盤に、FRR (zebra / bgpd) を vrf-aware 化し、SONiC 側に vrfmgrd / vrforch を新設して L3 interface・static route・BGP セッション・ACL redirect の VRF binding を一気通貫で扱う。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/sonic-vrf-support-design-spec-draft.png" />
 </head>
   
@@ -36134,7 +36134,7 @@
 <tbody>
 <tr>
 <td><code>vrfmgrd</code></td>
-<td><code>CONFIG_DB.VRF</code> 購読 → Linux VRF master device 作成 / 削除</td>
+<td><code>CONFIG_DB.VRF</code> 購読 → Linux VRF master device 作成 / 削除、<code>STATE_VRF_TABLE</code> で状態同期<!-- evidence: sonic-net/sonic-swss cfgmgr/vrfmgr.cpp:22-25 (m_appVrfTableProducer / m_stateVrfTable), :292 (CFG_VRF_TABLE_NAME consumer) --></td>
 </tr>
 <tr>
 <td><code>intfsmgrd</code></td>
@@ -36154,7 +36154,7 @@
 </tr>
 <tr>
 <td><code>vrforch</code></td>
-<td><code>APP_DB.VRF_TABLE</code> を <a href="../../reference/glossary/#term-sai">SAI</a> Virtual Router に mapping、OID 払い出し</td>
+<td><code>APP_DB.VRF_TABLE</code> を <a href="../../reference/glossary/#term-sai">SAI</a> Virtual Router に mapping、OID 払い出し（<code>sai_virtual_router_api-&gt;create_virtual_router</code> を <code>VrfOrch</code> 内で発行）<!-- evidence: sonic-net/sonic-swss orchagent/vrforch.cpp:20,93 (create_virtual_router 呼び出し) --></td>
 </tr>
 <tr>
 <td><code>intfsorch</code> / <code>routeorch</code> / <code>neighorch</code> / <code>aclorch</code></td>

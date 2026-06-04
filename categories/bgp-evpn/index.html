@@ -36178,8 +36178,12 @@
 <li><a href="../../topics/04-vrf-ecmp/">Topics 04: VRF / ECMP</a> — VRF / ECMP の前提</li>
 </ul>
 <h2 id="verification">verification ステータス注意点<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
+<p>以下の 4 ページは現行 master との差分が確認されている。利用前に必ず各ページ末尾の差分節を参照すること。</p>
 <ul>
-<li><strong>discrepancy-found</strong>: <code>bfd-hw-offload-for-bgp-session.md</code>, <code>bgp-route-install-error-handling.md</code>, <code>evpn-vxlan-hld.md</code>, <code>evpn-vxlan-multihoming.md</code> — 各ページ末尾に差分メモあり</li>
+<li><a href="../../routing/bfd-hw-offload-for-bgp-session/"><code>bfd-hw-offload-for-bgp-session.md</code></a> (<code>monitor: not_implemented</code>) — <code>bfdsyncd</code> プロセスおよびフィーチャフラグ分岐が BGP container の supervisord に存在せず、<a href="../../reference/glossary/#term-hld">HLD</a> が示す中間プロセス経路全体が未実装。<a href="../../reference/glossary/#term-state_db">STATE_DB</a> への BFD remote 属性反映パスもコードに無い</li>
+<li><a href="../../routing/bgp-route-install-error-handling/"><code>bgp-route-install-error-handling.md</code></a> (<code>monitor: deprecated</code>) — HLD が想定する <code>ERROR_ROUTE_TABLE</code> / <code>ErrorListener</code> / 双方向 <a href="../../reference/glossary/#term-fpm">FPM</a> socket は未実装。現行 master は <strong>逆方向</strong>のアプローチ（ASIC 取り込み成功確認後に広告、suppress-fib-pending）を採用しており、失敗時挙動は「pending のまま広告しない」</li>
+<li><a href="../../routing/evpn-vxlan-hld/"><code>evpn-vxlan-hld.md</code></a> (実装あり / 名称配置の乖離) — CONFIG_DB テーブルは HLD の <code>EVPN_NVO</code> ではなく <strong><code>VXLAN_EVPN_NVO</code></strong>。EVPN 中核 orch は <code>vxlanorch.{h,cpp}</code> 内 <code>EvpnNvoOrch</code> に集約され、HLD が示す複数 orch には分散していない。FRR BGP-EVPN 設定は <code>frr.conf</code> テンプレ / <code>vtysh</code> 直叩き経由（SONiC CLI だけでは完結しない）</li>
+<li><a href="../../routing/evpn-vxlan-multihoming/"><code>evpn-vxlan-multihoming.md</code></a> (<code>monitor: not_implemented</code>) — <code>EVPN_ETHERNET_SEGMENT</code> テーブル / <code>EvpnMhOrch</code> / <code>L2nhgOrch</code> / <code>ShlOrch</code> / <code>config interface evpn-esi</code> CLI / <code>sonic-evpn-mh.yang</code> のいずれも master に存在しない（関連 PR <a href="../../reference/glossary/#term-sonic-swss">sonic-swss</a> #4262 / #4206 / #4039 は open）。dual-attached host は MC-<a href="../../reference/glossary/#term-lag">LAG</a> で代替する</li>
 </ul>
 <h2 id="_4">関連カテゴリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36187,7 +36191,7 @@
 <li><a href="../multi-asic/">Multi-ASIC / VOQ chassis 関連</a></li>
 <li><a href="../gnmi-openconfig/">gNMI / gNOI / OpenConfig 関連</a></li>
 </ul>
-<!-- glossary-links-injected: 70074b0b38c0 -->
+<!-- glossary-links-injected: 6fc493a71451 -->
 
 
 

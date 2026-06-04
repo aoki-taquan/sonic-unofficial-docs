@@ -35805,7 +35805,7 @@
 <li><a href="../../about/">このドキュメントについて</a> — [meta] このドキュメントについて — 本ページは sonic-unofficial-docs プロジェクトの目的・スコープ・ライセンス・フィードバック窓口・貢献方法を…</li>
 <li><strong>読み手別ガイド</strong> (<code>guides/</code>)</li>
 <li><a href="../../guides/">読み手別ガイド</a> — [meta] 読み手別ガイド — SONiC ドキュメントを読む目的に応じて、既存ページを読む順番をまとめた入口です。area 別の章構成はそのままに、初回に見るべきページ…</li>
-<li><a href="../../guides/beginner/">初学者向けガイド</a> — [meta] 初学者向けガイド — SONiC を初めて触る読者を想定しています。ネットワーク OS としての SONiC の位置付け、コンテナ、Redis DB、SAI、…</li>
+<li><a href="../../guides/beginner/">初学者向けガイド</a> — [meta] SONiC を初めて触る読者向け。コンテナ / Redis DB / SAI / 設定反映フローの輪郭と、各 area への導線をまとめます。</li>
 <li><a href="../../guides/operator/">運用者向けガイド</a> — [meta] 運用者向けガイド — 既に SONiC を運用している読者を想定した入口。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show techs…</li>
 <li><a href="../../guides/developer/">開発者向けガイド</a> — [meta] 開発者向けガイド — SONiC に機能追加・拡張を入れたい読者を想定し、HLD・YANG・CONFIG_DB・CLI・daemon / orch・テスト計画…</li>
 <li><a href="../../guides/evaluator/">評価者向けガイド</a> — [meta] ラボで SONiC を試用する読者向けに、仮想環境または評価機で起動し、管理 IP、ポート、VLAN、BGP などの基本設定を入れて状態確認まで辿る導線と、最…</li>
@@ -35910,7 +35910,7 @@
 <li><a href="../../topics/10-gnmi-openconfig/operations/">運用</a> — [code-verified] 運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collect…</li>
 <li><a href="../../topics/10-gnmi-openconfig/internals/">内部実装</a> — [meta] 内部実装 — gNMI / OpenConfig の内部実装は、telemetry コンテナの中に gNMI server があり、translib / so…</li>
 <li><a href="../../topics/10-gnmi-openconfig/gnoi-gnsi/">gNOI / gNSI</a> — [meta] gNOI / gNSI — gNOI (gRPC Network Operations Interface) は、設定読み書き (gNMI) の隣で rebo…</li>
-<li><a href="../../topics/10-gnmi-openconfig/yang-reference/">YANG リファレンス</a> — [meta] YANG リファレンス — このページは、機能章 (本書の章 01〜21) から YANG モジュールを逆引きするための索引です。SONiC native Y…</li>
+<li><a href="../../topics/10-gnmi-openconfig/yang-reference/">YANG リファレンス</a> — [meta] 本書の機能章 01〜21 から SONiC native YANG モジュールを逆引きするための索引。各章にどの sonic-*.yang が対応するかを 1…</li>
 <li><a href="../../topics/10-gnmi-openconfig/advanced/">gNMI / OpenConfig の発展トピック</a> — [meta] gNMI / OpenConfig の発展トピック — gNMI / gNOI / Translib / Transformer の基本パスを押さえた後は、t…</li>
 </ul>
 </li>
@@ -35927,7 +35927,7 @@
 </li>
 <li><strong>Multi-ASIC / VOQ Chassis</strong> (<code>topics/12-multi-asic-voq/</code>)<ul>
 <li><a href="../../topics/12-multi-asic-voq/">Multi-ASIC / VOQ Chassis</a> — [meta] Multi-ASIC / VOQ Chassis — この章は、SONiC が「1 つの NOS インスタンスで複数 ASIC を、または複数 line ca…</li>
-<li><a href="../../topics/12-multi-asic-voq/concept/">概念</a> — [meta] 概念 — Multi-ASIC と VOQ chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 ASIC を基準に、ど…</li>
+<li><a href="../../topics/12-multi-asic-voq/concept/">概念</a> — [hld-only] 概念 — Multi-ASIC と VOQ chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 ASIC を基準に、ど…</li>
 <li><a href="../../topics/12-multi-asic-voq/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — ここでは「supervisor の Chassis DB」「各 ASIC namespace の Redis」「fabric を介した d…</li>
 <li><a href="../../topics/12-multi-asic-voq/setup/">設定</a> — [meta] 設定 — Multi-ASIC / VOQ chassis の設定の核心は「ASIC ごとに別 JSON を持つのではなく、1 枚の Golden Confi…</li>
 <li><a href="../../topics/12-multi-asic-voq/operations/">運用</a> — [meta] 運用 — Multi-ASIC / VOQ chassis の運用調査は、pizza-box と比べて「どこから見るか」が増えます。supervisor から…</li>
@@ -36031,7 +36031,7 @@
 <li><a href="../../topics/22-reference-index/operations/">運用</a> — [meta] 運用 — リファレンス索引章での「運用」は、reference ページ / 機能章 / categories の整合を維持し、欠落と discrepancy…</li>
 <li><a href="../../topics/22-reference-index/internals/">内部実装</a> — [meta] 内部実装 — 22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / CONFIG_DB / YANG の…</li>
 <li><a href="../../topics/22-reference-index/advanced/">発展トピック</a> — [meta] 発展トピック — リファレンス索引 (CLI / CONFIG_DB / YANG / cross-reference) を回し続けるための index 再生…</li>
-<li><a href="../../topics/22-reference-index/cli-index/">CLI 横断索引</a> — [meta] docs/reference/cli/ 配下の 73 ページを機能章ごとに束ね直した索引。各 CLI ページは config- / show- / debug…</li>
+<li><a href="../../topics/22-reference-index/cli-index/">CLI 横断索引</a> — [meta] docs/reference/cli/ 配下の主要 CLI ページを機能章ごとに束ね直した抜粋索引。全 73 ページの辞書一覧ではなく、各機能章の主入口から引…</li>
 <li><a href="../../topics/22-reference-index/config-db-index/">CONFIG_DB 横断索引</a> — [meta] CONFIG_DB 横断索引 — docs/reference/config-db/ 配下の 293 ページを、機能章ごとに table family で並べ…</li>
 <li><a href="../../topics/22-reference-index/yang-index/">YANG 横断索引</a> — [meta] docs/reference/yang/ 配下に辞書化済みの 84 native SONiC YANG モジュールを、本サイトの機能章ごとに並べ直した逆引き索…</li>
 <li><a href="../../topics/22-reference-index/quality-gaps/">品質と gap</a> — [meta] 品質と gap — 本ページは、Phase 6 以降の検証作業で残った 2 種類の「不完全さ」をどこで追跡するかをまとめる。</li>
@@ -36116,7 +36116,7 @@
 <li><a href="../../routing/new-frr-sonic-communication-channel/">新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）</a> — [code-verified] 新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール） — SONiC の routing は FRR に依存し、zebra d…</li>
 <li><a href="../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）</a> — [code-verified] FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP） — SONiC Management Fra…</li>
 <li><a href="../../routing/sonic-management-vrf-design-document-201911-release/">Management VRF 設計（201911 release / l3mdev + cgroups）</a> — [code-verified] Management VRF 設計（201911 release / l3mdev + cgroups） — TACACS+ で config tacacs…</li>
-<li><a href="../../routing/sonic-vrf-support-design-spec-draft/">VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）</a> — [code-verified] VRF サポート（vrfmgrd / vrforch / FRR vrf-aware） — SONiC の VRF サポートは、Linux kernel の…</li>
+<li><a href="../../routing/sonic-vrf-support-design-spec-draft/">VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）</a> — [code-verified] SONiC の VRF サポートは、Linux kernel の VRF master device を基盤に、FRR (zebra / bgpd) を vr…</li>
 <li><a href="../../routing/vrf-feature-ansible-test-plan-omit-in-toc/">VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）</a> — [code-verified] VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証） — vrf-vs-test-…</li>
 <li><a href="../../routing/vrf-vs-test-plan/">VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）</a> — [code-verified] VRF の SwSS パスを VS テストフレームワークで機械的に検証するテストプラン。vrfmgrd / intfmgrd / Orchagent が CO…</li>
 <li><a href="../../routing/default-route/">linkmgrd のデフォルトルート連動（DualToR mux 制御）</a> — [code-verified] linkmgrd のデフォルトルート連動（DualToR mux 制御） — DualToR 構成では 2 台の ToR が active / standby…</li>
@@ -36278,7 +36278,7 @@
 <li><a href="../../system/critical-resource-monitoring/">クリティカルリソースモニタリング (CRM) 要件</a> — [code-verified] クリティカルリソースモニタリング (CRM) 要件 — SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / A…</li>
 <li><a href="../../system/critical-resource-monitoring-in-sonic/">Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視）</a> — [code-verified] Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視） — ASIC 側の各種リソース（route 表、neighb…</li>
 <li><a href="../../system/dataplane-telemetry-in-sonic/">Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）</a> — [code-verified] Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report） — 全モード共通で swit…</li>
-<li><a href="../../system/dataplane-telemetry-test-plan/">Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report）</a> — [code-verified] Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Que…</li>
+<li><a href="../../system/dataplane-telemetry-test-plan/">Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report）</a> — [code-verified] Dataplane Telemetry (DTel) のテストプラン。INT source / sink / transit、Postcard、Drop re…</li>
 <li><a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/">show techsupport での SFP EEPROM ページダンプ取り込み</a> — [code-verified] show techsupport での SFP EEPROM ページダンプ取り込み — 光モジュール起因の物理層トラブル解析向けに、show techsupp…</li>
 <li><a href="../../system/event-driven-techsupport-invocation-coredump-mgmt/">Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota）</a> — [discrepancy-found] Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota） —…</li>
 <li><a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/">Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）</a> — [code-verified] Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE） — CRM（Critical Resource Monitori…</li>
@@ -36434,7 +36434,7 @@
 <li><a href="../../internals/support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）</a> — [code-verified] Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig） — Multi-ASIC SONiC…</li>
 <li><a href="../../internals/p4-orchagent/">P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）</a> — [code-verified] P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み） — PINS (P4 Integrated Network Sta…</li>
 <li><a href="../../internals/swss-schema/">swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）</a> — [code-verified] swss-schema（APPL_DB / STATE_DB の中心スキーマ参照） — SONiC の APPL_DB / STATE_DB に存在する主要テ…</li>
-<li><a href="../../internals/zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a> — [discrepancy-found] ZMQ ProducerStateTable / ConsumerStateTable 設計 — 通常の ProducerStateTable / Consu…</li>
+<li><a href="../../internals/zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a> — [code-verified] ZMQ ProducerStateTable / ConsumerStateTable 設計 — 通常の ProducerStateTable / Consu…</li>
 <li><a href="../../internals/aggregate-voq-counters-in-sonic/">VOQ カウンタ集約（chassis supervisor からの aggregate 表示）</a> — [code-verified] VOQ カウンタ集約（chassis supervisor からの aggregate 表示） — distributed VOQ アーキテクチャでは、ある…</li>
 <li><a href="../../internals/byte-packet-rates-port-utilization-in-sonic/">バイト/パケットレートとポート使用率（RATES テーブル + EMA）</a> — [code-verified] バイト/パケットレートとポート使用率（RATES テーブル + EMA） — portstat / intfstat が表示する RX_BPS / RX_PP…</li>
 <li><a href="../../internals/sonic-counter-initialization-optimization/">flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）</a> — [code-verified] flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats） — SONiC の counter…</li>
@@ -36446,7 +36446,7 @@
 <li><a href="../../internals/l3-scaling-and-performance-enhancements-internals/">L3 Scaling と Performance 強化 内部実装（RouteOrch bulk / fpmsyncd / sairedis / show arp）</a> — [discrepancy-found] L3 Scaling と Performance 強化 HLD の内部実装。RouteOrch の bulk route API (gRouteBulker)…</li>
 <li><a href="../../internals/l3-scaling-and-performance-enhancements-limitations/">L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）</a> — [discrepancy-found] L3 Scaling と Performance 強化 HLD の制限事項。kernel メモリ消費と CPU 負荷のトレードオフ、AS7712 計測の他 A…</li>
 <li><a href="../../internals/why-need-health-check/">コンテナ health-check（k8s readiness probe）</a> — [code-verified] コンテナ health-check（k8s readiness probe） — SONiC の k8s 連携では、コンテナそのものが起動しているかどうかは…</li>
-<li><a href="../../internals/swss-common-database-config/">swss-common データベース設定（database_config.json）</a> — [issue-confirmed] database_config.json が必須となった経緯と DEFAULT_UNIXSOCKET 廃止、非標準環境での注意点。</li>
+<li><a href="../../internals/swss-common-database-config/">swss-common データベース設定（database_config.json）</a> — [code-verified] database_config.json が必須となった経緯と DEFAULT_UNIXSOCKET 廃止、非標準環境での読み込みパス指定方法。</li>
 <li><a href="../../internals/swss-common-db-link-ordering/">swss-common Logger の linkToDb / linkToDbNative 呼び出し順序</a> — [code-verified] Logger::linkToDb と Logger::linkToDbNative の呼び出し順序に関する API 設計上の制約と、その意図を logger.…</li>
 <li><strong>リファレンス</strong> (<code>reference/</code>)</li>
 <li><a href="../../reference/">リファレンス</a> — [meta] リファレンス — CLI、CONFIG_DB、YANG を機械抽出ベースで整理する参照章。</li>

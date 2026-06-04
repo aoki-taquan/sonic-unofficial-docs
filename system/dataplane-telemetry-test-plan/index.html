@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report） — In-band Network Telemetry (INT) と Postcard / Drop / Queue report を含…">
+        <meta name="description" content="Dataplane Telemetry (DTel) のテストプラン。INT source / sink / transit、Postcard、Drop report、Queue report の各機能を PTF + sonic-mgmt で検証する設計を整理する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report） — In-band Network Telemetry (INT) と Postcard / Drop / Queue report を含…" />
+<meta property="og:description" content="Dataplane Telemetry (DTel) のテストプラン。INT source / sink / transit、Postcard、Drop report、Queue report の各機能を PTF + sonic-mgmt で検証する設計を整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/dataplane-telemetry-test-plan.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/system/dataplane-telemetry-test-plan/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report） — In-band Network Telemetry (INT) と Postcard / Drop / Queue report を含…" />
+<meta property="twitter:description" content="Dataplane Telemetry (DTel) のテストプラン。INT source / sink / transit、Postcard、Drop report、Queue report の各機能を PTF + sonic-mgmt で検証する設計を整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/dataplane-telemetry-test-plan.png" />
 </head>
   
@@ -36242,7 +36242,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p>DTel feature は Barefoot 系 ASIC 主体。<code>SAI_OBJECT_TYPE_DTEL_*</code> の community SAI 取り込み状況、<code>DTEL_*</code> テーブルの CONFIG_DB スキーマ、sonic-mgmt 配下 DTel テストの現行カバレッジは未裏取り。</p>
+<p>DTel feature は Barefoot 系 ASIC 主体。CONFIG_DB <code>DTEL</code> / <code>DTEL_REPORT_SESSION</code> / <code>DTEL_INT_SESSION</code> / <code>DTEL_QUEUE_REPORT</code> / <code>DTEL_EVENT</code> テーブルは <code>sonic-swss-common</code> の <code>schema.h</code> で定義され<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>、<code>sonic-swss</code> の <code>DTelOrch</code> がこれらを subscribe して <code>SAI_DTEL_*</code> 属性に変換する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。swss レベルのユニットテストは <code>tests/test_dtel.py</code> でカバー<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。本ページが扱う sonic-mgmt 配下の Ansible テスト (<code>dtel.yml</code>) は本リポジトリにクローンしていないため、テストプラン本文の主張は HLD 記述に依拠する。</p>
 </div>
 <h1 id="dataplane-telemetry-dtel-int-sourcesinktransit-postcard-dropqueue-report">Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report）<a class="headerlink" href="#dataplane-telemetry-dtel-int-sourcesinktransit-postcard-dropqueue-report" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36344,11 +36344,12 @@
 <h2 id="_7">裏取りメモ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>DTel の主要 orch 実装は <code>sonic-swss</code> に取り込まれている。</p>
 <ul>
-<li>DTel Orch: <code>.cache/sonic-sources/sonic-swss/orchagent/dtelorch.cpp</code> / <code>dtelorch.h</code>（INT source/sink/transit、Postcard、Drop / Queue Report の SAI_DTEL_* 属性ハンドリング）</li>
-<li>swss-level テスト: <code>.cache/sonic-sources/sonic-swss/tests/test_dtel.py</code></li>
-<li>SAI side: Barefoot 由来の <code>SAI_OBJECT_TYPE_DTEL_*</code> は community SAI ヘッダに取り込み済み（dtelorch.cpp の include 依存）</li>
+<li>CONFIG_DB スキーマ: <code>DTEL</code> / <code>DTEL_REPORT_SESSION</code> / <code>DTEL_INT_SESSION</code> / <code>DTEL_QUEUE_REPORT</code> / <code>DTEL_EVENT</code> の各テーブル名は <code>sonic-swss-common/common/schema.h</code> で定義<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li>DTel Orch: <code>sonic-swss/orchagent/dtelorch.cpp</code> の <code>doDtelTask*</code> 系ハンドラが上記テーブルを subscribe し、<code>SAI_DTEL_ATTR_INT_ENDPOINT_ENABLE</code> / <code>INT_TRANSIT_ENABLE</code> / <code>POSTCARD_ENABLE</code> / <code>DROP_REPORT_ENABLE</code> / <code>QUEUE_REPORT_ENABLE</code> 等に変換<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
+<li>swss-level テスト: <code>sonic-swss/tests/test_dtel.py</code> に <code>TestDtel</code> クラスで Global / ReportSession / INTSession / QueueReport / FlowWatchlist / Event の属性反映を 6 テストでカバー<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup></li>
+<li>SAI side: <code>SAI_OBJECT_TYPE_DTEL_*</code> および <code>SAI_DTEL_EVENT_TYPE_*</code> enum は <code>dtelorch.cpp</code> の include 経由で community SAI ヘッダから取り込み済み</li>
 </ul>
-<p>テストプランが対象とする CONFIG_DB スキーマ (<code>DTEL_*</code>) と orch 動作は現行 master でカバーされており、Barefoot 系 <a href="../../reference/glossary/#term-asic">ASIC</a> 向けの DTel feature として実装が継続している。本ページの主張は実装と整合するため <code>code-verified</code> に昇格。</p>
+<p>テストプランが対象とする CONFIG_DB スキーマ (<code>DTEL_*</code>) と orch 動作は現行 master の <code>sonic-swss</code> / <code>sonic-swss-common</code> でカバーされており、Barefoot 系 <a href="../../reference/glossary/#term-asic">ASIC</a> 向けの DTel feature として実装が継続している。なお sonic-mgmt 配下の Ansible テスト (<code>dtel.yml</code>) は本リポジトリにクローンしていないため、現行カバレッジ自体は <a href="../../reference/glossary/#term-hld">HLD</a> 記述に依拠する。</p>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36357,13 +36358,22 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: 167700005048 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/barefoot_dtel/Dtel-test-plan.md">sonic-net/SONiC doc/barefoot_dtel/Dtel-test-plan.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L400-L404">sonic-net/sonic-swss-common common/schema.h L400-L404 @ 158de8d</a> — <code>CFG_DTEL_TABLE_NAME</code> / <code>CFG_DTEL_REPORT_SESSION_TABLE_NAME</code> / <code>CFG_DTEL_INT_SESSION_TABLE_NAME</code> / <code>CFG_DTEL_QUEUE_REPORT_TABLE_NAME</code> / <code>CFG_DTEL_EVENT_TABLE_NAME</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/dtelorch.cpp#L1700-L1725">sonic-net/sonic-swss orchagent/dtelorch.cpp L1700-L1725 @ 4305596</a> — table 名から <code>doDtel*Task</code> への dispatch&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/tests/test_dtel.py">sonic-net/sonic-swss tests/test_dtel.py @ 4305596</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
