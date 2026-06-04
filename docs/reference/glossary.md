@@ -1411,7 +1411,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SmartSwitch DPU テーブル群](config-db/smart-switch-dpu.md) (186)
 - [DPU テーブル](config-db/dpu.md) (174)
 - [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (123)
-- [サイトマップ](../_meta/sitemap.md) (96)
+- [サイトマップ](../_meta/sitemap.md) (98)
 
 ### [DPB](#term-dpb)
 
@@ -2170,7 +2170,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [SmartSwitch](#term-smartswitch)
 
 - [CHASSIS_MODULE テーブル](config-db/chassis-module.md) (78)
-- [サイトマップ](../_meta/sitemap.md) (60)
+- [サイトマップ](../_meta/sitemap.md) (59)
 - [SmartSwitch 関連テーブル (MID_PLANE_BRIDGE / DHCP_SERVER_IPV4_PORT)](config-db/smart-switch.md) (51)
 - [NTP テーブル群](config-db/ntp.md) (35)
 - [CHASSIS_STATE_DB テーブル群](config-db/chassis-state.md) (32)

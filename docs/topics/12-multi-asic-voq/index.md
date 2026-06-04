@@ -82,7 +82,7 @@ Multi-ASIC は同じ筐体内の複数 ASIC を namespace で分け、各 ASIC �
 | architecture | 93 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
 | setup | 232 | ✅ 完成 | meta | セットアップ手順 |
 | operations | 217 | ✅ 完成 | meta | 運用・デバッグ |
-| internals | 140 | ✅ 完成 | meta | 内部実装 |
+| internals | 146 | ✅ 完成 | code-verified | 内部実装 |
 | advanced | 108 | ✅ 完成 | meta | 発展トピック |
 
 <!-- /chapter-progress -->
