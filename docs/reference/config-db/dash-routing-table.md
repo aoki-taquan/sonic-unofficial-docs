@@ -22,8 +22,8 @@ related:
     - DASH_ENI_ROUTE_TABLE
     - DASH_ENI_TABLE
     - DASH_VNET_MAPPING_TABLE
-  cli: []
-  yang: []
+  _no_related_cli: true
+  _no_related_yang: true
 ---
 
 # DASH_ROUTE_* テーブル
