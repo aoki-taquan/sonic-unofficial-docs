@@ -1,7 +1,8 @@
 ---
 title: 発展トピック
-description: 発展トピック — SONiC を全体像として見たときに、初学者の足場が固まったあとで触れたい横断テーマを並べる。GCU による差分適用、warm/fast/cold
-  reboot の選び分け、multi-ASIC、SmartSwitch、Application Extension といった現代的な拡張軸が中心。
+description: 発展トピック — SONiC を全体像として見たときに、初学者の足場が固まったあとで触れたい横断テーマを並べる。GCU
+  による差分適用、warm/fast/cold reboot の選び分け、multi-ASIC、SmartSwitch、Application Extension、streaming
+  telemetry といった現代的な拡張軸を扱う。
 area: topics
 verification: meta
 last_verified: 2026-05-12
@@ -28,10 +29,13 @@ related:
 [GCU](../../reference/glossary.md#term-gcu) (Generic Config Updater) は `config apply-patch` / `config replace` の中身で、[CONFIG_DB](../../reference/glossary.md#term-config_db) を JSON 木として扱い RFC 6902 の JSON Patch を当てる仕組みである。
 
 - patch は `sonic-yang-models` の [YANG](../../reference/glossary.md#term-yang) で validate される。validation を通らない patch はそもそも適用されない。
-- 適用順序は YANG の依存 (`leafref` 等) を尊重して order を組み替える。順序依存で失敗するときは patch の中で参照が前方になっていないかを確認する。
-- rollback 用の inverse patch が自動生成され、失敗時はそれで巻き戻す。inverse patch は CONFIG_DB の現在値に依存するため、別ホストで使い回せない。
+- 適用順序は YANG の依存 (`leafref` 等) を尊重して `StrictPatchSorter` が並び替える。順序依存で失敗するときは patch 自体の妥当性より sorter が解けない循環参照を疑う[^gcu-applier]。
+- patch 適用中の自動 rollback（inverse patch）は実装されておらず、適用途中で失敗するとその時点までの変更が CONFIG_DB に残る。明示的に戻したい場合は事前に `config checkpoint <name>` でスナップショットを取り、`config rollback <name>` で `/etc/sonic/checkpoints/<name>.cp.json` から差分パッチを生成して当て直す方式になる[^gcu-rollbacker]。
 
-実運用では、GCU を使うのは「複数機能をまたぐ大きな変更」と「自動化からの partial update」が中心。1〜2 行の変更は `config` CLI で十分。
+実運用では、GCU を使うのは「複数機能をまたぐ大きな変更」と「自動化からの partial update」が中心。1〜2 行の変更は `config` CLI で十分。重要な変更前は checkpoint を必ず取っておく。
+
+[^gcu-applier]: [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `generic_config_updater/generic_updater.py` の `PatchApplier.apply` は patch 検証 → `StrictPatchSorter.sort` → 順次適用の流れで、途中失敗時の自動巻き戻しは実装されていない (L106-L162)。
+[^gcu-rollbacker]: rollback の実体は `FileSystemConfigRollbacker.rollback` で、checkpoint JSON を読み込み `ConfigReplacer` 経由で差分パッチを当てる (`generic_config_updater/generic_updater.py` L195-L222、checkpoints は `/etc/sonic/checkpoints` 配下 L17)。
 
 ## reboot の選び分け
 
@@ -71,7 +75,10 @@ SONiC core を再ビルドせずに後付けで機能 docker を入れる仕組�
 
 - telemetry 用 daemon `telemetry` (旧) と `gnmi` (新) があり、image 版で切替中。`show feature config` で確認する。
 - subscribe path は SONiC 内部の [Redis](../../reference/glossary.md#term-redis) path を XPath で叩く `SONIC-DB` モードと、OpenConfig YANG をマップする `OC` モードがあり、collector 側でどちらを使うか決める。
-- secure 化は `config telemetry secure-mode enable` で TLS を有効にし、`/etc/sonic/telemetry/` の証明書ファイルを正にする。
+- TLS の有効化は telemetry daemon 起動フラグ (`-server_crt` / `-server_key` / `-ca_crt`) で行う。専用の `config telemetry secure-mode` CLI は存在せず、`config telemetry` は watermark interval の設定 (`config watermark telemetry interval ...`) 専用である[^telemetry-tls][^config-telemetry]。証明書の差し替えは `/etc/sonic/telemetry/` 配下、もしくは `/keys/server_cert.lnk` / `/keys/server_key.lnk` 等のシンボリックリンクの張り替えで運用する。
+
+[^telemetry-tls]: sonic-gnmi `telemetry/telemetry.go` の `setupFlags` で `server_crt` / `server_key` / `ca_crt` が flag.String として宣言されており (L196-L198)、`NoTLS` / `Insecure` が立っていない限り `serverCert` と `serverKey` が必須 (L256-L260)。
+[^config-telemetry]: sonic-utilities `config/main.py` の `telemetry` group は `watermark` group のサブで、`config watermark telemetry interval <value>` のみを実装している (L8777-L8794)。`secure-mode` 系サブコマンドは存在しない。
 
 詳細は [Telemetry / gNMI 章](../09-telemetry-snmp/index.md) と [gNMI / OpenConfig 章](../10-gnmi-openconfig/index.md)。
 
@@ -121,4 +128,4 @@ discrepancy を読み手に隠さず、しかし sea of YAML にしないバラ�
 - 個別機能の発展 → 各章の `advanced.md`。
 - 障害時の動線 → [運用入口](operations.md) と [Reboot 章](../11-reboot/index.md)。
 
-<!-- glossary-links-injected: 5c9b3765d470 -->
+<!-- glossary-links-injected: f960e6599a3c -->

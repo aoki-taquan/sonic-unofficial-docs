@@ -1,44 +1,34 @@
 ---
 title: CLI 横断索引
-description: CLI 横断索引 — docs/reference/cli/ 配下の 72 ページを、機能章でどこから引かれるかで並べ直した索引です。各
-  CLI ページは config- / show- / debug-* のグループごとに分かれており、本ページではこれを機能章ごとに束ね直します。
+description: docs/reference/cli/ 配下の 73 ページを機能章ごとに束ね直した索引。各 CLI ページは config- / show- / debug- の辞書ページとして独立しており、本ページでは機能章からの入口として再構成する。
 area: topics
 verification: meta
-last_verified: 2026-05-10
+last_verified: 2026-06-04
 related:
   cli:
-  - config interface
-  - show ip
-  - config platform firmware
   - config bgp
   - show bgp
+  - config interface
+  - show ip
   - config vxlan
   - config vnet
-  config_db:
-  - VRF
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
-  yang:
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-vrf
-  - sonic-bgp-bbr
-  - sonic-bgp-peerrange
-  - sonic-bgp-device-global
-  - sonic-bgp-sentinel
+  - config qos
+  - config buffer
+  - config aaa
+  - config nat
+  - config platform firmware
+  config_db: []
+  yang: []
+related_opt_out: true
 ---
 
 # CLI 横断索引
 
-`docs/reference/cli/` 配下の 72 ページを、機能章でどこから引かれるかで並べ直した索引である。各 CLI ページは `config-*` / `show-*` / `debug-*` のグループごとに分かれており、本ページではこれを機能章ごとに束ね直す。
+`docs/reference/cli/` 配下の 73 ページを、機能章でどこから引かれるかで並べ直した索引である。各 CLI ページは `config-*` / `show-*` / `debug-*` のグループごとに辞書として独立しており、本ページではこれを機能章ごとに束ね直す。
 
 ## 機能章別 CLI 表
 
-実装済の章は本表からリンクする。未実装の章はプレースホルダとして「章番号 / 主題」のみ記載する。
+全章とも `docs/topics/` 配下にディレクトリが存在し、`concept` / `setup` / `operations` / `architecture` / `internals` / `advanced` の構成で公開されている。本表では機能章の主入口 (`setup.md` / `operations.md` / `index.md`) を併記する。
 
 ### 02 BGP と FRR 制御プレーン
 
@@ -87,29 +77,37 @@ related:
 
 - [config acl](../../reference/cli/config-acl.md)
 - [show acl](../../reference/cli/show-acl.md)
+- [config mirror-session](../../reference/cli/config-mirror-session.md)
 
 入口: [07-acl-copp-mirror/setup.md](../07-acl-copp-mirror/setup.md) / [07-acl-copp-mirror/operations.md](../07-acl-copp-mirror/operations.md)。
 
-### 08 QoS / Buffer / PFC / Watermark (未実装章)
+### 08 QoS / Buffer / PFC / Watermark
 
 - [config qos](../../reference/cli/config-qos.md)
 - [config buffer](../../reference/cli/config-buffer.md)
 - [show buffer](../../reference/cli/show-buffer.md)
+- [show buffer-pool](../../reference/cli/show-buffer-pool.md)
 - [config pfcwd](../../reference/cli/config-pfcwd.md)
 - [show pfc](../../reference/cli/show-pfc.md)
 - [show priority-group](../../reference/cli/show-priority-group.md)
 - [show queue](../../reference/cli/show-queue.md)
 
-### 09 Telemetry / SNMP / Observability (未実装章)
+入口: [08-qos-buffer/setup.md](../08-qos-buffer/setup.md) / [08-qos-buffer/operations.md](../08-qos-buffer/operations.md)。
+
+### 09 Telemetry / SNMP / Observability
 
 - [config snmp](../../reference/cli/config-snmp.md)
 - [config sflow](../../reference/cli/config-sflow.md)
 - [config syslog](../../reference/cli/config-syslog.md)
+- [show snmpagentaddress](../../reference/cli/show-snmpagentaddress.md)
+- [show snmptrap](../../reference/cli/show-snmptrap.md)
 - [show techsupport](../../reference/cli/show-techsupport.md)
 - [show system-health](../../reference/cli/show-system-health.md)
 - [show feature](../../reference/cli/show-feature.md)
 - [debug-group](../../reference/cli/debug-group.md)
 - [clear](../../reference/cli/clear.md)
+
+入口: [09-telemetry-snmp/setup.md](../09-telemetry-snmp/setup.md) / [09-telemetry-snmp/operations.md](../09-telemetry-snmp/operations.md)。
 
 ### 11 Reboot / Upgrade / Lifecycle
 
@@ -122,27 +120,44 @@ related:
 
 入口: [11-reboot/index.md](../11-reboot/index.md)。
 
-### 14 Platform / Port / Optics (未実装章)
+### 14 Platform / Port / Optics
 
 - [show platform](../../reference/cli/show-platform.md)
+- [show environment](../../reference/cli/show-environment.md)
 - [config platform firmware](../../reference/cli/config-platform-firmware.md)
+- [show interfaces](../../reference/cli/show-interfaces.md)
 
-### 15 Security / AAA / FIPS (未実装章)
+入口: [14-platform-port-optics/setup.md](../14-platform-port-optics/setup.md) / [14-platform-port-optics/operations.md](../14-platform-port-optics/operations.md)。
+
+### 15 Security / AAA / FIPS
 
 - [config aaa](../../reference/cli/config-aaa.md)
+- [show aaa](../../reference/cli/show-aaa.md)
 - [config mgmt-trio](../../reference/cli/config-mgmt-trio.md)
+- [show mgmt-vrf](../../reference/cli/show-mgmt-vrf.md)
+- [config ssh](../../reference/cli/config-ssh.md)
 
-### 16 NAT / DHCP Relay / Time-DNS (未実装章)
+入口: [15-security-aaa/setup.md](../15-security-aaa/setup.md) / [15-security-aaa/operations.md](../15-security-aaa/operations.md)。
+
+### 16 NAT / DHCP Relay / Time-DNS
 
 - [config nat](../../reference/cli/config-nat.md)
 - [show nat](../../reference/cli/show-nat.md)
 - [config dhcp-relay](../../reference/cli/config-dhcp-relay.md)
+- [config ntp](../../reference/cli/config-ntp.md)
+- [config clock](../../reference/cli/config-clock.md)
+- [show clock](../../reference/cli/show-clock.md)
 
-### 19 Build / Packaging (未実装章)
+入口: [16-nat-dhcp-dns/setup.md](../16-nat-dhcp-dns/setup.md) / [16-nat-dhcp-dns/operations.md](../16-nat-dhcp-dns/operations.md)。
+
+### 19 Build / Packaging
 
 - [sonic-cfggen](../../reference/cli/sonic-cfggen.md)
 - [sonic-package-manager](../../reference/cli/sonic-package-manager.md)
 - [show running-config](../../reference/cli/show-running-config.md)
+- [show version](../../reference/cli/show-version.md)
+
+入口: [19-build-packaging/setup.md](../19-build-packaging/setup.md) / [19-build-packaging/operations.md](../19-build-packaging/operations.md)。
 
 ## 辞書から章への逆引き
 
@@ -150,8 +165,9 @@ related:
 
 ## 補足
 
-- `show ip / show ipv6` ページは [BGP](../../reference/glossary.md#term-bgp) 章と [VRF](../../reference/glossary.md#term-vrf) 章の両方から参照される。主入口は VRF 章。
-- `config interface` は L2 章と VRF 章の双方から参照される。主入口は L2 章。
-- `config-mgmt-trio` は management framework / [gNMI](../../reference/glossary.md#term-gnmi) 章で扱う想定だが、現時点では未実装のため上記 15 章プレースホルダとして残す。
+- `show ip` / `show ipv6` ページは [BGP](../../reference/glossary.md#term-bgp) 章と [VRF](../../reference/glossary.md#term-vrf) 章の両方から参照される。主入口は VRF 章。
+- `config interface` は L2 章 / VRF 章 / Platform 章の三章から参照される。主入口は L2 章。
+- `config-mgmt-trio` は management framework / [gNMI](../../reference/glossary.md#term-gnmi) 章でも扱う想定だが、CLI 入口としては 15 Security 章に集約する。
+- `show interfaces` は L2 章と Platform 章の両方から参照される。物理層の counters / FEC / transceiver 情報は Platform 章を主入口とする。
 
 <!-- glossary-links-injected: d913b2e2ebed -->

@@ -1,4 +1,6 @@
 {
   "description": "check_citation_quality.py の除外リスト。Reference 系 (docs/reference/, docs/_meta/, docs/categories/, docs/guides/) はデフォルトで除外されているので、ここに書く必要は無い。split-child / 表中心ページ / 本文が極端に短く脚注不要なケース等を path 単位で挙げる。",
-  "exceptions": []
+  "exceptions": [
+    "docs/topics/05-dual-tor/operations.md"
+  ]
 }

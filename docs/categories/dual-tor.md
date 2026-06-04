@@ -42,7 +42,7 @@ Dual-ToR は **active-standby** のほうがマスター実装としては成熟
 
 ### routing（mux / nexthop）
 
-- [linkmgrd のデフォルトルート連動（DualToR mux 制御）](../routing/default-route.md) (area: `routing`, verification: `hld-only`)
+- [linkmgrd のデフォルトルート連動（DualToR mux 制御）](../routing/default-route.md) (area: `routing`, verification: `code-verified`)
 - [dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）](../routing/multiple-nexthop-route-hld.md) (area: `routing`, verification: `code-verified`)
 - [プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）](../routing/prefix-based-mux-neighbors.md) (area: `routing`, verification: `code-verified`)
 
@@ -69,7 +69,6 @@ Dual-ToR は **active-standby** のほうがマスター実装としては成熟
 
 ## verification ステータス注意点
 
-- **hld-only**: `default-route.md`
 - **discrepancy-found**: `dscp-remapping-for-tunnel-traffic.md`（実装と HLD で挙動差異）
 
 ## 関連カテゴリ

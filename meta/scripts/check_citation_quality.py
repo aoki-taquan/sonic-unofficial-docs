@@ -191,7 +191,7 @@ def main() -> int:
                 file=sys.stderr,
             )
             for r in rows:
-                print(f"  - {r[0]}", file=sys.stderr)
+                print(f"  - {r['path']}", file=sys.stderr)
             return 1
         print("[citation-quality] OK (no citation-deficient pages)", file=sys.stderr)
         return 0
