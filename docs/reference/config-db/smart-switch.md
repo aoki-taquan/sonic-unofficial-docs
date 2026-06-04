@@ -30,6 +30,8 @@ related:
   yang:
     - sonic-smart-switch
     - sonic-dhcp-server-ipv4
+  cli:
+    - sonic-cfggen
 ---
 
 # SmartSwitch 関連テーブル (MID_PLANE_BRIDGE / DHCP_SERVER_IPV4_PORT)
