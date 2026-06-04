@@ -29,9 +29,12 @@ related:
 
 ## 2. 干渉する機能
 
-- **uRPF (Unicast Reverse Path Forwarding)**: DIP=SIP の本テストは uRPF が **strict mode で有効化されていると pass しない可能性** がある（SRC_IP が自分宛と等価のため）。HLD は uRPF 設定との相互作用には触れていないが、テスト時は確認が必要。
-- **ACL**: SRC_IP / DST_IP 同一を deny する ACL を設定していると、本テストは fail する。テスト前提の ACL 構成については HLD 内に記述がない。
-- **VM ベースの host エミュレーション**: PTF docker / VM の準備は本 HLD のスコープ外。`sonic-mgmt` の標準 testbed 構築フローに依存する。
+!!! note "HLD 出典範囲の明示"
+    [HLD](../reference/glossary.md#term-hld) 本文（`doc/dip-sip/DIP=SIP_HLD.md` @ `49bab5b5`）が明示的に言及するのは **VM による host エミュレーション** のみ[^2]で、uRPF / [ACL](../reference/glossary.md#term-acl) との相互作用には触れていない。以下の uRPF / ACL 項は HLD 外の **本ドキュメントによる注意喚起** であり、テスト失敗時の切り分け候補として参考までに記載する。実機での挙動は testbed 構成に依存するため、断定はしない。
+
+- **VM ベースの host エミュレーション**: 本 HLD は「ホストは VM でエミュレートする」と明記している[^2]。PTF docker / VM の準備自体は本 HLD のスコープ外で、`sonic-mgmt` の標準 testbed 構築フローに依存する。
+- **uRPF (Unicast Reverse Path Forwarding)**（HLD 外・参考）: 一般論として uRPF strict mode が有効な環境では、SRC_IP が DUT 自身宛と等価になる本テストのパケットが drop される懸念がある。HLD は uRPF 設定との相互作用に触れていないため、テスト失敗時の切り分け候補として確認するに留める。
+- **ACL**（HLD 外・参考）: SRC_IP / DST_IP 同一を deny するような ACL が事前に入っている testbed では本テストが落ちる可能性がある。HLD はテスト前提の ACL 構成について記述しておらず、これも本ドキュメントの注意喚起に留まる。
 
 ## 3. トラブルシューティング
 
@@ -111,6 +114,7 @@ show interfaces neighbor expected
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dip-sip/DIP=SIP_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/SONiC` `doc/dip-sip/DIP=SIP_HLD.md` L27 "Hosts are emulated using VMs" @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- glossary-links-injected: e919cc931c5a -->
 
