@@ -1,9 +1,8 @@
 ---
 title: Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue
   report）
-description: Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard
-  + Drop/Queue report） — In-band Network Telemetry (INT) と Postcard / Drop / Queue
-  report を含…
+description: Dataplane Telemetry (DTel) のテストプラン。INT source / sink / transit、Postcard、Drop
+  report、Queue report の各機能を PTF + sonic-mgmt で検証する設計を整理する。
 area: system
 verification: code-verified
 last_verified: 2026-05-11
@@ -11,22 +10,26 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/barefoot_dtel/Dtel-test-plan.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss
+  path: orchagent/dtelorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
 related:
   config_db:
+  - DTEL
+  - DTEL_REPORT_SESSION
+  - DTEL_INT_SESSION
+  - DTEL_QUEUE_REPORT
   - DTEL_EVENT
-  - TELEMETRY_CLIENT
-  - TELEMETRY
   - ACL_RULE
   - ACL_TABLE
-  - QUEUE
-  - CRM
   cli:
   - show queue
   - show acl
   - config acl
-  yang:
-  - sonic-queue
-  - sonic-crm
+  _no_related_yang: true
 ---
 
 <!-- topics-tip -->
@@ -35,7 +38,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
-    DTel feature は Barefoot 系 ASIC 主体。`SAI_OBJECT_TYPE_DTEL_*` の community SAI 取り込み状況、`DTEL_*` テーブルの CONFIG_DB スキーマ、sonic-mgmt 配下 DTel テストの現行カバレッジは未裏取り。
+    DTel feature は Barefoot 系 ASIC 主体。CONFIG_DB `DTEL` / `DTEL_REPORT_SESSION` / `DTEL_INT_SESSION` / `DTEL_QUEUE_REPORT` / `DTEL_EVENT` テーブルは `sonic-swss-common` の `schema.h` で定義され[^2]、`sonic-swss` の `DTelOrch` がこれらを subscribe して `SAI_DTEL_*` 属性に変換する[^3]。swss レベルのユニットテストは `tests/test_dtel.py` でカバー[^4]。本ページが扱う sonic-mgmt 配下の Ansible テスト (`dtel.yml`) は本リポジトリにクローンしていないため、テストプラン本文の主張は HLD 記述に依拠する。
 
 # Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report）
 
@@ -139,16 +142,20 @@ queue depth/latency 閾値超過時に report:
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/barefoot_dtel/Dtel-test-plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/barefoot_dtel/Dtel-test-plan.md)
+[^2]: [sonic-net/sonic-swss-common common/schema.h L400-L404 @ 158de8d](https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L400-L404) — `CFG_DTEL_TABLE_NAME` / `CFG_DTEL_REPORT_SESSION_TABLE_NAME` / `CFG_DTEL_INT_SESSION_TABLE_NAME` / `CFG_DTEL_QUEUE_REPORT_TABLE_NAME` / `CFG_DTEL_EVENT_TABLE_NAME`
+[^3]: [sonic-net/sonic-swss orchagent/dtelorch.cpp L1700-L1725 @ 4305596](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/dtelorch.cpp#L1700-L1725) — table 名から `doDtel*Task` への dispatch
+[^4]: [sonic-net/sonic-swss tests/test_dtel.py @ 4305596](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/tests/test_dtel.py)
 
 ## 裏取りメモ
 
 DTel の主要 orch 実装は `sonic-swss` に取り込まれている。
 
-- DTel Orch: `.cache/sonic-sources/sonic-swss/orchagent/dtelorch.cpp` / `dtelorch.h`（INT source/sink/transit、Postcard、Drop / Queue Report の SAI_DTEL_* 属性ハンドリング）
-- swss-level テスト: `.cache/sonic-sources/sonic-swss/tests/test_dtel.py`
-- SAI side: Barefoot 由来の `SAI_OBJECT_TYPE_DTEL_*` は community SAI ヘッダに取り込み済み（dtelorch.cpp の include 依存）
+- CONFIG_DB スキーマ: `DTEL` / `DTEL_REPORT_SESSION` / `DTEL_INT_SESSION` / `DTEL_QUEUE_REPORT` / `DTEL_EVENT` の各テーブル名は `sonic-swss-common/common/schema.h` で定義[^2]
+- DTel Orch: `sonic-swss/orchagent/dtelorch.cpp` の `doDtelTask*` 系ハンドラが上記テーブルを subscribe し、`SAI_DTEL_ATTR_INT_ENDPOINT_ENABLE` / `INT_TRANSIT_ENABLE` / `POSTCARD_ENABLE` / `DROP_REPORT_ENABLE` / `QUEUE_REPORT_ENABLE` 等に変換[^3]
+- swss-level テスト: `sonic-swss/tests/test_dtel.py` に `TestDtel` クラスで Global / ReportSession / INTSession / QueueReport / FlowWatchlist / Event の属性反映を 6 テストでカバー[^4]
+- SAI side: `SAI_OBJECT_TYPE_DTEL_*` および `SAI_DTEL_EVENT_TYPE_*` enum は `dtelorch.cpp` の include 経由で community SAI ヘッダから取り込み済み
 
-テストプランが対象とする CONFIG_DB スキーマ (`DTEL_*`) と orch 動作は現行 master でカバーされており、Barefoot 系 [ASIC](../reference/glossary.md#term-asic) 向けの DTel feature として実装が継続している。本ページの主張は実装と整合するため `code-verified` に昇格。
+テストプランが対象とする CONFIG_DB スキーマ (`DTEL_*`) と orch 動作は現行 master の `sonic-swss` / `sonic-swss-common` でカバーされており、Barefoot 系 [ASIC](../reference/glossary.md#term-asic) 向けの DTel feature として実装が継続している。なお sonic-mgmt 配下の Ansible テスト (`dtel.yml`) は本リポジトリにクローンしていないため、現行カバレッジ自体は [HLD](../reference/glossary.md#term-hld) 記述に依拠する。
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -158,4 +165,4 @@ DTel の主要 orch 実装は `sonic-swss` に取り込まれている。
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: 167700005048 -->
