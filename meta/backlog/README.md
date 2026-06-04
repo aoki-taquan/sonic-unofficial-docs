@@ -1,4 +1,4 @@
-# Backlog 残 10 件の分類整理（2026-05-12 round 38 update）
+# Backlog 残 8 件の分類整理（2026-06-04 update — SmartSwitch HA 2 件を split 実装済として archive）
 
 `meta/backlog/<area>/*.json` に残る **10 件** のタスクを、品質ゲート観点で **drop（廃止候補）/ low-priority（v1.1 以降）/ defer（既存大型ページへ統合）** の 3 カテゴリに分類する。
 
@@ -8,10 +8,11 @@
 
 | カテゴリ | 件数 | 処理方針 |
 |----------|------|----------|
-| **low-priority**（v1.1 検討） | 10 | 内容自体は有用だが、既存ページとの重複 / scope outside / 大型 HLD で着手コスト大 |
-| **drop / defer（_archived へ移動済）** | 5 | 本 PR で `meta/backlog/_archived/<area>/` へ物理移動 |
+| **low-priority**（v1.1 検討） | 8 | 内容自体は有用だが、既存ページとの重複 / scope outside / 大型 HLD で着手コスト大 |
+| **doc-exists-split で archive 済**（本 update） | 2 | SmartSwitch HA HLD / Detailed Design は split 実装済 |
+| **drop / defer（_archived へ移動済）** | 5 | round 38 PR で `meta/backlog/_archived/<area>/` へ物理移動 |
 | **drop（旧分類で _archived 化済）** | 27 | round 36 以前に既に _archived へ移動済 |
-| **合計（現存 active）** | **10** | - |
+| **合計（現存 active）** | **8** | - |
 
 ## 1. 本 PR (chore/q40-an-audit38-backlog) でのアクション
 
@@ -40,10 +41,10 @@ round 36 時点で 42 件 → drop 27 件を _archived 化済（リリースノ�
 
 | ファイル | サイズ | 備考 |
 |---------|--------|------|
-| `architecture/smartswitch-high-availability-high-level-design.json` | 149KB | SmartSwitch HA HLD。一部 `overlay/dash-ha-state-machine.md` 等でカバー、HA 全体像の独立ページは v1.2（章単位分割）候補 |
-| `platform/smartswitch-high-availability-detailed-design.json` | 62KB | SmartSwitch HA Detailed Design。上記と対をなす |
 | `system/cmis-diagnostic-monitoring-overview-in-sonic.json` | 221KB | CMIS 光学診断モニタリング。`docs/platform/` 配下に統合 or 独立ページ化のいずれか |
 | `system/sonic-command-line-interface-guide.json` | 608KB | CLI ガイド全文。すでに `docs/reference/cli/` 25 件で個別 CLI ページ化済のため、独立ガイド化は重複 |
+
+> 2026-06-04 update: SmartSwitch HA HLD (149KB) / Detailed Design (62KB) の 2 件は `architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-{,concepts,internals,operations}.md` と `architecture/smartswitch-high-availability-manager-daemon-hamgrd-design{,-concepts,-internals,-operations,-limitations}.md` で split 実装済のため `_archived/` へ移動した。`meta/scripts/cleanup_backlog.py` に `doc-exists-split` 検出（`<slug>-*.md` glob）を追加し、同種の split 実装済 backlog を以後自動 archive する。これにより audit の「stale-vs-backlog」課題（未実装 slug を 0 点で叩く）を構造的に解消する。
 
 ### 2.2 telemetry / openconfig 系（3 件）
 
