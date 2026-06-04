@@ -23,6 +23,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-04 #5134 fix(quality): deep rewrites v2 integration (7 pages, score +0.92)
 - 2026-06-04 #5133 chore(typos): add 'delimitor' to extend-words (upstream Go variable)
 - 2026-06-04 #5132 fix(quality): deep rewrite topics/10-gnmi-openconfig/architecture.md Subscribe section
 - 2026-06-04 #5131 fix(quality): deep rewrite topics/08-qos-buffer/setup.md (meta→code-verified)
@@ -517,7 +518,6 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3943 docs(config-db): add Phase D failure-behavior block to vxlan-fdb
 - 2026-05-19 #3949 docs(config-db): add Phase F side-effects block to lossless-traffic-pattern
 - 2026-05-19 #3947 docs(config-db): add Phase H platform block to pin-config
-- 2026-05-19 #3934 docs(config-db): add Phase H platform block to gnmi-server
 - 2026-05-19 #3946 docs(config-db): add Phase D failure-behavior block to TAM page
 - 2026-05-19 #3945 docs(config-db): add Phase H platform marker to stp-vlan
 - 2026-05-19 #3941 docs(config-db): add Phase F side-effects block to redis-db-config
