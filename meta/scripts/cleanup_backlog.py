@@ -6,6 +6,10 @@ Targets:
     overview, summary, revision, references, feature-name[-N], hld-name,
     abstract, background, requirements, definitions, terminology, etc.).
   - Slugs whose docs/<area>/<slug>.md already exists in the repo.
+  - Slugs that were implemented as a split-page family — docs/<area>/<slug>-{concepts,internals,operations,limitations,design,dpu-scope-*}*.md.
+    Without this rule, audits keep counting backlog entries like
+    `smartswitch-high-availability-high-level-design` as un-ported even
+    though the equivalent HLD has already been split into multiple slugs.
 
 Behaviour:
   - dry-run by default: prints the candidates.
@@ -70,6 +74,24 @@ def iter_backlog_files() -> list[Path]:
     return sorted(files)
 
 
+def _has_split_implementation(area: str, slug: str) -> list[Path]:
+    """Return list of docs that look like a split-page family for this slug.
+
+    A split family is the pattern we use when a single large HLD is broken
+    into several derived pages (e.g. `<slug>-concepts.md`,
+    `<slug>-internals.md`, `<slug>-operations.md`, `<slug>-limitations.md`,
+    `<slug>-dpu-scope-*.md`). When any such derivative exists we treat the
+    original backlog entry as already-implemented — otherwise audits keep
+    scoring it as a 0-point ghost page.
+    """
+    area_dir = DOCS / area
+    if not area_dir.is_dir():
+        return []
+    # Match <slug>-<something>.md but not unrelated slugs that share a
+    # prefix accidentally — require the next char to be `-`.
+    return sorted(p for p in area_dir.glob(f"{slug}-*.md"))
+
+
 def classify(path: Path) -> str | None:
     """Return reason string if entry should be archived, else None."""
     area = path.parent.name
@@ -79,6 +101,11 @@ def classify(path: Path) -> str | None:
     doc = DOCS / area / f"{slug}.md"
     if doc.exists():
         return "doc-exists"
+    split = _has_split_implementation(area, slug)
+    if split:
+        sample = split[0].name
+        extra = f" +{len(split) - 1}" if len(split) > 1 else ""
+        return f"doc-exists-split ({sample}{extra})"
     return None
 
 
@@ -97,8 +124,12 @@ def main() -> int:
 
     noise = sum(1 for _, r in matches if r.startswith("noise-slug"))
     exists = sum(1 for _, r in matches if r == "doc-exists")
+    split = sum(1 for _, r in matches if r.startswith("doc-exists-split"))
     print(f"Scanned {len(files)} backlog entries.")
-    print(f"Matched: {len(matches)} (noise-slug={noise}, doc-exists={exists}).")
+    print(
+        f"Matched: {len(matches)} (noise-slug={noise}, doc-exists={exists}, "
+        f"doc-exists-split={split})."
+    )
     for f, reason in matches[:30]:
         print(f"  [{reason}] {f.relative_to(ROOT)}")
     if len(matches) > 30:
