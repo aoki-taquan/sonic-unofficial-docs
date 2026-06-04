@@ -88,7 +88,7 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 
 ## 追加の発展トピック
 
-- **NAT64 / DNS64**: IPv6 専用 host から IPv4 to の通信を NAT64 + DNS64 で橋渡しする。SONiC NAT は主に IPv4 NAT に焦点が当たっており、NAT64 は ASIC capability と SAI 対応が前提。
+- **NAT64 / DNS64**: IPv6 専用 host から IPv4 to の通信を NAT64 + DNS64 で橋渡しする。SONiC NAT は主に IPv4 NAT に焦点が当たっており、NAT64 は ASIC capability と [SAI](../../reference/glossary.md#term-sai) 対応が前提。
 - **DHCPv4 / v6 server (in-box)**: 通常は relay 用途だが、lab / mgmt 用途で in-box DHCP server を動かす構成が議論される (`dnsmasq` ベース)。
 - **NTP 精度向上 (PTP との比較)**: 1ms 級の同期が必要なら PTP (IEEE 1588) を使うが、SONiC PTP は HLD 段階の機能が多い。chrony で得られる精度の限界を理解しておく。
 - **DHCP server identifier override**: 複数 DHCP relay 装置で同じ subnet を扱うとき、server identifier override (RFC 5107) を使って応答の経路を制御する。
@@ -153,4 +153,4 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 - [07 ACL / CoPP / Mirror: DHCP DoS 緩和との境界](../07-acl-copp-mirror/index.md)
 - [15 Security / AAA: mgmt VRF と service bind](../15-security-aaa/index.md)
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: f9445b5b4106 -->

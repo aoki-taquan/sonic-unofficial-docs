@@ -125,7 +125,7 @@ management framework (Sonic-MGMT-Framework) / [gNMI](../../reference/glossary.md
 
 ### 13 DASH と SmartSwitch
 
-- (native SONiC YANG なし — DASH appliance/ENI 制御は dedicated データプレーン API 経由)
+- (native SONiC YANG なし — [DASH](../../reference/glossary.md#term-dash) appliance/[ENI](../../reference/glossary.md#term-eni) 制御は dedicated データプレーン API 経由)
 
 ### 14 Platform / Port / Optics / PHY
 
@@ -178,3 +178,5 @@ upstream の `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/` �
 - その他: `sonic-gnmi`、`sonic-grpcclient`、`sonic-heartbeat`、`sonic-high-frequency-telemetry`、`sonic-auto_techsupport`、`sonic-logger`、`sonic-memory-statistics`、`sonic-fast-linkup`、`sonic-peer-switch`、`sonic-mux-linkmgr`、`sonic-kubernetes_master`、`sonic-dscp-fc-map`、`sonic-exp-fc-map`、`sonic-mpls-tc-map`、`sonic-lossless-traffic-pattern`、`sonic-buffer-port-egress-profile-list`、`sonic-buffer-port-ingress-profile-list`
 
 辞書化未着手の項目は `meta/reference-gaps.md` にも反映していく方針である。本ページの章別マッピングは現状辞書化済の 84 モジュールに限定する。
+
+<!-- glossary-links-injected: cc54e00e3a88 -->

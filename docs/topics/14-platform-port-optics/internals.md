@@ -104,7 +104,7 @@ flowchart LR
 
 | コンポーネント | 主実体 | 責務 |
 | --- | --- | --- |
-| `PortsOrch` (`orchagent/portsorch.cpp`) | `PortsOrch::initializePorts`、`PortsOrch::setPortAdminStatus`[^portsorch] | port SAI object 作成、speed/FEC/autoneg 設定 |
+| `PortsOrch` (`orchagent/portsorch.cpp`) | `PortsOrch::initializePorts`、`PortsOrch::setPortAdminStatus`[^[portsorch](../../reference/glossary.md#term-portsorch)] | port SAI object 作成、speed/FEC/autoneg 設定 |
 | `portsyncd` | netlink listener | kernel link state を [APPL_DB](../../reference/glossary.md#term-appl_db) へ |
 | `xcvrd` (`sonic-platform-daemons/sonic-xcvrd/xcvrd/`) | `xcvrd.py`、`media_settings_parser.notify_media_setting`[^xcvrd] | transceiver EEPROM 読み出し、SI 適用、TRANSCEIVER_INFO/DOM/STATUS を [STATE_DB](../../reference/glossary.md#term-state_db) に書く |
 | `thermalctld` | platform plugin で温度センサ取得 | thermal policy 反映 |
@@ -175,4 +175,4 @@ ASIC_DB:
 [^xcvrd]: [sonic-net/sonic-platform-daemons `sonic-xcvrd/xcvrd/xcvrd.py` (ref `4ba9612`)](https://github.com/sonic-net/sonic-platform-daemons/blob/4ba9612cb7756651062d37f977e3df17d57f740d/sonic-xcvrd/xcvrd/xcvrd.py) — `media_settings_parser.notify_media_setting` 呼び出し (L338, L571, L831, L859) と TRANSCEIVER_INFO/DOM テーブル書き込み (L736-738) を確認。
 [^media-settings]: [sonic-net/sonic-buildimage `device/nokia/x86_64-nokia_ixr7250e_36x400g-r0/media_settings.json` (ref `9ea932e`)](https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/device/nokia/x86_64-nokia_ixr7250e_36x400g-r0/media_settings.json) を例として確認 (装置 SKU ごとに同名ファイルが存在)。
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 889740d66e5f -->
