@@ -78,7 +78,7 @@ if (status == SAI_STATUS_BUFFER_OVERFLOW) {
 }
 ```
 
-master 実装では **`querySupportedCounters()` が `SAI_STATUS_SUCCESS` 以外を返した場合に既存の per-ID 取得方式へフォールバック** する設計に拡張されている (HLD は `SAI_STATUS_NOT_IMPLEMENTED` のみと記述していたが、実装はより広く異常系を拾う)[^2]。これにより SAI 未対応ベンダでも互換性を維持する[^1]。
+master 実装では **`querySupportedCounters()` が `SAI_STATUS_SUCCESS` 以外を返した場合に既存の per-ID 取得方式へフォールバック** する設計に拡張されている ([HLD](../reference/glossary.md#term-hld) は `SAI_STATUS_NOT_IMPLEMENTED` のみと記述していたが、実装はより広く異常系を拾う)[^2]。これにより SAI 未対応ベンダでも互換性を維持する[^1]。
 
 ```cpp
 // FlexCounter.cpp L1559: 統合された CounterContext テンプレートでの fallback 判定
@@ -121,7 +121,7 @@ HLD では Port / Queue / PG / RIF / Buffer Pool ごとに個別の `updateSuppo
 | `COUNTER_TYPE_PG` | `sai_ingress_priority_group_stat_t` | `SAI_OBJECT_TYPE_INGRESS_PRIORITY_GROUP` |
 | `COUNTER_TYPE_RIF` | `sai_router_interface_stat_t` | `SAI_OBJECT_TYPE_ROUTER_INTERFACE` |
 | `COUNTER_TYPE_BUFFER_POOL` | `sai_buffer_pool_stat_t` | `SAI_OBJECT_TYPE_BUFFER_POOL` |
-| `COUNTER_TYPE_ENI` | `sai_eni_stat_t` | `SAI_OBJECT_TYPE_ENI` (DASH) |
+| `COUNTER_TYPE_ENI` | `sai_eni_stat_t` | `SAI_OBJECT_TYPE_ENI` ([DASH](../reference/glossary.md#term-dash)) |
 
 一方で次の context 種別は `use_sai_stats_capa_query = false` で明示的に新 API 経路を無効化し、従来の per-ID 列挙のみを使う[^2]:
 
@@ -208,4 +208,4 @@ counterpoll show
 [^1]: `sonic-net/SONiC` `doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 [^2]: `sonic-net/sonic-sairedis` `syncd/FlexCounter.cpp` L1542-1619 (`updateSupportedCounters` / `querySupportedCounters`), L2910-2959 (`querySupportedMeterCounters`), L3308-3378 (CounterContext factory での `use_sai_stats_capa_query` 切替), `syncd/FlexCounter.h` L95 (`use_sai_stats_capa_query` メンバ既定値), `syncd/VendorSai.cpp` L376 (`queryStatsCapability` 実装) master
 
-<!-- glossary-links-injected: a841ffc67f6c -->
+<!-- glossary-links-injected: 1df59d4a3148 -->

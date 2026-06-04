@@ -49,7 +49,7 @@ related:
 
 ## 動的 buffer model の運用詳細
 
-動的 buffer model (`buffermgrd` が dynamic) では、`BUFFER_PROFILE` を手書きせず alpha (dynamic threshold) と pool size のみ指定する。`sonic-buffer-profile` YANG の `dynamic_th` leaf は「Dynamic threshold alpha value controlling the maximum proportion of free buffer pool space.」と定義されており、SAI の `SAI_BUFFER_PROFILE_ATTR_SHARED_DYNAMIC_TH` に対応する。alpha = 1/8 を基準に、congestion 多めの ToR では alpha を大きくして burst 吸収を優先し、tail-drop 厳しめの構成では小さくする。
+動的 buffer model (`buffermgrd` が dynamic) では、`BUFFER_PROFILE` を手書きせず alpha (dynamic threshold) と pool size のみ指定する。`sonic-buffer-profile` [YANG](../../reference/glossary.md#term-yang) の `dynamic_th` leaf は「Dynamic threshold alpha value controlling the maximum proportion of free buffer pool space.」と定義されており、SAI の `SAI_BUFFER_PROFILE_ATTR_SHARED_DYNAMIC_TH` に対応する。alpha = 1/8 を基準に、congestion 多めの ToR では alpha を大きくして burst 吸収を優先し、tail-drop 厳しめの構成では小さくする。
 
 <!-- evidence:
 source: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-buffer-profile.yang#L45-L49 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
@@ -196,7 +196,7 @@ reasoning: デフォルト action = drop の根拠。
 ## 発展トピック
 
 - **Asymmetric PFC**: 上流と下流で PFC enable bitmap を非対称に運用するモデル。lossless TC を一方向だけ pause 対象とする使い方で、`PORT_QOS_MAP|<port>.pfc_to_queue_map` と peer ToR の設定整合が要点。
-- **動的 buffer model**: 旧来の static buffer profile から、`BUFFER_POOL` の thresholds と alpha (dynamic threshold) を ASIC レベルで決める動的モデルへの移行。`buffermgrd` が `BUFFER_PROFILE` を auto 計算する。
+- **動的 buffer model**: 旧来の static buffer profile から、`BUFFER_POOL` の thresholds と alpha (dynamic threshold) を [ASIC](../../reference/glossary.md#term-asic) レベルで決める動的モデルへの移行。`buffermgrd` が `BUFFER_PROFILE` を auto 計算する。
 - **PFC watchdog の per-queue 詳細化**: storm 検出窓 / restore 窓を queue ごとにチューニングし、不要な polling load を減らす。`PFC_WD_TABLE` のパラメータ調整。
 - **Tunnel [DSCP](../../reference/glossary.md#term-dscp) remap**: standby ToR → active ToR の bounce-back を別 PG/queue に逃がす設定。詳細は [05 Dual-ToR](../05-dual-tor/advanced.md) と相互参照。
 - **[Headroom](../../reference/glossary.md#term-headroom) pool**: PFC pause 受信中に必要な headroom buffer を共有 pool で確保する設計。port shutdown 時に headroom が解放される動作の理解が必要。
@@ -262,4 +262,4 @@ reasoning: デフォルト action = drop の根拠。
 - [Enhancements on show acl commands](../../acl-qos/enhancements-on-show-acl-commands.md)
 - [Everflow test plan (mirror counter 観点)](../../acl-qos/everflow-test-plan.md)
 
-<!-- glossary-links-injected: e74af460f6e2 -->
+<!-- glossary-links-injected: 6bd7277d13e4 -->

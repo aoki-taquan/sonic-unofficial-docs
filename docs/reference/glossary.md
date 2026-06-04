@@ -1494,7 +1494,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VXLAN_EVPN_NVO テーブル](config-db/vxlan-evpn-nvo.md) (66)
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (58)
 - [VXLAN トンネルポート (Port::TUNNEL)](config-db/tunnel-port.md) (56)
-- [サイトマップ](../_meta/sitemap.md) (50)
+- [サイトマップ](../_meta/sitemap.md) (49)
 
 ### [EVPN-MH](#term-evpn-mh)
 
@@ -1989,7 +1989,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [QoS](#term-qos)
 
-- [サイトマップ](../_meta/sitemap.md) (34)
+- [サイトマップ](../_meta/sitemap.md) (33)
 - [PORT_QOS_MAP テーブル](config-db/port-qos-map.md) (17)
 - [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (14)
 - [EXP_TO_FC_MAP テーブル](config-db/exp-to-fc-map.md) (12)
