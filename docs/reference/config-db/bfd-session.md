@@ -17,6 +17,7 @@ related:
     - BGP_DEVICE_GLOBAL
   cli:
     - show bfd peers
+  _no_related_yang: true
 ---
 
 # BFD_SESSION テーブル
