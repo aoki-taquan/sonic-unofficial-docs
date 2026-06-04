@@ -22,6 +22,8 @@ related:
   appl_db:
     - SRV6_MY_SID_TABLE
     - SRV6_SID_LIST_TABLE
+  _no_related_cli: true
+  _no_related_yang: true
 ---
 
 # APPL_DB SRV6 テーブル
