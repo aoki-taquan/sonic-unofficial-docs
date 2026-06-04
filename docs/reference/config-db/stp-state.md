@@ -25,6 +25,8 @@ related:
     - STP
     - STP_VLAN
     - STP_PORT
+  _no_related_cli: true
+  _no_related_yang: true
 ---
 
 # STATE\_DB STP\_TABLE（STP 状態テーブル）

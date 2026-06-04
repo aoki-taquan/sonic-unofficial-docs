@@ -48,6 +48,12 @@ related:
     - STP_MST_INST
     - STP_MST_PORT
     - MCLAG_DOMAIN
+  cli:
+    - show spanning_tree
+    - show mclag brief
+  yang:
+    - sonic-spanning-tree
+    - sonic-mclag
 ---
 
 # STP / ICCP 連携 — コード由来デフォルト詳細
