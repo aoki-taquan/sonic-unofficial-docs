@@ -26,13 +26,34 @@ related:
 
 ## Dataplane Telemetry (DTel)
 
-DTel は In-band Network Telemetry を [SONiC](../../reference/glossary.md#term-sonic) スイッチがエクスポートする機能です。[ASIC](../../reference/glossary.md#term-asic) が flow ごとにスイッチ内部情報（latency、queue 状態、drop reason 等）を packet header に書き込み、[INT](../../reference/glossary.md#term-int) report として外部 collector に送出します。SONiC は collector / report session / watchlist を [CONFIG_DB](../../reference/glossary.md#term-config_db) と APP_DB に持ち、`dtelorch` が [SAI](../../reference/glossary.md#term-sai) DTEL object に変換します。
+DTel は In-band Network Telemetry を [SONiC](../../reference/glossary.md#term-sonic) スイッチがエクスポートする機能です。[ASIC](../../reference/glossary.md#term-asic) が flow ごとにスイッチ内部情報（latency、queue 状態、drop reason 等）を packet header に書き込み、[INT](../../reference/glossary.md#term-int) report として外部 collector に送出します。SONiC は collector / report session / watchlist を [CONFIG_DB](../../reference/glossary.md#term-config_db) と APP_DB に持ち、`DTelOrch` が [SAI](../../reference/glossary.md#term-sai) DTEL object に変換します[^dtelorch]。
+
+<!-- evidence:
+source: sonic-swss/orchagent/dtelorch.h#L1-L40
+excerpt: |
+  // class DTelOrch — orchestrator for DTel CONFIG_DB tables → SAI DTEL objects
+reasoning: DTel 関連 CONFIG_DB の処理は DTelOrch クラス（dtelorch.h / dtelorch.cpp）が担当する。
+-->
 
 DTel は ASIC capability への依存が大きく、すべての platform で同じ event type / report mode が出るわけではありません。test plan ページは、SAI DTEL object と SONiC table の対応、report format の検証観点を整理しています。
 
 ## sFlow
 
-sFlow は古典的なサンプリング + counter polling 型 telemetry です。hsflowd が `psample` 経由で kernel から packet sample を取り、`SFLOW_COLLECTOR` 宛に sFlow datagram を送ります。Counter polling も hsflowd が担当し、`SFLOW|global` テーブルの `polling_interval` フィールドで interval を制御します。
+sFlow は古典的なサンプリング + counter polling 型 telemetry です。hsflowd が `psample` 経由で kernel から packet sample を取り、`SFLOW_COLLECTOR` 宛に sFlow datagram を送ります。Counter polling も hsflowd が担当し、`SFLOW|global` テーブルの `polling_interval` フィールドで interval を制御します[^sflow-polling]。
+
+<!-- evidence:
+source: sonic-utilities/show/sflow.py#L70-L85
+excerpt: |
+  if (sflow_info and 'polling_interval' in sflow_info['global']):
+      click.echo("{}".format(sflow_info['global']['polling_interval']))
+reasoning: CONFIG_DB の "SFLOW|global" hash 配下の polling_interval フィールドが show sflow で表示される。docs の主張と一致。
+-->
+<!-- evidence:
+source: sonic-buildimage/dockers/docker-sflow/base_image_files/psample#L1-L10
+excerpt: |
+  docker exec -$DOCKER_EXEC_FLAGS sflow psample "$@"
+reasoning: sflow docker に psample CLI wrapper が同梱され、kernel psample group から sample を取り出す経路であることを示す。
+-->
 
 sFlow と DTel の住み分けは、sFlow が「サンプリングされた粗い flow telemetry」、DTel が「flow ごとの精密 in-band telemetry」と覚えると整理できます。test plan ページは collector / agent / sampling rate の確認観点をまとめます。
 
@@ -119,7 +140,7 @@ SNMP の設定は CONFIG_DB に集約されつつありますが、過去資産�
 
 ## トラブルシュート観点
 
-- gNMI subscribe が応答しないときは、`docker exec telemetry telemetryctl status` で agent up、`/var/log/syslog` で TLS / cert エラーを確認する。`TELEMETRY|certs` の `ca_crt` パス、`gnmi.server.crt`/`key` の存在も併せて点検。
+- gNMI subscribe が応答しないときは、`docker exec telemetry supervisorctl status telemetry` で agent up を確認、`/var/log/syslog` で TLS / cert エラーを確認する。`TELEMETRY|certs` (または新 docker では `GNMI|certs`) の `ca_crt` / `server_crt` / `server_key` パスの存在も併せて点検する[^certs]。
 - SNMP walk が timeout する場合、`snmpd` の view [ACL](../../reference/glossary.md#term-acl) 設定 (`/etc/sonic/snmp.yml`)、`SNMP_AGENT_ADDRESS_CONFIG` のリスン IP、`snmpd` プロセス内の MIB initialization 遅延 (起動後 30 秒程度) を疑う。
 - sFlow sample が collector に届かないときは `show sflow interface` で sample rate、`config sflow polling-interval` の有効性、`SFLOW_COLLECTOR` の宛先到達性 (UDP 6343) を点検。
 
@@ -128,5 +149,11 @@ SNMP の設定は CONFIG_DB に集約されつつありますが、過去資産�
 - gNMI subscribe の性能検証は `gnmi_cli -subscribe` で 1k〜10k path を sample 並列受信し、telemetry agent の CPU/メモリと、`COUNTERS_DB` の polling 間隔への影響を計測する。
 - SNMP scale 検証は `snmpwalk -t 30 -r 3` で entity MIB / transceiver MIB を large port count (256 ports〜) で取得する。target は 60 秒以内の完走。
 - DTel / sFlow の sampling 精度検証は、`pktgen` で既知レートのトラフィックを流し、collector 側で sample 数 × sampling rate ≒ 実トラフィックになることを確認する。
+
+## 引用元
+
+[^dtelorch]: DTel CONFIG_DB → SAI 変換は `sonic-net/sonic-swss` の `orchagent/dtelorch.{h,cpp}` に `DTelOrch` クラスとして実装されている。
+[^sflow-polling]: `SFLOW|global` の `polling_interval` フィールドは `sonic-net/sonic-utilities` の `show/sflow.py` で参照され、`config sflow polling-interval <value>` で設定する (`doc/Command-Reference.md` §sflow)。
+[^certs]: 旧 `docker-sonic-telemetry` は `TELEMETRY|certs` を、新 `docker-sonic-gnmi` は `GNMI|certs` を参照する。フィールド名はいずれも `ca_crt` / `server_crt` / `server_key`（`telemetry.sh` / `gnmi-native.sh` 内 jq 抽出より）。
 
 <!-- glossary-links-injected: fad4d220bc71 -->
