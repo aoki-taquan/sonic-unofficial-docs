@@ -1327,7 +1327,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [CONFIG_DB](#term-config_db)
 
-- [サイトマップ](../_meta/sitemap.md) (129)
+- [サイトマップ](../_meta/sitemap.md) (130)
 - [APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)](config-db/appl-mirror.md) (58)
 - [IPv6 Link-local モード](config-db/ipv6-link-local.md) (54)
 - [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (50)
@@ -2222,9 +2222,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [TAM](#term-tam)
 
 - [TAM テーブル](config-db/tam.md) (177)
+- [Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）](../routing/path-tracing-midpoint.md) (19)
 - [運用](../topics/17-srv6-mpls/operations.md) (11)
 - [変更履歴](../_meta/changelog.md) (7)
-- [Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）](../routing/path-tracing-midpoint.md) (3)
 - [内部実装](../topics/17-srv6-mpls/internals.md) (3)
 
 ### [TC (Traffic Class)](#term-tc)
