@@ -1410,8 +1410,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [DPU / ENI / VDPU / REMOTE_DPU テーブル](config-db/dpu-eni.md) (193)
 - [SmartSwitch DPU テーブル群](config-db/smart-switch-dpu.md) (186)
 - [DPU テーブル](config-db/dpu.md) (174)
-- [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (107)
-- [サイトマップ](../_meta/sitemap.md) (94)
+- [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (123)
+- [サイトマップ](../_meta/sitemap.md) (96)
 
 ### [DPB](#term-dpb)
 
@@ -1866,9 +1866,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../system/smart-switch-reboot-high-level-design.md) (45)
 - [DASH と SmartSwitch の考え方](../topics/13-dash-smartswitch/concept.md) (38)
-- [サイトマップ](../_meta/sitemap.md) (27)
+- [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (29)
+- [サイトマップ](../_meta/sitemap.md) (28)
 - [ACL_TABLE (CTRLPLANE) テーブル](config-db/control-plane-acl.md) (27)
-- [DPU の IP 割当・gNMI 連携・KVM 検証](../topics/13-dash-smartswitch/setup.md) (24)
 
 ### [orchagent](#term-orchagent)
 
