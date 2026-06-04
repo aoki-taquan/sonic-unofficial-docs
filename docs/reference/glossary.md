@@ -1402,8 +1402,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [サイトマップ](../_meta/sitemap.md) (6)
 - [DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id）](../architecture/dhcpv4-relay-agent.md) (2)
 - [DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）](../routing/dhcp-relay-per-interface-counter.md) (2)
+- [VRF / ECMP / RIB-FIB パイプライン](../topics/04-vrf-ecmp/index.md) (2)
 - [Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md) (2)
-- [NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md) (2)
 
 ### [DPU](#term-dpu)
 
