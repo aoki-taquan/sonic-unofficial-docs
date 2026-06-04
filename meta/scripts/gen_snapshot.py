@@ -261,7 +261,13 @@ def recent_audits(n: int = 5) -> list[tuple[int, str]]:
         for line in path.read_text(encoding="utf-8").splitlines():
             m = score_re.search(line)
             if m:
-                score = m.group(1)
+                candidate = m.group(1)
+                # Phantom-zero guard: see gen_index_banner.extract_average および
+                # meta/quality-audit-guide.md §3.2。実 audit の母集団平均は
+                # 4.5+/5 帯域に収まっており 0.00 ぴったりは未集計セル混入の
+                # phantom entry とみなす。
+                if float(candidate) > 0.0:
+                    score = candidate
                 break
         out.append((n_round, score))
     return out
