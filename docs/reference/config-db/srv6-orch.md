@@ -21,6 +21,9 @@ related:
     - VRF
   yang:
     - sonic-srv6
+  cli:
+    - show srv6 mysid
+    - counterpoll srv6
 ---
 
 # Srv6Orch — APP_DB SRV6 テーブル
