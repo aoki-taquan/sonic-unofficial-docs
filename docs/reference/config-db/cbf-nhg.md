@@ -15,8 +15,12 @@ sources:
     path: doc/cbf/cbf_hld.md
     ref: HEAD
 related:
-  config_db: []
+  config_db:
+    - DSCP_TO_FC_MAP
+    - EXP_TO_FC_MAP
   cli: []
+  _no_related_cli: true
+  _no_related_yang: true
 ---
 
 # CLASS_BASED_NEXT_HOP_GROUP テーブル
