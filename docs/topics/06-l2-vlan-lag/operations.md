@@ -5,13 +5,7 @@ description: L2 運用確認 — L2 障害は「VLAN に入っていない」「
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/show-vlan.md
-- docs/reference/cli/show-mclag.md
-- docs/switching/sonic-bum-storm-control.md
-- docs/switching/link-event-damping-hld.md
-- docs/switching/layer-2-forwarding-enhancements.md
-- docs/switching/mclag-enhancements.md
+sources: []
 related:
   cli:
   - show vlan

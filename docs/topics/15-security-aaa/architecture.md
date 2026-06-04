@@ -5,14 +5,7 @@ description: アーキテクチャ — ここでは login が成立するまで�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/management/aaa-improvements.md
-- docs/management/tacacs-authentication.md
-- docs/management/sonic-tacacs-improvement.md
-- docs/management/radius-management-user-authentication.md
-- docs/management/hld-ldap.md
-- docs/management/ssh-server-global-config-hld.md
-- docs/management/serial-console-global-config-hld.md
+sources: []
 related:
   cli:
   - config aaa

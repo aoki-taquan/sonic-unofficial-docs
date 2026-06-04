@@ -4,11 +4,7 @@ description: 概要 — SONiC の物理層は、大きく「port そのもの」
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/platform/global-platform-specific-psuutil-class-instance.md
-- docs/architecture/sonic-port-configuration-refactor-design.md
-- docs/reference/config-db/port.md
-- docs/reference/yang/sonic-port.md
+sources: []
 keywords:
 - Platform
 - Port

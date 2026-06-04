@@ -4,10 +4,7 @@ description: Dual-ToR の考え方 — Dual-ToR は「サーバを 2 台の ToR 
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/overlay/active-active-dual-tor.md
-- docs/overlay/active-standby-dual-tor.md
-- docs/categories/dual-tor.md
+sources: []
 keywords:
 - Dual-ToR
 - 概念

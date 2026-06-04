@@ -5,12 +5,7 @@ description: Overlay 発展トピック — ここでは、基本の VXLAN / VNE
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/routing/evpn-vxlan-multihoming.md
-- docs/overlay/smartswitch-eni-based-forwarding.md
-- docs/overlay/nvgre-tunnel-in-sonic.md
-- docs/platform/subnet-decapsulation-with-sonic.md
-- docs/overlay/vnet-local-endpoint-forwarding.md
+sources: []
 related:
   cli:
   - config vlan

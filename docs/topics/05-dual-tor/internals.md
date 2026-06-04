@@ -4,13 +4,7 @@ description: Mux 制御の内部構造 — Dual-ToR の制御は 1 つの daemon
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/management/design-doc.md
-- docs/routing/default-route.md
-- docs/routing/prefix-based-mux-neighbors.md
-- docs/routing/multiple-nexthop-route-hld.md
-- docs/overlay/active-active-dual-tor.md
-- docs/overlay/active-standby-dual-tor.md
+sources: []
 related:
   cli:
   - show techsupport

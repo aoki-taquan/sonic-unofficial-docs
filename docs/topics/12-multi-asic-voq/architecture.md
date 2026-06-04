@@ -5,13 +5,7 @@ description: アーキテクチャ — ここでは「supervisor の Chassis DB�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md
-- docs/platform/voq-sonic.md
-- docs/platform/fabric-port-support-on-sonic.md
-- docs/platform/recirculation-port-support-on-voq-chassis.md
-- docs/internals/support-redis-databases-in-multiple-namespaces.md
-- docs/platform/db-design-for-multi-asic-scenarios.md
+sources: []
 related:
   cli:
   - show acl

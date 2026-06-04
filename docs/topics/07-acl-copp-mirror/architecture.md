@@ -5,11 +5,7 @@ description: アーキテクチャ — ACL の中心は AclOrch です。設定�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/acl-qos/acl-user-defined-table-type-support.md
-- docs/acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables.md
-- docs/acl-qos/acl-flex-counters-support.md
-- docs/architecture/sonic-trap-flow-counter-design.md
+sources: []
 related:
   cli:
   - show acl

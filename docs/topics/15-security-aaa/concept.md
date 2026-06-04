@@ -5,10 +5,7 @@ description: 概念 — SONiC のセキュリティ機能は、ひとつの巨�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/management/aaa-improvements.md
-- docs/architecture/pw-hardening-design.md
-- docs/system/sonic-container-hardening.md
+sources: []
 keywords:
 - Security
 - AAA

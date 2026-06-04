@@ -5,12 +5,7 @@ description: 発展トピック — VOQ chassis 固有の機能は、BGP・LAG�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/routing/bgp-setup-for-voq-chassis.md
-- docs/switching/lag-on-distributed-voq-system.md
-- docs/platform/everflow-support-on-voq-chassis.md
-- docs/routing/reliable-tsa.md
-- docs/system/multi-asic-warm-reboot.md
+sources: []
 related:
   cli:
   - config bgp

@@ -4,12 +4,7 @@ description: 発展トピック — このページは、ACL / CoPP / mirror の
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/acl-qos/copp-manager-redesign-test-plan.md
-- docs/acl-qos/copp-neighbor-miss-trap-and-enhancements.md
-- docs/acl-qos/dash-acl-tags.md
-- docs/acl-qos/port-access-control-in-sonic.md
-- docs/acl-qos/dhcp-dos-mitigation-in-sonic.md
+sources: []
 related:
   cli:
   - show acl
