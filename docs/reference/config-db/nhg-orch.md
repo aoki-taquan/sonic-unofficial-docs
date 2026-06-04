@@ -18,8 +18,10 @@ sources:
     path: orchagent/cbf/nhgmaporch.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
-  config_db: []
-  yang: []
+  config_db:
+    - FG_NHG
+  _no_related_cli: true
+  _no_related_yang: true
 ---
 
 # NEXTHOP_GROUP / CBF_NHG / NHG_MAP テーブル
@@ -40,15 +42,15 @@ related:
 
 ```mermaid
 flowchart LR
-  APPL[("APPL_DB\nNEXTHOP_GROUP_TABLE\nCLASS_BASED_NEXT_HOP_GROUP_TABLE\nFC_TO_NHG_INDEX_MAP_TABLE")]
-  NhgOrch["NhgOrch\nCbfNhgOrch\nNhgMapOrch"]
-  APPL --> NhgOrch
-  SAI["SAI\nsai_next_hop_group_api"]
-  NhgOrch --> SAI
+  CDB[("CONFIG_DB<br/>FG_NHG")]
+  DM["FgNhgOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_next_hop_group_api"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    APPL_DB から SAI までの典型経路。詳細は本文を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## NEXTHOP_GROUP_TABLE フィールド
