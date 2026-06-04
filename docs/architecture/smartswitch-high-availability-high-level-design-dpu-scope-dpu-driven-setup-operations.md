@@ -3,8 +3,8 @@ title: SmartSwitch HA DPU-Scope-DPU-Driven 運用（CLI / 設定 / failover 確�
 description: SmartSwitch HA DPU-Scope-DPU-Driven の設定経路（DASH SDN config）、failover
   確認、BFD / next hop / split-brain のトラブルシュート手順、制限事項と干渉機能を整理する。
 area: architecture
-verification: code-verified
-last_verified: 2026-05-26
+verification: hld-only
+last_verified: 2026-06-04
 page_kind: split-child
 sources:
 - repo: sonic-net/SONiC
@@ -62,11 +62,11 @@ HA_SCOPE:scope-A
 
 ## 3. 状態と forwarding の確認
 
-DPU の HA 状態は telemetry（gNMI）でのみ正規に取得できる。CLI は HLD に明示されていないが、運用上は次の経路で間接確認する:
+DPU の HA 状態は telemetry（gNMI）でのみ正規に取得できると HLD は述べているが、**具体的な gNMI path や CLI コマンドは HLD に記載がない**[^1]。以下のコマンド例は [SONiC](../reference/glossary.md#term-sonic) 既存 NOS 機能（`show bfd` / `show platform` / `show chassis modules`）と DASH SDN config object 名から推定した運用ガイドであり、HLD に裏取りされた仕様ではない（本ページが `verification: hld-only` である理由）。実環境では platform / SDN controller 側のドキュメントを優先すること。
 
 ```bash
-# DPU の HA 状態（telemetry / gNMI 経由）
-gnmic -a <switch> get --path /smart-switch/dpu/0/ha-scope/state
+# DPU の HA 状態（telemetry / gNMI 経由 — path は SDN controller 実装依存、HLD 未記載）
+gnmic -a <switch> get --path <HA scope state path>
 
 # NPU 上の next hop が想定 DPU VIP を向いているか
 ip route show | grep <DPU VIP range>
@@ -82,6 +82,8 @@ show platform inventory
 `Active` 確定後は [BFD](../reference/glossary.md#term-bfd) が両 DPU で Up になり、preferred DPU が next hop に選ばれる。`PendingActiveActivation` 段階では BFD は Down のままで、これは正常な dormant 状態[^1]。
 
 ## 4. failover の確認
+
+以降の確認手順は HLD §3 状態遷移と §4 telemetry の記述[^1]を運用フローに落とした **推定手順** であり、個別 CLI 出力例の文言までは HLD に裏取りされていない。状態名 (`Destroying` / `Dead` / `SwitchingToStandalone` / `Standalone`) と SDN controller の `flow reconcile` 承認フローのみが HLD 由来である。
 
 ### 4.1 Planned shutdown を打った後
 
@@ -112,11 +114,11 @@ show platform inventory
 | HA 再 pair で新 DPU が `Dead` のまま | 旧 HA set object の削除と新 HA set object の作成順。[ENI](../reference/glossary.md#term-eni) 全 program 後に `AdminState=Enabled` |
 
 ```bash
-# 代表トラブルシュート
+# 代表トラブルシュート（CLI 名・gNMI path は HLD 未記載の推定ガイド、§3 参照）
 show bfd sessions
 ip route show | grep <DPU VIP range>
 show chassis modules status
-gnmic -a <switch> get --path /smart-switch/dpu/0/ha-scope/state
+gnmic -a <switch> get --path <HA scope state path>
 ```
 
 ## 6. 制限事項
@@ -140,4 +142,4 @@ gnmic -a <switch> get --path /smart-switch/dpu/0/ha-scope/state
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/high-availability/smart-switch-ha-dpu-scope-dpu-driven-setup.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: dd580da5b801 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->
