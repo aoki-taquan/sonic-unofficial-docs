@@ -25,12 +25,12 @@ last_verified: 2026-05-11
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 762 |
+| code-verified | 763 |
 | runbook-verified | 27 |
-| discrepancy-found | 113 |
+| discrepancy-found | 112 |
 | issue-confirmed | 6 |
-| hld-only | 1 |
-| meta | 194 |
+| hld-only | 2 |
+| meta | 193 |
 | stub | 1 |
 
 ## area 別マトリクス
@@ -43,7 +43,7 @@ last_verified: 2026-05-11
 | `architecture` | 34 | 0 | 25 | 0 | 1 | 1 | 0 | 61 |
 | `categories` | 0 | 0 | 0 | 0 | 0 | 11 | 0 | 11 |
 | `guides` | 0 | 0 | 0 | 0 | 0 | 5 | 0 | 5 |
-| `internals` | 12 | 0 | 6 | 0 | 0 | 1 | 0 | 19 |
+| `internals` | 13 | 0 | 5 | 0 | 0 | 1 | 0 | 19 |
 | `management` | 32 | 0 | 16 | 2 | 0 | 1 | 0 | 51 |
 | `overlay` | 19 | 0 | 1 | 0 | 0 | 1 | 0 | 21 |
 | `platform` | 35 | 0 | 13 | 3 | 0 | 1 | 0 | 52 |
@@ -51,6 +51,6 @@ last_verified: 2026-05-11
 | `routing` | 45 | 0 | 12 | 0 | 0 | 1 | 0 | 58 |
 | `switching` | 18 | 0 | 8 | 0 | 0 | 1 | 0 | 27 |
 | `system` | 56 | 0 | 18 | 1 | 0 | 2 | 0 | 77 |
-| `topics` | 15 | 0 | 0 | 0 | 0 | 146 | 0 | 161 |
+| `topics` | 15 | 0 | 0 | 0 | 1 | 145 | 0 | 161 |
 
 推移情報（時系列）は本ページでは扱いません。スナップショットのみ。
