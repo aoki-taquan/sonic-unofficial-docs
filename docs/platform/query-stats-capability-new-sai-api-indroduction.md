@@ -10,6 +10,9 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-sairedis
+  path: syncd/FlexCounter.cpp
+  ref: master
 related:
   config_db:
   - FLEX_COUNTER_TABLE
@@ -29,7 +32,7 @@ related:
 <!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
-    `sonic-sairedis/syncd/FlexCounter.cpp` master に `querySupportedCounters()` 実装と `use_sai_stats_capa_query` フラグ、`sai_stat_capability_list_t` を使った 2 段呼び出し（count 取得 → list 取り直し）パターン、`SAI_STATUS_NOT_IMPLEMENTED` フォールバックを確認。Port / Queue / PG / RIF / BufferPool で同パターン。HLD の改修は master 取り込み済み。
+    `sonic-sairedis/syncd/FlexCounter.cpp` master に `querySupportedCounters()` 実装と `use_sai_stats_capa_query` フラグ、`sai_stat_capability_list_t` を使った 2 段呼び出し（count 取得 → list 取り直し）パターンを確認 (L1566-1619)。master ではオブジェクト種別ごとの per-type 関数ではなく、`CounterContext<StatType>` テンプレート上の単一 `updateSupportedCounters()` に統合済み (L1542-1564)。HLD と異なり SAI 側のフォールバック条件は `SAI_STATUS_NOT_IMPLEMENTED` 限定ではなく「`querySupportedCounters()` が `SAI_STATUS_SUCCESS` 以外を返した場合」となっている (L1559)。MACsec / SwitchDebug / PortDebug / Flow / Tunnel など一部 context 種別は `use_sai_stats_capa_query = false` で明示的に旧 per-ID 方式に固定 (L3312, L3346, L3354, L3361, L3368, L3376)。
 
 # sai_query_stats_capability による Counter Capability 一括取得
 
@@ -75,7 +78,16 @@ if (status == SAI_STATUS_BUFFER_OVERFLOW) {
 }
 ```
 
-ベンダ SAI が `SAI_STATUS_NOT_IMPLEMENTED` を返した場合は **既存の per-ID 取得方式にフォールバック** する。これにより SAI 未対応ベンダでも互換性を維持する[^1]。
+master 実装では **`querySupportedCounters()` が `SAI_STATUS_SUCCESS` 以外を返した場合に既存の per-ID 取得方式へフォールバック** する設計に拡張されている ([HLD](../reference/glossary.md#term-hld) は `SAI_STATUS_NOT_IMPLEMENTED` のみと記述していたが、実装はより広く異常系を拾う)[^2]。これにより SAI 未対応ベンダでも互換性を維持する[^1]。
+
+```cpp
+// FlexCounter.cpp L1559: 統合された CounterContext テンプレートでの fallback 判定
+if (!use_sai_stats_capa_query || querySupportedCounters(rid, stats_mode, m_supportedCounters) != SAI_STATUS_SUCCESS)
+{
+    /* Fallback to legacy approach */
+    getSupportedCounters(rid, counter_ids, stats_mode);
+}
+```
 
 ### SAI ヘッダ定義
 
@@ -96,19 +108,30 @@ sai_status_t sai_query_stats_capability(
         _Inout_ sai_stat_capability_list_t     *stats_capability);
 ```
 
-各エントリ `sai_stat_capability_t` は `stat_enum`（counter ID）と stats mode のビットマスク（READ / READ_AND_CLEAR 等）を持つ[^1]。
+各エントリ `sai_stat_capability_t` は `stat_enum`（counter ID）と `stat_modes`（stats mode のビットマスク。READ / READ_AND_CLEAR 等）を持つ[^1]。実装側は `statCapability.stat_modes & stats_mode` で要求モードとの AND を取り、合致するものだけを supported set に入れる[^2]。
 
-### 改修対象関数
+### 改修対象関数 (master 取り込み後)
 
-`syncd` の `FlexCounter.cpp` で次の関数が新 API を使うよう書き換わる[^1]:
+HLD では Port / Queue / PG / RIF / Buffer Pool ごとに個別の `updateSupportedXxxCounters()` を改修すると記述されていたが[^1]、master では `CounterContext<StatType>` テンプレートクラス上の **単一の `updateSupportedCounters()` メソッドに統合** されている[^2]。対象オブジェクト種別は `m_objectType` メンバで切り替わる。
 
-| 関数 | 対象 |
-|------|------|
-| `updateSupportedPortCounters(portRid)` | Port |
-| `updateSupportedQueueCounters(queueRid, counterIds)` | Queue |
-| `updateSupportedPriorityGroupCounters(priorityGroupRid, counterIds)` | PG |
-| `updateSupportedRifCounters(rifRid)` | RIF |
-| `updateSupportedBufferPoolCounters(bufferPoolRid, counterIds, statsMode)` | Buffer Pool |
+| Counter context | StatType | object type |
+|------|------|------|
+| `COUNTER_TYPE_PORT` | `sai_port_stat_t` | `SAI_OBJECT_TYPE_PORT` |
+| `COUNTER_TYPE_QUEUE` | `sai_queue_stat_t` | `SAI_OBJECT_TYPE_QUEUE` |
+| `COUNTER_TYPE_PG` | `sai_ingress_priority_group_stat_t` | `SAI_OBJECT_TYPE_INGRESS_PRIORITY_GROUP` |
+| `COUNTER_TYPE_RIF` | `sai_router_interface_stat_t` | `SAI_OBJECT_TYPE_ROUTER_INTERFACE` |
+| `COUNTER_TYPE_BUFFER_POOL` | `sai_buffer_pool_stat_t` | `SAI_OBJECT_TYPE_BUFFER_POOL` |
+| `COUNTER_TYPE_ENI` | `sai_eni_stat_t` | `SAI_OBJECT_TYPE_ENI` ([DASH](../reference/glossary.md#term-dash)) |
+
+一方で次の context 種別は `use_sai_stats_capa_query = false` で明示的に新 API 経路を無効化し、従来の per-ID 列挙のみを使う[^2]:
+
+- `COUNTER_TYPE_PORT_DEBUG` (PortDebug)
+- `COUNTER_TYPE_SWITCH_DEBUG` (SwitchDebug)
+- `COUNTER_TYPE_MACSEC_FLOW` / `COUNTER_TYPE_MACSEC_SA`
+- `COUNTER_TYPE_FLOW`
+- `COUNTER_TYPE_TUNNEL`
+
+Meter bucket entry には `querySupportedMeterCounters()` という別エントリポイントが用意され、こちらも 2 段呼び出しパターンを使う[^2]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md#L20-L30 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -150,13 +173,13 @@ reasoning: 改修対象関数とフォールバック動作の根拠。
 
 ### 関連する SAI 属性
 
-該当なし（API そのものの追加）。`sai_stat_capability_t.stat_enum` と `stats_modes` ビットマスクが個別 counter の能力情報を返す。
+該当なし（API そのものの追加）。`sai_stat_capability_t.stat_enum` と `stat_modes` ビットマスクが個別 counter の能力情報を返す[^2]。
 
 ## 制限事項
 
 - **SAI ベンダ実装依存**: 新 API を実装するか、`SAI_STATUS_NOT_IMPLEMENTED` を返すかのいずれかが要求される[^1]。誤った status を返すベンダではフォールバックが働かない可能性。
 - **互換のためのコードパス二重化**: 旧 per-ID ループ実装も残す必要があり、メンテナンスコストは増える。
-- **mode 情報の扱い**: 新 API は stats mode のビットマスクも返すが、SONiC `FlexCounter` 側でどこまで活用するかは [HLD](../reference/glossary.md#term-hld) では明記されていない（counter 集合判定のみ言及）[^1]。
+- **mode 情報の扱い**: 新 API は stats mode のビットマスクも返すが、SONiC `FlexCounter` 側ではリクエスト中の `stats_mode` と AND を取り、bit が立っていない counter は supported set から除外する用途に限定して活用している[^2]。`READ_AND_CLEAR` を要求した context で counter が `READ` のみ対応の場合は除外される。
 
 ## 干渉する機能
 
@@ -183,5 +206,6 @@ counterpoll show
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-sairedis` `syncd/FlexCounter.cpp` L1542-1619 (`updateSupportedCounters` / `querySupportedCounters`), L2910-2959 (`querySupportedMeterCounters`), L3308-3378 (CounterContext factory での `use_sai_stats_capa_query` 切替), `syncd/FlexCounter.h` L95 (`use_sai_stats_capa_query` メンバ既定値), `syncd/VendorSai.cpp` L376 (`queryStatsCapability` 実装) master
 
-<!-- glossary-links-injected: a841ffc67f6c -->
+<!-- glossary-links-injected: 1df59d4a3148 -->

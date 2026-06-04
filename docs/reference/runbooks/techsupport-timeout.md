@@ -1,7 +1,8 @@
 ---
 title: show techsupport が timeout する
-description: 'Runbook: show techsupport が timeout する — : sonic-net/sonic-utilities
-  @ 39732bceb — scripts/generate_dump : sonic-net/sonic-utilities @ 39732bceb — show/main.py'
+description: 'Runbook: show techsupport が長時間 / global-timeout で abort する症状の切り分け
+  と auto-techsupport 設定のチューニング手順。出典は sonic-net/sonic-utilities @ 39732bceb の scripts/generate_dump
+  と show/main.py、config/plugins/auto_techsupport.py。'
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
@@ -11,6 +12,9 @@ sources:
   ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 - repo: sonic-net/sonic-utilities
   path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/plugins/auto_techsupport.py
   ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
@@ -111,7 +115,12 @@ sonic-db-cli CONFIG_DB keys "AUTO_TECHSUPPORT_FEATURE|*"
 
 - timeout を引き上げて取り直す: `show techsupport --global-timeout 60 --cmd-timeout 10`
 - `/var/dump` 整理: `sudo techsupport_cleanup.py` or 手動で古い tarball を削除
-- auto-techsupport の閾値調整: `config auto-techsupport global state enabled max-techsupport-limit 10`
+- auto-techsupport の閾値調整: `state` と `max-techsupport-limit` は別々のサブコマンドなので 1 行に連結すると click が引数解釈に失敗する。次のように 2 コマンドに分割する [^3]:
+
+    ```bash
+    sudo config auto-techsupport global state enabled
+    sudo config auto-techsupport global max-techsupport-limit 10
+    ```
 - `--silent` で軽量 dump → 状況把握 → その後の絞り込み解析
 
 ## 関連ページ
@@ -126,5 +135,6 @@ sonic-db-cli CONFIG_DB keys "AUTO_TECHSUPPORT_FEATURE|*"
 
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `scripts/generate_dump`
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `show/main.py`
+[^3]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `config/plugins/auto_techsupport.py` L143-L205（`state` / `max-techsupport-limit` がそれぞれ独立した click サブコマンドとして定義され、いずれも引数を 1 つだけ取る）
 
 <!-- glossary-links-injected: 8df9850464d2 -->

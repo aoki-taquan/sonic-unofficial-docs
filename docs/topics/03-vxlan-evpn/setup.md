@@ -1,11 +1,17 @@
 ---
 title: Overlay 設定
 description: Overlay 設定 — Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN
-  の NVO を作るのか」を決めると整理できます。どの場合も、VTEP となる VXLAN tunnel が先に必要です。
+  の NVO を作るのか」を決めると整理できる。どの場合も、VTEP となる VXLAN tunnel が先に必要となる。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: code-verified
+last_verified: 2026-06-04
+sources:
+- repo: sonic-net/sonic-utilities
+  path: config/vxlan.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   cli:
   - config vxlan
@@ -125,7 +131,7 @@ sudo config vxlan map add vtep1 100 100100
 }
 ```
 
-`VXLAN_TUNNEL_MAP` のキーは `<tunnel>|<map_name>` で、`map_name` の命名は慣例的に `map_<vni>_<vlan>` 形式が使われます。`vlan` フィールドは `Vlan<id>` 形式で書く必要があります (数字単独ではエラー)。
+`VXLAN_TUNNEL_MAP` のキーは `<tunnel>|<map_name>` で、`config vxlan map add` 経由の場合 `map_name` は `map_<vni>_Vlan<id>` 形式が `vxlan.py` 側でハードコードされる (慣例ではなくコード生成)[^vxlan-map-name]。`vlan` フィールドも `Vlan<id>` 形式で書く必要がある (数字単独ではエラー)。
 
 `sonic-cfggen` で部分パッチを当てる場合:
 
@@ -239,7 +245,7 @@ VXLAN / NVGRE の外側 header だけで [ECMP](../../reference/glossary.md#term
 
 ## よくある設定エラーと対処
 
-`sonic-utilities/config/vxlan.py` の `ctx.fail()` から抜粋した実エラーメッセージ:
+`sonic-utilities/config/vxlan.py` の `ctx.fail()` から抜粋した実エラーメッセージ[^vxlan-ctx-fail]:
 
 | エラーメッセージ | 原因 | 対処 |
 |---|---|---|
@@ -269,5 +275,9 @@ VXLAN / NVGRE の外側 header だけで [ECMP](../../reference/glossary.md#term
 - [sonic-vxlan YANG](../../reference/yang/sonic-vxlan.md)
 - [sonic-vnet YANG](../../reference/yang/sonic-vnet.md)
 - [Policy Based Hashing](../../architecture/sonic-policy-based-hashing.md)
+
+[^vxlan-map-name]: `sonic-net/sonic-utilities/config/vxlan.py` の `add_vxlan_map` (L167-L208) では `vlan_name = "Vlan" + vlan` を組み立てた上で `mapname = vxlan_name + '|' + 'map_' + vni + '_' + vlan_name` でキーを生成しており、形式は固定。`del_vxlan_map` (L215-L253) と `add_vxlan_map_range` (L313) も同じ形式。`sonic-net/sonic-utilities/config/vxlan.py#L204` (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)。
+
+[^vxlan-ctx-fail]: 列挙したエラーメッセージは `sonic-net/sonic-utilities/config/vxlan.py` 内の `ctx.fail()` 呼び出しと一致 (`VTEP already configured.` L45 / `Please delete the EVPN NVO configuration.` L76 / `Please delete all VLAN VNI mappings.` L85 / `EVPN NVO already configured` L122 / `VTEP {} not configured` L125, L188, L234 / `Invalid Vlan Id , Valid Range : 1 to 4094` L179 / `Invalid VNI {}. Valid range [1 to 16777215].` L183 / `Vlan Id already mapped` L198 / `VNI Id already mapped` L200 / `VNI mapped to vrf {}, Please remove VRF VNI mapping` L245)。`sonic-net/sonic-utilities/config/vxlan.py` (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)。
 
 <!-- glossary-links-injected: c5c8b661ae7e -->

@@ -4,10 +4,13 @@ description: show pfc サブコマンド — show pfc は PFC counter と PFC pr
   CLI グループ。show pfcwd は同じ領域の watchdog 表示 wrapper で、pfcwd show ... に委譲する。
 area: reference
 verification: code-verified
-last_verified: 2026-05-10
+last_verified: 2026-06-04
 sources:
 - repo: sonic-net/sonic-utilities
   path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: utilities_common/multi_asic.py
   ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
@@ -30,17 +33,17 @@ related:
 
 | コマンド | 用途 |
 |---------|------|
-| `show pfc counters [options]` | [PFC](../../reference/glossary.md#term-pfc) counters を表示 |
-| `show pfc priority [options]` | PFC priority 設定を表示 |
-| `show pfc asymmetric [options]` | asymmetric PFC 設定を表示 |
-| `show pfcwd config [-d true|false]` | PFC watchdog config を表示 |
-| `show pfcwd stats [-d true|false]` | PFC watchdog stats を表示 |
+| `show pfc counters [-d all\|frontend] [-n NS] [--history]` | [PFC](../../reference/glossary.md#term-pfc) counters を表示 |
+| `show pfc priority [INTERFACE] [-n NS]` | PFC priority 設定を表示 |
+| `show pfc asymmetric [INTERFACE] [-n NS]` | asymmetric PFC 設定を表示 |
+| `show pfcwd config [-d all\|frontend] [-n NS]` | PFC watchdog config を表示 |
+| `show pfcwd stats [-d all\|frontend] [-n NS]` | PFC watchdog stats を表示 |
 
 ## 詳細
 
 `show pfc` 配下の command は `pfcstat` / `pfc` 系 utility を実行する wrapper として定義される。interface alias mode の場合は必要に応じて alias を [SONiC](../../reference/glossary.md#term-sonic) port 名へ変換してから外部コマンドへ渡す。
 
-`show pfcwd config` は `pfcwd show config -d <display>`、`show pfcwd stats` は `pfcwd show stats -d <display>` を実行する。`display` は multi-[ASIC](../../reference/glossary.md#term-asic) 共通 option の表示制御値[^2]。
+`show pfcwd config` は `pfcwd show config -d <display>`、`show pfcwd stats` は `pfcwd show stats -d <display>` を実行する[^2]。`-d` / `--display` は multi-[ASIC](../../reference/glossary.md#term-asic) 共通 option で、値は `click.Choice` で制約される (典型的には `all` / `frontend`)。boolean ではなく、single-[ASIC](../../reference/glossary.md#term-asic) ではデフォルト `all`、multi-[ASIC](../../reference/glossary.md#term-asic) / chassis では `frontend` がデフォルト[^3]。`-n` / `--namespace` は対象 ASIC namespace を絞るための同共通 option[^3]。
 
 ## 注意
 
@@ -59,7 +62,9 @@ related:
 
 [^1]: `show pfc` グループ定義。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L670>
 
-[^2]: `show pfcwd` の `config` / `stats` wrapper。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L724>
+[^2]: `show pfcwd` の `config` / `stats` wrapper (`pfcwd show ... -d <display>` に委譲)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L728-L750>
+
+[^3]: multi-ASIC 共通 `--display` / `--namespace` option 定義 (`type=click.Choice(...)`, default は single-ASIC で `DISPLAY_ALL`、multi-ASIC / chassis で `DISPLAY_EXTERNAL`)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/utilities_common/multi_asic.py#L111-L133>
 
 <!-- usage-example -->
 ## 実行例
@@ -142,4 +147,4 @@ show pfcwd stats
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: e82be350a384 -->

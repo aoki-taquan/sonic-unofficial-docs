@@ -1,11 +1,20 @@
 ---
 title: QoS / Buffer の発展トピック
-description: QoS / Buffer の発展トピック — QoS / Buffer / PFC の基本（scheduler、queue map、PG、watermark）を押さえた後は、PFC
-  の運用整合性と buffer pool の設計が次の論点になる。
+description: QoS / Buffer / PFC の基本（scheduler、queue map、PG、watermark）を押さえた後の発展領域として、動的 buffer model
+  の alpha 設定、PFC watchdog のチューニング、Asymmetric PFC、headroom pool 設計、WRED/ECN の細分化を整理する。
 area: topics
 verification: meta
-last_verified: 2026-05-11
-sources: []
+last_verified: 2026-06-04
+sources:
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/buffermgrdyn.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/pfcwdorch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-buffer-profile.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   cli:
   - clear
@@ -40,18 +49,154 @@ related:
 
 ## 動的 buffer model の運用詳細
 
-動的 buffer model (`buffermgrd` が dynamic) では、`BUFFER_PROFILE` を手書きせず alpha (dynamic threshold) と pool size のみ指定する。alpha は [ASIC](../../reference/glossary.md#term-asic) の `SAI_BUFFER_PROFILE_ATTR_SHARED_DYNAMIC_TH` に直接マップされ、共有 pool 残量に応じて per-PG/queue の使用上限が自動調整される。alpha = 1/8 を基準に、congestion 多めの ToR では alpha を大きくして burst 吸収を優先し、tail-drop 厳しめの構成では小さくする。
+動的 buffer model (`buffermgrd` が dynamic) では、`BUFFER_PROFILE` を手書きせず alpha (dynamic threshold) と pool size のみ指定する。`sonic-buffer-profile` [YANG](../../reference/glossary.md#term-yang) の `dynamic_th` leaf は「Dynamic threshold alpha value controlling the maximum proportion of free buffer pool space.」と定義されており、SAI の `SAI_BUFFER_PROFILE_ATTR_SHARED_DYNAMIC_TH` に対応する。alpha = 1/8 を基準に、congestion 多めの ToR では alpha を大きくして burst 吸収を優先し、tail-drop 厳しめの構成では小さくする。
 
-ポートアップ / ダウン時には `buffermgrd` が `BUFFER_PG`, `BUFFER_QUEUE` を再計算し、`speed`, `cable-length` の変化を `pg_lossless_<speed>_<cable>_profile` という profile キーで参照する。pg-headroom 計算式は `headroom = 2 * (delay * BW + MTU)` ベース。手動上書きは原則しない。
+<!-- evidence:
+source: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-buffer-profile.yang#L45-L49 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  leaf dynamic_th { ... description "Dynamic threshold alpha value controlling the maximum proportion of free buffer pool space."; }
+reasoning: YANG 定義で alpha = dynamic_th が共有 pool 比率を制御する一次根拠。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-buffer-profile.yang#L45-L49 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-buffer-profile.yang#L45-L49 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)`
+
+    **抜粋**:
+
+    ```text
+    leaf dynamic_th { ... description "Dynamic threshold alpha value controlling the maximum proportion of free buffer pool space."; }
+    ```
+
+    **判断根拠**: YANG 定義で alpha = dynamic_th が共有 pool 比率を制御する一次根拠。
+
+<!-- evidence-rendered:end -->
+
+ポートアップ / ダウン時には `buffermgrd` が `BUFFER_PG`, `BUFFER_QUEUE` を再計算し、`speed`, `cable-length`, `mtu` の変化に応じて `pg_lossless_<speed>_<cable>` ないし `pg_lossless_<speed>_<cable>_mtu<mtu>` 形式の profile キーを生成する (デフォルト MTU 時は `_mtu...` suffix を省略する)。pg-headroom 計算は `buffer_headroom_<platform>.lua` という per-platform Lua スクリプトに委ねられ、delay-bandwidth-product + MTU ベースの式が SKU ごとに異なる。手動上書きは原則しない。
+
+<!-- evidence:
+source: sonic-net/sonic-swss/cfgmgr/buffermgrdyn.cpp#L485-L495 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  if (mtu == DEFAULT_MTU_STR) { buffer_profile_key = "pg_lossless_" + speed + "_" + cable; }
+  else                          { buffer_profile_key = "pg_lossless_" + speed + "_" + cable + "_mtu" + mtu; }
+reasoning: profile キー生成ロジックの直接根拠。MTU デフォルト時の suffix 省略も含めて記述に反映。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/cfgmgr/buffermgrdyn.cpp#L485-L495 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/cfgmgr/buffermgrdyn.cpp#L485-L495 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    if (mtu == DEFAULT_MTU_STR) { buffer_profile_key = "pg_lossless_" + speed + "_" + cable; }
+    else                          { buffer_profile_key = "pg_lossless_" + speed + "_" + cable + "_mtu" + mtu; }
+    ```
+
+    **判断根拠**: profile キー生成ロジックの直接根拠。MTU デフォルト時の suffix 省略も含めて記述に反映。
+
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-swss/cfgmgr/buffermgrdyn.cpp#L75-L109 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  string headroomPluginName = "buffer_headroom_" + platform + ".lua";
+  ...
+  string headroomLuaScript = swss::loadLuaScript(headroomPluginName);
+  m_headroomSha = swss::loadRedisScript(applDb, headroomLuaScript);
+reasoning: pg-headroom 計算が per-platform Lua スクリプトに委譲されている根拠。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/cfgmgr/buffermgrdyn.cpp#L75-L109 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/cfgmgr/buffermgrdyn.cpp#L75-L109 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    string headroomPluginName = "buffer_headroom_" + platform + ".lua";
+    ...
+    string headroomLuaScript = swss::loadLuaScript(headroomPluginName);
+    m_headroomSha = swss::loadRedisScript(applDb, headroomLuaScript);
+    ```
+
+    **判断根拠**: pg-headroom 計算が per-platform Lua スクリプトに委譲されている根拠。
+
+<!-- evidence-rendered:end -->
 
 ## PFC watchdog のチューニング
 
-`PFC_WD_TABLE|GLOBAL` の `POLL_INTERVAL` と `DETECTION_TIME` / `RESTORATION_TIME` は per-queue 単位で個別に上書き可能 (`PFC_WD_TABLE|<port>`)。短すぎる detection (100ms) は legitimate な burst を storm と誤検知し、長すぎる (1s 超) と head-of-line block が広がる。fabric 規模が大きいほど、detection を 200ms, restoration を 200ms 程度に揃え、storm 確定後は `forward` ではなく `drop` action にして局所封じ込め、を推奨する。
+`PFC_WD_TABLE|GLOBAL` の `POLL_INTERVAL` と、`PFC_WD_TABLE|<port>` の `detection_time` / `restoration_time` は per-port 単位で上書き可能。`pfcwdorch` は `detection_time` を 100ms 〜 5000ms、`restoration_time` を 100ms 〜 60000ms の範囲でクランプする (範囲外の値は `to_uint` で reject される)。短すぎる detection (100ms 付近) は legitimate な burst を storm と誤検知し、長すぎる (1s 超) と head-of-line block が広がる。fabric 規模が大きいほど detection / restoration を 200ms 程度に揃える運用が無難。なお `action` のデフォルトは `drop` (実装コメント "drop action is default" 参照) のため、storm 確定後の局所封じ込めはデフォルト挙動と一致する。
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/pfcwdorch.cpp#L22-L25 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  #define PFC_WD_DETECTION_TIME_MAX       (5 * 1000)
+  #define PFC_WD_DETECTION_TIME_MIN       100
+  #define PFC_WD_RESTORATION_TIME_MAX     (60 * 1000)
+  #define PFC_WD_RESTORATION_TIME_MIN     100
+reasoning: detection / restoration の許容範囲の直接根拠。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/pfcwdorch.cpp#L22-L25 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/pfcwdorch.cpp#L22-L25 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    #define PFC_WD_DETECTION_TIME_MAX       (5 * 1000)
+    #define PFC_WD_DETECTION_TIME_MIN       100
+    #define PFC_WD_RESTORATION_TIME_MAX     (60 * 1000)
+    #define PFC_WD_RESTORATION_TIME_MIN     100
+    ```
+
+    **判断根拠**: detection / restoration の許容範囲の直接根拠。
+
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/pfcwdorch.cpp#L189-L190 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  // According to requirements, drop action is default
+  PfcWdAction action = PfcWdAction::PFC_WD_ACTION_DROP;
+reasoning: デフォルト action = drop の根拠。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/pfcwdorch.cpp#L189-L190 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/pfcwdorch.cpp#L189-L190 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    // According to requirements, drop action is default
+    PfcWdAction action = PfcWdAction::PFC_WD_ACTION_DROP;
+    ```
+
+    **判断根拠**: デフォルト action = drop の根拠。
+
+<!-- evidence-rendered:end -->
 
 ## 発展トピック
 
 - **Asymmetric PFC**: 上流と下流で PFC enable bitmap を非対称に運用するモデル。lossless TC を一方向だけ pause 対象とする使い方で、`PORT_QOS_MAP|<port>.pfc_to_queue_map` と peer ToR の設定整合が要点。
-- **動的 buffer model**: 旧来の static buffer profile から、`BUFFER_POOL` の thresholds と alpha (dynamic threshold) を ASIC レベルで決める動的モデルへの移行。`buffermgrd` が `BUFFER_PROFILE` を auto 計算する。
+- **動的 buffer model**: 旧来の static buffer profile から、`BUFFER_POOL` の thresholds と alpha (dynamic threshold) を [ASIC](../../reference/glossary.md#term-asic) レベルで決める動的モデルへの移行。`buffermgrd` が `BUFFER_PROFILE` を auto 計算する。
 - **PFC watchdog の per-queue 詳細化**: storm 検出窓 / restore 窓を queue ごとにチューニングし、不要な polling load を減らす。`PFC_WD_TABLE` のパラメータ調整。
 - **Tunnel [DSCP](../../reference/glossary.md#term-dscp) remap**: standby ToR → active ToR の bounce-back を別 PG/queue に逃がす設定。詳細は [05 Dual-ToR](../05-dual-tor/advanced.md) と相互参照。
 - **[Headroom](../../reference/glossary.md#term-headroom) pool**: PFC pause 受信中に必要な headroom buffer を共有 pool で確保する設計。port shutdown 時に headroom が解放される動作の理解が必要。
@@ -65,11 +210,10 @@ related:
 - **scheduler weight と shaper の同時設定**: `SCHEDULER` の `weight` と `pir/cir` を両方設定すると ASIC によって解釈が違う。WFQ + shaping の組合せは platform docs と [SAI](../../reference/glossary.md#term-sai) sample で必ず確認する。
 - **ECN-only deployment**: PFC を無効にして ECN だけで lossless を狙う構成は、congestion 検出が遅れて queue が膨らむと drop に至る。host TCP stack の DCTCP 設定とセットで運用する。
 
-## 将来計画 / ロードマップ
+## 関連 HLD
 
-- `align-watermark-flow-with-port-configuration` [HLD](../../reference/glossary.md#term-hld) が port lifecycle と watermark の整合を扱い、これを起点に counter の reset 周りが整理される方向。
-- Dynamic buffer model の telemetry 統合が長期テーマで、buffer pool の utilization を OpenConfig schema で export する話が継続。
-- SAI 側で `SAI_BUFFER_POOL_ATTR_XOFF_SIZE` や per-queue headroom counter の attribute が拡張されており、[SONiC](../../reference/glossary.md#term-sonic) 側 schema 追随が見込まれる。
+- `align-watermark-flow-with-port-configuration` [HLD](../../reference/glossary.md#term-hld): port lifecycle と watermark counter の整合を扱う。port admin down 時の watermark clear や counter reset 周りはこの HLD を参照。
+- `dynamically-headroom-calculation` HLD: 動的 buffer model の headroom 算出ロジックの設計根拠。`buffer_headroom_<platform>.lua` の入出力契約と対応する。
 
 ## 関連 RFC / 仕様書
 
@@ -80,11 +224,11 @@ related:
 - [RFC 7567](https://datatracker.ietf.org/doc/html/rfc7567) — [AQM](../../reference/glossary.md#term-aqm) Recommendations (WRED 議論)
 - [RFC 2474](https://datatracker.ietf.org/doc/html/rfc2474) — DSCP
 
-## upstream 開発の最新動向
+## 関連 upstream コンポーネント
 
-- `sonic-buildimage` 配下の `buffermgrd` で動的 buffer model のチューニング PR が継続。alpha 値の自動計算ロジックが SKU 別に分岐していくため、platform 依存が増える傾向。
-- `sonic-swss` の `qosorch` で WRED profile attribute 更新と PFC watchdog の storm detection 改善 PR が定期的に入る。
-- Streaming telemetry 側 ([10 gNMI](../10-gnmi-openconfig/index.md)) で `COUNTERS_DB` の watermark / queue / PG 数値を export する設定例が拡張中。
+- 動的 buffer model: `sonic-swss/cfgmgr/buffermgrdyn.cpp` が `BufferMgrDynamic` クラスで `BUFFER_PG` / `BUFFER_PROFILE` を生成し、per-platform Lua スクリプト (`buffer_headroom_<platform>.lua`) を呼び出す。SKU 別 headroom 計算は Lua 側で分岐するため、platform 追加時はこの Lua 提供が必須となる。
+- PFC watchdog: `sonic-swss/orchagent/pfcwdorch.cpp` が `PFC_WD_TABLE` の field を処理し、`forward` / `drop` 2 種の action を実装する (`actionMap` 参照)。
+- Streaming telemetry との連携は [10 gNMI](../10-gnmi-openconfig/index.md) を参照。`COUNTERS_DB` の watermark / queue / PG 系 counter を export する経路はそちらに集約。
 
 ## トラブルシュート観点
 
@@ -118,4 +262,4 @@ related:
 - [Enhancements on show acl commands](../../acl-qos/enhancements-on-show-acl-commands.md)
 - [Everflow test plan (mirror counter 観点)](../../acl-qos/everflow-test-plan.md)
 
-<!-- glossary-links-injected: e74af460f6e2 -->
+<!-- glossary-links-injected: 6bd7277d13e4 -->
