@@ -5,11 +5,7 @@ description: DPU の IP 割当・gNMI 連携・KVM 検証 — SmartSwitch / DASH
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/system/smart-switch-ip-address-assignment.md
-- docs/management/smart-switch-gnmi-feedback-design-omit-in-toc.md
-- docs/overlay/dash-sonic-kvm.md
-- docs/architecture/smart-switch-database-design.md
+sources: []
 related:
   cli:
   - show feature

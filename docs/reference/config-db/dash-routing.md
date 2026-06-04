@@ -33,6 +33,7 @@ related:
   cli: []
   yang:
     - sonic-dash
+  _no_related_cli: true
 ---
 
 # DASH_ROUTING_* テーブル

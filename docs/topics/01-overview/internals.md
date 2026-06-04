@@ -5,10 +5,7 @@ description: 内部実装 — 設定基盤の内部実装は、起動時に設�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/system/sonic-configuration-setup-service.md
-- docs/internals/support-multiple-user-defined-redis-database-instances.md
-- docs/internals/support-redis-databases-in-multiple-namespaces.md
+sources: []
 related:
   cli:
   - config vnet

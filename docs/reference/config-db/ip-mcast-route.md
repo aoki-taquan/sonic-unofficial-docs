@@ -24,9 +24,7 @@ sources:
     path: common/schema.h
     ref: HEAD
 related:
-  config_db: []
-  cli: []
-  yang: []
+  _no_related: true
 ---
 
 # IP マルチキャストルート (P4RT)

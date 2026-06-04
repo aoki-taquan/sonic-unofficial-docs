@@ -5,11 +5,7 @@ description: 概念 — SONiC の observability は、用途ごとに別のサ�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/system/sonic-logging-system-dumps-arch-spec.md
-- docs/system/show-techsupport.md
-- docs/internals/dump-utility-for-easy-debugging.md
-- docs/system/system-ready-hld.md
+sources: []
 keywords:
 - Telemetry
 - SNMP

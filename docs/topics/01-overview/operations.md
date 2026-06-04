@@ -4,12 +4,7 @@ description: 運用入口 — 運用時の設定基盤は、日常変更、起�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/system/sonic-optional-feature-control-enhancement.md
-- docs/switching/control-sonic-behaviors-with-system-defaults-table.md
-- docs/architecture/reset-factory-design.md
-- docs/reference/cli/show-feature.md
-- docs/reference/config-db/system-defaults.md
+sources: []
 related:
   cli:
   - show feature

@@ -5,12 +5,7 @@ description: Route / Interface / Counter の確認 — L3 の障害調査では�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/show-ip.md
-- docs/reference/cli/show-interfaces.md
-- docs/routing/router-interface-counters-in-sonic.md
-- docs/routing/sonic-route-flow-counter-design.md
-- docs/architecture/sonic-ip-interface-loopback-action.md
+sources: []
 related:
   cli:
   - show ip

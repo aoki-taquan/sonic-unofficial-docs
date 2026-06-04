@@ -5,12 +5,7 @@ description: 設定データフロー — SONiC の設定を読むときは、�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/internals/swss-schema.md
-- docs/internals/zmq-producer-consumer-state-table-design.md
-- docs/management/redis-client-manager-rcm-hld.md
-- docs/reference/config-db/device-metadata.md
-- docs/reference/config-db/feature.md
+sources: []
 related:
   cli:
   - config bgp

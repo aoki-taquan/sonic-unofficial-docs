@@ -5,14 +5,7 @@ area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
-sources:
-- docs/overlay/vxlan-sonic.md
-- docs/routing/evpn-vxlan-hld.md
-- docs/overlay/nvgre-tunnel-in-sonic.md
-- docs/platform/subnet-decapsulation-with-sonic.md
-- docs/routing/overlay-ecmp-with-bfd-monitoring.md
-- docs/routing/overlay-ecmp-enhancements.md
-- docs/overlay/dscp-remapping-for-tunnel-traffic.md
+sources: []
 keywords:
 - VXLAN
 - EVPN

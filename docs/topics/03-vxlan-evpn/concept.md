@@ -5,11 +5,7 @@ description: VXLAN / VNET / EVPN の概要 — SONiC の overlay 周りは、「
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/overlay/vxlan-sonic.md
-- docs/routing/evpn-vxlan-hld.md
-- docs/overlay/nvgre-tunnel-in-sonic.md
-- docs/platform/subnet-decapsulation-with-sonic.md
+sources: []
 keywords:
 - VXLAN
 - EVPN
