@@ -14,7 +14,6 @@ related:
   - CRM
   cli:
   - show techsupport
-  yang: []
   _no_related_yang: true
 ---
 
