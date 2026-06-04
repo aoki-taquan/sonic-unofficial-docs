@@ -62,39 +62,43 @@ sudo config switchport mode routed Ethernet0
 
 | Table | フィールド |
 |-------|-----------|
-| `PORT.<name>` | `switchport_mode` (新規) |
-| `PORTCHANNEL.<name>` | `switchport_mode` (新規) |
+| `PORT.<name>` | `mode` (新規。値は `access` / `trunk` / `routed`)[^2] |
+| `PORTCHANNEL.<name>` | `mode` (新規。同上)[^2] |
 | `VLAN_MEMBER` | 既存 (`tagging_mode`)。CLI から複数指定可能になる |
 | `VLAN` | 既存 (`vlanid`)。複数追加可能 |
 
+!!! note "フィールド名は `mode`"
+    HLD 本文では `switchport_mode` の名前で言及される箇所があるが、`sonic-utilities` 実装 (`config/switchport.py` `db.cfgdb.mod_entry("PORT", port, {"mode": ...})`) では CONFIG_DB 上のキーは `mode` で書き込まれる[^2]。redis 経由で確認する際は `mode` を見ること。
+
 | CLI | 用途 |
 |-----|------|
-| `config vlan add <vid\|range\|list>` | 複数 [VLAN](../reference/glossary.md#term-vlan) 追加 |
-| `config vlan del <vid\|range\|list>` | 複数 VLAN 削除 |
-| `config vlan member add <vlan> <port\|range>` | メンバ一括追加 |
-| `config vlan member del <vlan> <port\|range>` | メンバ一括削除 |
-| `config switchport mode <mode> <port>` | ポートのモード変更 |
+| `config vlan add <vid>` | 単一 [VLAN](../reference/glossary.md#term-vlan) 追加[^2] |
+| `config vlan add -m "<range\|list>"` | 複数 VLAN 追加 (`-m` / `--multiple` フラグ必須)[^2] |
+| `config vlan del <vid>` / `config vlan del -m "<range\|list>"` | VLAN 削除 (単一 / 複数)[^2] |
+| `config vlan member add [-m] [-e] <vlan> <port>` | メンバ追加 (`-m` で複数 vid、`-e` で除外指定)[^2] |
+| `config vlan member del [-m] [-e] <vlan> <port>` | メンバ削除 |
+| `config switchport mode <access\|trunk\|routed> <port>` | ポートのモード変更[^2] |
 
 ## 設定例（実装に合わせた現実形）
 
 ```bash
-# 1. VLAN 10〜12 を一括作成
-sudo config vlan add 10-12
+# 1. VLAN 10〜12 を一括作成 (-m が必須。付け忘れると "is not integer" エラー)
+sudo config vlan add -m "10-12"
 
 # 2. Ethernet0 を access、Vlan10 untagged（2 ステップ）
 sudo config switchport mode access Ethernet0
 sudo config vlan member add 10 Ethernet0 --untagged
 
 # 3. PortChannel1 を trunk、native=Vlan10、tagged=Vlan20-22
-sudo config vlan add 20-22
+sudo config vlan add -m "20-22"
 sudo config switchport mode trunk PortChannel1
 sudo config vlan member add 10 PortChannel1 --untagged
-sudo config vlan member add 20 PortChannel1
-sudo config vlan member add 21 PortChannel1
-sudo config vlan member add 22 PortChannel1
+# 複数 vid を一括追加 (-m で範囲・カンマ区切りを受け付け)
+sudo config vlan member add -m "20-22" PortChannel1
 
 # 4. 元に戻す（メンバ削除→mode）
 sudo config vlan member del 10 PortChannel1
+sudo config vlan member del -m "20-22" PortChannel1
 sudo config switchport mode routed PortChannel1
 ```
 
@@ -142,19 +146,21 @@ config switchport mode access Ethernet0
 <!-- phase-boundary -->
 ## 実装フェーズ境界
 
-!!! info "Phase 別の実装済 / 未実装 サマリ"
-    本ページは `monitor: partially_implemented` で、HLD で示された一連の機能
-    が **段階的に取り込まれている** 状態を扱う。フェーズ毎の実装境界を
-    1 枚の表に集約する (詳細は本ページ上部の `diff` admonition および
-    [discrepancy-index](../reference/verification/discrepancy-index.md) を参照)。
+!!! info "機能カテゴリ別の実装済 / 未実装 サマリ"
+    本ページは `monitor: partially_implemented`。HLD で提案された CLI 拡張のうち、
+    どの形が実装済 (master の `sonic-utilities` で動作確認できる) で、
+    どの形が HLD 文書のみで実装されていないかを 1 枚の表に集約する。
+    具体的な差分根拠は [discrepancy ページ](switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
 
-    | Phase | 範囲 (機能 / 段階) | 実装済 (master 取り込み済) | 未実装 (HLD 提案のみ) |
+    | カテゴリ | 範囲 | 実装済 (master) | 未実装 / HLD のみ |
     |---|---|---|---|
-    | Phase 1 — 基本機能 | HLD §概要 / §設計の中核ユースケース | 取り込み済 — 本ページの「実装の概観」「実装詳細」節および `diff` admonition の現状側を参照 | — (Phase 1 は実装済) |
-    | Phase 2 — 拡張機能 | HLD §拡張 / §追加要件 / §周辺統合 | 一部のみ取り込み済 — 本ページ「実装詳細」の補足参照 | 未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および `diff` admonition の差分側に列挙 |
-    | Phase 3 — 将来拡張 | HLD §Future Work / §将来課題 | — | 未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点) |
+    | `switchport mode` コマンド本体 | mode 切替 (`access` / `trunk` / `routed`) を Ethernet / PortChannel に適用[^2] | `config switchport mode <access\|trunk\|routed> <port>` の 2 引数形 — `click.Choice(["access", "trunk", "routed"])` で実装[^2] | HLD 例の **第 3 引数 `<vlan-list>`** (mode 切替と同時に VLAN メンバを宣言する形) — `config/switchport.py` の `@click.argument` には未定義 |
+    | VLAN 一括 add/del | 複数 VLAN を 1 コマンドで作成・削除 | `config vlan add -m "10-12"` / `config vlan add -m "10,20,30"` (`--multiple` フラグ + parser 経由)[^2] | フラグ無しでの `config vlan add 10-12` 形 (HLD 例) — 実装は `vid.isdigit()` チェックで弾く |
+    | VLAN_MEMBER 一括 add/del | 複数 vid を一度にメンバ追加 / 削除 | `config vlan member add -m "20-22" <port>` および `-e` (except) フラグ。`vid="all"` 指定可[^2] | PortChannel 含む **ポート側の範囲指定** (`Ethernet0-3` のような port range) — `add_vlan_member` は単一 port 引数のみ |
+    | CONFIG_DB スキーマ | `PORT` / `PORTCHANNEL` テーブルへの mode フィールド追加 | `mode` キーが `access` / `trunk` / `routed` で書き込まれる[^2] | HLD 本文中の `switchport_mode` 名 — 実装名は `mode` (本ページ上部 note 参照) |
+    | アップグレード経路 | `db_migrator` で既存 port の mode 推論 | YANG / db_migrator 側で `mode` 推論ロジックが入っている[^1] | — |
 
-    凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。
+    凡例: 「実装済」=現行 master の `sonic-utilities` で動作確認できる範囲 / 「未実装」=HLD 文書には書かれているが対応 PR が未マージまたは設計のみ。
 <!-- /phase-boundary -->
 
 ## 実装との乖離
@@ -164,5 +170,6 @@ config switchport mode access Ethernet0
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-utilities` `config/switchport.py` L16-99 (`@click.Choice(["access", "trunk", "routed"])`, `mod_entry("PORT", port, {"mode": ...})`) および `config/vlan.py` L95-141, L331-399 (`@click.option('-m', '--multiple')`, `multiple_vlan_parser`) @ `39732bceb8bdefe706518ab40623bbbba6ff33b9`
 
 <!-- glossary-links-injected: 33d01a0d37a4 -->
