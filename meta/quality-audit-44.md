@@ -40,7 +40,7 @@ round 43（random、df subtype 別評価 4 周目）で提案された 3 改善:
 | # | パス | area | verification | df subtype | 行数 |
 |---|------|------|--------------|-----------|------|
 | 1 | `docs/management/snmp-yang.md` | management (HLD) | code-verified | - | 178 |
-| 2 | `docs/qos/dscp-remapping-for-tunnel-traffic.md` | qos (HLD) | code-verified | - | 215 |
+| 2 | `docs/overlay/dscp-remapping-for-tunnel-traffic.md` | overlay (HLD) | code-verified | - | 215 |
 | 3 | `docs/system/sonic-image-version.md` | system (HLD) | code-verified | - | 167 |
 | 4 | `docs/reference/config-db/buffer-pool.md` | reference (CDB) | code-verified | - | 132 |
 | 5 | `docs/reference/cli/show-interfaces.md` | reference (CLI) | code-verified | - | 298 |
