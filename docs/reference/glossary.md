@@ -1347,7 +1347,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [reset-factory（keep-basic / keep-all-config / only-config）](../architecture/reset-factory-design.md) (25)
 - [FEATURE テーブル](config-db/feature.md) (11)
 - [BANNER_MESSAGE テーブル](config-db/banner-message.md) (8)
-- [内部実装](../topics/01-overview/internals.md) (5)
+- [内部実装](../topics/01-overview/internals.md) (7)
 
 ### [COUNTERS_DB](#term-counters_db)
 
