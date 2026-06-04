@@ -1,6 +1,6 @@
 ---
 title: VRF / ECMP / RIB-FIB パイプライン
-description: VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APPL_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…
+description: VRF / ECMP / RIB-FIB パイプライン — SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APPL_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種類を選ぶ」の順で読み直す章入口。
 area: topics
 verification: meta
 page_kind: chapter-index
@@ -19,28 +19,33 @@ keywords:
 related:
   cli:
   - config vrf
-  - config bgp
-  - config interface
+  - config vrf add
+  - config vrf del
+  - config vrf bind
+  - config vrf unbind
   - config route
-  - show bgp
-  - show ip
-  - show vlan
+  - config route add
+  - config route del
+  - show cli vrf
+  - show cli mgmt-vrf
+  - show cli ipv6 route
+  - clear cli flowcnt-route
   config_db:
   - VRF
-  - BGP_PEER_GROUP_AF
+  - STATIC_ROUTE
+  - FG_NHG
+  - FG_NHG_PREFIX
+  - FG_NHG_MEMBER
+  - ROUTE_REDISTRIBUTE
   - LOOPBACK_INTERFACE
-  - VLAN
-  - VLAN_INTERFACE
-  - BGP_AGGREGATE_ADDRESS
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
   yang:
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-global
-  - sonic-bgp-peerrange
-  - sonic-fine-grained-ecmp
+  - sonic-vrf
+  - sonic-mgmt_vrf
+  - sonic-static-route
   - sonic-route-common
-  - sonic-route-map
+  - sonic-fine-grained-ecmp
+  - sonic-interface
+  - sonic-loopback-interface
 ---
 
 # VRF / ECMP / RIB-FIB パイプライン
@@ -100,21 +105,21 @@ related:
 
 **関連する HLD 7 件**
 
-- [NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離](../../routing/routing-and-next-hop-table-enhancement.md)
-- [BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）](../../routing/bgp-loading-optimization-for-sonic.md)
-- [IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）](../../routing/ipv6-link-local-enhancements.md)
+- [VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）](../../routing/sonic-vrf-support-design-spec-draft.md)
+- [linkmgrd のデフォルトルート連動（DualToR mux 制御）](../../routing/default-route.md)
 - [Fine Grained ECMP（FG_NHG / fgnhgorch）](../../routing/sonic-fine-grained-ecmp.md)
-- [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../../routing/srv6-vpn-hld.md)
-- [BGP PIC（Prefix Independent Convergence / NHG 階層）](../../routing/bgp-prefix-independent-convergence-architecture-document.md)
-- [BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）](../../routing/bgp-route-install-error-handling.md)
+- [DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）](../../routing/dhcp-relay-for-ipv6-hld.md)
+- [Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）](../../routing/high-level-design-document.md)
+- [dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）](../../routing/multiple-nexthop-route-hld.md)
+- [Management VRF 設計（201911 release / l3mdev + cgroups）](../../routing/sonic-management-vrf-design-document-201911-release.md)
 
 **関連トラブルシュート 5 件**
 
+- [DHCP Relay で IP が払い出されない](../../reference/runbooks/dhcp-relay.md)
 - [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
 - [APPL_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
-- [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
-- [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
-- [EVPN Type-2 route が広告されない](../../reference/runbooks/evpn-type2-not-advertised.md)
+- [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](../../reference/runbooks/arp-entry-stuck.md)
+- [BGP route が広告されない](../../reference/runbooks/bgp-route-not-advertised.md)
 
 <!-- /next-reads -->
 
