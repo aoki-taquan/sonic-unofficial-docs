@@ -18,10 +18,11 @@ sources:
     path: orchagent/nhgorch.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
-  config_db: []
+  config_db:
+    - VRF
   cli:
     - show mpls route
-  yang: []
+  _no_related_yang: true
 ---
 
 # LABEL_ROUTE_TABLE (APPL_DB)
