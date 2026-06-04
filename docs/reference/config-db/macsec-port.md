@@ -15,6 +15,10 @@ related:
   config_db:
     - PORT
     - MACSEC_PROFILE
+  cli:
+    - config macsec port add
+    - config macsec port del
+    - show macsec
   yang:
     - sonic-port
     - sonic-macsec

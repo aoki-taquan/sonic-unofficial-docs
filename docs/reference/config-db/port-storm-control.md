@@ -10,8 +10,11 @@ sources:
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db:
-    - PORT_STORM_CONTROL
     - PORT
+  cli:
+    - config storm-control
+    - config interface storm-control
+    - show storm-control all
   yang:
     - sonic-storm-control
 ---
@@ -28,11 +31,15 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>PORT_STORM_CONTROL")]
-  DM["PolicerOrch"]
+  CDB[("CONFIG_DB<br/>PORT")]
+  DM["portmgrd"]
   CDB --> DM
-  SAI["SAI<br/>sai_policer_api"]
-  DM --> SAI
+  APPDB[("APP_DB<br/>APP_PORT_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_port_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"

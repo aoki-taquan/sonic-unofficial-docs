@@ -33,6 +33,8 @@ related:
   cli:
     - counterpoll
     - watermarkstat
+  yang:
+    - sonic-flex_counter
 ---
 
 # FLEX_COUNTER_TABLE — PG_WATERMARK エントリ
