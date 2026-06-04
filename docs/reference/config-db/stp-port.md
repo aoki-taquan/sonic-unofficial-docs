@@ -19,6 +19,10 @@ related:
     - STP_VLAN_PORT
     - VLAN
     - PORT
+  cli:
+    - config spanning-tree interface cost
+    - config spanning-tree interface priority
+  _no_related_yang: true
 ---
 
 # STP_PORT テーブル — 暗黙デフォルト詳細
