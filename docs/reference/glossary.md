@@ -1233,7 +1233,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (76)
 - [APPL_DB ACL テーブル群](config-db/appl-acl.md) (73)
 - [APPL_DB LAG_TABLE (portchannel ステータス)](config-db/portchannel-status.md) (66)
-- [サイトマップ](../_meta/sitemap.md) (59)
+- [サイトマップ](../_meta/sitemap.md) (60)
 - [FABRIC_MONITOR テーブル](config-db/fabric-monitor.md) (54)
 
 ### [ARP](#term-arp)
@@ -1561,9 +1561,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [ROUTE_TABLE handler 分岐 (fpmsyncd / RouteSync)](config-db/route-handler.md) (35)
 - [概要](../topics/02-bgp/concept.md) (16)
+- [アーキテクチャ](../topics/02-bgp/architecture.md) (15)
 - [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (9)
 - [内部実装](../topics/02-bgp/internals.md) (8)
-- [DEVICE_METADATA テーブル](config-db/device-metadata.md) (7)
 
 ### [fpmsyncd](#term-fpmsyncd)
 
