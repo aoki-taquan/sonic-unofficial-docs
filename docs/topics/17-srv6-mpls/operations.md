@@ -1,34 +1,52 @@
 ---
 title: 運用
-description: 運用 — SRv6 / MPLS / Path Tracing の運用確認は、「設定が CONFIG_DB に正しく入ったか」「FRR /
-  netlink 経由で APP_DB に渡ったか」「SAI / ASIC に programming されたか」の三段を順に追います。
+description: SRv6 / MPLS / Path Tracing の運用確認は「設定が CONFIG_DB に正しく入ったか」「FRR / netlink 経由で
+  APP_DB に渡ったか」「SAI / ASIC に programming されたか」の三段を順に追います。各機能の出口（show コマンド / DB
+  / ログ）と典型的な異常パターンを実例ベースで整理します。
 area: topics
-verification: meta
-last_verified: 2026-05-11
-sources: []
+verification: code-verified
+last_verified: 2026-06-04
+sources:
+- repo: sonic-net/sonic-swss
+  path: orchagent/srv6orch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/srv6orch.h
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/portsorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-utilities
+  path: show/srv6.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: scripts/route_check.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   cli:
-  - show interfaces
-  - clear counters
-  - show bgp
-  - config qos
-  - config bgp
+  - show srv6 locators
+  - show srv6 static-sids
+  - show srv6 stats
+  - show mpls
+  - show interfaces counters rif
+  - sonic-clear counters
+  - crm show resources mpls_inseg
   config_db:
-  - CRM
+  - SRV6_MY_LOCATORS
+  - SRV6_MY_SIDS
+  - INTERFACE
+  - PORT
+  - MPLS_TC_TO_TC_MAP
   - PORT_QOS_MAP
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - CRM
   yang:
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
+  - sonic-srv6
+  - sonic-interface
+  - sonic-port
   - sonic-crm
-  - sonic-bgp-bbr
-  - sonic-bgp-peerrange
-  - sonic-bgp-device-global
-  - sonic-bgp-sentinel
 ---
 
 # 運用
@@ -38,6 +56,8 @@ related:
 ## SRv6
 
 ### 設定が CONFIG_DB に入ったかの確認
+
+CONFIG_DB のテーブル名は `SRV6_MY_LOCATORS` / `SRV6_MY_SIDS` です[^schema][^show-srv6]。
 
 ```bash
 admin@sonic:~$ redis-cli -n 4 KEYS "SRV6_MY_LOCATORS|*"
@@ -55,6 +75,21 @@ admin@sonic:~$ redis-cli -n 4 KEYS "SRV6_MY_SIDS|*"
 1) "SRV6_MY_SIDS|loc1|fc00:0:1:e000::"
 2) "SRV6_MY_SIDS|loc1|fc00:0:1:e001::"
 ```
+
+CLI からは `show srv6 locators` / `show srv6 static-sids` で同等の情報が取れます[^show-srv6]。
+
+<!-- evidence:
+sonic-swss-common/common/schema.h L398-399 @ 158de8d3:
+  #define CFG_SRV6_MY_SID_TABLE_NAME      "SRV6_MY_SIDS"
+  #define CFG_SRV6_MY_LOCATOR_TABLE_NAME  "SRV6_MY_LOCATORS"
+sonic-utilities/show/srv6.py L10-11 @ 39732bce:
+  CONFIG_DB_MY_SID_TABLE     = 'SRV6_MY_SIDS'
+  CONFIG_DB_MY_LOCATORS_TABLE = 'SRV6_MY_LOCATORS'
+sonic-swss/orchagent/srv6orch.cpp L341-343 @ 43055961:
+  auto blen = fvsGetValue(fvs, "block_len", true);
+  auto nlen = fvsGetValue(fvs, "node_len", true);
+  auto flen = fvsGetValue(fvs, "func_len", true);
+-->
 
 `uA` / `End.X` の SID は `nexthop` フィールドに紐づく nexthop IP が **既知の neighbor** でないと FRR / `srv6orch` は pending 扱いになります。
 
@@ -79,12 +114,16 @@ fc00:0:1:e001::   uA (nh fe80::1)               bgp           loc1
 
 ### APP_DB / ASIC_DB の programming 確認
 
+APP_DB のテーブル名は `SRV6_MY_SID_TABLE`、ASIC_DB は `SAI_OBJECT_TYPE_MY_SID_ENTRY` です[^schema][^srv6orch]。
+
 ```bash
 admin@sonic:~$ redis-cli -n 0 KEYS "SRV6_MY_SID_TABLE:*"
 1) "SRV6_MY_SID_TABLE:32:16:16:0:fc00:0:1:e000::"
 admin@sonic:~$ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_MY_SID_ENTRY:*" | wc -l
 2
 ```
+
+APP_DB のキーは `block_len:node_len:func_len:args_len:sid-ip` の形式で、`srv6orch` 内のコメント (L2210) でもこの順序が明示されています[^srv6orch]。
 
 APP_DB に乗っているのに [ASIC_DB](../../reference/glossary.md#term-asic_db) に出ない場合、`srv6orch` の pending queue で止まっている可能性が高いです。`docker exec swss supervisorctl tail -f orchagent` で `SRv6Orch` のログを追います。次のいずれかが典型です。
 
@@ -96,7 +135,7 @@ APP_DB に乗っているのに [ASIC_DB](../../reference/glossary.md#term-asic_
 
 ### トラフィック観測
 
-MySID 単位の counter は phase 機能で、現状の [SONiC](../../reference/glossary.md#term-sonic) master では IPv6 forwarding 全体の [RIF](../../reference/glossary.md#term-rif) counter で代用するのが現実的です。
+MySID 単位の counter は `show srv6 stats` で参照できますが[^show-srv6-stats]、forwarding 量の概観には IPv6 全体の [RIF](../../reference/glossary.md#term-rif) counter が手早く有効です。
 
 ```bash
 admin@sonic:~$ sonic-clear counters
@@ -106,7 +145,7 @@ admin@sonic:~$ show interfaces counters rif
 Ethernet0      120    9.6 KB        80  ...
 ```
 
-uA / End.X が forwarding しているかを概観するには十分です。ヘッダ単位の観察が必要なら `tcpdump -i <intf> -nn ip6 proto 43` で SRH を見ます。
+ヘッダ単位の観察が必要なら `tcpdump -i <intf> -nn ip6 proto 43` で SRH を見ます。
 
 ## MPLS
 
@@ -120,7 +159,7 @@ mpls
 enable
 ```
 
-`show interfaces mpls` 系 CLI の提供範囲は実装依存です。`show runningconfiguration` で `mpls` 行が出れば CONFIG_DB には入っています。
+`show runningconfiguration` で `mpls` 行が出れば CONFIG_DB には入っています。`show interfaces` 系で MPLS 専用サブコマンドは現状提供されていません。
 
 ### FRR / LSP の確認
 
@@ -135,6 +174,8 @@ admin@sonic:~$ vtysh -c "show mpls table"
 LSP が消えるパターンは多くが LDP / [BGP](../../reference/glossary.md#term-bgp)-LU の neighbor down です。`vtysh -c "show mpls ldp neighbor"` / `vtysh -c "show bgp ipv4 labeled-unicast summary"` を最初に見ます。
 
 ### APP_DB と ASIC_DB
+
+APP_DB は `LABEL_ROUTE_TABLE`[^schema-mpls]、ASIC_DB は `SAI_OBJECT_TYPE_INSEG_ENTRY` です。
 
 ```bash
 admin@sonic:~$ redis-cli -n 0 KEYS "LABEL_ROUTE_TABLE:*" | head
@@ -168,17 +209,15 @@ admin@sonic:~$ sudo config crm thresholds mpls inseg type percentage
 admin@sonic:~$ sudo config crm thresholds mpls inseg high 85
 ```
 
-大規模静的 LSP では事前に threshold を設定すると、`/var/log/syslog` に [CRM](../../reference/glossary.md#term-crm) の警告が出ます。[QoS](../../reference/glossary.md#term-qos) が効かないときは `MPLS_TC_TO_TC_MAP` → `PORT_QOS_MAP` の参照を CONFIG_DB から辿ります。
+`crmorch` は `CRM_MPLS_INSEG` を `SAI_OBJECT_TYPE_INSEG_ENTRY` にマッピングしてカウントします[^crm]。大規模静的 LSP では事前に threshold を設定すると、`/var/log/syslog` に [CRM](../../reference/glossary.md#term-crm) の警告が出ます。[QoS](../../reference/glossary.md#term-qos) が効かないときは `MPLS_TC_TO_TC_MAP` → `PORT_QOS_MAP` の参照を CONFIG_DB から辿ります。
 
 ## Path Tracing
 
-### CONFIG_DB と show
+### CONFIG_DB の確認
+
+Path Tracing の per-port 設定は `PORT` テーブルの `pt_interface_id` / `pt_timestamp_template` フィールドで持ちます[^pt-schema][^portsorch-pt]。`show interfaces path-tracing` 相当の専用 CLI は現行 master の `sonic-utilities` には未実装で、確認は `redis-cli` か `show runningconfiguration` で行います。
 
 ```bash
-admin@sonic:~$ show interface path-tracing
-  Interface    PT Interface ID    PT Timestamp Template
------------  -----------------  -----------------------
-Ethernet0    513                template3
 admin@sonic:~$ redis-cli -n 4 HGETALL "PORT|Ethernet0" | grep -A1 pt_
 pt_interface_id
 513
@@ -188,6 +227,8 @@ template3
 
 ### ASIC programming
 
+`portsorch` が `SAI_PORT_ATTR_PATH_TRACING_INTF` および `SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE` を Port に書き込みます[^[portsorch](../../reference/glossary.md#term-portsorch)-pt]。timestamp の `template1`〜`template4` は `SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_*_*` にマッピングされます[^portsorch-pt-map]。
+
 ```bash
 admin@sonic:~$ redis-cli -n 1 HGETALL "ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x..." | grep -A1 PATH_TRACING
 SAI_PORT_ATTR_PATH_TRACING_INTF
@@ -196,7 +237,21 @@ SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE
 SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_TEMPLATE3
 ```
 
-probe 生成・回収は SONiC 外側（PT Source / Sink / Regional Collector）の仕事です。SONiC は midpoint として **HbH-PT の MCD を書き足す** だけなので、検証は経路上で実トラフィックをキャプチャして MCD が増えているかを確認するのが手っ取り早いです。
+<!-- evidence:
+sonic-swss/orchagent/portsorch.cpp L213-218 @ 43055961:
+  static map<string, sai_port_path_tracing_timestamp_type_t> pt_timestamp_template_map =
+  {
+    { "template1", SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_8_15  },
+    { "template2", SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_12_19 },
+    { "template3", SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_16_23 },
+    { "template4", SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_20_27 }
+  };
+sonic-swss/orchagent/portsorch.cpp L11487, L11507 @ 43055961:
+  attr.id = SAI_PORT_ATTR_PATH_TRACING_INTF;
+  attr.id = SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE;
+-->
+
+probe 生成・回収は [SONiC](../../reference/glossary.md#term-sonic) 外側（PT Source / Sink / Regional Collector）の仕事です。SONiC は midpoint として **HbH-PT の MCD を書き足す** だけなので、検証は経路上で実トラフィックをキャプチャして MCD が増えているかを確認するのが手っ取り早いです。
 
 SRv6 `H.Encaps.Red` と Path Tracing を併用するときは、外側 IPv6 の HbH-PT が内側にどう写るかが ASIC 実装依存で、[HLD](../../reference/glossary.md#term-hld) の前提と乖離していることがあります（[discrepancy](../../routing/path-tracing-midpoint.md) 参照）。
 
@@ -234,4 +289,16 @@ SRv6 `H.Encaps.Red` と Path Tracing を併用するときは、外側 IPv6 の 
 - [VRF / ECMP 章](../04-vrf-ecmp/index.md)（next-hop / nexthop group の確認）
 - [SWSS / SAI / Redis 章](../20-swss-sai-redis/index.md)（共通の SAI 失敗観察）
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+## 引用元
+
+[^schema]: `sonic-net/sonic-swss-common` `common/schema.h` L169, L398-399 @ `158de8d3` — `CFG_SRV6_MY_LOCATOR_TABLE_NAME = "SRV6_MY_LOCATORS"`、`CFG_SRV6_MY_SID_TABLE_NAME = "SRV6_MY_SIDS"`、`APP_SRV6_MY_SID_TABLE_NAME = "SRV6_MY_SID_TABLE"`。
+[^show-srv6]: `sonic-net/sonic-utilities` `show/srv6.py` L10-11, L51-58 @ `39732bce` — `show srv6 locators` が `SRV6_MY_LOCATORS` を、`show srv6 static-sids` が `SRV6_MY_SIDS` / `SRV6_MY_SID_TABLE` を読みます。
+[^show-srv6-stats]: `sonic-net/sonic-utilities` `show/srv6.py` L150-151 @ `39732bce` — `show srv6 stats` サブコマンド。
+[^srv6orch]: `sonic-net/sonic-swss` `orchagent/srv6orch.cpp` L104-107, L1453-1454, L2210 @ `43055961` — APP_DB / CONFIG_DB の両 SRv6 テーブルを購読し、MySID キーを `block_len:node_len:function_len:args_len:sid-ip` の順で分解します。
+[^schema-mpls]: `sonic-net/sonic-swss-common` `common/schema.h` L48 @ `158de8d3` — `APP_LABEL_ROUTE_TABLE_NAME = "LABEL_ROUTE_TABLE"`。
+[^crm]: `sonic-net/sonic-swss` `orchagent/crmorch.cpp` L113 @ `43055961` — `CRM_MPLS_INSEG` を `SAI_OBJECT_TYPE_INSEG_ENTRY` にマッピング。
+[^pt-schema]: `sonic-net/sonic-swss` `doc/swss-schema.md` L30, L1026 @ `43055961` — `PORT` テーブルの `pt_interface_id` (1-4095) と `pt_timestamp_template` フィールド定義。
+[^portsorch-pt]: `sonic-net/sonic-swss` `orchagent/portsorch.cpp` L1420, L1435, L11484-11507 @ `43055961` — `portsorch` が `SAI_PORT_ATTR_PATH_TRACING_INTF` / `SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE` を Port に設定。
+[^portsorch-pt-map]: `sonic-net/sonic-swss` `orchagent/portsorch.cpp` L213-218 @ `43055961` — `template1`〜`template4` の文字列を `SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_*_*` にマッピング。
+
+<!-- glossary-links-injected: 4e8b9837844c -->
