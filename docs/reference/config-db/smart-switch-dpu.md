@@ -29,6 +29,8 @@ related:
     - CHASSIS_MODULE
   yang:
     - sonic-smart-switch
+  cli:
+    - sonic-cfggen
 ---
 
 # SmartSwitch DPU テーブル群
