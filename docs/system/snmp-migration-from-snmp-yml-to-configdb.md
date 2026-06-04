@@ -1,11 +1,12 @@
 ---
 title: SNMP 設定の snmp.yml → CONFIG_DB 移行
 description: SNMP 設定の snmp.yml → CONFIG_DB 移行 — /etc/sonic/snmp.yml には community /
-  location が、CONFIG_DB には ACL のみが入る、という分散した SNMP 設定状態を解消し、全 SNMP 設定を CONFIG_DB に集約
-  するための移行設…
+  location が、CONFIG_DB には ACL のみが入る、という分散した SNMP 設定状態を解消し、全 SNMP 設定を CONFIG_DB
+  に集約するための移行設計。SNMP / SNMP_COMMUNITY / SNMP_USER / SNMP_AGENT_ADDRESS_CONFIG
+  の YANG 整合と SNMP_TRAP_CONFIG の YANG 未対応も併せて整理する。
 area: system
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-06-04
 sources:
 - repo: sonic-net/SONiC
   path: doc/snmp/snmp-configdb-migration-hld.md
@@ -35,7 +36,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified（基本構成のみ）"
-    現行 master で `config snmp` グループ (`sonic-utilities/config/main.py:4261`)、`docker-snmp/snmpd.conf.j2` の CONFIG_DB ベース設定、`sonic-yang-models` の `sonic-snmp.yang` を確認。SNMP / SNMP_COMMUNITY / SNMP_USER テーブルは現行 yang に取り込まれている。`snmp.yml` → CONFIG_DB ワンタイム変換スクリプトの場所は明示できなかったが、CONFIG_DB ベース運用は標準化済み（verified at: 2026-05-09）。
+    現行 master で `config snmp` グループ (`sonic-utilities/config/main.py:4261`)、`docker-snmp/snmpd.conf.j2` の CONFIG_DB ベース設定、`sonic-yang-models` の `sonic-snmp.yang` を確認。`SNMP` / `SNMP_COMMUNITY` / `SNMP_USER` / `SNMP_AGENT_ADDRESS_CONFIG` の 4 container は現行 YANG に取り込まれている[^2]。一方、`config snmptrap` が書く `SNMP_TRAP_CONFIG` テーブル[^3]は CONFIG_DB に存在するが `sonic-snmp.yang` 側に対応 container は無く、YANG カバレッジは未達。`snmp.yml` → CONFIG_DB ワンタイム変換スクリプトの場所は明示できなかったが、CONFIG_DB ベース運用は標準化済み（verified at: 2026-06-04）。
 
 # SNMP 設定の snmp.yml → CONFIG_DB 移行
 
@@ -86,11 +87,13 @@ flowchart TD
 
 ### 関連する CONFIG_DB
 
-| Table | Key | 説明 |
-|-------|-----|------|
-| `SNMP` | `LOCATION` / `CONTACT` | ロケーション / コンタクト |
-| `SNMP_COMMUNITY` | `<community>` | RO/RW community 定義 |
-| `SNMP_USER` | `<user>` | SNMPv3 ユーザ（auth/priv 含む） |
+| Table | Key | 説明 | YANG |
+|-------|-----|------|------|
+| `SNMP` | `LOCATION` / `CONTACT` | ロケーション / コンタクト | あり (`sonic-snmp:SNMP`)[^2] |
+| `SNMP_COMMUNITY` | `<community>` | RO/RW community 定義 | あり (`sonic-snmp:SNMP_COMMUNITY`)[^2] |
+| `SNMP_USER` | `<user>` | SNMPv3 ユーザ（auth/priv 含む） | あり (`sonic-snmp:SNMP_USER`)[^2] |
+| `SNMP_AGENT_ADDRESS_CONFIG` | `<ip>\|<port>\|<vrf>` | snmpd の listen IP / port / [VRF](../reference/glossary.md#term-vrf) | あり (`sonic-snmp:SNMP_AGENT_ADDRESS_CONFIG`)[^2] |
+| `SNMP_TRAP_CONFIG` | `v1TrapDest` / `v2TrapDest` / `v3TrapDest` | SNMP trap 送信先 (`DestIp`, `DestPort`, `vrf`, `Community`)[^3] | **無** (sonic-snmp.yang に対応 container 無し) |
 
 ### 関連する CLI
 
@@ -109,12 +112,33 @@ config snmp user add <user> <noAuthNoPriv|AuthNoPriv|Priv> <RO|RW> \
     <MD5|SHA|HMAC-SHA-2> <auth_password> <DES|AES> <encrypt_password>
 config snmp user del <user>
 
+# 別グループ（同じ snmp.yml 撤去スコープ。本 HLD のスキーマ追加範囲外だが現行 utilities に実装あり）
+config snmpagentaddress add <agentip> [-p <port>] [-v <vrf>]   # SNMP_AGENT_ADDRESS_CONFIG[^4]
+config snmpagentaddress del <agentip> [-p <port>] [-v <vrf>]
+config snmptrap modify <1|2|3> <serverip> [-p <port>] [-v <vrf>] [-c <comm>]  # SNMP_TRAP_CONFIG[^3]
+config snmptrap del <1|2|3>
+
 show run snmp [community|contact|location|user] [--json]
+show snmpagentaddress
+show snmptrap
 ```
 
 ### 関連する YANG
 
-[HLD](../reference/glossary.md#term-hld) に [YANG](../reference/glossary.md#term-yang) 追加の記述は無い（`snmp-schema-addition.md` 側で示唆されるのみ）。
+[HLD](../reference/glossary.md#term-hld) 本文自体には [YANG](../reference/glossary.md#term-yang) 追加の明示記述は無い（`snmp-schema-addition.md` 側で示唆されるのみ）。実装側では `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-snmp.yang`[^2] が以下の container を提供し、本 HLD の CONFIG_DB スキーマと整合する:
+
+| YANG container | 対応 CONFIG_DB | 主な leaf |
+|----------------|-----------------|------------|
+| `sonic-snmp:SNMP/CONTACT` | `SNMP\|CONTACT` | `Contact` (string, 1..255)[^2] |
+| `sonic-snmp:SNMP/LOCATION` | `SNMP\|LOCATION` | `Location` (string, 1..255)[^2] |
+| `sonic-snmp:SNMP_COMMUNITY/SNMP_COMMUNITY_LIST` | `SNMP_COMMUNITY\|<name>` | `name` (key), `TYPE` (enum RO/RW)[^2] |
+| `sonic-snmp:SNMP_USER/SNMP_USER_LIST` | `SNMP_USER\|<name>` | `SNMP_USER_TYPE` (noAuthNoPriv/AuthNoPriv/Priv, mandatory), `SNMP_USER_PERMISSION` (RO/RW, mandatory), `SNMP_USER_AUTH_TYPE` (MD5/SHA/HMAC-SHA-2), `SNMP_USER_AUTH_PASSWORD`, `SNMP_USER_ENCRYPTION_TYPE` (DES/AES), `SNMP_USER_ENCRYPTION_PASSWORD` (mandatory)[^2] |
+| `sonic-snmp:SNMP_AGENT_ADDRESS_CONFIG/SNMP_AGENT_ADDRESS_CONFIG_LIST` | `SNMP_AGENT_ADDRESS_CONFIG\|<ip>\|<port>\|<vrf>` | `agent_ip` (key), `port` (key), `vrf_name` (key)[^2] |
+
+注意:
+
+- `sonic-snmp.yang` の現 revision (`2022-05-13`)[^2] に `SNMP_TRAP_CONFIG` 用の container は **無い**。`config snmptrap` (`sonic-utilities/config/main.py:4213`)[^3] が書き込む同テーブルは YANG 経由の validation を受けず、CONFIG_DB 生 schema のみで運用される。
+- `SNMP_USER_AUTH_PASSWORD` / `SNMP_USER_ENCRYPTION_PASSWORD` には `SNMP_USER_TYPE` に応じた `must` 制約があり、`AuthNoPriv` / `Priv` で最低 8 文字を要求する[^2]。
 
 ### 設定例
 
@@ -136,7 +160,7 @@ show run snmp community
 
 - **既存 ACL の `SNMP_ACL`**: 本機能とは独立に CONFIG_DB に存在する。SNMP デーモンの ACL 部分は本機能の対象外。
 - **`docker-snmp` 起動順**: CONFIG_DB が先に上がっていることが前提。`hostcfgd` の起動依存は変更されない。
-- **Watchdog / SNMP trap**: trap は別途 `SNMP_TRAP_CONFIG` テーブル等で管理（本 HLD のスコープ外）。
+- **SNMP trap**: trap は `SNMP_TRAP_CONFIG` テーブルで管理され、`v1TrapDest` / `v2TrapDest` / `v3TrapDest` の 3 key に `DestIp` / `DestPort` / `vrf` / `Community` を持つ[^3]。本 HLD のスキーマ追加スコープ外であり、現行 `sonic-snmp.yang` にも対応 container は無い[^2]。
 
 ## トラブルシューティング
 
@@ -159,6 +183,9 @@ snmpwalk -v2c -c public localhost system
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/snmp/snmp-configdb-migration-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-snmp.yang` (`container sonic-snmp` 配下の `SNMP` L25-50 / `SNMP_COMMUNITY` L52-79 / `SNMP_USER` L80-166 / `SNMP_AGENT_ADDRESS_CONFIG` L167-202、revision `2022-05-13`)
+[^3]: `sonic-net/sonic-utilities` `config/main.py` `def snmptrap(...)` L4213 から `snmptrap.command('del')` L4256（`SNMP_TRAP_CONFIG` テーブルへの `v1TrapDest` / `v2TrapDest` / `v3TrapDest` 書き込み）
+[^4]: `sonic-net/sonic-utilities` `config/main.py` `def snmpagentaddress(...)` L4129 から `snmpagentaddress.command('del')` L4207（`SNMP_AGENT_ADDRESS_CONFIG` テーブルへの `ip|port|vrf` 書き込み）
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -167,4 +194,4 @@ snmpwalk -v2c -c public localhost system
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: a44572fede5f -->
+<!-- glossary-links-injected: 8b572e7ecef7 -->
