@@ -1,7 +1,6 @@
 ---
 title: Reboot 運用と障害調査
-description: Reboot 運用と障害調査 — reboot 運用で重要なのは、実行前に peer と platform の前提を揃えること、実行中に
-  warm shutdown / restore の境界を見失わないこと、実行後に原因と復元結果を確認することです。
+description: Reboot 運用と障害調査 — 実行前に peer と platform の前提を揃え、実行中は warm shutdown / restore の境界を見失わず、実行後は reboot-cause と reconciliation 状態を確認するための切り分け手順をまとめる。
 area: topics
 verification: meta
 last_verified: 2026-05-10
@@ -53,6 +52,23 @@ ls /host/reboot-cause/
 cat /host/reboot-cause/reboot-cause.txt
 cat /host/reboot-cause/previous-reboot-cause.json
 ```
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/scripts/reboot#L14 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  REBOOT_CAUSE_FILE="/host/reboot-cause/reboot-cause.txt"
+reasoning: reboot / fast-reboot / soft-reboot のいずれの wrapper script も /host/reboot-cause/reboot-cause.txt を最新 cause の生ファイルとして書き出す。
+-->
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/reboot_cause.py#L13-L23 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  PREVIOUS_REBOOT_CAUSE_FILE_PATH = "/host/reboot-cause/previous-reboot-cause.json"
+  ...
+  if os.path.exists(PREVIOUS_REBOOT_CAUSE_FILE_PATH):
+      with open(PREVIOUS_REBOOT_CAUSE_FILE_PATH) as prev_reboot_cause_file:
+reasoning: show reboot-cause は前回 cause を /host/reboot-cause/previous-reboot-cause.json から JSON として読み込む。
+-->
+
 
 ## LACP と peer 側の時間
 
@@ -130,6 +146,25 @@ natsyncd                      1  reconciled
 May 10 11:01:08 sw01 INFO swss#bgpcfgd: BGP reached reconciled state
 May 10 11:01:09 sw01 INFO swss#orchagent: EOIU received from all components
 ```
+
+<!-- evidence:
+source: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: master)
+excerpt: |
+  // Wait 3 seconds after detecting EOIU reached state
+  const uint32_t DEFAULT_EOIU_HOLD_INTERVAL = 3;
+  ...
+  bgpStateTable.hget("IPv4|eoiu", "state", value);
+reasoning: fpmsyncd は STATE_DB の BGP_STATE_TABLE|<family>|eoiu を hget して reached を待つ。EOIU は警告文どおり後続 clean-up の前提となる同期点である。
+-->
+<!-- evidence:
+source: sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: master)
+excerpt: |
+  key             = BGP_STATE_TABLE|family|eoiu             ; family = "IPv4" / "IPv6"  ; address family.
+  state           = "unknown" / "reached" / "consumed"         ; unknown: eoiu state not fetched yet.
+                                                               ; reached: bgp eoiu done.
+reasoning: EOIU 状態は STATE_DB の BGP_STATE_TABLE で公開され、reconciliation 完了判定に使われる。
+-->
+
 
 ## reboot 種別の使い分け早見表
 
