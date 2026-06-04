@@ -8,6 +8,10 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/fwutil/fwutil.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-utilities
+  path: fwutil/main.py
+- repo: sonic-net/sonic-platform-common
+  path: sonic_platform_base/component_base.py
 related:
   config_db: []
   cli:
@@ -57,10 +61,15 @@ flowchart LR
 
 | CLI | 用途 |
 |-----|------|
-| `fwutil show status` | 各 component の現行 firmware version |
-| `fwutil show updates` | 利用可能な update（manifest 由来） |
+| `fwutil show status` | 各 component の現行 firmware version / chassis ・ module ごとの一覧[^2] |
+| `fwutil show updates` | 利用可能な update（manifest 由来、`-i current/next` で image を選択）[^2] |
+| `fwutil show update-all-status` | `fwutil update all` の実行進捗ステータスを表示[^2] |
+| `fwutil show version` | **fwutil ユーティリティ自身のバージョン** を表示（firmware version ではない）[^2] |
 | `fwutil install chassis component <name> fw <path>` | image を直接 install |
-| `fwutil update` | manifest に従って一括 update |
+| `fwutil update all` / `fwutil update {chassis,module}` | manifest に従って一括 / 範囲指定で update |
+
+!!! warning "`fwutil show version` の誤解しやすい点"
+    `fwutil show version` は **fwutil コマンド自身のバージョン文字列**（例: `fwutil version 2.0.0.0`）を表示するもので、各 component の firmware version を表示するものではない[^2]。component の現行 firmware version を確認するには `fwutil show status` を使う。
 
 ### Boot type による動作差
 
@@ -91,15 +100,23 @@ flowchart LR
 firmware ユーティリティを確認する。
 
 ```bash
-# Firmware
+# 各 component の現行 firmware version を確認
 sudo fwutil show status
+
+# manifest と照合して利用可能な update を確認
+sudo fwutil show updates
+
+# fwutil コマンド自身のバージョン（firmware version ではない）
 sudo fwutil show version
+
+# platform 同梱 firmware イメージの実体（platform 依存）
 ls /usr/share/sonic/device/*/fw/ 2>/dev/null | head
 ```
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/fwutil/fwutil.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-utilities` `fwutil/main.py` の `show` サブグループ定義（`status` L467-475 / `updates` L478 付近 / `update-all-status` L479-487 / `version` L490-494）と `VERSION = '2.0.0.0'`（L20）を参照。
 
 <!-- concerns hint:
 - sonic-utilities/fwutil/ の現行 master 取り込みと CLI subcommand 一覧確認
