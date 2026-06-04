@@ -17403,10 +17403,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#master" class="md-nav__link">
     <span class="md-ellipsis">
       
-        改修対象関数
+        改修対象関数 (master 取り込み後)
       
     </span>
   </a>
@@ -17419,7 +17419,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -17458,7 +17458,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -17469,7 +17469,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -17480,7 +17480,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -17492,7 +17492,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -17508,7 +17508,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -18857,7 +18857,7 @@
   <span class="md-ellipsis">
     
   
-    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+    xcvrd クラッシュ（CMIS module_media_interface_id 未定義）
   
 
     
@@ -36039,10 +36039,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#master" class="md-nav__link">
     <span class="md-ellipsis">
       
-        改修対象関数
+        改修対象関数 (master 取り込み後)
       
     </span>
   </a>
@@ -36055,7 +36055,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -36094,7 +36094,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -36105,7 +36105,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -36116,7 +36116,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -36128,7 +36128,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -36144,7 +36144,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36188,7 +36188,7 @@
 
 <div class="admonition info">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-sairedis/syncd/FlexCounter.cpp</code> master に <code>querySupportedCounters()</code> 実装と <code>use_sai_stats_capa_query</code> フラグ、<code>sai_stat_capability_list_t</code> を使った 2 段呼び出し（count 取得 → list 取り直し）パターン、<code>SAI_STATUS_NOT_IMPLEMENTED</code> フォールバックを確認。Port / Queue / PG / RIF / BufferPool で同パターン。HLD の改修は master 取り込み済み。</p>
+<p><code>sonic-sairedis/syncd/FlexCounter.cpp</code> master に <code>querySupportedCounters()</code> 実装と <code>use_sai_stats_capa_query</code> フラグ、<code>sai_stat_capability_list_t</code> を使った 2 段呼び出し（count 取得 → list 取り直し）パターンを確認 (L1566-1619)。master ではオブジェクト種別ごとの per-type 関数ではなく、<code>CounterContext&lt;StatType&gt;</code> テンプレート上の単一 <code>updateSupportedCounters()</code> に統合済み (L1542-1564)。HLD と異なり SAI 側のフォールバック条件は <code>SAI_STATUS_NOT_IMPLEMENTED</code> 限定ではなく「<code>querySupportedCounters()</code> が <code>SAI_STATUS_SUCCESS</code> 以外を返した場合」となっている (L1559)。MACsec / SwitchDebug / PortDebug / Flow / Tunnel など一部 context 種別は <code>use_sai_stats_capa_query = false</code> で明示的に旧 per-ID 方式に固定 (L3312, L3346, L3354, L3361, L3368, L3376)。</p>
 </div>
 <h1 id="sai_query_stats_capability-counter-capability">sai_query_stats_capability による Counter Capability 一括取得<a class="headerlink" href="#sai_query_stats_capability-counter-capability" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36221,56 +36221,83 @@
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>ベンダ SAI が <code>SAI_STATUS_NOT_IMPLEMENTED</code> を返した場合は <strong>既存の per-ID 取得方式にフォールバック</strong> する。これにより SAI 未対応ベンダでも互換性を維持する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="sai">SAI ヘッダ定義<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
-<div class="language-c highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="cm">/**</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="cm"> * @brief Query statistics capability for statistics bound at object level</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="cm"> *</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="cm"> * @param[in]    switch_id        SAI Switch object id</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="cm"> * @param[in]    object_type      SAI object type</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="cm"> * @param[inout] stats_capability List of implemented enum values, and the statistics modes (bit mask) supported per value</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="cm"> *</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="cm"> * @return #SAI_STATUS_SUCCESS on success, #SAI_STATUS_BUFFER_OVERFLOW if lists size insufficient,</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="cm"> *         failure status code on error</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="cm"> */</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">sai_status_t</span><span class="w"> </span><span class="nf">sai_query_stats_capability</span><span class="p">(</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">        </span><span class="n">_In_</span><span class="w">    </span><span class="n">sai_object_id_t</span><span class="w">                 </span><span class="n">switch_id</span><span class="p">,</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">        </span><span class="n">_In_</span><span class="w">    </span><span class="n">sai_object_type_t</span><span class="w">               </span><span class="n">object_type</span><span class="p">,</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">        </span><span class="n">_Inout_</span><span class="w"> </span><span class="n">sai_stat_capability_list_t</span><span class="w">     </span><span class="o">*</span><span class="n">stats_capability</span><span class="p">);</span>
+<p>master 実装では <strong><code>querySupportedCounters()</code> が <code>SAI_STATUS_SUCCESS</code> 以外を返した場合に既存の per-ID 取得方式へフォールバック</strong> する設計に拡張されている (<a href="../../reference/glossary/#term-hld">HLD</a> は <code>SAI_STATUS_NOT_IMPLEMENTED</code> のみと記述していたが、実装はより広く異常系を拾う)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。これにより SAI 未対応ベンダでも互換性を維持する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// FlexCounter.cpp L1559: 統合された CounterContext テンプレートでの fallback 判定</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">use_sai_stats_capa_query</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">querySupportedCounters</span><span class="p">(</span><span class="n">rid</span><span class="p">,</span><span class="w"> </span><span class="n">stats_mode</span><span class="p">,</span><span class="w"> </span><span class="n">m_supportedCounters</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="cm">/* Fallback to legacy approach */</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="n">getSupportedCounters</span><span class="p">(</span><span class="n">rid</span><span class="p">,</span><span class="w"> </span><span class="n">counter_ids</span><span class="p">,</span><span class="w"> </span><span class="n">stats_mode</span><span class="p">);</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>各エントリ <code>sai_stat_capability_t</code> は <code>stat_enum</code>（counter ID）と stats mode のビットマスク（READ / READ_AND_CLEAR 等）を持つ<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_4">改修対象関数<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p><code>syncd</code> の <code>FlexCounter.cpp</code> で次の関数が新 API を使うよう書き換わる<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="sai">SAI ヘッダ定義<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="cm">/**</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="cm"> * @brief Query statistics capability for statistics bound at object level</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="cm"> *</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="cm"> * @param[in]    switch_id        SAI Switch object id</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="cm"> * @param[in]    object_type      SAI object type</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="cm"> * @param[inout] stats_capability List of implemented enum values, and the statistics modes (bit mask) supported per value</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="cm"> *</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="cm"> * @return #SAI_STATUS_SUCCESS on success, #SAI_STATUS_BUFFER_OVERFLOW if lists size insufficient,</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="cm"> *         failure status code on error</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="cm"> */</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="n">sai_status_t</span><span class="w"> </span><span class="nf">sai_query_stats_capability</span><span class="p">(</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">        </span><span class="n">_In_</span><span class="w">    </span><span class="n">sai_object_id_t</span><span class="w">                 </span><span class="n">switch_id</span><span class="p">,</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">        </span><span class="n">_In_</span><span class="w">    </span><span class="n">sai_object_type_t</span><span class="w">               </span><span class="n">object_type</span><span class="p">,</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">        </span><span class="n">_Inout_</span><span class="w"> </span><span class="n">sai_stat_capability_list_t</span><span class="w">     </span><span class="o">*</span><span class="n">stats_capability</span><span class="p">);</span>
+</span></code></pre></div>
+<p>各エントリ <code>sai_stat_capability_t</code> は <code>stat_enum</code>（counter ID）と <code>stat_modes</code>（stats mode のビットマスク。READ / READ_AND_CLEAR 等）を持つ<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実装側は <code>statCapability.stat_modes &amp; stats_mode</code> で要求モードとの AND を取り、合致するものだけを supported set に入れる<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<h3 id="master">改修対象関数 (master 取り込み後)<a class="headerlink" href="#master" title="Permanent link">&para;</a></h3>
+<p>HLD では Port / Queue / PG / RIF / Buffer Pool ごとに個別の <code>updateSupportedXxxCounters()</code> を改修すると記述されていたが<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>、master では <code>CounterContext&lt;StatType&gt;</code> テンプレートクラス上の <strong>単一の <code>updateSupportedCounters()</code> メソッドに統合</strong> されている<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。対象オブジェクト種別は <code>m_objectType</code> メンバで切り替わる。</p>
 <table>
 <thead>
 <tr>
-<th>関数</th>
-<th>対象</th>
+<th>Counter context</th>
+<th>StatType</th>
+<th>object type</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>updateSupportedPortCounters(portRid)</code></td>
-<td>Port</td>
+<td><code>COUNTER_TYPE_PORT</code></td>
+<td><code>sai_port_stat_t</code></td>
+<td><code>SAI_OBJECT_TYPE_PORT</code></td>
 </tr>
 <tr>
-<td><code>updateSupportedQueueCounters(queueRid, counterIds)</code></td>
-<td>Queue</td>
+<td><code>COUNTER_TYPE_QUEUE</code></td>
+<td><code>sai_queue_stat_t</code></td>
+<td><code>SAI_OBJECT_TYPE_QUEUE</code></td>
 </tr>
 <tr>
-<td><code>updateSupportedPriorityGroupCounters(priorityGroupRid, counterIds)</code></td>
-<td>PG</td>
+<td><code>COUNTER_TYPE_PG</code></td>
+<td><code>sai_ingress_priority_group_stat_t</code></td>
+<td><code>SAI_OBJECT_TYPE_INGRESS_PRIORITY_GROUP</code></td>
 </tr>
 <tr>
-<td><code>updateSupportedRifCounters(rifRid)</code></td>
-<td>RIF</td>
+<td><code>COUNTER_TYPE_RIF</code></td>
+<td><code>sai_router_interface_stat_t</code></td>
+<td><code>SAI_OBJECT_TYPE_ROUTER_INTERFACE</code></td>
 </tr>
 <tr>
-<td><code>updateSupportedBufferPoolCounters(bufferPoolRid, counterIds, statsMode)</code></td>
-<td>Buffer Pool</td>
+<td><code>COUNTER_TYPE_BUFFER_POOL</code></td>
+<td><code>sai_buffer_pool_stat_t</code></td>
+<td><code>SAI_OBJECT_TYPE_BUFFER_POOL</code></td>
+</tr>
+<tr>
+<td><code>COUNTER_TYPE_ENI</code></td>
+<td><code>sai_eni_stat_t</code></td>
+<td><code>SAI_OBJECT_TYPE_ENI</code> (<a href="../../reference/glossary/#term-dash">DASH</a>)</td>
 </tr>
 </tbody>
 </table>
+<p>一方で次の context 種別は <code>use_sai_stats_capa_query = false</code> で明示的に新 API 経路を無効化し、従来の per-ID 列挙のみを使う<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
+<ul>
+<li><code>COUNTER_TYPE_PORT_DEBUG</code> (PortDebug)</li>
+<li><code>COUNTER_TYPE_SWITCH_DEBUG</code> (SwitchDebug)</li>
+<li><code>COUNTER_TYPE_MACSEC_FLOW</code> / <code>COUNTER_TYPE_MACSEC_SA</code></li>
+<li><code>COUNTER_TYPE_FLOW</code></li>
+<li><code>COUNTER_TYPE_TUNNEL</code></li>
+</ul>
+<p>Meter bucket entry には <code>querySupportedMeterCounters()</code> という別エントリポイントが用意され、こちらも 2 段呼び出しパターンを使う<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md#L20-L30 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -36288,53 +36315,56 @@ reasoning: 改修対象関数とフォールバック動作の根拠。
 <p><strong>出典</strong>:</p>
 <p><code>sonic-net/SONiC/doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md#L20-L30 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
 <p><strong>抜粋</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>The affected functions with this new API will take place on FlexCounter.cpp:
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>- void updateSupportedPortCounters(_In_ sai_object_id_t portRid)
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>- void updateSupportedQueueCounters(...)
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>...
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>The implementation will support backwards compatibility, so if a SAI vendor is currently not supporting this API it will fall back to the legacy approach.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>The affected functions with this new API will take place on FlexCounter.cpp:
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>- void updateSupportedPortCounters(_In_ sai_object_id_t portRid)
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>- void updateSupportedQueueCounters(...)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>...
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>The implementation will support backwards compatibility, so if a SAI vendor is currently not supporting this API it will fall back to the legacy approach.
 </span></code></pre></div>
 <p><strong>判断根拠</strong>: 改修対象関数とフォールバック動作の根拠。</p>
 </details>
 <!-- evidence-rendered:end -->
 
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
 <p>外部設定表面は無い。SAI capability の検出方式が変わるだけで、ユーザに見える挙動は「起動時間が短くなる」のみ。</p>
 <h3 id="sai_1">関連する SAI 属性<a class="headerlink" href="#sai_1" title="Permanent link">&para;</a></h3>
-<p>該当なし（API そのものの追加）。<code>sai_stat_capability_t.stat_enum</code> と <code>stats_modes</code> ビットマスクが個別 counter の能力情報を返す。</p>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>該当なし（API そのものの追加）。<code>sai_stat_capability_t.stat_enum</code> と <code>stat_modes</code> ビットマスクが個別 counter の能力情報を返す<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>SAI ベンダ実装依存</strong>: 新 API を実装するか、<code>SAI_STATUS_NOT_IMPLEMENTED</code> を返すかのいずれかが要求される<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。誤った status を返すベンダではフォールバックが働かない可能性。</li>
 <li><strong>互換のためのコードパス二重化</strong>: 旧 per-ID ループ実装も残す必要があり、メンテナンスコストは増える。</li>
-<li><strong>mode 情報の扱い</strong>: 新 API は stats mode のビットマスクも返すが、SONiC <code>FlexCounter</code> 側でどこまで活用するかは <a href="../../reference/glossary/#term-hld">HLD</a> では明記されていない（counter 集合判定のみ言及）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>mode 情報の扱い</strong>: 新 API は stats mode のビットマスクも返すが、SONiC <code>FlexCounter</code> 側ではリクエスト中の <code>stats_mode</code> と AND を取り、bit が立っていない counter は supported set から除外する用途に限定して活用している<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。<code>READ_AND_CLEAR</code> を要求した context で counter が <code>READ</code> のみ対応の場合は除外される。</li>
 </ul>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Fast-reboot / Warm-reboot</strong>: 起動経路で counter capability 検出を含むため、本改修は時間制約のある reboot シーケンスで特に意味がある<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>Fast-reboot / Warm-reboot</strong>: 起動経路で counter capability 検出を含むため、本改修は時間制約のある reboot シーケンスで特に意味がある<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong><code>FlexCounter</code>/<code>FlexCounterManager</code></strong>: 統計収集の中核。同 cpp 内の他関数と連動するため、メンバ変数 <code>m_supportedPortCounters</code> 等の読み出し側もそのまま使える設計。</li>
 <li><strong>個別 vendor SAI</strong>: 実装状況がバラつくと本機能の有効性も差が出る。<code>SAI_STATUS_NOT_IMPLEMENTED</code> を正しく返さないベンダはエラー扱いされる可能性。</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>起動が依然遅い: vendor SAI が新 API を実装していない可能性。<code>syncd</code> ログで <code>queryStatsCapability</code> の status を確認。<code>SAI_STATUS_NOT_IMPLEMENTED</code> ならフォールバック動作中。</li>
 <li>一部 counter が認識されない: 新 API が返す <code>stat_enum</code> 集合と旧 per-ID 列挙の差が無いか、SAI バージョン依存を疑う。</li>
 </ul>
-<h3 id="_9">コマンド例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_8">コマンド例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p>SAI stats capability を確認する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># SAI stats</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>saidump<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-40
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;COUNTERS_*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>counterpoll<span class="w"> </span>show
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># SAI stats</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>saidump<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-40
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;COUNTERS_*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>counterpoll<span class="w"> </span>show
 </span></code></pre></div>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: a841ffc67f6c -->
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 1df59d4a3148 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-sairedis</code> <code>syncd/FlexCounter.cpp</code> L1542-1619 (<code>updateSupportedCounters</code> / <code>querySupportedCounters</code>), L2910-2959 (<code>querySupportedMeterCounters</code>), L3308-3378 (CounterContext factory での <code>use_sai_stats_capa_query</code> 切替), <code>syncd/FlexCounter.h</code> L95 (<code>use_sai_stats_capa_query</code> メンバ既定値), <code>syncd/VendorSai.cpp</code> L376 (<code>queryStatsCapability</code> 実装) master&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

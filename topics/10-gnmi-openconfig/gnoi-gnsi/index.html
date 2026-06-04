@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="gNOI / gNSI — gNOI (gRPC Network Operations Interface) は、設定読み書き (gNMI) の隣で「操作」を担当する。">
+        <meta name="description" content="gNOI / gNSI — gNOI (gRPC Network Operations Interface) は、設定読み書き (gNMI) の隣で reboot / OS install / file transfer / factory reset / healthz といった操作 RPC を担当し、gNSI (gRPC Network Security Interface) が証明書配布・認可・attestation を担う。SONiC では telemetry container 内の gNMI server に同居する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="gNOI / gNSI - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="gNOI / gNSI — gNOI (gRPC Network Operations Interface) は、設定読み書き (gNMI) の隣で「操作」を担当する。" />
+<meta property="og:description" content="gNOI / gNSI — gNOI (gRPC Network Operations Interface) は、設定読み書き (gNMI) の隣で reboot / OS install / file transfer / factory reset / healthz といった操作 RPC を担当し、gNSI (gRPC Network Security Interface) が証明書配布・認可・attestation を担う。SONiC では telemetry container 内の gNMI server に同居する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/10-gnmi-openconfig/gnoi-gnsi.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/10-gnmi-openconfig/gnoi-gnsi/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="gNOI / gNSI - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="gNOI / gNSI — gNOI (gRPC Network Operations Interface) は、設定読み書き (gNMI) の隣で「操作」を担当する。" />
+<meta property="twitter:description" content="gNOI / gNSI — gNOI (gRPC Network Operations Interface) は、設定読み書き (gNMI) の隣で reboot / OS install / file transfer / factory reset / healthz といった操作 RPC を担当し、gNSI (gRPC Network Security Interface) が証明書配布・認可・attestation を担う。SONiC では telemetry container 内の gNMI server に同居する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/10-gnmi-openconfig/gnoi-gnsi.png" />
 </head>
   
@@ -18805,7 +18805,7 @@
   <span class="md-ellipsis">
     
   
-    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+    xcvrd クラッシュ（CMIS module_media_interface_id 未定義）
   
 
     

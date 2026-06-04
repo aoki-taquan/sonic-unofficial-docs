@@ -18610,7 +18610,7 @@
   <span class="md-ellipsis">
     
   
-    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+    xcvrd クラッシュ（CMIS module_media_interface_id 未定義）
   
 
     
@@ -37669,7 +37669,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>hostcfgd</code> 以外で <code>PASSW_HARDENING</code> テーブルを購読するプロセスは存在しない。PAM モジュール (<code>pam_pwquality.so</code> / <code>pam_pwhistory.so</code> / <code>pam_cracklib.so</code>) は <code>/etc/pam.d/common-password</code> を認証時に読むのみで <a href="../../glossary/#term-redis">Redis</a> を購読しない。</p>
+<p><code>hostcfgd</code> 以外で <code>PASSW_HARDENING</code> テーブルを購読するプロセスは存在しない。PAM モジュール (<code>pam_pwquality.so</code> / <code>pam_pwhistory.so</code>) は <code>/etc/pam.d/common-password</code> を認証時に読むのみで <a href="../../glossary/#term-redis">Redis</a> を購読しない<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h3 id="keyspace">keyspace 通知 → ハンドラ呼び出しの流れ<a class="headerlink" href="#keyspace" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config passw-hardening policies state enabled
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ↓ HSET &quot;PASSW_HARDENING|POLICIES&quot; state &quot;enabled&quot;
@@ -37832,8 +37832,9 @@
 </table>
 <h3 id="boolean-lower_class-upper_class-digits_class-special_class-reject_user_passw_match">boolean フィールド (<code>lower_class</code> / <code>upper_class</code> / <code>digits_class</code> / <code>special_class</code> / <code>reject_user_passw_match</code>)<a class="headerlink" href="#boolean-lower_class-upper_class-digits_class-special_class-reject_user_passw_match" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>"True"</code> / <code>"true"</code> / <code>"1"</code> → <code>is_true()</code> で Python <code>True</code> に正規化 → PAM <code>pam_pwquality.so</code> / <code>pam_cracklib.so</code> に対応オプションを渡す</li>
-<li><code>"False"</code> / <code>"false"</code> / <code>"0"</code> → <code>False</code> → 当該クラス要件をスキップ</li>
+<li><code>"True"</code> / <code>"true"</code> → <code>is_true()</code> で Python <code>True</code> に正規化 → PAM <code>pam_pwquality.so</code> に対応オプション (<code>ucredit</code> / <code>lcredit</code> / <code>dcredit</code> / <code>ocredit</code> / <code>reject_username</code>) を渡す</li>
+<li><code>"False"</code> / <code>"false"</code> → <code>False</code> → 当該クラス要件は credit=0 として渡され実質スキップ</li>
+<li>上記以外 (<code>"yes"</code> / <code>"1"</code> / <code>"no"</code> 等) は <code>is_true()</code> が <code>False</code> を返し <code>LOG_ERR</code> を出力 (<code>hostcfgd:156-162</code>)</li>
 </ul>
 <h3 id="_19">複合条件<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <ul>
@@ -37931,6 +37932,9 @@
 <ol>
 <li id="fn:1">
 <p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-passwh.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-passwh.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-passwh.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>PAM テンプレート: <code>common-password.j2</code> (<code>pam_pwquality</code> / <code>pam_pwhistory</code> のみ使用、<code>pam_cracklib</code> は不使用). <a href="https://github.com/sonic-net/sonic-host-services/blob/c5bbbe8b07b96f078fa4b761316627404b01bd04/data/templates/common-password.j2#L27-L33">https://github.com/sonic-net/sonic-host-services/blob/c5bbbe8b07b96f078fa4b761316627404b01bd04/data/templates/common-password.j2#L27-L33</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

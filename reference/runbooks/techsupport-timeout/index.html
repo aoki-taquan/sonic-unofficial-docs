@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: show techsupport が timeout する — : sonic-net/sonic-utilities @ 39732bceb — scripts/generate_dump : sonic-net/sonic-utilities @ 39732bceb — show/main.py">
+        <meta name="description" content="Runbook: show techsupport が長時間 / global-timeout で abort する症状の切り分け と auto-techsupport 設定のチューニング手順。出典は sonic-net/sonic-utilities @ 39732bceb の scripts/generate_dump と show/main.py、config/plugins/auto_techsupport.py。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="show techsupport が timeout する - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: show techsupport が timeout する — : sonic-net/sonic-utilities @ 39732bceb — scripts/generate_dump : sonic-net/sonic-utilities @ 39732bceb — show/main.py" />
+<meta property="og:description" content="Runbook: show techsupport が長時間 / global-timeout で abort する症状の切り分け と auto-techsupport 設定のチューニング手順。出典は sonic-net/sonic-utilities @ 39732bceb の scripts/generate_dump と show/main.py、config/plugins/auto_techsupport.py。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/techsupport-timeout.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/techsupport-timeout/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="show techsupport が timeout する - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: show techsupport が timeout する — : sonic-net/sonic-utilities @ 39732bceb — scripts/generate_dump : sonic-net/sonic-utilities @ 39732bceb — show/main.py" />
+<meta property="twitter:description" content="Runbook: show techsupport が長時間 / global-timeout で abort する症状の切り分け と auto-techsupport 設定のチューニング手順。出典は sonic-net/sonic-utilities @ 39732bceb の scripts/generate_dump と show/main.py、config/plugins/auto_techsupport.py。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/techsupport-timeout.png" />
 </head>
   
@@ -18610,7 +18610,7 @@
   <span class="md-ellipsis">
     
   
-    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+    xcvrd クラッシュ（CMIS module_media_interface_id 未定義）
   
 
     
@@ -36168,8 +36168,13 @@
 <ul>
 <li>timeout を引き上げて取り直す: <code>show techsupport --global-timeout 60 --cmd-timeout 10</code></li>
 <li><code>/var/dump</code> 整理: <code>sudo techsupport_cleanup.py</code> or 手動で古い tarball を削除</li>
-<li>auto-techsupport の閾値調整: <code>config auto-techsupport global state enabled max-techsupport-limit 10</code></li>
-<li><code>--silent</code> で軽量 dump → 状況把握 → その後の絞り込み解析</li>
+<li>
+<p>auto-techsupport の閾値調整: <code>state</code> と <code>max-techsupport-limit</code> は別々のサブコマンドなので 1 行に連結すると click が引数解釈に失敗する。次のように 2 コマンドに分割する <sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>:</p>
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>auto-techsupport<span class="w"> </span>global<span class="w"> </span>state<span class="w"> </span>enabled
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>auto-techsupport<span class="w"> </span>global<span class="w"> </span>max-techsupport-limit<span class="w"> </span><span class="m">10</span>
+</span></code></pre></div>
+- <code>--silent</code> で軽量 dump → 状況把握 → その後の絞り込み解析</p>
+</li>
 </ul>
 <h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36189,6 +36194,9 @@
 </li>
 <li id="fn:2">
 <p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — <code>show/main.py</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — <code>config/plugins/auto_techsupport.py</code> L143-L205（<code>state</code> / <code>max-techsupport-limit</code> がそれぞれ独立した click サブコマンドとして定義され、いずれも引数を 1 つだけ取る）&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

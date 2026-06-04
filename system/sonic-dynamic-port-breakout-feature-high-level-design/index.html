@@ -15065,7 +15065,7 @@
   <a href="#4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. 制限事項と干渉する機能
+        4. 干渉・連携する機能
       
     </span>
   </a>
@@ -15101,10 +15101,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        6. 運用上の注意 / 既知の制約
       
     </span>
   </a>
@@ -15112,7 +15112,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -18818,7 +18818,7 @@
   <span class="md-ellipsis">
     
   
-    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+    xcvrd クラッシュ（CMIS module_media_interface_id 未定義）
   
 
     
@@ -36008,7 +36008,7 @@
   <a href="#4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. 制限事項と干渉する機能
+        4. 干渉・連携する機能
       
     </span>
   </a>
@@ -36044,10 +36044,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        6. 運用上の注意 / 既知の制約
       
     </span>
   </a>
@@ -36055,7 +36055,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36190,16 +36190,14 @@
 </tr>
 </tbody>
 </table>
-<h2 id="4">4. 制限事項と干渉する機能<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
+<h2 id="4">4. 干渉・連携する機能<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
+<p>breakout 操作と整合を取る必要がある周辺機能・サブシステム。</p>
 <ul>
-<li><strong>対応 platform のみ</strong>: <code>platform.json</code> に modes 記載が必要</li>
-<li><strong>依存設定の自動再生は無し</strong>: 削除はするが再構築はユーザ責任</li>
-<li><strong>link 一時断</strong>: SAI port create/remove のため link が切れる</li>
-<li><strong>fabric port</strong> など特殊 port には適用しない</li>
 <li><strong>port-profile-init / fast-link-up</strong>: port 起動シーケンスと整合が要る</li>
 <li><strong>media-based-port-settings</strong>: SI 設定と連携</li>
 <li><strong>multi-asic / single-json</strong>: per-asic で breakout を扱う場合の整合</li>
 <li><strong>CMIS / ZR</strong>: ZR は固定 application-select で breakout 自由度低</li>
+<li><strong>fabric port</strong> など特殊 port には適用しない</li>
 </ul>
 <h2 id="5">5. トラブルシューティング<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36214,13 +36212,15 @@
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BREAKOUT_CFG|Ethernet0&#39;</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>show<span class="w"> </span>platform<span class="w"> </span>summary
 </span></code></pre></div>
-<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="6">6. 運用上の注意 / 既知の制約<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
+<p>機能としての適用範囲・実機運用上の留意点。</p>
 <ul>
-<li>breakout 可能なポート組合せは platform.json の <code>interfaces</code> キーに定義された範囲に限られ、<a href="../../reference/glossary/#term-hld">HLD</a> 記述よりも実機サポート範囲が狭い場合がある。</li>
-<li>breakout 実行時は対象ポートが一時的に down し、隣接機器の <a href="../../reference/glossary/#term-lldp">LLDP</a> / LAG メンバーシップが flap する点を運用で考慮する。</li>
-<li>動的 breakout 中に CONFIG_DB が中間状態となるため、並行して <code>config save</code> を実行すると不整合な config が保存される。</li>
+<li><strong>対応 platform のみ</strong>: <code>platform.json</code> に modes 記載が必要。breakout 可能なポート組合せは <code>interfaces</code> キーに定義された範囲に限られ、<a href="../../reference/glossary/#term-hld">HLD</a> 記述よりも実機サポート範囲が狭い場合がある</li>
+<li><strong>依存設定の自動再生は無し</strong>: 削除はするが再構築はユーザ責任</li>
+<li><strong>link 一時断</strong>: SAI port create/remove のため link が切れ、隣接機器の <a href="../../reference/glossary/#term-lldp">LLDP</a> / LAG メンバーシップが flap する</li>
+<li><strong>中間状態での config save 禁止</strong>: 動的 breakout 中に CONFIG_DB が中間状態となるため、並行して <code>config save</code> を実行すると不整合な config が保存される</li>
 </ul>
-<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>

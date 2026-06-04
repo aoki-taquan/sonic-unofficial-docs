@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="CMIS アプリケーション広告リストに MediaInterfaceIDApp が定義されていない場合に xcvrd がクラッシュする問題と回避策。">
+        <meta name="description" content="CMIS アプリケーション広告に media interface ID が含まれない場合に xcvrd が KeyError でクラッシュする問題と回避策。">
       
       
       
@@ -30,7 +30,7 @@
     
     
       
-        <title>xcvrd クラッシュ（MediaInterfaceIDApp 未定義） - SONiC 非公式ドキュメント</title>
+        <title>xcvrd クラッシュ（CMIS module_media_interface_id 未定義） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -66,16 +66,16 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="xcvrd クラッシュ（MediaInterfaceIDApp 未定義） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="CMIS アプリケーション広告リストに MediaInterfaceIDApp が定義されていない場合に xcvrd がクラッシュする問題と回避策。" />
+<meta property="og:title" content="xcvrd クラッシュ（CMIS module_media_interface_id 未定義） - SONiC 非公式ドキュメント" />
+<meta property="og:description" content="CMIS アプリケーション広告に media interface ID が含まれない場合に xcvrd が KeyError でクラッシュする問題と回避策。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/platform/xcvrd-cmis-mediainterface-crash.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/xcvrd-cmis-mediainterface-crash/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="xcvrd クラッシュ（MediaInterfaceIDApp 未定義） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="CMIS アプリケーション広告リストに MediaInterfaceIDApp が定義されていない場合に xcvrd がクラッシュする問題と回避策。" />
+<meta property="twitter:title" content="xcvrd クラッシュ（CMIS module_media_interface_id 未定義） - SONiC 非公式ドキュメント" />
+<meta property="twitter:description" content="CMIS アプリケーション広告に media interface ID が含まれない場合に xcvrd が KeyError でクラッシュする問題と回避策。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/platform/xcvrd-cmis-mediainterface-crash.png" />
 </head>
   
@@ -96,7 +96,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#xcvrd-mediainterfaceidapp" class="md-skip">
+        <a href="#xcvrd-cmis-module_media_interface_id" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -130,7 +130,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+              xcvrd クラッシュ（CMIS module_media_interface_id 未定義）
             
           </span>
         </div>
@@ -18647,7 +18647,7 @@
   <span class="md-ellipsis">
     
   
-    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+    xcvrd クラッシュ（CMIS module_media_interface_id 未定義）
   
 
     
@@ -18665,7 +18665,7 @@
   <span class="md-ellipsis">
     
   
-    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+    xcvrd クラッシュ（CMIS module_media_interface_id 未定義）
   
 
     
@@ -18706,6 +18706,17 @@
     <span class="md-ellipsis">
       
         影響範囲
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#issue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語マッピング（Issue ↔ 実コード）
       
     </span>
   </a>
@@ -35910,6 +35921,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#issue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語マッピング（Issue ↔ 実コード）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36028,34 +36050,55 @@
   
 
 
-<h1 id="xcvrd-mediainterfaceidapp">xcvrd クラッシュ（MediaInterfaceIDApp 未定義）<a class="headerlink" href="#xcvrd-mediainterfaceidapp" title="Permanent link">&para;</a></h1>
+<h1 id="xcvrd-cmis-module_media_interface_id">xcvrd クラッシュ（CMIS module_media_interface_id 未定義）<a class="headerlink" href="#xcvrd-cmis-module_media_interface_id" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>CMIS（Common Management Interface Specification）対応光モジュールを搭載したシステムで、モジュールのアプリケーション広告リストに <code>MediaInterfaceIDApp</code> が定義されていない場合、<code>xcvrd</code> がクラッシュする問題が報告されている。</p>
+<p>CMIS（Common Management Interface Specification）対応光モジュールを搭載したシステムで、モジュールのアプリケーション広告リスト（Application Advertisement）に media interface ID エントリが正しく定義されていない場合、<code>xcvrd</code> がアプリケーション辞書アクセスで <code>KeyError</code> を投げてクラッシュする問題が報告されている。Issue <a href="https://github.com/sonic-net/sonic-platform-common/issues/489">sonic-net/sonic-platform-common#489</a> では当該フィールドを CMIS 仕様用語で <code>MediaInterfaceIDApp</code> と呼称しているが、master のコード上のキー名は <code>module_media_interface_id</code> である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">影響範囲<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>sonic-platform-common</code> に依存するすべてのプラットフォーム</li>
-<li>CMIS 対応（QSFP-DD / OSFP / CMIS 準拠 SFP 等）光モジュールを使用する環境</li>
+<li><code>sonic-platform-common</code> の <code>sonic_xcvr</code> ライブラリに依存するすべてのプラットフォーム</li>
+<li>CMIS 対応（QSFP-DD / OSFP / CMIS 準拠 SFP-DD 等）光モジュールを使用する環境</li>
 </ul>
+<h2 id="issue">用語マッピング（Issue ↔ 実コード）<a class="headerlink" href="#issue" title="Permanent link">&para;</a></h2>
+<p>Issue / CMIS 仕様 と master 実装でのキー名対応は以下のとおり。</p>
+<table>
+<thead>
+<tr>
+<th>Issue / CMIS 仕様での呼称</th>
+<th>master 実装での appl_dict キー</th>
+<th>定義箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MediaInterfaceIDApp</code></td>
+<td><code>module_media_interface_id</code></td>
+<td><code>cmis.py:637</code> <code>cmis.py:2308</code><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td><code>HostInterfaceIDApp</code></td>
+<td><code>host_electrical_interface_id</code></td>
+<td><code>cmis.py:636</code> <code>cmis.py:2300</code><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p>EEPROM 上のフィールド名としては <code>ModuleMediaInterface850nm</code> / <code>ModuleMediaInterfaceSM</code> / <code>ModuleMediaInterfacePassiveCopper</code> / <code>ModuleMediaInterfaceActiveCable</code> / <code>ModuleMediaInterfaceBaseT</code> がメディアタイプ別に定義されており（<code>consts.py:159-163</code><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>）、<code>get_application_advertisement()</code> がこれらを media type に応じて選択して <code>module_media_interface_id</code> キーへ格納する。</p>
 <h2 id="_3">原因<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>CMIS のアプリケーション広告リスト（Application Advertisement List）データへのアクセスにおいて、<code>MediaInterfaceIDApp</code> が <code>Undefined</code> または未定義のエントリを含むモジュールでも辞書を直接参照していたため、<code>xcvrd</code> がその値を処理しようとして例外を発生させクラッシュする（詳細は <a href="https://github.com/sonic-net/sonic-platform-common/issues/489">Issue #489</a>）。</p>
-<p>具体的には、アプリケーション広告エントリの <code>MediaInterfaceIDApp</code> フィールドが存在しないモジュールでは、辞書アクセスが <code>KeyError</code> を引き起こす。</p>
+<p><code>get_application_advertisement()</code> はアプリケーション番号 1〜15 を走査し、各エントリの host / media interface ID をディクショナリに詰める実装になっている。media interface ID 値が <code>None</code> / <code>'Unknown'</code> の場合は <code>continue</code> でそのエントリをスキップする防御コードが入っているが（<code>cmis.py:2305-2308</code><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>）、その後段の <code>is_lpo()</code> や他の利用箇所では返却された <code>appl_dict</code> に対し <code>appl_dict.get('module_media_interface_id')</code> でアクセスしている（<code>cmis.py:637</code><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>）。</p>
+<p>Issue #489 で報告されたクラッシュは、特定モジュールのアプリケーション広告が CMIS 仕様で必須とされる media interface ID 相当のエントリを欠いており、上記の防御コードを経ずに辞書直接参照系のコードパスへ到達した場合に <code>KeyError</code> を引き起こすというもの<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <h2 id="_4">症状<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>xcvrd crashed with exception:
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>KeyError: &#39;MediaInterfaceIDApp&#39;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>KeyError: &#39;module_media_interface_id&#39;
 </span></code></pre></div>
-<p>またはそれに準ずる例外スタックトレースがシステムログに記録される。</p>
+<p>またはそれに準ずる例外スタックトレースがシステムログに記録される。Issue 由来のクラッシュ報告では CMIS 仕様用語の <code>MediaInterfaceIDApp</code> がメッセージに現れるケースもある<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># ログ確認コマンド</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>xcvrd<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># または</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sudo<span class="w"> </span>tail<span class="w"> </span>-100<span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>xcvrd
 </span></code></pre></div>
 <h2 id="_5">修正<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>PR <a href="https://github.com/sonic-net/sonic-platform-common/pull/457">sonic-net/sonic-platform-common#457</a> の修正を適用することで解消される。</p>
-<p>修正の要点：
-- <code>MediaInterfaceIDApp</code> が存在しない場合に <code>Undefined</code> として扱う安全なアクセスを実装
-- アプリケーション広告リストの走査時に <code>None</code> / 未定義チェックを追加</p>
+<p>PR <a href="https://github.com/sonic-net/sonic-platform-common/pull/457">sonic-net/sonic-platform-common#457</a> の修正で、辞書アクセス箇所を <code>.get()</code> ベースの安全アクセスに変更し、media interface ID が未定義のエントリは走査時にスキップするようになった。本記事執筆時点 (commit <code>64beade</code>) の master にはこの修正方針が反映されており、<code>get_application_advertisement()</code> 側でも <code>appl_dict.get('module_media_interface_id')</code> を使う構造になっている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_6">暫定回避策<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p>修正が適用されたバージョンにアップデートできない場合、問題のある光モジュールを一時的に取り外すか、別のポートに移動することで当該インターフェースでのクラッシュを回避できる。</p>
+<p>修正が適用されたバージョンへアップデートできない場合、問題のある光モジュールを一時的に取り外すか、別のポートに移動することで当該インターフェースでのクラッシュを回避できる。当該モジュールのアプリケーション広告内容は <code>sfputil show eeprom -dp &lt;port&gt;</code> で確認できる。</p>
 <h2 id="_7">関連<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../sfp-sff8472-rx-power-calibration/">SFF-8472 Rx パワーキャリブレーション問題</a></li>
@@ -36063,6 +36106,20 @@
 <li>GitHub Issue: <a href="https://github.com/sonic-net/sonic-platform-common/issues/489">sonic-net/sonic-platform-common#489</a></li>
 <li>GitHub PR: <a href="https://github.com/sonic-net/sonic-platform-common/pull/457">sonic-net/sonic-platform-common#457</a></li>
 </ul>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><code>sonic-platform-common</code> <code>sonic_platform_base/sonic_xcvr/api/public/cmis.py</code> (commit <code>64beade</code>) — <code>is_lpo()</code> (L627-644) の <code>appl_dict.get('module_media_interface_id')</code> と、<code>get_application_advertisement()</code> 内の構築ループ (L2293-2308)。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-platform-common</code> <code>sonic_platform_base/sonic_xcvr/fields/consts.py</code> (commit <code>64beade</code>) L158-163 で <code>HOST_ELECTRICAL_INTERFACE</code> / <code>MODULE_MEDIA_INTERFACE_{850NM,SM,PASSIVE_COPPER,ACTIVE_CABLE,BASE_T}</code> を定義。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://github.com/sonic-net/sonic-platform-common/issues/489">sonic-net/sonic-platform-common#489</a> のクラッシュ報告内容（Issue 由来呼称 <code>MediaInterfaceIDApp</code>）。&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

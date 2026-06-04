@@ -18779,7 +18779,7 @@
   <span class="md-ellipsis">
     
   
-    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+    xcvrd クラッシュ（CMIS module_media_interface_id 未定義）
   
 
     
@@ -36098,12 +36098,32 @@
 <td>HER 用 flood list</td>
 </tr>
 <tr>
-<td><code>show vxlan &lt;name&gt;</code></td>
-<td><a href="../../reference/glossary/#term-vxlan">VXLAN</a> tunnel 情報</td>
+<td><code>show vxlan name &lt;name&gt;</code></td>
+<td>個別 <a href="../../reference/glossary/#term-vxlan">VXLAN</a> tunnel 情報<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
-<td><code>show mac vxlan &lt;name&gt; &lt;vni&gt;</code></td>
-<td>VNI 別 learned MAC</td>
+<td><code>show vxlan tunnel</code></td>
+<td>全 VTEP tunnel と src/dst を一覧<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>show vxlan remotevni all</code> / <code>show vxlan remotevni &lt;vtep_ip&gt;</code></td>
+<td>リモート VTEP から学習した VNI 一覧<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>show vxlan remotevtep</code></td>
+<td>リモート VTEP 一覧（<a href="../../reference/glossary/#term-fdb">FDB</a> / VNI 経由で発見）<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>show vxlan vlanvnimap</code> / <code>show vxlan vrfvnimap</code></td>
+<td>VLAN ↔ VNI / VRF ↔ VNI マッピング<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>show vxlan remotemac all</code></td>
+<td>リモート VTEP 経由の MAC 一覧<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>show vxlan counters</code></td>
+<td>tunnel カウンタ<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 </tbody>
 </table>
@@ -36159,8 +36179,8 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># VXLAN tunnel / VNI / EVPN</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>vxlan<span class="w"> </span>tunnel
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>vxlan<span class="w"> </span>remotevni<span class="w"> </span>all
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>show<span class="w"> </span>evpn<span class="w"> </span>vni
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VXLAN_TUNNEL|*&#39;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VXLAN_TUNNEL|*&#39;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show evpn vni&#39;</span>
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp l2vpn evpn summary&#39;</span>
 </span></code></pre></div>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -36174,13 +36194,16 @@
 <li><a href="../../reference/config-db/vxlan-tunnel-map/">CONFIG_DB: VXLAN_TUNNEL_MAP</a></li>
 </ul>
 <h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 0726817b0ba1 -->
+<!-- glossary-links-injected: 302f3d074477 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/vxlan/Vxlan_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-utilities</code> <code>show/vxlan.py</code> (<code>vxlan</code> click group) L12-L392 @ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

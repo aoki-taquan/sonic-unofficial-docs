@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="VXLAN / VNet 全体設計の制限事項。Phase 1 のスコープ外項目（BGP EVPN 統合、Warm restart など）、L2 と L3 を別トンネルとして扱う設計上の制約、干渉する機能との関係を整理する。">
+        <meta name="description" content="VXLAN / VNet 全体設計の制限事項を整理する。元 HLD の Phase 1 スコープ外項目を現行 master 実装と突き合わせ、L2 と L3 を別トンネルとして扱う設計上の制約、干渉する機能との関係をまとめる。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="VXLAN / VNet 制限事項と既知の課題 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="VXLAN / VNet 全体設計の制限事項。Phase 1 のスコープ外項目（BGP EVPN 統合、Warm restart など）、L2 と L3 を別トンネルとして扱う設計上の制約、干渉する機能との関係を整理する。" />
+<meta property="og:description" content="VXLAN / VNet 全体設計の制限事項を整理する。元 HLD の Phase 1 スコープ外項目を現行 master 実装と突き合わせ、L2 と L3 を別トンネルとして扱う設計上の制約、干渉する機能との関係をまとめる。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/overlay/vxlan-sonic-limitations.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/vxlan-sonic-limitations/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="VXLAN / VNet 制限事項と既知の課題 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="VXLAN / VNet 全体設計の制限事項。Phase 1 のスコープ外項目（BGP EVPN 統合、Warm restart など）、L2 と L3 を別トンネルとして扱う設計上の制約、干渉する機能との関係を整理する。" />
+<meta property="twitter:description" content="VXLAN / VNet 全体設計の制限事項を整理する。元 HLD の Phase 1 スコープ外項目を現行 master 実装と突き合わせ、L2 と L3 を別トンネルとして扱う設計上の制約、干渉する機能との関係をまとめる。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/overlay/vxlan-sonic-limitations.png" />
 </head>
   
@@ -11655,10 +11655,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-phase-1" class="md-nav__link">
+  <a href="#1-hld-phase-1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Phase 1 のスコープ外
+        1. 元 HLD で「Phase 1 スコープ外」とされていた項目の現状
       
     </span>
   </a>
@@ -11666,10 +11666,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2" class="md-nav__link">
+  <a href="#2-master" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. 設計上の制約
+        2. 設計上の制約（現行 master でも残る）
       
     </span>
   </a>
@@ -11677,21 +11677,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-verifier-hint" class="md-nav__link">
+  <a href="#3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. 既知の懸念点（Verifier hint）
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. 干渉する機能
+        3. 干渉する機能
       
     </span>
   </a>
@@ -18751,7 +18740,7 @@
   <span class="md-ellipsis">
     
   
-    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+    xcvrd クラッシュ（CMIS module_media_interface_id 未定義）
   
 
     
@@ -35877,10 +35866,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-phase-1" class="md-nav__link">
+  <a href="#1-hld-phase-1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Phase 1 のスコープ外
+        1. 元 HLD で「Phase 1 スコープ外」とされていた項目の現状
       
     </span>
   </a>
@@ -35888,10 +35877,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2" class="md-nav__link">
+  <a href="#2-master" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. 設計上の制約
+        2. 設計上の制約（現行 master でも残る）
       
     </span>
   </a>
@@ -35899,21 +35888,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-verifier-hint" class="md-nav__link">
+  <a href="#3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. 既知の懸念点（Verifier hint）
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. 干渉する機能
+        3. 干渉する機能
       
     </span>
   </a>
@@ -35969,62 +35947,60 @@
 
 <h1 id="vxlan-vnet">VXLAN / VNet 制限事項と既知の課題<a class="headerlink" href="#vxlan-vnet" title="Permanent link">&para;</a></h1>
 <p>このページは <a href="../vxlan-sonic/">VXLAN / VNet 全体設計（概要ハブ）</a> の派生ページで、<strong>制限事項・既知の課題・干渉する機能</strong> に絞って整理する。概念は <a href="../vxlan-sonic-concepts/">vxlan-sonic-concepts.md</a>、設定は <a href="../vxlan-sonic-operations/">vxlan-sonic-operations.md</a>、内部実装は <a href="../vxlan-sonic-internals/">vxlan-sonic-internals.md</a> を参照。</p>
-<h2 id="1-phase-1">1. Phase 1 のスコープ外<a class="headerlink" href="#1-phase-1" title="Permanent link">&para;</a></h2>
+<p>元 HLD は Phase 1 / Phase 2 の段階的計画として書かれているが、現行 master では Phase 2 想定項目の大半が実装済みである。本ページは <strong>HLD 上の制約と現行実装の差分</strong> を切り分けて記述する。</p>
+<h2 id="1-hld-phase-1">1. 元 HLD で「Phase 1 スコープ外」とされていた項目の現状<a class="headerlink" href="#1-hld-phase-1" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>状態</th>
+<th>元 HLD での扱い</th>
+<th>現行 master の状態</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><a href="../../reference/glossary/#term-bgp">BGP</a> <a href="../../reference/glossary/#term-evpn">EVPN</a> 統合</td>
-<td>Phase 1 ではなし。経路は外部から <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> に直接投入する前提<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>Phase 1 ではなし。経路は外部から <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> に直接投入する前提<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>実装済み。<code>VxlanOrch</code> 配下に <code>EvpnNvoOrch</code> / <code>EvpnRemoteVnip2pOrch</code> / <code>EvpnRemoteVnip2mpOrch</code> が存在し、EVPN MAC/IP 学習経路を取り込む<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
 <td>L2 <a href="../../reference/glossary/#term-vxlan">VXLAN</a>（タグ・無タグ）</td>
-<td>Phase 2 で導入予定</td>
+<td>Phase 2 で導入予定<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>実装済み。<code>VXLAN_TUNNEL_MAP</code> で <a href="../../reference/glossary/#term-vlan">VLAN</a> ↔ VNI を mapping し、<code>FdbOrch</code> が <code>APP_VXLAN_FDB_TABLE_NAME</code> 由来エントリを <code>FDB_ORIGIN_VXLAN_ADVERTIZED</code> として扱う<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
 </tr>
 <tr>
 <td>HER（Head End Replication）</td>
-<td>Phase 2 で導入予定</td>
+<td>Phase 2 で導入予定<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>実装済み。<code>VxlanTunnel</code> は <code>SAI_TUNNEL_PEER_MODE_P2MP</code> で生成され、P2MP tunnel bridge port で <a href="../../reference/glossary/#term-fdb">FDB</a> 学習が行われる<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
 <td>CLI 整備</td>
-<td>Phase 2 で拡充。Phase 1 では <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 直接編集</td>
+<td>Phase 2 で拡充。Phase 1 では <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 直接編集<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>実装済み。<a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> に <code>config vxlan</code> / <code>show vxlan</code> コマンド群が取り込まれている<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup><sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup></td>
 </tr>
 <tr>
 <td>Warm restart</td>
-<td>Phase 1 で非対応。<a href="../../reference/glossary/#term-sai">SAI</a> VR オブジェクトが warm restart 非互換のため Phase 2 で再検討<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>Phase 1 で非対応。<a href="../../reference/glossary/#term-sai">SAI</a> VR オブジェクトが warm restart 非互換のため Phase 2 で再検討<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>実装済み。<code>vxlanorch.cpp</code> は <code>WarmStart::getWarmStartState("orchagent", state)</code> で warmboot 状態を判定し、新規 tunnel のみ追加する分岐を持つ<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
 <td>Kernel <a href="../../reference/glossary/#term-vrf">VRF</a> programming</td>
-<td><a href="../../reference/glossary/#term-hld">HLD</a> スコープ外</td>
+<td><a href="../../reference/glossary/#term-hld">HLD</a> スコープ外<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>スコープ外のまま（変更なし）</td>
 </tr>
 </tbody>
 </table>
-<h2 id="2">2. 設計上の制約<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<h2 id="2-master">2. 設計上の制約（現行 master でも残る）<a class="headerlink" href="#2-master" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>L3 VXLAN と L2 VXLAN は別トンネル</strong> として作られる。同じ <a href="../../reference/glossary/#term-vtep">VTEP</a> で両方使う場合は 2 つの VXLAN tunnel object が SAI に生成される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>VTEP の <code>src_ip</code> は実在 IF（通常 <code>Loopback0</code>）の IP であること</li>
-<li><code>VXLAN_TUNNEL.dst_ip</code> は P2P 用のオプション。P2MP では空のままにする</li>
-<li><code>VNET.peer_list</code> 経路複製は <strong>同 VTEP 内</strong> に閉じる（remote VTEP には複製されない）</li>
+<li><code>VXLAN_TUNNEL.dst_ip</code> は P2P 用のオプション。P2MP では空のままにする（<code>dst_ip == nullptr</code> のとき <code>SAI_TUNNEL_PEER_MODE_P2MP</code> で生成される）<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><code>VNET.peer_list</code> 経路複製は <strong>同 VTEP 内</strong> に閉じる（remote VTEP には複製されない）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="3-verifier-hint">3. 既知の懸念点（Verifier hint）<a class="headerlink" href="#3-verifier-hint" title="Permanent link">&para;</a></h2>
-<p>HLD 初版が古いため、現行 master の実装と乖離している可能性が高い項目:</p>
+<h2 id="3">3. 干渉する機能<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>BGP EVPN 統合 (Phase 2) の現状</li>
-<li>Warm restart 対応状況（Phase 2 で再検討予定だった）</li>
-<li><code>VXLAN_TUNNEL_MAP</code> の最終スキーマ（VNI ↔ <a href="../../reference/glossary/#term-vlan">VLAN</a> / VNI ↔ VRF）</li>
-<li><code>FdbOrch</code> と <code>VxlanOrch</code> の協調実装（HLD で TBD だった部分）</li>
-<li>HER（head-end replication）の現行実装</li>
-<li>CLI（<code>config vxlan</code> / <code>show vxlan</code>）の <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> への取り込み形</li>
-</ul>
-<h2 id="4">4. 干渉する機能<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>BGP EVPN（Phase 2）</strong>: 経路供給源として <code>VNET_ROUTE_TUNNEL_TABLE</code> を埋める</li>
-<li><strong>VLAN / VLAN_MEMBER</strong>: L2 VXLAN は VLAN ↔ VNI mapping 前提</li>
+<li><strong>BGP EVPN</strong>: 経路供給源として <code>VNET_ROUTE_TUNNEL_TABLE</code> および <code>APP_VXLAN_FDB_TABLE</code> を埋める<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
+<li><strong>VLAN / VLAN_MEMBER</strong>: L2 VXLAN は VLAN ↔ VNI mapping 前提（<code>VXLAN_TUNNEL_MAP</code> の <code>vlan</code> / <code>vni</code> キー）<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>VRF（通常 VRF）</strong>: <code>VrfOrch</code> 経由</li>
 <li><strong><a href="../../reference/glossary/#term-dash">DASH</a> / <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a></strong>: 新しい HLD（<a href="../smartswitch-eni-based-forwarding/">ENI Based Forwarding</a>）は本 HLD の VxLAN tunnel を利用</li>
 <li><strong>MC-<a href="../../reference/glossary/#term-lag">LAG</a> / dual-ToR</strong>: 拡張あり</li>
@@ -36037,13 +36013,25 @@
 <li><a href="../vxlan-sonic-internals/">vxlan-sonic-internals.md</a> — 内部実装</li>
 </ul>
 <h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 0726817b0ba1 -->
+<!-- glossary-links-injected: e945c9c07207 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/vxlan/Vxlan_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/vxlan/Vxlan_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/vxlanorch.cpp</code>（<code>WarmStart::getWarmStartState</code> L1919-1948 / <code>SAI_TUNNEL_PEER_MODE_P2MP</code> L368 / <code>EvpnNvoOrch</code> L1678・<code>EvpnRemoteVnip2pOrch</code> L2449・<code>EvpnRemoteVnip2mpOrch</code> L2611 / <code>VXLAN_TUNNEL_MAP</code> L2010-2060）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/fdborch.cpp</code>（<code>APP_VXLAN_FDB_TABLE_NAME</code> 処理と <code>FDB_ORIGIN_VXLAN_ADVERTIZED</code> 分岐 L719-893）&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>sonic-net/sonic-utilities</code> <code>config/vxlan.py</code>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p><code>sonic-net/sonic-utilities</code> <code>show/vxlan.py</code>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

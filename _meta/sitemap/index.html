@@ -18608,7 +18608,7 @@
   <span class="md-ellipsis">
     
   
-    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+    xcvrd クラッシュ（CMIS module_media_interface_id 未定義）
   
 
     
@@ -35836,7 +35836,7 @@
 <li><a href="../../topics/03-vxlan-evpn/">VXLAN / EVPN / VNET オーバーレイ</a> — [meta] VXLAN / EVPN / VNET オーバーレイ — この章は、SONiC の overlay を「VXLAN tunnel を作る」「VNET と VR…</li>
 <li><a href="../../topics/03-vxlan-evpn/concept/">VXLAN / VNET / EVPN の概要</a> — [meta] VXLAN / VNET / EVPN の概要 — SONiC の overlay 周りは、「VXLAN」「VNET」「EVPN」という 3 つの単語がほぼ同…</li>
 <li><a href="../../topics/03-vxlan-evpn/architecture/">Overlay アーキテクチャ</a> — [meta] Overlay アーキテクチャ — Overlay を読むときの中心は、設定テーブルそのものではなく「誰がどの table を見て、最終的にどの SAI ob…</li>
-<li><a href="../../topics/03-vxlan-evpn/setup/">Overlay 設定</a> — [meta] Overlay 設定 — Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN の NVO を…</li>
+<li><a href="../../topics/03-vxlan-evpn/setup/">Overlay 設定</a> — [code-verified] Overlay 設定 — Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN の NVO を…</li>
 <li><a href="../../topics/03-vxlan-evpn/operations/">Overlay 運用</a> — [meta] Overlay 運用 — Overlay の障害切り分けは、underlay、VTEP、control plane、route programming、QoS…</li>
 <li><a href="../../topics/03-vxlan-evpn/internals/">内部実装</a> — [meta] 内部実装 — VXLAN / EVPN / VNET の内部実装は「FRR (bgpd) が EVPN type-2/type-5 を学習し、zebra が…</li>
 <li><a href="../../topics/03-vxlan-evpn/advanced/">Overlay 発展トピック</a> — [meta] Overlay 発展トピック — ここでは、基本の VXLAN / VNET / EVPN の延長に見えるが、別の前提や別の orch を持つ機能を整理します…</li>
@@ -35889,7 +35889,7 @@
 <li><a href="../../topics/08-qos-buffer/setup/">QoS / Buffer の設定</a> — [code-verified] QoS / Buffer の設定 — 設定は「pool / profile を作る → port に classification を当てる → queue…</li>
 <li><a href="../../topics/08-qos-buffer/operations/">QoS / Buffer の運用</a> — [meta] QoS / Buffer の運用 — 「アプリが詰まる」「PFC で止まった」「キューが捨てている」と言われたときに、どのコマンドをどの順番で叩くか、を整理し…</li>
 <li><a href="../../topics/08-qos-buffer/internals/">QoS / Buffer の内部実装</a> — [meta] QoS / Buffer の内部実装 — ここでは「設定が変わるたびに buffer がどう再計算されるか」「ポートを足したり消したりしたとき何が起きるか」「…</li>
-<li><a href="../../topics/08-qos-buffer/advanced/">QoS / Buffer の発展トピック</a> — [meta] QoS / Buffer の発展トピック — QoS / Buffer / PFC の基本（scheduler、queue map、PG、watermark）…</li>
+<li><a href="../../topics/08-qos-buffer/advanced/">QoS / Buffer の発展トピック</a> — [meta] QoS / Buffer / PFC の基本（scheduler、queue map、PG、watermark）を押さえた後の発展領域として、動的 buffe…</li>
 </ul>
 </li>
 <li><strong>Telemetry / SNMP / Observability</strong> (<code>topics/09-telemetry-snmp/</code>)<ul>
@@ -35909,7 +35909,7 @@
 <li><a href="../../topics/10-gnmi-openconfig/setup/">設定</a> — [meta] 設定 — gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC native…</li>
 <li><a href="../../topics/10-gnmi-openconfig/operations/">運用</a> — [code-verified] 運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collect…</li>
 <li><a href="../../topics/10-gnmi-openconfig/internals/">内部実装</a> — [meta] 内部実装 — gNMI / OpenConfig の内部実装は、telemetry コンテナの中に gNMI server があり、translib / so…</li>
-<li><a href="../../topics/10-gnmi-openconfig/gnoi-gnsi/">gNOI / gNSI</a> — [meta] gNOI / gNSI — gNOI (gRPC Network Operations Interface) は、設定読み書き (gNMI) の隣で「操作」を…</li>
+<li><a href="../../topics/10-gnmi-openconfig/gnoi-gnsi/">gNOI / gNSI</a> — [meta] gNOI / gNSI — gNOI (gRPC Network Operations Interface) は、設定読み書き (gNMI) の隣で rebo…</li>
 <li><a href="../../topics/10-gnmi-openconfig/yang-reference/">YANG リファレンス</a> — [meta] YANG リファレンス — このページは、機能章 (本書の章 01〜21) から YANG モジュールを逆引きするための索引です。SONiC native Y…</li>
 <li><a href="../../topics/10-gnmi-openconfig/advanced/">gNMI / OpenConfig の発展トピック</a> — [meta] gNMI / OpenConfig の発展トピック — gNMI / gNOI / Translib / Transformer の基本パスを押さえた後は、t…</li>
 </ul>
@@ -36194,7 +36194,7 @@
 <li><a href="../../overlay/vxlan-sonic-concepts/">VXLAN / VNet 概念（VTEP + VNet + L2/L3 トンネル）</a> — [code-verified] VXLAN / VNet の概念・用語・設計思想。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の関係…</li>
 <li><a href="../../overlay/vxlan-sonic-operations/">VXLAN / VNet 設定と運用（CONFIG_DB / APP_DB / CLI）</a> — [code-verified] VXLAN / VNet の設定経路。CONFIG_DB / APP_DB スキーマ、CLI 一覧、VNet ピアリングの設定例、運用時のトラブルシューティン…</li>
 <li><a href="../../overlay/vxlan-sonic-internals/">VXLAN / VNet 内部実装（VxlanTunnelOrch / VnetOrch / SAI 属性）</a> — [code-verified] VXLAN / VNet の orchagent と SAI 連携の内部実装。VxlanTunnelOrch / VnetOrch / VrfMgrD / I…</li>
-<li><a href="../../overlay/vxlan-sonic-limitations/">VXLAN / VNet 制限事項と既知の課題</a> — [code-verified] VXLAN / VNet 全体設計の制限事項。Phase 1 のスコープ外項目（BGP EVPN 統合、Warm restart など）、L2 と L3 を別…</li>
+<li><a href="../../overlay/vxlan-sonic-limitations/">VXLAN / VNet 制限事項と既知の課題</a> — [code-verified] VXLAN / VNet 全体設計の制限事項を整理する。元 HLD の Phase 1 スコープ外項目を現行 master 実装と突き合わせ、L2 と L3…</li>
 <li><a href="../../overlay/active-active-dual-tor/">Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）</a> — [code-verified] Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor） — active…</li>
 <li><a href="../../overlay/active-standby-dual-tor/">Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）</a> — [code-verified] Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel） — 要件は…</li>
 <li><a href="../../overlay/active-standby-dual-tor-concepts/">Active-Standby Dual ToR 概念（構成と要件）</a> — [code-verified] Active-Standby Dual ToR の構成と要件、y-cable + linkmgrd の役割分担、ToR↔NIC 方向の振る舞いを整理する。</li>
@@ -36427,7 +36427,7 @@
 <li><a href="../../platform/sfp-eeprom-parsing-gaps/">SfpUtilBase の EEPROM 解析欠損</a> — [issue-confirmed] SfpUtilBase クラスに実装されていない get/set 関数が残存する問題と、xcvrd 経由アクセスへの設計方針。</li>
 <li><a href="../../platform/sfp-sff8472-rx-power-calibration/">SFF-8472 外部キャリブレーション SFP の Rx パワー変換誤り</a> — [issue-confirmed] 外部キャリブレーション方式の SFP モジュールで Rx 受信パワーの変換値が誤る問題と修正内容。</li>
 <li><a href="../../platform/thermalctld-speed-tolerance-api-change/">thermalctld の speed_tolerance API 廃止と移行</a> — [code-verified] thermalctld が speed_tolerance を STATE_DB に書き込まなくなった変更と、Fan クラスの is_under_speed…</li>
-<li><a href="../../platform/xcvrd-cmis-mediainterface-crash/">xcvrd クラッシュ（MediaInterfaceIDApp 未定義）</a> — [issue-confirmed] CMIS アプリケーション広告リストに MediaInterfaceIDApp が定義されていない場合に xcvrd がクラッシュする問題と回避策。</li>
+<li><a href="../../platform/xcvrd-cmis-mediainterface-crash/">xcvrd クラッシュ（CMIS module_media_interface_id 未定義）</a> — [issue-confirmed] CMIS アプリケーション広告に media interface ID が含まれない場合に xcvrd が KeyError でクラッシュする問題と回避策。</li>
 <li><strong>内部実装</strong> (<code>internals/</code>)</li>
 <li><a href="../../internals/">内部実装</a> — [meta] 内部実装 — Redis、SwSS、orchagent、counter、P4Orch など実装内部の構造を扱う章。</li>
 <li><a href="../../internals/support-multiple-user-defined-redis-database-instances/">複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）</a> — [code-verified] 複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散） — 従来の SONiC は 単一の Redis イン…</li>
@@ -36936,7 +36936,7 @@
 <li><a href="../../reference/runbooks/dualtor-mux/">Dual-ToR mux が切り替わらない</a> — [code-verified] Runbook: Dual-ToR mux が切り替わらない — : sonic-net/sonic-linkmgrd @ 65f5633 — LinkMan…</li>
 <li><a href="../../reference/runbooks/sai-failure/">SAI failure / syncd リスタート多発</a> — [runbook-verified] Runbook: SAI failure / syncd リスタート多発 — : sonic-net/sonic-sairedis @ 88bc51a — s…</li>
 <li><a href="../../reference/runbooks/container-not-starting/">コンテナが起動しない (FEATURE)</a> — [runbook-verified] Runbook: コンテナが起動しない (FEATURE) — : sonic-net/sonic-host-services @ c5bbbe8 — hos…</li>
-<li><a href="../../reference/runbooks/techsupport-timeout/">show techsupport が timeout する</a> — [runbook-verified] Runbook: show techsupport が timeout する — : sonic-net/sonic-utilities @ 39732bce…</li>
+<li><a href="../../reference/runbooks/techsupport-timeout/">show techsupport が timeout する</a> — [runbook-verified] Runbook: show techsupport が長時間 / global-timeout で abort する症状の切り分け と auto-techsu…</li>
 <li><a href="../../reference/runbooks/flex-counter-stuck/">counter が更新されない (FLEX_COUNTER)</a> — [code-verified] Runbook: counter が更新されない (FLEX_COUNTER) — : sonic-net/sonic-swss @ 4305596 — fl…</li>
 <li><a href="../../reference/runbooks/rif-acl-counter-zero/">RIF / ACL counter が 0 のまま</a> — [code-verified] Runbook: RIF / ACL counter が 0 のまま — : sonic-net/sonic-swss @ 4305596 — aclorch…</li>
 <li><a href="../../reference/runbooks/config-save-load/">CONFIG_DB save / load が反映されない</a> — [runbook-verified] Runbook: CONFIG_DB save / load が反映されない — : sonic-net/sonic-utilities @ 39732bce…</li>

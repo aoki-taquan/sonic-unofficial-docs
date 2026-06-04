@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Overlay 設定 — Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN の NVO を作るのか」を決めると整理できます。どの場合も、VTEP となる VXLAN tunnel が先に必要です。">
+        <meta name="description" content="Overlay 設定 — Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN の NVO を作るのか」を決めると整理できる。どの場合も、VTEP となる VXLAN tunnel が先に必要となる。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Overlay 設定 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Overlay 設定 — Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN の NVO を作るのか」を決めると整理できます。どの場合も、VTEP となる VXLAN tunnel が先に必要です。" />
+<meta property="og:description" content="Overlay 設定 — Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN の NVO を作るのか」を決めると整理できる。どの場合も、VTEP となる VXLAN tunnel が先に必要となる。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/03-vxlan-evpn/setup.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/03-vxlan-evpn/setup/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Overlay 設定 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Overlay 設定 — Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN の NVO を作るのか」を決めると整理できます。どの場合も、VTEP となる VXLAN tunnel が先に必要です。" />
+<meta property="twitter:description" content="Overlay 設定 — Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN の NVO を作るのか」を決めると整理できる。どの場合も、VTEP となる VXLAN tunnel が先に必要となる。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/03-vxlan-evpn/setup.png" />
 </head>
   
@@ -18877,7 +18877,7 @@
   <span class="md-ellipsis">
     
   
-    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+    xcvrd クラッシュ（CMIS module_media_interface_id 未定義）
   
 
     
@@ -36249,7 +36249,7 @@
 </span><span id="__span-3-27"><a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-3-28"><a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>VXLAN_TUNNEL_MAP</code> のキーは <code>&lt;tunnel&gt;|&lt;map_name&gt;</code> で、<code>map_name</code> の命名は慣例的に <code>map_&lt;vni&gt;_&lt;vlan&gt;</code> 形式が使われます。<code>vlan</code> フィールドは <code>Vlan&lt;id&gt;</code> 形式で書く必要があります (数字単独ではエラー)。</p>
+<p><code>VXLAN_TUNNEL_MAP</code> のキーは <code>&lt;tunnel&gt;|&lt;map_name&gt;</code> で、<code>config vxlan map add</code> 経由の場合 <code>map_name</code> は <code>map_&lt;vni&gt;_Vlan&lt;id&gt;</code> 形式が <code>vxlan.py</code> 側でハードコードされる (慣例ではなくコード生成)<sup id="fnref:vxlan-map-name"><a class="footnote-ref" href="#fn:vxlan-map-name">1</a></sup>。<code>vlan</code> フィールドも <code>Vlan&lt;id&gt;</code> 形式で書く必要がある (数字単独ではエラー)。</p>
 <p><code>sonic-cfggen</code> で部分パッチを当てる場合:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>cat<span class="w"> </span>vxlan_patch.json<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span>--write-to-db
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>config<span class="w"> </span>save<span class="w"> </span>-y
@@ -36362,7 +36362,7 @@
 <h2 id="pbh-inner-hash">PBH inner hash<a class="headerlink" href="#pbh-inner-hash" title="Permanent link">&para;</a></h2>
 <p>VXLAN / NVGRE の外側 header だけで <a href="../../../reference/glossary/#term-ecmp">ECMP</a> / <a href="../../../reference/glossary/#term-lag">LAG</a> hash すると、複数 flow が同じ tunnel endpoint へ偏ることがあります。Policy Based Hashing は <a href="../../../reference/glossary/#term-acl">ACL</a> match した encapsulated packet に対して inner 5-tuple ベースの hash を適用する機能です。設定単位は <code>PBH_TABLE</code>、<code>PBH_RULE</code>、<code>PBH_HASH</code>、<code>PBH_HASH_FIELD</code> で、VXLAN/VNET そのものの設定とは別です。</p>
 <h2 id="_2">よくある設定エラーと対処<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p><code>sonic-utilities/config/vxlan.py</code> の <code>ctx.fail()</code> から抜粋した実エラーメッセージ:</p>
+<p><code>sonic-utilities/config/vxlan.py</code> の <code>ctx.fail()</code> から抜粋した実エラーメッセージ<sup id="fnref:vxlan-ctx-fail"><a class="footnote-ref" href="#fn:vxlan-ctx-fail">2</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -36440,6 +36440,18 @@
 <li><a href="../../../architecture/sonic-policy-based-hashing/">Policy Based Hashing</a></li>
 </ul>
 <!-- glossary-links-injected: c5c8b661ae7e -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:vxlan-map-name">
+<p><code>sonic-net/sonic-utilities/config/vxlan.py</code> の <code>add_vxlan_map</code> (L167-L208) では <code>vlan_name = "Vlan" + vlan</code> を組み立てた上で <code>mapname = vxlan_name + '|' + 'map_' + vni + '_' + vlan_name</code> でキーを生成しており、形式は固定。<code>del_vxlan_map</code> (L215-L253) と <code>add_vxlan_map_range</code> (L313) も同じ形式。<code>sonic-net/sonic-utilities/config/vxlan.py#L204</code> (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)。&#160;<a class="footnote-backref" href="#fnref:vxlan-map-name" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:vxlan-ctx-fail">
+<p>列挙したエラーメッセージは <code>sonic-net/sonic-utilities/config/vxlan.py</code> 内の <code>ctx.fail()</code> 呼び出しと一致 (<code>VTEP already configured.</code> L45 / <code>Please delete the EVPN NVO configuration.</code> L76 / <code>Please delete all VLAN VNI mappings.</code> L85 / <code>EVPN NVO already configured</code> L122 / <code>VTEP {} not configured</code> L125, L188, L234 / <code>Invalid Vlan Id , Valid Range : 1 to 4094</code> L179 / <code>Invalid VNI {}. Valid range [1 to 16777215].</code> L183 / <code>Vlan Id already mapped</code> L198 / <code>VNI Id already mapped</code> L200 / <code>VNI mapped to vrf {}, Please remove VRF VNI mapping</code> L245)。<code>sonic-net/sonic-utilities/config/vxlan.py</code> (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)。&#160;<a class="footnote-backref" href="#fnref:vxlan-ctx-fail" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

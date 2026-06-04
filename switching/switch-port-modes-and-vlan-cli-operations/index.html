@@ -18806,7 +18806,7 @@
   <span class="md-ellipsis">
     
   
-    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+    xcvrd クラッシュ（CMIS module_media_interface_id 未定義）
   
 
     
@@ -36111,11 +36111,11 @@
 <tbody>
 <tr>
 <td><code>PORT.&lt;name&gt;</code></td>
-<td><code>switchport_mode</code> (新規)</td>
+<td><code>mode</code> (新規。値は <code>access</code> / <code>trunk</code> / <code>routed</code>)<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
 <td><code>PORTCHANNEL.&lt;name&gt;</code></td>
-<td><code>switchport_mode</code> (新規)</td>
+<td><code>mode</code> (新規。同上)<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
 <td><code>VLAN_MEMBER</code></td>
@@ -36127,6 +36127,10 @@
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">フィールド名は <code>mode</code></p>
+<p>HLD 本文では <code>switchport_mode</code> の名前で言及される箇所があるが、<code>sonic-utilities</code> 実装 (<code>config/switchport.py</code> <code>db.cfgdb.mod_entry("PORT", port, {"mode": ...})</code>) では CONFIG_DB 上のキーは <code>mode</code> で書き込まれる<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。redis 経由で確認する際は <code>mode</code> を見ること。</p>
+</div>
 <table>
 <thead>
 <tr>
@@ -36136,45 +36140,49 @@
 </thead>
 <tbody>
 <tr>
-<td><code>config vlan add &lt;vid\|range\|list&gt;</code></td>
-<td>複数 <a href="../../reference/glossary/#term-vlan">VLAN</a> 追加</td>
+<td><code>config vlan add &lt;vid&gt;</code></td>
+<td>単一 <a href="../../reference/glossary/#term-vlan">VLAN</a> 追加<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
-<td><code>config vlan del &lt;vid\|range\|list&gt;</code></td>
-<td>複数 VLAN 削除</td>
+<td><code>config vlan add -m "&lt;range\|list&gt;"</code></td>
+<td>複数 VLAN 追加 (<code>-m</code> / <code>--multiple</code> フラグ必須)<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
-<td><code>config vlan member add &lt;vlan&gt; &lt;port\|range&gt;</code></td>
-<td>メンバ一括追加</td>
+<td><code>config vlan del &lt;vid&gt;</code> / <code>config vlan del -m "&lt;range\|list&gt;"</code></td>
+<td>VLAN 削除 (単一 / 複数)<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
-<td><code>config vlan member del &lt;vlan&gt; &lt;port\|range&gt;</code></td>
-<td>メンバ一括削除</td>
+<td><code>config vlan member add [-m] [-e] &lt;vlan&gt; &lt;port&gt;</code></td>
+<td>メンバ追加 (<code>-m</code> で複数 vid、<code>-e</code> で除外指定)<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
-<td><code>config switchport mode &lt;mode&gt; &lt;port&gt;</code></td>
-<td>ポートのモード変更</td>
+<td><code>config vlan member del [-m] [-e] &lt;vlan&gt; &lt;port&gt;</code></td>
+<td>メンバ削除</td>
+</tr>
+<tr>
+<td><code>config switchport mode &lt;access\|trunk\|routed&gt; &lt;port&gt;</code></td>
+<td>ポートのモード変更<sup id="fnref8:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 </tbody>
 </table>
 <h2 id="_1">設定例（実装に合わせた現実形）<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 1. VLAN 10〜12 を一括作成</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>-12
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 1. VLAN 10〜12 を一括作成 (-m が必須。付け忘れると &quot;is not integer&quot; エラー)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>add<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;10-12&quot;</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># 2. Ethernet0 を access、Vlan10 untagged（2 ステップ）</span>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>access<span class="w"> </span>Ethernet0
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">10</span><span class="w"> </span>Ethernet0<span class="w"> </span>--untagged
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># 3. PortChannel1 を trunk、native=Vlan10、tagged=Vlan20-22</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>add<span class="w"> </span><span class="m">20</span>-22
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>add<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;20-22&quot;</span>
 </span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>trunk<span class="w"> </span>PortChannel1
 </span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">10</span><span class="w"> </span>PortChannel1<span class="w"> </span>--untagged
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">20</span><span class="w"> </span>PortChannel1
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">21</span><span class="w"> </span>PortChannel1
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">22</span><span class="w"> </span>PortChannel1
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="c1"># 4. 元に戻す（メンバ削除→mode）</span>
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>del<span class="w"> </span><span class="m">10</span><span class="w"> </span>PortChannel1
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="c1"># 複数 vid を一括追加 (-m で範囲・カンマ区切りを受け付け)</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;20-22&quot;</span><span class="w"> </span>PortChannel1
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="c1"># 4. 元に戻す（メンバ削除→mode）</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>del<span class="w"> </span><span class="m">10</span><span class="w"> </span>PortChannel1
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>del<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;20-22&quot;</span><span class="w"> </span>PortChannel1
 </span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>routed<span class="w"> </span>PortChannel1
 </span></code></pre></div>
 <h2 id="_2">制限事項<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -36216,42 +36224,54 @@
 <!-- phase-boundary -->
 <h2 id="_7">実装フェーズ境界<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="admonition info">
-<p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>
-<p>本ページは <code>monitor: partially_implemented</code> で、HLD で示された一連の機能
-が <strong>段階的に取り込まれている</strong> 状態を扱う。フェーズ毎の実装境界を
-1 枚の表に集約する (詳細は本ページ上部の <code>diff</code> admonition および
-<a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照)。</p>
+<p class="admonition-title">機能カテゴリ別の実装済 / 未実装 サマリ</p>
+<p>本ページは <code>monitor: partially_implemented</code>。HLD で提案された CLI 拡張のうち、
+どの形が実装済 (master の <code>sonic-utilities</code> で動作確認できる) で、
+どの形が HLD 文書のみで実装されていないかを 1 枚の表に集約する。
+具体的な差分根拠は <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy ページ</a> を参照。</p>
 <table>
 <thead>
 <tr>
-<th>Phase</th>
-<th>範囲 (機能 / 段階)</th>
-<th>実装済 (master 取り込み済)</th>
-<th>未実装 (HLD 提案のみ)</th>
+<th>カテゴリ</th>
+<th>範囲</th>
+<th>実装済 (master)</th>
+<th>未実装 / HLD のみ</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Phase 1 — 基本機能</td>
-<td>HLD §概要 / §設計の中核ユースケース</td>
-<td>取り込み済 — 本ページの「実装の概観」「実装詳細」節および <code>diff</code> admonition の現状側を参照</td>
-<td>— (Phase 1 は実装済)</td>
+<td><code>switchport mode</code> コマンド本体</td>
+<td>mode 切替 (<code>access</code> / <code>trunk</code> / <code>routed</code>) を Ethernet / PortChannel に適用<sup id="fnref9:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td><code>config switchport mode &lt;access\|trunk\|routed&gt; &lt;port&gt;</code> の 2 引数形 — <code>click.Choice(["access", "trunk", "routed"])</code> で実装<sup id="fnref10:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td>HLD 例の <strong>第 3 引数 <code>&lt;vlan-list&gt;</code></strong> (mode 切替と同時に VLAN メンバを宣言する形) — <code>config/switchport.py</code> の <code>@click.argument</code> には未定義</td>
 </tr>
 <tr>
-<td>Phase 2 — 拡張機能</td>
-<td>HLD §拡張 / §追加要件 / §周辺統合</td>
-<td>一部のみ取り込み済 — 本ページ「実装詳細」の補足参照</td>
-<td>未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および <code>diff</code> admonition の差分側に列挙</td>
+<td>VLAN 一括 add/del</td>
+<td>複数 VLAN を 1 コマンドで作成・削除</td>
+<td><code>config vlan add -m "10-12"</code> / <code>config vlan add -m "10,20,30"</code> (<code>--multiple</code> フラグ + parser 経由)<sup id="fnref11:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td>フラグ無しでの <code>config vlan add 10-12</code> 形 (HLD 例) — 実装は <code>vid.isdigit()</code> チェックで弾く</td>
 </tr>
 <tr>
-<td>Phase 3 — 将来拡張</td>
-<td>HLD §Future Work / §将来課題</td>
+<td>VLAN_MEMBER 一括 add/del</td>
+<td>複数 vid を一度にメンバ追加 / 削除</td>
+<td><code>config vlan member add -m "20-22" &lt;port&gt;</code> および <code>-e</code> (except) フラグ。<code>vid="all"</code> 指定可<sup id="fnref12:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td>PortChannel 含む <strong>ポート側の範囲指定</strong> (<code>Ethernet0-3</code> のような port range) — <code>add_vlan_member</code> は単一 port 引数のみ</td>
+</tr>
+<tr>
+<td>CONFIG_DB スキーマ</td>
+<td><code>PORT</code> / <code>PORTCHANNEL</code> テーブルへの mode フィールド追加</td>
+<td><code>mode</code> キーが <code>access</code> / <code>trunk</code> / <code>routed</code> で書き込まれる<sup id="fnref13:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td>HLD 本文中の <code>switchport_mode</code> 名 — 実装名は <code>mode</code> (本ページ上部 note 参照)</td>
+</tr>
+<tr>
+<td>アップグレード経路</td>
+<td><code>db_migrator</code> で既存 port の mode 推論</td>
+<td>YANG / db_migrator 側で <code>mode</code> 推論ロジックが入っている<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 <td>—</td>
-<td>未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点)</td>
 </tr>
 </tbody>
 </table>
-<p>凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。</p>
+<p>凡例: 「実装済」=現行 master の <code>sonic-utilities</code> で動作確認できる範囲 / 「未実装」=HLD 文書には書かれているが対応 PR が未マージまたは設計のみ。</p>
 </div>
 <!-- /phase-boundary -->
 
@@ -36264,7 +36284,10 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-utilities</code> <code>config/switchport.py</code> L16-99 (<code>@click.Choice(["access", "trunk", "routed"])</code>, <code>mod_entry("PORT", port, {"mode": ...})</code>) および <code>config/vlan.py</code> L95-141, L331-399 (<code>@click.option('-m', '--multiple')</code>, <code>multiple_vlan_parser</code>) @ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
