@@ -1727,7 +1727,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [MUX_CABLE テーブル（per-port フィールド詳細）](config-db/mux-cable-port.md) (52)
 - [MUX_CABLE テーブル](config-db/mux-cable.md) (30)
 - [linkmgrd のデフォルトルート連動（DualToR mux 制御）](../routing/default-route.md) (27)
-- [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (19)
+- [Mux 制御の内部構造](../topics/05-dual-tor/internals.md) (21)
 
 ### [LLDP](#term-lldp)
 
@@ -2185,7 +2185,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ROUTE_TABLE (STATE_DB / APPL_STATE_DB)](config-db/route-state.md) (101)
 - [FEATURE (STATE_DB)](config-db/feature-state.md) (91)
 - [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (85)
-- [サイトマップ](../_meta/sitemap.md) (80)
+- [サイトマップ](../_meta/sitemap.md) (81)
 
 ### [swssconfig](#term-swssconfig)
 
@@ -2258,7 +2258,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [ToR](#term-tor)
 
-- [サイトマップ](../_meta/sitemap.md) (78)
+- [サイトマップ](../_meta/sitemap.md) (77)
 - [Dual-ToR の考え方](../topics/05-dual-tor/concept.md) (65)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (59)
 - [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (40)

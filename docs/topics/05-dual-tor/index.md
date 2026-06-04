@@ -77,7 +77,7 @@ related:
 | ページ | 行数 | 状態 | verification | 主目的 |
 |---|---|---|---|---|
 | concept | 188 | ✅ 完成 | meta | 概念・位置付け |
-| internals | 122 | ✅ 完成 | meta | 内部実装 |
+| internals | 132 | ✅ 完成 | code-verified | 内部実装 |
 | setup | 244 | ✅ 完成 | meta | セットアップ手順 |
 | operations | 195 | ✅ 完成 | meta | 運用・デバッグ |
 | advanced | 116 | ✅ 完成 | meta | 発展トピック |
