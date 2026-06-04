@@ -35838,15 +35838,21 @@
 <p>目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。<code>Discrepancy-found</code> は <a href="../reference/glossary/#term-hld">HLD</a> と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。</p>
 <h2 id="_3">検証状況<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ページ数: 51</li>
-<li>分布: code-verified: 43 / Discrepancy-found: 8 / HLD-only: 0</li>
+<li>ページ数: 57</li>
+<li>分布: code-verified: 43 / Discrepancy-found: 14 / HLD-only: 0</li>
 </ul>
 <h2 id="_4">実装差分があるページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="bgp-route-install-error-handling/">BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）</a></li>
 <li><a href="bfd-hw-offload-for-bgp-session/">BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）</a></li>
 <li><a href="evpn-vxlan-multihoming/">EVPN VXLAN Multihoming（ESI / DF election / split-horizon）</a></li>
+<li><a href="evpn-vxlan-multihoming-concepts/">EVPN VXLAN Multihoming 概念（ESI / DF election / Split-horizon / Aliasing）</a></li>
+<li><a href="evpn-vxlan-multihoming-internals/">EVPN VXLAN Multihoming 実装内部（EvpnMhOrch / L2nhgOrch / ShlOrch / SAI L2 NHG）</a></li>
+<li><a href="evpn-vxlan-multihoming-operations/">EVPN VXLAN Multihoming 運用（config interface evpn-esi / show vxlan ethernet-segment / 差分）</a></li>
 <li><a href="evpn-vxlan-hld/">EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）</a></li>
+<li><a href="evpn-vxlan-hld-concepts/">EVPN VXLAN 概念（Route Type 2/3/5 / L2VNI / L3VNI / IRB）</a></li>
+<li><a href="evpn-vxlan-hld-internals/">EVPN VXLAN 内部実装（FRR → fpmsyncd → APPL_DB → orchagent → SAI）</a></li>
+<li><a href="evpn-vxlan-hld-operations/">EVPN VXLAN 設定・運用（vtysh / show evpn / show bgp l2vpn）</a></li>
 <li><a href="local-ars-hld/">Local ARS（Adaptive Routing &amp; Switching の local 完結版）</a></li>
 <li><a href="bgp-setup-for-voq-chassis/">VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）</a></li>
 <li><a href="bgpcfgd-dynamic-peer-modification-support/">bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）</a></li>
@@ -35918,7 +35924,31 @@
 <td>Discrepancy-found</td>
 </tr>
 <tr>
+<td><a href="evpn-vxlan-multihoming-concepts/">EVPN VXLAN Multihoming 概念（ESI / DF election / Split-horizon / Aliasing）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="evpn-vxlan-multihoming-internals/">EVPN VXLAN Multihoming 実装内部（EvpnMhOrch / L2nhgOrch / ShlOrch / SAI L2 NHG）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="evpn-vxlan-multihoming-operations/">EVPN VXLAN Multihoming 運用（config interface evpn-esi / show vxlan ethernet-segment / 差分）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
 <td><a href="evpn-vxlan-hld/">EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="evpn-vxlan-hld-concepts/">EVPN VXLAN 概念（Route Type 2/3/5 / L2VNI / L3VNI / IRB）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="evpn-vxlan-hld-internals/">EVPN VXLAN 内部実装（FRR → fpmsyncd → APPL_DB → orchagent → SAI）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="evpn-vxlan-hld-operations/">EVPN VXLAN 設定・運用（vtysh / show evpn / show bgp l2vpn）</a></td>
 <td>Discrepancy-found</td>
 </tr>
 <tr>

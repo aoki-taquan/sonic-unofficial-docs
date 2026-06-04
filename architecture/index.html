@@ -35824,8 +35824,8 @@
 <p>まず全体像や実装単位のページを読み、必要に応じて関連する機能別章またはリファレンス章に移動する。</p>
 <h2 id="_3">検証状況<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ページ数: 41</li>
-<li>分布: code-verified: 27 / Discrepancy-found: 9 / <a href="../reference/glossary/#term-hld">HLD</a>-only: 5</li>
+<li>ページ数: 48</li>
+<li>分布: code-verified: 30 / Discrepancy-found: 13 / <a href="../reference/glossary/#term-hld">HLD</a>-only: 5</li>
 </ul>
 <h2 id="_4">実装差分があるページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35835,6 +35835,10 @@
 <li><a href="sag-high-level-design-for-sonic/">SAG（Static Anycast Gateway）for SONiC</a></li>
 <li><a href="ssdhealth-design/">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）</a></li>
 <li><a href="smartswitch-high-availability-manager-daemon-hamgrd-design/">SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）</a></li>
+<li><a href="smartswitch-high-availability-manager-daemon-hamgrd-design-concepts/">SmartSwitch HA HAMgrD 概念（actor model と vDPU 抽象）</a></li>
+<li><a href="smartswitch-high-availability-manager-daemon-hamgrd-design-internals/">SmartSwitch HA HAMgrD 内部実装（actor workflow / DPU-Driven 詳細）</a></li>
+<li><a href="smartswitch-high-availability-manager-daemon-hamgrd-design-operations/">SmartSwitch HA HAMgrD CONFIG/APP/STATE_DB スキーマ（設定経路）</a></li>
+<li><a href="smartswitch-high-availability-manager-daemon-hamgrd-design-limitations/">SmartSwitch HA HAMgrD 制限事項と実装乖離</a></li>
 <li><a href="sflow-high-level-design/">sFlow（hsflowd / sflowmgrd / SAI sample-packet）</a></li>
 <li><a href="build-profiles/">ビルドプロファイル（rules/profiles/*.mk）</a></li>
 <li><a href="port-illegal-packets-drop-design/">ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）</a></li>
@@ -35965,7 +35969,35 @@
 <td>code-verified</td>
 </tr>
 <tr>
+<td><a href="smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-concepts/">SmartSwitch HA DPU-Scope-DPU-Driven 概念（pairing / scope / owner / mode）</a></td>
+<td>code-verified</td>
+</tr>
+<tr>
+<td><a href="smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-internals/">SmartSwitch HA DPU-Scope-DPU-Driven 内部実装（状態遷移と再同期）</a></td>
+<td>code-verified</td>
+</tr>
+<tr>
+<td><a href="smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-operations/">SmartSwitch HA DPU-Scope-DPU-Driven 運用（CLI / 設定 / failover 確認）</a></td>
+<td>code-verified</td>
+</tr>
+<tr>
 <td><a href="smartswitch-high-availability-manager-daemon-hamgrd-design/">SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="smartswitch-high-availability-manager-daemon-hamgrd-design-concepts/">SmartSwitch HA HAMgrD 概念（actor model と vDPU 抽象）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="smartswitch-high-availability-manager-daemon-hamgrd-design-internals/">SmartSwitch HA HAMgrD 内部実装（actor workflow / DPU-Driven 詳細）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="smartswitch-high-availability-manager-daemon-hamgrd-design-operations/">SmartSwitch HA HAMgrD CONFIG/APP/STATE_DB スキーマ（設定経路）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="smartswitch-high-availability-manager-daemon-hamgrd-design-limitations/">SmartSwitch HA HAMgrD 制限事項と実装乖離</a></td>
 <td>Discrepancy-found</td>
 </tr>
 <tr>
