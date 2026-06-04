@@ -78,7 +78,7 @@ Multi-ASIC は同じ筐体内の複数 ASIC を namespace で分け、各 ASIC �
 
 | ページ | 行数 | 状態 | verification | 主目的 |
 |---|---|---|---|---|
-| concept | 151 | ✅ 完成 | meta | 概念・位置付け |
+| concept | 157 | ✅ 完成 | hld-only | 概念・位置付け |
 | architecture | 93 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
 | setup | 232 | ✅ 完成 | meta | セットアップ手順 |
 | operations | 217 | ✅ 完成 | meta | 運用・デバッグ |
