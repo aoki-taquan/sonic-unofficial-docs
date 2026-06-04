@@ -2048,8 +2048,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SNMP テーブル](config-db/snmp.md) (160)
 - [SNMP_AGENT_ADDRESS_CONFIG / SNMP_USER テーブル (デフォルト詳細)](config-db/snmp-agent.md) (139)
 - [SNMP_COMMUNITY テーブル](config-db/community-list.md) (86)
+- [SNMP 設定の snmp.yml → CONFIG_DB 移行](../system/snmp-migration-from-snmp-yml-to-configdb.md) (74)
 - [sonic-snmp YANG](yang/sonic-snmp.md) (73)
-- [SNMP_AGENT_ADDRESS_CONFIG テーブル](config-db/snmp-agent-address-config.md) (72)
 
 ### [SRv6](#term-srv6)
 
