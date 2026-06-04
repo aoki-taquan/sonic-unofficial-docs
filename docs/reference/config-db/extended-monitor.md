@@ -19,8 +19,8 @@ sources:
     path: common/schema.h
     ref: master
 related:
-  config_db: []
-  cli: []
+  _no_related_config_db: true
+  _no_related_cli: true
   yang:
     - sonic-events-common
     - sonic-events-host
