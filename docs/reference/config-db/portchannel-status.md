@@ -24,6 +24,7 @@ related:
   cli:
     - show interfaces portchannel
     - sonic-db-cli APPL_DB
+  _no_related_yang: true
 ---
 
 # APPL_DB LAG_TABLE (portchannel ステータス)
