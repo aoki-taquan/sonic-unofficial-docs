@@ -23,6 +23,9 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-04 #5114 docs(area-index): list split-child slugs alongside parents (systemic drift fix)
+- 2026-06-04 #5112 fix(audit): correct area prefix for 2 misplaced page references
+- 2026-06-04 #5111 fix(audit): guard aggregation against score 0 phantom entries
 - 2026-06-04 #5113 chore(backlog): detect split-page implementations + archive SmartSwitch HA 2 entries
 - 2026-06-04 #5110 docs(related): fill empty related axes + opt-out markers (batch 13)
 - 2026-06-04 #5109 chore(frontmatter): fill empty related axes / opt-outs (batch 12)
@@ -518,12 +521,9 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3931 docs(config-db): add Phase F side-effects block to vnet-route
 - 2026-05-19 #3930 docs(config-db): add Phase G pubsub block to SUBNET_DECAP page
 - 2026-05-19 #3928 docs(config-db): add Phase E constants marker to nhg-table page
-- 2026-05-19 #3917 docs(config-db): add Phase E hardcoded-constants block to ssh-config-base
 - 2026-05-19 #3926 docs(config-db): add Phase H platform block to vrrp-track
 - 2026-05-19 #3925 docs(config-db): add Phase F side-effects block to log-config
 - 2026-05-19 #3924 docs(config-db): add Phase F side-effects block to IPv6 link-local page
 - 2026-05-19 #3923 docs(config-db): add Phase F side-effects block to stp-orch
 - 2026-05-19 #3922 docs(config-db): add Phase D failure-behavior block to nvgre-tunnel
-- 2026-05-19 #3919 docs(config-db): add Phase G pubsub block to STP_PORT page
-- 2026-05-19 #3918 docs(config-db): add Phase E hardcoded-constants block to TC_TO_DSCP_MAP
 
