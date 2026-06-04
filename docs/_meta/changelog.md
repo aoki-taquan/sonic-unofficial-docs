@@ -23,6 +23,12 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-04 #5107 fix(frontmatter): resolve empty related arrays (batch 11)
+- 2026-06-04 #5105 chore(frontmatter): clean empty related arrays + opt-out markers (config-db batch 8)
+- 2026-06-04 #5104 chore(frontmatter): resolve empty related arrays in 6 config-db pages (b7)
+- 2026-06-04 #5103 docs(config-db): resolve empty related arrays in batch 6 (4 pages)
+- 2026-06-04 #5101 fix(related): add opt-out markers for empty related arrays (batch 0)
+- 2026-06-04 #5097 schema: clear string-list sources on 113 topics meta pages
 - 2026-06-03 #5096 schema: add 'topics' to area enum (155 chapter pages)
 - 2026-06-03 #5095 fix(lab): correct sonic-vs build target + sonic-mgmt pytest invocation + redis snapshot procedure
 - 2026-06-03 #5094 chore(frontmatter): rename legacy _no_yang to _no_related_yang (24 files)
@@ -516,14 +522,8 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3915 docs(config-db): add Phase H platform block to ports-status
 - 2026-05-19 #3914 docs(config-db): add Phase G pubsub block to gnmi-state
 - 2026-05-19 #3913 docs(config-db): add Phase D failure-behavior block to RESTAPI page
-- 2026-05-19 #3903 docs(config-db): add Phase F side-effects block to gnmi-counter
 - 2026-05-19 #3910 docs(config-db): add Phase E hardcoded-constants block to ipv6-link-local
 - 2026-05-19 #3908 docs(config-db): add Phase E hardcoded-constants block to PBH_TABLE page
-- 2026-05-19 #3904 docs(config-db): add Phase G pubsub block to VRRP_TRACK
 - 2026-05-19 #3907 docs(config-db): add Phase G pubsub block to NTP_SERVER page
 - 2026-05-19 #3905 docs(config-db): add Phase E hardcoded-constants block to redis-db-config
-- 2026-05-19 #3900 docs(config-db): add Phase D failure-behavior block to mux-cable-port
-- 2026-05-19 #3901 docs(config-db): add Phase F side-effects block to gnmi-counter
-- 2026-05-19 #3899 docs(config-db): add Phase D failure block to SWITCH_TRIMMING
-- 2026-05-19 #3898 docs(config-db): add Phase F side-effects block to suppress-asic-sdk-health-event
 

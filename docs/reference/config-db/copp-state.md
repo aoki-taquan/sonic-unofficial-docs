@@ -17,6 +17,7 @@ related:
     - COPP_TRAP
   cli:
     - show copp
+  _no_related_yang: true
 ---
 
 # STATE_DB COPP 状態テーブル
