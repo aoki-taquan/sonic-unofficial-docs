@@ -40,7 +40,7 @@ related:
 
 ## 最小 bring-up 例
 
-評価者がそのまま打てる最小構成として、image インストールから 1 物理ポート up・VLAN 作成・BGP neighbor 投入までの 4 ステップを示す。詳細パラメータは上記 reading path のリファレンスを参照すること。
+評価者がそのまま打てる最小構成として、image インストールから 1 物理ポート up・VLAN 作成・BGP neighbor 投入までの 4 ステップを示す。BGP は `config bgp` CLI が neighbor 追加コマンドを持たないため、ラボでは [vtysh](../reference/glossary.md#term-vtysh) から [FRR](../reference/glossary.md#term-frr) を直接設定するのが最短である (恒久化したい場合は `config_db.json` の `BGP_NEIGHBOR` テーブル編集 + `config reload`)。詳細パラメータは上記 reading path のリファレンスを参照すること。
 
 ```bash
 # 1. SONiC image をインストールして再起動
@@ -53,11 +53,13 @@ sudo config interface startup Ethernet0
 sudo config vlan add 100
 sudo config vlan member add 100 Ethernet0
 
-# 4. BGP neighbor を投入
-sudo config bgp neighbor add 10.0.0.1 65001
+# 4. BGP neighbor を投入する (vtysh 経由)
+sudo vtysh -c 'configure terminal' \
+           -c 'router bgp 65000' \
+           -c 'neighbor 10.0.0.1 remote-as 65001'
 ```
 
-`config interface startup` の引数は単一インタフェース名で、内部で `PORT` テーブルの `admin_status` を `up` に更新する<!-- evidence: sonic-utilities config/main.py:5184-5210 -->。`config vlan add` は `vlan.py` で実装されており、`VLAN` テーブルに `Vlan<vid>` エントリを作成する<!-- evidence: sonic-utilities config/vlan.py:95 -->。
+`config interface startup` の引数は単一インタフェース名で、内部で `PORT` テーブルの `admin_status` を `up` に更新する<!-- evidence: sonic-utilities config/main.py:5184-5210 -->。`config vlan add` は `vlan.py` で実装されており、`VLAN` テーブルに `Vlan<vid>` エントリを作成する<!-- evidence: sonic-utilities config/vlan.py:95-142 -->。BGP については `config bgp` サブコマンドが `shutdown` / `startup` / `remove` の 3 サブグループのみで neighbor 追加コマンドを持たず<!-- evidence: sonic-utilities config/main.py:4918-5054 (bgp group: shutdown/startup/remove のみ、add 系なし) -->、設定本体は FRR が握っているため、評価ラボでは `vtysh` から直接 FRR を叩くか、`config_db.json` の `BGP_NEIGHBOR` / `DEVICE_NEIGHBOR` テーブルを編集して `config reload` する流れになる ([config bgp](../reference/cli/config-bgp.md) も参照)。
 
 ## 評価シナリオ別の分岐
 
@@ -77,4 +79,4 @@ sudo config bgp neighbor add 10.0.0.1 65001
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9fb3fca99a59 -->
+<!-- glossary-links-injected: 14bb29c924c8 -->
