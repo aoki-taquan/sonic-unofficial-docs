@@ -41,8 +41,8 @@ last_verified: 2026-05-13
 - ベンダー版 SONiC の overlay 実装差分（コミュニティ版 `master` のみ扱う）
 
 ## 検証状況
-- ページ数: 9
-- 分布: code-verified: 8 / Discrepancy-found: 1
+- ページ数: 12
+- 分布: code-verified: 11 / Discrepancy-found: 1
 
 ## 実装差分があるページ
 - [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](dscp-remapping-for-tunnel-traffic.md)
@@ -56,6 +56,9 @@ last_verified: 2026-05-13
 | [DASH SONiC KVM（BMv2 ベース仮想 DPU）](dash-sonic-kvm.md) | code-verified |
 | [NVGRE トンネル（nvgreorch / decap mapper）](nvgre-tunnel-in-sonic.md) | code-verified |
 | [SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観](sonic-dash-hld.md) | code-verified |
+| [SONiC-DASH 概念（ENI / VNet / route_type / ACL / メータリング）](sonic-dash-hld-concepts.md) | code-verified |
+| [SONiC-DASH 内部実装（DASH APP DB スキーマ / dashorch / SAI DASH API）](sonic-dash-hld-internals.md) | code-verified |
+| [SONiC-DASH 運用（CLI / 設定例 / トラブルシュート）](sonic-dash-hld-operations.md) | code-verified |
 | [SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）](smartswitch-eni-based-forwarding.md) | code-verified |
 | [VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）](vnet-local-endpoint-forwarding.md) | code-verified |
 | [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](vxlan-sonic.md) | code-verified |
