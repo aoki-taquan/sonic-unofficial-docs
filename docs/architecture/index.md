@@ -11,8 +11,8 @@ last_verified: 2026-05-13
 ## この章の読み方
 まず全体像や実装単位のページを読み、必要に応じて関連する機能別章またはリファレンス章に移動する。
 ## 検証状況
-- ページ数: 41
-- 分布: code-verified: 27 / Discrepancy-found: 9 / [HLD](../reference/glossary.md#term-hld)-only: 5
+- ページ数: 48
+- 分布: code-verified: 30 / Discrepancy-found: 13 / [HLD](../reference/glossary.md#term-hld)-only: 5
 
 ## 実装差分があるページ
 - [DIP=SIP PTF 検証テスト](dip-sip-ptf-validation-high-level-design.md)
@@ -21,6 +21,10 @@ last_verified: 2026-05-13
 - [SAG（Static Anycast Gateway）for SONiC](sag-high-level-design-for-sonic.md)
 - [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](ssdhealth-design.md)
 - [SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）](smartswitch-high-availability-manager-daemon-hamgrd-design.md)
+- [SmartSwitch HA HAMgrD 概念（actor model と vDPU 抽象）](smartswitch-high-availability-manager-daemon-hamgrd-design-concepts.md)
+- [SmartSwitch HA HAMgrD 内部実装（actor workflow / DPU-Driven 詳細）](smartswitch-high-availability-manager-daemon-hamgrd-design-internals.md)
+- [SmartSwitch HA HAMgrD CONFIG/APP/STATE_DB スキーマ（設定経路）](smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md)
+- [SmartSwitch HA HAMgrD 制限事項と実装乖離](smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md)
 - [sFlow（hsflowd / sflowmgrd / SAI sample-packet）](sflow-high-level-design.md)
 - [ビルドプロファイル（rules/profiles/*.mk）](build-profiles.md)
 - [ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）](port-illegal-packets-drop-design.md)
@@ -63,7 +67,14 @@ last_verified: 2026-05-13
 | [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](ssdhealth-design.md) | Discrepancy-found |
 | [Smart Switch のデータベース構成（NPU 上の DPU overlay DB）](smart-switch-database-design.md) | code-verified |
 | [SmartSwitch HA - DPU-Scope-DPU-Driven 構成](smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md) | code-verified |
+| [SmartSwitch HA DPU-Scope-DPU-Driven 概念（pairing / scope / owner / mode）](smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-concepts.md) | code-verified |
+| [SmartSwitch HA DPU-Scope-DPU-Driven 内部実装（状態遷移と再同期）](smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-internals.md) | code-verified |
+| [SmartSwitch HA DPU-Scope-DPU-Driven 運用（CLI / 設定 / failover 確認）](smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-operations.md) | code-verified |
 | [SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）](smartswitch-high-availability-manager-daemon-hamgrd-design.md) | Discrepancy-found |
+| [SmartSwitch HA HAMgrD 概念（actor model と vDPU 抽象）](smartswitch-high-availability-manager-daemon-hamgrd-design-concepts.md) | Discrepancy-found |
+| [SmartSwitch HA HAMgrD 内部実装（actor workflow / DPU-Driven 詳細）](smartswitch-high-availability-manager-daemon-hamgrd-design-internals.md) | Discrepancy-found |
+| [SmartSwitch HA HAMgrD CONFIG/APP/STATE_DB スキーマ（設定経路）](smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md) | Discrepancy-found |
+| [SmartSwitch HA HAMgrD 制限事項と実装乖離](smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md) | Discrepancy-found |
 | [Sub-port Interface（dot1q encap / VRF RIF / 命名規則）](sonic-sub-port-interface-high-level-design.md) | HLD-only |
 | [Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）](sonic-trap-flow-counter-design.md) | code-verified |
 | [port_config.ini パーサ統合（portconfig.py 一元化）](sonic-port-configuration-refactor-design.md) | code-verified |

@@ -44,8 +44,8 @@ L2 / link layer の制御面を扱う。具体的には:
 - PortChannel / VLAN の **CLI コマンド一覧** や **[CONFIG_DB](../reference/glossary.md#term-config_db) テーブル定義** は [reference](../reference/index.md) 章
 
 ## 検証状況
-- ページ数: 19
-- 分布: code-verified: 12 / Discrepancy-found: 4 / HLD-only: 3
+- ページ数: 22
+- 分布: code-verified: 15 / Discrepancy-found: 4 / HLD-only: 3
 
 ## 実装差分があるページ
 - [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](layer-2-forwarding-enhancements.md)
@@ -69,6 +69,9 @@ L2 / link layer の制御面を扱う。具体的には:
 | [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](layer-2-forwarding-enhancements.md) | Discrepancy-found |
 | [MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）](macsec-sonic-high-level-design-document.md) | code-verified |
 | [MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）](mclag-enhancements.md) | code-verified |
+| [MCLAG Enhancements 概念（7 軸拡張・isolation group / unique IP）](mclag-enhancements-concepts.md) | code-verified |
+| [MCLAG Enhancements 内部実装（iccpd / MclagSyncd / FdbOrch / IsolationGroupOrch）](mclag-enhancements-internals.md) | code-verified |
+| [MCLAG Enhancements 運用（CLI / 設定手順 / 確認 / トラブルシュート）](mclag-enhancements-operations.md) | code-verified |
 | [Multiple Spanning Tree Protocol (MSTP) on SONiC](multiple-spanning-tree-protocol.md) | code-verified |
 | [PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）](openconfig-support-for-portchannel-aggregate-interface.md) | code-verified |
 | [ProducerStateTable の view switching（warm reboot 用の差分適用）](view-switching-in-producerstatetable.md) | code-verified |

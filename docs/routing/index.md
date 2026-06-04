@@ -11,14 +11,20 @@ last_verified: 2026-05-13
 ## この章の読み方
 目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は [HLD](../reference/glossary.md#term-hld) と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
 ## 検証状況
-- ページ数: 51
-- 分布: code-verified: 43 / Discrepancy-found: 8 / HLD-only: 0
+- ページ数: 57
+- 分布: code-verified: 43 / Discrepancy-found: 14 / HLD-only: 0
 
 ## 実装差分があるページ
 - [BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）](bgp-route-install-error-handling.md)
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](bfd-hw-offload-for-bgp-session.md)
 - [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](evpn-vxlan-multihoming.md)
+- [EVPN VXLAN Multihoming 概念（ESI / DF election / Split-horizon / Aliasing）](evpn-vxlan-multihoming-concepts.md)
+- [EVPN VXLAN Multihoming 実装内部（EvpnMhOrch / L2nhgOrch / ShlOrch / SAI L2 NHG）](evpn-vxlan-multihoming-internals.md)
+- [EVPN VXLAN Multihoming 運用（config interface evpn-esi / show vxlan ethernet-segment / 差分）](evpn-vxlan-multihoming-operations.md)
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](evpn-vxlan-hld.md)
+- [EVPN VXLAN 概念（Route Type 2/3/5 / L2VNI / L3VNI / IRB）](evpn-vxlan-hld-concepts.md)
+- [EVPN VXLAN 内部実装（FRR → fpmsyncd → APPL_DB → orchagent → SAI）](evpn-vxlan-hld-internals.md)
+- [EVPN VXLAN 設定・運用（vtysh / show evpn / show bgp l2vpn）](evpn-vxlan-hld-operations.md)
 - [Local ARS（Adaptive Routing & Switching の local 完結版）](local-ars-hld.md)
 - [VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）](bgp-setup-for-voq-chassis.md)
 - [bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）](bgpcfgd-dynamic-peer-modification-support.md)
@@ -42,7 +48,13 @@ last_verified: 2026-05-13
 | [DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）](dhcp-relay-for-ipv6-hld.md) | code-verified |
 | [ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）](test-plan-for-inner-packet-hashing-in-ecmp.md) | code-verified |
 | [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](evpn-vxlan-multihoming.md) | Discrepancy-found |
+| [EVPN VXLAN Multihoming 概念（ESI / DF election / Split-horizon / Aliasing）](evpn-vxlan-multihoming-concepts.md) | Discrepancy-found |
+| [EVPN VXLAN Multihoming 実装内部（EvpnMhOrch / L2nhgOrch / ShlOrch / SAI L2 NHG）](evpn-vxlan-multihoming-internals.md) | Discrepancy-found |
+| [EVPN VXLAN Multihoming 運用（config interface evpn-esi / show vxlan ethernet-segment / 差分）](evpn-vxlan-multihoming-operations.md) | Discrepancy-found |
 | [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](evpn-vxlan-hld.md) | Discrepancy-found |
+| [EVPN VXLAN 概念（Route Type 2/3/5 / L2VNI / L3VNI / IRB）](evpn-vxlan-hld-concepts.md) | Discrepancy-found |
+| [EVPN VXLAN 内部実装（FRR → fpmsyncd → APPL_DB → orchagent → SAI）](evpn-vxlan-hld-internals.md) | Discrepancy-found |
+| [EVPN VXLAN 設定・運用（vtysh / show evpn / show bgp l2vpn）](evpn-vxlan-hld-operations.md) | Discrepancy-found |
 | [FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）](sonic-frr-bgp-extended-unified-configuration-management-framework.md) | code-verified |
 | [Fine Grained ECMP（FG_NHG / fgnhgorch）](sonic-fine-grained-ecmp.md) | code-verified |
 | [IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）](ipv6-link-local-enhancements.md) | code-verified |
