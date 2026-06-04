@@ -1599,9 +1599,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）](../management/sonic-config-update-validation-via-yang.md) (19)
 - [Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）](../architecture/sonic-generic-configuration-update-and-rollback.md) (8)
+- [設定変更の選び方](../topics/01-overview/configuration.md) (6)
 - [サイトマップ](../_meta/sitemap.md) (5)
 - [概念と読み始め方](../topics/01-overview/concept.md) (5)
-- [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (4)
 
 ### [gNOI](#term-gnoi)
 

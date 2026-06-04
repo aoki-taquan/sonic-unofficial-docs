@@ -36,6 +36,10 @@ related:
 
 `config load` と `config reload` は特に混同しやすい入口です。`load` は merge なので、ファイルから消した設定が DB に残る可能性があります。クリーンな全体入れ替えが必要なら `reload`、停止影響を抑えて差分だけ当てたいなら `replace` を検討します。
 
+`config replace` と `config apply-patch` は、いずれも内部的には [GCU](../../reference/glossary.md#term-gcu) を経由する点で共通しますが、入力の粒度が異なります。`replace` は **target 全体の JSON ファイル** を渡し、内部で現状との diff を JSON Patch 化して当てる「全体置換」用途です（target は config 全体である必要があり、部分 JSON を渡してはいけない点が CLI の docstring でも警告されています）[^replace-cli]。一方 `apply-patch` は **RFC 6902 JSON Patch を運用者が直接書く** 「部分パッチ」用途です。手元に target 全体の正本があるなら `replace`、特定テーブル数件だけを変えたいなら `apply-patch` を選びます。
+
+[^replace-cli]: `sonic-utilities/config/main.py` L1999-L2036 (`def replace`) — docstring: "Replace the whole config with the specified config ... The target config file should be the whole config, not just the part intended to be updated." 内部実装は `GenericUpdater().replace(...)` を呼び、GCU が target と current の差分を JSON Patch 化して適用する。
+
 ## GCU を使う場面
 
 [Generic Config Update / Rollback](../../architecture/sonic-generic-configuration-update-and-rollback.md) は、`config reload` を避けて running `CONFIG_DB` に増分パッチを安全に当てる仕組みです。入力は JSON Patch、適用前に YANG validation を行い、依存関係を考慮して適用順を決めます。失敗時は rollback し、任意の checkpoint へ戻す操作も扱います。
