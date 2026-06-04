@@ -45,7 +45,7 @@ SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応す�
 
 ## 典型的な読み進め方
 
-1. **SAI と SONiC の境界** → 隣接カテゴリ [Container / Build system 関連](container-build.md) の前に、まず Topics 20 を見ると syncd / sairedis の役割が掴める
+1. **SAI と SONiC の境界** → 隣接カテゴリ [Container / Build system 関連](container-build.md) の前に、まず [Topics 20: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を見ると syncd / sairedis の役割が掴める
 2. **capability** → `egress-mirroring-support-and-acl-action-capability-check.md` で「ASIC ごとに何ができるか」を見る方法を学ぶ
 3. **API version 検査** → `sai-api-version-check.md` でビルド時の整合性検査
 4. **bulk API** → `port-profile-init-hld.md` で fast-boot 高速化、`sonic-port-auto-fec-design.md` で Auto FEC
