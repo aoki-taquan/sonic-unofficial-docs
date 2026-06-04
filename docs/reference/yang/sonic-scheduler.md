@@ -86,14 +86,24 @@ module: sonic-scheduler
 | `weight` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/weight` | `uint8` |  | 1 | range 1..100 | Scheduling algorithm weight |
 | `priority` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/priority` | `uint8` |  |  | range 0..9 | [Scheduler](../../reference/glossary.md#term-scheduler) priority |
 | `meter_type` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/meter_type` | `enumeration` |  | bytes | packets, bytes | Metering unit for shaping rates (packets or bytes). |
-| `cir` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/cir` | `uint64` |  |  |  | Committed information rate for the dual-rate token bucket policer. This value represents the rate at which tokens are added to the primary bucket. Unit is Bps(Bytes per second) for meter type bytes else packets. |
-| `pir` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/pir` | `uint64` |  |  |  | Peak information rate for the dual-rate token bucket policer.This value represents the rate at which tokens are added to the secondary bucket.Unit is Bps(Bytes per second) for meter type bytes else... |
-| `cbs` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/cbs` | `uint32` |  |  |  | Committed burst size for the dual-rate token bucket policer.This value represents the depth of the token bucket.Unit is bytes for meter type bytes else packets for meter type is packets |
-| `pbs` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/pbs` | `uint32` |  |  |  | Excess burst size for the dual-rate token bucket policer. This value represents the depth of the secondary bucket. Unit is bytes for meter type bytes else packets for meter type is packets |
+| `cir` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/cir` | `uint64` |  |  |  | Committed information rate for the dual-rate token bucket policer. Tokens are added to the primary bucket at this rate. 単位は `meter_type=bytes` のとき Bps (bytes per second)、`packets` のとき pps (packets per second)。 |
+| `pir` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/pir` | `uint64` |  |  |  | Peak information rate for the dual-rate token bucket policer. Tokens are added to the secondary bucket at this rate. 単位は `meter_type=bytes` のとき Bps、`packets` のとき pps。`must` により `cir > 0` かつ `pir >= cir` が要求される[^1]。 |
+| `cbs` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/cbs` | `uint32` |  |  |  | Committed burst size (primary token bucket の深さ)。単位は `meter_type=bytes` のとき bytes、`packets` のとき packets。`must` により `cir > 0` が要求される[^1]。 |
+| `pbs` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/pbs` | `uint32` |  |  |  | Excess (peak) burst size (secondary token bucket の深さ)。単位は `meter_type=bytes` のとき bytes、`packets` のとき packets。`must` により `pir > 0` かつ `pbs >= cbs` (cbs 設定時) が要求される[^1]。 |
 
-## leafref / 依存
+## leafref / must 制約
 
-- なし（このモジュール内で直接 leafref を持つ leaf はない）
+`leafref` は無し（このモジュール内で直接 leafref を持つ leaf はない）。一方、`SCHEDULER_LIST` 配下の shaping パラメータには [YANG](../../reference/glossary.md#term-yang) `must` 式によるクロスフィールド検証が定義されている[^1]:
+
+| 対象 leaf | `must` 式 (要約) | エラー文言 |
+|-----------|------------------|------------|
+| `pir` | `cir` が設定済みで `cir > 0` | `pir can't be configured without cir.` |
+| `pir` | `pir >= cir` | `pir must be greater than or equal to cir` |
+| `cbs` | `cir` が設定済みで `cir > 0` | `cbs can't be configured without cir.` |
+| `pbs` | `pir` が設定済みで `pir > 0` | `pbs can't be configured without pir.` |
+| `pbs` | `cbs` 未設定 もしくは `pbs >= cbs` | `pbs must be greater than or equal to cbs` |
+
+これらの制約は [CONFIG_DB](../../reference/glossary.md#term-config_db) への書き込み時に `sonic-yang-models` で検証される。
 
 ## augment / deviation
 
@@ -135,4 +145,4 @@ module: sonic-scheduler
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 012a493efd9b -->
+<!-- glossary-links-injected: 9dae6d74c08e -->

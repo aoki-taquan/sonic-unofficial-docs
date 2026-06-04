@@ -37,28 +37,52 @@ BGP セッション関連の状態は CONFIG_DB の `BGP_NEIGHBOR` テーブル�
 
 ## 推奨 reading path
 
-逆引き表で当たりが付いた後、面で押さえたい場合の読み順です。
+逆引き表で当たりが付いた後、面で押さえたい場合の読み順です。フラットに 20 項目並べると入口で迷うため、まず **最初に押さえる 5 件** で導線の骨格をつかみ、その後は用途（BGP / interface・VLAN / health & support / 内部設計）でグルーピングしています。
 
-1. [CLI リファレンス](../reference/cli/index.md)
-2. [show interfaces](../reference/cli/show-interfaces.md)
-3. [show ip](../reference/cli/show-ip.md)
-4. [show bgp](../reference/cli/show-bgp.md)
-5. [show platform](../reference/cli/show-platform.md)
-6. [show system-health](../reference/cli/show-system-health.md)
-7. [show techsupport](../reference/cli/show-techsupport.md)
-8. [config interface](../reference/cli/config-interface.md)
-9. [config bgp](../reference/cli/config-bgp.md)
-10. [config vlan](../reference/cli/config-vlan.md)
-11. [CONFIG_DB リファレンス](../reference/config-db/index.md)
-12. [PORT テーブル](../reference/config-db/port.md)
-13. [INTERFACE テーブル](../reference/config-db/interface.md)
-14. [BGP_NEIGHBOR テーブル](../reference/config-db/bgp-neighbor.md)
-15. [VLAN テーブル](../reference/config-db/vlan.md)
-16. [show techsupport 設計](../system/show-techsupport.md)
-17. [System Health Monitor](../system/sonic-system-health-monitor-high-level-design.md)
-18. [Syslog source IP](../system/sonic-syslog-source-ip.md)
-19. [NTP client configuration](../system/sonic-network-time-protocol-ntp-client-configuration.md)
-20. [Static DNS configuration](../system/static-dns-configuration.md)
+### まず最初に押さえる 5 件
+
+SONiC を一度も触ったことが無い読者でも、この 5 ページで「CLI と CONFIG_DB が両輪である」ことと、最頻出の障害切り分け入口がわかります。
+
+1. [CLI リファレンス](../reference/cli/index.md) — `show` / `config` の全体像
+2. [CONFIG_DB リファレンス](../reference/config-db/index.md) — 設定の正規表現は CLI ではなくこちら
+3. [show interfaces](../reference/cli/show-interfaces.md) — 物理層の最初の 1 コマンド
+4. [show ip](../reference/cli/show-ip.md) — L3 経路確認の入口
+5. [show techsupport](../reference/cli/show-techsupport.md) — 詰まったときの dump
+
+### BGP / ルーティング深掘り
+
+逆引き表の「BGP セッションが上がらない」「ルーティングが期待どおりでない」を起点に追加で読む順です。
+
+- [show bgp](../reference/cli/show-bgp.md)
+- [config bgp](../reference/cli/config-bgp.md)
+- [BGP_NEIGHBOR テーブル](../reference/config-db/bgp-neighbor.md)
+
+### interface / VLAN 深掘り
+
+物理ポート down や VLAN 内疎通不可を起点に追加で読む順です。
+
+- [config interface](../reference/cli/config-interface.md)
+- [config vlan](../reference/cli/config-vlan.md)
+- [PORT テーブル](../reference/config-db/port.md)
+- [INTERFACE テーブル](../reference/config-db/interface.md)
+- [VLAN テーブル](../reference/config-db/vlan.md)
+
+### health / platform / support
+
+ハードウェア状態とサポート依頼まわりです。
+
+- [show platform](../reference/cli/show-platform.md)
+- [show system-health](../reference/cli/show-system-health.md)
+- [System Health Monitor 設計](../system/sonic-system-health-monitor-high-level-design.md)
+- [show techsupport 設計](../system/show-techsupport.md)
+
+### 周辺機能 (NTP / syslog / DNS)
+
+逆引き表に直接は無いが、運用導入直後によく問い合わせが入る周辺機能の HLD です。
+
+- [Syslog source IP](../system/sonic-syslog-source-ip.md)
+- [NTP client configuration](../system/sonic-network-time-protocol-ntp-client-configuration.md)
+- [Static DNS configuration](../system/static-dns-configuration.md)
 
 ## 設定変更時の確認 / 保存 / rollback
 

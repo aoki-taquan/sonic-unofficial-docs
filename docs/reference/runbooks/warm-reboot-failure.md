@@ -1,7 +1,8 @@
 ---
 title: Warm Reboot が失敗 / 通信断が長引く
-description: 'Runbook: Warm Reboot が失敗 / 通信断が長引く — : sonic-net/sonic-utilities @ 39732bceb
-  — scripts/warm-reboot : sonic-net/sonic-swss @ 4305596 — warm_restart helper'
+description: 'Warm Reboot が失敗もしくは通信断が長引くケースの切り分け runbook。WARM_RESTART
+  テーブルの enable 状態、reconciliation の進捗、BGP graceful-restart capability、syncd の pre-shutdown
+  状態などを順に確認する。'
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
@@ -63,8 +64,8 @@ sonic-db-cli CONFIG_DB hgetall "WARM_RESTART|swss"
 sonic-db-cli CONFIG_DB hgetall "WARM_RESTART|bgp"
 sonic-db-cli STATE_DB hgetall "WARM_RESTART_TABLE|orchagent"
 
-# warm boot 前のチェック (pending op)
-sudo /usr/local/bin/check_warmboot_progress.sh 2>/dev/null || true
+# warm boot 進行中フラグ (warm-reboot script が起動時にチェックする WARM_RESTART_ENABLE_TABLE) [^1]
+sonic-db-cli STATE_DB keys "WARM_RESTART_ENABLE_TABLE|*"
 docker logs swss 2>&1 | grep -iE "warm.*restore|reconcil" | tail -50
 
 # BGP graceful-restart capability
@@ -76,7 +77,7 @@ docker exec bgp vtysh -c "show bgp neighbor" | grep -A3 "Graceful Restart"
 1. **`WARM_RESTART` テーブルで該当機能が enable されていない** (bgp / [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / swss / [syncd](../../reference/glossary.md#term-syncd) / nat 等)
 2. **[BGP](../../reference/glossary.md#term-bgp) graceful restart の対向側未対応 / capability 未交換**: GR helper として動作するために対向 peer も GR 対応が必要
 3. **dataplane object 量が大きすぎて reconciliation が間に合わない** (Route 数十万件 + [ACL](../../reference/glossary.md#term-acl) 大量) → restore_count に至らずタイムアウト
-4. **`pre-shutdown` のチェックで pending operation あり** (`COUNTERS_DB` の queue / port が busy)
+4. **`pre-shutdown` で [syncd](../../reference/glossary.md#term-syncd) が `pre-shutdown-succeeded` 状態に到達しない** (60 秒タイムアウト) [^1]
 5. **platform / [SAI](../../reference/glossary.md#term-sai) が warm boot 非対応** (Mellanox/Broadcom SDK バージョン依存)
 
 ## 切り分け手順
@@ -157,7 +158,7 @@ sudo grep -i SAI_KEY_WARM_BOOT /usr/share/sonic/hwsku/*/sai.profile 2>/dev/null
 
 本ページの根拠は引用元 [^1][^2] を参照。
 
-[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `scripts/warm-reboot`
-[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — warm_restart helper
+[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `scripts/warm-reboot` (L385-L444 `initialize_pre_shutdown` / `request_pre_shutdown` / `wait_for_pre_shutdown_complete_or_fail`、L855-L866 `check_warm_restart_in_progress`)
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — `warmrestart/warmRestartHelper.cpp` (warm restart reconciliation helper)
 
-<!-- glossary-links-injected: da64d9ca9c4c -->
+<!-- glossary-links-injected: 31370f6ab239 -->

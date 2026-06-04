@@ -1599,9 +1599,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）](../management/sonic-config-update-validation-via-yang.md) (19)
 - [Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）](../architecture/sonic-generic-configuration-update-and-rollback.md) (8)
+- [設定変更の選び方](../topics/01-overview/configuration.md) (6)
 - [サイトマップ](../_meta/sitemap.md) (5)
 - [概念と読み始め方](../topics/01-overview/concept.md) (5)
-- [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (4)
 
 ### [gNOI](#term-gnoi)
 
@@ -1917,7 +1917,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [port_config.ini](#term-port-config-ini)
 
-- [port_config.ini パーサ統合（portconfig.py 一元化）](../architecture/sonic-port-configuration-refactor-design.md) (18)
+- [port_config.ini パーサ統合（portconfig.py 一元化）](../architecture/sonic-port-configuration-refactor-design.md) (22)
 - [SONiC ポート命名規則の変更案（et[sX]pY[abcd]）](../platform/sonic-port-naming-convention-change.md) (16)
 - [DEVICE_RUNTIME_METADATA テーブル](config-db/device-runtime-metadata.md) (16)
 - [DEVICE_NEIGHBOR テーブル](config-db/device-neighbor.md) (12)
@@ -2213,7 +2213,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (356)
+- [サイトマップ](../_meta/sitemap.md) (355)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (31)
 - [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (28)

@@ -1,7 +1,6 @@
 ---
 title: port_config.ini パーサ統合（portconfig.py 一元化）
-description: port_config.ini パーサ統合（portconfig.py 一元化） — SONiC のポート定義は伝統的に port_config.ini（プラットフォーム配下のテキストファイル）に書かれており、ポート名・index・lane・speed
-  等を保持する。
+description: port_config.ini パーサを sonic-config-engine/portconfig.py に一本化し、散在するパース実装を集約する HLD。platform.json 移行の下地としての位置付けと、build/runtime 依存および test plan を整理する。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
@@ -157,17 +156,25 @@ HLD が示すテスト計画[^1]:
 - pmon が起動失敗: `sonic-config-engine` が docker 内に配置されていない。`portconfig.py` を import できないため[^1]。
 - ベンダ固有 daemon で `port_config.ini` が見つからない: vendor 側 のリファクタが追従していない可能性[^1]。
 
-### コマンド例: Port config refactor 確認
+### コマンド例: parse 層集約の挙動確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+本リファクタの主眼は **`port_config.ini` / `platform.json` パースの単一窓口化** にある。[orchagent](../reference/glossary.md#term-orchagent) 等のランタイム挙動ではなく、**同じ入力ファイルに対して `portconfig.get_port_config` が安定した CONFIG_DB PORT 反映を返すか** を確かめるのが直接的な検証になる。下記は build 環境 / unit test 経路での確認例。
 
 ```bash
-# PORT エントリ反映と orchagent ログ
-show interfaces status
-redis-cli -n 4 keys 'PORT|Ethernet*' | sort | head
-sudo grep -E 'portsorch' /var/log/syslog | tail -50
+# 1. portconfig.py の関数が一本化されていることを import 経路で確認
+python3 -c "from portconfig import get_port_config, parse_port_config_file, get_child_ports, get_breakout_mode; print('ok')"
+
+# 2. sonic-cfggen 経由で port_config.ini → CONFIG_DB PORT セクションを生成
+#    （-k <hwsku> -p <port_config.ini> を与えると minigraph 不要で PORT 部分だけ吐ける）
+sonic-cfggen -k Force10-S6000 -p /usr/share/sonic/device/<platform>/<hwsku>/port_config.ini \
+    --print-data | jq '.PORT'
+
+# 3. 同じ SKU を platform.json 経路でも生成して diff
+sonic-cfggen -k Force10-S6000 --print-data | jq '.PORT' > /tmp/port.json.out
+diff /tmp/port.ini.out /tmp/port.json.out   # auto-increment index と lanes/speed が一致するべき
 ```
+
+`sfputilbase.py` / `sfputilhelper.py` の adapter 経路が壊れていないかは、`sfputil show eeprom` などの **sub-command 出力比較** が HLD の test plan で指示されている検証ポイントである[^1]。
 
 ## 参考リンク
 
@@ -197,4 +204,4 @@ sudo grep -E 'portsorch' /var/log/syslog | tail -50
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: e2892b76fd9a -->

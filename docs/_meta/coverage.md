@@ -28,8 +28,8 @@ last_verified: 2026-05-11
 | code-verified | 756 |
 | runbook-verified | 27 |
 | discrepancy-found | 112 |
-| issue-confirmed | 9 |
-| hld-only | 0 |
+| issue-confirmed | 8 |
+| hld-only | 1 |
 | meta | 199 |
 | stub | 1 |
 
@@ -40,11 +40,11 @@ last_verified: 2026-05-11
 | `_meta` | 0 | 0 | 0 | 0 | 0 | 5 | 0 | 5 |
 | `_root` | 0 | 0 | 0 | 0 | 0 | 4 | 0 | 4 |
 | `acl-qos` | 29 | 0 | 6 | 0 | 0 | 1 | 0 | 36 |
-| `architecture` | 35 | 0 | 25 | 0 | 0 | 1 | 0 | 61 |
+| `architecture` | 34 | 0 | 25 | 0 | 1 | 1 | 0 | 61 |
 | `categories` | 0 | 0 | 0 | 0 | 0 | 11 | 0 | 11 |
 | `guides` | 0 | 0 | 0 | 0 | 0 | 5 | 0 | 5 |
 | `internals` | 10 | 0 | 6 | 2 | 0 | 1 | 0 | 19 |
-| `management` | 31 | 0 | 16 | 3 | 0 | 1 | 0 | 51 |
+| `management` | 32 | 0 | 16 | 2 | 0 | 1 | 0 | 51 |
 | `overlay` | 19 | 0 | 1 | 0 | 0 | 1 | 0 | 21 |
 | `platform` | 35 | 0 | 13 | 3 | 0 | 1 | 0 | 52 |
 | `reference` | 467 | 27 | 8 | 0 | 0 | 13 | 1 | 516 |
