@@ -13,25 +13,16 @@ related:
   config_db:
   - MACSEC_PROFILE
   - PORT
-  - PFC_WD
   - ACL_RULE
   - ACL_TABLE
-  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
-  - CRM
   cli:
   - config macsec
   - show macsec
-  - show pfc
   - show acl
   - config acl
   yang:
   - sonic-macsec
-  - sonic-pfc-priority-priority-group-map
-  - sonic-pfc-priority-queue-map
-  - sonic-crm
-  - sonic-pfcwd
-  - sonic-buffer-pool
-  - sonic-buffer-profile
+  - sonic-acl
 ---
 
 <!-- topics-tip -->
@@ -40,7 +31,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified（基本構成のみ）"
-    現行 master の `sonic-swss/orchagent/macsecorch.cpp` で `PAUSE_ETHER_TYPE 0x8808`、`PFC_MODE_BYPASS` を確認（PFC バイパス ACL の実装）。`macsecmgr` / `macsecorch` モジュール、`docker-macsec/etc/wpa_supplicant.conf` も存在。XPN / proactive SAK refresh / 可変 max-SA の wpa_supplicant 拡張は別パッチ系列で取り込まれている。詳細は元 HLD 参照（verified at: 2026-05-09）。
+    現行 master の `sonic-swss/orchagent/macsecorch.cpp` で `PAUSE_ETHER_TYPE 0x8808`（L26）、`PFC_MODE_BYPASS`（L29）、PFC バイパス ACL を構築する分岐（L3120, L3186）を確認[^pfc-bypass]。`macsecmgr` / `macsecorch` モジュール、`docker-macsec/etc/wpa_supplicant.conf` も存在。XPN / proactive SAK refresh / 可変 max-SA の wpa_supplicant 拡張は別パッチ系列で取り込まれている。詳細は元 HLD 参照（verified at: 2026-05-09）。
 
 # MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）
 
@@ -152,7 +143,7 @@ APPL_DB:MACSEC_INGRESS_SA_TABLE:<ifname>:<sci>:<an>
 
 | 機能 | 影響 |
 |------|------|
-| **PFC** | `ETHER_TYPE=0x8808` フレームを暗号化対象から外すため Ingress/Egress に PFC バイパス ACL を追加 |
+| **PFC** | `ETHER_TYPE=0x8808` フレームを暗号化対象から外すため Ingress/Egress に PFC バイパス ACL を追加[^pfc-bypass]。PFCWD / buffer-pool / buffer-profile などは MACsec とは独立に動作（本 HLD のスコープ外） |
 | **ACL** | PFC バイパス + MACsec フロー用 ACL_ENTRY を MACsec Orch が暗黙に作成 |
 | **[FlexCounter](../reference/glossary.md#term-flexcounter)** | SA 単位 counter polling で [COUNTERS_DB](../reference/glossary.md#term-counters_db) に大量 entry |
 | **Warm reboot** | SAK / SA は揮発し再生成する設計 |
@@ -198,6 +189,7 @@ MACsec を [LAG](../reference/glossary.md#term-lag) と組み合わせる場合�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/macsec/MACsec_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^pfc-bypass]: `sonic-net/sonic-swss` `orchagent/macsecorch.cpp` L26（`PAUSE_ETHER_TYPE 0x8808`）, L29（`PFC_MODE_BYPASS`）, L3120-L3186（`pfc_mode == PFC_MODE_BYPASS` 分岐で `SAI_ACL_ENTRY_ATTR_FIELD_ETHER_TYPE = 0x8808` を持つ ACL エントリを生成）
 
 <!-- topics-back-ref -->
 ## 関連 Topics
