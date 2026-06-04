@@ -117,7 +117,7 @@ module: sonic-mclag
 | `MCLAG_DOMAIN_LIST` (must) | `(keepalive_interval * 3) <= session_timeout` | `keepalive_session_multiplier-invalid` | keepalive 周期の 3 倍が session timeout を超えないこと[^1] |
 | `keepalive_interval` (range) | `1..60` | `keepalive_interval-invalid` | 秒単位、デフォルト 1[^1] |
 | `session_timeout` (range) | `1..3600` | `session_timeout-invalid` | 秒単位、デフォルト 30[^1] |
-| `domain_id` (range) | `1..4095` | `MCLAG Domain ID out of range` | — [^1] |
+| `domain_id` (range) | `1..4095` | — (error-message `MCLAG Domain ID out of range`) | [YANG](../../reference/glossary.md#term-yang) source は `error-app-tag` を持たず `error-message` のみを定義[^1] |
 | `MCLAG_UNIQUE_IP_LIST` (must) | `count(../../MCLAG_DOMAIN/MCLAG_DOMAIN_LIST/domain_id) != 0` | `mclag-invalid` | `MCLAG_DOMAIN` 未設定では `MCLAG_UNIQUE_IP` を作成できない[^1] |
 | `MCLAG_UNIQUE_IP_LIST/if_name` (pattern) | `Vlan([0-9]{1,3}\|[1-3][0-9]{3}\|[4][0][0-8][0-9]\|[4][0][9][0-4])` | — | [VLAN](../../reference/glossary.md#term-vlan) ID 0..4094 のみ受理[^1] |
 
@@ -165,4 +165,4 @@ module: sonic-mclag
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mclag.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: f7808c6675e0 -->
+<!-- glossary-links-injected: d5320e852f7a -->
