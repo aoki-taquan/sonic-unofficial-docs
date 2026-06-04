@@ -1,14 +1,26 @@
 ---
 title: SONiC Management Framework（REST / gNMI / Translib / Transformer）
-description: SONiC Management Framework（REST / gNMI / Translib / Transformer） — sonic-mgmt-framework
-  は外部 API（REST / gNMI / CLI）と内部 CONFIG_DB / 各種 daemon 間の モデル翻訳層 を担う。
+description: sonic-mgmt-framework は REST/gNMI/CLI と CONFIG_DB / daemon 間の YANG モデル翻訳層。Translib App
+  Interface、Transformer 各種 callback、Subscribe、CVL の deep-link 付き解説。
 area: management
 verification: code-verified
-last_verified: 2026-05-10
+last_verified: 2026-06-04
 sources:
 - repo: sonic-net/SONiC
   path: doc/mgmt/Management Framework.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-mgmt-common
+  path: translib/app_interface.go
+  ref: master
+- repo: sonic-net/sonic-mgmt-common
+  path: translib/transformer/xfmr_interface.go
+  ref: master
+- repo: sonic-net/sonic-mgmt-common
+  path: translib/subscribe.go
+  ref: master
+- repo: sonic-net/sonic-mgmt-common
+  path: cvl/cvl_api.go
+  ref: master
 related:
   config_db:
   - AAA
@@ -71,6 +83,73 @@ flowchart LR
 - **mgmt-framework container**: REST / Translib / Transformer / KLISH を 1 コンテナに同居させる構成
 - **認証/認可**: TLS + client cert、TACACS+/[RADIUS](../reference/glossary.md#term-radius)/LDAP は [AAA](../reference/glossary.md#term-aaa) 改善 [HLD](../reference/glossary.md#term-hld) に従う
 
+## 主要コンポーネントの深掘り
+
+原典 HLD は 2883 行 (170KB) ある包括設計書のため[^1]、本ページでは中心となる Translib / Transformer / Subscribe / CVL の interface とソース位置のみ要点を抜く。各章の詳細は HLD 該当節 (節番号で記載) を参照のこと。
+
+### Translib App Interface（HLD 3.2.2.6）
+
+Translib は北側 (REST / gNMI / CLI) からの xpath 要求を受け取り、`appInterface` を実装する app module に dispatch する。`appInterface` は translate / process 系の対称な対を持つ[^2]:
+
+```go
+// translib/app_interface.go L96-L112
+type appInterface interface {
+    initialize(data appData)
+    translateCreate(d *db.DB)  ([]db.WatchKeys, error)
+    translateUpdate(d *db.DB)  ([]db.WatchKeys, error)
+    translateReplace(d *db.DB) ([]db.WatchKeys, error)
+    translateDelete(d *db.DB)  ([]db.WatchKeys, error)
+    translateGet(dbs [db.MaxDB]*db.DB) error
+    translateAction(dbs [db.MaxDB]*db.DB) error
+    translateSubscribe(req translateSubRequest) (translateSubResponse, error)
+    processCreate(d *db.DB)  (SetResponse, error)
+    processUpdate(d *db.DB)  (SetResponse, error)
+    // ... processReplace / processDelete / processGet / processAction / processSubscribe
+}
+```
+
+App module は `register(path, info)` で初期化時に URL prefix を登録する[^2]。openconfig 系の標準 app は `common_app.go` を経由して Transformer に委譲する設計。
+
+- App registry: `translib/app_interface.go` L115-L133 の `register()`
+- 既存 app 例: `acl_app.go` / `lldp_app.go` / `pfm_app.go` / `sys_app.go` / `common_app.go`
+
+### Transformer callback 型（HLD 3.2.2.7）
+
+Transformer は openconfig YANG ↔ sonic YANG / CONFIG_DB の写像を per-module Go callback で表現する[^3]。主要な callback 型:
+
+| 型 | 用途 | source |
+|----|----|--------|
+| `KeyXfmrYangToDb` / `KeyXfmrDbToYang` | list key 双方向写像 | `xfmr_interface.go` L151-L157 |
+| `FieldXfmrYangToDb` / `FieldXfmrDbToYang` | leaf field 値変換 | L163-, L246- |
+| `SubTreeXfmrYangToDb` / `SubTreeXfmrDbToYang` | subtree 一括変換 | L175-L181 |
+| `TableXfmrFunc` | 動的 Redis table 決定 | L208 |
+| `PreXfmrFunc` / `PostXfmrFunc` | CREATE/UPDATE/DELETE 前後フック | L199-, L220- |
+| `PathXfmrDbToYangFunc` | DB key→YANG key path 変換 | L226 |
+
+これらは YANG 拡張 (`sonic-extensions`) の annotation で YANG モデルに紐付ける[^3]。詳細は HLD 3.2.2.7.5 (YANG Extensions) と 3.2.2.7.6 (Public Functions) 参照。
+
+### gNMI Subscribe / Stream（HLD 3.2.2.6 + 4.4）
+
+`translib/subscribe.go` の公開 API:
+
+- `Subscribe(req SubscribeRequest) error` — 変更通知 stream (L171)[^4]
+- `Stream(req SubscribeRequest) error` — 周期 push (L219)
+- `IsSubscribeSupported(req IsSubscribeRequest)` — path ごとに subscribe 可否を返す (L264)
+
+SAMPLE / ON_CHANGE の最小間隔は `apis.SAMPLE_NOTIFICATION_MIN_INTERVAL` に固定[^4] (`subscribe.go` L104-L107)。詳細フロー (gNMI handler → Translib → app `translateSubscribe`) は HLD 4.4 節。
+
+### CVL (Config Validation Library)（HLD 3.2.2.8）
+
+CVL は sonic-* YANG を使った CONFIG_DB 書き込み前 validation を提供する[^5]。主な API は `cvl/cvl_api.go`:
+
+- `Initialize()` / `Finish()` (L123, L178)
+- `ValidationSessOpen()` / `ValidationSessClose()` (L182, L202)
+- `ValidateConfig(jsonData)` (L272) — startup config 用バルク検証
+- `ValidateEditConfig(cfgData)` (L297) — [orchagent](../reference/glossary.md#term-orchagent) 等の差分書き込み検証
+- `SortDepTables()` / `GetOrderedTables()` (L750, L767) — leafref 依存解決の topological sort
+
+CVL は構文 (YANG schema) / 意味 (must / when / leafref) / Platform 制約 (静的 + 動的) の三層検証を行う (HLD 3.2.2.8.2)。
+
 ## 主要なフロー
 
 ```mermaid
@@ -131,9 +210,22 @@ diff /etc/sonic/config_db.json <(show runningconfiguration all)
 ```
 
 
+## 開発者ワークフロー（HLD 5 章への入口）
+
+新機能の API 化フローは標準 YANG ベース / 非標準 (sonic-* YANG only) の二系統に分かれる:
+
+- **非標準 (sonic-* YANG only)**: HLD 5.1 節。sonic-* YANG 定義 → REST stub / Client SDK 自動生成 → Translation App (Go) 実装 → IS CLI / gNMI 配線
+- **標準ベース (openconfig / IETF)**: HLD 5.2 節。標準 YANG を選定 → Redis schema 設計 → sonic-* YANG 定義 → Transformer callback 実装 (上記表参照) → IS CLI / gNMI
+
+実装側のテンプレ・既存例は `sonic-mgmt-common/translib/transformer/` 配下 (例: `xfmr_intf.go` / `xfmr_sflow.go` / `xfmr_mclag.go` / `xfmr_system.go`) と `translib/*_app.go` を参照。
+
 ## 引用元
 
-[^1]: `sonic-net/SONiC` `doc/mgmt/Management Framework.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^1]: `sonic-net/SONiC` `doc/mgmt/Management Framework.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06` (2883 行の包括 HLD)
+[^2]: `sonic-net/sonic-mgmt-common` `translib/app_interface.go` L45-L186 @ master (`appInterface` / `register()`)
+[^3]: `sonic-net/sonic-mgmt-common` `translib/transformer/xfmr_interface.go` L147-L266 @ master (callback 型定義)
+[^4]: `sonic-net/sonic-mgmt-common` `translib/subscribe.go` L37-L270 @ master (`Subscribe` / `Stream` / `IsSubscribeSupported`)
+[^5]: `sonic-net/sonic-mgmt-common` `cvl/cvl_api.go` L123-L800 @ master (CVL session / validation API)
 
 <!-- concerns hint:
 - sonic-mgmt-framework / sonic-mgmt-common の現行 master 取り込み確認
@@ -163,4 +255,4 @@ diff /etc/sonic/config_db.json <(show runningconfiguration all)
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8b4906c6c628 -->
+<!-- glossary-links-injected: e2892b76fd9a -->
