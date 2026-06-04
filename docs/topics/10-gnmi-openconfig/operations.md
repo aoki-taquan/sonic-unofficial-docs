@@ -1,36 +1,32 @@
 ---
 title: 運用
 description: 運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collector
-  へ push する dial-out telemetry、subscription の安定性が課題になる。
+  へ push する dial-out telemetry、subscription の安定性が課題になる。それぞれの HLD を一望できるようにまとめる。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: code-verified
+last_verified: 2026-06-04
+sources:
+- repo: sonic-net/sonic-gnmi
+  path: gnmi_server/server.go
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-gnmi
+  path: telemetry/telemetry.go
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-telemetry.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-telemetry_client.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  cli:
-  - show nat
-  - config nat
-  - config bgp
-  - show bgp
-  - config portchannel
-  - config qos
-  - show acl
+  cli: []
   config_db:
-  - TELEMETRY_CLIENT
-  - NAT
-  - VLAN
   - TELEMETRY
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - TELEMETRY_CLIENT
   yang:
-  - sonic-port
-  - sonic-nat
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
+  - sonic-telemetry
+  - sonic-telemetry_client
+  _no_related_cli: true
 ---
 
 # 運用
@@ -42,6 +38,40 @@ related:
 複数の NMS / 自動化 client が同じ switch に書き込むと、race condition による不整合が起きる。[SONiC](../../reference/glossary.md#term-sonic) は gNMI master arbitration で「現在の writer は 1 つだけ」を強制できる。election ID を交換し、より大きい ID を持つ client が master になる。slave 化された client の Set は失敗で返るため、運用 script 側で master 化失敗時の fallback を書く必要がある。
 
 詳細は [gNMI master arbitration HLD](../../management/gnmi-master-arbitration-hld.md) を参照する。election ID のリセット条件、failover の手順、observability の見方はそのページにまとまっている。
+
+<!-- evidence:
+source: sonic-net/sonic-gnmi/gnmi_server/server.go#L1308-L1340 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+excerpt: |
+  // ReqFromMasterEnabledMA returns true if the request is sent by the master controller.
+  func ReqFromMasterEnabledMA(req *gnmipb.SetRequest, masterEID *uint128) error {
+      ...
+      ma := e.GetMasterArbitration()
+      ...
+      reqEID = uint128{High: ma.ElectionId.High, Low: ma.ElectionId.Low}
+reasoning: gNMI SetRequest の Extension に MasterArbitration を載せ、election_id (uint128) を比較して master 判定をする実装。role は未実装で codes.Unimplemented を返す。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-gnmi/gnmi_server/server.go#L1308-L1340 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)"
+
+    **出典**:
+
+    `sonic-net/sonic-gnmi/gnmi_server/server.go#L1308-L1340 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)`
+
+    **抜粋**:
+
+    ```text
+    // ReqFromMasterEnabledMA returns true if the request is sent by the master controller.
+    func ReqFromMasterEnabledMA(req *gnmipb.SetRequest, masterEID *uint128) error {
+        ...
+        ma := e.GetMasterArbitration()
+        ...
+        reqEID = uint128{High: ma.ElectionId.High, Low: ma.ElectionId.Low}
+    ```
+
+    **判断根拠**: gNMI SetRequest の Extension に MasterArbitration を載せ、election_id (uint128) を比較して master 判定をする実装。role は未実装で codes.Unimplemented を返す。
+
+<!-- evidence-rendered:end -->
 
 非 master からの Set は次のような応答になるため、client 側で `PermissionDenied` を確実に拾う実装にする。
 
@@ -65,6 +95,58 @@ gNMI Set は [CONFIG_DB](../../reference/glossary.md#term-config_db) を更新�
 - 大量の Set を高頻度で打つ用途では、write amplification によりディスクへの負担が増えるため、明示的な save を使うパターンと使い分ける。
 
 挙動の詳細、エラー処理、`config save` との衝突回避は [Save-on-set HLD](../../management/save-on-set-hld.md) を参照する。
+
+<!-- evidence:
+source: sonic-net/sonic-gnmi/telemetry/telemetry.go#L183-L190 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+excerpt: |
+  WithSaveOnSet: fs.Bool("with-save-on-set", false, "Enables save-on-set."),
+reasoning: telemetry プロセスの起動フラグ `--with-save-on-set` で save-on-set が有効化される。default は false。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-gnmi/telemetry/telemetry.go#L183-L190 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)"
+
+    **出典**:
+
+    `sonic-net/sonic-gnmi/telemetry/telemetry.go#L183-L190 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)`
+
+    **抜粋**:
+
+    ```text
+    WithSaveOnSet: fs.Bool("with-save-on-set", false, "Enables save-on-set."),
+    ```
+
+    **判断根拠**: telemetry プロセスの起動フラグ `--with-save-on-set` で save-on-set が有効化される。default は false。
+
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-gnmi/gnmi_server/server.go#L1050-L1068 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+excerpt: |
+  // saveOnSetEnabled saves configuration to a file
+  func SaveOnSetEnabled() error { ... }
+  func saveOnSetDisabled() error { return nil }
+reasoning: SaveOnSetEnabled / saveOnSetDisabled の 2 関数を Server.SaveStartupConfig に差し込む形で実装されている。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-gnmi/gnmi_server/server.go#L1050-L1068 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)"
+
+    **出典**:
+
+    `sonic-net/sonic-gnmi/gnmi_server/server.go#L1050-L1068 (sha: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)`
+
+    **抜粋**:
+
+    ```text
+    // saveOnSetEnabled saves configuration to a file
+    func SaveOnSetEnabled() error { ... }
+    func saveOnSetDisabled() error { return nil }
+    ```
+
+    **判断根拠**: SaveOnSetEnabled / saveOnSetDisabled の 2 関数を Server.SaveStartupConfig に差し込む形で実装されている。
+
+<!-- evidence-rendered:end -->
 
 設定の有無は `redis-cli -n 4 hgetall "DEVICE_METADATA|localhost"` または telemetry の起動オプションで確認する。`config_db.json` の更新タイムスタンプを `stat /etc/sonic/config_db.json` で監視すると、Set 後に永続化が走ったかを後追いできる。
 

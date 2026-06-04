@@ -1605,8 +1605,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [gNOI](#term-gnoi)
 
-- [サイトマップ](../_meta/sitemap.md) (28)
-- [Wake-on-LAN（wol CLI と SonicWolService gNOI）](../switching/wake-on-lan-in-sonic.md) (18)
+- [サイトマップ](../_meta/sitemap.md) (27)
+- [Wake-on-LAN（wol CLI と SonicWolService gNOI）](../switching/wake-on-lan-in-sonic.md) (21)
 - [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../system/smart-switch-reboot-high-level-design.md) (18)
 - [gNOI / gNSI](../topics/10-gnmi-openconfig/gnoi-gnsi.md) (17)
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (16)
@@ -2213,7 +2213,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (355)
+- [サイトマップ](../_meta/sitemap.md) (356)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (31)
 - [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (28)
@@ -2258,7 +2258,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [ToR](#term-tor)
 
-- [サイトマップ](../_meta/sitemap.md) (77)
+- [サイトマップ](../_meta/sitemap.md) (78)
 - [Dual-ToR の考え方](../topics/05-dual-tor/concept.md) (65)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (59)
 - [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (40)

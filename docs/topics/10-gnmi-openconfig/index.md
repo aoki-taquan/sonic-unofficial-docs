@@ -77,7 +77,7 @@ related:
 | concept | 140 | ✅ 完成 | meta | 概念・位置付け |
 | architecture | 69 | ⚠️ プレースホルダ | code-verified | アーキテクチャ・データフロー |
 | setup | 208 | ✅ 完成 | meta | セットアップ手順 |
-| operations | 170 | ✅ 完成 | meta | 運用・デバッグ |
+| operations | 256 | ✅ 完成 | code-verified | 運用・デバッグ |
 | internals | 126 | ✅ 完成 | meta | 内部実装 |
 | gnoi-gnsi | 53 | ⚠️ プレースホルダ | meta | gNOI / gNSI API |
 | yang-reference | 35 | ⚠️ プレースホルダ | meta | YANG リファレンス |
