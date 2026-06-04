@@ -25,7 +25,8 @@ related:
   cli:
     - show mac
     - sonic-clear fdb all
-  yang: []
+  yang:
+    - sonic-fdb
 ---
 
 # APPL_DB FDB_TABLE
