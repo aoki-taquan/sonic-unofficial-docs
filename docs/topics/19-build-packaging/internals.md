@@ -64,7 +64,7 @@ flowchart LR
   FEATURED --> SYSTEMD[systemd start docker]
 ```
 
-`featured` は [sonic-host-services](../../reference/glossary.md#term-sonic-host-services) 配下の専用 daemon で、`FEATURE` テーブルを subscribe して service の enable / disable / restart を司る。汎用ホスト設定 (TACACS / SSH / syslog 等) は `hostcfgd` 側が担当する。[^featured]
+`featured` は `sonic-host-services` 配下の専用 daemon で、`FEATURE` テーブルを subscribe して service の enable / disable / restart を司る。汎用ホスト設定 (TACACS / SSH / syslog 等) は `hostcfgd` 側が担当する。[^featured]
 
 ## 主要コンポーネントの責務
 
