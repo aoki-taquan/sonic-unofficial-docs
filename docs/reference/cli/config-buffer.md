@@ -1,10 +1,10 @@
 ---
 title: config buffer サブコマンド
 description: config buffer サブコマンド — config buffer は dynamic buffer が有効なシステムで、CONFIG_DB
-  の BUFFER_PROFILE を追加・更新する CLI グループ。
+  の BUFFER_PROFILE を追加・更新・削除し、shared headroom pool の比率/サイズを設定する CLI グループ。
 area: reference
 verification: code-verified
-last_verified: 2026-05-10
+last_verified: 2026-06-04
 sources:
 - repo: sonic-net/sonic-utilities
   path: config/main.py
@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-`config buffer` は dynamic buffer が有効なシステムで、[CONFIG_DB](../../reference/glossary.md#term-config_db) の `BUFFER_PROFILE` を追加・更新する CLI グループ。グループ入口で `DEVICE_METADATA|localhost` の `buffer_model` を確認し、dynamic 以外では実行を拒否する[^1]。
+`config buffer` は dynamic buffer が有効なシステムで、[CONFIG_DB](../../reference/glossary.md#term-config_db) の `BUFFER_PROFILE` を追加・更新・削除し、shared headroom pool の比率/サイズを設定する CLI グループ。グループ入口で `is_dynamic_buffer_enabled()` を呼び、dynamic でなければ実行を拒否する[^1]。
 
 ## コマンド一覧
 
@@ -35,6 +35,9 @@ related:
 |---------|------|
 | `config buffer profile add <profile> [options]` | `BUFFER_PROFILE|<profile>` を新規作成 |
 | `config buffer profile set <profile> [options]` | 既存 profile を更新 |
+| `config buffer profile remove <profile>` | 既存 profile を削除 |
+| `config buffer shared_headroom_pool over-subscribe-ratio <ratio>` | shared headroom pool の over-subscribe 比率を設定 |
+| `config buffer shared_headroom_pool size <size>` | shared headroom pool の絶対サイズを設定 |
 
 ## 各コマンドの詳細
 
@@ -51,9 +54,9 @@ config buffer profile add <profile>
     [--pool <pool>]
 ```
 
-`BUFFER_PROFILE|<profile>` が既に存在する場合はエラー。存在しない場合、`update_profile()` を通じて `pool`, `xon`, `xoff`, `size`, `dynamic_th` を組み立て、`ValidatedConfigDBConnector` で [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込む[^2]。
+`BUFFER_PROFILE|<profile>` が既に存在する場合はエラー。存在しない場合、`update_profile()` を呼ぶ[^2]。`update_profile()` 内部で `ConfigDBConnector` を `ValidatedConfigDBConnector` でラップし、`pool`, `xon`, `xoff`, `size`, `dynamic_th` を組み立てた上で [CONFIG_DB](../../reference/glossary.md#term-config_db) に `set_entry` する[^update]。
 
-`--pool` を省略すると `ingress_lossless_pool` が使われる。指定 pool は `BUFFER_POOL` に存在する必要がある。
+`--pool` を省略すると `ingress_lossless_pool` が使われる。指定 pool は `BUFFER_POOL` に存在する必要がある。`xon`/`xoff`/`size` をいずれも省略した場合は `headroom_type=dynamic` の profile となり、`--dynamic_th` の指定が必須となる[^update].
 
 ### `config buffer profile set <profile>`
 
@@ -70,13 +73,44 @@ config buffer profile set <profile>
 
 既存 `BUFFER_PROFILE|<profile>` を更新する。profile が存在しなければエラー。既存 profile が `xoff` を持たない dynamic headroom 計算型の場合、`--xoff` を指定して非 dynamic 型へ変える操作は拒否される[^3]。
 
+### `config buffer profile remove <profile>`
+
+**用法**:
+
+```bash
+config buffer profile remove <profile>
+```
+
+`BUFFER_PROFILE|<profile>` を削除する。削除前に `BUFFER_PG` テーブル全体を走査し、いずれかの port/PG が当該 profile を参照していれば `Profile X is referenced by ...` で拒否する。profile が存在しなければ `Profile X doesn't exist` で失敗する[^4]。
+
+### `config buffer shared_headroom_pool over-subscribe-ratio <ratio>`
+
+**用法**:
+
+```bash
+config buffer shared_headroom_pool over-subscribe-ratio <ratio>
+```
+
+`DEFAULT_LOSSLESS_BUFFER_PARAMETER` の単一エントリに `over_subscribe_ratio` を設定する。値域は `[0, ポート数]`。`0` を指定するとキーが削除される。テーブルに 2 件以上のエントリがあると失敗する[^5]。
+
+### `config buffer shared_headroom_pool size <size>`
+
+**用法**:
+
+```bash
+config buffer shared_headroom_pool size <size>
+```
+
+`BUFFER_POOL|ingress_lossless_pool` の `xoff` を設定する。`STATE_DB` の `BUFFER_MAX_PARAM_TABLE|global` から `mmu_size` を読み、`size > mmu_size` の場合は拒否される。`size=0` を指定すると既存の `xoff` キーが削除される[^5].
+
 ## 関連する CONFIG_DB
 
 | テーブル | キー | 操作 |
 |----------|------|------|
-| `BUFFER_PROFILE` | `<profile>` | profile の作成・更新 |
-| `BUFFER_POOL` | `<pool>` | 指定 pool の存在確認 |
-| `DEFAULT_LOSSLESS_BUFFER_PARAMETER` | 任意 | shared headroom pool 判定 |
+| `BUFFER_PROFILE` | `<profile>` | profile の作成・更新・削除 |
+| `BUFFER_POOL` | `<pool>` / `ingress_lossless_pool` | 指定 pool の存在確認、shared headroom pool size の書き込み先 (`xoff`) |
+| `BUFFER_PG` | `<port>|<pg>` | profile 削除時の参照チェック (read-only) |
+| `DEFAULT_LOSSLESS_BUFFER_PARAMETER` | 任意 | `over_subscribe_ratio` / `default_dynamic_th` の格納 |
 
 ## 注意
 
@@ -93,11 +127,17 @@ config buffer profile set <profile>
 
 ## 引用元
 
-[^1]: `config buffer` グループ定義と dynamic buffer チェック。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8481>
+[^1]: `config buffer` グループ定義と `is_dynamic_buffer_enabled()` チェック。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8479-L8487>
 
-[^2]: `profile add` は既存 entry を確認してから `update_profile()` を呼ぶ。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8494>
+[^2]: `profile add` は既存 entry を確認してから `update_profile()` を呼ぶ。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8497-L8514>
 
-[^3]: `profile set` の存在確認と `xoff` 変更制限。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8514>
+[^update]: `update_profile()` は `ValidatedConfigDBConnector` で wrap した上で `BUFFER_PROFILE` に `set_entry` する。`xon`/`xoff`/`size` 未指定時は `headroom_type=dynamic` と扱われ、`dynamic_th` が必須となる。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8556-L8632>
+
+[^3]: `profile set` の存在確認と `xoff` 変更制限。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8517-L8537>
+
+[^4]: `profile remove` は `BUFFER_PG` 参照チェック → `set_entry(..., None)` で削除。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8634-L8656>
+
+[^5]: `shared_headroom_pool` グループの `over-subscribe-ratio` / `size` サブコマンド。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8658-L8730>
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
