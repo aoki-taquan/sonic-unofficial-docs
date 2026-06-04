@@ -1376,8 +1376,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ConsumerStateTable](#term-consumerstatetable)
 
 - [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (16)
+- [ZMQ ProducerStateTable / ConsumerStateTable 設計](../internals/zmq-producer-consumer-state-table-design.md) (15)
 - [DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)](config-db/dpu-orch.md) (13)
-- [ZMQ ProducerStateTable / ConsumerStateTable 設計](../internals/zmq-producer-consumer-state-table-design.md) (11)
 - [APPL_DB BUFFER_* テーブル群](config-db/appl-buffer.md) (10)
 - [LABEL_ROUTE_TABLE (APPL_DB)](config-db/appl-mpls-route.md) (10)
 
@@ -1621,7 +1621,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (324)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (320)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
