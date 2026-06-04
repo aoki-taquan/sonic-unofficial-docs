@@ -1759,7 +1759,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [APPL_DB MCLAG/ICCP 関連テーブル](config-db/appl-mclag.md) (133)
 - [MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル](config-db/mclag-domain.md) (121)
 - [MCLAG_UNIQUE_IP テーブル](config-db/mclag-unique-ip.md) (113)
-- [STP / ICCP 連携 — コード由来デフォルト詳細](config-db/stp-iccp.md) (68)
+- [sonic-mclag YANG](yang/sonic-mclag.md) (87)
 
 ### [minigraph.xml](#term-minigraph.xml)
 
