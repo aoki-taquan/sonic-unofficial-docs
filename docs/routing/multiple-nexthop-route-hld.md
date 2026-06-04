@@ -8,6 +8,15 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/dualtor/multiple_nexthop_route_hld.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss
+  path: orchagent/muxorch.cpp
+  ref: master
+- repo: sonic-net/sonic-swss
+  path: orchagent/muxorch.h
+  ref: master
+- repo: sonic-net/sonic-swss
+  path: orchagent/routeorch.cpp
+  ref: master
 related:
   config_db:
   - MUX_CABLE
@@ -33,7 +42,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
-    `sonic-swss/orchagent/muxorch.cpp` L1585 `MuxOrch::updateRoute(const IpPrefix &pfx)`、L2058 `MuxOrch::containsNextHop()`、L1824/1926/2019/2045/2050 の `mux_nexthop_tb_` 出入り、L700 `MuxCable::updateRoutes()` / L724 `MuxCable::updateRoutesForNextHop()` から `mux_orch_->updateRoute(rt->prefix)` が駆動される経路を確認 (verified at: 2026-05-09)。
+    `sonic-swss/orchagent/muxorch.cpp` L2058 `MuxOrch::containsNextHop()`、L2069 `MuxOrch::isMuxNexthops(const NextHopGroupKey&)`、`muxorch.h` L280 宣言、`routeorch.cpp` L2688 で `mux_orch->isMuxNexthops(nextHops)` を mux nexthop group の個別展開分岐の条件に使用、L2721-L2723 で route add 後に `mux_orch->updateRoute(ipPrefix)` を呼ぶ駆動経路を確認 (verified at: 2026-06-04)。
 
 # dual-tor mux 跨ぎの multi-nexthop route ループ回避（`MuxOrch::updateRoute`）
 
@@ -99,29 +108,47 @@ flowchart TD
 
 `updateRoute()` が機能するには `m_nextHops` (Route → NextHop 群キャッシュ) に mux neighbor が **個別展開** されている必要がある。既存実装では group 内 next-hop は個別エントリにならず、state 遷移時にループできない[^1]。
 
-`routeorch.cpp` に `nextHops.is_mux_nexthop()` 判定を追加し、mux neighbor から成る group を解凍する[^1]:
+master 実装では `routeorch.cpp` の route add 経路に `mux_orch->isMuxNexthops(nextHops)` 判定を入れ、mux neighbor から成る group を解凍して各 nexthop ごとに `addNextHopRoute()` を呼ぶ[^2]:
 
 ```c++
-if (ctx.nhg_index.empty() && nextHops.getSize() == 1 &&
-    !nextHops.is_overlay_nexthop() && !nextHops.is_srv6_nexthop() ||
-    nextHops.is_mux_nexthop())
+// sonic-swss/orchagent/routeorch.cpp L2688
+else if (nextHops.getSize() > 1 && mux_orch->isMuxNexthops(nextHops)
+         && !nextHops.is_overlay_nexthop() && !nextHops.is_srv6_nexthop())
 {
-    for (auto it : nextHops.getNextHops()) {
-        if (!it.ip_address.isZero())
-            addNextHopRoute(it, r_key);
+    RouteKey routekey = { vrf_id, ipPrefix };
+    auto nexthop_list = nextHops.getNextHops();
+    for (auto nh = nexthop_list.begin(); nh != nexthop_list.end(); nh++)
+    {
+        if (!nh->ip_address.isZero())
+        {
+            addNextHopRoute(*nh, routekey);
+        }
     }
 }
 ```
 
-`is_mux_nexthop()` は `NextHopGroupKey` のメソッドで、group 内のいずれかが mux neighbor なら true。**「group の neighbor は ALL mux か NONE mux」** という前提で、混在は想定しない[^1]。
+判定関数は `NextHopGroupKey` のメソッドではなく `MuxOrch::isMuxNexthops(const NextHopGroupKey&)` で、内部で各 `NextHopKey` を `containsNextHop()` (= `mux_nexthop_tb_` 参照) にかけ、**いずれか 1 つでも mux neighbor を含めば true** を返す[^2]。HLD 文書では「ALL mux か NONE mux」前提（混在なし）として設計されている[^1]。
 
-### `MuxOrch::containsNextHop()`
+### `MuxOrch::containsNextHop()` と `isMuxNexthops()`
 
-mux neighbor 判定のため `MuxOrch` に追加[^1]:
+`mux_nexthop_tb_` 参照で個別 NH が mux 配下かを判定する low-level helper と、group key 単位で判定する高位 API の 2 段構成[^2]:
 
 ```c++
-bool MuxOrch::containsNextHop(NextHopKey nh) {
-    return mux_nexthop_tb_.find(nh) != mux_nexthop_tb_.end();
+// sonic-swss/orchagent/muxorch.cpp L2058
+bool MuxOrch::containsNextHop(const NextHopKey& nexthop)
+{
+    return mux_nexthop_tb_.find(nexthop) != mux_nexthop_tb_.end();
+}
+
+// sonic-swss/orchagent/muxorch.cpp L2069
+bool MuxOrch::isMuxNexthops(const NextHopGroupKey& nextHops)
+{
+    const std::set<NextHopKey> s_nexthops = nextHops.getNextHops();
+    for (auto it = s_nexthops.begin(); it != s_nexthops.end(); it++)
+    {
+        if (this->containsNextHop(*it)) return true;
+    }
+    return false;
 }
 ```
 
@@ -136,8 +163,10 @@ sequenceDiagram
     participant ASIC
     App->>CDB: route 11.11.11.0/24 NH=[A,B] (mux)
     CDB->>RO: notify
-    RO->>RO: is_mux_nexthop() → true → 個別展開
-    RO->>MO: updateRoute(R1)
+    RO->>MO: isMuxNexthops(nextHops)?
+    MO-->>RO: true
+    RO->>RO: addNextHopRoute() で個別展開
+    RO->>MO: updateRoute(ipPrefix)
     MO->>MO: A active? B active?
     MO->>ASIC: route -> active NH (or tunnel)
 ```
@@ -163,7 +192,7 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*11.11.11.0/24
 ## 干渉する機能
 
 - **`MuxOrch`**: `updateRoute()` を新設、neighbor / tunnel と密結合
-- **`RouteOrch`**: `is_mux_nexthop()` 判定で個別展開
+- **`RouteOrch`**: `MuxOrch::isMuxNexthops()` 判定で `addNextHopRoute()` 個別展開
 - **`linkmgrd` 状態通知**: state 遷移ごとに `updateRoute()` を駆動
 - **`TunnelOrch`**: 全 standby 時の tunnel nexthop 供給
 - **既存 ECMP 経路**: dual-tor mux 環境では実質無効化
@@ -172,7 +201,7 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*11.11.11.0/24
 
 - 経路ループ → [ASIC_DB](../reference/glossary.md#term-asic_db) で nexthop が単一に絞られているか、`MuxOrch` ログで `updateRoute()` 呼び出し確認
 - nexthop が **常に tunnel** → `show muxcable status` で active/standby 確認
-- nexthop group のまま → `is_mux_nexthop()` が false。`mux_nexthop_tb_` 登録確認
+- nexthop group のまま → `MuxOrch::isMuxNexthops()` が false。`mux_nexthop_tb_` 登録確認
 - ECMP したい → 本 [HLD](../reference/glossary.md#term-hld) は **mux nexthop ECMP を許容しない** 設計
 
 ### コマンド例
@@ -195,13 +224,15 @@ redis-cli -n 1 hgetall 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP*' 2>/dev/null 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dualtor/multiple_nexthop_route_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss` `orchagent/muxorch.cpp` L2058 / L2069、`orchagent/muxorch.h` L280、`orchagent/routeorch.cpp` L2688 / L2721 @ master
 
-<!-- concerns hint:
-- MuxOrch::updateRoute() の現行 master 実装存在確認 (sonic-swss/orchagent/muxorch.cpp)
-- MuxOrch::containsNextHop() と mux_nexthop_tb_ の取り込み確認
-- NextHopGroupKey::is_mux_nexthop() の存在と判定ロジック確認
-- routeorch.cpp で is_mux_nexthop() ベースに m_nextHops に個別展開する分岐の取り込み確認
-- linkmgrd の state 変化が MuxOrch::updateRoute を駆動する経路の確認
+<!-- evidence: 2026-06-04 master 直接確認
+- sonic-swss/orchagent/muxorch.h L280: `bool isMuxNexthops(const NextHopGroupKey&);` 宣言
+- sonic-swss/orchagent/muxorch.cpp L2058-2061: `MuxOrch::containsNextHop(const NextHopKey&)` 実装
+- sonic-swss/orchagent/muxorch.cpp L2069-2082: `MuxOrch::isMuxNexthops(const NextHopGroupKey&)` 実装 (group 内 any-match)
+- sonic-swss/orchagent/routeorch.cpp L2688: `else if (nextHops.getSize() > 1 && mux_orch->isMuxNexthops(nextHops) && ...)` 個別展開分岐
+- sonic-swss/orchagent/routeorch.cpp L2721-2724: `if (mux_orch->isMuxNexthops(nextHops)) { mux_orch->updateRoute(ipPrefix); }`
+- 旧記述の `NextHopGroupKey::is_mux_nexthop()` は master に存在しない (`MuxOrch::isMuxNexthops()` に統一されている)
 -->
 
 <!-- topics-back-ref -->
