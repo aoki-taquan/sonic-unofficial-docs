@@ -1,36 +1,39 @@
 ---
 title: Dual-ToR の運用
-description: Dual-ToR の運用 — Dual-ToR の障害対応では、最初に「mux がどちらを向いているか」だけを見ると誤ります。サーバ側リンク、ICMP
-  prober、Y-cable / SoC 制御、default route、MuxOrch の route programming が別々に壊れ得るためです。
+description: Dual-ToR の障害対応で見るべき順序 (設定 / 論理 mux state / HW direction / tunnel route / prober health) と、show
+  muxcable サブコマンド・linkmgrd / MuxOrch ログ・関連 DB テーブルの読み方を、実コードと YANG を引きながらまとめる。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: code-verified
+last_verified: 2026-06-04
+sources:
+- repo: sonic-net/sonic-utilities
+  path: show/muxcable.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/muxcable.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-mux-cable.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-mux-linkmgr.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   cli:
   - show muxcable
   - config muxcable
   - show interfaces
-  - show ip
-  - clear
   - show feature
   - show bfd
+  - sonic-clear muxcable
   config_db:
+  - MUX_CABLE
   - MUX_LINKMGR
   - VLAN
-  - MUX_CABLE
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
+  - BFD_SESSION
   yang:
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
+  - sonic-mux-cable
+  - sonic-mux-linkmgr
 ---
 
 # Dual-ToR の運用
