@@ -54,7 +54,7 @@ config banner state {enabled|disabled}
 source: sonic-net/sonic-utilities/config/main.py#L10012-L10020 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
 excerpt: |
   @banner.command()
-  @click.argument('state', type=click.Choice(['enabled', 'disabled']))
+  @click.argument('state', metavar='<enabled|disabled>', required=True, type=click.Choice(['enabled', 'disabled']))
   def state(state):
       config_db.mod_entry(swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME, 'global',
                           {'state': state})
@@ -71,7 +71,7 @@ excerpt: |
 
     ```text
     @banner.command()
-    @click.argument('state', type=click.Choice(['enabled', 'disabled']))
+    @click.argument('state', metavar='<enabled|disabled>', required=True, type=click.Choice(['enabled', 'disabled']))
     def state(state):
         config_db.mod_entry(swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME, 'global',
                             {'state': state})
@@ -81,18 +81,119 @@ excerpt: |
 
 ### `config banner login <message>`
 
+**用法**:
+
+```bash
+config banner login <message>
+```
+
+**引数**:
+
+- `message` ... ログイン前バナー文字列（`required=True`、`metavar='<message>'`）
+
 **動作**:
 `BANNER_MESSAGE|global` の `login` フィールドを更新。SSH/console ログイン前に表示されるバナー文字列。
 
 ### `config banner logout <message>`
+
+**用法**:
+
+```bash
+config banner logout <message>
+```
+
+**引数**:
+
+- `message` ... ログアウト時バナー文字列（`required=True`、`metavar='<message>'`）
 
 **動作**:
 `BANNER_MESSAGE|global` の `logout` フィールドを更新。
 
 ### `config banner motd <message>`
 
+**用法**:
+
+```bash
+config banner motd <message>
+```
+
+**引数**:
+
+- `message` ... MOTD 文字列（`required=True`、`metavar='<message>'`）
+
 **動作**:
 `BANNER_MESSAGE|global` の `motd` フィールドを更新。ログイン後に表示される MOTD (Message Of The Day)。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/main.py#L10023-L10053 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @banner.command()
+  @click.argument('message', metavar='<message>', required=True)
+  def login(message):
+      """Set login message"""
+      config_db = ConfigDBConnector()
+      config_db.connect()
+      config_db.mod_entry(swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME, 'global',
+                          {'login': message})
+
+  @banner.command()
+  @click.argument('message', metavar='<message>', required=True)
+  def logout(message):
+      """Set logout message"""
+      config_db = ConfigDBConnector()
+      config_db.connect()
+      config_db.mod_entry(swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME, 'global',
+                          {'logout': message})
+
+  @banner.command()
+  @click.argument('message', metavar='<message>', required=True)
+  def motd(message):
+      """Set message of the day"""
+      config_db = ConfigDBConnector()
+      config_db.connect()
+      config_db.mod_entry(swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME, 'global',
+                          {'motd': message})
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L10023-L10053 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L10023-L10053 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @banner.command()
+    @click.argument('message', metavar='<message>', required=True)
+    def login(message):
+        """Set login message"""
+        config_db = ConfigDBConnector()
+        config_db.connect()
+        config_db.mod_entry(swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME, 'global',
+                            {'login': message})
+    
+    @banner.command()
+    @click.argument('message', metavar='<message>', required=True)
+    def logout(message):
+        """Set logout message"""
+        config_db = ConfigDBConnector()
+        config_db.connect()
+        config_db.mod_entry(swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME, 'global',
+                            {'logout': message})
+    
+    @banner.command()
+    @click.argument('message', metavar='<message>', required=True)
+    def motd(message):
+        """Set message of the day"""
+        config_db = ConfigDBConnector()
+        config_db.connect()
+        config_db.mod_entry(swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME, 'global',
+                            {'motd': message})
+    ```
+
+<!-- evidence-rendered:end -->
 
 ## 関連する CONFIG_DB
 
