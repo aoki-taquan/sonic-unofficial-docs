@@ -29,6 +29,9 @@ related:
     - STP_PORT_STATE_TABLE
     - STP_FASTAGEING_FLUSH_TABLE
     - STP_INST_PORT_FLUSH_TABLE
+  cli:
+    - show spanning-tree
+  _no_related_yang: true
 ---
 
 # APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
