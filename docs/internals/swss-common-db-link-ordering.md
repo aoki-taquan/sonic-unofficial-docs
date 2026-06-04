@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-`linkToDb()` と `linkToDbNative()` は `sonic-swss-common` の `Logger` クラス（`common/logger.h`）が公開する **静的メソッド**で、daemon の最小ログ優先度 (`LOGLEVEL`) や出力先 (`LOGOUTPUT`) を CONFIG_DB の `LOGGER` テーブルから動的に取得・反映するための初期化 API である。
+`linkToDb()` と `linkToDbNative()` は `sonic-swss-common` の `Logger` クラス（`common/logger.h`）が公開する **静的メソッド**で、daemon の最小ログ優先度 (`LOGLEVEL`) や出力先 (`LOGOUTPUT`) を [CONFIG_DB](../reference/glossary.md#term-config_db) の `LOGGER` テーブルから動的に取得・反映するための初期化 API である。
 
 このページでは [sonic-swss-common#507](https://github.com/sonic-net/sonic-swss-common/issues/507) で論点となった「なぜ呼び出し順序に依存するのか」を、master の実装に即して整理する。
 
@@ -53,6 +53,25 @@ excerpt: |
   static void linkToDbNative(const std::string& dbName, const char * defPrio="NOTICE");
 reasoning: linkToDb / linkToDbNative は Logger の static メソッドであり、ヘッダコメントが順序制約 (linkToDbNative は linkToDb の後で呼ぶ) を明示している。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss-common/common/logger.h#L85-L95 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss-common/common/logger.h#L85-L95 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)`
+
+    **抜粋**:
+
+    ```text
+    static void linkToDb(const std::string& dbName, const PriorityChangeNotify& notify, const std::string& defPrio);
+    // Must be called after all linkToDb to start select from DB
+    static void linkToDbNative(const std::string& dbName, const char * defPrio="NOTICE");
+    ```
+
+    **判断根拠**: linkToDb / linkToDbNative は Logger の static メソッドであり、ヘッダコメントが順序制約 (linkToDbNative は linkToDb の後で呼ぶ) を明示している。
+
+<!-- evidence-rendered:end -->
 
 ## 現行 master が要求する順序
 
@@ -88,6 +107,27 @@ excerpt: |
 reasoning: linkToDbNative は内部で linkToDb を呼んだ後に restartSettingThread() で CONFIG_DB を購読する settingThread を再起動する。これが「最後に呼ぶべき」理由である。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss-common/common/logger.cpp#L159-L169 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss-common/common/logger.cpp#L159-L169 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)`
+
+    **抜粋**:
+
+    ```text
+    void Logger::linkToDbNative(const std::string& dbName, const char * defPrio)
+    {
+        linkToDb(dbName, swssPrioNotify, defPrio);
+        getInstance().restartSettingThread();
+    }
+    ```
+
+    **判断根拠**: linkToDbNative は内部で linkToDb を呼んだ後に restartSettingThread() で CONFIG_DB を購読する settingThread を再起動する。これが「最後に呼ぶべき」理由である。
+
+<!-- evidence-rendered:end -->
+
 `restartSettingThread()` が起動する `settingThread` は CONFIG_DB の `LOGGER` テーブルを `SubscriberStateTable` で購読し続け、優先度・出力先の変更通知を受け取ったら `linkToDb` で登録された `PriorityChangeNotify` / `OutputChangeNotify` を呼び出す。したがって `linkToDb` よりも先にスレッドを走らせる意味は無い。
 
 ## Issue #507 の論点
@@ -117,4 +157,4 @@ reasoning: linkToDbNative は内部で linkToDb を呼んだ後に restartSettin
 - [sonic-swss-common `common/logger.h` (master `158de8d3`)](https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/logger.h#L85-L95)
 - [sonic-swss-common `common/logger.cpp` (master `158de8d3`)](https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/logger.cpp#L159-L169)
 
-<!-- glossary-links-injected: e2892b76fd9a -->
+<!-- glossary-links-injected: 896d391185a9 -->

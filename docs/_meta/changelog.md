@@ -23,6 +23,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-04 #5185 fix(quality): iter4 integration (12 rewrites)
 - 2026-06-04 #5160 fix(quality): iter2 integration (12 rewrites)
 - 2026-06-04 #5147 fix(quality): iter1 integration (12 rewrites)
 - 2026-06-04 #5134 fix(quality): deep rewrites v2 integration (7 pages, score +0.92)
@@ -525,5 +526,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3941 docs(config-db): add Phase F side-effects block to redis-db-config
 - 2026-05-19 #3942 docs(config-db): add Phase H platform block to vxlan-tunnel-map
 - 2026-05-19 #3939 docs(config-db): add Phase F side-effects block to warm-restart
-- 2026-05-19 #3938 docs(config-db): add Phase G pubsub block to gnmi-dialin
 
