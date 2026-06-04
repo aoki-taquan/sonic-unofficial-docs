@@ -34,8 +34,8 @@ related:
 - [SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）](../management/sonic-gnmi-server-interface-design.md) (area: `management`, verification: `code-verified`)
 - [gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）](../management/gnmi-usage.md) (area: `management`, verification: `code-verified`)
 - [gNMI Master Arbitration（election ID と SetRequest 拡張）](../management/gnmi-master-arbitration-hld.md) (area: `management`, verification: `discrepancy-found`)
-- [gNMI Save-On-Set（Set ごとの ConfigDB 永続化）](../management/save-on-set-hld.md) (area: `management`, verification: `hld-only`)
-- [SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）](../management/smart-switch-gnmi-feedback-design-omit-in-toc.md) (area: `management`, verification: `hld-only`)
+- [gNMI Save-On-Set（Set ごとの ConfigDB 永続化）](../management/save-on-set-hld.md) (area: `management`, verification: `code-verified`)
+- [SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）](../management/smart-switch-gnmi-feedback-design-omit-in-toc.md) (area: `management`, verification: `discrepancy-found`)
 - [YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）](../management/sonic-config-update-validation-via-yang.md) (area: `management`, verification: `code-verified`)
 - [JSON Patch ordering（YANG 制約に従う apply-patch のステップ分割）](../management/json-patch-ordering-using-yang-models.md) (area: `management`, verification: `code-verified`)
 - [SONiC CLI 自動生成ツール（YANG → click plugin 自動生成）](../management/sonic-cli-auto-generation-tool.md) (area: `management`, verification: `code-verified`)
@@ -120,8 +120,8 @@ YANG リファレンスは全件 `code-verified`。詳細は [reference/yang イ
 
 ## verification ステータス注意点
 
-- **hld-only**: `save-on-set-hld.md`, `smart-switch-gnmi-feedback-design-omit-in-toc.md`
-- **discrepancy-found**: `gnmi-master-arbitration-hld.md`, `sonic-yang-model-guidelines.md`, `liquid-cooling-leakage-detection-in-sonic.md`, `smartswitch-dpu-graceful-shutdown.md`, `wake-on-lan-in-sonic.md` — [HLD](../reference/glossary.md#term-hld) と実装に差異あり
+- **discrepancy-found**: `gnmi-master-arbitration-hld.md`, `sonic-yang-model-guidelines.md`, `smart-switch-gnmi-feedback-design-omit-in-toc.md`, `liquid-cooling-leakage-detection-in-sonic.md`, `smartswitch-dpu-graceful-shutdown.md`, `wake-on-lan-in-sonic.md` — [HLD](../reference/glossary.md#term-hld) と実装に差異あり
+- 上記以外はすべて `code-verified`。本ドキュメント全体で `hld-only` のページは 0 件（裏取り完了済み）
 
 ## 関連カテゴリ
 
