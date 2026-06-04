@@ -217,7 +217,7 @@ port が VLAN メンバでない間に投入した static は orchagent ログ�
 
 <!-- /next-action -->
 
-## 関連 Topics
+## 関連ページ詳細
 
 - [06-l2-vlan-lag/operations](../topics/06-l2-vlan-lag/operations.md): FDB / VLAN 運用
 - [06-l2-vlan-lag/internals](../topics/06-l2-vlan-lag/internals.md): FdbOrch 内部
@@ -225,7 +225,7 @@ port が VLAN メンバでない間に投入した static は orchagent ログ�
 
 ### 関連 GitHub Issue / PR
 
-- [GitHub Issue / PR の関連リンクは未確認] — FDB flush / aging / static MAC / VLAN range 拡張は L2 系の小粒 PR が継続的に追加されており、HLD 全体を束ねるトラッキング Issue / PR は確認できず。
+- HLD 全体を束ねるトラッキング Issue / PR は確認できず。FDB flush / aging / static MAC / VLAN range 拡張は L2 系の小粒 PR が継続的に追加されているため、関連 issue を辿るには本ページ「既知の問題」節の個別 issue リンク（#307, #249, [sonic-buildimage](../reference/glossary.md#term-sonic-buildimage)#6002）を起点に検索すること。
 
 <!-- phase-boundary -->
 ## 実装フェーズ境界
@@ -260,4 +260,4 @@ port が VLAN メンバでない間に投入した static は orchagent ログ�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 75921d013977 -->
