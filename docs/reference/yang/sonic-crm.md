@@ -109,7 +109,7 @@ module: sonic-crm
 | `<resource>_high_threshold` | `sonic-crm/CRM/Config/<resource>_high_threshold` | `uint16` |  |  | THRESHOLD_EXCEEDED アラートを起こす上限値 |
 | `<resource>_low_threshold` | `sonic-crm/CRM/Config/<resource>_low_threshold` | `uint16` |  |  | THRESHOLD_CLEAR アラートを起こす下限値 |
 
-完全な leaf 一覧は [YANG](../../reference/glossary.md#term-yang) ソース（37 リソースクラス × 3 + `polling_interval` ＝ 約 112 リーフ）を直接参照のこと。
+完全な leaf 一覧は [YANG](../../reference/glossary.md#term-yang) ソース（35 リソースクラス × 3 + `polling_interval` ＝ 106 リーフ）を直接参照のこと[^2]。
 
 ## must / 制約
 
@@ -173,5 +173,6 @@ crm show thresholds all
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-crm.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^2]: 同上ソースファイル全体（L1-970）。`leaf <name>_threshold_type` 35 個、`leaf <name>_high_threshold` 35 個、`leaf <name>_low_threshold` 35 個、加えて `leaf polling_interval` 1 個（重複 `grep -oE "leaf [a-zA-Z0-9_]+" | sort -u` で確認）。
 
 <!-- glossary-links-injected: c006405759d8 -->
