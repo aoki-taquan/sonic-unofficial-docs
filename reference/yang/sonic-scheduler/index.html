@@ -31941,10 +31941,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#leafref" class="md-nav__link">
+  <a href="#leafref-must" class="md-nav__link">
     <span class="md-ellipsis">
       
-        leafref / 依存
+        leafref / must 制約
       
     </span>
   </a>
@@ -36059,10 +36059,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#leafref" class="md-nav__link">
+  <a href="#leafref-must" class="md-nav__link">
     <span class="md-ellipsis">
       
-        leafref / 依存
+        leafref / must 制約
       
     </span>
   </a>
@@ -36284,7 +36284,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>Committed information rate for the dual-rate token bucket policer. This value represents the rate at which tokens are added to the primary bucket. Unit is Bps(Bytes per second) for meter type bytes else packets.</td>
+<td>Committed information rate for the dual-rate token bucket policer. Tokens are added to the primary bucket at this rate. 単位は <code>meter_type=bytes</code> のとき Bps (bytes per second)、<code>packets</code> のとき pps (packets per second)。</td>
 </tr>
 <tr>
 <td><code>pir</code></td>
@@ -36293,7 +36293,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>Peak information rate for the dual-rate token bucket policer.This value represents the rate at which tokens are added to the secondary bucket.Unit is Bps(Bytes per second) for meter type bytes else...</td>
+<td>Peak information rate for the dual-rate token bucket policer. Tokens are added to the secondary bucket at this rate. 単位は <code>meter_type=bytes</code> のとき Bps、<code>packets</code> のとき pps。<code>must</code> により <code>cir &gt; 0</code> かつ <code>pir &gt;= cir</code> が要求される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</td>
 </tr>
 <tr>
 <td><code>cbs</code></td>
@@ -36302,7 +36302,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>Committed burst size for the dual-rate token bucket policer.This value represents the depth of the token bucket.Unit is bytes for meter type bytes else packets for meter type is packets</td>
+<td>Committed burst size (primary token bucket の深さ)。単位は <code>meter_type=bytes</code> のとき bytes、<code>packets</code> のとき packets。<code>must</code> により <code>cir &gt; 0</code> が要求される<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</td>
 </tr>
 <tr>
 <td><code>pbs</code></td>
@@ -36311,14 +36311,49 @@
 <td></td>
 <td></td>
 <td></td>
-<td>Excess burst size for the dual-rate token bucket policer. This value represents the depth of the secondary bucket. Unit is bytes for meter type bytes else packets for meter type is packets</td>
+<td>Excess (peak) burst size (secondary token bucket の深さ)。単位は <code>meter_type=bytes</code> のとき bytes、<code>packets</code> のとき packets。<code>must</code> により <code>pir &gt; 0</code> かつ <code>pbs &gt;= cbs</code> (cbs 設定時) が要求される<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</td>
 </tr>
 </tbody>
 </table>
-<h2 id="leafref">leafref / 依存<a class="headerlink" href="#leafref" title="Permanent link">&para;</a></h2>
-<ul>
-<li>なし（このモジュール内で直接 leafref を持つ leaf はない）</li>
-</ul>
+<h2 id="leafref-must">leafref / must 制約<a class="headerlink" href="#leafref-must" title="Permanent link">&para;</a></h2>
+<p><code>leafref</code> は無し（このモジュール内で直接 leafref を持つ leaf はない）。一方、<code>SCHEDULER_LIST</code> 配下の shaping パラメータには <a href="../../glossary/#term-yang">YANG</a> <code>must</code> 式によるクロスフィールド検証が定義されている<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>対象 leaf</th>
+<th><code>must</code> 式 (要約)</th>
+<th>エラー文言</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pir</code></td>
+<td><code>cir</code> が設定済みで <code>cir &gt; 0</code></td>
+<td><code>pir can't be configured without cir.</code></td>
+</tr>
+<tr>
+<td><code>pir</code></td>
+<td><code>pir &gt;= cir</code></td>
+<td><code>pir must be greater than or equal to cir</code></td>
+</tr>
+<tr>
+<td><code>cbs</code></td>
+<td><code>cir</code> が設定済みで <code>cir &gt; 0</code></td>
+<td><code>cbs can't be configured without cir.</code></td>
+</tr>
+<tr>
+<td><code>pbs</code></td>
+<td><code>pir</code> が設定済みで <code>pir &gt; 0</code></td>
+<td><code>pbs can't be configured without pir.</code></td>
+</tr>
+<tr>
+<td><code>pbs</code></td>
+<td><code>cbs</code> 未設定 もしくは <code>pbs &gt;= cbs</code></td>
+<td><code>pbs must be greater than or equal to cbs</code></td>
+</tr>
+</tbody>
+</table>
+<p>これらの制約は <a href="../../glossary/#term-config_db">CONFIG_DB</a> への書き込み時に <code>sonic-yang-models</code> で検証される。</p>
 <h2 id="augment-deviation">augment / deviation<a class="headerlink" href="#augment-deviation" title="Permanent link">&para;</a></h2>
 <ul>
 <li>なし</li>
@@ -36355,13 +36390,13 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 012a493efd9b -->
+<!-- glossary-links-injected: 9dae6d74c08e -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-scheduler.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-scheduler.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

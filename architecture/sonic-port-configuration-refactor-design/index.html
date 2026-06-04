@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="port_config.ini パーサ統合（portconfig.py 一元化） — SONiC のポート定義は伝統的に port_config.ini（プラットフォーム配下のテキストファイル）に書かれており、ポート名・index・lane・speed 等を保持する。">
+        <meta name="description" content="port_config.ini パーサを sonic-config-engine/portconfig.py に一本化し、散在するパース実装を集約する HLD。platform.json 移行の下地としての位置付けと、build/runtime 依存および test plan を整理する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="port_config.ini パーサ統合（portconfig.py 一元化） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="port_config.ini パーサ統合（portconfig.py 一元化） — SONiC のポート定義は伝統的に port_config.ini（プラットフォーム配下のテキストファイル）に書かれており、ポート名・index・lane・speed 等を保持する。" />
+<meta property="og:description" content="port_config.ini パーサを sonic-config-engine/portconfig.py に一本化し、散在するパース実装を集約する HLD。platform.json 移行の下地としての位置付けと、build/runtime 依存および test plan を整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/architecture/sonic-port-configuration-refactor-design.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-port-configuration-refactor-design/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="port_config.ini パーサ統合（portconfig.py 一元化） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="port_config.ini パーサ統合（portconfig.py 一元化） — SONiC のポート定義は伝統的に port_config.ini（プラットフォーム配下のテキストファイル）に書かれており、ポート名・index・lane・speed 等を保持する。" />
+<meta property="twitter:description" content="port_config.ini パーサを sonic-config-engine/portconfig.py に一本化し、散在するパース実装を集約する HLD。platform.json 移行の下地としての位置付けと、build/runtime 依存および test plan を整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/architecture/sonic-port-configuration-refactor-design.png" />
 </head>
   
@@ -7688,10 +7688,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#port-config-refactor" class="md-nav__link">
+  <a href="#parse" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コマンド例: Port config refactor 確認
+        コマンド例: parse 層集約の挙動確認
       
     </span>
   </a>
@@ -36147,10 +36147,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#port-config-refactor" class="md-nav__link">
+  <a href="#parse" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コマンド例: Port config refactor 確認
+        コマンド例: parse 層集約の挙動確認
       
     </span>
   </a>
@@ -36240,7 +36240,7 @@
 <p><code>portconfig.parse_port_config_file</code> の戻り値は <strong>常に index を含むよう統一</strong> する。<code>port_config.ini</code> 側で <code>index</code> が定義されていない場合でも、<strong>1-based の auto-increment</strong> をデフォルト値として埋める<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>歴史的経緯として <code>port_config.ini</code> を <strong>0-based</strong> で書いている SKU が一部残っていた。これらは <strong>すべて 1-based に揃える</strong> ことが本リファクタの前提条件として示されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <blockquote>
-<p>"For now, there are still a few SKUs provided <a href="../../reference/glossary/#term-port-config-ini">port_config.ini</a> file with 0-based port index, all those port_config.ini files should be changed to 1-based." <sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>"For now, there are still a few SKUs provided <a href="../../reference/glossary/#term-port-config-ini">port_config.ini</a> file with 0-based port index, all those port_config.ini files should be changed to 1-based." <sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 </blockquote>
 <p>ポート index は他モジュールでも使われるため、抜けがあると下流に伝播する。共通パーサが必ず index を返すことで、呼び出し側は「無いケース」を考えなくて済む構造になる。</p>
 <h3 id="_3">散在パーサの集約対象<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -36317,7 +36317,7 @@ reasoning: 一元化の動機が「platform.json への移行容易化」にあ�
 <p><code>portconfig.py</code> 自体は <code>sonic-buildimage/src/sonic-config-engine</code> パッケージに属する。これを他モジュールから再利用するために、HLD は次の 2 点を要求している<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li><strong>build-time の unit test を持つモジュール</strong> は <code>sonic-config-engine</code> を <strong>build-time dependency</strong> として宣言する。</li>
-<li><strong>docker 内にインストールされるモジュール</strong> （例: pmon）は、その docker に <strong><code>sonic-config-engine</code> を同梱</strong> する必要がある。HLD では pmon docker が既に同梱しているため再利用可能と注記している<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>docker 内にインストールされるモジュール</strong> （例: pmon）は、その docker に <strong><code>sonic-config-engine</code> を同梱</strong> する必要がある。HLD では pmon docker が既に同梱しているため再利用可能と注記している<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ol>
 <p>つまり「parse 関数を呼ぶ側が <code>portconfig</code> 本体をリンクできる導線」を、テストとランタイム双方で確保するのが必須要件。</p>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -36339,32 +36339,39 @@ reasoning: 一元化の動機が「platform.json への移行容易化」にあ�
 <p>検証対象は <strong>Mellanox 全 SKU + 安定版 201911 image</strong> とされている<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。当時の master を切る基準点としての記述で、現在の community master との対応関係は別途確認が必要。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>0-based index の SKU を 1-based に揃える必要がある</strong>。これを怠ると <code>parse_port_config_file</code> の auto-increment と既存記述が衝突するか、もしくは下流 index 参照と齟齬を起こす<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>ベンダ固有コードはスコープ外</strong>。各ベンダリポジトリの port_config パース箇所は本 HLD では網羅しない<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>0-based index の SKU を 1-based に揃える必要がある</strong>。これを怠ると <code>parse_port_config_file</code> の auto-increment と既存記述が衝突するか、もしくは下流 index 参照と齟齬を起こす<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>ベンダ固有コードはスコープ外</strong>。各ベンダリポジトリの port_config パース箇所は本 HLD では網羅しない<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>リファクタの順序保証が無い。たとえば <code>sfputilbase.py</code> だけ移行・他は旧経路、という中間状態では、auto-increment の挙動と旧パーサの挙動が <strong>微妙にずれる</strong> 可能性がある（旧パーサが index を返さないケースの扱い）。</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>platform.json</code> への移行</strong>: 本リファクタが下地となる。パース層が 1 箇所なら <code>port_config.ini</code> か <code>platform.json</code> かを <code>portconfig.py</code> 内で吸収できる。</li>
-<li><strong>xcrvrd（transceiver daemon）</strong>: <code>port_config.ini</code> のパース経路に依存している。テスト計画でも DOM / 挿抜の挙動確認が必須項目になっている<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>sfputil</code> CLI</strong>: <code>lpmode</code> / <code>reset</code> が正しい interface に効くかが重要なチェックポイント。ポート名 → index のマッピングが auto-increment 経路に切り替わる際の影響範囲<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>xcrvrd（transceiver daemon）</strong>: <code>port_config.ini</code> のパース経路に依存している。テスト計画でも DOM / 挿抜の挙動確認が必須項目になっている<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>sfputil</code> CLI</strong>: <code>lpmode</code> / <code>reset</code> が正しい interface に効くかが重要なチェックポイント。ポート名 → index のマッピングが auto-increment 経路に切り替わる際の影響範囲<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>build dependency</strong>: <code>sonic-config-engine</code> をビルド時依存に追加する変更が、他モジュールのビルド時間・コンテナサイズに微増の影響を与える可能性。</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>移行後にポート番号がずれる: <code>port_config.ini</code> 側で 0-based のまま残っていないかを確認。auto-increment 経路と混ざると 1 ずれる。</li>
 <li><code>sfputil lpmode &lt;Ethernet0&gt;</code> が別 interface に効く: <code>portconfig.get_port_config</code> の戻りと <code>sfputilbase.py</code> の dict / list 詰め替えの adapter にバグがある可能性。</li>
-<li>pmon が起動失敗: <code>sonic-config-engine</code> が docker 内に配置されていない。<code>portconfig.py</code> を import できないため<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>ベンダ固有 daemon で <code>port_config.ini</code> が見つからない: vendor 側 のリファクタが追従していない可能性<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>pmon が起動失敗: <code>sonic-config-engine</code> が docker 内に配置されていない。<code>portconfig.py</code> を import できないため<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ベンダ固有 daemon で <code>port_config.ini</code> が見つからない: vendor 側 のリファクタが追従していない可能性<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h3 id="port-config-refactor">コマンド例: Port config refactor 確認<a class="headerlink" href="#port-config-refactor" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># PORT エントリ反映と orchagent ログ</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORT|Ethernet*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;portsorch&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+<h3 id="parse">コマンド例: parse 層集約の挙動確認<a class="headerlink" href="#parse" title="Permanent link">&para;</a></h3>
+<p>本リファクタの主眼は <strong><code>port_config.ini</code> / <code>platform.json</code> パースの単一窓口化</strong> にある。<a href="../../reference/glossary/#term-orchagent">orchagent</a> 等のランタイム挙動ではなく、<strong>同じ入力ファイルに対して <code>portconfig.get_port_config</code> が安定した CONFIG_DB PORT 反映を返すか</strong> を確かめるのが直接的な検証になる。下記は build 環境 / unit test 経路での確認例。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 1. portconfig.py の関数が一本化されていることを import 経路で確認</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;from portconfig import get_port_config, parse_port_config_file, get_child_ports, get_breakout_mode; print(&#39;ok&#39;)&quot;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># 2. sonic-cfggen 経由で port_config.ini → CONFIG_DB PORT セクションを生成</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1">#    （-k &lt;hwsku&gt; -p &lt;port_config.ini&gt; を与えると minigraph 不要で PORT 部分だけ吐ける）</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>sonic-cfggen<span class="w"> </span>-k<span class="w"> </span>Force10-S6000<span class="w"> </span>-p<span class="w"> </span>/usr/share/sonic/device/&lt;platform&gt;/&lt;hwsku&gt;/port_config.ini<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span>--print-data<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.PORT&#39;</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># 3. 同じ SKU を platform.json 経路でも生成して diff</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>sonic-cfggen<span class="w"> </span>-k<span class="w"> </span>Force10-S6000<span class="w"> </span>--print-data<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.PORT&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/port.json.out
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>diff<span class="w"> </span>/tmp/port.ini.out<span class="w"> </span>/tmp/port.json.out<span class="w">   </span><span class="c1"># auto-increment index と lanes/speed が一致するべき</span>
 </span></code></pre></div>
+<p><code>sfputilbase.py</code> / <code>sfputilhelper.py</code> の adapter 経路が壊れていないかは、<code>sfputil show eeprom</code> などの <strong>sub-command 出力比較</strong> が HLD の test plan で指示されている検証ポイントである<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_10">参考リンク<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/yang/sonic-port/">YANG: sonic-port</a></li>
@@ -36390,13 +36397,13 @@ reasoning: 一元化の動機が「platform.json への移行容易化」にあ�
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: e2892b76fd9a -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/port-config-refactor/port-config-refactor-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/port-config-refactor/port-config-refactor-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

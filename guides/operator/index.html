@@ -813,6 +813,67 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="推奨 reading path">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まず最初に押さえる 5 件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP / ルーティング深掘り
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interface-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        interface / VLAN 深掘り
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#health-platform-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        health / platform / support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ntp-syslog-dns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        周辺機能 (NTP / syslog / DNS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -35876,6 +35937,67 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="推奨 reading path">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まず最初に押さえる 5 件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP / ルーティング深掘り
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interface-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        interface / VLAN 深掘り
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#health-platform-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        health / platform / support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ntp-syslog-dns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        周辺機能 (NTP / syslog / DNS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -35992,29 +36114,47 @@
 </table>
 <p>BGP セッション関連の状態は CONFIG_DB の <code>BGP_NEIGHBOR</code> テーブルに格納され、<code>bgpcfgd</code> (<code>BGPPeerMgrBase</code>) が <code>swsscommon.CFG_BGP_NEIGHBOR_TABLE_NAME</code> を購読して FRR (<code>vtysh</code>) 設定へ反映します<!-- evidence: sonic-net/sonic-buildimage src/sonic-bgpcfgd/bgpcfgd/main.py L87 -->。<code>show ip bgp summary</code> の実装本体は <code>sonic-utilities</code> の <code>show/bgp_frr_v4.py</code> (<code>summary</code> サブコマンド) にあり、内部で FRR の summary を全 BGP インスタンスから集約して表示します<!-- evidence: sonic-net/sonic-utilities show/bgp_frr_v4.py L36-L44 -->。CONFIG_DB に neighbor が居るのに <code>show ip bgp summary</code> に出てこない場合、<code>bgpcfgd</code> が動作していない（<code>systemctl status bgp</code>）か、FRR コンテナが落ちている疑いがあります。</p>
 <h2 id="reading-path">推奨 reading path<a class="headerlink" href="#reading-path" title="Permanent link">&para;</a></h2>
-<p>逆引き表で当たりが付いた後、面で押さえたい場合の読み順です。</p>
+<p>逆引き表で当たりが付いた後、面で押さえたい場合の読み順です。フラットに 20 項目並べると入口で迷うため、まず <strong>最初に押さえる 5 件</strong> で導線の骨格をつかみ、その後は用途（BGP / interface・VLAN / health &amp; support / 内部設計）でグルーピングしています。</p>
+<h3 id="5">まず最初に押さえる 5 件<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
+<p>SONiC を一度も触ったことが無い読者でも、この 5 ページで「CLI と CONFIG_DB が両輪である」ことと、最頻出の障害切り分け入口がわかります。</p>
 <ol>
-<li><a href="../../reference/cli/">CLI リファレンス</a></li>
-<li><a href="../../reference/cli/show-interfaces/">show interfaces</a></li>
-<li><a href="../../reference/cli/show-ip/">show ip</a></li>
+<li><a href="../../reference/cli/">CLI リファレンス</a> — <code>show</code> / <code>config</code> の全体像</li>
+<li><a href="../../reference/config-db/">CONFIG_DB リファレンス</a> — 設定の正規表現は CLI ではなくこちら</li>
+<li><a href="../../reference/cli/show-interfaces/">show interfaces</a> — 物理層の最初の 1 コマンド</li>
+<li><a href="../../reference/cli/show-ip/">show ip</a> — L3 経路確認の入口</li>
+<li><a href="../../reference/cli/show-techsupport/">show techsupport</a> — 詰まったときの dump</li>
+</ol>
+<h3 id="bgp">BGP / ルーティング深掘り<a class="headerlink" href="#bgp" title="Permanent link">&para;</a></h3>
+<p>逆引き表の「BGP セッションが上がらない」「ルーティングが期待どおりでない」を起点に追加で読む順です。</p>
+<ul>
 <li><a href="../../reference/cli/show-bgp/">show bgp</a></li>
-<li><a href="../../reference/cli/show-platform/">show platform</a></li>
-<li><a href="../../reference/cli/show-system-health/">show system-health</a></li>
-<li><a href="../../reference/cli/show-techsupport/">show techsupport</a></li>
-<li><a href="../../reference/cli/config-interface/">config interface</a></li>
 <li><a href="../../reference/cli/config-bgp/">config bgp</a></li>
+<li><a href="../../reference/config-db/bgp-neighbor/">BGP_NEIGHBOR テーブル</a></li>
+</ul>
+<h3 id="interface-vlan">interface / VLAN 深掘り<a class="headerlink" href="#interface-vlan" title="Permanent link">&para;</a></h3>
+<p>物理ポート down や VLAN 内疎通不可を起点に追加で読む順です。</p>
+<ul>
+<li><a href="../../reference/cli/config-interface/">config interface</a></li>
 <li><a href="../../reference/cli/config-vlan/">config vlan</a></li>
-<li><a href="../../reference/config-db/">CONFIG_DB リファレンス</a></li>
 <li><a href="../../reference/config-db/port/">PORT テーブル</a></li>
 <li><a href="../../reference/config-db/interface/">INTERFACE テーブル</a></li>
-<li><a href="../../reference/config-db/bgp-neighbor/">BGP_NEIGHBOR テーブル</a></li>
 <li><a href="../../reference/config-db/vlan/">VLAN テーブル</a></li>
+</ul>
+<h3 id="health-platform-support">health / platform / support<a class="headerlink" href="#health-platform-support" title="Permanent link">&para;</a></h3>
+<p>ハードウェア状態とサポート依頼まわりです。</p>
+<ul>
+<li><a href="../../reference/cli/show-platform/">show platform</a></li>
+<li><a href="../../reference/cli/show-system-health/">show system-health</a></li>
+<li><a href="../../system/sonic-system-health-monitor-high-level-design/">System Health Monitor 設計</a></li>
 <li><a href="../../system/show-techsupport/">show techsupport 設計</a></li>
-<li><a href="../../system/sonic-system-health-monitor-high-level-design/">System Health Monitor</a></li>
+</ul>
+<h3 id="ntp-syslog-dns">周辺機能 (NTP / syslog / DNS)<a class="headerlink" href="#ntp-syslog-dns" title="Permanent link">&para;</a></h3>
+<p>逆引き表に直接は無いが、運用導入直後によく問い合わせが入る周辺機能の HLD です。</p>
+<ul>
 <li><a href="../../system/sonic-syslog-source-ip/">Syslog source IP</a></li>
 <li><a href="../../system/sonic-network-time-protocol-ntp-client-configuration/">NTP client configuration</a></li>
 <li><a href="../../system/static-dns-configuration/">Static DNS configuration</a></li>
-</ol>
+</ul>
 <h2 id="rollback">設定変更時の確認 / 保存 / rollback<a class="headerlink" href="#rollback" title="Permanent link">&para;</a></h2>
 <p>逆引き表の対処で設定を変えた場合、最低限の運用フローは以下です。詳細手順は本ガイドの範囲を超えるため、各 CLI ページの「保存」「config reload」セクションを参照してください。</p>
 <ul>

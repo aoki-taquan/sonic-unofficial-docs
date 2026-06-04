@@ -766,6 +766,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 つのキー概念（最低限の要約）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reading-path" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35846,6 +35857,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 つのキー概念（最低限の要約）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reading-path" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35906,6 +35928,14 @@
 <h1 id="_1">初学者向けガイド<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <h2 id="_2">想定シナリオ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p><a href="../../reference/glossary/#term-sonic">SONiC</a> を初めて触る読者を想定しています。ネットワーク OS としての SONiC の位置付け、コンテナ、<a href="../../reference/glossary/#term-redis">Redis</a> DB、<a href="../../reference/glossary/#term-sai">SAI</a>、設定反映の流れを把握し、各 area の意味を理解するための導線です。</p>
+<h2 id="4">4 つのキー概念（最低限の要約）<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
+<p>このページは導線（目次）の役割を担い、各概念の詳細解説は <a href="../../getting-started/">初めての方の必読 10</a> と <a href="../../architecture/">アーキテクチャ</a> に委ねますが、リンク先を辿る前に最低限の輪郭を持っておくと迷子になりにくいので、各 1〜2 文ずつだけ要約します。</p>
+<ul>
+<li><strong>コンテナ</strong>: SONiC のコントロールプレーンは複数の Docker コンテナに分割されており、<code>sonic-buildimage</code> の <code>dockers/</code> 配下に <code>docker-orchagent</code>（<a href="../../reference/glossary/#term-sonic-swss">SwSS</a>）、<code>docker-syncd-*</code>（<a href="../../reference/glossary/#term-sai">SAI</a> ベンダ実装ごと）、<code>docker-database</code>（Redis）、<code>docker-teamd</code>、<code>docker-lldp</code>、<code>docker-snmp</code>、<code>docker-nat</code>、<code>docker-macsec</code>、<code>docker-sflow</code>、<code>docker-router-advertiser</code> 等が定義されています<sup id="fnref:docker-list"><a class="footnote-ref" href="#fn:docker-list">1</a></sup>。<a href="../../reference/glossary/#term-bgp">BGP</a> は別 submodule の <code>dockers/docker-fpm-frr</code>（<a href="../../reference/glossary/#term-frr">FRR</a> を内包）が担います。</li>
+<li><strong>Redis DB</strong>: 全コンテナは <code>docker-database</code> 内の Redis インスタンスを介して非同期に状態交換し、論理 DB として CONFIG_DB（運用者が投入する設定の真の源）、<a href="../../reference/glossary/#term-appl_db">APPL_DB</a>（orchagent が SwSS 側に発行する宣言的状態）、<a href="../../reference/glossary/#term-asic_db">ASIC_DB</a>（<a href="../../reference/glossary/#term-syncd">syncd</a> と SAI が共有するハード抽象状態）、<a href="../../reference/glossary/#term-state_db">STATE_DB</a>（実観測状態）等に分かれます。</li>
+<li><strong>SAI</strong>: ベンダ間でハードウェア差を吸収する C API で、<code>sonic-sairedis</code> がその参照実装を提供します。<code>syncd</code> プロセス（<a href="https://github.com/sonic-net/sonic-sairedis/blob/master/syncd/Syncd.cpp"><code>syncd/Syncd.cpp</code></a>）が ASIC_DB の差分を購読し、ベンダ提供の SAI 実装ライブラリ経由で ASIC に反映します<sup id="fnref:syncd"><a class="footnote-ref" href="#fn:syncd">2</a></sup>。</li>
+<li><strong>設定反映フロー</strong>: 概ね <code>config</code> コマンド / <a href="../../reference/glossary/#term-gnmi">gNMI</a> → CONFIG_DB → <a href="../../reference/glossary/#term-orchagent">orchagent</a>（<a href="https://github.com/sonic-net/sonic-swss/tree/master/orchagent"><code>sonic-swss/orchagent</code></a>）が解釈し APPL_DB に書き込み → syncd が ASIC_DB を経由して SAI 経由で ASIC に反映、観測結果は逆向きに STATE_DB / <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> に集約される、という単方向パイプラインで動作します。</li>
+</ul>
 <h2 id="reading-path">推奨 reading path<a class="headerlink" href="#reading-path" title="Permanent link">&para;</a></h2>
 <ol>
 <li><a href="../../">SONiC 非公式ドキュメント</a></li>
@@ -35932,7 +35962,19 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: b8175455c8ca -->
+<!-- glossary-links-injected: 158f1c95daa3 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:docker-list">
+<p>コンテナ一覧の根拠は <code>sonic-buildimage</code> の <a href="https://github.com/sonic-net/sonic-buildimage/tree/master/dockers/"><code>dockers/</code> ディレクトリ</a>（<code>docker-database</code> / <code>docker-orchagent</code> / <code>docker-teamd</code> / <code>docker-lldp</code> / <code>docker-snmp</code> / <code>docker-nat</code> / <code>docker-macsec</code> / <code>docker-sflow</code> / <code>docker-router-advertiser</code> を含む）。<code>docker-syncd-*</code> はベンダ ASIC ごとに <code>docker-syncd-brcm</code> 等として並列に存在し、<code>docker-fpm-frr</code> は FRR を内包する BGP 用コンテナとして別途定義されています。&#160;<a class="footnote-backref" href="#fnref:docker-list" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:syncd">
+<p><code>syncd</code> の起点は <a href="https://github.com/sonic-net/sonic-sairedis/blob/master/syncd/Syncd.cpp"><code>sonic-sairedis/syncd/Syncd.cpp</code></a> で、Redis (ASIC_DB) からの SAI オブジェクト操作通知を受けてベンダ SAI 実装に橋渡しします。&#160;<a class="footnote-backref" href="#fnref:syncd" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

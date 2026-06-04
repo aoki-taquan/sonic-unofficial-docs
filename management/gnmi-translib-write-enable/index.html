@@ -36035,31 +36035,33 @@
 
 <h1 id="gnmi-set-translib">gNMI SET / Translib 書き込み有効化<a class="headerlink" href="#gnmi-set-translib" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../reference/glossary/#term-gnmi">gNMI</a> SET リクエストを実行すると、次のようなエラーが返される場合がある。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Translib write is disabled
+<p><a href="../../reference/glossary/#term-gnmi">gNMI</a> SET リクエストを実行すると、次のような gRPC エラーが返される場合がある<sup id="fnref:server-go"><a class="footnote-ref" href="#fn:server-go">1</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>rpc error: code = Unimplemented desc = Translib write is disabled
 </span></code></pre></div>
-<p>または</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>setEntry: DoCVL for UPDATE
-</span></code></pre></div>
-<p>これらのエラーは、<a href="../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> のビルド時に <strong>Translib 書き込みが無効化された状態</strong>でビルドされていることが原因である。</p>
+<p>このエラーは、<a href="../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> のビルド時に <strong>Translib 書き込みが無効化された状態</strong>でビルドされていることが原因である。</p>
+<div class="admonition note">
+<p class="admonition-title">別系統のエラーと混同しないこと</p>
+<p>syslog や glog 出力に現れる <code>setEntry: DoCVL for UPDATE</code> は <strong>本問題とは無関係</strong> である。これは <code>sonic-mgmt-common</code> の <code>translib/db/db.go</code> が UPDATE 操作前に CVL (Config Validation Library) を呼び出す際の <code>glog.V(3)</code> デバッグログであり、Translib 書き込みが有効でも常に出力される<sup id="fnref:docvl-log"><a class="footnote-ref" href="#fn:docvl-log">2</a></sup>。CVL バリデーション失敗は別途 <code>CVL Error</code> 系メッセージとして現れる。</p>
+</div>
 <h2 id="_2">原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p><a href="../../reference/glossary/#term-sonic">SONiC</a> の gNMI サーバ（<code>sonic-gnmi</code>）は、デフォルトでは Translib の書き込み操作を無効にしてコンパイルされる。これは意図的なセキュリティ上の選択であり、設定変更操作を明示的に許可する場合のみ有効化できる。</p>
+<p><a href="../../reference/glossary/#term-sonic">SONiC</a> の gNMI サーバ（<code>sonic-gnmi</code>）は、デフォルトでは Translib の書き込み操作を無効にしてコンパイルされる。サーバは起動時に <code>EnableTranslibWrite</code> フラグを参照し、false の場合 SET ハンドラが <code>codes.Unimplemented</code> で即座に拒否する<sup id="fnref2:server-go"><a class="footnote-ref" href="#fn:server-go">1</a></sup>。これは意図的なセキュリティ上の選択であり、設定変更操作を明示的に許可する場合のみ有効化できる。</p>
+<p>実装上は、ビルド時に <code>constants_translib.go</code>（デフォルト、<code>ENABLE_TRANSLIB_WRITE = false</code>）か <code>constants_translib_write.go</code>（<code>ENABLE_TRANSLIB_WRITE = true</code>）のいずれかを選択することで切り替わる<sup id="fnref:constants"><a class="footnote-ref" href="#fn:constants">3</a></sup>。</p>
 <h2 id="_3">解決方法<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="translib">ビルド時に Translib 書き込みを有効化する<a class="headerlink" href="#translib" title="Permanent link">&para;</a></h3>
 <p><code>sonic-buildimage</code> をビルドする際、以下のオプションを指定する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>make<span class="w"> </span><span class="nv">ENABLE_TRANSLIB_WRITE</span><span class="o">=</span>y<span class="w"> </span>&lt;target&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>make<span class="w"> </span><span class="nv">ENABLE_TRANSLIB_WRITE</span><span class="o">=</span>y<span class="w"> </span>&lt;target&gt;
 </span></code></pre></div>
 <p>または <code>rules/config</code> ファイルに以下を追加する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ENABLE_TRANSLIB_WRITE = y
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ENABLE_TRANSLIB_WRITE = y
 </span></code></pre></div>
 <h3 id="_4">確認方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p>gNMI サーバが書き込み有効でビルドされているかを確認するには、SET リクエストを試みる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>gnmi_set<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>-xpath<span class="w"> </span>/openconfig-interfaces:interfaces/interface<span class="o">[</span><span class="nv">name</span><span class="o">=</span>Ethernet0<span class="o">]</span>/config/description<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>-string_val<span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span>-target_addr<span class="w"> </span>&lt;sonic-ip&gt;:8080<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span>-username<span class="w"> </span>admin<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span>-password<span class="w"> </span>&lt;password&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gnmi_set<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>-xpath<span class="w"> </span>/openconfig-interfaces:interfaces/interface<span class="o">[</span><span class="nv">name</span><span class="o">=</span>Ethernet0<span class="o">]</span>/config/description<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-string_val<span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-target_addr<span class="w"> </span>&lt;sonic-ip&gt;:8080<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span>-username<span class="w"> </span>admin<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span>-password<span class="w"> </span>&lt;password&gt;
 </span></code></pre></div>
 <p><code>Translib write is disabled</code> エラーが返る場合は、書き込みが無効なビルドを使用している。</p>
 <h2 id="_5">注意事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -36076,6 +36078,21 @@
 <li>GitHub Issue: <a href="https://github.com/sonic-net/sonic-gnmi/issues/20">sonic-net/sonic-gnmi#20</a></li>
 </ul>
 <!-- glossary-links-injected: 1260314c6f20 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:server-go">
+<p><code>sonic-gnmi/gnmi_server/server.go</code> L1149-1152 — <code>s.config.EnableTranslibWrite == false</code> のとき <code>grpc.Errorf(codes.Unimplemented, "Translib write is disabled")</code> を返す。&#160;<a class="footnote-backref" href="#fnref:server-go" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:server-go" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:docvl-log">
+<p><code>sonic-mgmt-common/translib/db/db.go</code> L1318-1320 — <code>if glog.V(3) { glog.Info("setEntry: DoCVL for UPDATE") }</code> は UPDATE 経路の CVL 呼び出し前デバッグログであり、エラーではない。&#160;<a class="footnote-backref" href="#fnref:docvl-log" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:constants">
+<p><code>sonic-gnmi/gnmi_server/constants_translib.go</code> L6（既定: <code>const ENABLE_TRANSLIB_WRITE = false</code>）と <code>sonic-gnmi/gnmi_server/constants_translib_write.go</code> L6（書き込み有効ビルド: <code>true</code>）、および <code>sonic-gnmi/Makefile</code> L38 の <code>ifeq ($(ENABLE_TRANSLIB_WRITE),y)</code> 分岐で選択される。&#160;<a class="footnote-backref" href="#fnref:constants" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

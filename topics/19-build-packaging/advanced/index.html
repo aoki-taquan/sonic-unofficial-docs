@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="発展トピック — リリース直前で気にする観点を 3 つ並べる。ARM 向け移植、container hardening、feature quality 定義はそれぞれ別 HLD だが、リリース時にまとめて満たしておきたい条件 という共通点がある。">
+        <meta name="description" content="ARM 移植・container hardening・feature quality 定義・マルチプラットフォーム並列ビルド・SDK 切替・再現可能ビルド・CVE 対応など、リリース直前にまとめて満たしておきたい横断観点を並べる章。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="発展トピック - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="発展トピック — リリース直前で気にする観点を 3 つ並べる。ARM 向け移植、container hardening、feature quality 定義はそれぞれ別 HLD だが、リリース時にまとめて満たしておきたい条件 という共通点がある。" />
+<meta property="og:description" content="ARM 移植・container hardening・feature quality 定義・マルチプラットフォーム並列ビルド・SDK 切替・再現可能ビルド・CVE 対応など、リリース直前にまとめて満たしておきたい横断観点を並べる章。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/19-build-packaging/advanced.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/19-build-packaging/advanced/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="発展トピック - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="発展トピック — リリース直前で気にする観点を 3 つ並べる。ARM 向け移植、container hardening、feature quality 定義はそれぞれ別 HLD だが、リリース時にまとめて満たしておきたい条件 という共通点がある。" />
+<meta property="twitter:description" content="ARM 移植・container hardening・feature quality 定義・マルチプラットフォーム並列ビルド・SDK 切替・再現可能ビルド・CVE 対応など、リリース直前にまとめて満たしておきたい横断観点を並べる章。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/19-build-packaging/advanced.png" />
 </head>
   
@@ -6027,17 +6027,6 @@
     <span class="md-ellipsis">
       
         CVE 対応のワークフロー
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連ページ
       
     </span>
   </a>
@@ -36040,17 +36029,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連ページ
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -36080,7 +36058,7 @@
 <p>リリース直前で気にする観点を 3 つ並べる。ARM 向け移植、container hardening、feature quality 定義はそれぞれ別 <a href="../../../reference/glossary/#term-hld">HLD</a> だが、<strong>リリース時にまとめて満たしておきたい条件</strong> という共通点がある。</p>
 <h2 id="arm-armhf-arm64">ARM (armhf / arm64) サポート<a class="headerlink" href="#arm-armhf-arm64" title="Permanent link">&para;</a></h2>
 <p><a href="../../../reference/glossary/#term-sonic">SONiC</a> の build system は元々 AMD64 中心だったため、ARM 系プラットフォームへ広げるには <code>sonic-slave</code>、<code>dockers/</code>、<code>rules/</code>、<code>Makefile</code>、<code>apt</code> repo、kernel ビルド、<code>onie-image-*.conf</code>、<code>installer/install.sh</code> などを横断的に修正する必要があった。</p>
-<p>実装では <code>Makefile.work</code> の <code>CONFIGURED_ARCH</code> / <code>PLATFORM_ARCH</code>（default <code>amd64</code>）と、<code>sonic-slave-&lt;dist&gt;</code> を <code>-march-&lt;arch&gt;</code> サフィックス付きで切り替える仕組みに収束している。HLD で示された <code>sonic-slave-armhf</code> / <code>sonic-slave-arm64</code> という固定ディレクトリ命名は廃止されている。詳細と裏取りは <a href="../../../architecture/sonic-arm-architecture-support/">ARM architecture support</a> を読む。</p>
+<p>実装では <code>Makefile.work</code> の <code>CONFIGURED_ARCH</code> / <code>PLATFORM_ARCH</code>（default <code>amd64</code>）と、<code>sonic-slave-&lt;dist&gt;</code> を <code>-march-&lt;arch&gt;</code> サフィックス付きで切り替える仕組みに収束している<!-- evidence: sonic-net/sonic-buildimage Makefile.work:121-177 -->。HLD で示された <code>sonic-slave-armhf</code> / <code>sonic-slave-arm64</code> という固定ディレクトリ命名は廃止されている。詳細と裏取りは <a href="../../../architecture/sonic-arm-architecture-support/">ARM architecture support</a> を読む。</p>
 <p>ARM 向けの注意点は次のとおり。</p>
 <ul>
 <li>qemu-user-static を使う cross-build パス（一部 platform）と native ARM ビルドパスの二系統がある。</li>
@@ -36101,11 +36079,12 @@
 <li>後付け配布したい → <a href="../operations/">運用</a> と <a href="../../../architecture/sonic-application-extension-infrastructure/">Application Extension Infrastructure</a>。</li>
 <li>ARM へ移植する → <a href="../../../architecture/sonic-arm-architecture-support/">ARM architecture support</a>。</li>
 <li>リリース判定 → <a href="../../../system/sonic-feature-quality-definition/">Feature quality definition</a>。</li>
+<li>container 硬化の現状 → <a href="../../../system/sonic-container-hardening/">Container hardening</a>。</li>
 </ul>
 <h2 id="build">マルチプラットフォーム build の並列化<a class="headerlink" href="#build" title="Permanent link">&para;</a></h2>
 <p><code>sonic-buildimage</code> は <code>PLATFORM=&lt;vendor&gt;</code> 単位で完全に独立した image を生成するため、ビルドを横方向に分割しやすい。実運用での並列化パターンは次の三段になる。</p>
 <ul>
-<li><strong><code>make -j</code> レベル</strong>: 単一 platform 内で <code>dpkg-buildpackage</code> / docker build を並列化する。<code>SONIC_BUILD_JOBS</code> と <code>SONIC_CONFIG_BUILD_JOBS</code> を物理コアに合わせて指定。</li>
+<li><strong><code>make -j</code> レベル</strong>: 単一 platform 内で <code>dpkg-buildpackage</code> / docker build を並列化する。<code>SONIC_BUILD_JOBS</code> と <code>SONIC_CONFIG_BUILD_JOBS</code> を物理コアに合わせて指定<!-- evidence: sonic-net/sonic-buildimage rules/config:10-20, Makefile.work:30 -->。</li>
 <li><strong>platform レベル</strong>: CI runner / sub-job を <code>PLATFORM=broadcom</code> / <code>mellanox</code> / <code>marvell</code> などで分割する。共通 deb (<code>target/debs/</code>) は cache で再利用し、<a href="../../../reference/glossary/#term-syncd">syncd</a> と SDK 依存パッケージだけ platform 個別に作る。</li>
 <li><strong>arch レベル</strong>: <code>PLATFORM_ARCH=amd64</code> / <code>arm64</code> / <code>armhf</code> を別 matrix セルに展開する。<code>sonic-slave-&lt;dist&gt;-&lt;arch&gt;</code> docker を pre-pull しておくと <code>docker-base</code> のフェーズ時間が大きく短縮する。</li>
 </ul>
@@ -36120,7 +36099,7 @@
 </ul>
 <p>複数 vendor を並走で持つチームは、SDK 切替 PR を vendor ごとに分割し、<code>make configure PLATFORM=&lt;vendor&gt;</code> の差分だけ review する運用にすると衝突を避けやすい。</p>
 <h2 id="reproducible-build">再現可能ビルド (reproducible build)<a class="headerlink" href="#reproducible-build" title="Permanent link">&para;</a></h2>
-<p>同じ source tree からビルドして bit 一致の image を得る試み。SONiC 単体では未到達だが、debian 由来の <code>SOURCE_DATE_EPOCH</code> 伝播、deb 内の timestamp 正規化、docker layer の order 固定、<code>pip</code> wheel の hash pin など、段階的な改善が進む。<code>SONIC_VERSION_CACHE</code> を使った deb cache 再利用は build 時間短縮と再現性改善の両方に効く。完全 reproducible は kernel module の build-id と docker overlayfs の I/O 順序が残課題。</p>
+<p>同じ source tree からビルドして bit 一致の image を得る試み。SONiC 単体では未到達だが、debian 由来の <code>SOURCE_DATE_EPOCH</code> 伝播、deb 内の timestamp 正規化、docker layer の order 固定、<code>pip</code> wheel の hash pin など、段階的な改善が進む。<code>SONIC_VERSION_CACHE</code> を使った deb cache 再利用は build 時間短縮と再現性改善の両方に効く<!-- evidence: sonic-net/sonic-buildimage rules/config:336-343, Makefile.work:196-200 -->。完全 reproducible は kernel module の build-id と docker overlayfs の I/O 順序が残課題。</p>
 <h2 id="cve">CVE 対応のワークフロー<a class="headerlink" href="#cve" title="Permanent link">&para;</a></h2>
 <p>base が debian なので CVE 通知は <code>debian-security</code> announce と SBOM の突き合わせが起点になる。優先度判定の典型手順は次のとおり。</p>
 <ul>
@@ -36129,13 +36108,8 @@
 <li>syncd / kernel module 配下の CVE は vendor SAI / vendor kernel patch の追従が要るため、vendor SDK PR と組で進める。</li>
 <li>修正後は実 image build と nightly test plan で regression を見るのが原則。</li>
 </ul>
-<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../../../architecture/sonic-arm-architecture-support/">ARM architecture support</a></li>
-<li><a href="../../../system/sonic-container-hardening/">Container hardening</a></li>
-<li><a href="../../../system/sonic-feature-quality-definition/">Feature quality definition</a></li>
-<li><a href="../../../system/analysis-of-disk-writers-in-sonic-devices/">Disk writers analysis</a></li>
-</ul>
+<!-- 「章の出口」を関連ページの一覧として兼用する。重複を避けるため独立した「関連ページ」セクションは持たない。 -->
+
 <!-- glossary-links-injected: 8ba32e5aa69d -->
 
 

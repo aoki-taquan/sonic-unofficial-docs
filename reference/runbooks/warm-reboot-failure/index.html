@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: Warm Reboot が失敗 / 通信断が長引く — : sonic-net/sonic-utilities @ 39732bceb — scripts/warm-reboot : sonic-net/sonic-swss @ 4305596 — warm_restart helper">
+        <meta name="description" content="Warm Reboot が失敗もしくは通信断が長引くケースの切り分け runbook。WARM_RESTART テーブルの enable 状態、reconciliation の進捗、BGP graceful-restart capability、syncd の pre-shutdown 状態などを順に確認する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Warm Reboot が失敗 / 通信断が長引く - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: Warm Reboot が失敗 / 通信断が長引く — : sonic-net/sonic-utilities @ 39732bceb — scripts/warm-reboot : sonic-net/sonic-swss @ 4305596 — warm_restart helper" />
+<meta property="og:description" content="Warm Reboot が失敗もしくは通信断が長引くケースの切り分け runbook。WARM_RESTART テーブルの enable 状態、reconciliation の進捗、BGP graceful-restart capability、syncd の pre-shutdown 状態などを順に確認する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/warm-reboot-failure.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/warm-reboot-failure/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Warm Reboot が失敗 / 通信断が長引く - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: Warm Reboot が失敗 / 通信断が長引く — : sonic-net/sonic-utilities @ 39732bceb — scripts/warm-reboot : sonic-net/sonic-swss @ 4305596 — warm_restart helper" />
+<meta property="twitter:description" content="Warm Reboot が失敗もしくは通信断が長引くケースの切り分け runbook。WARM_RESTART テーブルの enable 状態、reconciliation の進捗、BGP graceful-restart capability、syncd の pre-shutdown 状態などを順に確認する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/warm-reboot-failure.png" />
 </head>
   
@@ -36117,8 +36117,8 @@
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;WARM_RESTART|bgp&quot;</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;WARM_RESTART_TABLE|orchagent&quot;</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># warm boot 前のチェック (pending op)</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>sudo<span class="w"> </span>/usr/local/bin/check_warmboot_progress.sh<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># warm boot 進行中フラグ (warm-reboot script が起動時にチェックする WARM_RESTART_ENABLE_TABLE) [^1]</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;WARM_RESTART_ENABLE_TABLE|*&quot;</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;warm.*restore|reconcil&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="c1"># BGP graceful-restart capability</span>
@@ -36129,7 +36129,7 @@
 <li><strong><code>WARM_RESTART</code> テーブルで該当機能が enable されていない</strong> (bgp / <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / swss / <a href="../../glossary/#term-syncd">syncd</a> / nat 等)</li>
 <li><strong><a href="../../glossary/#term-bgp">BGP</a> graceful restart の対向側未対応 / capability 未交換</strong>: GR helper として動作するために対向 peer も GR 対応が必要</li>
 <li><strong>dataplane object 量が大きすぎて reconciliation が間に合わない</strong> (Route 数十万件 + <a href="../../glossary/#term-acl">ACL</a> 大量) → restore_count に至らずタイムアウト</li>
-<li><strong><code>pre-shutdown</code> のチェックで pending operation あり</strong> (<code>COUNTERS_DB</code> の queue / port が busy)</li>
+<li><strong><code>pre-shutdown</code> で <a href="../../glossary/#term-syncd">syncd</a> が <code>pre-shutdown-succeeded</code> 状態に到達しない</strong> (60 秒タイムアウト) <sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>platform / <a href="../../glossary/#term-sai">SAI</a> が warm boot 非対応</strong> (Mellanox/Broadcom SDK バージョン依存)</li>
 </ol>
 <h2 id="_4">切り分け手順<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -36191,16 +36191,16 @@
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: da64d9ca9c4c -->
+<!-- glossary-links-injected: 31370f6ab239 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — <code>scripts/warm-reboot</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — <code>scripts/warm-reboot</code> (L385-L444 <code>initialize_pre_shutdown</code> / <code>request_pre_shutdown</code> / <code>wait_for_pre_shutdown_complete_or_fail</code>、L855-L866 <code>check_warm_restart_in_progress</code>)&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — warm_restart helper&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <code>warmrestart/warmRestartHelper.cpp</code> (warm restart reconciliation helper)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

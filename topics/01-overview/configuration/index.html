@@ -36055,6 +36055,7 @@
 </tbody>
 </table>
 <p><code>config load</code> と <code>config reload</code> は特に混同しやすい入口です。<code>load</code> は merge なので、ファイルから消した設定が DB に残る可能性があります。クリーンな全体入れ替えが必要なら <code>reload</code>、停止影響を抑えて差分だけ当てたいなら <code>replace</code> を検討します。</p>
+<p><code>config replace</code> と <code>config apply-patch</code> は、いずれも内部的には <a href="../../../reference/glossary/#term-gcu">GCU</a> を経由する点で共通しますが、入力の粒度が異なります。<code>replace</code> は <strong>target 全体の JSON ファイル</strong> を渡し、内部で現状との diff を JSON Patch 化して当てる「全体置換」用途です（target は config 全体である必要があり、部分 JSON を渡してはいけない点が CLI の docstring でも警告されています）<sup id="fnref:replace-cli"><a class="footnote-ref" href="#fn:replace-cli">1</a></sup>。一方 <code>apply-patch</code> は <strong>RFC 6902 JSON Patch を運用者が直接書く</strong> 「部分パッチ」用途です。手元に target 全体の正本があるなら <code>replace</code>、特定テーブル数件だけを変えたいなら <code>apply-patch</code> を選びます。</p>
 <h2 id="gcu">GCU を使う場面<a class="headerlink" href="#gcu" title="Permanent link">&para;</a></h2>
 <p><a href="../../../architecture/sonic-generic-configuration-update-and-rollback/">Generic Config Update / Rollback</a> は、<code>config reload</code> を避けて running <code>CONFIG_DB</code> に増分パッチを安全に当てる仕組みです。入力は JSON Patch、適用前に YANG validation を行い、依存関係を考慮して適用順を決めます。失敗時は rollback し、任意の checkpoint へ戻す操作も扱います。</p>
 <pre class="mermaid"><code>flowchart LR
@@ -36082,6 +36083,15 @@
 <li><a href="../../../reference/cli/sonic-cfggen/">sonic-cfggen コマンド</a></li>
 </ul>
 <!-- glossary-links-injected: 8ba32e5aa69d -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:replace-cli">
+<p><code>sonic-utilities/config/main.py</code> L1999-L2036 (<code>def replace</code>) — docstring: "Replace the whole config with the specified config ... The target config file should be the whole config, not just the part intended to be updated." 内部実装は <code>GenericUpdater().replace(...)</code> を呼び、GCU が target と current の差分を JSON Patch 化して適用する。&#160;<a class="footnote-backref" href="#fnref:replace-cli" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

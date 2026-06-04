@@ -36001,7 +36001,7 @@
 <li><a href="../../topics/19-build-packaging/setup/">設定</a> — [meta] 設定 — Build / Packaging 章での「設定」は、機能 docker の有効化と extension のインストール、build 時の plat…</li>
 <li><a href="../../topics/19-build-packaging/operations/">設定 / 運用</a> — [meta] 設定 / 運用 — Application Extension は、3rd party / 任意の docker を inbox 機能と同じ管理面で扱うための…</li>
 <li><a href="../../topics/19-build-packaging/internals/">内部実装</a> — [code-verified] sonic-buildimage が吐き出す .deb と docker image、sonic-package-manager (SPM) による exte…</li>
-<li><a href="../../topics/19-build-packaging/advanced/">発展トピック</a> — [meta] 発展トピック — リリース直前で気にする観点を 3 つ並べる。ARM 向け移植、container hardening、feature quality 定義は…</li>
+<li><a href="../../topics/19-build-packaging/advanced/">発展トピック</a> — [meta] ARM 移植・container hardening・feature quality 定義・マルチプラットフォーム並列ビルド・SDK 切替・再現可能ビルド・C…</li>
 </ul>
 </li>
 <li><strong>20-swss-sai-redis</strong> (<code>topics/20-swss-sai-redis/</code>)<ul>
@@ -36059,7 +36059,7 @@
 <li><a href="../../architecture/sonic-policy-based-hashing/">Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）</a> — [code-verified] Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple） — NVGRE / VxLAN のような enc…</li>
 <li><a href="../../architecture/sonic-port-auto-fec-design/">Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）</a> — [code-verified] Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto） — ポートの auton…</li>
 <li><a href="../../architecture/sonic-port-auto-negotiation-design/">ポート Auto-Negotiation（advertised-speeds / interface-type）</a> — [code-verified] ポート Auto-Negotiation（advertised-speeds / interface-type） — IEEE 802.3 の auto-ne…</li>
-<li><a href="../../architecture/sonic-port-configuration-refactor-design/">port_config.ini パーサ統合（portconfig.py 一元化）</a> — [code-verified] port_config.ini パーサ統合（portconfig.py 一元化） — SONiC のポート定義は伝統的に port_config.ini（プラ…</li>
+<li><a href="../../architecture/sonic-port-configuration-refactor-design/">port_config.ini パーサ統合（portconfig.py 一元化）</a> — [code-verified] port_config.ini パーサを sonic-config-engine/portconfig.py に一本化し、散在するパース実装を集約する HLD…</li>
 <li><a href="../../architecture/sonic-port-link-training-design/">ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR）</a> — [code-verified] ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR） — LT は CR/KR 系で送受信が 動的に FIR…</li>
 <li><a href="../../architecture/sonic-sub-port-interface-high-level-design/">Sub-port Interface（dot1q encap / VRF RIF / 命名規則）</a> — [code-verified] Sub-port Interface（dot1q encap / VRF RIF / 命名規則） — 物理 port または PortChannel に .…</li>
 <li><a href="../../architecture/dhcpv4-relay-agent/">DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id）</a> — [code-verified] DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id） — ToR スイッチが dow…</li>
@@ -36072,7 +36072,7 @@
 <li><a href="../../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup/">SmartSwitch HA - DPU-Scope-DPU-Driven 構成</a> — [code-verified] SmartSwitch HA - DPU-Scope-DPU-Driven 構成 — SmartSwitch の HA はもともと ENI-Scope-NPU…</li>
 <li><a href="../../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-concepts/">SmartSwitch HA DPU-Scope-DPU-Driven 概念（pairing / scope / owner / mode）</a> — [code-verified] SmartSwitch HA の DPU-Scope-DPU-Driven 構成における 4 軸（HA pairing / HA owner / HA sco…</li>
 <li><a href="../../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-internals/">SmartSwitch HA DPU-Scope-DPU-Driven 内部実装（状態遷移と再同期）</a> — [code-verified] SmartSwitch HA DPU-Scope-DPU-Driven の NPU/DPU 間プロトコル、HA 状態機械の状態集合、role activati…</li>
-<li><a href="../../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-operations/">SmartSwitch HA DPU-Scope-DPU-Driven 運用（CLI / 設定 / failover 確認）</a> — [code-verified] SmartSwitch HA DPU-Scope-DPU-Driven の設定経路（DASH SDN config）、failover 確認、BFD / ne…</li>
+<li><a href="../../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-operations/">SmartSwitch HA DPU-Scope-DPU-Driven 運用（CLI / 設定 / failover 確認）</a> — [hld-only] SmartSwitch HA DPU-Scope-DPU-Driven の設定経路（DASH SDN config）、failover 確認、BFD / ne…</li>
 <li><a href="../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design/">SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）</a> — [discrepancy-found] SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携） — hamgrd は SmartSwitch の NPU 側 H…</li>
 <li><a href="../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-concepts/">SmartSwitch HA HAMgrD 概念（actor model と vDPU 抽象）</a> — [discrepancy-found] HAMgrD の概念。NPU 側 actor model、vDPU 抽象、HA Set / HA Scope の役割、DPU-Driven / Switch-…</li>
 <li><a href="../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-operations/">SmartSwitch HA HAMgrD CONFIG/APP/STATE_DB スキーマ（設定経路）</a> — [discrepancy-found] HAMgrD の設定経路。DASH_HA_GLOBAL_CONFIG / DASH_HA_SET_CONFIG / DASH_HA_SCOPE_CONFIG…</li>
@@ -36373,7 +36373,7 @@
 <li><a href="../../management/enhancement-of-cmis-module-management/">CMIS モジュール管理拡張（host_tx_signal / host_tx_ready の同期）</a> — [code-verified] CMIS モジュール管理拡張（host_tx_signal / host_tx_ready の同期） — ASIC 側 SerDes は SWSS の Por…</li>
 <li><a href="../../management/sonic-cli-auto-generation-tool/">SONiC CLI 自動生成ツール（YANG → click plugin 自動生成）</a> — [code-verified] SONiC CLI 自動生成ツール — SONiC Application Extension (SAE) として 3rd party 機能を 追加 dock…</li>
 <li><a href="../../management/gnmi-streaming-telemetry-pitfalls/">gNMI ストリーミングテレメトリの落とし穴</a> — [issue-confirmed] dial-in ストリーミングテレメトリで発生する OOM・メモリリーク・RESOURCE_EXHAUSTED エラーの原因と対策。</li>
-<li><a href="../../management/gnmi-translib-write-enable/">gNMI SET / Translib 書き込み有効化</a> — [issue-confirmed] gNMI SET リクエストが失敗する場合の原因と、Translib 書き込みを有効化してビルドする方法を説明する。</li>
+<li><a href="../../management/gnmi-translib-write-enable/">gNMI SET / Translib 書き込み有効化</a> — [code-verified] gNMI SET リクエストが失敗する場合の原因と、Translib 書き込みを有効化してビルドする方法を説明する。</li>
 <li><a href="../../management/snmp-interface-scope/">SNMP エージェントがサポートするインターフェーススコープ</a> — [issue-confirmed] sonic-snmpagent の RFC1213-MIB ifTable がサポートするインターフェース種別と、管理インターフェース（eth0）が含まれない…</li>
 <li><strong>プラットフォーム</strong> (<code>platform/</code>)</li>
 <li><a href="../../platform/">プラットフォーム</a> — [meta] プラットフォーム — SAI、PMON、センサー、トランシーバ、プラットフォーム API、シャーシ機能を扱う章。</li>
@@ -36929,7 +36929,7 @@
 <li><a href="../../reference/runbooks/bgp-session-down/">BGP セッションが UP しない</a> — [runbook-verified] Runbook: BGP セッションが UP しない — : sonic-net/sonic-frr @ 799f47f — bgpd FSM : sonic…</li>
 <li><a href="../../reference/runbooks/vlan-tagging/">VLAN メンバーを追加してもタグが付かない</a> — [runbook-verified] Runbook: VLAN メンバーを追加してもタグが付かない — : sonic-net/sonic-swss @ 4305596 — vlanmgrd :…</li>
 <li><a href="../../reference/runbooks/fec-errors/">FEC エラーが多発する</a> — [runbook-verified] Runbook: FEC エラーが多発する — : sonic-net/sonic-platform-daemons @ 4ba9612 — xcvrd /…</li>
-<li><a href="../../reference/runbooks/warm-reboot-failure/">Warm Reboot が失敗 / 通信断が長引く</a> — [runbook-verified] Runbook: Warm Reboot が失敗 / 通信断が長引く — : sonic-net/sonic-utilities @ 39732bceb —…</li>
+<li><a href="../../reference/runbooks/warm-reboot-failure/">Warm Reboot が失敗 / 通信断が長引く</a> — [runbook-verified] Warm Reboot が失敗もしくは通信断が長引くケースの切り分け runbook。WARM_RESTART テーブルの enable 状態、reconci…</li>
 <li><a href="../../reference/runbooks/pfc-bandwidth/">PFC で帯域が出ない / Buffer overflow</a> — [runbook-verified] Runbook: PFC で帯域が出ない / Buffer overflow — : sonic-net/sonic-swss @ 4305596 — buf…</li>
 <li><a href="../../reference/runbooks/dhcp-relay/">DHCP Relay で IP が払い出されない</a> — [runbook-verified] Runbook: DHCP Relay で IP が払い出されない — : sonic-net/sonic-dhcp-relay @ 7316417 — re…</li>
 <li><a href="../../reference/runbooks/multi-asic-namespace/">Multi-ASIC で namespace 間通信できない</a> — [code-verified] Runbook: Multi-ASIC で namespace 間通信できない — : sonic-net/sonic-utilities @ 39732bc…</li>
