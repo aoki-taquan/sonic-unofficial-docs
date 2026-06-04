@@ -10,6 +10,12 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/dualtor/dualtor_active_standby_hld.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss
+  path: orchagent/muxorch.cpp
+- repo: sonic-net/sonic-buildimage
+  path: files/scripts/arp_update
+- repo: sonic-net/sonic-linkmgrd
+  path: src/
 related:
   config_db:
   - VLAN
@@ -48,15 +54,17 @@ related:
 - y-cable I2C 失敗時の MUX_FAIL 復旧シナリオは HLD 上限定的
 - LinkManager は LinkProber より低頻度（hysteresis 抑制）
 
-## 2. 既知の懸念点（Verifier hint）
+## 2. 追加検証対象
 
-- [linkmgrd](../reference/glossary.md#term-linkmgrd) の LinkProber / MuxState / LinkState / LinkManager 4 サブモジュールの現行実装確認 — 実装の構成は `link_prober/` / `mux_state/` / `link_manager/` の 3 ディレクトリ + `DbInterface.cpp` で概ね一致を確認済
-- MuxOrch の neighbor handling 3 案のうちどれが採用されているか確認 — `createStandaloneTunnelRoute` / `removeStandaloneTunnelRoute` 案で確定
-- ycabled の I2C リトライ + MUX_FAIL 報告ロジック実装確認
-- Loopback0 宛 encap パケット listen + ping 駆動 service の所在確認（HLD §6.3.5.1 相当）
-- zero mac neighbor + tunnel route 自動 install の [neighsyncd](../reference/glossary.md#term-neighsyncd) / [muxorch](../reference/glossary.md#term-muxorch) 実装確認（HLD §6.3.5.2 相当）
-- arp_update の FAILED → INCOMPLETE 書き換えの取り込み確認
-- accept_untracked_na の kernel backport 状況確認
+HLD と実装の照合で確定済 / 未確定な項目を整理する。
+
+- [linkmgrd](../reference/glossary.md#term-linkmgrd) のサブモジュール構成は `link_prober/` / `mux_state/` / `link_state/` / `link_manager/` の 4 ディレクトリ + `DbInterface.cpp` で構成される<!-- evidence: sonic-linkmgrd/src/ ディレクトリ構成 -->
+- MuxOrch の neighbor handling は `createStandaloneTunnelRoute` / `removeStandaloneTunnelRoute` 経由の standalone tunnel route 案で確定[^2]
+- arp_update の FAILED / INCOMPLETE neighbor 書き換えロジックは buildimage 同梱スクリプトで実装済[^3]
+- ycabled の I2C リトライ + MUX_FAIL 報告ロジック詳細（`sonic-platform-daemons/sonic-ycabled/` 配下）は別ページで取り扱う
+- Loopback0 宛 encap パケット listen + ping 駆動 service の所在は HLD §6.3.5.1 相当として要追跡
+- zero mac neighbor + tunnel route 自動 install の [neighsyncd](../reference/glossary.md#term-neighsyncd) / [muxorch](../reference/glossary.md#term-muxorch) 実装は HLD §6.3.5.2 相当として要追跡
+- `accept_untracked_na` の kernel backport 状況は kernel-config 依存のため要追跡
 
 ## 3. 干渉する機能
 
@@ -77,5 +85,7 @@ related:
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dualtor/dualtor_active_standby_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss` `orchagent/muxorch.cpp` L1968 / L1983 / L2442 / L2455（`createStandaloneTunnelRoute` / `removeStandaloneTunnelRoute` 呼び出しと定義）
+[^3]: `sonic-net/sonic-buildimage` `files/scripts/arp_update` L182-L210（IPv6 FAILED/INCOMPLETE neighbor の zero MAC 経由再解決と permanent INCOMPLETE 設定）
 
 <!-- glossary-links-injected: fa77d98b9e28 -->
