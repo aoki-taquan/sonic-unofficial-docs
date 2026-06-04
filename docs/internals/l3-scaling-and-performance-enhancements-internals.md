@@ -52,6 +52,9 @@ related:
 
 burst 時の add/remove ループで entry が満杯にならない問題の解消が主眼。[CoPP](../reference/glossary.md#term-copp) では ARP/ND の最大 600 pps → **8000 pps** に引き上げる提案[^1]。
 
+!!! warning "現行 master では未適用"
+    上表の閾値および CoPP 8000 pps はいずれも HLD 提案段階で、現行 master の既定値は `gc_thresh{1,2,3} = 1024/2048/4096`、`queue4_group2` の `cir`/`cbs = 600` のまま。詳細は本ページ末尾の「実装との乖離」節を参照。
+
 ## 2. Route programming 時間短縮
 
 旧時計値（AS7712 / Tomahawk 上）[^1]:
@@ -158,7 +161,20 @@ flowchart LR
 
 ## 実装との乖離
 
-`monitor: partially_implemented` — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ [L3 Scaling と Performance 強化 内部実装 親ページ](l3-scaling-and-performance-enhancements.md) の同セクション（`## 実装との乖離` または `!!! diff` ブロック）を参照のこと。
+`monitor: partially_implemented` — `RouteOrch` bulk / `fpmsyncd` の `rt_table==0` skip / `show arp` の個別 [FDB](../reference/glossary.md#term-fdb) lookup は実装済み (§2.1 / §2.2 / §3 の citation 参照) だが、**HLD §1 が提案する kernel ARP/ND 閾値と CoPP pps の引き上げは現行 master に未適用** という点が本 split-child 固有の差分である。
+
+!!! diff "本ページ固有の差分 (HLD 提案 vs 現行 master)"
+    | 項目 | HLD 提案値[^1] | 現行 master 既定値 | 根拠 (master のソース) |
+    |------|---------------|------------------|----------------------|
+    | `net.ipv4.neigh.default.gc_thresh1` | 16000 | **1024** | `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:21` |
+    | `net.ipv4.neigh.default.gc_thresh2` | 32000 | **2048** | `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:23` |
+    | `net.ipv4.neigh.default.gc_thresh3` | 48000 | **4096** | `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:25` |
+    | `net.ipv6.neigh.default.gc_thresh{1,2,3}` | 8000 / 16000 / 32000 | **1024 / 2048 / 4096** | `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:22,24,26` |
+    | ARP/ND CoPP rate (`queue4_group2` の `cir`/`cbs`) | 8000 pps | **600 pps** | `sonic-buildimage/files/image_config/copp/copp_cfg.j2:6-9` (`queue4_group2` block L21-30、`arp` trap が L100-104 で参照) |
+
+    影響: 大規模 L3 (数万 neigh) 環境では HLD が想定した burst 耐性 / GC 動作が得られない。実運用で必要な場合は `CONFIG_DB` / sysctl override で個別調整する必要がある (本ページの議論範囲外、運用詳細は [l3-scaling-and-performance-enhancements-operations.md](l3-scaling-and-performance-enhancements-operations.md) を参照)。
+
+    その他の差分 (RouteOrch bulk timer の周期や `nlohmann/json` バージョンなど、複数 split-child 共通の項目) は親ページ [L3 Scaling と Performance 強化（概要ハブ）](l3-scaling-and-performance-enhancements.md) の `## 実装との乖離` を参照。
 
 ## 引用元
 

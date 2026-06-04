@@ -229,7 +229,7 @@ last_verified: 2026-05-13
 - [L3 Scaling と Performance 強化 内部実装（RouteOrch bulk / fpmsyncd / sairedis / show](../../internals/l3-scaling-and-performance-enhancements-internals.md)  
   area: `internals` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
   
-  `monitor: partially_implemented` — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ [L3 Scaling と Performance 強化 内部実装 親ページ](../../internals/l3-scaling-and-performance-enhancements.md) の同セクション（`## 実装との乖離` または `!!! diff` ブロック）を参照のこと。
+  `monitor: partially_implemented` — `RouteOrch` bulk / `fpmsyncd` の `rt_table==0` skip / `show arp` の個別 [FDB](../../reference/glossary.md#term-fdb) lookup は実装済み (§2.1 / §2.2 / §3 の citation 参照) だが、**HLD §1 が提案する kernel ARP/ND 閾値と CoPP pps の引き上げは現行 master に未適用** という点が本 split-child 固有の差分である。
 
 - [L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）](../../internals/l3-scaling-and-performance-enhancements-limitations.md)  
   area: `internals` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
@@ -781,7 +781,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
 - [L3 Scaling と Performance 強化 内部実装（RouteOrch bulk / fpmsyncd / sairedis / show](../../internals/l3-scaling-and-performance-enhancements-internals.md)  
   area: `internals` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
   
-  `monitor: partially_implemented` — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ [L3 Scaling と Performance 強化 内部実装 親ページ](../../internals/l3-scaling-and-performance-enhancements.md) の同セクション（`## 実装との乖離` または `!!! diff` ブロック）を参照のこと。
+  `monitor: partially_implemented` — `RouteOrch` bulk / `fpmsyncd` の `rt_table==0` skip / `show arp` の個別 [FDB](../../reference/glossary.md#term-fdb) lookup は実装済み (§2.1 / §2.2 / §3 の citation 参照) だが、**HLD §1 が提案する kernel ARP/ND 閾値と CoPP pps の引き上げは現行 master に未適用** という点が本 split-child 固有の差分である。
 
 - [L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）](../../internals/l3-scaling-and-performance-enhancements-limitations.md)  
   area: `internals` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
