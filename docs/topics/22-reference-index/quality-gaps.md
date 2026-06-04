@@ -5,12 +5,10 @@ area: topics
 verification: meta
 last_verified: 2026-05-10
 related:
-  cli:
-  - show techsupport
+  cli: []
   config_db: []
   yang: []
-  _no_related_config_db: true
-  _no_related_yang: true
+  _no_related: true
 ---
 
 # 品質と gap
