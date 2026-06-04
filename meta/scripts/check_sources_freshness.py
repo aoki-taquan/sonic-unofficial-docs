@@ -173,11 +173,15 @@ tags:
 
 このページは `meta/scripts/check_sources_freshness.py --write` で生成され、各対象リポについて pinned SHA と upstream HEAD の差分を可視化する。**読者はサイトの記述がどの時点の SONiC master を反映しているかをここで確認できる**。
 
+!!! info "生成時刻 / generated-at"
+    この表は **{today}** に `check_sources_freshness.py --write` で生成された。`cache HEAD` と `upstream HEAD` は **生成時点** のローカル shallow clone を反映する。表の `cache HEAD` 列がページ上 frontmatter `last_verified` から大きく時間が空いている場合、本ページ自体が陳腐化している可能性がある（その場合は再生成スクリプトを走らせること）。
+
 ## サマリ
 
 - 対象リポ数: **{total}**
 - upstream より遅れているリポ: **{len(behind_repos)}**
 - ローカル cache が見つからなかったリポ: **{len(missing)}**
+- 生成日（last regenerated）: **{today}**
 
 ## 一覧
 
