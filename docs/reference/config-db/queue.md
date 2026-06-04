@@ -14,7 +14,9 @@ related:
     - SCHEDULER
     - WRED_PROFILE
     - PORT
-  cli: []
+  cli:
+    - config qos reload
+    - show queue counters
   yang:
     - sonic-queue
 ---
