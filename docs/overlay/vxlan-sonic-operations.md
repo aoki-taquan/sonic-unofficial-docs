@@ -3,12 +3,15 @@ title: VXLAN / VNet 設定と運用（CONFIG_DB / APP_DB / CLI）
 description: VXLAN / VNet の設定経路。CONFIG_DB / APP_DB スキーマ、CLI 一覧、VNet ピアリングの設定例、運用時のトラブルシューティング手順を扱う。
 area: overlay
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-06-04
 page_kind: split-child
 sources:
 - repo: sonic-net/SONiC
   path: doc/vxlan/Vxlan_hld.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-utilities
+  path: show/vxlan.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
   - VXLAN_TUNNEL
@@ -106,8 +109,13 @@ VNET_TABLE:<vnet>
 | `config vxlan <name> vlan <vid> vni <vni>` | VLAN ↔ VNI |
 | `config vxlan <name> src_if <intf>` | [VTEP](../reference/glossary.md#term-vtep) の source IF |
 | `config vxlan <name> vlan <vid> flood vtep <ip,...>` | HER 用 flood list |
-| `show vxlan <name>` | [VXLAN](../reference/glossary.md#term-vxlan) tunnel 情報 |
-| `show mac vxlan <name> <vni>` | VNI 別 learned MAC |
+| `show vxlan name <name>` | 個別 [VXLAN](../reference/glossary.md#term-vxlan) tunnel 情報[^2] |
+| `show vxlan tunnel` | 全 VTEP tunnel と src/dst を一覧[^2] |
+| `show vxlan remotevni all` / `show vxlan remotevni <vtep_ip>` | リモート VTEP から学習した VNI 一覧[^2] |
+| `show vxlan remotevtep` | リモート VTEP 一覧（[FDB](../reference/glossary.md#term-fdb) / VNI 経由で発見）[^2] |
+| `show vxlan vlanvnimap` / `show vxlan vrfvnimap` | VLAN ↔ VNI / VRF ↔ VNI マッピング[^2] |
+| `show vxlan remotemac all` | リモート VTEP 経由の MAC 一覧[^2] |
+| `show vxlan counters` | tunnel カウンタ[^2] |
 
 VNet ピアリングの CLI は無く、[CONFIG_DB](../reference/glossary.md#term-config_db) を直接編集する想定[^1]。
 
@@ -152,8 +160,8 @@ VXLAN トンネルと [EVPN](../reference/glossary.md#term-evpn) ピアの状態
 # VXLAN tunnel / VNI / EVPN
 show vxlan tunnel
 show vxlan remotevni all
-show evpn vni
 redis-cli -n 4 keys 'VXLAN_TUNNEL|*'
+docker exec bgp vtysh -c 'show evpn vni'
 docker exec bgp vtysh -c 'show bgp l2vpn evpn summary'
 ```
 
@@ -170,5 +178,6 @@ docker exec bgp vtysh -c 'show bgp l2vpn evpn summary'
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Vxlan_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-utilities` `show/vxlan.py` (`vxlan` click group) L12-L392 @ `39732bceb8bdefe706518ab40623bbbba6ff33b9`
 
-<!-- glossary-links-injected: 0726817b0ba1 -->
+<!-- glossary-links-injected: 302f3d074477 -->
