@@ -4,11 +4,7 @@ description: 内部実装 — このページは、observability のうち SONiC
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/internals/sonic-flexcounter-refactor.md
-- docs/internals/sonic-counter-initialization-optimization.md
-- docs/internals/byte-packet-rates-port-utilization-in-sonic.md
-- docs/system/sonic-logging-system-dumps-arch-spec.md
+sources: []
 related:
   cli:
   - show interfaces

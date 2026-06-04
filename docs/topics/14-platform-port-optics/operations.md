@@ -4,21 +4,7 @@ description: 運用 — ここでは、装置 health と optics に関連する�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/platform/sonic-sfp-refactoring.md
-- docs/management/enhancement-of-cmis-module-management.md
-- docs/platform/cmis-and-c-cmis-support-for-zr.md
-- docs/platform/custom-si-settings-for-cmis-modules.md
-- docs/system/transceiver-and-sensor-monitoring-hld.md
-- docs/platform/sonic-thermal-control-design.md
-- docs/platform/thermal-control-test-plan.md
-- docs/platform/liquid-cooling-leakage-detection-in-sonic.md
-- docs/platform/sonic-psu-daemon-design.md
-- docs/architecture/ssdhealth-design.md
-- docs/system/sonic-storage-monitoring-daemon-design.md
-- docs/platform/pcieinfo-design.md
-- docs/system/sonic-pcie-monitoring-services-hld.md
-- docs/reference/cli/show-platform.md
+sources: []
 related:
   cli:
   - show platform

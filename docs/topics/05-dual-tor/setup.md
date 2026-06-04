@@ -5,11 +5,7 @@ description: Dual-ToR の設定 — Dual-ToR の設定は、port ごとの MUX_C
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/reference/cli/config-muxcable.md
-- docs/reference/cli/show-muxcable.md
-- docs/reference/config-db/mux-cable.md
-- docs/reference/config-db/peer-switch.md
+sources: []
 related:
   cli:
   - show muxcable

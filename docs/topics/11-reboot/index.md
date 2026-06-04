@@ -5,14 +5,7 @@ area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
-sources:
-- docs/system/sonic-warm-reboot.md
-- docs/system/fast-reboot-flow-improvements-hld.md
-- docs/system/sonic-express-reboot-hld-spec.md
-- docs/system/system-wide-warmboot.md
-- docs/reference/cli/reboot-fast-warm.md
-- docs/reference/cli/config-warm_restart.md
-- docs/reference/cli/sonic-installer.md
+sources: []
 keywords:
 - Reboot
 - Upgrade

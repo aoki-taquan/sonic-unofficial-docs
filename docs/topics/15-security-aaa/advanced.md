@@ -4,12 +4,7 @@ description: 発展トピック — ここでは platform 層の信頼チェー�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/system/sonic-openssl-fips-140-3-hld.md
-- docs/system/sonic-fips-deployment.md
-- docs/system/hld-secure-boot.md
-- docs/system/secure-upgrade.md
-- docs/system/sonic-container-hardening.md
+sources: []
 related:
   cli: []
   config_db: []

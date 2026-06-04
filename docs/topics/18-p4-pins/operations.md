@@ -5,10 +5,7 @@ description: 運用 — PINS の運用で確認したいのは「コントロー
 area: topics
 verification: meta
 last_verified: 2026-05-11
-sources:
-- docs/management/packetio.md
-- docs/management/send-to-ingress-hld.md
-- docs/management/p4rt-read-cache-hld.md
+sources: []
 related:
   cli:
   - show platform

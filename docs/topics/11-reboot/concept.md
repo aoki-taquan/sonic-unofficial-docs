@@ -5,12 +5,7 @@ description: Reboot family の選び方 — SONiC の reboot は、単に「速�
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/system/sonic-warm-reboot.md
-- docs/system/fast-reboot-flow-improvements-hld.md
-- docs/system/sonic-express-reboot-hld-spec.md
-- docs/categories/reboot.md
-- docs/reference/cli/reboot-fast-warm.md
+sources: []
 keywords:
 - Reboot
 - 概念

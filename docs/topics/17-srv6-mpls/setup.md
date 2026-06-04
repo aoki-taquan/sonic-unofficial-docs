@@ -4,13 +4,7 @@ description: 設定 — SRv6 / MPLS / Path Tracing の設定は、いずれも C
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources:
-- docs/routing/static-configuration-of-srv6-in-sonic-hld.md
-- docs/routing/segment-routing-over-ipv6-srv6-hld.md
-- docs/routing/mpls-for-sonic-high-level-design-document.md
-- docs/routing/mpls-tc-to-tc-map.md
-- docs/routing/path-tracing-midpoint.md
-- docs/reference/yang/sonic-route-common.md
+sources: []
 related:
   cli:
   - config interface
