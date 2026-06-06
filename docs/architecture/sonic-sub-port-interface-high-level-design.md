@@ -61,7 +61,7 @@ dot1q vlan id は 1〜4094。同一親 port 上で重複不可。異親なら同
 
 ```mermaid
 flowchart LR
-    USER[(CONFIG_DB\nVLAN_SUB_INTERFACE)] --> IM[intfsmgrd]
+    USER[(CONFIG_DB\nVLAN_SUB_INTERFACE)] --> IM[intfmgrd]
     IM -->|netlink: add/del subif| KERN[Linux kernel host\nsub-interface]
     IM --> APP[(APPL_DB\nINTF_TABLE)]
     APP --> IO[intfsorch]
@@ -98,7 +98,7 @@ VLAN_SUB_INTERFACE|<subif>|<prefix>:
 
 ### Linux 連携
 
-intfsmgrd は kernel host 側に **vlan device**（`ip link add link Ethernet0 name Eth0.10 type vlan id 10`）を作る。route / neighbor は通常通り netlink 経由で APPDB に流れる[^1]。
+intfmgrd は kernel host 側に **vlan device**（`ip link add link Ethernet0 name Eth0.10 type vlan id 10`）を作る。route / neighbor は通常通り netlink 経由で APPDB に流れる[^1]。
 
 ### Runtime admin status / MTU
 
@@ -106,7 +106,7 @@ intfsmgrd は kernel host 側に **vlan device**（`ip link add link Ethernet0 n
 
 ### Warm reboot
 
-[CONFIG_DB](../reference/glossary.md#term-config_db) persist + intfsmgrd の再 sync で復旧。SAI 側 OID は再生成、Linux host vlan device は kept[^1]。
+[CONFIG_DB](../reference/glossary.md#term-config_db) persist + intfmgrd の再 sync で復旧。SAI 側 OID は再生成、Linux host vlan device は kept[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/subport/sonic-sub-port-intf-hld.md#L67-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -192,7 +192,7 @@ ip -d link show Ethernet0.10
 [^1]: `sonic-net/SONiC` `doc/subport/sonic-sub-port-intf-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- concerns hint:
-- intfsmgrd / intfsorch の sub-port 拡張の現行 master 取り込み確認
+- intfmgrd / intfsorch の sub-port 拡張の現行 master 取り込み確認
 - VLAN_SUB_INTERFACE スキーマと sonic-yang-models 取り込み確認
 - SAI_ROUTER_INTERFACE_TYPE_SUB_PORT の community SAI 取り込み確認
 - config subinterface CLI の sonic-utilities 取り込み確認
