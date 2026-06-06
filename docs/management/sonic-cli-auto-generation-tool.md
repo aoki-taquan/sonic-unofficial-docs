@@ -2,7 +2,7 @@
 title: SONiC CLI 自動生成ツール（YANG → click plugin 自動生成）
 description: SONiC CLI 自動生成ツール — SONiC Application Extension (SAE) として 3rd party 機能を
   追加 docker で持ち込む際に、CLI を都度書く工数を減らすため、YANG モデルから show / config click plugin を自動生成
-  するユーティリ…
+  するユーティリティ。
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,8 +12,6 @@ sources:
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-  - AUTO_TECHSUPPORT_FEATURE
-  - AUTO_TECHSUPPORT
   - VLAN
   - VLAN_MEMBER
   - VLAN_INTERFACE
@@ -161,16 +159,7 @@ sonic-cli-gen remove   config sonic-acl
 - `ls /usr/local/yang-models/` — 対象 YANG モジュール一覧
 - `sonic-cli-gen generate config <module>` を実行し、生成 plugin の import エラーは `python3 -c "import config.plugins.auto.<module>_yang"` で確認
 - `sonic-package-manager list` — Application Extension の有効化状況
-
-確認コマンド例:
-
-```bash
-# 自動生成 CLI の出力確認
-sonic-cli
-show running-configuration | head
-ls /usr/local/lib/python*/dist-packages/show/plugins
-```
-
+- `ls /usr/local/lib/python3*/dist-packages/show/plugins/auto/` — 自動生成 show plugin の有無
 
 ## 引用元
 
