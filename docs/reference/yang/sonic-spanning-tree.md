@@ -158,7 +158,7 @@ module: sonic-spanning-tree
 | `ifname` | `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/ifname` | `leafref` | yes |  | ../../../STP_PORT/STP_PORT_LIST/ifname | Reference to Ethernet interface or [PortChannel](../../reference/glossary.md#term-portchannel) |
 | `path_cost` | `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/path_cost` | `uint64` |  | 200 | range 1..200000000 | Path cost per VLAN per port |
 | `priority` | `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/priority` | `uint8` |  | 128 | range 0..240 | Port priority per VLAN |
-| `ifname` | `sonic-spanning-tree/STP_PORT/STP_PORT_LIST/ifname` | `leafref` | yes |  | Ethernet/[PortChannel](../../reference/glossary.md#term-portchannel) | Reference to Ethernet interface or [PortChannel](../../reference/glossary.md#term-portchannel) |
+| `ifname` | `sonic-spanning-tree/STP_PORT/STP_PORT_LIST/ifname` | `string` | yes |  | Ethernet/[PortChannel](../../reference/glossary.md#term-portchannel) 名 (yang 上は plain `string`、leafref ではない[^1]) | Reference to Ethernet interface or [PortChannel](../../reference/glossary.md#term-portchannel) |
 | `enabled` | `sonic-spanning-tree/STP_PORT/STP_PORT_LIST/enabled` | `boolean` | yes |  |  | Spanning tree enabled on interface |
 | `root_guard` | `sonic-spanning-tree/STP_PORT/STP_PORT_LIST/root_guard` | `boolean` |  | false |  | Root guard on port |
 | `bpdu_guard` | `sonic-spanning-tree/STP_PORT/STP_PORT_LIST/bpdu_guard` | `boolean` |  | false |  | BPDU guard on port |
@@ -187,10 +187,12 @@ module: sonic-spanning-tree
 
 ## leafref / 依存
 
-- `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/vlan-name` → `../../../STP_VLAN/STP_VLAN_LIST/name`
-- `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/ifname` → `../../../STP_PORT/STP_PORT_LIST/ifname`
-- `sonic-spanning-tree/STP_MST_PORT/STP_MST_PORT_LIST/inst_id` → `../../../STP_MST_INST/STP_MST_INST_LIST/instance`
-- `sonic-spanning-tree/STP_MST_PORT/STP_MST_PORT_LIST/ifname` → `../../../STP_PORT/STP_PORT_LIST/ifname`
+- `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/vlan-name` → `../../../STP_VLAN/STP_VLAN_LIST/name`[^1]
+- `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/ifname` → `../../../STP_PORT/STP_PORT_LIST/ifname`[^1]
+- `sonic-spanning-tree/STP_MST_PORT/STP_MST_PORT_LIST/inst_id` → `../../../STP_MST_INST/STP_MST_INST_LIST/instance`[^1]
+- `sonic-spanning-tree/STP_MST_PORT/STP_MST_PORT_LIST/ifname` → `../../../STP_PORT/STP_PORT_LIST/ifname`[^1]
+
+なお `STP_PORT_LIST` の key である `ifname` 自体は `type string` であり、`sonic-port` / `sonic-portchannel` への leafref 制約は yang 上には存在しない[^1]。実在性チェックは stpmgrd 側に委ねられている。
 
 ## augment / deviation
 
