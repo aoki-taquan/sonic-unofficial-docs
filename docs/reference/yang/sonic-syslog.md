@@ -125,6 +125,16 @@ module: sonic-syslog
 
 - `sonic-syslog/SYSLOG_CONFIG_FEATURE/SYSLOG_CONFIG_FEATURE_LIST/service` → `/feature:sonic-feature/feature:FEATURE/feature:FEATURE_LIST/feature:name`
 
+## must 制約
+
+[YANG](../../reference/glossary.md#term-yang) 上で `must` として明示されている制約。違反すると CONFIG_DB 反映時に検証エラー / rsyslog 起動失敗の原因となる。
+
+| leaf | 制約 (要約) | [YANG](../../reference/glossary.md#term-yang) XPath | 失敗時の挙動 |
+|------|------------|-----------|--------------|
+| `source` (SYSLOG_SERVER_LIST) | `source` と `server_address` は同一の address family (両方 IPv4 か両方 IPv6) でなければならない | `(contains(current(), '.') and contains(../server_address, '.')) or (contains(current(), ':') and contains(../server_address, ':'))` | YANG validation 失敗、CONFIG_DB 反映が拒否される[^2] |
+| `vrf` (SYSLOG_SERVER_LIST) | `vrf = 'mgmt'` を指定する場合は `MGMT_VRF_CONFIG/vrf_global/mgmtVrfEnabled = 'true'` でなければならない | `(current() != 'mgmt') or (/mvrf:sonic-mgmt_vrf/mvrf:MGMT_VRF_CONFIG/mvrf:vrf_global/mvrf:mgmtVrfEnabled = 'true')` | mgmt-vrf 未有効状態で `mgmt` を指定すると検証失敗。CONFIG_DB へ直接 set した場合は rsyslog 起動側で routing 解決に失敗する[^3] |
+| `welf_firewall_name` (SYSLOG_CONFIG/GLOBAL) | `format != 'standard'` のときのみ設定可能 (実質 `format=welf` 時のみ) | `(../format != 'standard')` | `format=standard` のまま `welf_firewall_name` を指定すると検証失敗[^4] |
+
 ## augment / deviation
 
 - なし
@@ -165,7 +175,9 @@ module: sonic-syslog
 
 ### よくある落とし穴
 
-- `vrf` leaf で `mgmt` 指定したのに mgmt-vrf 未有効だと rsyslog 起動失敗。両方の整合が必要。
+- `vrf` leaf で `mgmt` 指定したのに mgmt-vrf 未有効だと rsyslog 起動失敗。両方の整合が必要 (上記 must 制約参照)。
+- `source` を指定する場合、`server_address` と同じ address family (IPv4/IPv6) を選ぶこと。混在は YANG validation 失敗。
+- `format=welf` (=`format != 'standard'`) のときのみ `welf_firewall_name` を設定可能。逆に `format=standard` のまま `welf_firewall_name` を埋めても validation 失敗で反映されない。
 
 ### 関連する config / show コマンド
 
@@ -178,6 +190,9 @@ show syslog
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-syslog.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^2]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-syslog.yang` L105-L110 (`leaf source` の `must "(contains(current(), '.') and contains(../server_address, '.')) or (contains(current(), ':') and contains(../server_address, ':'))"`) @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^3]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-syslog.yang` L117-L127 (`leaf vrf` の `must "(current() != 'mgmt') or (/mvrf:sonic-mgmt_vrf/mvrf:MGMT_VRF_CONFIG/mvrf:vrf_global/mvrf:mgmtVrfEnabled = 'true')"`) @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^4]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-syslog.yang` L178-L182 (`leaf welf_firewall_name` の `must "(../format != 'standard')"`) @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
 
 <!-- topics-back-ref -->
@@ -187,4 +202,4 @@ show syslog
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->
