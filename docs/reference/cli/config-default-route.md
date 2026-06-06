@@ -3,11 +3,14 @@ title: config default-route（デフォルトルート設定パターン）
 description: 'config default-route（デフォルトルート設定パターン） — SONiC に config default-route という独立コマンドは存在しないため、用途に応じて vtysh / config route-map / frr 設定ファイル等を使い分けるパターンを解説する。'
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-06-06
 sources:
   - repo: sonic-net/sonic-utilities
     path: config/main.py
     ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db:
     - STATIC_ROUTE
@@ -83,7 +86,44 @@ MGMT_INTERFACE|eth0|10.0.0.0/24
 
 ## パターン 3: BGP 経由
 
-業務トラフィック向けのデフォルトルートは大抵 [BGP](../../reference/glossary.md#term-bgp) で受ける。CLI 単独で設定する場合は `config bgp` 系（`config-bgp.md` 参照）または `vtysh` で `neighbor X default-originate` / `default-information originate` を使う。
+業務トラフィック向けのデフォルトルートは大抵 [BGP](../../reference/glossary.md#term-bgp) で受ける。[SONiC](../../reference/glossary.md#term-sonic) の標準 image は [FRR](../../reference/glossary.md#term-frr) を BGP daemon として同梱しており、デフォルトルートの出力（advertise）方法は **2 系統** ある:
+
+| 方法 | スコープ | 用途 |
+|---|---|---|
+| `neighbor X default-originate` | neighbor 単位 | 特定 neighbor にのみ `0.0.0.0/0` を生成 |
+| `default-information originate` | address-family 全体 | 再配布（redistribute）した default route を全 neighbor に広告 |
+
+### vtysh での即時設定
+
+`vtysh` を直接叩く場合の最小例。`neighbor` 形式は自分側が生成元になる ToR / spine 想定:
+
+```bash
+sudo vtysh -c "configure terminal" \
+  -c "router bgp 65000" \
+  -c "address-family ipv4 unicast" \
+  -c "neighbor 10.0.0.1 default-originate" \
+  -c "end"
+
+# route-map で条件付け
+sudo vtysh -c "configure terminal" \
+  -c "router bgp 65000" \
+  -c "address-family ipv4 unicast" \
+  -c "neighbor 10.0.0.1 default-originate route-map RM_DEFAULT" \
+  -c "end"
+
+# OSPF / static からの default を BGP に注入
+sudo vtysh -c "configure terminal" \
+  -c "router bgp 65000" \
+  -c "address-family ipv4 unicast" \
+  -c "default-information originate" \
+  -c "end"
+```
+
+### CONFIG_DB 経由（frr-mgmt-framework）
+
+`frr-mgmt-framework` （[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common [YANG](../../reference/glossary.md#term-yang) → frrcfgd → [vtysh](../../reference/glossary.md#term-vtysh)）を使う構成では、CONFIG_DB の `BGP_NEIGHBOR_AF` テーブルに `send_default_route` / `default_rmap` を入れると `neighbor X default-originate ...` に展開され[^2]、`BGP_GLOBALS_AF` 側のフラグからは `default-information originate` が展開される[^3]。[EVPN](../../reference/glossary.md#term-evpn) address-family では `default-originate-ipv4` / `default-originate-ipv6` フラグが `default-originate ipv4` / `default-originate ipv6` に対応する[^4]。
+
+`config bgp` 配下の click サブコマンドの詳細は [config bgp サブコマンド](config-bgp.md) を参照。受信側（自分が default を learn する側）には特別な設定は不要で、デフォルトでは BGP best path として選ばれ Linux カーネルの routing table と [SAI](../../reference/glossary.md#term-sai) route object に書き込まれる。
 
 ## STATIC_ROUTE の更新ロジック（補足）
 
@@ -125,6 +165,9 @@ flowchart LR
 ## 引用元
 
 [^1]: `config route add` の実装は `config/main.py` L7812-L7888。`blackhole` の自動付与は L7858-L7870。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L7812>
+[^2]: `send_default_route` / `default_rmap` → `neighbor {} default-originate ...` のマッピングは `frrcfgd.py` L1899-L1900。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L1899>
+[^3]: `default-information originate` の組み立ては `frrcfgd.py` L3621-L3645（always / route-map / metric / metric-type サフィックス対応）。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L3621>
+[^4]: [EVPN](../../reference/glossary.md#term-evpn) address-family の `default-originate-ipv4` / `default-originate-ipv6` フラグは `frrcfgd.py` L1851-L1852。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L1851>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -158,4 +201,4 @@ vtysh -c 'show ip route 0.0.0.0/0'
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 7ac8e66e1af3 -->
+<!-- glossary-links-injected: 7f527ec781a5 -->
