@@ -9,6 +9,10 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/flex_counter/flex_counter_refactor.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-sairedis
+  path: syncd/FlexCounter.cpp
+- repo: sonic-net/sonic-sairedis
+  path: syncd/FlexCounter.h
 related:
   config_db:
   - FLEX_COUNTER_TABLE
@@ -36,7 +40,7 @@ related:
 
 ## なぜリファクタが要るか（旧構造の問題）
 
-`syncd` の `FlexCounter` は port / queue / buffer pool / priority group など **多数の統計・属性タイプ** を扱う巨大クラス。port counter / queue counter / queue attribute … ごとに `setXXXCounterList` / `removeXXX` / `collectXXXCounters` / `collectXXXAttr` が独立実装されていて `FlexCounter.cpp` 約 4000 行、`.h` 約 600 行に膨らんでいる[^1]。
+`syncd` の `FlexCounter` は port / queue / buffer pool / priority group など **多数の統計・属性タイプ** を扱う巨大クラス。port counter / queue counter / queue attribute … ごとに `setXXXCounterList` / `removeXXX` / `collectXXXCounters` / `collectXXXAttr` が独立実装されていて `FlexCounter.cpp` 約 4000 行、`.h` 約 600 行に膨らんでいる[^1]（リファクタ後の現 master では `.cpp` は依然 3916 行だが、これは後続の [DASH](../reference/glossary.md#term-dash) / [SmartSwitch](../reference/glossary.md#term-smartswitch) 系 counter context 追加分を含む。`.h` は 231 行まで縮小済[^2]）。
 
 旧来は統計種別ごとに 3 系統のデータを別々に持っていた[^1]:
 
@@ -134,13 +138,15 @@ void FlexCounter::collectCounters(swss::Table &countersTable) {
 
 新統計タイプの追加は **`CounterContext<NewType>` の登録 1 行** で済む。
 
-## 効果（PoC）
+## 効果（PoC 試算 / 現 master 実測）
 
-| 項目 | 旧 | 新 |
-|------|-----|-----|
-| `FlexCounter.cpp` 行数 | 約 4000 | **約 1000** |
-| `FlexCounter.h` 行数 | 約 600 | **約 200** |
-| 新統計タイプ追加 | `setXXXCounterList` 等を一式実装 | context 登録 + 振舞フラグ設定 |
+下表は HLD の PoC 時点での試算値[^1] と、現 master の実測値を並べたもの。リファクタは master に取り込まれているが、その後の機能追加（DASH / SmartSwitch [DPU](../reference/glossary.md#term-dpu) 系の新 counter context 等）により `.cpp` 側は当時の試算ほどには減っていない。`.h` 側は test double を除いた public/private インターフェースのみが残り試算に近い値まで縮小している[^2]。
+
+| 項目 | 旧（HLD 記載） | 新（PoC 試算）| 現 master 実測 |
+|------|----------------|----------------|----------------|
+| `FlexCounter.cpp` 行数 | 約 4000 | 約 1000 | **3916**[^2] |
+| `FlexCounter.h` 行数 | 約 600 | 約 200 | **231**[^2] |
+| 新統計タイプ追加 | `setXXXCounterList` 等を一式実装 | context 登録 + 振舞フラグ設定 | 同左（`createCounterContext` 経由）[^2] |
 
 ## 設定
 
@@ -170,6 +176,7 @@ HLD は `Restrictions/Limitations` を **N/A** と明記[^1]。事実上の前�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/flex_counter/flex_counter_refactor.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-sairedis` `syncd/FlexCounter.cpp`（3916 行）/ `syncd/FlexCounter.h`（231 行、`getCounterContext` `createCounterContext` `removeCounterContext` `hasCounterContext` は L162–L172）
 
 <!-- topics-back-ref -->
 ## 関連 Topics (索引)
@@ -178,4 +185,4 @@ HLD は `Restrictions/Limitations` を **N/A** と明記[^1]。事実上の前�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 78e7206f4df2 -->
+<!-- glossary-links-injected: 39a1d13532f7 -->
