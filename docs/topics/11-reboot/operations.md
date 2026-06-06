@@ -2,9 +2,21 @@
 title: Reboot 運用と障害調査
 description: Reboot 運用と障害調査 — 実行前に peer と platform の前提を揃え、実行中は warm shutdown / restore の境界を見失わず、実行後は reboot-cause と reconciliation 状態を確認するための切り分け手順をまとめる。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: code-verified
+last_verified: 2026-06-06
+sources:
+- repo: sonic-net/sonic-utilities
+  path: scripts/reboot
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/reboot_cause.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-swss
+  path: fpmsyncd/fpmsyncd.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: doc/swss-schema.md
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   cli:
   - show reboot-cause
@@ -185,7 +197,7 @@ May 10 11:01:09 sw01 INFO swss#orchagent: EOIU received from all components
 ```
 
 <!-- evidence:
-source: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: master)
+source: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
 excerpt: |
   // Wait 3 seconds after detecting EOIU reached state
   const uint32_t DEFAULT_EOIU_HOLD_INTERVAL = 3;
@@ -195,11 +207,11 @@ reasoning: fpmsyncd は STATE_DB の BGP_STATE_TABLE|<family>|eoiu を hget し�
 -->
 
 <!-- evidence-rendered:start -->
-??? note "📋 検証エビデンス: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: master)"
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
 
     **出典**:
 
-    `sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: master)`
+    `sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
 
     **抜粋**:
 
@@ -215,7 +227,7 @@ reasoning: fpmsyncd は STATE_DB の BGP_STATE_TABLE|<family>|eoiu を hget し�
 <!-- evidence-rendered:end -->
 
 <!-- evidence:
-source: sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: master)
+source: sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
 excerpt: |
   key             = BGP_STATE_TABLE|family|eoiu             ; family = "IPv4" / "IPv6"  ; address family.
   state           = "unknown" / "reached" / "consumed"         ; unknown: eoiu state not fetched yet.
@@ -224,11 +236,11 @@ reasoning: EOIU 状態は STATE_DB の BGP_STATE_TABLE で公開され、reconci
 -->
 
 <!-- evidence-rendered:start -->
-??? note "📋 検証エビデンス: sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: master)"
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
 
     **出典**:
 
-    `sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: master)`
+    `sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
 
     **抜粋**:
 
