@@ -1368,7 +1368,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [CRM](#term-crm)
 
 - [CRM テーブル](config-db/crm.md) (150)
-- [Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）](../system/generic-sai-extension-critical-resource-monitoring-crm.md) (43)
+- [Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）](../system/generic-sai-extension-critical-resource-monitoring-crm.md) (51)
 - [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (35)
 - [ROUTE_TABLE (APPL_DB)](config-db/app-route.md) (29)
 - [DASH_ACL_* テーブル](config-db/dash-acl.md) (25)
@@ -1621,7 +1621,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (262)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (266)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
