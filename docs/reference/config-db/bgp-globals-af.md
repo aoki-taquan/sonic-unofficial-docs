@@ -34,7 +34,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>BGP_GLOBALS_AF")]
-  DM["bgpcfgd"]
+  DM["frrcfgd"]
   CDB --> DM
 ```
 
@@ -260,7 +260,7 @@ vtysh -c 'show bgp l2vpn evpn summary'
 
 ### 段階 1 — Consumer 登録
 
-`bgpcfgd` が CONFIG_DB の `BGP_GLOBALS_AF` テーブルを購読する。
+`frrcfgd` (`frr-mgmt-framework`) の `BGPConfigDaemon` が `bgp_af_handler` を `BGP_GLOBALS_AF` テーブルに登録して購読する (`frrcfgd.py:2297`)。`bgpcfgd` は本テーブルを購読しない。
 
 `BGP_GLOBALS_AF` は `<vrf>|<af>` の key 構造。
 
@@ -285,8 +285,8 @@ vtysh -c 'show bgp l2vpn evpn summary'
 対象テーブル: `BGP_GLOBALS_AF`
 
 ### CLI
-- `vtysh` 経由 address-family コマンド群 ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が CONFIG_DB へ書き戻し)
-  - ソース: `sonic-frr bgpcfgd`
+- `config bgp` 系および `sonic-mgmt-common` (OpenConfig BGP) 経由で CONFIG_DB に書き込まれる。`vtysh` から直接実行された BGP 設定は FRR running-config のみを変更し、CONFIG_DB へは書き戻されない（frrcfgd は CONFIG_DB → FRR の一方向）。
+  - ソース: `sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`
 
 ### minigraph / sonic-cfggen
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
@@ -304,7 +304,7 @@ vtysh -c 'show bgp l2vpn evpn summary'
 - なし
 
 ### ランタイム注入 (デーモン自動書き込み)
-- `bgpcfgd` が FRR running-config を CONFIG_DB と同期
+- なし (frrcfgd は CONFIG_DB → FRR の一方向。FRR → CONFIG_DB の書き戻し経路は本テーブルに存在しない)
 <!-- /entry-points -->
 
 

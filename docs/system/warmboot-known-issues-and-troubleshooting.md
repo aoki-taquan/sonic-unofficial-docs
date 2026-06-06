@@ -88,6 +88,11 @@ syncd の init は正常に完了し、warmboot シーケンスは継続する�
 **対処**: エラーログを確認しつつ warmboot シーケンスが完了すれば問題なし。
 SAI バージョンを syncd と整合させることで解消する。
 
+**現行 master での状況**: SAI 連携バグはベンダー SAI 実装に依存するため、SONiC 側コードでの普遍的な
+fix は導入されていない。`syncd` の warm-restart シーケンス自体は今も `sonic-sairedis` 側で維持
+されている。報告当時の 202012 系プラットフォームでの再現に対しては SAI ヘッダ更新で解消ずみの旨が
+コメントで報告されている。
+
 ---
 
 ### 1-2. `syncd translateVidToRid failures for buffer pools` (#6726)[^6726]
@@ -110,6 +115,10 @@ syncd: executeOperationsOnAsic: operations to execute on ASIC: 56
 **対処**: 変換が完了するまで待機。ウォームブート完了後に統計収集を再試行する。
 Buffer pool OID の VIDTORID マップが再構築されれば自動解消する。
 
+**現行 master での状況**: VIDTORID マップ再構築のタイミング問題はウォーム/ファストリブートに本質的な
+過渡状態であり、master でも `warm_restart` 終了通知（`WARM_RESTART_TABLE` の `state` 列）を待って
+から外部監視を走らせる運用が引き続き推奨される。
+
 ---
 
 ### 1-3. syncd `APPLY_VIEW` エラー: hostif_trap_group (#7071, #7094)[^7071][^7094]
@@ -129,6 +138,10 @@ hostif_trap_group が [ACL](../reference/glossary.md#term-acl) エントリか�
 - SAI バージョンを `4.3.0.13-1` 以前（またはバグ修正版）に変更
 - `4.3.3.1` および `4.3.3.1-1` でこの問題が確認されている
 
+**現行 master での状況**: BRCM SAI 側のバグであり SONiC リポジトリでは fix を持たない。
+master では Broadcom が同梱する SAI のバージョンが進んでおり、4.3.3.x 系の固有問題としては
+事実上クローズ扱いだが、同等の APPLY_VIEW 障害の再発時には SAI 側 changelog の確認が必須。
+
 ---
 
 ## 2. LAG フラップ (#6773)[^6773]
@@ -146,6 +159,10 @@ PortChannel メンバーの再学習タイミングで競合が発生する。
 
 **対処**: 2 回目以降のウォームブート後に LAG が安定するまで待機（通常 30 秒以内）。
 本番環境では連続ウォームブート間に十分なインターバルを設ける。
+
+**現行 master での状況**: TD3 固有の PortChannel 再収束タイミング問題は、[teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd)/orchagent の
+warm-restart 再同期手順が継続して維持されており、master でも連続ウォームブート間隔は
+WARM_RESTART_TABLE の各コンポーネント `state` が `reconciled` になるのを待つ運用が安全。
 
 ---
 
@@ -168,6 +185,10 @@ screen -d -m warm-reboot
 tmux new-session -d -s warmboot 'warm-reboot'
 ```
 
+**現行 master での状況**: `scripts/warm-reboot` は今も bash スクリプトで、`trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM`
+により実行中のシグナルを無視するが、起動時点で受けた SIGHUP には依然脆弱なため、SSH 経由実行時は
+`nohup` / `screen` / `tmux` での detach が推奨される運用は master でも変わらない[^warmreboot-trap]。
+
 ---
 
 ## 4. fast-reboot ダウンタイム超過 (#7140)[^7140]
@@ -186,6 +207,11 @@ show reboot-cause
 # /var/log/syslog で fast-reboot の各フェーズのタイムスタンプを確認
 grep -E 'fast-reboot|kexec|orchagent' /var/log/syslog | tail -50
 ```
+
+**現行 master での状況**: fast-reboot のダウンタイム上限はプラットフォーム依存で、SONiC 側に汎用的な
+30 秒保証はもともと存在しない（30 秒は当時の目標値）。master でも `fast-reboot` スクリプトと
+`syncd`/`orchagent` の連携シーケンスは継続的に調整されており、ダウンタイム測定はプラットフォーム
+ごとに個別検証が必要。
 
 ---
 
@@ -207,6 +233,10 @@ master ブランチでインストールされたパッケージが
 # パッケージ移行をスキップ
 sonic-installer install --skip-package-migration <image>
 ```
+
+**現行 master での状況**: `--skip-package-migration` オプションは現行 master の
+`sonic_installer/main.py` でも有効で[^skip-pkg-mig]、対象 bootloader が package migration をサポート
+しない場合は自動的に skip される実装になっている。
 
 ---
 
@@ -230,6 +260,10 @@ cat /host/reboot-cause/previous-reboot-cause
 cat /var/log/reboot-cause/REBOOT_CAUSE
 ```
 
+**現行 master での状況**: `/host/reboot-cause/previous-reboot-cause` は現行 master の各プラット
+フォーム `sonic_platform/chassis.py` でも参照されているパスである。reboot-cause 競合の根本対策は
+issue で議論中だが、`show reboot-cause history` で過去ログを参照する運用は引き続き有効。
+
 ---
 
 ## 7. [202012] fast-reboot orchagent タイムアウト (#9899)[^9899]
@@ -249,6 +283,10 @@ kernel: igb 0000:0a:00.0 eth0: igb_watchdog_task: Detected Tx Unit Hang
 
 **対処**: NIC の TX ハング（ management port）が原因の場合がある。
 ドライバのリセットが完了してから再試行。
+
+**現行 master での状況**: 報告は 202012 ブランチが対象。master は orchagent/syncd 間の
+INIT_VIEW 通知シーケンスが継続的に改善されており、同等のタイムアウトを観測した場合は
+NIC ドライバ（igb 等）の TX hang 警告の有無を併せて確認する手順が引き続き有効。
 
 ---
 
@@ -288,5 +326,7 @@ kernel: igb 0000:0a:00.0 eth0: igb_watchdog_task: Detected Tx Unit Hang
 [^7518]: [sonic-buildimage #7518](https://github.com/sonic-net/sonic-buildimage/issues/7518) — 最新 master から旧イメージへのダウングレード失敗。
 [^12512]: [sonic-buildimage #12512](https://github.com/sonic-net/sonic-buildimage/issues/12512) — ウォームブート後の reboot-cause 誤表示。
 [^9899]: [sonic-buildimage #9899](https://github.com/sonic-net/sonic-buildimage/issues/9899) — [202012] fast-reboot 中の orchagent INIT_VIEW タイムアウト。
+[^warmreboot-trap]: `scripts/warm-reboot`（`sonic-net/sonic-utilities`）の `trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM` 行。実行中のシグナルは無視するが、起動時点での SSH 切断耐性は得られない。
+[^skip-pkg-mig]: `sonic_installer/main.py` の `install` コマンドにおける `--skip-package-migration` オプション定義（`sonic-net/sonic-utilities`）。
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: 9165fb6adb46 -->

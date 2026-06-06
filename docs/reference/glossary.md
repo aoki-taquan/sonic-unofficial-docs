@@ -1269,7 +1269,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ASIC](#term-asic)
 
 - [SUPPRESS_ASIC_SDK_HEALTH_EVENT テーブル](config-db/suppress-asic-sdk-health-event.md) (112)
-- [サイトマップ](../_meta/sitemap.md) (100)
+- [サイトマップ](../_meta/sitemap.md) (101)
 - [CHASSIS_STATE_DB テーブル群](config-db/chassis-state.md) (65)
 - [概念](../topics/12-multi-asic-voq/concept.md) (65)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (54)
@@ -1279,8 +1279,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [BFD_SESSION_TABLE (STATE_DB)](config-db/bfd-state.md) (164)
 - [APPL_DB BFD_SESSION_TABLE (bfdorch)](config-db/bfd-orch.md) (155)
 - [BFD_SESSION テーブル](config-db/bfd-session.md) (155)
+- [BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）](../routing/bfd-hw-offload.md) (80)
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (77)
-- [BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）](../routing/bfd-hw-offload.md) (75)
 
 ### [BGP](#term-bgp)
 
@@ -1327,7 +1327,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [CONFIG_DB](#term-config_db)
 
-- [サイトマップ](../_meta/sitemap.md) (130)
+- [サイトマップ](../_meta/sitemap.md) (131)
 - [APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)](config-db/appl-mirror.md) (58)
 - [IPv6 Link-local モード](config-db/ipv6-link-local.md) (54)
 - [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (50)
@@ -1576,7 +1576,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [FRR](#term-frr)
 
 - [COMMUNITY_SET テーブル](config-db/community-set.md) (87)
-- [BGP_GLOBALS_AF テーブル](config-db/bgp-globals-af.md) (65)
+- [BGP_GLOBALS_AF テーブル](config-db/bgp-globals-af.md) (68)
 - [ROUTE_MAP テーブル](config-db/route-map.md) (63)
 - [BGP_AGGREGATE_ADDRESS テーブル](config-db/bgp-aggregate-address.md) (58)
 - [PREFIX_SET テーブル](config-db/prefix-set.md) (58)
@@ -1629,7 +1629,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [Headroom](#term-headroom)
 
-- [DEFAULT_LOSSLESS_BUFFER_PARAMETER テーブル](config-db/default-lossless-buffer-parameter.md) (29)
+- [DEFAULT_LOSSLESS_BUFFER_PARAMETER テーブル](config-db/default-lossless-buffer-parameter.md) (30)
 - [LOSSLESS_TRAFFIC_PATTERN テーブル](config-db/lossless-traffic-pattern.md) (11)
 - [CABLE_LENGTH テーブル](config-db/cable-length.md) (6)
 - [BUFFER_POOL テーブル](config-db/buffer-pool.md) (5)
@@ -1798,8 +1798,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [PORT (macsec フィールド)](config-db/macsec-port.md) (126)
 - [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (85)
 - [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](../switching/sonic-sai-post-support-for-macsec.md) (35)
+- [MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）](../switching/macsec-sonic-high-level-design-document.md) (30)
 - [Gearbox PHY ごとの MACsec backend 決定（macsec_supported）](../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md) (27)
-- [MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）](../switching/macsec-sonic-high-level-design-document.md) (26)
 
 ### [Multi-ASIC](#term-multi-asic)
 

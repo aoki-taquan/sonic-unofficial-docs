@@ -1,7 +1,6 @@
 ---
 title: BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
-description: BFD ハードウェアオフロード（BfdOrch / BFD_SESSION） — BFD（Bidirectional Forwarding
-  Detection）はリンク・ピア間の高速障害検出プロトコルである。
+description: BFD（Bidirectional Forwarding Detection）セッションを ASIC にオフロードして CPU 介在なしに高速障害検出する Phase 1 設計。BfdOrch が APPL_DB.BFD_SESSION_TABLE を購読し SAI BFD API でセッションを登録、STATE_DB.BFD_SESSION_TABLE に状態を反映する。
 area: routing
 verification: code-verified
 last_verified: 2026-05-11
@@ -10,19 +9,11 @@ sources:
   path: doc/bfd/BFD HW Offload HLD.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - VRF
-  - CRM
-  - MGMT_VRF_CONFIG
-  - VXLAN_TUNNEL_MAP
-  - SYSLOG_SERVER
+  _no_related_config_db: true
+  _no_related_yang: true
   cli:
-  - show bfd session
-  - show bfd
-  - config vrf
-  yang:
-  - sonic-vrf
-  - sonic-crm
+  - show bfd summary
+  - show bfd peer
 ---
 
 <!-- topics-tip -->
@@ -43,7 +34,7 @@ related:
 
 - ASIC 側で BFD パケットの送受信・状態遷移を完結させ、最大 4000 セッションまでスケールする
 - セッションは `APPL_DB.BFD_SESSION` 経由で外部コンポーネント（例: 上位コントローラ、[orchagent](../reference/glossary.md#term-orchagent)）が直接書き込む。Phase 1 では `CONFIG_DB` 経由および専用 `config` CLI は実装しない[^1]
-- 状態は [SAI](../reference/glossary.md#term-sai) 通知を `BfdOrch` が受け取り `STATE_DB` に反映、`show bfd session` で参照する
+- 状態は [SAI](../reference/glossary.md#term-sai) 通知を `BfdOrch` が受け取り `STATE_DB` に反映、`show bfd summary` で参照する
 
 本 [HLD](../reference/glossary.md#term-hld) は 2021 年時点の Phase 1 設計であり、Control plane BFD（FRR `bfdd`）との共存は同 HLD のスコープ外である[^1]。
 
@@ -60,7 +51,7 @@ flowchart LR
     ASIC -.->|SAI notification\nsai_bfd_session_state_t| SYNCD
     SYNCD -.-> ORCH
     ORCH -->|状態反映| STATE[(STATE_DB\nBFD_SESSION_TABLE)]
-    CLI[show bfd session] --> STATE
+    CLI[show bfd summary / peer] --> STATE
 ```
 
 要点:
@@ -182,7 +173,10 @@ Phase 1 ではユーザ向け [CONFIG_DB](../reference/glossary.md#term-config_d
 
 | Command | 用途 |
 |---------|------|
-| `show bfd session <session name>` | オフロードされた BFD セッションと状態を表示 |
+| `show bfd summary` | 全 BFD セッションを `STATE_DB.BFD_SESSION_TABLE` から走査して表示[^2] |
+| `show bfd peer <peer_ip>` | 指定 peer IP の BFD セッションのみ表示[^2] |
+
+なお HLD 本文や旧版 doc では `show bfd session` という暫定名が登場するが、現行 `sonic-utilities` には存在しない。実装は `show bfd` グループ配下に `summary` / `peer` サブコマンドのみが存在する[^2]。
 
 `config bfd ...` 系の CLI は本 HLD では明示的に **将来拡張** とされ、Phase 1 のスコープ外[^1]。
 
@@ -226,7 +220,7 @@ HSET "BFD_SESSION_TABLE:default:default:10.0.0.5" \
 
 ## トラブルシューティング
 
-- セッションが Up にならない場合、まず `show bfd session` で `STATE_DB.BFD_SESSION_TABLE` 上の状態を確認。`Init` で止まっているならピア側の状態を疑う
+- セッションが Up にならない場合、まず `show bfd summary` で `STATE_DB.BFD_SESSION_TABLE` 上の状態を確認。`Init` で止まっているならピア側の状態を疑う
 - `APPL_DB` に SET したのにセッションが現れない場合、`BfdOrch` ログ・[syncd](../reference/glossary.md#term-syncd) ログに SAI エラーが出ていないか確認（SAI BFD 未対応 ASIC では create が失敗）
 - HW オフロード対応 SAI 属性は ASIC ベンダー依存。`SAI_BFD_SESSION_OFFLOAD_TYPE_FULL` を解釈できない実装では full offload にならない可能性あり
 
@@ -237,14 +231,20 @@ BFD セッションと HW オフロード状態を確認する。
 ```bash
 # BFD
 show bfd summary
-show bfd peer all
-redis-cli -n 4 keys 'BFD_SESSION|*'
+show bfd peer 10.0.0.5
+# APPL_DB (db 0) のオフロード対象セッション入口
+redis-cli -n 0 keys 'BFD_SESSION_TABLE:*'
+# STATE_DB (db 6) の現在状態（show bfd summary の参照元）
+redis-cli -n 6 keys 'BFD_SESSION_TABLE|*'
 docker exec bgp vtysh -c 'show bfd peers' | head
 ```
+
+APPL_DB は keyseparator `:`、[STATE_DB](../reference/glossary.md#term-state_db) は `|` を用いる点に注意（`sonic-swss-common/common/schema.h:120` で APP テーブル、line 491 で STATE テーブルを定義）。CONFIG_DB (db 4) に BFD セッションは存在しない（Phase 1 では未定義）。
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bfd/BFD HW Offload HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-utilities` `show/main.py:2669-2745` (`bfd` グループ、`summary` / `peer` サブコマンド、`STATE_DB.BFD_SESSION_TABLE|*` を keys 走査)
 
 <!-- concerns hint:
 - BfdOrch が現行 master の sonic-swss に存在するか
@@ -262,4 +262,4 @@ docker exec bgp vtysh -c 'show bfd peers' | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9cc90e2e6da0 -->
+<!-- glossary-links-injected: 6981be1a469d -->

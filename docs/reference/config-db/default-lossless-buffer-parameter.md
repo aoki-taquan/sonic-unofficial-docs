@@ -219,9 +219,10 @@ show buffer profile
 |---|---|---|---|---|
 | `BufferMgrDynamic` | `doTask()`（DEFAULT_LOSSLESS_BUFFER_PARAMETER） | `op == SET_COMMAND` かつ `key != "global"` | ポート情報の存在チェック → 未設定なら `task_need_retry` | `sonic-swss/cfgmgr/buffermgrdyn.cpp:1898` |
 | `BufferMgrDynamic` | `doTask()`（DEFAULT_LOSSLESS_BUFFER_PARAMETER） | `field == "default_dynamic_th"` | デフォルト閾値 `m_defaultThreshold` を更新し動的プロファイルを再計算トリガー | `sonic-swss/cfgmgr/buffermgrdyn.cpp:1993-1996` |
-| `BufferMgrDynamic` | `doTask()`（DEFAULT_LOSSLESS_BUFFER_PARAMETER） | `op == DEL_COMMAND` | `log_notice` のみ（削除操作は内部状態をリセットせず継続） | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2005` |
+| `BufferMgrDynamic` | `doTask()`（DEFAULT_LOSSLESS_BUFFER_PARAMETER） | `op == DEL_COMMAND` | `newRatio=""` に強制リセット → `m_overSubscribeRatio` と差分があれば `refreshSharedHeadroomPool()` を呼び SHP を無効化（プロファイル・プール再計算） | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2005-2008,2015-2029` |
+| `BufferMgrDynamic` | `doTask()`（DEFAULT_LOSSLESS_BUFFER_PARAMETER） | SET/DEL 以外の op | `SWSS_LOG_ERROR "Unsupported command ..."` → `task_failed` | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2009-2013` |
 
-> **裏取り**: `DEFAULT_LOSSLESS_BUFFER_PARAMETER` のハンドラパス L1894-2010。3 件分岐抽出。
+> **裏取り**: `DEFAULT_LOSSLESS_BUFFER_PARAMETER` のハンドラパス L1978-2033。op 分岐 (SET / DEL / その他) と field 分岐 (`default_dynamic_th` / `over_subscribe_ratio`) を抽出。
 <!-- /handler-branching -->
 <!-- cross-refs -->
 ## 暗黙参照テーブル

@@ -4,11 +4,15 @@ description: MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI） — IEE
   / 802.1X-2010 準拠の Layer 2 暗号化 を実装する設計。
 area: switching
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-06-06
 sources:
 - repo: sonic-net/SONiC
   path: doc/macsec/MACsec_hld.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss
+  path: orchagent/macsecorch.cpp
+- repo: sonic-net/sonic-swss
+  path: cfgmgr/macsecmgr.cpp
 related:
   config_db:
   - MACSEC_PROFILE
@@ -31,7 +35,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified（基本構成のみ）"
-    現行 master の `sonic-swss/orchagent/macsecorch.cpp` で `PAUSE_ETHER_TYPE 0x8808`（L26）、`PFC_MODE_BYPASS`（L29）、PFC バイパス ACL を構築する分岐（L3120, L3186）を確認[^pfc-bypass]。`macsecmgr` / `macsecorch` モジュール、`docker-macsec/etc/wpa_supplicant.conf` も存在。XPN / proactive SAK refresh / 可変 max-SA の wpa_supplicant 拡張は別パッチ系列で取り込まれている。詳細は元 HLD 参照（verified at: 2026-05-09）。
+    現行 master の `sonic-swss/orchagent/macsecorch.cpp` で `PAUSE_ETHER_TYPE 0x8808`（L26）、`PFC_MODE_BYPASS`（L29）、PFC バイパス ACL を構築する分岐（L3120）を確認[^pfc-bypass]。`cfgmgr/macsecmgr.cpp` の `MACsecProfile::update`（L355-L393）で `cipher_suite` / `primary_cak` / `primary_ckn` を必須、`fallback_cak` / `fallback_ckn` / `rekey_period` / `send_sci` / `replay_window` / `enable_replay_protect` をオプションとして受理[^macsecmgr-fields]。`docker-macsec/etc/wpa_supplicant.conf` および MACsec Orch の XPN ハンドリング（`SAI_MACSEC_SA_ATTR_CONFIGURED_EGRESS_XPN` / `MINIMUM_INGRESS_XPN`）も存在。`wpa_supplicant` 側 SONiC 拡張パッチの取り込み具合は本リポでは未追跡（verified at: 2026-05-09）。
 
 # MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）
 
@@ -45,7 +49,20 @@ related:
 
 ## 1. 何が動くか（コンポーネント）
 
-IEEE 802.1AE / 802.1X-2010 準拠の **Layer 2 暗号化** を実装する設計[^1]。Phase IV まで段階規定（基本 → PFC 連携 → CLI/scale → ACL/multi-tenant）。
+IEEE 802.1AE / 802.1X-2010 準拠の **Layer 2 暗号化** を実装する設計[^1]。HLD §1.1 で Phase I-IV まで段階規定されているが、現行 master の `macsecmgr` / `macsecorch` で確認できる範囲では Phase II-IV の SONiC 側 ([orchagent](../reference/glossary.md#term-orchagent) / cfgmgr) 要素は既に実装済みで、`wpa_supplicant` 拡張側の取り込みは別パッチ系列扱いで本リポでは未追跡。
+
+### Phase 別 実装ステータス
+
+HLD §1.1 [^1] の Phase 規定と、`sonic-swss` master で観測できる実装の対応:
+
+| Phase | HLD 上の主要要求 | SONiC swss 側の状態 |
+|-------|------------------|---------------------|
+| I | GCM-AES-128/256、[PortChannel](../reference/glossary.md#term-portchannel) 同居、SAK 無停止入れ替え | `macsecorch` で SAI MACsec_PORT/SC/SA を生成、`macsecmgr` が `cipher_suite` 必須として受理[^macsecmgr-fields] |
+| II | XPN（GCM-AES-XPN-128/256）、Proactive SAK refresh、`config macsec` CLI、`show macsec`、PFC バイパス | `SAI_MACSEC_CIPHER_SUITE_GCM_AES_XPN_128/256` 分岐 (macsecorch.cpp L1614-L1620、L2268-L2284)、`PFC_MODE_BYPASS` 用 ACL 生成 (L3120)[^pfc-bypass] |
+| III | primary / fallback CAK 同時保持 | `macsecmgr` が `fallback_cak` / `fallback_ckn` をオプションで受理[^macsecmgr-fields] |
+| IV | `send_sci` / `replay_protect` / `replay_window` / `rekey_period` のオンザフライ更新 | `macsecmgr` が `send_sci` / `enable_replay_protect` / `replay_window` / `rekey_period` フィールドを解釈[^macsecmgr-fields]。「オンザフライ更新」可否は wpa_supplicant 側に依存し本リポでは未確認 |
+
+「`wpa_supplicant` 側 SONiC 拡張」（XPN サポート / proactive rekey / max-SA 可変）は upstream 非対応で別パッチ系列。本ページの code-verified 範囲は SONiC 側 (`macsecmgr` / `macsecorch` / SAI) に限る。
 
 ```mermaid
 flowchart LR
@@ -189,7 +206,8 @@ MACsec を [LAG](../reference/glossary.md#term-lag) と組み合わせる場合�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/macsec/MACsec_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
-[^pfc-bypass]: `sonic-net/sonic-swss` `orchagent/macsecorch.cpp` L26（`PAUSE_ETHER_TYPE 0x8808`）, L29（`PFC_MODE_BYPASS`）, L3120-L3186（`pfc_mode == PFC_MODE_BYPASS` 分岐で `SAI_ACL_ENTRY_ATTR_FIELD_ETHER_TYPE = 0x8808` を持つ ACL エントリを生成）
+[^pfc-bypass]: `sonic-net/sonic-swss` `orchagent/macsecorch.cpp` L26（`PAUSE_ETHER_TYPE 0x8808`）, L29（`PFC_MODE_BYPASS`）, L3120（`pfc_mode == PFC_MODE_BYPASS` 分岐で `SAI_ACL_ENTRY_ATTR_FIELD_ETHER_TYPE = 0x8808` を持つ ACL エントリを生成）
+[^macsecmgr-fields]: `sonic-net/sonic-swss` `cfgmgr/macsecmgr.cpp` `MACsecProfile::update` (L355-L393): 必須フィールド `cipher_suite` / `primary_cak` / `primary_ckn`、オプション `fallback_cak` / `fallback_ckn` / `enable_replay_protect` / `replay_window` / `send_sci` / `rekey_period` / `priority` / `policy`
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -200,4 +218,4 @@ MACsec を [LAG](../reference/glossary.md#term-lag) と組み合わせる場合�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 08099c33af25 -->
+<!-- glossary-links-injected: 50927980e907 -->

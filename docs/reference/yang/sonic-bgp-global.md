@@ -38,7 +38,8 @@ flowchart LR
   C1 --> D1
   C2[("CONFIG_DB<br/>BGP_GLOBALS_AF")]
   Y --> C2
-  C2 --> D1
+  D2["frrcfgd"]
+  C2 --> D2
 ```
 
 !!! note "凡例"
