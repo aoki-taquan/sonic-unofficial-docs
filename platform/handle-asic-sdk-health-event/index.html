@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action） — ASIC / SDK が検出した内部不整合・FW assert・queue stuck・memory error などを SAI の health event 通知 として上…">
+        <meta name="description" content="ASIC / SDK が検出した内部不整合・FW assert・memory error などを SAI の switch_asic_sdk_health_event 通知として受け、orchagent が STATE_DB の ASIC_SDK_HEALTH_EVENT_TABLE に書き出して show / telemetry / suppress 設定に流す経路の解説。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action） — ASIC / SDK が検出した内部不整合・FW assert・queue stuck・memory error などを SAI の health event 通知 として上…" />
+<meta property="og:description" content="ASIC / SDK が検出した内部不整合・FW assert・memory error などを SAI の switch_asic_sdk_health_event 通知として受け、orchagent が STATE_DB の ASIC_SDK_HEALTH_EVENT_TABLE に書き出して show / telemetry / suppress 設定に流す経路の解説。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/platform/handle-asic-sdk-health-event.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/handle-asic-sdk-health-event/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action） — ASIC / SDK が検出した内部不整合・FW assert・queue stuck・memory error などを SAI の health event 通知 として上…" />
+<meta property="twitter:description" content="ASIC / SDK が検出した内部不整合・FW assert・memory error などを SAI の switch_asic_sdk_health_event 通知として受け、orchagent が STATE_DB の ASIC_SDK_HEALTH_EVENT_TABLE に書き出して show / telemetry / suppress 設定に流す経路の解説。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/platform/handle-asic-sdk-health-event.png" />
 </head>
   
@@ -18266,6 +18266,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベントスキーマ（実装由来）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#suppress" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -18282,7 +18293,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -18321,7 +18332,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -18332,7 +18343,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -18343,7 +18354,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -18355,7 +18366,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -18371,7 +18382,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35973,6 +35984,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベントスキーマ（実装由来）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#suppress" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35989,7 +36011,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -36028,7 +36050,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -36039,7 +36061,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -36050,7 +36072,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -36062,7 +36084,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -36078,7 +36100,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36142,30 +36164,41 @@
     STATE --&gt; SHOW[show asic-sdk-health-event]
     STATE --&gt; TEL[gNMI telemetry]
     CFG[CONFIG_DB\nSUPPRESS_ASIC_SDK_HEALTH_EVENT] --&gt; ORCH</code></pre>
-<p>イベントスキーマ（<a href="../../reference/glossary/#term-hld">HLD</a> 概念）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="_3">イベントスキーマ（実装由来）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p><code>switchorch.cpp</code> の <code>onSwitchAsicSdkHealthEvent()</code> が STATE_DB の <code>ASIC_SDK_HEALTH_EVENT_TABLE</code> に書く実体は以下のとおり<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <ul>
-<li><strong>severity</strong>: fatal / warning / notice</li>
-<li><strong>category</strong>: ASIC firmware / SDK / link / packet / temperature / memory ...</li>
-<li><strong>timestamp</strong>, <strong>count</strong>, <strong>description</strong></li>
-<li><strong>action policy</strong>: severity ごとに「ログのみ」「カウンタ計上」「critical 通知」を区別</li>
+<li><strong>Key</strong>: <code>sai_timestamp</code> を <code>%Y-%m-%d %H:%M:%S</code> 形式で localtime 整形した文字列。vendor SAI が異常に大きい timestamp を渡した場合は現在時刻に差し替える防衛コードあり<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>Field</strong>:<ul>
+<li><code>severity</code> — <code>fatal</code> / <code>warning</code> / <code>notice</code> のいずれか<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
+<li><code>category</code> — <code>software</code> / <code>firmware</code> / <code>cpu_hw</code> / <code>asic_hw</code> のいずれか<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup></li>
+<li><code>description</code> — vendor SAI からの可変長 byte 列。0x0d / 0x0a 以外の非印字文字は除去される<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
+</li>
+<li><strong>追加 syslog</strong>: severity=fatal は <code>SWSS_LOG_ERROR</code>、それ以外は <code>SWSS_LOG_NOTICE</code>。さらに <code>event_publish(g_events_handle, "asic-sdk-health-event", ...)</code> で sonic-events 経由の telemetry にも publish される<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">HLD と実装の差分</p>
+<p>上位 HLD では category を「ASIC firmware / SDK / link / packet / temperature / memory ...」のように示唆するが、実装の community SAI enum は <strong>4 値 (software / firmware / cpu_hw / asic_hw)</strong> に正規化されている<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。「link」「packet」「temperature」等の細分類は description 文字列内の vendor 任意フォーマットに格下げされている点に注意。</p>
+</div>
 <h3 id="suppress">Suppress（抑制）<a class="headerlink" href="#suppress" title="Permanent link">&para;</a></h3>
-<p><code>SUPPRESS_ASIC_SDK_HEALTH_EVENT</code> テーブルで <strong>特定の severity / category を出さない</strong> 設定が可能。誤検知が頻発する platform で運用上のノイズを下げるための機構。</p>
-<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>SUPPRESS_ASIC_SDK_HEALTH_EVENT</code> テーブルで <strong>特定の severity / category を出さない</strong> 設定が可能。orchagent は起動時と <code>SUPPRESS_ASIC_SDK_HEALTH_EVENT</code> テーブル更新時の双方で <code>registerAsicSdkHealthEventCategories()</code> を呼び、<code>SAI_SWITCH_ATTR_REG_{FATAL,WARNING,NOTICE}_SWITCH_ASIC_SDK_HEALTH_CATEGORY</code> に <strong>「通知させたい category 集合」（universal_set から suppressed を引いたもの）</strong> を設定し直す<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。つまり SUPPRESS は orchagent 内のフィルタではなく、SAI レイヤでの register 解除として実装されている。</p>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Table</th>
 <th>Key</th>
+<th>Field</th>
 <th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>SUPPRESS_ASIC_SDK_HEALTH_EVENT</code></td>
-<td><code>&lt;severity&gt;</code></td>
-<td>抑制対象 category のリスト等</td>
+<td><code>&lt;severity&gt;</code> (<code>fatal</code> / <code>warning</code> / <code>notice</code>)</td>
+<td><code>categories</code> (leaf-list: <code>software</code> / <code>firmware</code> / <code>cpu_hw</code> / <code>asic_hw</code>), <code>max_events</code> (uint32)</td>
+<td>当該 severity で <strong>suppress</strong> したい category 集合と、保持する最大イベント数<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup></td>
 </tr>
 </tbody>
 </table>
@@ -36192,26 +36225,26 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>SAI 実装依存</strong>: SAI vendor が health notification を上げない場合、本機構は動かない</li>
 <li><strong>抑制で見えなくなる</strong>: ハードウェア障害解析時は抑制設定を一旦解除する必要がある</li>
 <li><strong>解釈は category 名にしか頼れない</strong>: 詳細メッセージは vendor 文字列でフォーマットが固まっていない</li>
 </ul>
-<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>syslog rate limit</strong>: イベント大量発生時に rate-limit でドロップされる可能性</li>
 <li><strong>system health monitor</strong>: critical イベントを system health の状態に統合する設計</li>
 <li><strong>telemetry / dial-out</strong>: STATE_DB の表を subscribe して外部送信</li>
 <li><strong>SAI failure handling / dump-on-sai-failure</strong>: SAI API call 失敗のハンドリングと相補（こちらは notification ベース）</li>
 </ul>
-<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>イベントが出ない → vendor SAI が notification を register しているか、<a href="../../reference/glossary/#term-orchagent">orchagent</a> ログを確認</li>
 <li><code>show</code> で何も出ない → STATE_DB <code>ASIC_SDK_HEALTH_EVENT_TABLE</code> を <code>redis-cli</code> で直接確認</li>
 <li>抑制が効かない → <code>SUPPRESS_ASIC_SDK_HEALTH_EVENT</code> の key 名と category 名のスペル確認</li>
 </ul>
-<h3 id="_7">コマンド例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h3 id="_8">コマンド例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p>SAI / SDK のエラーログと dump を確認する。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># SAI failure / SDK health</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>syncd<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;sai_status|fail|error&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
@@ -36219,23 +36252,34 @@
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>show<span class="w"> </span>techsupport<span class="w"> </span>--silent<span class="w"> </span>--since<span class="w"> </span><span class="s1">&#39;1 hour ago&#39;</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ASIC_SDK_HEALTH_EVENT*&#39;</span>
 </span></code></pre></div>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- SAI health notification API（SAI_SWITCH_ATTR_*_NOTIFY 系）の community SAI 取り込み確認
-- orchagent 側 health event handler の現行実装存在確認
-- STATE_DB ASIC_SDK_HEALTH_EVENT_TABLE スキーマの現行値確認
-- CONFIG_DB SUPPRESS_ASIC_SDK_HEALTH_EVENT スキーマと sonic-yang-models 取り込み確認
-- show asic-sdk-health-event / config asic-sdk-health-event CLI の sonic-utilities 取り込み確認
-- system health / dump-on-sai-failure / telemetry との統合経路の現行実装確認
+- 2026-06: severity / category enum と STATE_DB スキーマを switchorch.cpp と sonic-suppress-asic-sdk-health-event.yang から直接裏取り済 (footnote [^2]-[^6])
+- 残課題: system health monitor / dump-on-sai-failure 側との具体的な status 連携 (どの DB key を共有するか) は別ページで深掘り余地あり
 -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 896d391185a9 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/handle-ASIC-SDK-health-event/handle-ASIC-SDK-health-event.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/handle-ASIC-SDK-health-event/handle-ASIC-SDK-health-event.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/switchorch.cpp</code> <code>SwitchOrch::onSwitchAsicSdkHealthEvent()</code> L1578-L1670（STATE_DB 書き込みと description サニタイズ、event_publish）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/switchorch.cpp</code> L78-L83 <code>switch_asic_sdk_health_event_severity_reverse_map</code>（<code>fatal</code> / <code>warning</code> / <code>notice</code> への文字列化）&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/switchorch.cpp</code> L85-L107 <code>switch_asic_sdk_health_event_category_reverse_map</code> および <code>_universal_set</code>（<code>software</code> / <code>firmware</code> / <code>cpu_hw</code> / <code>asic_hw</code>）&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/switchorch.cpp</code> <code>SwitchOrch::registerAsicSdkHealthEventCategories()</code> L1366-L1408 および <code>doCfgSuppressAsicSdkHealthEventTableTask()</code> L1410-L1487&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-suppress-asic-sdk-health-event.yang</code> L27-L60&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

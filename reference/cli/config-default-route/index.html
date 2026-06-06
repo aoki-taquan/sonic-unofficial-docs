@@ -20905,6 +20905,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="パターン 3: BGP 経由">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vtysh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vtysh での即時設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-frr-mgmt-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 経由（frr-mgmt-framework）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -35994,6 +36022,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="パターン 3: BGP 経由">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vtysh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vtysh での即時設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-frr-mgmt-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 経由（frr-mgmt-framework）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -36196,7 +36252,53 @@
 </span></code></pre></div>
 <p>このゲートウェイは管理 <a href="../../glossary/#term-vrf">VRF</a>（有効時）または default <a href="../../glossary/#term-vrf">VRF</a> の routing table に <code>default via 10.0.0.1 dev eth0</code> として注入される。<strong>データプレーン側の default route と分離する</strong>点に注意。</p>
 <h2 id="3-bgp">パターン 3: BGP 経由<a class="headerlink" href="#3-bgp" title="Permanent link">&para;</a></h2>
-<p>業務トラフィック向けのデフォルトルートは大抵 <a href="../../glossary/#term-bgp">BGP</a> で受ける。CLI 単独で設定する場合は <code>config bgp</code> 系（<code>config-bgp.md</code> 参照）または <code>vtysh</code> で <code>neighbor X default-originate</code> / <code>default-information originate</code> を使う。</p>
+<p>業務トラフィック向けのデフォルトルートは大抵 <a href="../../glossary/#term-bgp">BGP</a> で受ける。<a href="../../glossary/#term-sonic">SONiC</a> の標準 image は <a href="../../glossary/#term-frr">FRR</a> を BGP daemon として同梱しており、デフォルトルートの出力（advertise）方法は <strong>2 系統</strong> ある:</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>スコープ</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>neighbor X default-originate</code></td>
+<td>neighbor 単位</td>
+<td>特定 neighbor にのみ <code>0.0.0.0/0</code> を生成</td>
+</tr>
+<tr>
+<td><code>default-information originate</code></td>
+<td>address-family 全体</td>
+<td>再配布（redistribute）した default route を全 neighbor に広告</td>
+</tr>
+</tbody>
+</table>
+<h3 id="vtysh">vtysh での即時設定<a class="headerlink" href="#vtysh" title="Permanent link">&para;</a></h3>
+<p><code>vtysh</code> を直接叩く場合の最小例。<code>neighbor</code> 形式は自分側が生成元になる ToR / spine 想定:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;configure terminal&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>-c<span class="w"> </span><span class="s2">&quot;router bgp 65000&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-c<span class="w"> </span><span class="s2">&quot;address-family ipv4 unicast&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-c<span class="w"> </span><span class="s2">&quot;neighbor 10.0.0.1 default-originate&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span>-c<span class="w"> </span><span class="s2">&quot;end&quot;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># route-map で条件付け</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>sudo<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;configure terminal&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">  </span>-c<span class="w"> </span><span class="s2">&quot;router bgp 65000&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span>-c<span class="w"> </span><span class="s2">&quot;address-family ipv4 unicast&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span>-c<span class="w"> </span><span class="s2">&quot;neighbor 10.0.0.1 default-originate route-map RM_DEFAULT&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">  </span>-c<span class="w"> </span><span class="s2">&quot;end&quot;</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="c1"># OSPF / static からの default を BGP に注入</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>sudo<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;configure terminal&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">  </span>-c<span class="w"> </span><span class="s2">&quot;router bgp 65000&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">  </span>-c<span class="w"> </span><span class="s2">&quot;address-family ipv4 unicast&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="w">  </span>-c<span class="w"> </span><span class="s2">&quot;default-information originate&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="w">  </span>-c<span class="w"> </span><span class="s2">&quot;end&quot;</span>
+</span></code></pre></div>
+<h3 id="config_db-frr-mgmt-framework">CONFIG_DB 経由（frr-mgmt-framework）<a class="headerlink" href="#config_db-frr-mgmt-framework" title="Permanent link">&para;</a></h3>
+<p><code>frr-mgmt-framework</code> （<a href="../../glossary/#term-sonic-mgmt">sonic-mgmt</a>-common <a href="../../glossary/#term-yang">YANG</a> → frrcfgd → <a href="../../glossary/#term-vtysh">vtysh</a>）を使う構成では、CONFIG_DB の <code>BGP_NEIGHBOR_AF</code> テーブルに <code>send_default_route</code> / <code>default_rmap</code> を入れると <code>neighbor X default-originate ...</code> に展開され<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>、<code>BGP_GLOBALS_AF</code> 側のフラグからは <code>default-information originate</code> が展開される<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。<a href="../../glossary/#term-evpn">EVPN</a> address-family では <code>default-originate-ipv4</code> / <code>default-originate-ipv6</code> フラグが <code>default-originate ipv4</code> / <code>default-originate ipv6</code> に対応する<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</p>
+<p><code>config bgp</code> 配下の click サブコマンドの詳細は <a href="../config-bgp/">config bgp サブコマンド</a> を参照。受信側（自分が default を learn する側）には特別な設定は不要で、デフォルトでは BGP best path として選ばれ Linux カーネルの routing table と <a href="../../glossary/#term-sai">SAI</a> route object に書き込まれる。</p>
 <h2 id="static_route">STATIC_ROUTE の更新ロジック（補足）<a class="headerlink" href="#static_route" title="Permanent link">&para;</a></h2>
 <p><code>config route add</code> が同じ prefix で複数回呼ばれた場合、<code>config/main.py</code> の <code>add_route()</code> は <strong>既存エントリの値カラムに <code>,</code> 区切りで追記</strong>する形で複数 nexthop を蓄積する仕様<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。デフォルトルートに複数 <a href="../../glossary/#term-ecmp">ECMP</a> nexthop を載せたい場合は、その分だけコマンドを繰り返すか 1 度のコマンドで <code>nexthop 10.0.0.1 nexthop 10.0.0.2</code> の形で書く。</p>
 <p>削除は <code>config route del prefix 0.0.0.0/0 ...</code> で対象 nexthop を指定する。</p>
@@ -36242,9 +36344,9 @@
 <li>VRF 指定を忘れると default VRF に入り、想定外の経路漏れになる。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span><span class="m">0</span>.0.0.0/0
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span>vrf<span class="w"> </span>all
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ip route 0.0.0.0/0&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span><span class="m">0</span>.0.0.0/0
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span>vrf<span class="w"> </span>all
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ip route 0.0.0.0/0&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
 
@@ -36259,13 +36361,22 @@
 </ul>
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 7ac8e66e1af3 -->
+<!-- glossary-links-injected: 7f527ec781a5 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><code>config route add</code> の実装は <code>config/main.py</code> L7812-L7888。<code>blackhole</code> の自動付与は L7858-L7870。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L7812">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L7812</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>send_default_route</code> / <code>default_rmap</code> → <code>neighbor {} default-originate ...</code> のマッピングは <code>frrcfgd.py</code> L1899-L1900。<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L1899">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L1899</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>default-information originate</code> の組み立ては <code>frrcfgd.py</code> L3621-L3645（always / route-map / metric / metric-type サフィックス対応）。<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L3621">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L3621</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><a href="../../glossary/#term-evpn">EVPN</a> address-family の <code>default-originate-ipv4</code> / <code>default-originate-ipv6</code> フラグは <code>frrcfgd.py</code> L1851-L1852。<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L1851">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L1851</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

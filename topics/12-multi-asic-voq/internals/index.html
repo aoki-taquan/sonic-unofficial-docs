@@ -36253,7 +36253,7 @@
 </tr>
 <tr>
 <td><code>SYSTEM_LAG_MEMBER_TABLE</code></td>
-<td>chassis 跨ぎ LAG のメンバー port 情報[^<a href="../../../reference/glossary/#term-portsorch">portsorch</a>-lag]</td>
+<td>chassis 跨ぎ LAG のメンバー port 情報<sup id="fnref:lagorch-chassis"><a class="footnote-ref" href="#fn:lagorch-chassis">5</a></sup></td>
 </tr>
 </tbody>
 </table>
@@ -36326,7 +36326,7 @@
 <li><a href="../../../internals/aggregate-voq-counters-in-sonic/">Aggregate VOQ counters in SONiC</a></li>
 <li><a href="../../../routing/bgp-setup-for-voq-chassis/">BGP setup for VOQ chassis</a></li>
 </ul>
-<!-- glossary-links-injected: 4e2024452c7a -->
+<!-- glossary-links-injected: 889740d66e5f -->
 
 <div class="footnote">
 <hr />
@@ -36343,8 +36343,8 @@
 <li id="fn:show-fabric">
 <p><code>show fabric reachability</code> は <code>fabricstat -r</code>、<code>show fabric isolation</code> は <code>fabricstat -i</code> を実行する click group。sonic-net/<a href="../../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> <code>show/fabric.py</code> L33-50 (ref <code>39732bceb8bd</code>).&#160;<a class="footnote-backref" href="#fnref:show-fabric" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
-<li id="fn:portsorch-lag">
-<p>VOQ chassis では <a href="../../../reference/glossary/#term-portchannel">PortChannel</a> の add / member 変更時に <code>SYSTEM_LAG_TABLE</code> / <code>SYSTEM_LAG_MEMBER_TABLE</code> を <code>CHASSIS_APP_DB</code> 上で更新する。sonic-net/sonic-swss <code>orchagent/portsorch.cpp</code> L8037, L8114 (ref <code>4305596156d7</code>).&#160;<a class="footnote-backref" href="#fnref:portsorch-lag" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+<li id="fn:lagorch-chassis">
+<p>VOQ chassis では <a href="../../../reference/glossary/#term-portchannel">PortChannel</a> の add / member 変更時に <code>SYSTEM_LAG_TABLE</code> / <code>SYSTEM_LAG_MEMBER_TABLE</code> を <code>CHASSIS_APP_DB</code> 上で更新する。sonic-net/sonic-swss <code>orchagent/portsorch.cpp</code> L8037, L8114 (ref <code>4305596156d7</code>).&#160;<a class="footnote-backref" href="#fnref:lagorch-chassis" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

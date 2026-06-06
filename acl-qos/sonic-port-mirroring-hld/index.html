@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC Port Mirroring（SPAN / ERSPAN） — SONiC の port mirroring 拡張。Port / Port-Channel 単位の ingress / egress / both SPAN、および ERSPAN（IP encapsulation）に対応する。">
+        <meta name="description" content="SONiC Port Mirroring（SPAN / ERSPAN） — Port / Port-Channel 単位の ingress / egress / both SPAN、および ERSPAN（IP encapsulation）に対応する port mirroring 機能の HLD と現行 master 実装の対応関係をまとめる。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SONiC Port Mirroring（SPAN / ERSPAN） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SONiC Port Mirroring（SPAN / ERSPAN） — SONiC の port mirroring 拡張。Port / Port-Channel 単位の ingress / egress / both SPAN、および ERSPAN（IP encapsulation）に対応する。" />
+<meta property="og:description" content="SONiC Port Mirroring（SPAN / ERSPAN） — Port / Port-Channel 単位の ingress / egress / both SPAN、および ERSPAN（IP encapsulation）に対応する port mirroring 機能の HLD と現行 master 実装の対応関係をまとめる。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/acl-qos/sonic-port-mirroring-hld.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/sonic-port-mirroring-hld/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SONiC Port Mirroring（SPAN / ERSPAN） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SONiC Port Mirroring（SPAN / ERSPAN） — SONiC の port mirroring 拡張。Port / Port-Channel 単位の ingress / egress / both SPAN、および ERSPAN（IP encapsulation）に対応する。" />
+<meta property="twitter:description" content="SONiC Port Mirroring（SPAN / ERSPAN） — Port / Port-Channel 単位の ingress / egress / both SPAN、および ERSPAN（IP encapsulation）に対応する port mirroring 機能の HLD と現行 master 実装の対応関係をまとめる。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/acl-qos/sonic-port-mirroring-hld.png" />
 </head>
   
@@ -36231,13 +36231,13 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: code-verified（基本構成のみ）</p>
-<p>現行 master の <code>sonic-swss/orchagent/mirrororch.cpp</code> に <code>MirrorOrch</code> クラス、SAI Mirror セッションの利用可能数取得 (<code>SAI_OBJECT_TYPE_MIRROR_SESSION</code> の object availability query, mirrororch.cpp:362) を確認。<code>sonic-utilities/config/main.py</code> の <code>mirror_session</code> グループ (3148-) と <code>validate_mirror_session_config</code>、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mirror-session.yang</code> も存在。Mirror Capability Discovery 名（<code>MIRROR_SESSION_CAPABILITY</code> テーブル）は明示見つからず、object availability query API 経由で代替されている可能性あり。詳細フロー / SAI 属性マッピングは元 HLD 参照（verified at: 2026-05-09）。</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>現行 master の <code>sonic-swss/orchagent/mirrororch.cpp</code> に <code>MirrorOrch</code> クラス、SAI Mirror セッションの object availability query (<code>SAI_OBJECT_TYPE_MIRROR_SESSION</code>) を確認。<code>sonic-utilities/config/main.py</code> の <code>mirror_session</code> グループと <code>validate_mirror_session_config</code>、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mirror-session.yang</code> も存在。Capability Discovery は当初 v0.2 HLD で示された <code>MIRROR_CAPABILITIES</code> ではなく、現行実装では <code>SwitchOrch::querySwitchPortMirrorCapability()</code> が <code>STATE_DB SWITCH_CAPABILITY|switch</code> テーブルに <code>PORT_INGRESS_MIRROR_CAPABLE</code> / <code>PORT_EGRESS_MIRROR_CAPABLE</code> フィールドとして書き込む形に集約されている<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。本ページはこの実装側の名称を採用する（verified at: 2026-06-06）。</p>
 </div>
 <h1 id="sonic-port-mirroringspan-erspan">SONiC Port Mirroring（SPAN / ERSPAN）<a class="headerlink" href="#sonic-port-mirroringspan-erspan" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><a href="../../reference/glossary/#term-sonic">SONiC</a> の port mirroring 拡張。Port / Port-Channel 単位の <strong>ingress / egress / both</strong> SPAN、および ERSPAN（IP encapsulation）に対応する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。複数ソース・単一宛先の動的セッション管理、Port-Channel に対するセッションは少なくとも 1 メンバが UP のとき有効、を要件とする。</p>
-<p>v0.2 では <strong>Mirror Capability Discovery and Validation</strong> が追加された（プラットフォームが対応する mirror モード・属性を <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に公開して上位が事前検証できるようにする仕組み）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>v0.2 では <strong>Mirror Capability Discovery and Validation</strong> が追加された（プラットフォームが対応する mirror モード・属性を <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に公開して上位が事前検証できるようにする仕組み）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。現行 master では HLD 当初案の <code>MIRROR_CAPABILITIES</code> 単独テーブルではなく、<code>SwitchOrch</code> が一元管理する <code>SWITCH_CAPABILITY|switch</code> テーブルにフィールドとして書き込む形で実装されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">主要要件（要約）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36257,7 +36257,8 @@
     ADB --&gt; MO[MirrorOrch]
     MO --&gt; ASIC[(ASIC: SAI_OBJECT_TYPE_MIRROR_SESSION)]
     MO --&gt; SDB[(STATE_DB MIRROR_SESSION_TABLE)]
-    CAP[Capability\n SAI query] --&gt; SDB2[(STATE_DB MIRROR_CAPABILITIES)]</code></pre>
+    SO[SwitchOrch\n sai_query_attribute_capability] --&gt; SDB2[(STATE_DB SWITCH_CAPABILITY\|switch)]
+    SDB2 -.参照.-&gt; CFG[config mirror_session\n is_port_mirror_capability_supported]</code></pre>
 <h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>MIRROR_SESSION|&lt;session_name&gt;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    type            = &quot;SPAN&quot; | &quot;ERSPAN&quot;
@@ -36272,7 +36273,108 @@
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    direction       = &quot;rx&quot; | &quot;tx&quot; | &quot;both&quot;
 </span></code></pre></div>
 <h3 id="capability-discovery">Capability Discovery<a class="headerlink" href="#capability-discovery" title="Permanent link">&para;</a></h3>
-<p><code>MIRROR_CAPABILITIES</code> テーブル（STATE_DB）に、プラットフォームでサポートされる mirror モードと属性を <a href="../../reference/glossary/#term-syncd">syncd</a> 起動時に書き込み。<code>MirrorOrch</code> は新セッション作成前に capability を参照し、未対応モードを <code>MirrorMgr</code> に対してエラー返却する。</p>
+<p>HLD v0.2 当初案では <code>MIRROR_CAPABILITIES</code> という独立テーブルが提案されていたが、現行 master 実装は <code>SwitchOrch</code> が一元管理する <code>STATE_DB SWITCH_CAPABILITY|switch</code> テーブルにフィールドとして格納する<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>STATE_DB エントリ</th>
+<th>フィールド</th>
+<th>値</th>
+<th>書き込み元</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SWITCH_CAPABILITY\|switch</code></td>
+<td><code>PORT_INGRESS_MIRROR_CAPABLE</code></td>
+<td><code>"true"</code> / <code>"false"</code></td>
+<td><code>SwitchOrch::querySwitchPortMirrorCapability()</code></td>
+</tr>
+<tr>
+<td><code>SWITCH_CAPABILITY\|switch</code></td>
+<td><code>PORT_EGRESS_MIRROR_CAPABLE</code></td>
+<td><code>"true"</code> / <code>"false"</code></td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<p><code>SwitchOrch</code> は <a href="../../reference/glossary/#term-orchagent">orchagent</a> 起動時に <code>sai_query_attribute_capability(SAI_OBJECT_TYPE_PORT, SAI_PORT_ATTR_INGRESS_MIRROR_SESSION / SAI_PORT_ATTR_EGRESS_MIRROR_SESSION)</code> を呼び、<code>set_implemented</code> の結果を <code>"true"</code> / <code>"false"</code> の文字列として書き込む。SAI query 自体が失敗した場合は後方互換のためデフォルト <code>"true"</code> を入れる<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>config mirror_session add</code> 側（CLI）は SPAN セッション作成時に <code>is_port_mirror_capability_supported(direction)</code> でこのテーブルを参照し、<code>direction</code> が <code>rx</code> / <code>tx</code> / <code>both</code> のいずれかに応じて対応するフィールドを check する。キー欠落（None）は「未公開プラットフォーム」として <strong>supported とみなす</strong>（後方互換）、明示 <code>"false"</code> のみ拒否する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。ERSPAN セッションには本 capability check は適用されない。</p>
+<!-- evidence:
+source: sonic-swss/orchagent/switchorch.cpp#L1903-L1957 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  void SwitchOrch::querySwitchPortMirrorCapability() {
+    status = sai_query_attribute_capability(gSwitchId, SAI_OBJECT_TYPE_PORT,
+                            SAI_PORT_ATTR_INGRESS_MIRROR_SESSION, &capability);
+    ...
+    fvVector.emplace_back(SWITCH_CAPABILITY_TABLE_PORT_INGRESS_MIRROR_CAPABLE, "true");
+    ...
+    set_switch_capability(fvVector);
+  }
+reasoning: 現行 master は MIRROR_CAPABILITIES ではなく SWITCH_CAPABILITY|switch テーブルにフィールド形式で capability を書く。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-swss/orchagent/switchorch.cpp#L1903-L1957 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-swss/orchagent/switchorch.cpp#L1903-L1957 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>void SwitchOrch::querySwitchPortMirrorCapability() {
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  status = sai_query_attribute_capability(gSwitchId, SAI_OBJECT_TYPE_PORT,
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>                          SAI_PORT_ATTR_INGRESS_MIRROR_SESSION, &amp;capability);
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  ...
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  fvVector.emplace_back(SWITCH_CAPABILITY_TABLE_PORT_INGRESS_MIRROR_CAPABLE, &quot;true&quot;);
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  ...
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  set_switch_capability(fvVector);
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>}
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 現行 master は MIRROR_CAPABILITIES ではなく SWITCH_CAPABILITY|switch テーブルにフィールド形式で capability を書く。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-utilities/config/main.py#L1290-L1316 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  def is_port_mirror_capability_supported(direction, namespace=None):
+      entry_name = "SWITCH_CAPABILITY|switch"
+      directions_to_check = []
+      if not direction or direction in ['rx', 'both']:
+          directions_to_check.append("PORT_INGRESS_MIRROR_CAPABLE")
+      if not direction or direction in ['tx', 'both']:
+          directions_to_check.append("PORT_EGRESS_MIRROR_CAPABLE")
+      for capability_key in directions_to_check:
+          value = state_db.get(state_db.STATE_DB, entry_name, capability_key)
+          if value is not None and value != "true":
+              return False
+      return True
+reasoning: CLI 側は同じ SWITCH_CAPABILITY|switch を読み、SPAN direction に応じて事前検証する。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-utilities/config/main.py#L1290-L1316 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-utilities/config/main.py#L1290-L1316 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>def is_port_mirror_capability_supported(direction, namespace=None):
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    entry_name = &quot;SWITCH_CAPABILITY|switch&quot;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    directions_to_check = []
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    if not direction or direction in [&#39;rx&#39;, &#39;both&#39;]:
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        directions_to_check.append(&quot;PORT_INGRESS_MIRROR_CAPABLE&quot;)
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    if not direction or direction in [&#39;tx&#39;, &#39;both&#39;]:
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        directions_to_check.append(&quot;PORT_EGRESS_MIRROR_CAPABLE&quot;)
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    for capability_key in directions_to_check:
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>        value = state_db.get(state_db.STATE_DB, entry_name, capability_key)
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        if value is not None and value != &quot;true&quot;:
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>            return False
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    return True
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: CLI 側は同じ SWITCH_CAPABILITY|switch を読み、SPAN direction に応じて事前検証する。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<p>なお <code>MirrorOrch</code> 自体は SAI Mirror セッションの <strong>数量</strong> capability を <code>SAI_OBJECT_TYPE_MIRROR_SESSION</code> の object availability query で取得しており、port 属性 capability とは別経路で扱われる。</p>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
 <table>
@@ -36290,15 +36392,15 @@
 </tbody>
 </table>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config mirror_session add &lt;name&gt; --type SPAN --src-port &lt;p&gt; --dst-port &lt;p&gt; --direction rx
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config mirror_session add &lt;name&gt; --type ERSPAN --src-ip &lt;ip&gt; --dst-ip &lt;ip&gt; --gre-type &lt;type&gt; --src-port &lt;p&gt;
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>config mirror_session remove &lt;name&gt;
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>show mirror_session
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config mirror_session add &lt;name&gt; --type SPAN --src-port &lt;p&gt; --dst-port &lt;p&gt; --direction rx
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config mirror_session add &lt;name&gt; --type ERSPAN --src-ip &lt;ip&gt; --dst-ip &lt;ip&gt; --gre-type &lt;type&gt; --src-port &lt;p&gt;
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>config mirror_session remove &lt;name&gt;
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>show mirror_session
 </span></code></pre></div>
 <h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>mirror_session<span class="w"> </span>add<span class="w"> </span>MIR_SPAN1<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span>--type<span class="w"> </span>SPAN<span class="w"> </span>--src-port<span class="w"> </span>Ethernet0<span class="w"> </span>--dst-port<span class="w"> </span>Ethernet48<span class="w"> </span>--direction<span class="w"> </span>both
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>mirror_session
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>mirror_session<span class="w"> </span>add<span class="w"> </span>MIR_SPAN1<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--type<span class="w"> </span>SPAN<span class="w"> </span>--src-port<span class="w"> </span>Ethernet0<span class="w"> </span>--dst-port<span class="w"> </span>Ethernet48<span class="w"> </span>--direction<span class="w"> </span>both
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>mirror_session
 </span></code></pre></div>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36322,10 +36424,13 @@
 <h3 id="port-mirroring">コマンド例: Port mirroring 確認<a class="headerlink" href="#port-mirroring" title="Permanent link">&para;</a></h3>
 <p>下記コマンドを順に実行することで、関連する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / STATE_DB のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Mirror session の状態と CONFIG_DB / STATE_DB を確認</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>mirror_session
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;MIRROR_SESSION|*&#39;</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;MIRROR_SESSION_TABLE|everflow0&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Mirror session の状態と CONFIG_DB / APPL_DB を確認</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>mirror_session
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;MIRROR_SESSION|*&#39;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;MIRROR_SESSION_TABLE|everflow0&#39;</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># プラットフォームの port mirror capability を STATE_DB で確認</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;SWITCH_CAPABILITY|switch&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>mirror
 </span></code></pre></div>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
@@ -36335,13 +36440,19 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: e2892b76fd9a -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/port-mirroring/SONiC_Port_Mirroring_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/port-mirroring/SONiC_Port_Mirroring_HLD.md</code> @ <code>fcf0848bcc6282434e6a3e0b86dd3ee7043db291</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/switchorch.cpp</code> <code>querySwitchPortMirrorCapability()</code> L1903-L1957 @ <code>4305596156d70e9797e8a881b3d19b46de0bce0d</code>、定数定義は <code>orchagent/switchorch.h</code> L34-L35&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-utilities</code> <code>config/main.py</code> <code>is_port_mirror_capability_supported()</code> L1290-L1316 @ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

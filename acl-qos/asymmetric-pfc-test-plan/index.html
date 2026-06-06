@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures） — Asymmetric PFC は SONiC 機能だが、本ドキュメントはその 機能テスト計画 を扱う。">
+        <meta name="description" content="Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures） — Asymmetric PFC は SONiC 機能だが、本ドキュメントはその機能テスト計画を扱う。CONFIG_DB の PORT.pfc_asym フィールドを切り替えて swss / SAI に反映させる経路を、PTF と Fanout の pfc_gen.py で検証する手順をまとめる。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures） — Asymmetric PFC は SONiC 機能だが、本ドキュメントはその 機能テスト計画 を扱う。" />
+<meta property="og:description" content="Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures） — Asymmetric PFC は SONiC 機能だが、本ドキュメントはその機能テスト計画を扱う。CONFIG_DB の PORT.pfc_asym フィールドを切り替えて swss / SAI に反映させる経路を、PTF と Fanout の pfc_gen.py で検証する手順をまとめる。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/acl-qos/asymmetric-pfc-test-plan.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/asymmetric-pfc-test-plan/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures） — Asymmetric PFC は SONiC 機能だが、本ドキュメントはその 機能テスト計画 を扱う。" />
+<meta property="twitter:description" content="Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures） — Asymmetric PFC は SONiC 機能だが、本ドキュメントはその機能テスト計画を扱う。CONFIG_DB の PORT.pfc_asym フィールドを切り替えて swss / SAI に反映させる経路を、PTF と Fanout の pfc_gen.py で検証する手順をまとめる。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/acl-qos/asymmetric-pfc-test-plan.png" />
 </head>
   
@@ -36421,7 +36421,12 @@ reasoning: pfc_gen.py の役割と配備 fixture の根拠。
 <p><code>tests/ptf_runner.py</code> モジュールを使って既存 PTF テストケースをラップする<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
-<p>該当なし（テスト計画文書）。</p>
+<p>テスト計画そのものは設定対象を持たないが、検証対象の Asymmetric PFC 本体機能は以下を触る:</p>
+<ul>
+<li><strong>CONFIG_DB</strong>: <code>PORT|&lt;alias&gt;</code> ハッシュの <code>pfc_asym</code> フィールド (<code>on</code> / <code>off</code>)。<code>portsorch.cpp</code> L5407-L5434 で値変化を検知して <code>setPortPfcAsym()</code> を呼ぶ<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
+<li><strong>CLI</strong>: <code>show pfc asymmetric [&lt;interface&gt;]</code> で現在のモードを表示 (<code>sonic-utilities/show/main.py</code> L706-L720)<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</li>
+<li><strong><a href="../../reference/glossary/#term-yang">YANG</a></strong>: <code>sonic-port</code> の <code>pfc-asym</code> leaf。</li>
+</ul>
 <h3 id="_6">設定例（テスト実行）<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># sonic-mgmt 側</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">cd</span><span class="w"> </span>sonic-mgmt/tests
@@ -36471,13 +36476,19 @@ reasoning: pfc_gen.py の役割と配備 fixture の根拠。
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: d5320e852f7a -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/pfc_asym/PFC_Asymmetric_Test_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/portsorch.cpp</code> L5407-L5434 (CONFIG_DB.PORT.pfc_asym 適用経路)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-utilities</code> <code>show/main.py</code> L706-L720 (<code>show pfc asymmetric</code> サブコマンド定義)&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

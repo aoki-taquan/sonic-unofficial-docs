@@ -32764,6 +32764,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#typedef" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        typedef
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#leafref" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36131,6 +36142,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#typedef" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        typedef
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#leafref" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36330,6 +36352,7 @@
 <p>本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。<code>inject_yang_xref.py</code> により自動生成されます。</p>
 <h3 id="config_db">対応 CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <ul>
+<li><a href="../../config-db/nat/"><code>NAT_GLOBAL</code></a></li>
 <li><a href="../../config-db/nat-pool/"><code>NAT_POOL</code></a></li>
 <li><a href="../../config-db/nat-bindings/"><code>NAT_BINDINGS</code></a></li>
 </ul>
@@ -36438,7 +36461,7 @@
 <td><code>list</code></td>
 <td><code>sonic-nat/NAT_POOL/NAT_POOL_LIST</code></td>
 <td><code>name</code></td>
-<td></td>
+<td><code>max-elements 16</code><sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
 <td><code>container</code></td>
@@ -36450,10 +36473,14 @@
 <td><code>list</code></td>
 <td><code>sonic-nat/NAT_BINDINGS/NAT_BINDINGS_LIST</code></td>
 <td><code>name</code></td>
-<td></td>
+<td><code>max-elements 16</code><sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
 </tr>
 </tbody>
 </table>
+<div class="admonition warning">
+<p class="admonition-title">スケール上限</p>
+<p><code>NAT_POOL_LIST</code> / <code>NAT_BINDINGS_LIST</code> はいずれも <code>max-elements 16</code> 制約があり、CONFIG_DB に 17 個以上のプール / バインディングを投入すると YANG 検証で reject される<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。動的 NAT のスケール計画ではこの上限を前提にすること。</p>
+</div>
 <h2 id="leaf">leaf 一覧<a class="headerlink" href="#leaf" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36519,7 +36546,7 @@
 <td><code>nat-type</code></td>
 <td></td>
 <td>dnat</td>
-<td></td>
+<td>enum <code>snat</code> / <code>dnat</code><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
 <td>Nat type for the static napt entry - snat or dnat</td>
 </tr>
 <tr>
@@ -36555,7 +36582,7 @@
 <td><code>nat-type</code></td>
 <td></td>
 <td>dnat</td>
-<td></td>
+<td>enum <code>snat</code> / <code>dnat</code><sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
 <td>Nat type for the static nat entry - snat or dnat</td>
 </tr>
 <tr>
@@ -36654,7 +36681,7 @@
 <td><code>nat-type</code></td>
 <td></td>
 <td>snat</td>
-<td></td>
+<td>enum <code>snat</code> / <code>dnat</code><sup id="fnref3:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
 <td>Nat type for the binding - snat or dnat</td>
 </tr>
 <tr>
@@ -36665,6 +36692,31 @@
 <td></td>
 <td>range <code>1..9999</code></td>
 <td>Twice nat id for the binding to achieve the Dynamic twice nat</td>
+</tr>
+</tbody>
+</table>
+<h2 id="typedef">typedef<a class="headerlink" href="#typedef" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>typedef</th>
+<th>種別</th>
+<th>値 / パターン</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nat-type</code></td>
+<td><code>enumeration</code></td>
+<td><code>snat</code> (Source NAT) / <code>dnat</code> (Destination NAT)<sup id="fnref4:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+<td>NAT エントリの方向。<code>STATIC_NAT</code> / <code>STATIC_NAPT</code> は既定値 <code>dnat</code>、<code>NAT_BINDINGS</code> は既定値 <code>snat</code>。</td>
+</tr>
+<tr>
+<td><code>ip-address-range</code></td>
+<td><code>union</code> (<code>inet:ipv4-address</code> または <code>A.B.C.D[-A.B.C.D]</code> 形式の文字列)</td>
+<td><code>NAT_POOL</code> の <code>nat_ip</code> で使用</td>
+<td>単一 IPv4 アドレスまたは範囲を表す。</td>
 </tr>
 </tbody>
 </table>
@@ -36737,6 +36789,15 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-nat.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-nat.yang</code> L211-L213 (<code>NAT_POOL_LIST</code> の <code>max-elements 16</code> 制約) @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-nat.yang</code> L249-L251 (<code>NAT_BINDINGS_LIST</code> の <code>max-elements 16</code> 制約) @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-nat.yang</code> L33-L42 (<code>nat-type</code> typedef、<code>snat</code>=Source NAT / <code>dnat</code>=Destination NAT) @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

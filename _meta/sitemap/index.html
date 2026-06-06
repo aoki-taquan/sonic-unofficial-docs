@@ -35966,7 +35966,7 @@
 </li>
 <li><strong>16-nat-dhcp-dns</strong> (<code>topics/16-nat-dhcp-dns/</code>)<ul>
 <li><a href="../../topics/16-nat-dhcp-dns/advanced/">発展トピック</a> — [code-verified] 発展トピック — この章のメインは NAT / DHCP ですが、付帯する管理系サービスとして time / DNS / TWAMP / terminal s…</li>
-<li><a href="../../topics/16-nat-dhcp-dns/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — この章は NAT、DHCP relay、DHCP server の内部構造を「container → daemon → 設定生成 → pa…</li>
+<li><a href="../../topics/16-nat-dhcp-dns/architecture/">アーキテクチャ</a> — [code-verified] NAT / DHCP relay / DHCP server の container 構成と daemon、設定生成テンプレート、CPU / ASIC 二段の…</li>
 <li><a href="../../topics/16-nat-dhcp-dns/concept/">概念</a> — [meta] 概念 — 「edge / management サービス」は、ToR や management スイッチに乗っている付帯機能の集合で、SONiC では大きく…</li>
 <li><a href="../../topics/16-nat-dhcp-dns/">NAT / DHCP Relay / Time-DNS Services</a> — [meta] NAT / DHCP Relay / Time-DNS Services — この章は、SONiC が「edge / management 側で動く付帯サービ…</li>
 <li><a href="../../topics/16-nat-dhcp-dns/internals/">内部実装</a> — [meta] 内部実装 — NAT / DHCP / DNS の内部実装は「SONiC は何を ASIC に任せ、何を Linux user space daemon に任…</li>
@@ -36222,7 +36222,7 @@
 <li><a href="../../acl-qos/copp-manager-redesign-test-plan/">CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled）</a> — [code-verified] CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled） — CoppMgr は CONFIG_DB…</li>
 <li><a href="../../acl-qos/copp-neighbor-miss-trap-and-enhancements/">CoPP Neighbor Miss trap と enum capability query（show copp configuration）</a> — [code-verified] CoPP Neighbor Miss trap と enum capability query（show copp configuration） — CoPP…</li>
 <li><a href="../../acl-qos/everflow-test-plan/">Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）</a> — [code-verified] Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6） — Everflow（SAI mirro…</li>
-<li><a href="../../acl-qos/sonic-port-mirroring-hld/">SONiC Port Mirroring（SPAN / ERSPAN）</a> — [code-verified] SONiC Port Mirroring（SPAN / ERSPAN） — SONiC の port mirroring 拡張。Port / Port-Cha…</li>
+<li><a href="../../acl-qos/sonic-port-mirroring-hld/">SONiC Port Mirroring（SPAN / ERSPAN）</a> — [code-verified] SONiC Port Mirroring（SPAN / ERSPAN） — Port / Port-Channel 単位の ingress / egress…</li>
 <li><a href="../../acl-qos/asymmetric-pfc-test-plan/">Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）</a> — [code-verified] Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures） — Asymmetric PFC は SONiC 機能だが、…</li>
 <li><a href="../../acl-qos/pfc-historical-statistics/">PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI）</a> — [code-verified] PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI） — PFC pause を 受けていた累積時間 /…</li>
 <li><a href="../../acl-qos/align-watermark-flow-with-port-configuration-hld/">flexcounter の queue/PG map 生成と watermark 有効化の整合</a> — [code-verified] flexcounter の queue/PG map 生成と watermark 有効化の整合 — SONiC の flex counter には queue…</li>
@@ -36411,7 +36411,7 @@
 <li><a href="../../platform/smartswitch-dpu-graceful-shutdown/">Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）</a> — [discrepancy-found] Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT） — SmartSwitch では DP…</li>
 <li><a href="../../platform/1-sonic-on-multi-asic-platforms/">SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）</a> — [code-verified] 1 台の chassis に複数 ASIC を持つプラットフォームで SONiC を動かすための namespace 分離・per-ASIC Redis・so…</li>
 <li><a href="../../platform/db-design-for-multi-asic-scenarios/">multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）</a> — [code-verified] multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...） — SONi…</li>
-<li><a href="../../platform/handle-asic-sdk-health-event/">ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action）</a> — [code-verified] ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action） — ASIC /…</li>
+<li><a href="../../platform/handle-asic-sdk-health-event/">ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action）</a> — [code-verified] ASIC / SDK が検出した内部不整合・FW assert・memory error などを SAI の switch_asic_sdk_health_e…</li>
 <li><a href="../../platform/icmp-hardware-offload/">ICMP Hardware Offload（DualToR link prober の NPU 化）</a> — [code-verified] ICMP Hardware Offload（DualToR link prober の NPU 化） — SONiC の DualToR では、ToR ↔ サ…</li>
 <li><a href="../../platform/multi-asic-single-json-configuration-design/">Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）</a> — [code-verified] Multi-ASIC Single JSON Configuration（Golden Config に namespace layer） — minigra…</li>
 <li><a href="../../platform/pcieinfo-design/">pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較）</a> — [code-verified] pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較） — SONiC スイッチ上の PCI…</li>
@@ -36990,7 +36990,7 @@
 <li><a href="../../categories/bgp-evpn/">BGP / EVPN 関連</a> — [meta] BGP / EVPN 関連 — SONiC のルーティングは FRRouting (FRR) を中心に構築されており、その大部分が BGP / EVPN-VX…</li>
 <li><a href="../../categories/sai-extensions/">SAI 拡張属性追加系</a> — [meta] SAI 拡張属性追加系 — SAI capability 問い合わせ・失敗ハンドリング・SAI POST・Generic SAI Extension CRM・…</li>
 <li><a href="../../categories/mib-snmp/">MIB / SNMP 関連</a> — [meta] SONiC の SNMP エージェントは Net-SNMP + sonic_ax_impl (AgentX subagent) で構成され、snmpd が標準…</li>
-<li><a href="../../categories/gnmi-openconfig/">gNMI / gNOI / OpenConfig 関連</a> — [meta] gNMI / gNOI / OpenConfig 関連 — SONiC の管理プレーンは Management Framework（REST / gNMI /…</li>
+<li><a href="../../categories/gnmi-openconfig/">gNMI / gNOI / OpenConfig 関連</a> — [meta] gNMI / gNOI / OpenConfig 関連カテゴリのインデックス。Management Framework / sonic-gnmi / GCU…</li>
 <li><a href="../../categories/container-build/">Container / Build system 関連</a> — [meta] SONiC の container / build / image / upgrade に関わるページを area 横断でまとめたカテゴリ索引。sonic-b…</li>
 </ul>
 

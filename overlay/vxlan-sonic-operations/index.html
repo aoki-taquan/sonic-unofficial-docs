@@ -36086,19 +36086,31 @@
 </thead>
 <tbody>
 <tr>
-<td><code>config vxlan &lt;name&gt; vlan &lt;vid&gt; vni &lt;vni&gt;</code></td>
-<td>VLAN ↔ VNI</td>
+<td><code>config vxlan add &lt;vxlan_name&gt; &lt;src_ip&gt;</code></td>
+<td><a href="../../reference/glossary/#term-vtep">VTEP</a> tunnel エントリの追加（<code>VXLAN_TUNNEL</code> を書く）<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
 </tr>
 <tr>
-<td><code>config vxlan &lt;name&gt; src_if &lt;intf&gt;</code></td>
-<td><a href="../../reference/glossary/#term-vtep">VTEP</a> の source IF</td>
+<td><code>config vxlan del &lt;vxlan_name&gt;</code></td>
+<td>tunnel エントリの削除<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
 </tr>
 <tr>
-<td><code>config vxlan &lt;name&gt; vlan &lt;vid&gt; flood vtep &lt;ip,...&gt;</code></td>
-<td>HER 用 flood list</td>
+<td><code>config vxlan map add &lt;vxlan_name&gt; &lt;vlan_id&gt; &lt;vni&gt;</code></td>
+<td>VLAN ↔ VNI のマップ追加（<code>VXLAN_TUNNEL_MAP</code> を書く）<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
 </tr>
 <tr>
-<td><code>show vxlan name &lt;name&gt;</code></td>
+<td><code>config vxlan map del &lt;vxlan_name&gt; &lt;vlan_id&gt; &lt;vni&gt;</code></td>
+<td>VLAN ↔ VNI マップ削除<sup id="fnref4:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+<tr>
+<td><code>config vxlan map_range add &lt;vxlan_name&gt; &lt;vlan_start&gt; &lt;vlan_end&gt; &lt;vni_start&gt;</code></td>
+<td>VLAN レンジ ↔ VNI レンジの一括マップ<sup id="fnref5:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+<tr>
+<td><code>config vxlan evpn_nvo add &lt;nvo_name&gt; &lt;vxlan_name&gt;</code></td>
+<td>EVPN NVO エントリ追加<sup id="fnref6:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+<tr>
+<td><code>show vxlan name &lt;vxlan_name&gt;</code></td>
 <td>個別 <a href="../../reference/glossary/#term-vxlan">VXLAN</a> tunnel 情報<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
@@ -36106,24 +36118,28 @@
 <td>全 VTEP tunnel と src/dst を一覧<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
+<td><code>show vxlan interface</code></td>
+<td>VTEP 情報（src IP・status）<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
 <td><code>show vxlan remotevni all</code> / <code>show vxlan remotevni &lt;vtep_ip&gt;</code></td>
-<td>リモート VTEP から学習した VNI 一覧<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td>リモート VTEP から学習した VNI 一覧（<code>all</code> は sentinel）<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
 <td><code>show vxlan remotevtep</code></td>
-<td>リモート VTEP 一覧（<a href="../../reference/glossary/#term-fdb">FDB</a> / VNI 経由で発見）<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td>リモート VTEP 一覧（<a href="../../reference/glossary/#term-fdb">FDB</a> / VNI 経由で発見）<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
 <td><code>show vxlan vlanvnimap</code> / <code>show vxlan vrfvnimap</code></td>
-<td>VLAN ↔ VNI / VRF ↔ VNI マッピング<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td>VLAN ↔ VNI / VRF ↔ VNI マッピング<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
-<td><code>show vxlan remotemac all</code></td>
-<td>リモート VTEP 経由の MAC 一覧<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td><code>show vxlan remotemac all</code> / <code>show vxlan remotemac &lt;vtep_ip&gt;</code></td>
+<td>リモート VTEP 経由の MAC 一覧<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
-<td><code>show vxlan counters</code></td>
-<td>tunnel カウンタ<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td><code>show vxlan counters [tunnel]</code></td>
+<td>tunnel カウンタ<sup id="fnref8:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 </tbody>
 </table>
@@ -36203,7 +36219,10 @@
 <p><code>sonic-net/SONiC</code> <code>doc/vxlan/Vxlan_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>sonic-net/sonic-utilities</code> <code>show/vxlan.py</code> (<code>vxlan</code> click group) L12-L392 @ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-utilities</code> <code>show/vxlan.py</code> (<code>vxlan</code> click group) L12-L392 @ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-utilities</code> <code>config/vxlan.py</code> (<code>vxlan</code> click group, <code>add/del/map/map_range/evpn_nvo</code> subcommands) L14-L325 @ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
