@@ -36171,7 +36171,7 @@
 <h2 id="login_method">login_method の順序<a class="headerlink" href="#login_method" title="Permanent link">&para;</a></h2>
 <p><code>config aaa authentication login</code> で複数バックエンドを列挙できますが、運用上の鉄則は最後を必ず <code>local</code> で締めることです。外部サーバ全滅時のロックアウトを避けるためで、<a href="../../../management/aaa-improvements/">AAA improvements</a> と <a href="../../../management/tacacs-test-plan/">TACACS test plan</a> の失敗フォールバックシナリオで議論されています。</p>
 <h2 id="ssh-serial-console">SSH と serial console のポリシー<a class="headerlink" href="#ssh-serial-console" title="Permanent link">&para;</a></h2>
-<p>SSH の listen address、port、ciphers、login grace time、max auth tries などは <code>SSH_SERVER</code> テーブルにまとめ、<code>hostcfgd</code> 経由で <code>sshd_config</code> に展開されます。詳細フィールドと意図は <a href="../../../management/ssh-server-global-config-hld/">SSH server global config HLD</a> を参照してください。</p>
+<p>SSH の listen port、ciphers、認証リトライ回数、ログインタイムアウトなどは <code>SSH_SERVER\|POLICIES</code> にまとめ、<code>hostcfgd</code> 経由で <code>sshd_config</code> に展開されます。YANG 上の leaf 名は <code>ports</code> / <code>authentication_retries</code> / <code>login_timeout</code> / <code>inactivity_timeout</code> / <code>max_sessions</code> / <code>permit_root_login</code> / <code>password_authentication</code> / <code>ciphers</code> / <code>kex_algorithms</code> / <code>macs</code> であり、<code>sshd_config</code> の <code>MaxAuthTries</code> / <code>LoginGraceTime</code> のような sshd 用語とは綴りが異なる点に注意してください<sup id="fnref:ssh-yang"><a class="footnote-ref" href="#fn:ssh-yang">1</a></sup>。詳細フィールドと意図は <a href="../../../management/ssh-server-global-config-hld/">SSH server global config HLD</a> を参照してください。</p>
 <p>serial console 側は inactivity timeout、login banner との組み合わせ、root login の可否などを <code>SERIAL_CONSOLE</code> テーブルで制御します。設計意図は <a href="../../../management/serial-console-global-config-hld/">serial console global config HLD</a> にあります。</p>
 <p>banner メッセージ（login 前と login 後）は <code>BANNER_MESSAGE</code> テーブルで管理され、<code>/etc/issue</code> と <code>/etc/motd</code> に反映されます。詳細は <a href="../../../system/banner-messages-hld/">banner messages HLD</a> を参照してください。</p>
 <h2 id="_3">設定の入口の対応<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -36280,14 +36280,14 @@
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>sudo<span class="w"> </span>config<span class="w"> </span>aaa<span class="w"> </span>authentication<span class="w"> </span>login<span class="w"> </span>ldap<span class="w"> </span><span class="nb">local</span>
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># SSH 強化</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># SSH 強化（leaf 名は sonic-ssh-server.yang に従う。sshd_config の用語ではない点に注意）</span>
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>sudo<span class="w"> </span>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{</span>
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="s1">  &quot;SSH_SERVER&quot;:{&quot;POLICIES&quot;:{</span>
 </span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="s1">     &quot;permit_root_login&quot;:&quot;no&quot;,</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="s1">     &quot;max_auth_tries&quot;:&quot;3&quot;,</span>
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="s1">     &quot;login_grace_time&quot;:&quot;60&quot;,</span>
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="s1">     &quot;ciphers&quot;:&quot;aes256-gcm@openssh.com,aes256-ctr&quot;,</span>
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="s1">     &quot;kex_algorithms&quot;:&quot;curve25519-sha256,diffie-hellman-group16-sha512&quot;</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="s1">     &quot;authentication_retries&quot;:&quot;3&quot;,</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="s1">     &quot;login_timeout&quot;:&quot;60&quot;,</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="s1">     &quot;ciphers&quot;:[&quot;aes256-gcm@openssh.com&quot;,&quot;aes256-ctr&quot;],</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="s1">     &quot;kex_algorithms&quot;:[&quot;curve25519-sha256&quot;,&quot;diffie-hellman-group16-sha512&quot;]</span>
 </span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="s1">  }}</span>
 </span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="s1">}&#39;</span><span class="w"> </span>-w
 </span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>hostcfgd
@@ -36301,13 +36301,13 @@
 <p>法的要件 + 置き忘れセッション切断:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>banner<span class="w"> </span>login<span class="w">    </span><span class="s2">&quot;Authorized access only. Activity is logged.&quot;</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>banner<span class="w"> </span>motd<span class="w">     </span><span class="s2">&quot;SONiC NOS - production fabric&quot;</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>serial-console<span class="w"> </span>inactivity-timeout<span class="w"> </span><span class="m">600</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>serial-console<span class="w"> </span>inactivity-timeout<span class="w"> </span><span class="m">10</span><span class="w">  </span><span class="c1"># 単位は「分」（sonic-serial-console.yang)</span>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>serial-console<span class="w"> </span>sysrq-capabilities<span class="w"> </span>disabled
 </span></code></pre></div>
 <p>CONFIG_DB:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="nt">&quot;BANNER_MESSAGE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;global&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="s2">&quot;enabled&quot;</span><span class="p">,</span><span class="nt">&quot;login&quot;</span><span class="p">:</span><span class="s2">&quot;Authorized access only. Activity is logged.&quot;</span><span class="p">,</span><span class="nt">&quot;motd&quot;</span><span class="p">:</span><span class="s2">&quot;SONiC NOS - production fabric&quot;</span><span class="p">}},</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">&quot;SERIAL_CONSOLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;POLICIES&quot;</span><span class="p">:{</span><span class="nt">&quot;inactivity_timeout&quot;</span><span class="p">:</span><span class="s2">&quot;600&quot;</span><span class="p">,</span><span class="nt">&quot;sysrq_capabilities&quot;</span><span class="p">:</span><span class="s2">&quot;disabled&quot;</span><span class="p">}}</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">&quot;SERIAL_CONSOLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;POLICIES&quot;</span><span class="p">:{</span><span class="nt">&quot;inactivity_timeout&quot;</span><span class="p">:</span><span class="s2">&quot;10&quot;</span><span class="p">,</span><span class="nt">&quot;sysrq_capabilities&quot;</span><span class="p">:</span><span class="s2">&quot;disabled&quot;</span><span class="p">}}</span>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="p">}</span>
 </span></code></pre></div>
 <p><code>show banner</code> / <code>show serial-console</code> で投入結果を確認します。</p>
@@ -36373,17 +36373,26 @@
 <li>TACACS+ / RADIUS / LDAP のサーバを最低 2 台登録し、<code>login_method</code> の末尾に <code>local</code> を残す。</li>
 <li>SSH の <code>permit_root_login</code> を <code>no</code> 相当に倒し、<code>ciphers</code> / <code>kex</code> を必要なものだけに絞る。</li>
 <li>banner で「許可された運用者のみ」「アクセスは記録される」旨を明示し、法的要件を満たす。</li>
-<li>serial console の <code>inactivity_timeout</code> を有効にし、置き忘れセッションを切る。</li>
+<li>serial console の <code>inactivity_timeout</code>（分単位）を有効にし、置き忘れセッションを切る。</li>
 </ol>
 <p>これ以降の運用面（password reset、default credential、トラブルシュート）は <a href="../operations/">運用</a> に続きます。</p>
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CLI: <code>config aaa</code>、<code>config tacacs</code>、<code>config ldap</code>、<code>config banner</code>、<code>config serial-console</code>、<code>show aaa</code>、<code>show tacacs</code>、<code>show ldap-server</code>、<code>show ssh-server</code>、<code>show banner</code></li>
 <li>CONFIG_DB: <code>AAA</code>、<code>TACPLUS</code>、<code>TACPLUS_SERVER</code>、<code>RADIUS</code>、<code>RADIUS_SERVER</code>、<code>LDAP</code>、<code>LDAP_SERVER</code>、<code>SSH_SERVER</code>、<code>SERIAL_CONSOLE</code>、<code>BANNER_MESSAGE</code></li>
-<li>YANG: <a href="../../../reference/yang/sonic-system-aaa/"><code>sonic-system-aaa</code></a>、<code>sonic-system-tacacs</code>、<code>sonic-system-ldap</code>、<code>sonic-ssh-server</code>、<code>sonic-system-banner</code></li>
+<li>YANG: <a href="../../../reference/yang/sonic-system-aaa/"><code>sonic-system-aaa</code></a>、<code>sonic-system-tacacs</code>、<code>sonic-system-ldap</code>、<code>sonic-ssh-server</code>、<code>sonic-serial-console</code>、<code>sonic-banner</code></li>
 <li>関連 HLD: <a href="../../../management/tacacs-authentication/">TACACS+ HLD</a>、<a href="../../../management/radius-management-user-authentication/">RADIUS HLD</a>、<a href="../../../management/hld-ldap/">LDAP HLD</a>、<a href="../../../management/ssh-server-global-config-hld/">SSH server global config HLD</a>、<a href="../../../management/serial-console-global-config-hld/">serial console HLD</a>、<a href="../../../system/banner-messages-hld/">banner messages HLD</a></li>
 </ul>
 <!-- glossary-links-injected: db62d2100cef -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:ssh-yang">
+<p><code>sonic-net/sonic-buildimage</code> の <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-ssh-server.yang"><code>src/sonic-yang-models/yang-models/sonic-ssh-server.yang</code></a> (container <code>SSH_SERVER/POLICIES</code>, 20-132 行) で定義。<code>authentication_retries</code> の既定は 6 (range 1..100)、<code>login_timeout</code> は秒で既定 120 (range 1..600)、<code>inactivity_timeout</code> は<strong>分</strong>で既定 15 (range 0..35000) と単位が混在しています。&#160;<a class="footnote-backref" href="#fnref:ssh-yang" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

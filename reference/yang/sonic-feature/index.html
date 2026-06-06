@@ -36260,7 +36260,7 @@
   Y["sonic-feature"]
   C1[("CONFIG_DB&lt;br/&gt;FEATURE")]
   Y --&gt; C1
-  D1["coppmgrd"]
+  D1["featured"]
   C1 --&gt; D1</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
@@ -36457,7 +36457,7 @@
 <h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="_7">典型的なデプロイ位置<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li>feature コンテナの有効化 / 自動起動制御。<code>FEATURE|&lt;name&gt;</code> を <a href="../../glossary/#term-hostcfgd">hostcfgd</a> が systemd unit にマッピング。</li>
+<li>feature コンテナの有効化 / 自動起動制御。<code>FEATURE|&lt;name&gt;</code> を <code>featured</code> (sonic-host-services の daemon、<code>scripts/featured</code>) が subscribe して systemd unit の enable/disable と auto-restart 設定に反映する。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> <code>coppmgrd</code> も同テーブルを読み、有効な feature の <a href="../../glossary/#term-copp">CoPP</a> trap だけを <a href="../../glossary/#term-appl_db">APPL_DB</a> に push する trap enable filter として利用する。<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36470,13 +36470,19 @@
 <!-- /ops-hint -->
 
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: 3a40a40bb067 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-feature.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-host-services</code> <code>scripts/featured</code> (<code>FEATURE_TBL = swsscommon.CFG_FEATURE_TABLE_NAME</code>, FEATURE table updates を subscribe する <code>FeatureHandler</code>、<code>state</code> / <code>auto_restart</code> / <code>delayed</code> を systemd unit に反映)。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-swss</code> <code>cfgmgr/coppmgr.cpp</code> (<code>m_cfgFeatureTable(cfgDb, CFG_FEATURE_TABLE_NAME)</code>、<code>else if (table == CFG_FEATURE_TABLE_NAME)</code> 分岐で feature 有効/無効に応じた COPP trap を APP_COPP_TABLE に出力)。&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

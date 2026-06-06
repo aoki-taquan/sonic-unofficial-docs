@@ -35989,8 +35989,12 @@
 <h1 id="dipsip-ptf">DIP=SIP PTF 検証 概念<a class="headerlink" href="#dipsip-ptf" title="Permanent link">&para;</a></h1>
 <p>このページは <a href="../dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証（概要ハブ）</a> の派生で、<strong>テストの目的・トポロジ・対応 testbed</strong> に絞って整理する。ファイル構成・前処理は <a href="../dip-sip-ptf-validation-high-level-design-operations/">dip-sip-ptf-validation-high-level-design-operations.md</a>、パケット仕様 / 内部実装は <a href="../dip-sip-ptf-validation-high-level-design-internals/">dip-sip-ptf-validation-high-level-design-internals.md</a>、制限と <a href="../../reference/glossary/#term-hld">HLD</a> 乖離は <a href="../dip-sip-ptf-validation-high-level-design-limitations/">dip-sip-ptf-validation-high-level-design-limitations.md</a> を参照。</p>
 <h2 id="1">1. テストの目的<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
-<p>「DIP（destination IP）と SIP（source IP）が同じ」L3 パケットを <a href="../../reference/glossary/#term-sonic">SONiC</a> スイッチが正しくルーティングできるかを <strong>PTF (Packet Test Framework) で検証</strong> するテストの設計。一見奇妙な条件だが、ループバック検証や特定の DOS 系トラフィック形状への耐性、ハードウェアパスでの <a href="../../reference/glossary/#term-acl">ACL</a> / RPF が誤作動しないかを担保する目的で必要となる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>このページは機能 <a href="../../reference/glossary/#term-hld">HLD</a> ではなく <strong>テストインフラの HLD</strong>。SONiC 自体の挙動仕様というより、<strong><code>sonic-mgmt</code> リポジトリにどんな Ansible role / PTF スクリプトを置くか</strong> の設計が記述されている<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>「DIP（destination IP）と SIP（source IP）が同じ」L3 パケットを <a href="../../reference/glossary/#term-sonic">SONiC</a> スイッチが正しくルーティングできるかを <strong>PTF (Packet Test Framework) で検証</strong> するテストの設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="admonition note">
+<p class="admonition-title">編集側の補足（HLD 原文には記載なし）</p>
+<p>HLD 原文の <code>Overview</code> 章は「SONiC スイッチが DIP=SIP の L3 パケットのルーティングをサポートすることを検証する」とのみ述べており、具体的なユースケース（ループバック検証 / DOS 系トラフィック耐性 / <a href="../../reference/glossary/#term-acl">ACL</a> / RPF の誤作動回避など）は明示されていない。これらは「なぜこの一見奇妙な条件をテストするのか」を読者が理解しやすくするための編集側の解釈であり、HLD の仕様ではない点に注意。</p>
+</div>
+<p>このページは機能 <a href="../../reference/glossary/#term-hld">HLD</a> ではなく <strong>テストインフラの HLD</strong> に相当する。SONiC 自体の挙動仕様というより、<strong><code>sonic-mgmt</code> リポジトリにどんな Ansible role / PTF スクリプトを置くか</strong> の設計が記述されている<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="2">2. トポロジ<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
 <p>DUT に対して <strong>SRC <a href="../../reference/glossary/#term-rif">RIF</a> / DST RIF</strong> の 2 つの router interface を立て、それぞれの先に Source / Destination ホスト VM をぶら下げる単純な構成<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <pre class="mermaid"><code>flowchart LR
@@ -36037,7 +36041,7 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/dip-sip/DIP=SIP_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/dip-sip/DIP=SIP_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>（L3-5 Overview / L7-28 Topology / L67-90 Supported topologies + Workflow）&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -37946,7 +37946,7 @@
 <!-- runtime-trace -->
 <h2 id="_22">実コンテナ動作トレース<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p>本テーブルに対する常駐 subscriber は存在しない（<code>sonic-host-services/scripts/hostcfgd</code> の grep で <code>AUTO_TECHSUPPORT_FEATURE</code> 0 hit）。実装は <a href="../../glossary/#term-hostcfgd">hostcfgd</a> と独立した kernel <code>core_pattern</code> → <code>coredump-compress</code> → <code>coredump_gen_handler.py</code> のパイプラインで、必要なフィールドは一発起動スクリプトが同期 HGET で取得する。詳細は を参照。</p>
+<p>本テーブルに対する常駐 subscriber は存在しない（<code>sonic-host-services/scripts/hostcfgd</code> の grep で <code>AUTO_TECHSUPPORT_FEATURE</code> 0 hit）。実装は <a href="../../glossary/#term-hostcfgd">hostcfgd</a> と独立した kernel <code>core_pattern</code> → <code>coredump-compress</code> → <code>coredump_gen_handler.py</code> のパイプラインで、必要なフィールドは一発起動スクリプトが同期 HGET で取得する。詳細は本ページ後段の <code>&lt;!-- pubsub --&gt;</code> ブロックを参照。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継なし)</p>
 <h3 id="3-applsai">段階 3 — APPL→SAI<a class="headerlink" href="#3-applsai" title="Permanent link">&para;</a></h3>
@@ -38295,7 +38295,7 @@
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">本文 <code>&lt;!-- runtime-trace --&gt;</code> ブロックとの差異</p>
-<p>本文の段階 1 に「<code>auto_techsupport_handler</code> が <code>hostcfgd</code> 内部のサブハンドラとして <code>AUTO_TECHSUPPORT_FEATURE</code> を購読する」旨の記述があるが、<code>sonic-host-services/scripts/hostcfgd:2468-2528</code> を実コード grep した範囲では AUTO_TECHSUPPORT / AUTO_TECHSUPPORT_FEATURE への <code>subscribe()</code> 呼び出しは確認できない。実装は hostcfgd と独立した kernel <code>core_pattern</code> → <code>coredump-compress</code> → <code>coredump_gen_handler.py</code> のパイプライン (本ページの 分析)。次回 verifier 巡回で本文修正候補。</p>
+<p>本文の段階 1 に「<code>auto_techsupport_handler</code> が <code>hostcfgd</code> 内部のサブハンドラとして <code>AUTO_TECHSUPPORT_FEATURE</code> を購読する」旨の記述があるが、<code>sonic-host-services/scripts/hostcfgd:2468-2528</code> を実コード grep した範囲では AUTO_TECHSUPPORT / AUTO_TECHSUPPORT_FEATURE への <code>subscribe()</code> 呼び出しは確認できない。実装は hostcfgd と独立した kernel <code>core_pattern</code> → <code>coredump-compress</code> → <code>coredump_gen_handler.py</code> のパイプライン (本ページ <code>&lt;!-- pubsub --&gt;</code> ブロックの解析参照)。次回 verifier 巡回で本文修正候補。</p>
 </div>
 <!-- /pubsub -->
 
@@ -38529,7 +38529,7 @@
 <p>kernel <code>core_pattern</code> 側 (<code>sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45</code>) で <code>|/usr/local/bin/coredump-compress %e %t %p %P</code> が固定。<code>/var/core</code> を変更する場合は coredump-compress と <code>auto_techsupport_helper.py</code> の両方の書き換えが必要。</p>
 <h3 id="7">7. 重要な特性<a class="headerlink" href="#7" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong><code>coredump_gen_handler.py</code> 単体は定数を持たない</strong>: <code>from utilities_common.auto_techsupport_helper import *</code> で全定数を取り込む。の実体は <code>auto_techsupport_helper.py</code>。</li>
+<li><strong><code>coredump_gen_handler.py</code> 単体は定数を持たない</strong>: <code>from utilities_common.auto_techsupport_helper import *</code> で全定数を取り込む。定数定義の実体は <code>auto_techsupport_helper.py</code>。</li>
 <li><strong><code>techsupport_cleanup.py</code> は <code>TS_DIR</code> / <code>CFG_MAX_TS</code> のみ参照</strong>: <code>AUTO_TECHSUPPORT_FEATURE</code> テーブルは見ず、GLOBAL の <code>state</code> と <code>max_techsupport_limit</code> だけで cleanup 判定。</li>
 <li><strong><code>TS_GLOBAL_TIMEOUT="60"</code> は CONFIG_DB から上書き不可</strong>: 長時間 techsupport を必要とする運用ではソース改変が要る。</li>
 <li><strong><code>TIME_BUF=20</code> 秒</strong>: handler 起動時に <code>find_new_core_files()</code> で「直近 20 秒以内」の <code>*.core.gz</code> のみを対象にして二重起動を避ける。</li>

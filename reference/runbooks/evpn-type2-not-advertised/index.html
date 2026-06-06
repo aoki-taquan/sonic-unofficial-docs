@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: EVPN Type-2 (MAC/IP) route が peer に広告されない — : sonic-net/sonic-frr @ master — bgp_evpn.c : sonic-net/sonic-swss @ master — vxlanorch.cpp">
+        <meta name="description" content="Runbook: EVPN Type-2 (MAC/IP) route が peer に広告されない原因 (advertise-all-vni 未設定 / VLAN-VNI mapping 欠落 / FDB 未学習 / RT 不整合) を sonic-frr の bgp_evpn.c と sonic-swss の vxlanorch.cpp に照らして切り分けるための runbook。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="EVPN Type-2 route が広告されない - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: EVPN Type-2 (MAC/IP) route が peer に広告されない — : sonic-net/sonic-frr @ master — bgp_evpn.c : sonic-net/sonic-swss @ master — vxlanorch.cpp" />
+<meta property="og:description" content="Runbook: EVPN Type-2 (MAC/IP) route が peer に広告されない原因 (advertise-all-vni 未設定 / VLAN-VNI mapping 欠落 / FDB 未学習 / RT 不整合) を sonic-frr の bgp_evpn.c と sonic-swss の vxlanorch.cpp に照らして切り分けるための runbook。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/evpn-type2-not-advertised.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/evpn-type2-not-advertised/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="EVPN Type-2 route が広告されない - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: EVPN Type-2 (MAC/IP) route が peer に広告されない — : sonic-net/sonic-frr @ master — bgp_evpn.c : sonic-net/sonic-swss @ master — vxlanorch.cpp" />
+<meta property="twitter:description" content="Runbook: EVPN Type-2 (MAC/IP) route が peer に広告されない原因 (advertise-all-vni 未設定 / VLAN-VNI mapping 欠落 / FDB 未学習 / RT 不整合) を sonic-frr の bgp_evpn.c と sonic-swss の vxlanorch.cpp に照らして切り分けるための runbook。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/evpn-type2-not-advertised.png" />
 </head>
   
@@ -36133,8 +36133,8 @@
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong><code>advertise-all-vni</code> 未設定</strong>: <a href="../../glossary/#term-frr">FRR</a> の <code>address-family l2vpn evpn</code> で <code>advertise-all-vni</code> がない</li>
-<li><strong><a href="../../glossary/#term-vlan">VLAN</a>-VNI mapping 欠落</strong>: <code>VXLAN_TUNNEL_MAP</code> が未作成 / VNI 重複</li>
+<li><strong><code>advertise-all-vni</code> 未設定</strong>: <a href="../../glossary/#term-frr">FRR</a> の <code>address-family l2vpn evpn</code> で <code>advertise-all-vni</code> がない。これが無効だと per-VNI の Type-2/3 route が広告されず withdraw 対象となる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><a href="../../glossary/#term-vlan">VLAN</a>-VNI mapping 欠落</strong>: <code>VXLAN_TUNNEL_MAP</code> が未作成 / VNI 重複。<code>VxlanTunnelMapOrch::addOperation</code> で VLAN→VNI を <a href="../../glossary/#term-sai">SAI</a> に投入する経路が走らない<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong><a href="../../glossary/#term-fdb">FDB</a> が学習されていない</strong>: 対象 MAC が <code>show mac</code> に出ない</li>
 <li><strong>route-target import/export 不整合</strong></li>
 <li><strong><code>type-2 prefix</code> の filter / route-map で drop</strong></li>
@@ -36197,17 +36197,16 @@
 <li><a href="../../config-db/vxlan-tunnel/">../config-db/vxlan-tunnel.md</a></li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: 0726817b0ba1 -->
+<!-- glossary-links-injected: 3293e6cc7456 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-frr @ master — bgp_evpn.c&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/sonic-frr @ <code>799f47f2</code> — <a href="https://github.com/sonic-net/sonic-frr/blob/799f47f215e4266063c4ebde0041a0c7dd2d11d0/bgpd/bgp_evpn.c#L2308-L2320"><code>bgpd/bgp_evpn.c</code> L2308–L2320 <code>delete_routes_for_vni()</code></a>: <a href="../../glossary/#term-evpn">EVPN</a> (advertise-all-vni) 無効化または VNI 削除時に per-VNI table の Type-2 (MAC/IP) → Type-3 ルートを withdraw する。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ master — vxlanorch.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ <code>43055961</code> — <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L2010-L2050"><code>orchagent/vxlanorch.cpp</code> L2010–L2050 <code>VxlanTunnelMapOrch::addOperation()</code></a>: <code>VXLAN_TUNNEL_MAP</code> から VLAN ID と VNI ID を取り出し、tunnel / VLAN 存在確認後に <a href="../../glossary/#term-sai">SAI</a> tunnel map を作成する。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

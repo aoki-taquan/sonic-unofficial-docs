@@ -14325,89 +14325,6 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既知の問題
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="既知の問題">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#monit-sonic-buildimage4019" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        monit サービスが設定した閾値を超えるとプロセスを強制終了するため、回帰テストで失敗が多発する問題（sonic-buildimage#4019）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#monitsnmp-master-sonic-buildimage5502" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        monit/snmp テストが master イメージで失敗する問題（sonic-buildimage#5502）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#platform-system-health-asic-sonic-buildimage6343" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Platform system health において ASIC キーが適切に処理されない問題（sonic-buildimage#6343）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#brcm-th3-z9332-ser-single-error-recovery-sonic-buildimage6392" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        BRCM Th3 Z9332 で SER (Single Error Recovery) が注入されたメモリの修正システム（sonic-buildimage#6392）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show-system-health-detail-sonic-buildimage6463" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        show system-health detail コマンドが動作しない問題（sonic-buildimage#6463）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show-system-health-sonic-buildimage6641" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        show system-health コマンドが動作しない問題（sonic-buildimage#6641）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -36129,89 +36046,6 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既知の問題
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="既知の問題">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#monit-sonic-buildimage4019" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        monit サービスが設定した閾値を超えるとプロセスを強制終了するため、回帰テストで失敗が多発する問題（sonic-buildimage#4019）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#monitsnmp-master-sonic-buildimage5502" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        monit/snmp テストが master イメージで失敗する問題（sonic-buildimage#5502）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#platform-system-health-asic-sonic-buildimage6343" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Platform system health において ASIC キーが適切に処理されない問題（sonic-buildimage#6343）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#brcm-th3-z9332-ser-single-error-recovery-sonic-buildimage6392" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        BRCM Th3 Z9332 で SER (Single Error Recovery) が注入されたメモリの修正システム（sonic-buildimage#6392）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show-system-health-detail-sonic-buildimage6463" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        show system-health detail コマンドが動作しない問題（sonic-buildimage#6463）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show-system-health-sonic-buildimage6641" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        show system-health コマンドが動作しない問題（sonic-buildimage#6641）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -36257,11 +36091,11 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-swss/orchagent/crmorch.h</code> / <code>crmorch.cpp</code> に CrmOrch 実装、<code>sonic-yang-models/yang-models/sonic-crm.yang</code> に CONFIG_DB CRM スキーマ。<code>fdborch.cpp</code> / <code>routeorch.cpp</code> / <code>srv6orch.cpp</code> 等から CRM カウンタ更新が呼ばれることを grep で確認（verified at: 2026-05-10）。</p>
+<p><code>sonic-swss/orchagent/crmorch.h</code> / <code>crmorch.cpp</code> に <code>CrmOrch</code> 実装、<code>sonic-yang-models/yang-models/sonic-crm.yang</code> に CONFIG_DB CRM スキーマ。<code>fdborch.cpp</code> / <code>routeorch.cpp</code> / <code>srv6orch.cpp</code> 等から CRM カウンタ更新が呼ばれることを grep で確認。閾値超過 / 復旧通知は両方とも <code>SWSS_LOG_WARN</code> で出力される (<code>crmorch.cpp</code> L1175, L1183)<sup id="fnref4:crmorch"><a class="footnote-ref" href="#fn:crmorch">2</a></sup> (verified at: 2026-06-06)。</p>
 </div>
 <h1 id="critical-resource-monitoringcrmsai">Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視）<a class="headerlink" href="#critical-resource-monitoringcrmsai" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要なのか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../reference/glossary/#term-asic">ASIC</a> 側の各種リソース（route 表、neighbor、<a href="../../reference/glossary/#term-acl">ACL</a> counter、<a href="../../reference/glossary/#term-fdb">FDB</a>、<a href="../../reference/glossary/#term-nat">NAT</a> 等）は <strong>ハードウェアサイズで上限がある</strong>。上限到達で<strong>運用中に突然パケットドロップやプログラム失敗</strong>が起きるため、<a href="../../reference/glossary/#term-crm">CRM</a> は使用量をポーリングして <strong>しきい値超えで WARN / CRITICAL を syslog に出す</strong> ことで障害前検知を狙う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-asic">ASIC</a> 側の各種リソース（route 表、neighbor、<a href="../../reference/glossary/#term-acl">ACL</a> counter、<a href="../../reference/glossary/#term-fdb">FDB</a>、<a href="../../reference/glossary/#term-nat">NAT</a> 等）は <strong>ハードウェアサイズで上限がある</strong>。上限到達で<strong>運用中に突然パケットドロップやプログラム失敗</strong>が起きるため、<a href="../../reference/glossary/#term-crm">CRM</a> は使用量を定期ポーリングし、<strong>しきい値超え / 復旧時に <code>SWSS_LOG_WARN</code> レベルで syslog 通知</strong> することで障害前検知を狙う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:crmorch"><a class="footnote-ref" href="#fn:crmorch">2</a></sup>。</p>
 <p>ねらい:</p>
 <ul>
 <li>表枯渇を <strong>障害発生前に</strong> 通知</li>
@@ -36269,29 +36103,38 @@
 <li>しきい値の <code>percentage</code> / <code>used</code> / <code>free</code> モード、<code>high</code> / <code>low</code> の双方を扱う</li>
 </ul>
 <h2 id="resource">監視対象の resource<a class="headerlink" href="#resource" title="Permanent link">&para;</a></h2>
-<p>主要種別（<a href="../../reference/glossary/#term-hld">HLD</a> ベース、後発追加あり）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>主要種別（<a href="../../reference/glossary/#term-hld">HLD</a> は L3/L2/ACL/NAT/IPMC まで定義、master では <code>crmorch.cpp</code> で <a href="../../reference/glossary/#term-mpls">MPLS</a>/SRv6/NEXTHOP_GROUP_MAP/<a href="../../reference/glossary/#term-dash">DASH</a> 系まで拡張済み）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref2:crmorch"><a class="footnote-ref" href="#fn:crmorch">2</a></sup>:</p>
 <ul>
 <li>L3: <code>IPV4_ROUTE</code> / <code>IPV6_ROUTE</code> / <code>IPV4_NEIGHBOR</code> / <code>IPV6_NEIGHBOR</code> / <code>IPV4_NEXTHOP</code> / <code>IPV6_NEXTHOP</code></li>
-<li>L3 group: <code>NEXTHOP_GROUP</code> / <code>NEXTHOP_GROUP_MEMBER</code></li>
+<li>L3 group: <code>NEXTHOP_GROUP</code> / <code>NEXTHOP_GROUP_MEMBER</code> / <code>NEXTHOP_GROUP_MAP</code></li>
 <li>L2: <code>FDB_ENTRY</code></li>
 <li>ACL: <code>ACL_TABLE</code> / <code>ACL_GROUP</code> / <code>ACL_ENTRY</code> / <code>ACL_COUNTER</code></li>
 <li>NAT / multicast: <code>DNAT_ENTRY</code> / <code>SNAT_ENTRY</code> / <code>IPMC_ENTRY</code></li>
-<li>Tunnel / <a href="../../reference/glossary/#term-srv6">SRv6</a> 等は後発で追加</li>
+<li>MPLS: <code>MPLS_INSEG</code> / <code>MPLS_NEXTHOP</code></li>
+<li><a href="../../reference/glossary/#term-srv6">SRv6</a>: <code>SRV6_MY_SID_ENTRY</code> / <code>SRV6_NEXTHOP</code></li>
+<li>拡張枠組み: <code>EXTENSION_TABLE</code> (vendor 追加 resource)</li>
+<li>DASH: <code>DASH_VNET</code> / <code>DASH_ENI</code> / <code>DASH_*_INBOUND_ROUTING</code> / <code>DASH_*_OUTBOUND_ROUTING</code> / <code>DASH_*_PA_VALIDATION</code> / <code>DASH_*_OUTBOUND_CA_TO_PA</code></li>
 </ul>
 <h2 id="_2">どう動くのか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     CFG[CONFIG_DB.CRM] --&gt; CO[CrmOrch]
     CO --&gt; SAI[(SAI object availability API)]
     CO --&gt; CDB[(COUNTERS_DB.CRM)]
-    CO --&gt; SYS[syslog WARN/CRITICAL]
+    CO --&gt; SYS[syslog SWSS_LOG_WARN]
     CLI[crm show] --&gt; CDB</code></pre>
-<p>しきい値モード<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>しきい値モード<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref3:crmorch"><a class="footnote-ref" href="#fn:crmorch">2</a></sup>:</p>
 <ul>
-<li><strong>percentage</strong>: 上限の % で <code>high_threshold</code> / <code>low_threshold</code></li>
+<li><strong>percentage</strong>: 上限の % で <code>high_threshold</code> / <code>low_threshold</code> (<code>crmorch.cpp</code> L301-303 で文字列 enum マップ)</li>
 <li><strong>used</strong>: 絶対使用量</li>
-<li><strong>free</strong>: 残量</li>
+<li><strong>free</strong>: 残量（演算は <code>used</code> の逆向き）</li>
 </ul>
-<p><code>high</code> 超えで WARN/CRIT、<code>low</code> を下回ると clear（<code>free</code> モードはその逆）。周期は <code>polling_interval</code>。</p>
+<p>利用率が <code>high_threshold</code> 以上になった時点で <code>THRESHOLD_EXCEEDED</code> メッセージを <code>SWSS_LOG_WARN</code> で出力、<code>low_threshold</code> 以下に下がった時点で <code>THRESHOLD_CLEAR</code> を同じ WARN レベルで出力する (<code>crmorch.cpp</code> L1168-1186)。同一 resource あたりの exceeded ログは <code>CRM_EXCEEDED_MSG_MAX = 10</code> で頭打ちにレートリミットされる (<code>crmorch.cpp</code> L16, L1168)。</p>
+<p>デフォルト値 (<code>crmorch.cpp</code> L12-15):</p>
+<ul>
+<li><code>polling_interval</code>: 300 秒 (<code>CRM_POLLING_INTERVAL_DEFAULT = 5 * 60</code>)</li>
+<li><code>threshold_type</code>: <code>percentage</code></li>
+<li><code>low_threshold</code> / <code>high_threshold</code>: 70 / 85</li>
+</ul>
 <h2 id="config_db-cli">CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36339,8 +36182,8 @@
 </table>
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><a href="../../reference/glossary/#term-sai">SAI</a> 側 availability API が必要</strong>。vendor 未対応 resource は値が出ない</li>
-<li>WARN/CRIT は syslog のみで <strong>自動 recovery アクションは無い</strong></li>
+<li><strong><a href="../../reference/glossary/#term-sai">SAI</a> <code>sai_object_type_get_availability()</code> が必要</strong>。vendor 未対応 resource は値が出ない (<code>crmorch.cpp</code> L801, L854, L1035 で呼び出し)<sup id="fnref5:crmorch"><a class="footnote-ref" href="#fn:crmorch">2</a></sup></li>
+<li>通知は <code>SWSS_LOG_WARN</code> syslog のみで <strong>自動 recovery アクションは無い</strong>。exceeded ログは resource あたり 10 回で止まる (<code>CRM_EXCEEDED_MSG_MAX</code>)</li>
 <li>多 resource を高頻度ポーリングすると <strong><a href="../../reference/glossary/#term-asic-sdk">ASIC SDK</a> 負荷増</strong></li>
 <li><code>ACL_COUNTER</code> / <code>FDB_ENTRY</code> は SDK query が高コストになることがあり、長めの polling 推奨</li>
 </ul>
@@ -36364,38 +36207,7 @@
 <li><a href="../../topics/07-acl-copp-mirror/">07-acl-copp-mirror</a>: ACL リソース消費</li>
 <li><a href="../../topics/20-swss-sai-redis/">20-swss-sai-redis</a>: <a href="../../reference/glossary/#term-orchagent">orchagent</a> と SAI の関係</li>
 </ul>
-<h2 id="_7">既知の問題<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="monit-sonic-buildimage4019">monit サービスが設定した閾値を超えるとプロセスを強制終了するため、回帰テストで失敗が多発する問題（sonic-buildimage#4019）<a class="headerlink" href="#monit-sonic-buildimage4019" title="Permanent link">&para;</a></h3>
-<p>monit サービスが設定した閾値を超えるとプロセスを強制終了するため、回帰テストで失敗が多発する問題。テスト環境では monit の閾値設定を緩和するか、テスト中は monit を一時停止することを推奨</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/4019">sonic-net/sonic-buildimage#4019</a></li>
-</ul>
-<h3 id="monitsnmp-master-sonic-buildimage5502">monit/snmp テストが master イメージで失敗する問題（sonic-buildimage#5502）<a class="headerlink" href="#monitsnmp-master-sonic-buildimage5502" title="Permanent link">&para;</a></h3>
-<p>monit/snmp テストが master イメージで失敗する問題。monit が snmp_subagent を監視対象として設定しており、起動タイムアウトで kill している場合がある</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5502">sonic-net/sonic-buildimage#5502</a></li>
-</ul>
-<h3 id="platform-system-health-asic-sonic-buildimage6343">Platform system health において ASIC キーが適切に処理されない問題（sonic-buildimage#6343）<a class="headerlink" href="#platform-system-health-asic-sonic-buildimage6343" title="Permanent link">&para;</a></h3>
-<p>Platform system health において ASIC キーが適切に処理されない問題。<code>show system-health detail</code> の ASIC エントリを確認すること</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6343">sonic-net/sonic-buildimage#6343</a></li>
-</ul>
-<h3 id="brcm-th3-z9332-ser-single-error-recovery-sonic-buildimage6392">BRCM Th3 Z9332 で SER (Single Error Recovery) が注入されたメモリの修正システム（sonic-buildimage#6392）<a class="headerlink" href="#brcm-th3-z9332-ser-single-error-recovery-sonic-buildimage6392" title="Permanent link">&para;</a></h3>
-<p>BRCM Th3 Z9332 で SER (Single Error Recovery) が注入されたメモリの修正システムが正しく動作しない問題。ECC エラー監視の設定を確認すること</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6392">sonic-net/sonic-buildimage#6392</a></li>
-</ul>
-<h3 id="show-system-health-detail-sonic-buildimage6463"><code>show system-health detail</code> コマンドが動作しない問題（sonic-buildimage#6463）<a class="headerlink" href="#show-system-health-detail-sonic-buildimage6463" title="Permanent link">&para;</a></h3>
-<p><code>show system-health detail</code> コマンドが動作しない問題。<code>sudo systemctl status system-health</code> で状態確認すること</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6463">sonic-net/sonic-buildimage#6463</a></li>
-</ul>
-<h3 id="show-system-health-sonic-buildimage6641"><code>show system-health</code> コマンドが動作しない問題（sonic-buildimage#6641）<a class="headerlink" href="#show-system-health-sonic-buildimage6641" title="Permanent link">&para;</a></h3>
-<p><code>show system-health</code> コマンドが動作しない問題。<code>sudo systemctl status system-health</code> で確認し、必要に応じて再起動すること</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6641">sonic-net/sonic-buildimage#6641</a></li>
-</ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics_1">関連 Topics (索引)<a class="headerlink" href="#topics_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36403,13 +36215,16 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 989b6ea1d7a6 -->
+<!-- glossary-links-injected: ac479ac27678 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/crm/Critical-Resource-Monitoring-High-Level-Design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:crmorch">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/crmorch.cpp</code> / <code>orchagent/crmorch.h</code> @ master — <code>CrmResourceType</code> enum 全リスト (L30-65)、threshold mode 文字列マップ (L301-303)、default 定数 (L12-17)、<code>sai_object_type_get_availability()</code> 呼び出し (L801, L854, L1035)、<code>THRESHOLD_EXCEEDED</code> / <code>THRESHOLD_CLEAR</code> の WARN ログ (L1175, L1183)、レートリミット (L1168, L1179)&#160;<a class="footnote-backref" href="#fnref:crmorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:crmorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:crmorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:crmorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:crmorch" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

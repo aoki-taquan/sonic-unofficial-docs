@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="アーキテクチャ — SRv6 / MPLS / Path Tracing は別機能ですが、SONiC 内部では「CONFIG_DB → orchagent → SAI → ASIC」「FRR/netlink → fpmsyncd → APP_DB → orchagent → SAI」という同じ 2 系統のデータ経路に…">
+        <meta name="description" content="SRv6 / MPLS / Path Tracing を SONiC の共通 2 系統データ経路 (CONFIG_DB → orchagent → SAI と FRR/netlink → fpmsyncd → APP_DB → orchagent → SAI) に当てはめて読む章扉。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="アーキテクチャ - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="アーキテクチャ — SRv6 / MPLS / Path Tracing は別機能ですが、SONiC 内部では「CONFIG_DB → orchagent → SAI → ASIC」「FRR/netlink → fpmsyncd → APP_DB → orchagent → SAI」という同じ 2 系統のデータ経路に…" />
+<meta property="og:description" content="SRv6 / MPLS / Path Tracing を SONiC の共通 2 系統データ経路 (CONFIG_DB → orchagent → SAI と FRR/netlink → fpmsyncd → APP_DB → orchagent → SAI) に当てはめて読む章扉。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/17-srv6-mpls/architecture.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/17-srv6-mpls/architecture/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="アーキテクチャ - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="アーキテクチャ — SRv6 / MPLS / Path Tracing は別機能ですが、SONiC 内部では「CONFIG_DB → orchagent → SAI → ASIC」「FRR/netlink → fpmsyncd → APP_DB → orchagent → SAI」という同じ 2 系統のデータ経路に…" />
+<meta property="twitter:description" content="SRv6 / MPLS / Path Tracing を SONiC の共通 2 系統データ経路 (CONFIG_DB → orchagent → SAI と FRR/netlink → fpmsyncd → APP_DB → orchagent → SAI) に当てはめて読む章扉。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/17-srv6-mpls/architecture.png" />
 </head>
   
@@ -36035,7 +36035,7 @@
 <h1 id="_1">アーキテクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p><a href="../../../reference/glossary/#term-srv6">SRv6</a> / <a href="../../../reference/glossary/#term-mpls">MPLS</a> / Path Tracing は別機能ですが、<a href="../../../reference/glossary/#term-sonic">SONiC</a> 内部では「<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> → <a href="../../../reference/glossary/#term-orchagent">orchagent</a> → <a href="../../../reference/glossary/#term-sai">SAI</a> → <a href="../../../reference/glossary/#term-asic">ASIC</a>」「<a href="../../../reference/glossary/#term-frr">FRR</a>/netlink → <a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> → APP_DB → orchagent → SAI」という同じ 2 系統のデータ経路に乗ります。ここでは feature ごとの object flow を、その共通図に当てはめて読みます。</p>
 <h2 id="srv6-object-flow">SRv6 の object flow<a class="headerlink" href="#srv6-object-flow" title="Permanent link">&para;</a></h2>
-<p>SRv6 の中核は <code>srv6orch</code> で、APP_DB の <code>SRV6_MY_SID_TABLE</code> / <code>SRV6_SID_LIST</code> / <code>SRV6_POLICY</code> / <code>SRV6_STEER</code> を読み、SAI の <code>SAI_MY_SID_ENTRY_*</code> や <code>SAI_OBJECT_TYPE_SRV6_SIDLIST</code> を組み立てます。Static SID 経路では <code>bgpcfgd</code> の <code>SRv6Mgr</code> が CONFIG_DB の <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> を受け、<code>vtysh</code> で FRR に <code>segment-routing srv6 static-sids</code> を書き込みます。</p>
+<p>SRv6 の中核は <code>srv6orch</code> で、APP_DB の <code>SRV6_MY_SID_TABLE</code> / <code>SRV6_SID_LIST</code> / <code>SRV6_POLICY</code> / <code>SRV6_STEER</code> を読み、SAI の <code>SAI_MY_SID_ENTRY_*</code> や <code>SAI_OBJECT_TYPE_SRV6_SIDLIST</code> を組み立てます。Static SID 経路では <code>bgpcfgd</code> の <code>SRv6Mgr</code> が CONFIG_DB の <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> を受け、<code>vtysh</code> で FRR に <code>segment-routing srv6 static-sids</code> を書き込みます<sup id="fnref:srv6mgr"><a class="footnote-ref" href="#fn:srv6mgr">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
   CFG[CONFIG_DB&lt;br/&gt;SRV6_MY_LOCATORS / SRV6_MY_SIDS] --&gt; SMGR[bgpcfgd&lt;br/&gt;SRv6Mgr]
   SMGR --&gt;|vtysh| FRR[FRR zebra / mgmtd]
@@ -36045,9 +36045,9 @@
   APP --&gt; SRC
   SRC --&gt;|MY_SID_ENTRY&lt;br/&gt;SRV6_SIDLIST&lt;br/&gt;NEXT_HOP| SAI[SAI / syncd]
   SAI --&gt; ASIC[ASIC]</code></pre>
-<p><code>srv6orch</code> の <code>end_behavior_map</code> には <code>end</code> / <code>end.dt46</code> / <code>end.dt4</code> / <code>end.dt6</code> / <code>un</code> / <code>ua</code> / <code>udt4</code> / <code>udt6</code> / <code>udt46</code> / <code>udx4</code> / <code>udx6</code> などが登録されており、それぞれ <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*</code> にマップされます。Phase 1 では <code>END</code> / <code>END.DT46</code> / <code>H.Encaps.Red</code>、uSID <a href="../../../reference/glossary/#term-hld">HLD</a> で <code>uN</code> / <code>uA</code> / <code>uDT*</code> / <code>uDX*</code> が追加され、L3Adj HLD で <code>uA</code> / <code>End.X</code> 系の出口 nexthop 処理が完成しました。</p>
+<p><code>srv6orch</code> の <code>end_behavior_map</code> には <code>end</code> / <code>end.x</code> / <code>end.t</code> / <code>end.dx4</code> / <code>end.dx6</code> / <code>end.dt4</code> / <code>end.dt6</code> / <code>end.dt46</code> / <code>end.b6.encaps</code> / <code>end.b6.encaps.red</code> / <code>end.b6.insert</code> / <code>end.b6.insert.red</code> / <code>un</code> / <code>ua</code> / <code>udt4</code> / <code>udt6</code> / <code>udt46</code> / <code>udx4</code> / <code>udx6</code> の 19 エントリが登録されており、それぞれ <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*</code> にマップされます<sup id="fnref:endmap"><a class="footnote-ref" href="#fn:endmap">2</a></sup>。Phase 1 では <code>END</code> / <code>END.DT46</code> / <code>H.Encaps.Red</code>、uSID <a href="../../../reference/glossary/#term-hld">HLD</a> で <code>uN</code> / <code>uA</code> / <code>uDT*</code> / <code>uDX*</code> が追加され、L3Adj HLD で <code>uA</code> / <code>End.X</code> 系の出口 nexthop 処理が完成しました。</p>
 <h2 id="l3">L3 隣接の解決<a class="headerlink" href="#l3" title="Permanent link">&para;</a></h2>
-<p><code>uA</code> / <code>End.X</code> / <code>uDX4</code> / <code>uDX6</code> / <code>End.DX4</code> / <code>End.DX6</code> のような cross-connect 系 behavior は出口に L3 隣接が必須です。<code>srv6orch</code> は <code>m_pendingSRv6MySIDEntries</code> という pending queue を持ち、Neighbor 未解決時は SID 投入を保留、Neighbor が確定したタイミングで queue を flush し、<code>SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID</code> を SAI に渡します。これにより「先に SID を CONFIG_DB に書いて、後から neighbor が上がる」順序にも耐えます。</p>
+<p><code>uA</code> / <code>End.X</code> / <code>uDX4</code> / <code>uDX6</code> / <code>End.DX4</code> / <code>End.DX6</code> のような cross-connect 系 behavior は出口に L3 隣接が必須です。<code>srv6orch</code> は <code>m_pendingSRv6MySIDEntries</code> という <code>NextHopKey</code> をキーにした pending queue を持ち、Neighbor 未解決時は SID 投入を保留、Neighbor が確定したタイミングで queue を flush し、<code>SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID</code> を SAI に渡します<sup id="fnref:pending"><a class="footnote-ref" href="#fn:pending">3</a></sup>。これにより「先に SID を CONFIG_DB に書いて、後から neighbor が上がる」順序にも耐えます。</p>
 <h2 id="srv6-vpn-policy">SRv6 VPN / Policy<a class="headerlink" href="#srv6-vpn-policy" title="Permanent link">&para;</a></h2>
 <p>L3VPN over SRv6 では <code>srv6orch</code> 内部の <code>srv6_prefix_agg_id_table_</code> が VPN prefix を AGG_ID にまとめ、<code>createSrv6Vpn</code> / <code>deleteSrv6Vpn</code> で VPN encap mapper を介して <code>vpn_sid</code> を route nexthop に紐付けます。SRv6 Policy は SID list と steering 条件を別オブジェクトとして持ち、<code>SRV6_STEER</code> がトリガで対応 SID list を選ぶ構造です。</p>
 <h2 id="mpls-pipeline">MPLS の pipeline<a class="headerlink" href="#mpls-pipeline" title="Permanent link">&para;</a></h2>
@@ -36060,9 +36060,9 @@
   RO --&gt; SAI[SAI&lt;br/&gt;SAI_OBJECT_TYPE_INSEG_ENTRY]
   SAI --&gt; ASIC[ASIC]
   CRM[CRM] --- RO</code></pre>
-<p><code>fpmsyncd</code> は <code>AF_MPLS</code> の route と <code>LWTUNNEL_ENCAP_MPLS</code> の attribute から push label stack を取り出し、APP_DB の <code>LABEL_ROUTE_TABLE</code> に流します。orchagent 側で in-segment entry を bulk programming することで、大規模な静的 LSP でも load を抑える設計です。</p>
+<p><code>fpmsyncd</code> は <code>AF_MPLS</code> の route と <code>LWTUNNEL_ENCAP_MPLS</code> の attribute から push label stack を取り出し、APP_DB の <code>LABEL_ROUTE_TABLE</code> に流します<sup id="fnref:fpmmpls"><a class="footnote-ref" href="#fn:fpmmpls">4</a></sup>。orchagent 側で in-segment entry を bulk programming することで、大規模な静的 LSP でも load を抑える設計です。</p>
 <h2 id="path-tracing">Path Tracing の挿入点<a class="headerlink" href="#path-tracing" title="Permanent link">&para;</a></h2>
-<p>Path Tracing Midpoint は forwarding そのものを変えず、出口 port 単位で HbH-PT に書き込む MCD を決めます。<code>PORT|&lt;port&gt;</code> の <code>pt_interface_id</code> と <code>pt_timestamp_template</code> を <code>portmgrd</code> / <code>orchagent</code> が SAI の <code>SAI_PORT_ATTR_PATH_TRACING_INTF</code> / <code>SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE</code> に渡し、ASIC 側が IPv6 出力時に HbH-PT に MCD を追記します。Timestamp template は <code>12_19</code> のようにビット幅指定で、TimeSeries DB 側の解像度と合わせます。</p>
+<p>Path Tracing Midpoint は forwarding そのものを変えず、出口 port 単位で HbH-PT に書き込む MCD を決めます。<code>PORT|&lt;port&gt;</code> の <code>pt_interface_id</code> と <code>pt_timestamp_template</code> を <code>portmgrd</code> / <code>orchagent</code> が SAI の <code>SAI_PORT_ATTR_PATH_TRACING_INTF</code> / <code>SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE</code> に渡し、ASIC 側が IPv6 出力時に HbH-PT に MCD を追記します<sup id="fnref:ptattr"><a class="footnote-ref" href="#fn:ptattr">5</a></sup>。Timestamp template は <code>12_19</code> のようにビット幅指定で、TimeSeries DB 側の解像度と合わせます。</p>
 <p>SRv6 endpoint 処理は HbH-PT の有無に関わらず動くため、Path Tracing は SRv6 と直交して有効化できます。逆に言うと「SRv6 endpoint で IPv6 ヘッダが書き換わる場面でも HbH option が継承されるか」は ASIC 実装依存で、運用前に確認すべき項目です。</p>
 <h2 id="topic">共通する topic<a class="headerlink" href="#topic" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36080,6 +36080,27 @@
 <li><a href="../../../routing/path-tracing-midpoint/">Path Tracing Midpoint</a></li>
 </ul>
 <!-- glossary-links-injected: ec18b66e3507 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:srv6mgr">
+<p><code>SRv6Mgr</code> のテーブル購読定義は <code>sonic-net/sonic-buildimage</code> の <code>src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py</code> (<code>SRV6_MY_SIDS</code> / <code>SRV6_MY_LOCATORS</code> の subscribe、ref 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd) を参照。&#160;<a class="footnote-backref" href="#fnref:srv6mgr" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:endmap">
+<p>完全なリストは <code>sonic-net/sonic-swss</code> の <code>orchagent/srv6orch.cpp</code> L41-L62 (ref 4305596156d70e9797e8a881b3d19b46de0bce0d) を参照。<code>end_flavor_map</code> は別表で、<code>end</code> / <code>end.x</code> / <code>end.t</code> / <code>ua</code> が PSP_AND_USD、<code>un</code> のみ NONE。&#160;<a class="footnote-backref" href="#fnref:endmap" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:pending">
+<p><code>m_pendingSRv6MySIDEntries</code> の宣言は <code>sonic-net/sonic-swss</code> の <code>orchagent/srv6orch.h</code> L277、flush/insert ロジックは <code>orchagent/srv6orch.cpp</code> L1227-L1259, L1341, L1533-L1541 を参照。&#160;<a class="footnote-backref" href="#fnref:pending" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:fpmmpls">
+<p><code>sonic-net/sonic-swss</code> の <code>fpmsyncd/routesync.cpp</code> で <code>m_label_routeTable</code> を <code>APP_LABEL_ROUTE_TABLE_NAME</code> で初期化 (L158)、<code>AF_MPLS</code> 分岐 (L2066)、<code>LWTUNNEL_ENCAP_MPLS</code> の RTA_DST 解釈 (L2914) を確認。&#160;<a class="footnote-backref" href="#fnref:fpmmpls" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:ptattr">
+<p>両 attribute の SAI capability 照会と set パスは <code>sonic-net/sonic-swss</code> の <code>orchagent/portsorch.cpp</code> L579-L580, L624-L625, L1420, L1435, L11487, L11507 を参照。&#160;<a class="footnote-backref" href="#fnref:ptattr" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

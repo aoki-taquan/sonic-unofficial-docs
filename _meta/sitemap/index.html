@@ -35844,7 +35844,7 @@
 </li>
 <li><strong>VRF / ECMP / RIB-FIB パイプライン</strong> (<code>topics/04-vrf-ecmp/</code>)<ul>
 <li><a href="../../topics/04-vrf-ecmp/">VRF / ECMP / RIB-FIB パイプライン</a> — [meta] VRF / ECMP / RIB-FIB パイプライン — SONiC の L3 転送を「VRF と interface を作る」「route が FRR か…</li>
-<li><a href="../../topics/04-vrf-ecmp/concept/">L3 基盤と VRF</a> — [meta] L3 基盤と VRF — SONiC で L3 を読み始めるとき、最初に route テーブルから入ると挫折しやすい構成になっています。route の振る舞い…</li>
+<li><a href="../../topics/04-vrf-ecmp/concept/">L3 基盤と VRF</a> — [code-verified] SONiC の L3 を VRF / L3 interface / 経路 / next-hop の順で読み解くための入口章。vrfmgrd と VRFOrch…</li>
 <li><a href="../../topics/04-vrf-ecmp/architecture/">RIB-FIB と Route Object 生成</a> — [meta] RIB-FIB と Route Object 生成 — SONiC の L3 pipeline は、FRR が持つ RIB と、orchagent / syn…</li>
 <li><a href="../../topics/04-vrf-ecmp/setup/">VRF と Static Route の設定</a> — [meta] VRF と Static Route の設定 — 設定を読む入口は 3 つあります。作業者が打つのは CLI、永続設定として残るのは CONFIG_DB、外部…</li>
 <li><a href="../../topics/04-vrf-ecmp/operations/">Route / Interface / Counter の確認</a> — [meta] Route / Interface / Counter の確認 — L3 の障害調査では、最初に route だけを見ても原因を絞れません。VRF、inter…</li>
@@ -35976,7 +35976,7 @@
 </li>
 <li><strong>17-srv6-mpls</strong> (<code>topics/17-srv6-mpls/</code>)<ul>
 <li><a href="../../topics/17-srv6-mpls/advanced/">発展トピック</a> — [meta] 発展トピック — base 機能の上で広がる SRv6 / MPLS / Path Tracing 関連のトピックを、他章へのリンクと一緒にまとめます。</li>
-<li><a href="../../topics/17-srv6-mpls/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — SRv6 / MPLS / Path Tracing は別機能ですが、SONiC 内部では「CONFIG_DB → orchagent →…</li>
+<li><a href="../../topics/17-srv6-mpls/architecture/">アーキテクチャ</a> — [code-verified] SRv6 / MPLS / Path Tracing を SONiC の共通 2 系統データ経路 (CONFIG_DB → orchagent → SAI と…</li>
 <li><a href="../../topics/17-srv6-mpls/concept/">概念</a> — [code-verified] SRv6 / MPLS / Path Tracing が SONiC の通常 routing とどこで分岐し、どの daemon と DB を増やすかを 1…</li>
 <li><a href="../../topics/17-srv6-mpls/">SRv6 / MPLS / Path Tracing</a> — [meta] SRv6 / MPLS / Path Tracing — この章は、SONiC で SRv6（Segment Routing over IPv6）、MPLS、…</li>
 <li><a href="../../topics/17-srv6-mpls/internals/">内部実装</a> — [meta] 内部実装 — ここでは SRv6 / MPLS / Path Tracing の主要 daemon・ファイル・SAI 属性のうち、設計を理解する上で欠かせない…</li>
@@ -36302,7 +36302,7 @@
 <li><a href="../../system/snmp-migration-from-snmp-yml-to-configdb/">SNMP 設定の snmp.yml → CONFIG_DB 移行</a> — [code-verified] SNMP 設定の snmp.yml → CONFIG_DB 移行 — /etc/sonic/snmp.yml には community / location…</li>
 <li><a href="../../system/sonic-bmc-platform-management-monitoring/">SONiC BMC Platform Management &amp; Monitoring（pmon ↔ BMC 連携）</a> — [discrepancy-found] SONiC BMC Platform Management &amp; Monitoring（pmon ↔ BMC 連携） — 「BMC 付き SONiC platf…</li>
 <li><a href="../../system/sonic-boot-chart/">SONiC Boot Chart（systemd-bootchart 統合）</a> — [code-verified] SONiC Boot Chart（systemd-bootchart 統合） — SONiC は モジュール構成 で、各機能はスクリプト・ユーティリティ・da…</li>
-<li><a href="../../system/sonic-configuration-setup-service/">config-setup サービス（first-boot config 生成 / 版間 migration）</a> — [discrepancy-found] config-setup サービス（first-boot config 生成 / 版間 migration） — SONiC の起動時設定は /etc/son…</li>
+<li><a href="../../system/sonic-configuration-setup-service/">config-setup サービス（first-boot config 生成 / 版間 migration）</a> — [code-verified] config-setup サービス（first-boot config 生成 / 版間 migration） — SONiC の起動時設定は /etc/son…</li>
 <li><a href="../../system/sonic-container-hardening/">SONiC Container Hardening（capability / read-only / privileged 削減）</a> — [discrepancy-found] SONiC Container Hardening（capability / read-only / privileged 削減） — SONiC の doc…</li>
 <li><a href="../../system/sonic-dynamic-port-breakout-feature-high-level-design/">動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成）</a> — [code-verified] 動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成） — 1 つの物理 cage（QSFP-DD…</li>
 <li><a href="../../system/sonic-feature-quality-definition/">SONiC Feature Quality 定義（Alpha / Beta / GA とリリースノート連動）</a> — [meta] SONiC コミュニティが新機能を contribute する際の品質レベル定義で、Alpha・Beta・GA の 3 段階を設け、各段階のテスト要件・ドキュ…</li>
@@ -36935,7 +36935,7 @@
 <li><a href="../../reference/runbooks/multi-asic-namespace/">Multi-ASIC で namespace 間通信できない</a> — [code-verified] Runbook: Multi-ASIC で namespace 間通信できない — : sonic-net/sonic-utilities @ 39732bc…</li>
 <li><a href="../../reference/runbooks/dualtor-mux/">Dual-ToR mux が切り替わらない</a> — [code-verified] Runbook: Dual-ToR mux が切り替わらない — : sonic-net/sonic-linkmgrd @ 65f5633 — LinkMan…</li>
 <li><a href="../../reference/runbooks/sai-failure/">SAI failure / syncd リスタート多発</a> — [runbook-verified] syncd の異常終了や SAI API 連続失敗を切り分けるための runbook。CRM 枯渇 / SDK 非対応属性 / object 削除順序 / O…</li>
-<li><a href="../../reference/runbooks/container-not-starting/">コンテナが起動しない (FEATURE)</a> — [runbook-verified] Runbook: コンテナが起動しない (FEATURE) — : sonic-net/sonic-host-services @ c5bbbe8 — hos…</li>
+<li><a href="../../reference/runbooks/container-not-starting/">コンテナが起動しない (FEATURE)</a> — [runbook-verified] FEATURE テーブルと hostcfgd / config feature state を起点に SONiC のコンテナが起動しない事象を切り分ける ru…</li>
 <li><a href="../../reference/runbooks/techsupport-timeout/">show techsupport が timeout する</a> — [runbook-verified] Runbook: show techsupport が長時間 / global-timeout で abort する症状の切り分け と auto-techsu…</li>
 <li><a href="../../reference/runbooks/flex-counter-stuck/">counter が更新されない (FLEX_COUNTER)</a> — [code-verified] Runbook: counter が更新されない (FLEX_COUNTER) — : sonic-net/sonic-swss @ 4305596 — fl…</li>
 <li><a href="../../reference/runbooks/rif-acl-counter-zero/">RIF / ACL counter が 0 のまま</a> — [code-verified] Runbook: RIF / ACL counter が 0 のまま — : sonic-net/sonic-swss @ 4305596 — aclorch…</li>
@@ -36953,7 +36953,7 @@
 <li><a href="../../reference/runbooks/appdb-asicdb-sync-lag/">APPL_DB → ASIC_DB の反映が遅延・停止する</a> — [code-verified] Runbook: APPL_DB の更新が ASIC_DB（syncd）に反映されない — : sonic-net/sonic-swss @ master —…</li>
 <li><a href="../../reference/runbooks/snmpv3-auth-failure/">SNMPv3 ユーザー認証が失敗する</a> — [code-verified] Runbook: SNMPv3 user の認証 / 暗号化が失敗するときの切り分けとロールバック。CONFIG_DB の SNMP_USER エントリ実フィ…</li>
 <li><a href="../../reference/runbooks/nat-translation-miss/">NAT translation が一部漏れる</a> — [code-verified] Runbook: NAT translation が一部のフローで効かない — : sonic-net/sonic-swss @ master — nator…</li>
-<li><a href="../../reference/runbooks/evpn-type2-not-advertised/">EVPN Type-2 route が広告されない</a> — [code-verified] Runbook: EVPN Type-2 (MAC/IP) route が peer に広告されない — : sonic-net/sonic-frr @ ma…</li>
+<li><a href="../../reference/runbooks/evpn-type2-not-advertised/">EVPN Type-2 route が広告されない</a> — [code-verified] Runbook: EVPN Type-2 (MAC/IP) route が peer に広告されない原因 (advertise-all-vni 未設定 / V…</li>
 <li><a href="../../reference/runbooks/mclag-sync-failure/">MCLAG (mclagsyncd) の状態同期が止まる</a> — [runbook-verified] Runbook: MCLAG peer 同期が確立しない / state inconsistent — : sonic-net/sonic-swss @ ma…</li>
 <li><a href="../../reference/runbooks/techsupport-size-bloat/">show techsupport の出力サイズが肥大化する</a> — [runbook-verified] Runbook: show techsupport (generate_dump) のアーカイブが GB 級に肥大化 — : sonic-net/sonic-…</li>
 <li><a href="../../reference/runbooks/portchannel-lacp-not-established/">PortChannel メンバーで LACP が確立しない</a> — [runbook-verified] Runbook: PortChannel メンバーで LACP が確立しない — : sonic-net/sonic-swss @ 4305596 — cfg…</li>

@@ -33708,7 +33708,7 @@
   <a href="#monitor-partially-implemented" class="md-nav__link">
     <span class="md-ellipsis">
       
-        partially_implemented — 部分実装 (61 件)
+        partially_implemented — 部分実装 (60 件)
       
     </span>
   </a>
@@ -36112,7 +36112,7 @@
   <a href="#monitor-partially-implemented" class="md-nav__link">
     <span class="md-ellipsis">
       
-        partially_implemented — 部分実装 (61 件)
+        partially_implemented — 部分実装 (60 件)
       
     </span>
   </a>
@@ -36325,7 +36325,7 @@
 <p class="admonition-title">このページの使い方</p>
 <p>SONiC コミュニティ master の HLD は <strong>設計提案リポジトリ</strong> であり、現行コードと一致しているとは限りません。本ページは「HLD だけ読んで誤解しがちな機能」を一望できる USP ページです。読み手は、まず後述の <strong>monitor subtype 別セクション</strong> で該当機能の乖離タイプ（未実装 / 部分実装 / 進化置換 / 廃止）を把握し、そこから個別ページへ降りて <code>last_verified</code> と「実装との乖離」セクションの裏取り根拠を確認してください。area 横断で探す場合は末尾の <strong>area 別索引</strong> から辿れます。</p>
 </div>
-<p><code>verification: discrepancy-found</code> が付いた全 <strong>117</strong> ページを自動収集しています。本ページは <code>meta/scripts/gen_discrepancy_index.py</code> が生成し、CI (<code>--check</code>) で常時鮮度を保証します。</p>
+<p><code>verification: discrepancy-found</code> が付いた全 <strong>116</strong> ページを自動収集しています。本ページは <code>meta/scripts/gen_discrepancy_index.py</code> が生成し、CI (<code>--check</code>) で常時鮮度を保証します。</p>
 <h2 id="_1">サマリ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <h3 id="monitor-subtype">monitor subtype 別件数<a class="headerlink" href="#monitor-subtype" title="Permanent link">&para;</a></h3>
 <table>
@@ -36344,7 +36344,7 @@
 </tr>
 <tr>
 <td><a href="#monitor-partially-implemented"><code>partially_implemented</code></a></td>
-<td style="text-align: right;">61</td>
+<td style="text-align: right;">60</td>
 <td>部分実装</td>
 </tr>
 <tr>
@@ -36406,7 +36406,7 @@
 </tr>
 <tr>
 <td><a href="#area-system"><code>system</code></a></td>
-<td style="text-align: right;">19</td>
+<td style="text-align: right;">18</td>
 </tr>
 </tbody>
 </table>
@@ -36507,7 +36507,7 @@
   area: <code>system</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>per-page queue で既出の通り提案 HLD は未採用。再走査でも:</p>
-<h3 id="monitor-partially-implemented"><code>partially_implemented</code> — 部分実装 (61 件)<a class="headerlink" href="#monitor-partially-implemented" title="Permanent link">&para;</a></h3>
+<h3 id="monitor-partially-implemented"><code>partially_implemented</code> — 部分実装 (60 件)<a class="headerlink" href="#monitor-partially-implemented" title="Permanent link">&para;</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">部分実装</p>
 <p>HLD のスコープのうち<strong>一部の構成要素だけ</strong>が現行 master に取り込まれているページ群。データ層 / CLI / orch のどれが欠けているかは個別ページで明示。</p>
@@ -36832,13 +36832,6 @@
 </li>
 <li>
 <p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。xcvrd の現行構造、TRANSCEIVER_* テーブルの現行スキーマ（CMIS 拡張による多数フィールド追加）、polling interval 60s の妥当性は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
-</li>
-<li>
-<p><a href="../../../system/sonic-configuration-setup-service/">config-setup サービス（first-boot config 生成 / 版間 migration）</a><br />
-  area: <code>system</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></p>
-</li>
-<li>
-<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。HLD は 2019-07 Rev 0.2 で停滞。<code>config-setup</code> の実際の責務分担は本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
 </li>
 <li>
 <p><a href="../../../system/kdump/">kdump（kexec ベース kernel crash dump / makedumpfile）</a><br />
@@ -37692,13 +37685,6 @@
 </ul>
 <p>per-page queue で既出の通り提案 HLD は未採用。再走査でも:</p>
 <ul>
-<li>
-<p><a href="../../../system/sonic-configuration-setup-service/">config-setup サービス（first-boot config 生成 / 版間 migration）</a><br />
-  area: <code>system</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></p>
-</li>
-<li>
-<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。HLD は 2019-07 Rev 0.2 で停滞。<code>config-setup</code> の実際の責務分担は本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
-</li>
 <li>
 <p><a href="../../../system/kdump/">kdump（kexec ベース kernel crash dump / makedumpfile）</a><br />
   area: <code>system</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></p>

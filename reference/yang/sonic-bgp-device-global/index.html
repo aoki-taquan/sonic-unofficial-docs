@@ -36296,6 +36296,9 @@
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>           +--rw peers?   string
 </span></code></pre></div>
 <h2 id="leaf">leaf 一覧<a class="headerlink" href="#leaf" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang L33-L60 (tsa_enabled/wcmp_enabled default false, idf_isolation_state default "unisolated") @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd -->
+<!-- evidence: sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang L69-L80 (CONFED asn range 1..4294967295, peers string) @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd -->
+
 <table>
 <thead>
 <tr>
@@ -36332,7 +36335,7 @@
 <td><code>sonic-bgp-device-global/BGP_DEVICE_GLOBAL/STATE/idf_isolation_state</code></td>
 <td><code>enumeration</code></td>
 <td></td>
-<td></td>
+<td>unisolated</td>
 <td>isolated_no_export, isolated_withdraw_all, unisolated</td>
 <td>IDF (Internet-Facing Datacenter Fabric) isolation state</td>
 </tr>
