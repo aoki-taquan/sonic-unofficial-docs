@@ -153,7 +153,7 @@ Chassis global:
 | `SYSTEM_PORT_TABLE` | chassis 全体での system port ID 割当（VOQ 設計上の必須） |
 | `SYSTEM_NEIGH_TABLE` | 全 LC 共有の neighbor entry |
 | `SYSTEM_LAG_TABLE` | chassis 跨ぎ LAG（VOQ chassis only） |
-| `SYSTEM_LAG_MEMBER_TABLE` | chassis 跨ぎ LAG のメンバー port 情報[^[portsorch](../../reference/glossary.md#term-portsorch)-lag] |
+| `SYSTEM_LAG_MEMBER_TABLE` | chassis 跨ぎ LAG のメンバー port 情報[^lagorch-chassis] |
 
 `SystemPortOrch` / `SystemNeighOrch` が chassis_db を subscribe して、自 ASIC の `SAI_OBJECT_TYPE_SYSTEM_PORT` を作成 / 更新します。chassis_db 自体は SUP 上の Redis で、LC 側からは TCP で接続します（接続切断時は前述の段階的劣化）。
 
@@ -196,6 +196,6 @@ VOQ chassis では各 ASIC namespace で独立した FRR が動き、ASIC 間は
 [^neighorch]: VOQ switch では `CHASSIS_APP_SYSTEM_NEIGH_TABLE_NAME` を `chassisAppDb` 上に open し、リモート neighbor の同期に用いる。sonic-net/sonic-swss `orchagent/neighorch.cpp` L54-61, L887 (ref `4305596156d7`).
 [^fabric-iso]: `isolationPollsCfg` のデフォルトは `ISOLATION_POLLS_CFG`、`CONFIG_DB:FABRIC_MONITOR` から override 可能。`consecutivePollsWithErrors >= isolationPollsCfg` で auto-isolation 状態に遷移する。sonic-net/sonic-swss `orchagent/fabricportsorch.cpp` L436-475, L787-906 (ref `4305596156d7`).
 [^show-fabric]: `show fabric reachability` は `fabricstat -r`、`show fabric isolation` は `fabricstat -i` を実行する click group。sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `show/fabric.py` L33-50 (ref `39732bceb8bd`).
-[^portsorch-lag]: VOQ chassis では [PortChannel](../../reference/glossary.md#term-portchannel) の add / member 変更時に `SYSTEM_LAG_TABLE` / `SYSTEM_LAG_MEMBER_TABLE` を `CHASSIS_APP_DB` 上で更新する。sonic-net/sonic-swss `orchagent/portsorch.cpp` L8037, L8114 (ref `4305596156d7`).
+[^lagorch-chassis]: VOQ chassis では [PortChannel](../../reference/glossary.md#term-portchannel) の add / member 変更時に `SYSTEM_LAG_TABLE` / `SYSTEM_LAG_MEMBER_TABLE` を `CHASSIS_APP_DB` 上で更新する。sonic-net/sonic-swss `orchagent/portsorch.cpp` L8037, L8114 (ref `4305596156d7`).
 
-<!-- glossary-links-injected: 4e2024452c7a -->
+<!-- glossary-links-injected: 889740d66e5f -->
