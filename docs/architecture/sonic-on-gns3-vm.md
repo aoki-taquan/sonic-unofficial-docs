@@ -9,6 +9,12 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/sonic-gns3/GNS3 VM for SONiC.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-buildimage
+  path: platform/vs/README.gns3.md
+  ref: master
+- repo: sonic-net/sonic-buildimage
+  path: platform/vs/sonic-gns3a.sh
+  ref: master
 related:
   _no_related_config_db: true
   cli:
@@ -50,13 +56,23 @@ GNS3 は Qemu/KVM を介して SONiC [VS](../reference/glossary.md#term-vs) イ�
 
 ### SONiC イメージ取得
 
-公式 Azure Pipeline `#142` (`master`) の最新成功 build から `sonic-buildimage.vs` artifact を辿り、`target/sonic-vs.img.gz` をダウンロードする[^1]:
+公式 Azure Pipeline の `master` ブランチ最新成功 build から `sonic-buildimage.vs` artifact を辿り、`target/sonic-vs.img.gz` をダウンロードする[^1]。
 
-> https://sonic-build.azurewebsites.net/ui/sonic/pipelines/142/builds?branchName=master
+入口は SONiC pipeline 一覧ページから辿るのが URL 腐敗に強い:
 
-ダウンロード後 gunzip して `sonic-vs.img` を得る。
+> https://sonic-build.azurewebsites.net/ui/sonic/pipelines
+
+ここで `vs` 系 pipeline（HLD 執筆時点は ID `142`）を選び、`branchName=master` の最新 build を開く。HLD は直リンク `…/pipelines/142/builds?branchName=master` を案内しているが、pipeline ID は再編成で変わり得るため一覧から辿る方が安全である[^1]。
+
+ダウンロード後 `gunzip sonic-vs.img.gz` で `sonic-vs.img` を得る。
+
+ソースから build する場合は `make` で `target/sonic-vs.img.gz` が直接生成されるため、Azure 経由を経ずに同等の image を取得できる（`platform/vs/` の build target）[^2]。
 
 ### GNS3 への登録
+
+手動で Qemu テンプレートを作る方法と、`sonic-gns3a.sh` で `.gns3a` アプライアンス定義ファイルを生成する方法がある。後者は保守性が高い（パラメータの再現性が GUI 手順より明確）ため、繰り返し使う環境では推奨される[^2]。
+
+#### 方法 A: Qemu テンプレートを手動作成
 
 1. GNS3 プロジェクトを新規作成
 2. `New template` → `Manually create a new template` → `Qemu VM`
@@ -67,6 +83,16 @@ GNS3 は Qemu/KVM を介して SONiC [VS](../reference/glossary.md#term-vs) イ�
 4. ディスク image として展開済みの `sonic-vs.img` を指定
 
 これらの値は HLD で「推奨」として明示されている[^1]。
+
+#### 方法 B: `sonic-gns3a.sh` で `.gns3a` を生成
+
+`sonic-buildimage` の `platform/vs/sonic-gns3a.sh` は `sonic-vs.img` を入力に GNS3 アプライアンス定義 (`.gns3a`) を吐く。GNS3 GUI の `File → Import appliance` で取り込むだけで同等のテンプレートが登録される[^2]:
+
+```bash
+./sonic-gns3a.sh -r 1.1 -b <store_path>/sonic-vs.img
+```
+
+`-r` はアプライアンスのリビジョン、`-b` は `sonic-vs.img` の絶対パス。生成された `.gns3a` をインポートすれば手順 1〜4 をスキップできる。
 
 ### トポロジ構築とログイン
 
@@ -126,7 +152,7 @@ GNS3 GUI 操作の代替として CLI で扱う場合、`gns3server` の REST AP
 
 ## 制限事項
 
-- **Azure Pipeline URL の有効性**: 番号 142 や URL は将来変わる可能性がある。HLD 中の URL を盲信せず、最新の sonic-build 配置を確認する。
+- **Azure Pipeline URL の有効性**: pipeline ID（HLD 執筆時点 `142`）や URL は将来変わる可能性がある。直リンクではなく `https://sonic-build.azurewebsites.net/ui/sonic/pipelines` の一覧から辿る、もしくは `sonic-buildimage` から `make` で直接 `sonic-vs.img.gz` を build するのが URL 腐敗に強い。
 - **VS ビルドの位置づけ**: `sonic-vs.img` は機能テスト・トポロジ実験用。実 [ASIC](../reference/glossary.md#term-asic) を持たないため、[SAI](../reference/glossary.md#term-sai) コールはソフト VS で受ける。性能ベンチマーク用途には不向き。
 - **GNS3 自体の制約**: GUI 中心。CI 用途には KVM 直接または別の自動化基盤（[`sonic-mgmt` のテストベッド](https://github.com/sonic-net/sonic-mgmt)）が一般的。
 - **ホスト OS 依存**: Windows ホスト、Linux ホスト（GNS3 サーバモード）で手順が分かれる。本ドキュメントは Windows 中心の手順を示している[^1]。
@@ -159,6 +185,7 @@ ip -br link | head
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-gns3/GNS3 VM for SONiC.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-buildimage` `platform/vs/README.gns3.md` および `platform/vs/sonic-gns3a.sh`（`.gns3a` アプライアンスファイル生成スクリプト、`-r <ReleaseNumber> -b <sonic-vs.img>`）
 
 <!-- evidence (verifier-batch-20):
 - sonic-buildimage/platform/vs/README.gns3.md (HOWTO Create a GNS3 Appliance File)
