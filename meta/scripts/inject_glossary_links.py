@@ -180,6 +180,11 @@ def _mask_protected_spans(line: str) -> list[tuple[int, int]]:
     # Reference-style links: [text][ref].
     for m in re.finditer(r"\[[^\]]+\]\[[^\]]*\]", line):
         spans.append((m.start(), m.end()))
+    # Footnote references and definitions: [^key] and [^key]:.
+    # Injecting inside a footnote key turns ``[^fpmsyncd]`` into the broken
+    # ``[^[fpmsyncd](...)]`` form which never resolves to its definition.
+    for m in re.finditer(r"\[\^[^\]\s]+\]", line):
+        spans.append((m.start(), m.end()))
     # Raw HTML tags.
     for m in re.finditer(r"<[^>]+>", line):
         spans.append((m.start(), m.end()))

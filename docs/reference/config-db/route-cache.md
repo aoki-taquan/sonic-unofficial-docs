@@ -124,7 +124,7 @@ if (m_enable_db_write_and_notify &&
 
 ## fpmsyncd による購読 — `onRouteResponse()`
 
-ソース: `fpmsyncd/routesync.cpp` lines 3165–3265[^[fpmsyncd](../../reference/glossary.md#term-fpmsyncd)]
+ソース: `fpmsyncd/routesync.cpp` lines 3165–3265[^fpmsyncd]
 
 `fpmsyncd` は `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` を `NotificationConsumer` で購読し、通知を `onRouteResponse()` に渡す。
 
@@ -158,7 +158,7 @@ for (const auto& fieldValue: fieldValues)
 
 ## Warm Restart 時の動作
 
-Warm restart 完了後、`fpmsyncd::onWarmStartEnd()` が呼ばれる際に `markRoutesOffloaded()` が実行される[^[fpmsyncd](../../reference/glossary.md#term-fpmsyncd)]:
+Warm restart 完了後、`fpmsyncd::onWarmStartEnd()` が呼ばれる際に `markRoutesOffloaded()` が実行される[^fpmsyncd]:
 
 ```cpp
 void RouteSync::markRoutesOffloaded(swss::DBConnector& db)
@@ -181,7 +181,7 @@ APPL_STATE_DB の全 [ROUTE_TABLE](../../reference/glossary.md#term-route_table)
 | 1 | APPL_DB [ROUTE_TABLE](../../reference/glossary.md#term-route_table) → SAI 成功 → APPL_STATE_DB 書き込み | 強制先行（SAI 失敗時はエントリ不在） | SAI 失敗経路は APPL_STATE_DB に存在しない点に注意 |
 | 2 | [VRF](../../reference/glossary.md#term-vrf) SAI 登録 → VRF 経路の APPL_STATE_DB 書き込み | 強制先行（isVRFexists false → 後回し） | VRF を先に作成 |
 | 3 | doTask() flush() → APPL_STATE_DB 書き込みのまとめ到着 | バッチ境界（同サイクル内変更はまとめて送出） | consumer は同一バッチ変更の個別到着順を仮定しないこと |
-| 4 | suppress-fib-pending 有効 → fpmsyncd が RESPONSE_CHANNEL 購読 | 機能有効時のみ | 無効時は APPL_STATE_DB 書き込みは発生するが offload 通知は行われない |
+| 4 | suppress-fib-pending 有効 → [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が RESPONSE_CHANNEL 購読 | 機能有効時のみ | 無効時は APPL_STATE_DB 書き込みは発生するが offload 通知は行われない |
 | 5 | Warm Restart: APPL_STATE_DB 既存 → onWarmStartEnd → offload 通知 | 後払い（通常フローとは逆順） | warm restart 完了後に offload フラグ復元が自動実行される |
 
 ### 主要な制約詳細
@@ -201,7 +201,7 @@ if (m_enable_db_write_and_notify &&
 
 **バッファリングと flush（依存 #3）**: `RouteOrch` は `m_publisher.setBuffered(true)` で RESPONSE_CHANNEL + APPL_STATE_DB 書き込みをバッファリングし、`doTask()` 末尾の `m_publisher.flush()` で一括送出する（routeorch.cpp:L57, L1231）。同一 `doTask()` サイクル内で処理された複数経路の状態変更は、flush 時にまとめて [Redis](../../reference/glossary.md#term-redis) パイプラインに投入される。consumer は同一バッチ内の書き込みが個別到着順を保証しないことを前提とする必要がある。
 
-**suppression 有効時のみ fpmsyncd が購読（依存 #4）**: APPL_STATE_DB への書き込みは `suppress-fib-pending` 設定に関わらず発生するが、fpmsyncd がその結果を `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 経由で受け取って FRR zebra へ offload 通知を送るのは `suppress-fib-pending = enabled` の場合のみ。suppression 無効時は APPL_STATE_DB への書き込みが発生しても FRR の offload フラグは更新されない（fpmsyncd.cpp:L113-118、routesync.cpp:L3174）。
+**suppression 有効時のみ [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が購読（依存 #4）**: APPL_STATE_DB への書き込みは `suppress-fib-pending` 設定に関わらず発生するが、fpmsyncd がその結果を `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 経由で受け取って FRR zebra へ offload 通知を送るのは `suppress-fib-pending = enabled` の場合のみ。suppression 無効時は APPL_STATE_DB への書き込みが発生しても FRR の offload フラグは更新されない（fpmsyncd.cpp:L113-118、routesync.cpp:L3174）。
 
 **Warm Restart の後払い offload（依存 #5）**: Warm restart 完了時には `onWarmStartEnd()` が APPL_STATE_DB の全 ROUTE_TABLE エントリを走査して FRR zebra に RTM_NEWROUTE を一括送信する。この経路では通常フローと逆に APPL_STATE_DB が先に存在しており、それを読んで offload 通知を送出する（routesync.cpp:L3298-3310）。
 
