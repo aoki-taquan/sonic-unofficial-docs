@@ -4,8 +4,14 @@ description: 設定 — 全体像章での「設定」は個別機能の手順�
   の触り方を整理する。
 area: topics
 verification: meta
-last_verified: 2026-05-12
-sources: []
+last_verified: 2026-06-03
+sources:
+- repo: sonic-buildimage
+  path: files/build_templates/docker_image_ctl.j2
+  lines: "292-304"
+- repo: sonic-buildimage
+  path: files/scripts/configdb-load.sh
+  lines: "10-14"
 related:
   cli:
   - config reload
@@ -75,9 +81,11 @@ SONiC の設定は **2 つのレイヤ** で永続化される。読み違える
 ZTP や初回起動では、`minigraph.xml` や YAML プロファイルから `sonic-cfggen` が `config_db.json` を生成する。流れは次の通り。
 
 1. ONIE installer が image を展開し、`/etc/sonic/` に `minigraph.xml` (DC 系) または `config_db.json` (ベア start) を置く。
-2. `swss.service` 起動前に `sonic-cfggen -H -m -y /etc/sonic/init_cfg.json --write-to-db` が走り、CONFIG_DB を埋める。
+2. `database` コンテナ起動時に `docker_image_ctl.j2` が `sonic-cfggen` を呼び、`/etc/sonic/config_db.json` (および存在すれば `init_cfg.json`) を CONFIG_DB に書き込む。実体は `$SONIC_CFGGEN -j /etc/sonic/init_cfg.json -j /etc/sonic/config_db$DEV.json --write-to-db` で、`-j` を 2 回渡して init_cfg を base に config_db で overlay する形式である[^cfggen-load]。`minigraph.xml` を起点にする場合は別途 `config load_minigraph` (内部で `sonic-cfggen -H -m ...`) を経由する。
 3. 各 `*mgrd` が CONFIG_DB を購読し APPL_DB に展開する。
 4. ZTP は `ztp` daemon が DHCP option 経由で URL を取得し、上記 snapshot を上書きする。
+
+[^cfggen-load]: 出典: `sonic-buildimage/files/build_templates/docker_image_ctl.j2` L292-304 (database コンテナ起動時の CONFIG_DB load 分岐)、`sonic-buildimage/files/scripts/configdb-load.sh` L10-14 (同等の load ロジック)。`-H -m` は `minigraph.xml` を読む系列のオプションで、初回起動の `--write-to-db` 経路では使われない。
 
 bootstrap で読むべき設定は `DEVICE_METADATA|localhost`、`FEATURE|<docker>`、`PORT|<ifname>` の 3 種で、最初の 3 行に書かれている `hwsku`、`platform`、`type` が以降のすべての判断軸になる。
 
