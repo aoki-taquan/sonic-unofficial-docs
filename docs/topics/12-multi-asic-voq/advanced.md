@@ -44,7 +44,7 @@ related:
 
 # 発展トピック
 
-[VOQ](../../reference/glossary.md#term-voq) chassis 固有の機能は、[BGP](../../reference/glossary.md#term-bgp)・[LAG](../../reference/glossary.md#term-lag)・Everflow・TSA・warm reboot のような既存機能領域ごとに別 [HLD](../../reference/glossary.md#term-hld) として書かれています。ここでは「他章で読むべきテーマ」と「VOQ chassis 視点で押さえるポイント」を対応付け、各章への橋渡しに徹します。
+[VOQ](../../reference/glossary.md#term-voq) chassis 固有の機能は、[BGP](../../reference/glossary.md#term-bgp)・[LAG](../../reference/glossary.md#term-lag)・Everflow・TSA・warm reboot のような既存機能領域ごとに別 [HLD](../../reference/glossary.md#term-hld) として書かれている。ここでは「他章で読むべきテーマ」と「VOQ chassis 視点で押さえるポイント」を対応付け、各章への橋渡しに徹する。
 
 ## VOQ Chassis での BGP
 
@@ -81,7 +81,7 @@ L2 / LAG の章本文は [06 L2 / VLAN / LAG](../06-l2-vlan-lag/index.md) を参
 
 `everflow-support-on-voq-chassis` は、Everflow (ERSPAN ベースの mirror) の mirror source / destination が別 line card にいる構成のための HLD である。要点:
 
-- mirror source 側の line card で **ingress 時点で GRE ヘッダーを付与** し、その後通常のトラフィックとして fabric を経由し destination 側 line card へ運ばれる。
+- mirror source 側の line card で **ingress 時点で GRE ヘッダを付与** し、その後通常のトラフィックとして fabric を経由し destination 側 line card へ運ばれる。
 - [ACL](../../reference/glossary.md#term-acl) bind 先や session 識別は ASIC インスタンス単位で持ち、destination resolution は chassis 全体で一意に行う。
 
 mirror / ACL の章本文は [07 ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) を参照し、VOQ 視点では「ingress line card で GRE 化してから fabric を流れる」「per-ASIC session を複数の line card で運用する」点を押さえる。
@@ -123,7 +123,7 @@ VOQ chassis に拡張する際は、line card 単独の warm reboot 中に Super
 
 ## まとめ
 
-VOQ chassis 固有のテーマは、機能としては既存の章（BGP、LAG、Mirror、Reboot）に属しつつ、namespace 跨ぎ / line card 跨ぎ / Chassis DB との協調という観点を持ちます。各章本文で機能の中身を読み、本章の [概念](concept.md) と [アーキテクチャ](architecture.md) で「どこが namespace を超えるか」を意識すると、HLD を縦横に往復しやすくなります。
+VOQ chassis 固有のテーマは、機能としては既存の章（BGP、LAG、Mirror、Reboot）に属しつつ、namespace 跨ぎ / line card 跨ぎ / Chassis DB との協調という観点を持つ。各章本文で機能の中身を読み、本章の [概念](concept.md) と [アーキテクチャ](architecture.md) で「どこが namespace を超えるか」を意識すると、HLD を縦横に往復しやすくなる。
 
 ## 追加の発展トピック
 

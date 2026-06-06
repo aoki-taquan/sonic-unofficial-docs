@@ -77,7 +77,7 @@ flowchart LR
 - CLI: [show version](show-version.md) / [show system-health](show-system-health.md) / [reboot-fast-warm](reboot-fast-warm.md)
 - Topic: [リブート / アップグレード](../../topics/11-reboot/index.md)
 
-> `show uptime` は kernel の `/proc/uptime` を読む `uptime(1)` のラッパで、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) とは関連しない（[実装](#実装)参照）。
+> `show uptime` は kernel の `/proc/uptime` を読む `uptime(1)` のラッパで、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) とは関連しない（後述の「実装」節を参照）。
 
 <!-- ref-triangle:end -->
 
