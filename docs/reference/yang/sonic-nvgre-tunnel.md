@@ -8,9 +8,15 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-nvgre-tunnel.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-utilities
+    path: config/plugins/nvgre_tunnel.py
+    ref: master
+  - repo: sonic-net/sonic-utilities
+    path: show/plugins/nvgre_tunnel.py
+    ref: master
 related:
   config_db: [NVGRE_TUNNEL, NVGRE_TUNNEL_MAP]
-  cli: []
+  cli: ["config nvgre-tunnel", "config nvgre-tunnel-map", "show nvgre-tunnel", "show nvgre-tunnel-map"]
   yang: [sonic-vxlan, sonic-vnet]
 ---
 
@@ -98,7 +104,7 @@ module: sonic-nvgre-tunnel
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `NVGRE_TUNNEL`, `NVGRE_TUNNEL_MAP`
-- CLI: なし（[CONFIG_DB](../../reference/glossary.md#term-config_db) 直接設定）
+- CLI: `config nvgre-tunnel {add,delete}` / `config nvgre-tunnel-map {add,delete}` / `show nvgre-tunnel` / `show nvgre-tunnel-map` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `config/plugins/nvgre_tunnel.py` および `show/plugins/nvgre_tunnel.py` で click plugin として実装)[^2]
 
 <!-- yang-sibling -->
 ### 関連 YANG モジュール
@@ -136,11 +142,13 @@ module: sonic-nvgre-tunnel
 ```bash
 sonic-db-cli CONFIG_DB keys 'NVGRE_TUNNEL*'
 show nvgre-tunnel
+show nvgre-tunnel-map
 ```
 <!-- /ops-hint -->
 
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-nvgre-tunnel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^2]: `sonic-net/sonic-utilities` `config/plugins/nvgre_tunnel.py` L207-L349 (`nvgre-tunnel` / `nvgre-tunnel-map` click groups, `add` / `delete` subcommands) と `show/plugins/nvgre_tunnel.py` L46-L149 (`show nvgre-tunnel` / `show nvgre-tunnel-map`) で click plugin として登録。`doc/Command-Reference.md` の "NVGRE" 章に CLI 仕様あり。
 
-<!-- glossary-links-injected: 26ca9e81c971 -->
+<!-- glossary-links-injected: f960e6599a3c -->
