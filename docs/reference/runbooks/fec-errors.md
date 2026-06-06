@@ -29,7 +29,7 @@ related:
 
 - `show interfaces counters errors` で `RX_ERR` / `SYMBOL_ERR` が継続的に増加
 - リンク自体は UP するが、BER が高く上位プロトコル（[BGP](../../reference/glossary.md#term-bgp) / [LACP](../../reference/glossary.md#term-lacp)）が flap
-- `show interfaces counters fec-stats` で FEC corrected/uncorrected カウンタが急増 (portsorch が `SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES` / `..._NOT_CORRECTABLE_FRAMES` を COUNTERS_DB に集計)[^2]
+- `show interfaces counters fec-stats` で FEC corrected/uncorrected カウンタが急増 ([portsorch](../../reference/glossary.md#term-portsorch) が `SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES` / `..._NOT_CORRECTABLE_FRAMES` を [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に集計)[^2]
 
 ## 想定原因
 
@@ -65,7 +65,7 @@ sonic-db-cli APPL_DB hget "PORT_TABLE:Ethernet0" fec
 
 - 期待: 両端で一致 (`rs` 推奨 for 100G+)
 - 異常: 片側のみ `none` → 即時不一致
-- CONFIG_DB の `fec` は portsorch (`PortsOrch::doPortTask` → `setPortFec`) が SAI 属性 `SAI_PORT_ATTR_FEC_MODE` として ASIC に適用する。SAI 反映に失敗した場合 syslog に `Failed to set FEC mode` が出る[^2]
+- [CONFIG_DB](../../reference/glossary.md#term-config_db) の `fec` は [portsorch](../../reference/glossary.md#term-portsorch) (`PortsOrch::doPortTask` → `setPortFec`) が [SAI](../../reference/glossary.md#term-sai) 属性 `SAI_PORT_ATTR_FEC_MODE` として [ASIC](../../reference/glossary.md#term-asic) に適用する。[SAI](../../reference/glossary.md#term-sai) 反映に失敗した場合 syslog に `Failed to set FEC mode` が出る[^2]
 
 ### 2. エラーカウンタの内訳
 
@@ -127,4 +127,4 @@ sudo cat /usr/share/sonic/device/*/*/platform.json | jq '.interfaces["Ethernet0"
 [^1]: sonic-net/sonic-platform-daemons @ 4ba9612 — xcvrd / DOM 監視 (`sonic-xcvrd/xcvrd/xcvrd.py`)
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [portsorch](../../reference/glossary.md#term-portsorch) (`orchagent/portsorch.cpp` `setPortFec` L2386-L2411 / FEC カウンタ `SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES` 等 L306-L325)
 
-<!-- glossary-links-injected: 889740d66e5f -->
+<!-- glossary-links-injected: 0fef3ea5b562 -->

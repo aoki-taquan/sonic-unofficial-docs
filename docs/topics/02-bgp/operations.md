@@ -80,6 +80,23 @@ excerpt: |
 reasoning: fpmsyncd は DEVICE_METADATA の suppress-fib-pending フラグを読み、enable 時のみ FIB pending 検出フローを起動する。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L110-L115 (sha: 4305596)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L110-L115 (sha: 4305596)`
+
+    **抜粋**:
+
+    ```text
+    deviceMetadataTable.hget("localhost", "suppress-fib-pending", suppressionEnabledStr);
+    if (suppressionEnabledStr == "enabled")
+    ```
+
+    **判断根拠**: fpmsyncd は DEVICE_METADATA の suppress-fib-pending フラグを読み、enable 時のみ FIB pending 検出フローを起動する。
+
+<!-- evidence-rendered:end -->
 
 歴史的な Route Install Error Handling [HLD](../../reference/glossary.md#term-hld) は `ERROR_ROUTE_TABLE` と `FIB-install pending` 表示を提案しているが、現行 master の orchagent / fpmsyncd にはこの table 名のコードは存在せず、後発の Suppress FIB Pending（fpmsyncd の `suppress-fib-pending` フラグ + zebra `bgp suppress-fib-pending` 連携）で部分的に置換されている扱いになっている。
 
@@ -90,6 +107,25 @@ excerpt: |
   // ERROR_ROUTE_TABLE / fib-install pending という旧 HLD の table 名は存在しない。
 reasoning: Route Install Error Handling HLD は現行 master では別経路（suppress-fib-pending）に置き換わっており、HLD と実装に乖離がある旨を裏取り。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L110-L300 (sha: 4305596)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L110-L300 (sha: 4305596)`
+
+    **抜粋**:
+
+    ```text
+    // fpmsyncd では suppress-fib-pending のハンドリングのみが存在し、
+    // ERROR_ROUTE_TABLE / fib-install pending という旧 HLD の table 名は存在しない。
+    ```
+
+    **判断根拠**: Route Install Error Handling HLD は現行 master では別経路（suppress-fib-pending）に置き換わっており、HLD と実装に乖離がある旨を裏取り。
+
+<!-- evidence-rendered:end -->
+
 実運用では [BGP Suppress FIB Pending](../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md) と組み合わせて読む。
 
 ## BMP は何を見る機能か
@@ -102,6 +138,24 @@ excerpt: |
   #define BMP_STATE_DB        20
 reasoning: BMP_STATE_DB が swss-common 側で database id 20 として正式に定義されている裏取り。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss-common/common/schema.h#L33-L33 (sha: 158de8d)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss-common/common/schema.h#L33-L33 (sha: 158de8d)`
+
+    **抜粋**:
+
+    ```text
+    #define BMP_STATE_DB        20
+    ```
+
+    **判断根拠**: BMP_STATE_DB が swss-common 側で database id 20 として正式に定義されている裏取り。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-net/sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py#L21-L76 (sha: 799f47f)
 excerpt: |
@@ -111,6 +165,27 @@ excerpt: |
   self.state_db_conn.delete_all_by_pattern(BMP_STATE_DB, 'BGP_RIB_OUT_TABLE*')
 reasoning: bmpcfgd が BMP_STATE_DB 上の BGP_NEIGHBOR / BGP_RIB_IN_TABLE / BGP_RIB_OUT_TABLE を管理しており、Adj-RIB-In/Out が DB に出る構造が確認できる。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py#L21-L76 (sha: 799f47f)"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py#L21-L76 (sha: 799f47f)`
+
+    **抜粋**:
+
+    ```text
+    BMP_STATE_DB = "BMP_STATE_DB"
+    self.state_db_conn.delete_all_by_pattern(BMP_STATE_DB, 'BGP_NEIGHBOR*')
+    self.state_db_conn.delete_all_by_pattern(BMP_STATE_DB, 'BGP_RIB_IN_TABLE*')
+    self.state_db_conn.delete_all_by_pattern(BMP_STATE_DB, 'BGP_RIB_OUT_TABLE*')
+    ```
+
+    **判断根拠**: bmpcfgd が BMP_STATE_DB 上の BGP_NEIGHBOR / BGP_RIB_IN_TABLE / BGP_RIB_OUT_TABLE を管理しており、Adj-RIB-In/Out が DB に出る構造が確認できる。
+
+<!-- evidence-rendered:end -->
+
 [Multi-ASIC](../../reference/glossary.md#term-multi-asic) や [gNMI](../../reference/glossary.md#term-gnmi) Streaming との接点もあるため、単なる `show bgp` の置き換えではなく、継続監視用の出口として読む。
 
 ## CiscoBgp4MIB はなぜ STATE_DB 経由か
@@ -127,6 +202,25 @@ excerpt: |
 reasoning: CiscoBgp4MIB の実装が FRR VTY ではなく STATE_DB の NEIGH_STATE_TABLE から neighbor state を読み出していることを確認。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py#L29-L40 (sha: 329f1cc)"
+
+    **出典**:
+
+    `sonic-net/sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py#L29-L40 (sha: 329f1cc)`
+
+    **抜粋**:
+
+    ```text
+    self.neigh_state_map = Namespace.dbs_keys_namespace(self.db_conn, mibs.STATE_DB, "NEIGH_STATE_TABLE|*")
+    ...
+    neigh_info = self.db_conn[db_index].get_all(mibs.STATE_DB, neigh_key, blocking=False)
+    state = neigh_info['state']
+    ```
+
+    **判断根拠**: CiscoBgp4MIB の実装が FRR VTY ではなく STATE_DB の NEIGH_STATE_TABLE から neighbor state を読み出していることを確認。
+
+<!-- evidence-rendered:end -->
 
 ## show bgp summary の出力サンプル
 
@@ -139,7 +233,6 @@ BGP table version 12811
 RIB entries 12817, using 2358328 bytes of memory
 Peers 24, using 502080 KiB of memory
 Peer groups 4, using 256 bytes of memory
-
 
 Neighbor       V     AS    MsgRcvd    MsgSent    TblVer    InQ    OutQ  Up/Down    State/PfxRcd    NeighborName
 -----------  ---  -----  ---------  ---------  --------  -----  ------  ---------  --------------  --------------
@@ -272,6 +365,27 @@ excerpt: |
   echo "System Mode: Normal -> Maintenance"
 reasoning: TSA が community ではなく vtysh + tsa isolate テンプレートで route-map を差し替える形を取っており、本文の「community-based route policy 切り替え + 低 LOCAL_PREF 広告」という表現を「外部 neighbor 向け route-map を tsa テンプレートで差し替え + AS-path prepend / community 操作」に補正。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/TSA#L1-L40 (sha: 799f47f)"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/dockers/docker-fpm-frr/TSA#L1-L40 (sha: 799f47f)`
+
+    **抜粋**:
+
+    ```text
+    source /usr/bin/TS
+    ...
+    sonic-cfggen ... -t /usr/share/sonic/templates/bgpd/tsa/bgpd.tsa.isolate.conf.j2 > "$TSA_FILE"
+    vtysh -f "$TSA_FILE"
+    echo "System Mode: Normal -> Maintenance"
+    ```
+
+    **判断根拠**: TSA が community ではなく vtysh + tsa isolate テンプレートで route-map を差し替える形を取っており、本文の「community-based route policy 切り替え + 低 LOCAL_PREF 広告」という表現を「外部 neighbor 向け route-map を tsa テンプレートで差し替え + AS-path prepend / community 操作」に補正。
+
+<!-- evidence-rendered:end -->
 
 3. **peer flap の調査** — `show ip bgp neighbor X` の `Dropped` と `Last reset reason` を見て、hold-timer expired か NOTIFICATION 受信か、TCP RST かを切り分ける。`bgpd` syslog の `%ADJCHANGE` の連続を時系列で並べると周期が見える。
 4. **policy 変更後の収束確認** — `vtysh -c "clear ip bgp <ip> soft"` で再 advertise を促し、`received-routes` / `advertised-routes` 数の変化を見る。`clear ip bgp *` は全 peer に影響するので避ける。
