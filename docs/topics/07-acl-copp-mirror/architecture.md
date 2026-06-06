@@ -16,8 +16,9 @@ related:
   - COPP_GROUP
   - ACL_RULE
   - ACL_TABLE
-  - FLOW_COUNTER_ROUTE_PATTERN
+  - ACL_TABLE_TYPE
   yang:
+  - sonic-acl
   - sonic-copp
 ---
 
