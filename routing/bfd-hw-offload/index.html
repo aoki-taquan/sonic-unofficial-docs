@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="BFD ハードウェアオフロード（BfdOrch / BFD_SESSION） — BFD（Bidirectional Forwarding Detection）はリンク・ピア間の高速障害検出プロトコルである。">
+        <meta name="description" content="BFD（Bidirectional Forwarding Detection）セッションを ASIC にオフロードして CPU 介在なしに高速障害検出する Phase 1 設計。BfdOrch が APPL_DB.BFD_SESSION_TABLE を購読し SAI BFD API でセッションを登録、STATE_DB.BFD_SESSION_TABLE に状態を反映する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="BFD ハードウェアオフロード（BfdOrch / BFD_SESSION） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="BFD ハードウェアオフロード（BfdOrch / BFD_SESSION） — BFD（Bidirectional Forwarding Detection）はリンク・ピア間の高速障害検出プロトコルである。" />
+<meta property="og:description" content="BFD（Bidirectional Forwarding Detection）セッションを ASIC にオフロードして CPU 介在なしに高速障害検出する Phase 1 設計。BfdOrch が APPL_DB.BFD_SESSION_TABLE を購読し SAI BFD API でセッションを登録、STATE_DB.BFD_SESSION_TABLE に状態を反映する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/bfd-hw-offload.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/bfd-hw-offload/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="BFD ハードウェアオフロード（BfdOrch / BFD_SESSION） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="BFD ハードウェアオフロード（BfdOrch / BFD_SESSION） — BFD（Bidirectional Forwarding Detection）はリンク・ピア間の高速障害検出プロトコルである。" />
+<meta property="twitter:description" content="BFD（Bidirectional Forwarding Detection）セッションを ASIC にオフロードして CPU 介在なしに高速障害検出する Phase 1 設計。BfdOrch が APPL_DB.BFD_SESSION_TABLE を購読し SAI BFD API でセッションを登録、STATE_DB.BFD_SESSION_TABLE に状態を反映する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/bfd-hw-offload.png" />
 </head>
   
@@ -36329,7 +36329,7 @@
 <ul>
 <li>ASIC 側で BFD パケットの送受信・状態遷移を完結させ、最大 4000 セッションまでスケールする</li>
 <li>セッションは <code>APPL_DB.BFD_SESSION</code> 経由で外部コンポーネント（例: 上位コントローラ、<a href="../../reference/glossary/#term-orchagent">orchagent</a>）が直接書き込む。Phase 1 では <code>CONFIG_DB</code> 経由および専用 <code>config</code> CLI は実装しない<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>状態は <a href="../../reference/glossary/#term-sai">SAI</a> 通知を <code>BfdOrch</code> が受け取り <code>STATE_DB</code> に反映、<code>show bfd session</code> で参照する</li>
+<li>状態は <a href="../../reference/glossary/#term-sai">SAI</a> 通知を <code>BfdOrch</code> が受け取り <code>STATE_DB</code> に反映、<code>show bfd summary</code> で参照する</li>
 </ul>
 <p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は 2021 年時点の Phase 1 設計であり、Control plane BFD（FRR <code>bfdd</code>）との共存は同 HLD のスコープ外である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -36342,7 +36342,7 @@
     ASIC -.-&gt;|SAI notification\nsai_bfd_session_state_t| SYNCD
     SYNCD -.-&gt; ORCH
     ORCH --&gt;|状態反映| STATE[(STATE_DB\nBFD_SESSION_TABLE)]
-    CLI[show bfd session] --&gt; STATE</code></pre>
+    CLI[show bfd summary / peer] --&gt; STATE</code></pre>
 <p>要点:</p>
 <ul>
 <li><code>APPL_DB</code> の <code>BFD_SESSION</code> テーブルがオフロード対象セッションの入口。Phase 1 では BFD manager（誰が <code>APPL_DB</code> に書くか）の決定はスコープ外で「外部 producer が書く」想定<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -36511,11 +36511,16 @@ reasoning: BfdOrch が APPL_DB → SAI → STATE_DB を貫く責務であるこ�
 </thead>
 <tbody>
 <tr>
-<td><code>show bfd session &lt;session name&gt;</code></td>
-<td>オフロードされた BFD セッションと状態を表示</td>
+<td><code>show bfd summary</code></td>
+<td>全 BFD セッションを <code>STATE_DB.BFD_SESSION_TABLE</code> から走査して表示<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>show bfd peer &lt;peer_ip&gt;</code></td>
+<td>指定 peer IP の BFD セッションのみ表示<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 </tbody>
 </table>
+<p>なお HLD 本文や旧版 doc では <code>show bfd session</code> という暫定名が登場するが、現行 <code>sonic-utilities</code> には存在しない。実装は <code>show bfd</code> グループ配下に <code>summary</code> / <code>peer</code> サブコマンドのみが存在する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <p><code>config bfd ...</code> 系の CLI は本 HLD では明示的に <strong>将来拡張</strong> とされ、Phase 1 のスコープ外<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p>HLD で <a href="../../reference/glossary/#term-yang">YANG</a> モジュールへの言及は無い（<code>CONFIG_DB</code> スキーマが未定義のため）。</p>
@@ -36559,7 +36564,7 @@ reasoning: BfdOrch が APPL_DB → SAI → STATE_DB を貫く責務であるこ�
 </ul>
 <h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
-<li>セッションが Up にならない場合、まず <code>show bfd session</code> で <code>STATE_DB.BFD_SESSION_TABLE</code> 上の状態を確認。<code>Init</code> で止まっているならピア側の状態を疑う</li>
+<li>セッションが Up にならない場合、まず <code>show bfd summary</code> で <code>STATE_DB.BFD_SESSION_TABLE</code> 上の状態を確認。<code>Init</code> で止まっているならピア側の状態を疑う</li>
 <li><code>APPL_DB</code> に SET したのにセッションが現れない場合、<code>BfdOrch</code> ログ・<a href="../../reference/glossary/#term-syncd">syncd</a> ログに SAI エラーが出ていないか確認（SAI BFD 未対応 ASIC では create が失敗）</li>
 <li>HW オフロード対応 SAI 属性は ASIC ベンダー依存。<code>SAI_BFD_SESSION_OFFLOAD_TYPE_FULL</code> を解釈できない実装では full offload にならない可能性あり</li>
 </ul>
@@ -36567,10 +36572,14 @@ reasoning: BfdOrch が APPL_DB → SAI → STATE_DB を貫く責務であるこ�
 <p>BFD セッションと HW オフロード状態を確認する。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># BFD</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>bfd<span class="w"> </span>summary
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>bfd<span class="w"> </span>peer<span class="w"> </span>all
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BFD_SESSION|*&#39;</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bfd peers&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>bfd<span class="w"> </span>peer<span class="w"> </span><span class="m">10</span>.0.0.5
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># APPL_DB (db 0) のオフロード対象セッション入口</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BFD_SESSION_TABLE:*&#39;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># STATE_DB (db 6) の現在状態（show bfd summary の参照元）</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BFD_SESSION_TABLE|*&#39;</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bfd peers&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span></code></pre></div>
+<p>APPL_DB は keyseparator <code>:</code>、<a href="../../reference/glossary/#term-state_db">STATE_DB</a> は <code>|</code> を用いる点に注意（<code>sonic-swss-common/common/schema.h:120</code> で APP テーブル、line 491 で STATE テーブルを定義）。CONFIG_DB (db 4) に BFD セッションは存在しない（Phase 1 では未定義）。</p>
 <h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - BfdOrch が現行 master の sonic-swss に存在するか
@@ -36588,13 +36597,16 @@ reasoning: BfdOrch が APPL_DB → SAI → STATE_DB を貫く責務であるこ�
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9cc90e2e6da0 -->
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/bfd/BFD HW Offload HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-utilities</code> <code>show/main.py:2669-2745</code> (<code>bfd</code> グループ、<code>summary</code> / <code>peer</code> サブコマンド、<code>STATE_DB.BFD_SESSION_TABLE|*</code> を keys 走査)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

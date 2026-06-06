@@ -11108,6 +11108,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="1. 何が動くか（コンポーネント）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 別 実装ステータス
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -36024,6 +36041,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="1. 何が動くか（コンポーネント）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 別 実装ステータス
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -36232,7 +36266,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified（基本構成のみ）</p>
-<p>現行 master の <code>sonic-swss/orchagent/macsecorch.cpp</code> で <code>PAUSE_ETHER_TYPE 0x8808</code>（L26）、<code>PFC_MODE_BYPASS</code>（L29）、PFC バイパス ACL を構築する分岐（L3120, L3186）を確認<sup id="fnref:pfc-bypass"><a class="footnote-ref" href="#fn:pfc-bypass">2</a></sup>。<code>macsecmgr</code> / <code>macsecorch</code> モジュール、<code>docker-macsec/etc/wpa_supplicant.conf</code> も存在。XPN / proactive SAK refresh / 可変 max-SA の wpa_supplicant 拡張は別パッチ系列で取り込まれている。詳細は元 HLD 参照（verified at: 2026-05-09）。</p>
+<p>現行 master の <code>sonic-swss/orchagent/macsecorch.cpp</code> で <code>PAUSE_ETHER_TYPE 0x8808</code>（L26）、<code>PFC_MODE_BYPASS</code>（L29）、PFC バイパス ACL を構築する分岐（L3120）を確認<sup id="fnref:pfc-bypass"><a class="footnote-ref" href="#fn:pfc-bypass">2</a></sup>。<code>cfgmgr/macsecmgr.cpp</code> の <code>MACsecProfile::update</code>（L355-L393）で <code>cipher_suite</code> / <code>primary_cak</code> / <code>primary_ckn</code> を必須、<code>fallback_cak</code> / <code>fallback_ckn</code> / <code>rekey_period</code> / <code>send_sci</code> / <code>replay_window</code> / <code>enable_replay_protect</code> をオプションとして受理<sup id="fnref:macsecmgr-fields"><a class="footnote-ref" href="#fn:macsecmgr-fields">3</a></sup>。<code>docker-macsec/etc/wpa_supplicant.conf</code> および MACsec Orch の XPN ハンドリング（<code>SAI_MACSEC_SA_ATTR_CONFIGURED_EGRESS_XPN</code> / <code>MINIMUM_INGRESS_XPN</code>）も存在。<code>wpa_supplicant</code> 側 SONiC 拡張パッチの取り込み具合は本リポでは未追跡（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="macsec-on-sonicwpa_supplicant-macsec-mgrorch-sai">MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）<a class="headerlink" href="#macsec-on-sonicwpa_supplicant-macsec-mgrorch-sai" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36244,7 +36278,41 @@
 <li><strong>トラブル時</strong> に最初に見るべきログ / DB は？</li>
 </ol>
 <h2 id="1">1. 何が動くか（コンポーネント）<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
-<p>IEEE 802.1AE / 802.1X-2010 準拠の <strong>Layer 2 暗号化</strong> を実装する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Phase IV まで段階規定（基本 → PFC 連携 → CLI/scale → ACL/multi-tenant）。</p>
+<p>IEEE 802.1AE / 802.1X-2010 準拠の <strong>Layer 2 暗号化</strong> を実装する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。HLD §1.1 で Phase I-IV まで段階規定されているが、現行 master の <code>macsecmgr</code> / <code>macsecorch</code> で確認できる範囲では Phase II-IV の SONiC 側 (<a href="../../reference/glossary/#term-orchagent">orchagent</a> / cfgmgr) 要素は既に実装済みで、<code>wpa_supplicant</code> 拡張側の取り込みは別パッチ系列扱いで本リポでは未追跡。</p>
+<h3 id="phase">Phase 別 実装ステータス<a class="headerlink" href="#phase" title="Permanent link">&para;</a></h3>
+<p>HLD §1.1 <sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup> の Phase 規定と、<code>sonic-swss</code> master で観測できる実装の対応:</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>HLD 上の主要要求</th>
+<th>SONiC swss 側の状態</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>I</td>
+<td>GCM-AES-128/256、<a href="../../reference/glossary/#term-portchannel">PortChannel</a> 同居、SAK 無停止入れ替え</td>
+<td><code>macsecorch</code> で SAI MACsec_PORT/SC/SA を生成、<code>macsecmgr</code> が <code>cipher_suite</code> 必須として受理<sup id="fnref2:macsecmgr-fields"><a class="footnote-ref" href="#fn:macsecmgr-fields">3</a></sup></td>
+</tr>
+<tr>
+<td>II</td>
+<td>XPN（GCM-AES-XPN-128/256）、Proactive SAK refresh、<code>config macsec</code> CLI、<code>show macsec</code>、PFC バイパス</td>
+<td><code>SAI_MACSEC_CIPHER_SUITE_GCM_AES_XPN_128/256</code> 分岐 (macsecorch.cpp L1614-L1620、L2268-L2284)、<code>PFC_MODE_BYPASS</code> 用 ACL 生成 (L3120)<sup id="fnref2:pfc-bypass"><a class="footnote-ref" href="#fn:pfc-bypass">2</a></sup></td>
+</tr>
+<tr>
+<td>III</td>
+<td>primary / fallback CAK 同時保持</td>
+<td><code>macsecmgr</code> が <code>fallback_cak</code> / <code>fallback_ckn</code> をオプションで受理<sup id="fnref3:macsecmgr-fields"><a class="footnote-ref" href="#fn:macsecmgr-fields">3</a></sup></td>
+</tr>
+<tr>
+<td>IV</td>
+<td><code>send_sci</code> / <code>replay_protect</code> / <code>replay_window</code> / <code>rekey_period</code> のオンザフライ更新</td>
+<td><code>macsecmgr</code> が <code>send_sci</code> / <code>enable_replay_protect</code> / <code>replay_window</code> / <code>rekey_period</code> フィールドを解釈<sup id="fnref4:macsecmgr-fields"><a class="footnote-ref" href="#fn:macsecmgr-fields">3</a></sup>。「オンザフライ更新」可否は wpa_supplicant 側に依存し本リポでは未確認</td>
+</tr>
+</tbody>
+</table>
+<p>「<code>wpa_supplicant</code> 側 SONiC 拡張」（XPN サポート / proactive rekey / max-SA 可変）は upstream 非対応で別パッチ系列。本ページの code-verified 範囲は SONiC 側 (<code>macsecmgr</code> / <code>macsecorch</code> / SAI) に限る。</p>
 <pre class="mermaid"><code>flowchart LR
     CFG[CONFIG_DB MACSEC_PROFILE / PORT] --&gt; MM[MACsec Mgr]
     MM --&gt;|wpa_cli| WPA[wpa_supplicant]
@@ -36292,7 +36360,7 @@
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>show<span class="w"> </span>macsec<span class="w"> </span>Ethernet0
 </span></code></pre></div>
 <h2 id="3-mka-wpa_supplicant">3. MKA キー管理（wpa_supplicant 拡張）<a class="headerlink" href="#3-mka-wpa_supplicant" title="Permanent link">&para;</a></h2>
-<p>SONiC は <code>wpa_supplicant</code> を MKA エンドポイントとして使う。<a href="../../reference/glossary/#term-hld">HLD</a> 時点で <strong>upstream に無い拡張</strong> を施している<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC は <code>wpa_supplicant</code> を MKA エンドポイントとして使う。<a href="../../reference/glossary/#term-hld">HLD</a> 時点で <strong>upstream に無い拡張</strong> を施している<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>XPN サポート</strong>（GCM-AES-XPN-128/256）</li>
 <li><strong>Proactive SAK refresh</strong>（タイマや PN 余命でリキー）</li>
@@ -36315,7 +36383,7 @@
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>APPL_DB:MACSEC_EGRESS_SA_TABLE:&lt;ifname&gt;:&lt;sci&gt;:&lt;an&gt;  ; AN ∈ 0..3
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>APPL_DB:MACSEC_INGRESS_SA_TABLE:&lt;ifname&gt;:&lt;sci&gt;:&lt;an&gt;
 </span></code></pre></div>
-<p>各 SA は <code>sak</code>（16/32 byte）+ <code>lowest_acceptable_pn</code> を保持<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>各 SA は <code>sak</code>（16/32 byte）+ <code>lowest_acceptable_pn</code> を保持<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="5">5. 他機能との干渉<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36327,7 +36395,7 @@
 <tbody>
 <tr>
 <td><strong>PFC</strong></td>
-<td><code>ETHER_TYPE=0x8808</code> フレームを暗号化対象から外すため Ingress/Egress に PFC バイパス ACL を追加<sup id="fnref2:pfc-bypass"><a class="footnote-ref" href="#fn:pfc-bypass">2</a></sup>。PFCWD / buffer-pool / buffer-profile などは MACsec とは独立に動作（本 HLD のスコープ外）</td>
+<td><code>ETHER_TYPE=0x8808</code> フレームを暗号化対象から外すため Ingress/Egress に PFC バイパス ACL を追加<sup id="fnref3:pfc-bypass"><a class="footnote-ref" href="#fn:pfc-bypass">2</a></sup>。PFCWD / buffer-pool / buffer-profile などは MACsec とは独立に動作（本 HLD のスコープ外）</td>
 </tr>
 <tr>
 <td><strong>ACL</strong></td>
@@ -36403,16 +36471,19 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 08099c33af25 -->
+<!-- glossary-links-injected: 50927980e907 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/macsec/MACsec_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/macsec/MACsec_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:pfc-bypass">
-<p><code>sonic-net/sonic-swss</code> <code>orchagent/macsecorch.cpp</code> L26（<code>PAUSE_ETHER_TYPE 0x8808</code>）, L29（<code>PFC_MODE_BYPASS</code>）, L3120-L3186（<code>pfc_mode == PFC_MODE_BYPASS</code> 分岐で <code>SAI_ACL_ENTRY_ATTR_FIELD_ETHER_TYPE = 0x8808</code> を持つ ACL エントリを生成）&#160;<a class="footnote-backref" href="#fnref:pfc-bypass" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:pfc-bypass" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/macsecorch.cpp</code> L26（<code>PAUSE_ETHER_TYPE 0x8808</code>）, L29（<code>PFC_MODE_BYPASS</code>）, L3120（<code>pfc_mode == PFC_MODE_BYPASS</code> 分岐で <code>SAI_ACL_ENTRY_ATTR_FIELD_ETHER_TYPE = 0x8808</code> を持つ ACL エントリを生成）&#160;<a class="footnote-backref" href="#fnref:pfc-bypass" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:pfc-bypass" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:pfc-bypass" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:macsecmgr-fields">
+<p><code>sonic-net/sonic-swss</code> <code>cfgmgr/macsecmgr.cpp</code> <code>MACsecProfile::update</code> (L355-L393): 必須フィールド <code>cipher_suite</code> / <code>primary_cak</code> / <code>primary_ckn</code>、オプション <code>fallback_cak</code> / <code>fallback_ckn</code> / <code>enable_replay_protect</code> / <code>replay_window</code> / <code>send_sci</code> / <code>rekey_period</code> / <code>priority</code> / <code>policy</code>&#160;<a class="footnote-backref" href="#fnref:macsecmgr-fields" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:macsecmgr-fields" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:macsecmgr-fields" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:macsecmgr-fields" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

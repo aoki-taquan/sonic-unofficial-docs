@@ -36913,6 +36913,10 @@
 <h1 id="watermark_table">WATERMARK_TABLE テーブル<a class="headerlink" href="#watermark_table" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>Periodic watermark のテレメトリ周期を設定するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>WatermarkOrch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>) が購読し、<code>PERIODIC_WATERMARKS</code> テーブル (<a href="../../glossary/#term-counters_db">COUNTERS_DB</a>) を指定周期で自動クリアする。<code>FLEX_COUNTER_TABLE</code> の <code>QUEUE_WATERMARK</code> / <code>PG_WATERMARK</code> グループが enable になったときにタイマーが起動する。</p>
+<div class="admonition info">
+<p class="admonition-title">ページ URL について</p>
+<p>URL slug の <code>pwm</code> は <strong>p</strong>eriodic <strong>w</strong>ater<strong>m</strong>ark の略であり、CONFIG_DB 上のテーブル名は <code>WATERMARK_TABLE</code> （シングルトン: <code>WATERMARK_TABLE|TELEMETRY_INTERVAL</code>）。本ページは <code>WATERMARK_TABLE</code> テーブルを扱う。バッファプール watermark の port-per-PG 設定は <a href="../pg-watermark/"><code>PG_WATERMARK</code> グループ</a> を参照。</p>
+</div>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -37066,7 +37070,7 @@
 <tr>
 <td>CLI</td>
 <td><code>watermarkcfg -c &lt;秒&gt;</code> / <code>-s</code></td>
-<td><a href="../cli/"><code>watermarkcfg</code></a></td>
+<td><code>watermarkcfg</code> (<code>sonic-utilities/scripts/watermarkcfg</code>)</td>
 <td><code>interval</code> フィールドの書き込み（<a href="../../glossary/#term-config_db">CONFIG_DB</a> HSET）と読み出し</td>
 </tr>
 </tbody>

@@ -36308,7 +36308,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>switchorch.cpp:2094-2271</code>（<code>setFastLinkupCapability</code> / <code>doCfgSwitchFastLinkupTableTask</code>）、<code>portsorch.h:300</code>（<code>setPortFastLinkupEnabled</code>）、SAI <code>SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIMEOUT[_RANGE]</code> / <code>_GUARD_TIMEOUT[_RANGE]</code> / <code>_BER_THRESHOLD</code>、<code>sonic-utilities/show/main.py:2933</code> / <code>config/main.py:5095</code> の <code>switch-fast-linkup</code> CLI を確認済み (verified at: 2026-05-09)。</p>
+<p><code>sonic-swss/orchagent/switchorch.cpp:2094-2271</code>（<code>setFastLinkupCapability</code> / <code>doCfgSwitchFastLinkupTableTask</code>）<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>、<code>sonic-swss/orchagent/portsorch.h:300</code>（<code>setPortFastLinkupEnabled</code>）<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>、SAI <code>SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIMEOUT[_RANGE]</code> / <code>_GUARD_TIMEOUT[_RANGE]</code> / <code>_BER_THRESHOLD</code> / <code>SAI_PORT_ATTR_FAST_LINKUP_ENABLED</code>、<code>sonic-utilities/show/main.py:2933</code><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup> / <code>sonic-utilities/config/main.py:5115</code><sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup> の <code>switch-fast-linkup</code> CLI を確認済み (verified at: 2026-05-09)。なお HLD ドキュメントでは <code>_POLLING_TIME[_RANGE]</code> / <code>_GUARD_TIME[_RANGE]</code> 表記だが、master 実装の SAI 属性名は <code>_TIMEOUT</code> 接尾辞である（実装側を正とする）。</p>
 </div>
 <h1 id="sonic-fast-link-up">SONiC Fast Link-Up<a class="headerlink" href="#sonic-fast-link-up" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36338,12 +36338,12 @@
     CDB2 --&gt; PO[portsorch]
     PO --&gt;|SAI_PORT_ATTR_FAST_LINKUP_ENABLED| SAI</code></pre>
 <h2 id="capability">どこで capability を確認するか<a class="headerlink" href="#capability" title="Permanent link">&para;</a></h2>
-<p><code>switchorch</code> init で次を問い合わせる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>switchorch</code> init で次を問い合わせる<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
 <ul>
-<li><code>SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIME</code> の create/set 可否で <strong>対応可否</strong></li>
-<li><code>_POLLING_TIME_RANGE</code> / <code>_GUARD_TIME_RANGE</code> で <strong>許容レンジ</strong></li>
+<li><code>SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIMEOUT</code> の create/set 可否で <strong>対応可否</strong></li>
+<li><code>_POLLING_TIMEOUT_RANGE</code> / <code>_GUARD_TIMEOUT_RANGE</code> で <strong>許容レンジ</strong>（<a href="../../reference/glossary/#term-hld">HLD</a> は <code>_TIME_RANGE</code> 表記、実装は <code>_TIMEOUT_RANGE</code>）</li>
 </ul>
-<p>結果は <code>STATE_DB:SWITCH_CAPABILITY|switch</code> に公開<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>結果は <code>STATE_DB:SWITCH_CAPABILITY|switch</code> に公開<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>FAST_LINKUP_CAPABLE             = &quot;true&quot;/&quot;false&quot;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>FAST_LINKUP_POLLING_TIMER_RANGE = &quot;&lt;min&gt;,&lt;max&gt;&quot;
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>FAST_LINKUP_GUARD_TIMER_RANGE   = &quot;&lt;min&gt;,&lt;max&gt;&quot;
@@ -36376,9 +36376,9 @@
 </tr>
 </tbody>
 </table>
-<p>部分更新が許容され、未指定フィールドは保持される（partial update）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。未対応プラットフォームでは NOTICE ログを出し SAI 呼出さず return（safe no-op）。</p>
+<p>部分更新が許容され、未指定フィールドは保持される（partial update）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。未対応プラットフォームでは NOTICE ログを出し SAI 呼出さず return（safe no-op）。</p>
 <h2 id="recovery-only">動作モデル（recovery only）<a class="headerlink" href="#recovery-only" title="Permanent link">&para;</a></h2>
-<p><a href="../../reference/glossary/#term-asic">ASIC</a> ファームウェアは <strong>既に Up していて落ちた後の再起動</strong> にのみ Fast Link-Up を試みる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-asic">ASIC</a> ファームウェアは <strong>既に Up していて落ちた後の再起動</strong> にのみ Fast Link-Up を試みる<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li>リンクフラップ発生</li>
 <li>ASIC FW が前回 EQ を使い <code>polling_time</code> 秒以内に Up を試行</li>
@@ -36401,7 +36401,7 @@
     else
         PO-&gt;&gt;PO: NOTICE log, no SAI call
     end</code></pre>
-<p><code>portsorch</code> init でも <code>querySwitchCapability(SAI_OBJECT_TYPE_PORT, SAI_PORT_ATTR_FAST_LINKUP_ENABLED)</code> を打ちキャッシュする<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>portsorch</code> init でも <code>querySwitchCapability(SAI_OBJECT_TYPE_PORT, SAI_PORT_ATTR_FAST_LINKUP_ENABLED)</code> を打ちキャッシュする<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>。</p>
 <h2 id="_5">エラーハンドリング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36494,7 +36494,7 @@
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>show<span class="w"> </span>interfaces<span class="w"> </span>fast-linkup<span class="w"> </span>status
 </span></code></pre></div>
 <h3 id="yang">YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-fast-linkup.yang</code> モジュール（<code>SWITCH_FAST_LINKUP.GLOBAL</code> のみ）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ポート側 <code>fast_linkup</code> は <code>sonic-port.yang</code>。動的レンジは <a href="../../reference/glossary/#term-yang">YANG</a> ではモデリングせず CLI で <a href="../../reference/glossary/#term-state_db">STATE_DB</a> を見て検証する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>sonic-fast-linkup.yang</code> モジュール（<code>SWITCH_FAST_LINKUP.GLOBAL</code> のみ）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ポート側 <code>fast_linkup</code> は <code>sonic-port.yang</code>。動的レンジは <a href="../../reference/glossary/#term-yang">YANG</a> ではモデリングせず CLI で <a href="../../reference/glossary/#term-state_db">STATE_DB</a> を見て検証する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;SWITCH_CAPABILITY|switch&#39;</span><span class="w">   </span><span class="c1"># capability 確認</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>switch-fast-linkup<span class="w"> </span>global<span class="w"> </span>--polling-time<span class="w"> </span><span class="m">60</span><span class="w"> </span>--guard-time<span class="w"> </span><span class="m">10</span><span class="w"> </span>--ber<span class="w"> </span><span class="m">12</span>
@@ -36538,13 +36538,28 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9937abcefc29 -->
+<!-- glossary-links-injected: 167700005048 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/fast-linkup/fast-link-up-hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/fast-linkup/fast-link-up-hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/switchorch.cpp</code> L2094-L2271 (<code>setFastLinkupCapability</code> / <code>doCfgSwitchFastLinkupTableTask</code>)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/portsorch.h</code> L300 (<code>setPortFastLinkupEnabled</code> 宣言)&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>sonic-net/sonic-utilities</code> <code>show/main.py</code> L2933 (<code>show switch-fast-linkup</code> group 定義)&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p><code>sonic-net/sonic-utilities</code> <code>config/main.py</code> L5115-L5142 (<code>config switch-fast-linkup global</code>、capability 検証 + <code>SWITCH_FAST_LINKUP|GLOBAL</code> 更新)&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/portsorch.cpp</code> L1038-L1040 (<code>querySwitchCapability(SAI_OBJECT_TYPE_PORT, SAI_PORT_ATTR_FAST_LINKUP_ENABLED)</code> → <code>m_fastLinkupPortAttrSupported</code> キャッシュ)&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

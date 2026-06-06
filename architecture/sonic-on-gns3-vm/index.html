@@ -7305,6 +7305,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="GNS3 への登録">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-qemu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        方法 A: Qemu テンプレートを手動作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-sonic-gns3ash-gns3a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        方法 B: sonic-gns3a.sh で .gns3a を生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -36033,6 +36061,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="GNS3 への登録">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-qemu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        方法 A: Qemu テンプレートを手動作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-sonic-gns3ash-gns3a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        方法 B: sonic-gns3a.sh で .gns3a を生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -36223,12 +36279,17 @@
   Q2 --- Q3[Qemu VM&lt;br&gt;SONiC #3]</code></pre>
 <p>GNS3 は Qemu/KVM を介して SONiC <a href="../../reference/glossary/#term-vs">VS</a> イメージを起動する。各ノードは GNS3 GUI 上でリンクを引いて接続する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="sonic">SONiC イメージ取得<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h3>
-<p>公式 Azure Pipeline <code>#142</code> (<code>master</code>) の最新成功 build から <code>sonic-buildimage.vs</code> artifact を辿り、<code>target/sonic-vs.img.gz</code> をダウンロードする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>公式 Azure Pipeline の <code>master</code> ブランチ最新成功 build から <code>sonic-buildimage.vs</code> artifact を辿り、<code>target/sonic-vs.img.gz</code> をダウンロードする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>入口は SONiC pipeline 一覧ページから辿るのが URL 腐敗に強い:</p>
 <blockquote>
-<p>https://sonic-build.azurewebsites.net/ui/sonic/pipelines/142/builds?branchName=master</p>
+<p>https://sonic-build.azurewebsites.net/ui/sonic/pipelines</p>
 </blockquote>
-<p>ダウンロード後 gunzip して <code>sonic-vs.img</code> を得る。</p>
+<p>ここで <code>vs</code> 系 pipeline（HLD 執筆時点は ID <code>142</code>）を選び、<code>branchName=master</code> の最新 build を開く。HLD は直リンク <code>…/pipelines/142/builds?branchName=master</code> を案内しているが、pipeline ID は再編成で変わり得るため一覧から辿る方が安全である<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ダウンロード後 <code>gunzip sonic-vs.img.gz</code> で <code>sonic-vs.img</code> を得る。</p>
+<p>ソースから build する場合は <code>make</code> で <code>target/sonic-vs.img.gz</code> が直接生成されるため、Azure 経由を経ずに同等の image を取得できる（<code>platform/vs/</code> の build target）<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h3 id="gns3">GNS3 への登録<a class="headerlink" href="#gns3" title="Permanent link">&para;</a></h3>
+<p>手動で Qemu テンプレートを作る方法と、<code>sonic-gns3a.sh</code> で <code>.gns3a</code> アプライアンス定義ファイルを生成する方法がある。後者は保守性が高い（パラメータの再現性が GUI 手順より明確）ため、繰り返し使う環境では推奨される<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<h4 id="a-qemu">方法 A: Qemu テンプレートを手動作成<a class="headerlink" href="#a-qemu" title="Permanent link">&para;</a></h4>
 <ol>
 <li>GNS3 プロジェクトを新規作成</li>
 <li><code>New template</code> → <code>Manually create a new template</code> → <code>Qemu VM</code></li>
@@ -36238,13 +36299,18 @@
 <li><strong>Auto Start Console</strong>: ON</li>
 <li>ディスク image として展開済みの <code>sonic-vs.img</code> を指定</li>
 </ol>
-<p>これらの値は HLD で「推奨」として明示されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>これらの値は HLD で「推奨」として明示されている<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="b-sonic-gns3ash-gns3a">方法 B: <code>sonic-gns3a.sh</code> で <code>.gns3a</code> を生成<a class="headerlink" href="#b-sonic-gns3ash-gns3a" title="Permanent link">&para;</a></h4>
+<p><code>sonic-buildimage</code> の <code>platform/vs/sonic-gns3a.sh</code> は <code>sonic-vs.img</code> を入力に GNS3 アプライアンス定義 (<code>.gns3a</code>) を吐く。GNS3 GUI の <code>File → Import appliance</code> で取り込むだけで同等のテンプレートが登録される<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>./sonic-gns3a.sh<span class="w"> </span>-r<span class="w"> </span><span class="m">1</span>.1<span class="w"> </span>-b<span class="w"> </span>&lt;store_path&gt;/sonic-vs.img
+</span></code></pre></div>
+<p><code>-r</code> はアプライアンスのリビジョン、<code>-b</code> は <code>sonic-vs.img</code> の絶対パス。生成された <code>.gns3a</code> をインポートすれば手順 1〜4 をスキップできる。</p>
 <h3 id="_4">トポロジ構築とログイン<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <ol>
 <li>テンプレートをドラッグ＆ドロップしてノードを並べる</li>
 <li><code>Add a link</code> でノード間を接続</li>
 <li>ノードを起動。リンクが赤 → 緑になればコンソールが開く</li>
-<li>デフォルト認証情報でログイン<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</li>
+<li>デフォルト認証情報でログイン<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</li>
 </ol>
 <table>
 <thead>
@@ -36280,27 +36346,27 @@ reasoning: 推奨リソースとデフォルト認証情報の根拠。
 <p><strong>出典</strong>:</p>
 <p><code>sonic-net/SONiC/doc/sonic-gns3/GNS3 VM for SONiC.md#L75-L107 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
 <p><strong>抜粋</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>In the QEMU VM template configuration window, under the General Settings tab,
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>change the RAM size to 8192 MB (8GB) and the vCPU number to 4.
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>... default username admin and the default password YourPaSsWoRd.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>In the QEMU VM template configuration window, under the General Settings tab,
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>change the RAM size to 8192 MB (8GB) and the vCPU number to 4.
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>... default username admin and the default password YourPaSsWoRd.
 </span></code></pre></div>
 <p><strong>判断根拠</strong>: 推奨リソースとデフォルト認証情報の根拠。</p>
 </details>
 <!-- evidence-rendered:end -->
 
 <h3 id="_5">ホスト要件<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>GNS3 公式の Windows インストールガイドの推奨条件（VT-x / EPT または AMD-V/RVI 対応 CPU）を満たすこと。物理ホスト 1 台で SONiC ノードを多数立てる場合は RAM が律速<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>GNS3 公式の Windows インストールガイドの推奨条件（VT-x / EPT または AMD-V/RVI 対応 CPU）を満たすこと。物理ホスト 1 台で SONiC ノードを多数立てる場合は RAM が律速<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
 <p>該当なし。本ページは <strong>動作環境のセットアップ手順</strong> であり、SONiC 内部の設定スキーマは扱わない。</p>
 <h3 id="gns3_1">設定例（GNS3 への登録の最小コマンド相当）<a class="headerlink" href="#gns3_1" title="Permanent link">&para;</a></h3>
-<p>GNS3 GUI 操作の代替として CLI で扱う場合、<code>gns3server</code> の REST API でテンプレートを作る方法もあるが、HLD では明示されていない<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>GNS3 GUI 操作の代替として CLI で扱う場合、<code>gns3server</code> の REST API でテンプレートを作る方法もあるが、HLD では明示されていない<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Azure Pipeline URL の有効性</strong>: 番号 142 や URL は将来変わる可能性がある。HLD 中の URL を盲信せず、最新の sonic-build 配置を確認する。</li>
+<li><strong>Azure Pipeline URL の有効性</strong>: pipeline ID（HLD 執筆時点 <code>142</code>）や URL は将来変わる可能性がある。直リンクではなく <code>https://sonic-build.azurewebsites.net/ui/sonic/pipelines</code> の一覧から辿る、もしくは <code>sonic-buildimage</code> から <code>make</code> で直接 <code>sonic-vs.img.gz</code> を build するのが URL 腐敗に強い。</li>
 <li><strong>VS ビルドの位置づけ</strong>: <code>sonic-vs.img</code> は機能テスト・トポロジ実験用。実 <a href="../../reference/glossary/#term-asic">ASIC</a> を持たないため、<a href="../../reference/glossary/#term-sai">SAI</a> コールはソフト VS で受ける。性能ベンチマーク用途には不向き。</li>
 <li><strong>GNS3 自体の制約</strong>: GUI 中心。CI 用途には KVM 直接または別の自動化基盤（<a href="https://github.com/sonic-net/sonic-mgmt"><code>sonic-mgmt</code> のテストベッド</a>）が一般的。</li>
-<li><strong>ホスト OS 依存</strong>: Windows ホスト、Linux ホスト（GNS3 サーバモード）で手順が分かれる。本ドキュメントは Windows 中心の手順を示している<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>ホスト OS 依存</strong>: Windows ホスト、Linux ホスト（GNS3 サーバモード）で手順が分かれる。本ドキュメントは Windows 中心の手順を示している<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36317,11 +36383,11 @@ reasoning: 推奨リソースとデフォルト認証情報の根拠。
 <h3 id="gns3-vm-sonic">コマンド例: GNS3 VM 上の SONiC 動作確認<a class="headerlink" href="#gns3-vm-sonic" title="Permanent link">&para;</a></h3>
 <p>下記コマンドで関連する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># GNS3 上で起動した SONiC-VS の認識ポートと neighbor</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>neighbor
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># qemu / virtio NIC 接続状態</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>ip<span class="w"> </span>-br<span class="w"> </span>link<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># GNS3 上で起動した SONiC-VS の認識ポートと neighbor</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>neighbor
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># qemu / virtio NIC 接続状態</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>ip<span class="w"> </span>-br<span class="w"> </span>link<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span></code></pre></div>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-20):
@@ -36344,7 +36410,10 @@ reasoning: 推奨リソースとデフォルト認証情報の根拠。
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/sonic-gns3/GNS3 VM for SONiC.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/sonic-gns3/GNS3 VM for SONiC.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-buildimage</code> <code>platform/vs/README.gns3.md</code> および <code>platform/vs/sonic-gns3a.sh</code>（<code>.gns3a</code> アプライアンスファイル生成スクリプト、<code>-r &lt;ReleaseNumber&gt; -b &lt;sonic-vs.img&gt;</code>）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

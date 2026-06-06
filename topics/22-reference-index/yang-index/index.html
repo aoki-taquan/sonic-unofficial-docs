@@ -36331,7 +36331,7 @@
 
 
 <h1 id="yang">YANG 横断索引<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h1>
-<p><code>docs/reference/yang/</code> 配下に辞書化済みの <strong>84</strong> native <a href="../../../reference/glossary/#term-sonic">SONiC</a> <a href="../../../reference/glossary/#term-yang">YANG</a> モジュールを、機能章ごとに並べ直した逆引き索引である。SONiC の native YANG は概ね <code>sonic-&lt;feature&gt;.yang</code> の命名で <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の table family に 1 対 1 ないし 1 対多で対応している。</p>
+<p><code>docs/reference/yang/</code> 配下に辞書化済みの <strong>84</strong> native <a href="../../../reference/glossary/#term-sonic">SONiC</a> <a href="../../../reference/glossary/#term-yang">YANG</a> モジュールを、機能章ごとに並べ直した逆引き索引である<!-- evidence: docs/reference/yang/sonic-*.md (84 pages) -->。SONiC の native YANG は概ね <code>sonic-&lt;feature&gt;.yang</code> の命名で <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の table family に 1 対 1 ないし 1 対多で対応している。</p>
 <p>management framework (Sonic-MGMT-Framework) / <a href="../../../reference/glossary/#term-gnmi">gNMI</a> / OpenConfig との対応関係は別章で扱う方針で、本ページは native SONiC YANG モジュールから機能章へ戻る逆引きに専念する。アルファベット順の一覧が必要な場合は <a href="../../../reference/yang/">リファレンス: YANG モジュール</a> を参照すること。</p>
 <h2 id="yang_1">機能章別 YANG モジュール<a class="headerlink" href="#yang_1" title="Permanent link">&para;</a></h2>
 <h3 id="01-sonic">01 SONiC 全体像と設定基盤<a class="headerlink" href="#01-sonic" title="Permanent link">&para;</a></h3>
@@ -36480,7 +36480,7 @@
 <li><a href="../../../management/sonic-yang-model-guidelines/">SONiC YANG モデル ガイドライン</a></li>
 </ul>
 <h2 id="_1">未カバーのモジュール<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>upstream の <code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/</code> には約 136 の <code>.yang</code> ファイルが存在するが、本サイトで個別ページ化済みなのは上記 84 モジュールである。差分には以下のような共通モジュール / 内部モジュール / 派生機能が含まれる:</p>
+<p>upstream の <code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/</code> には 136 個の <code>sonic-*.yang</code> ファイルが存在するが<!-- evidence: src/sonic-yang-models/yang-models/sonic-*.yang (sonic-buildimage master, 136 entries) -->、本サイトで個別ページ化済みなのは上記 84 モジュールである。差分には以下のような共通モジュール / 内部モジュール / 派生機能が含まれる:</p>
 <ul>
 <li>共通: <code>sonic-bgp-common</code>、<code>sonic-bgp-internal-neighbor</code>、<code>sonic-bgp-voq-chassis-neighbor</code>、<code>sonic-bgp-prefix-list</code>、<code>sonic-bgp-allowed-prefix</code></li>
 <li>DASH: <code>sonic-dash</code></li>

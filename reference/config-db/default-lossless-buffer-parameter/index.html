@@ -37761,13 +37761,20 @@
 <td><code>BufferMgrDynamic</code></td>
 <td><code>doTask()</code>（DEFAULT_LOSSLESS_BUFFER_PARAMETER）</td>
 <td><code>op == DEL_COMMAND</code></td>
-<td><code>log_notice</code> のみ（削除操作は内部状態をリセットせず継続）</td>
-<td><code>sonic-swss/cfgmgr/buffermgrdyn.cpp:2005</code></td>
+<td><code>newRatio=""</code> に強制リセット → <code>m_overSubscribeRatio</code> と差分があれば <code>refreshSharedHeadroomPool()</code> を呼び SHP を無効化（プロファイル・プール再計算）</td>
+<td><code>sonic-swss/cfgmgr/buffermgrdyn.cpp:2005-2008,2015-2029</code></td>
+</tr>
+<tr>
+<td><code>BufferMgrDynamic</code></td>
+<td><code>doTask()</code>（DEFAULT_LOSSLESS_BUFFER_PARAMETER）</td>
+<td>SET/DEL 以外の op</td>
+<td><code>SWSS_LOG_ERROR "Unsupported command ..."</code> → <code>task_failed</code></td>
+<td><code>sonic-swss/cfgmgr/buffermgrdyn.cpp:2009-2013</code></td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p><strong>裏取り</strong>: <code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> のハンドラパス L1894-2010。3 件分岐抽出。</p>
+<p><strong>裏取り</strong>: <code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> のハンドラパス L1978-2033。op 分岐 (SET / DEL / その他) と field 分岐 (<code>default_dynamic_th</code> / <code>over_subscribe_ratio</code>) を抽出。</p>
 </blockquote>
 <!-- /handler-branching -->
 <!-- cross-refs -->

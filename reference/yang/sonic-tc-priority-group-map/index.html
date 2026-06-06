@@ -33299,6 +33299,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="leaf 一覧">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pg-pattern-note" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pg の pattern と空文字列受理について
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -36023,6 +36040,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="leaf 一覧">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pg-pattern-note" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pg の pattern と空文字列受理について
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -36205,10 +36239,14 @@
 <td></td>
 <td></td>
 <td>pattern <code>[0-7]?</code></td>
-<td>Target ingress priority group (0-7).</td>
+<td>Target ingress priority group (0-7)。<a href="#pg-pattern-note">注記</a></td>
 </tr>
 </tbody>
 </table>
+<!-- evidence: sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-tc-priority-group-map.yang L39-L69 @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd -->
+
+<h3 id="pg-pattern-note"><code>pg</code> の pattern と空文字列受理について<a class="headerlink" href="#pg-pattern-note" title="Permanent link">&para;</a></h3>
+<p>upstream <a href="../../glossary/#term-yang">YANG</a> 定義 (<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tc-priority-group-map.yang#L61-L69">sonic-tc-priority-group-map.yang L61-L69</a>) における <code>pg</code> leaf の pattern は <code>[0-7]?</code> (<code>?</code> 量化子付き 1 文字) であり、かつ leaf 自体 mandatory 指定がないため、<strong>空文字列も pattern 適合と判定される</strong> という曖昧さがある。<code>0</code> から <code>7</code> の単一数字を指定するのが運用上の前提だが、<a href="../../glossary/#term-yang">YANG</a> 規約上は空文字列を拒否しない。RFC 7950 では pattern 不一致のみが invalid であり、空文字列の禁止には別途 <code>length 1..1</code> 等の補強が必要となる。<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <h2 id="leafref">leafref / 依存<a class="headerlink" href="#leafref" title="Permanent link">&para;</a></h2>
 <ul>
 <li>なし</li>
@@ -36242,13 +36280,13 @@
 <!-- ref-triangle:end -->
 
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-tc-priority-group-map.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-tc-priority-group-map.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="発展トピック — この章の基本経路を押さえた後は、VoQ、BFD、EVPN の順に読むと BGP が他章へどうつながるかが見える。いずれも BGP 単体の話ではなく、シャーシ構成、障害検出、overlay control plane と結びつく。">
+        <meta name="description" content="発展トピック — この章の基本経路を押さえた後は、VoQ、BFD、EVPN の順に読むと BGP が他章へどうつながるかが見える。いずれも BGP 単体の話ではなく、シャーシ構成、障害検出、overlay control plane と結びつく hub ページ。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="発展トピック - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="発展トピック — この章の基本経路を押さえた後は、VoQ、BFD、EVPN の順に読むと BGP が他章へどうつながるかが見える。いずれも BGP 単体の話ではなく、シャーシ構成、障害検出、overlay control plane と結びつく。" />
+<meta property="og:description" content="発展トピック — この章の基本経路を押さえた後は、VoQ、BFD、EVPN の順に読むと BGP が他章へどうつながるかが見える。いずれも BGP 単体の話ではなく、シャーシ構成、障害検出、overlay control plane と結びつく hub ページ。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/02-bgp/advanced.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/02-bgp/advanced/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="発展トピック - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="発展トピック — この章の基本経路を押さえた後は、VoQ、BFD、EVPN の順に読むと BGP が他章へどうつながるかが見える。いずれも BGP 単体の話ではなく、シャーシ構成、障害検出、overlay control plane と結びつく。" />
+<meta property="twitter:description" content="発展トピック — この章の基本経路を押さえた後は、VoQ、BFD、EVPN の順に読むと BGP が他章へどうつながるかが見える。いずれも BGP 単体の話ではなく、シャーシ構成、障害検出、overlay control plane と結びつく hub ページ。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/02-bgp/advanced.png" />
 </head>
   
@@ -36187,11 +36187,11 @@
 <h2 id="_4">追加の発展トピック<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>基本の peer/policy 設定を超えた領域では、SONiC は FRR の機能を <a href="../../../reference/glossary/#term-redis">Redis</a> スキーマ経由で順次取り込んでいる。代表的なものを挙げる。</p>
 <ul>
-<li><strong>BGP Suppress FIB Pending</strong>: FIB 未投入の prefix を peer に広告しないことで、<a href="../../../reference/glossary/#term-asic">ASIC</a> が経路を持っていない状態で advertise してトラフィックブラックホールになるのを防ぐ。SONiC では <code>bgpcfgd</code> テンプレートと FRR の <code>bgp suppress-fib-pending</code> を組み合わせる。</li>
-<li><strong>BGP PIC (Prefix Independent Convergence) Core/Edge</strong>: edge link 障害時の収束を nexthop group レベルで行い、prefix 数に依存しない切替を実現する。SONiC では nexthop group 構造 (<code>NEXTHOP_GROUP_TABLE</code>) と <a href="../../../reference/glossary/#term-orchagent">orchagent</a> の対応で表現される。</li>
-<li><strong>BMP (BGP Monitoring Protocol, RFC 7854)</strong>: FRR の <code>bmpd</code> を Redis 経由で利用し、Adj-RIB-In / Adj-RIB-Out を外部 collector に流す。複数 station への並走 export を SONiC schema が <code>BGP_BMP</code> で表現する。</li>
-<li><strong>Dynamic Neighbor / Listen Range</strong>: 大規模 ToR で peer 数を事前列挙したくない場合に有効。<a href="../../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> で <code>BGP_PEER_RANGE</code> を組み立てる流れがある。</li>
-<li><strong>大規模経路ロード最適化</strong>: <code>bgp-loading-optimization</code> <a href="../../../reference/glossary/#term-hld">HLD</a> が、起動直後の peer 受信を加速するための queue tuning と <code>bgpd</code> の起動引数を扱う。経路投入のスループットが warm/cold reboot の収束時間を支配する。</li>
+<li><strong>BGP Suppress FIB Pending</strong>: FIB 未投入の prefix を peer に広告しないことで、<a href="../../../reference/glossary/#term-asic">ASIC</a> が経路を持っていない状態で advertise してトラフィックブラックホールになるのを防ぐ。SONiC では <code>bgpd.main.conf.j2</code> テンプレートが <code>bgp suppress-fib-pending</code> を既定で有効化しており、FRR 側の zebra ACK を待ってから announcement する挙動になる。<!-- evidence: sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2 L107 "bgp suppress-fib-pending" --></li>
+<li><strong>BGP PIC (Prefix Independent Convergence) Core/Edge</strong>: edge link 障害時の収束を nexthop group レベルで行い、prefix 数に依存しない切替を実現する。SONiC では nexthop group 構造を <code>NEXTHOP_GROUP_TABLE</code> で表現し、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> の <code>NhgOrch</code> (nhgorch.h) が SAI next-hop-group との対応をとる。<!-- evidence: sonic-swss/orchagent/nhgorch.h, orchdaemon.cpp NextHopGroupOrch --></li>
+<li><strong>BMP (BGP Monitoring Protocol, RFC 7854)</strong>: FRR の <code>bmpd</code> を Redis 経由で利用し、Adj-RIB-In / Adj-RIB-Out / BGP neighbor table dump を外部 collector に流す。SONiC schema 上は <code>sonic-bmp</code> YANG の <code>BMP</code> コンテナ (<code>bgp_neighbor_table</code> / <code>bgp_rib_in_table</code> / <code>bgp_rib_out_table</code> leaf) で各テーブル dump を on/off する。<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bmp.yang container BMP / table leaf bgp_rib_in_table --></li>
+<li><strong>Dynamic Neighbor / Listen Range</strong>: 大規模 ToR で peer 数を事前列挙したくない場合に有効。<a href="../../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> の <code>BGPPeerMgrBase</code> が <code>BGP_PEER_RANGE</code> を購読し FRR の <code>bgp listen range &lt;ip_range&gt; peer-group &lt;peer-group&gt;</code> コマンドへ変換する。<!-- evidence: sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py L90 BGPPeerMgrBase("BGP_PEER_RANGE", "dynamic"), managers_bgp.py L109 "bgp listen range" template --></li>
+<li><strong>大規模経路ロード最適化</strong>: <code>bgp-loading-optimization</code> <a href="../../../reference/glossary/#term-hld">HLD</a> が、起動直後の peer 受信を加速するための起動シーケンス制御を扱う (<code>bgpd</code> 起動順 / staggered peer up / zebra FPM 送出待ち)。経路投入のスループットが warm/cold reboot の収束時間を支配する。</li>
 </ul>
 <h2 id="_5">既知の制約と回避方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36229,7 +36229,7 @@
 </ul>
 <h2 id="_8">検証パスとラボ要件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>大量経路投入のスループット計測は <code>bgperf</code> / <code>goBGP</code> injector を使い、<code>zebra</code> の <code>fpm queue</code> メトリクス (<code>/var/log/syslog</code> の <code>FPM message dropped</code>) を観察する。queue drop が出る場合は <code>bgp-loading-optimization</code> の queue size 拡張パラメータを使う。</li>
+<li>大量経路投入のスループット計測は <code>bgperf</code> / <code>goBGP</code> injector を使い、<code>zebra</code> の FPM 送出メトリクス (<code>/var/log/syslog</code> の FPM 関連メッセージ、<code>fpmsyncd</code> 側の受信ログ) を観察する。drop / queue 滞留が出る場合は <code>bgp-loading-optimization</code> 系の起動順制御と zebra FPM 設定を見直す。</li>
 <li>BFD offload の検証では、SAI <code>bfd_session_state</code> の notification 順序と control plane <code>show bfd peers</code> の整合を確認する。BFD up なのに BGP が peer 切替を起こさない場合、<code>bfdd</code> ↔ <code>bgpd</code> の <code>peer-link</code> 紐付けが抜けていることが多い。</li>
 <li>VoQ シャーシでは Supervisor と Line Card の BGP 状態同期 (<code>bgp-setup-for-voq-chassis</code> 参照) が、warm reboot 後の収束で支配的になる。<code>CHASSIS_APP_DB</code> 上の BGP-related entry も併せて点検する。</li>
 </ul>

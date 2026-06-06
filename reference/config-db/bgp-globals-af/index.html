@@ -37573,7 +37573,7 @@
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CDB[("CONFIG_DB&lt;br/&gt;BGP_GLOBALS_AF")]
-  DM["bgpcfgd"]
+  DM["frrcfgd"]
   CDB --&gt; DM</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
@@ -38083,7 +38083,7 @@ comb_attr_list 第 2 要素。不揃い時は 3 フィールドが除去され�
 <!-- runtime-trace -->
 <h2 id="_17">実コンテナ動作トレース<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>bgpcfgd</code> が CONFIG_DB の <code>BGP_GLOBALS_AF</code> テーブルを購読する。</p>
+<p><code>frrcfgd</code> (<code>frr-mgmt-framework</code>) の <code>BGPConfigDaemon</code> が <code>bgp_af_handler</code> を <code>BGP_GLOBALS_AF</code> テーブルに登録して購読する (<code>frrcfgd.py:2297</code>)。<code>bgpcfgd</code> は本テーブルを購読しない。</p>
 <p><code>BGP_GLOBALS_AF</code> は <code>&lt;vrf&gt;|&lt;af&gt;</code> の key 構造。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (FRR <a href="../../glossary/#term-vtysh">vtysh</a> 経由)</p>
@@ -38099,8 +38099,8 @@ comb_attr_list 第 2 要素。不揃い時は 3 フィールドが除去され�
 <p>対象テーブル: <code>BGP_GLOBALS_AF</code></p>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>vtysh</code> 経由 address-family コマンド群 (<a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> が CONFIG_DB へ書き戻し)</li>
-<li>ソース: <code>sonic-frr bgpcfgd</code></li>
+<li><code>config bgp</code> 系および <code>sonic-mgmt-common</code> (OpenConfig BGP) 経由で CONFIG_DB に書き込まれる。<code>vtysh</code> から直接実行された BGP 設定は FRR running-config のみを変更し、CONFIG_DB へは書き戻されない（frrcfgd は CONFIG_DB → FRR の一方向）。</li>
+<li>ソース: <code>sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</code></li>
 </ul>
 <h3 id="minigraph-sonic-cfggen">minigraph / sonic-cfggen<a class="headerlink" href="#minigraph-sonic-cfggen" title="Permanent link">&para;</a></h3>
 <ul>
@@ -38124,7 +38124,7 @@ comb_attr_list 第 2 要素。不揃い時は 3 フィールドが除去され�
 </ul>
 <h3 id="_20">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>bgpcfgd</code> が FRR running-config を CONFIG_DB と同期</li>
+<li>なし (frrcfgd は CONFIG_DB → FRR の一方向。FRR → CONFIG_DB の書き戻し経路は本テーブルに存在しない)</li>
 </ul>
 <!-- /entry-points -->
 

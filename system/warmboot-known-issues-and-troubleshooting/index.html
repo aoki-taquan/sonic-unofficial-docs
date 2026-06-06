@@ -36206,6 +36206,10 @@ syncd の init は正常に完了し、warmboot シーケンスは継続する�
 複数プラットフォーム（Arista 7050CX3、S6100 等）で確認。</p>
 <p><strong>対処</strong>: エラーログを確認しつつ warmboot シーケンスが完了すれば問題なし。
 SAI バージョンを syncd と整合させることで解消する。</p>
+<p><strong>現行 master での状況</strong>: SAI 連携バグはベンダー SAI 実装に依存するため、SONiC 側コードでの普遍的な
+fix は導入されていない。<code>syncd</code> の warm-restart シーケンス自体は今も <code>sonic-sairedis</code> 側で維持
+されている。報告当時の 202012 系プラットフォームでの再現に対しては SAI ヘッダ更新で解消ずみの旨が
+コメントで報告されている。</p>
 <hr />
 <h3 id="1-2-syncd-translatevidtorid-failures-for-buffer-pools-6726">1-2. <code>syncd translateVidToRid failures for buffer pools</code> (#6726)<sup id="fnref:6726"><a class="footnote-ref" href="#fn:6726">3</a></sup><a class="headerlink" href="#1-2-syncd-translatevidtorid-failures-for-buffer-pools-6726" title="Permanent link">&para;</a></h3>
 <p><strong>現象</strong>: ウォームブート後の統計収集時に以下のエラー。</p>
@@ -36219,6 +36223,9 @@ ingress/egress buffer pool OID が一時的に無効になる。</p>
 </span></code></pre></div>
 <p><strong>対処</strong>: 変換が完了するまで待機。ウォームブート完了後に統計収集を再試行する。
 Buffer pool OID の VIDTORID マップが再構築されれば自動解消する。</p>
+<p><strong>現行 master での状況</strong>: VIDTORID マップ再構築のタイミング問題はウォーム/ファストリブートに本質的な
+過渡状態であり、master でも <code>warm_restart</code> 終了通知（<code>WARM_RESTART_TABLE</code> の <code>state</code> 列）を待って
+から外部監視を走らせる運用が引き続き推奨される。</p>
 <hr />
 <h3 id="1-3-syncd-apply_view-hostif_trap_group-7071-7094">1-3. syncd <code>APPLY_VIEW</code> エラー: hostif_trap_group (#7071, #7094)<sup id="fnref:7071"><a class="footnote-ref" href="#fn:7071">4</a></sup><sup id="fnref:7094"><a class="footnote-ref" href="#fn:7094">5</a></sup><a class="headerlink" href="#1-3-syncd-apply_view-hostif_trap_group-7071-7094" title="Permanent link">&para;</a></h3>
 <p><strong>現象</strong>: ウォームブートの going-down フェーズで syncd pre-shutdown が失敗し、
@@ -36231,6 +36238,9 @@ hostif_trap_group が <a href="../../reference/glossary/#term-acl">ACL</a> エ�
 <p><strong>対処</strong>:
 - SAI バージョンを <code>4.3.0.13-1</code> 以前（またはバグ修正版）に変更
 - <code>4.3.3.1</code> および <code>4.3.3.1-1</code> でこの問題が確認されている</p>
+<p><strong>現行 master での状況</strong>: BRCM SAI 側のバグであり SONiC リポジトリでは fix を持たない。
+master では Broadcom が同梱する SAI のバージョンが進んでおり、4.3.3.x 系の固有問題としては
+事実上クローズ扱いだが、同等の APPLY_VIEW 障害の再発時には SAI 側 changelog の確認が必須。</p>
 <hr />
 <h2 id="2-lag-6773">2. LAG フラップ (#6773)<sup id="fnref:6773"><a class="footnote-ref" href="#fn:6773">6</a></sup><a class="headerlink" href="#2-lag-6773" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: ウォームブート後（特に 2 回目以降）に <a href="../../reference/glossary/#term-portchannel">PortChannel</a> が数回 flap する。</p>
@@ -36242,6 +36252,9 @@ hostif_trap_group が <a href="../../reference/glossary/#term-acl">ACL</a> エ�
 PortChannel メンバーの再学習タイミングで競合が発生する。</p>
 <p><strong>対処</strong>: 2 回目以降のウォームブート後に LAG が安定するまで待機（通常 30 秒以内）。
 本番環境では連続ウォームブート間に十分なインターバルを設ける。</p>
+<p><strong>現行 master での状況</strong>: TD3 固有の PortChannel 再収束タイミング問題は、<a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a>/orchagent の
+warm-restart 再同期手順が継続して維持されており、master でも連続ウォームブート間隔は
+WARM_RESTART_TABLE の各コンポーネント <code>state</code> が <code>reconciled</code> になるのを待つ運用が安全。</p>
 <hr />
 <h2 id="3-ssh-7127">3. SSH セッション切断によるウォームブート失敗 (#7127)<sup id="fnref:7127"><a class="footnote-ref" href="#fn:7127">7</a></sup><a class="headerlink" href="#3-ssh-7127" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: <code>warm-reboot</code> コマンド実行中に SSH セッションが切断されると、
@@ -36256,6 +36269,9 @@ SSH 切断でプロセスツリーが SIGHUP を受けて終了する。</p>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># または</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>tmux<span class="w"> </span>new-session<span class="w"> </span>-d<span class="w"> </span>-s<span class="w"> </span>warmboot<span class="w"> </span><span class="s1">&#39;warm-reboot&#39;</span>
 </span></code></pre></div>
+<p><strong>現行 master での状況</strong>: <code>scripts/warm-reboot</code> は今も bash スクリプトで、<code>trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM</code>
+により実行中のシグナルを無視するが、起動時点で受けた SIGHUP には依然脆弱なため、SSH 経由実行時は
+<code>nohup</code> / <code>screen</code> / <code>tmux</code> での detach が推奨される運用は master でも変わらない<sup id="fnref:warmreboot-trap"><a class="footnote-ref" href="#fn:warmreboot-trap">13</a></sup>。</p>
 <hr />
 <h2 id="4-fast-reboot-7140">4. fast-reboot ダウンタイム超過 (#7140)<sup id="fnref:7140"><a class="footnote-ref" href="#fn:7140">8</a></sup><a class="headerlink" href="#4-fast-reboot-7140" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: fast-reboot のダウンタイムが 30 秒制限を超える。</p>
@@ -36268,6 +36284,10 @@ SSH 切断でプロセスツリーが SIGHUP を受けて終了する。</p>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># /var/log/syslog で fast-reboot の各フェーズのタイムスタンプを確認</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;fast-reboot|kexec|orchagent&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
 </span></code></pre></div>
+<p><strong>現行 master での状況</strong>: fast-reboot のダウンタイム上限はプラットフォーム依存で、SONiC 側に汎用的な
+30 秒保証はもともと存在しない（30 秒は当時の目標値）。master でも <code>fast-reboot</code> スクリプトと
+<code>syncd</code>/<code>orchagent</code> の連携シーケンスは継続的に調整されており、ダウンタイム測定はプラットフォーム
+ごとに個別検証が必要。</p>
 <hr />
 <h2 id="5-7518">5. イメージダウングレード失敗 (#7518)<sup id="fnref:7518"><a class="footnote-ref" href="#fn:7518">10</a></sup><a class="headerlink" href="#5-7518" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: 最新 master から古いイメージへのダウングレードが失敗する。</p>
@@ -36280,6 +36300,9 @@ master ブランチでインストールされたパッケージが
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># パッケージ移行をスキップ</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sonic-installer<span class="w"> </span>install<span class="w"> </span>--skip-package-migration<span class="w"> </span>&lt;image&gt;
 </span></code></pre></div>
+<p><strong>現行 master での状況</strong>: <code>--skip-package-migration</code> オプションは現行 master の
+<code>sonic_installer/main.py</code> でも有効で<sup id="fnref:skip-pkg-mig"><a class="footnote-ref" href="#fn:skip-pkg-mig">14</a></sup>、対象 bootloader が package migration をサポート
+しない場合は自動的に skip される実装になっている。</p>
 <hr />
 <h2 id="6-reboot-cause-12512">6. reboot-cause の誤表示 (#12512)<sup id="fnref:12512"><a class="footnote-ref" href="#fn:12512">11</a></sup><a class="headerlink" href="#6-reboot-cause-12512" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: ウォームブート後に reboot-cause が正しい理由を表示しない。</p>
@@ -36293,6 +36316,9 @@ master ブランチでインストールされたパッケージが
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>cat<span class="w"> </span>/host/reboot-cause/previous-reboot-cause
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>cat<span class="w"> </span>/var/log/reboot-cause/REBOOT_CAUSE
 </span></code></pre></div>
+<p><strong>現行 master での状況</strong>: <code>/host/reboot-cause/previous-reboot-cause</code> は現行 master の各プラット
+フォーム <code>sonic_platform/chassis.py</code> でも参照されているパスである。reboot-cause 競合の根本対策は
+issue で議論中だが、<code>show reboot-cause history</code> で過去ログを参照する運用は引き続き有効。</p>
 <hr />
 <h2 id="7-202012-fast-reboot-orchagent-9899">7. [202012] fast-reboot orchagent タイムアウト (#9899)<sup id="fnref:9899"><a class="footnote-ref" href="#fn:9899">12</a></sup><a class="headerlink" href="#7-202012-fast-reboot-orchagent-9899" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: fast-reboot 中に orchagent が INIT_VIEW 通知の受信を syncd に
@@ -36304,6 +36330,9 @@ master ブランチでインストールされたパッケージが
 </span></code></pre></div>
 <p><strong>対処</strong>: NIC の TX ハング（ management port）が原因の場合がある。
 ドライバのリセットが完了してから再試行。</p>
+<p><strong>現行 master での状況</strong>: 報告は 202012 ブランチが対象。master は orchagent/syncd 間の
+INIT_VIEW 通知シーケンスが継続的に改善されており、同等のタイムアウトを観測した場合は
+NIC ドライバ（igb 等）の TX hang 警告の有無を併せて確認する手順が引き続き有効。</p>
 <hr />
 <h2 id="_3">トラブルシューティングチェックリスト<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
@@ -36350,7 +36379,7 @@ master ブランチでインストールされたパッケージが
 </ul>
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p>各項目の一次情報は sonic-buildimage の issue tracker。ウォームリスタート機構の実装は <code>sonic-net/sonic-buildimage</code> (sha <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>) で裏取りした。</p>
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: 9165fb6adb46 -->
 
 <div class="footnote">
 <hr />
@@ -36390,6 +36419,12 @@ master ブランチでインストールされたパッケージが
 </li>
 <li id="fn:9899">
 <p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9899">sonic-buildimage #9899</a> — [202012] fast-reboot 中の orchagent INIT_VIEW タイムアウト。&#160;<a class="footnote-backref" href="#fnref:9899" title="Jump back to footnote 12 in the text">&#8617;</a></p>
+</li>
+<li id="fn:warmreboot-trap">
+<p><code>scripts/warm-reboot</code>（<code>sonic-net/sonic-utilities</code>）の <code>trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM</code> 行。実行中のシグナルは無視するが、起動時点での SSH 切断耐性は得られない。&#160;<a class="footnote-backref" href="#fnref:warmreboot-trap" title="Jump back to footnote 13 in the text">&#8617;</a></p>
+</li>
+<li id="fn:skip-pkg-mig">
+<p><code>sonic_installer/main.py</code> の <code>install</code> コマンドにおける <code>--skip-package-migration</code> オプション定義（<code>sonic-net/sonic-utilities</code>）。&#160;<a class="footnote-backref" href="#fnref:skip-pkg-mig" title="Jump back to footnote 14 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: SNMPv3 user 認証 / 暗号化が失敗する — : sonic-net/sonic-snmpagent @ master — main.py : sonic-net/sonic-buildimage @ master — docker-snmp">
+        <meta name="description" content="Runbook: SNMPv3 user の認証 / 暗号化が失敗するときの切り分けとロールバック。CONFIG_DB の SNMP_USER エントリ実フィールドと snmpd.conf.j2 / config snmp user add の対応を踏まえる">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SNMPv3 ユーザー認証が失敗する - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: SNMPv3 user 認証 / 暗号化が失敗する — : sonic-net/sonic-snmpagent @ master — main.py : sonic-net/sonic-buildimage @ master — docker-snmp" />
+<meta property="og:description" content="Runbook: SNMPv3 user の認証 / 暗号化が失敗するときの切り分けとロールバック。CONFIG_DB の SNMP_USER エントリ実フィールドと snmpd.conf.j2 / config snmp user add の対応を踏まえる" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/snmpv3-auth-failure.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/snmpv3-auth-failure/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SNMPv3 ユーザー認証が失敗する - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: SNMPv3 user 認証 / 暗号化が失敗する — : sonic-net/sonic-snmpagent @ master — main.py : sonic-net/sonic-buildimage @ master — docker-snmp" />
+<meta property="twitter:description" content="Runbook: SNMPv3 user の認証 / 暗号化が失敗するときの切り分けとロールバック。CONFIG_DB の SNMP_USER エントリ実フィールドと snmpd.conf.j2 / config snmp user add の対応を踏まえる" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/snmpv3-auth-failure.png" />
 </head>
   
@@ -34667,6 +34667,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#config_db-snmp_user" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB スキーマ（SNMP_USER エントリ）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35969,6 +35980,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#config_db-snmp_user" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB スキーマ（SNMP_USER エントリ）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36101,7 +36123,7 @@
 <h1 id="runbook-snmpv3-user">Runbook: SNMPv3 user 認証 / 暗号化が失敗する<a class="headerlink" href="#runbook-snmpv3-user" title="Permanent link">&para;</a></h1>
 <div class="admonition danger">
 <p class="admonition-title">実行前提</p>
-<p>SNMP user の削除 / 再作成 / password 変更は監視サーバ側の polling を一時的に失敗させる。事前に監視側で対象 user の alert を抑止し、変更前の <code>SNMP_USER</code> キー値を退避すること。<strong>ロールバック</strong>は退避値を <code>sonic-db-cli hset</code> で書き戻し、<code>docker restart snmp</code> で snmpd を再ロード。</p>
+<p>SNMP user の削除 / 再作成 / password 変更は監視サーバ側の polling を一時的に失敗させる。事前に監視側で対象 user の alert を抑止し、変更前の <code>SNMP_USER|&lt;user&gt;</code> ハッシュ全フィールドを <code>sonic-db-cli CONFIG_DB hgetall</code> で退避すること。<strong>ロールバック</strong>は退避値を <code>sonic-db-cli CONFIG_DB hset SNMP_USER|&lt;user&gt; &lt;field&gt; &lt;value&gt;</code> で書き戻し、<code>sudo systemctl restart snmp.service</code> で snmpd を再ロードする（<code>config snmp user add</code> 経由でも snmp.service が restart される <sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>）。</p>
 </div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36112,37 +36134,82 @@
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>auth/priv password 不一致</strong>: SHA / MD5 / AES / DES の組合せが client 側と異なる</li>
-<li><strong>engineID の不整合</strong>: ホスト名変更 / image 入替で engineID が変わり、key が再導出されず polling 側 cache とずれる</li>
-<li><strong>security level (<code>authNoPriv</code> / <code>authPriv</code>) の食い違い</strong></li>
-<li><strong>AgentX 経由の sub-agent (sonic-snmpagent) 未起動</strong>: 一部 OID のみ返らない</li>
+<li><strong>engineID の不整合</strong>: ホスト名変更 / image 入替で net-snmp が生成する engineID が変わり、localized key が再導出されず polling 側 cache とずれる（<a href="../../glossary/#term-sonic">SONiC</a> の <code>snmpd.conf.j2</code> は engineID を明示設定しないため net-snmp 既定の自動生成に従う <sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>）</li>
+<li><strong>security level (<code>SNMP_USER_TYPE</code> の <code>AuthNoPriv</code> / <code>Priv</code>) と client 側の食い違い</strong></li>
+<li><strong>AgentX 経由の sub-agent (sonic-snmpagent / <code>sonic_ax_impl</code>) 未起動</strong>: 一部 OID のみ返らない <sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
 <li><strong><a href="../../glossary/#term-acl">ACL</a> / firewall で UDP 161 がブロック</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
-    A[SNMPv3 認証失敗] --&gt; B{user / authPriv 設定一致?}
-    B -- No --&gt; B1[SNMP_USER の authProto/privProto 修正]
+    A[SNMPv3 認証失敗] --&gt; B{user / SNMP_USER_TYPE 一致?}
+    B -- No --&gt; B1[SNMP_USER_AUTH_TYPE / SNMP_USER_ENCRYPTION_TYPE 修正]
     B -- Yes --&gt; C{passphrase 長さ要件 OK?}
     C -- No --&gt; C1[8 文字以上に再設定]
     C -- Yes --&gt; D{engineID 一致?}
     D -- No --&gt; D1[snmpd の engineID 確認 / 再生成]
     D -- Yes --&gt; E[snmpd ログで authError を確認]</code></pre>
+<h2 id="config_db-snmp_user">CONFIG_DB スキーマ（SNMP_USER エントリ）<a class="headerlink" href="#config_db-snmp_user" title="Permanent link">&para;</a></h2>
+<p><code>config snmp user add</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>SNMP_USER|&lt;name&gt;</code> ハッシュに以下 6 フィールドを書く <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。<code>snmpd.conf.j2</code> はこの 6 フィールドを直接 <code>rouser</code> / <code>rwuser</code> / <code>CreateUser</code> 行に展開する <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>取り得る値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SNMP_USER_TYPE</code></td>
+<td><code>noAuthNoPriv</code> / <code>AuthNoPriv</code> / <code>Priv</code></td>
+<td><code>rouser</code> / <code>rwuser</code> の security level 引数</td>
+</tr>
+<tr>
+<td><code>SNMP_USER_PERMISSION</code></td>
+<td><code>RO</code> / <code>RW</code></td>
+<td><code>rouser</code> か <code>rwuser</code> かの分岐</td>
+</tr>
+<tr>
+<td><code>SNMP_USER_AUTH_TYPE</code></td>
+<td><code>MD5</code> / <code>SHA</code> / <code>HMAC-SHA-2</code> 等</td>
+<td><code>CreateUser</code> の auth proto</td>
+</tr>
+<tr>
+<td><code>SNMP_USER_AUTH_PASSWORD</code></td>
+<td>文字列（8 文字以上）</td>
+<td><code>CreateUser</code> の auth passphrase</td>
+</tr>
+<tr>
+<td><code>SNMP_USER_ENCRYPTION_TYPE</code></td>
+<td><code>DES</code> / <code>AES</code> 等</td>
+<td><code>CreateUser</code> の priv proto</td>
+</tr>
+<tr>
+<td><code>SNMP_USER_ENCRYPTION_PASSWORD</code></td>
+<td>文字列（8 文字以上）</td>
+<td><code>CreateUser</code> の priv passphrase</td>
+</tr>
+</tbody>
+</table>
 <h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-user">1. user 設定<a class="headerlink" href="#1-user" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;SNMP_USER|*&quot;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;SNMP_USER|&lt;user&gt;&quot;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>show<span class="w"> </span>snmp<span class="w"> </span>user
 </span></code></pre></div>
+<p><code>hgetall</code> で上表 6 フィールドが揃っているか確認する。<code>SNMP_USER_TYPE</code> が <code>AuthNoPriv</code> の場合は <code>*_AUTH_TYPE</code> / <code>*_AUTH_PASSWORD</code> のみが、<code>Priv</code> の場合は 4 つの auth/encryption フィールド全てが必要 <sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h3 id="2-snmpd-sub-agent">2. snmpd / sub-agent<a class="headerlink" href="#2-snmpd-sub-agent" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>snmp<span class="w"> </span>ps<span class="w"> </span>auxf<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;snmpd|sonic_ax&quot;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>snmp<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-200
 </span></code></pre></div>
 <ul>
-<li>期待: <code>snmpd</code> と <code>sonic_ax_impl</code> 両方が running</li>
+<li>期待: <code>snmpd</code> と <code>sonic_ax_impl</code>（AgentX sub-agent）の両方が running <sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
 </ul>
 <h3 id="3-engineid">3. engineID<a class="headerlink" href="#3-engineid" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>snmp<span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>engineID<span class="w"> </span>/etc/snmp/snmpd.conf
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>snmpget<span class="w"> </span>-v3<span class="w"> </span>-u<span class="w"> </span>&lt;user&gt;<span class="w"> </span>-l<span class="w"> </span>authPriv<span class="w"> </span>-a<span class="w"> </span>SHA<span class="w"> </span>-A<span class="w"> </span><span class="s1">&#39;&lt;auth&gt;&#39;</span><span class="w"> </span>-x<span class="w"> </span>AES<span class="w"> </span>-X<span class="w"> </span><span class="s1">&#39;&lt;priv&gt;&#39;</span><span class="w"> </span>&lt;switch&gt;<span class="w"> </span><span class="m">1</span>.3.6.1.2.1.1.1.0
 </span></code></pre></div>
+<p><code>snmpd.conf.j2</code> は engineID 行を出力しないため、<code>/etc/snmp/snmpd.conf</code> に engineID が明示されない場合は net-snmp が <code>/var/lib/snmp/snmpd.conf</code> 配下に自動生成した値を使う <sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="4-wire">4. wire レベル<a class="headerlink" href="#4-wire" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>any<span class="w"> </span>-nn<span class="w"> </span>udp<span class="w"> </span>port<span class="w"> </span><span class="m">161</span><span class="w"> </span>-vv
 </span></code></pre></div>
@@ -36152,8 +36219,8 @@
 </span></code></pre></div>
 <h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>パスワード再投入: <code>sudo config snmp user del &lt;user&gt;</code> → <code>sudo config snmp user add &lt;user&gt; ...</code>（<strong>ロールバック</strong>: 退避値で再作成）</li>
-<li>engineID 固定: <code>/etc/snmp/snmpd.conf</code> の <code>engineID</code> を固定値に（再起動後も維持される）</li>
+<li>パスワード再投入: <code>sudo config snmp user del &lt;user&gt;</code> → <code>sudo config snmp user add &lt;user&gt; &lt;noAuthNoPriv|AuthNoPriv|Priv&gt; &lt;RO|RW&gt; ...</code> <sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup>（<strong>ロールバック</strong>: 退避した 6 フィールドを <code>sonic-db-cli CONFIG_DB hset</code> で書き戻し、<code>sudo systemctl restart snmp.service</code>）</li>
+<li>engineID 固定: <code>/etc/snmp/snmpd.conf</code> 末尾に <code>engineID &lt;hex&gt;</code> 行を追加し、<code>docker restart snmp</code>（テンプレ側で出さないため永続化には <code>snmpd.conf.j2</code> 改変か他手段が必要）</li>
 <li>sub-agent: <code>docker exec snmp supervisorctl restart snmp-subagent</code></li>
 <li><a href="../../glossary/#term-acl">ACL</a>: <code>ACL_RULE</code> で UDP/161 を許可</li>
 </ul>
@@ -36163,17 +36230,19 @@
 <li><a href="../../../topics/09-telemetry-snmp/operations/">SNMP / Telemetry 運用ガイド</a></li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: 1f2da1437d5b -->
+<!-- glossary-links-injected: ff41d85b3b10 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-snmpagent @ master — main.py&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-buildimage">sonic-buildimage</a> @ master — <code>dockers/docker-snmp/snmpd.conf.j2</code> L66-L77（<code>SNMP_USER</code> ループで <code>SNMP_USER_PERMISSION</code> / <code>SNMP_USER_TYPE</code> / <code>SNMP_USER_AUTH_TYPE</code> / <code>SNMP_USER_AUTH_PASSWORD</code> / <code>SNMP_USER_ENCRYPTION_TYPE</code> / <code>SNMP_USER_ENCRYPTION_PASSWORD</code> を <code>rouser</code> / <code>rwuser</code> / <code>CreateUser</code> 行に展開）&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/<a href="../../glossary/#term-sonic-buildimage">sonic-buildimage</a> @ master — docker-snmp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ master — <code>config/main.py</code> L4710-L4792（<code>config snmp user add</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>SNMP_USER|&lt;name&gt;</code> に上記 6 フィールドを <code>set_entry</code> し、<code>systemctl restart snmp.service</code> を発行）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>sonic-net/sonic-snmpagent @ master — <code>src/sonic_ax_impl/main.py</code>（<code>sonic_ax_impl</code> が net-snmp の AgentX sub-agent として OID を提供。未起動だと一部 OID が <code>noSuchObject</code>）&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

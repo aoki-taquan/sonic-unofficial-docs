@@ -36027,42 +36027,41 @@
 <!-- phase-boundary -->
 <h2 id="_1">実装フェーズ境界<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <div class="admonition info">
-<p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>
-<p>本ページは <code>monitor: partially_implemented</code> で、HLD で示された一連の機能
-が <strong>段階的に取り込まれている</strong> 状態を扱う。フェーズ毎の実装境界を
-1 枚の表に集約する (詳細は本ページ上部の <code>diff</code> admonition および
-<a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照)。</p>
+<p class="admonition-title">gNSI サービス別の取り込み状況</p>
+<p>冒頭の note と同じ事実を、HLD の 4 サービスを軸に整理する。詳細な PR / コード
+根拠は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を、横断索引は
+<a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照。</p>
 <table>
 <thead>
 <tr>
-<th>Phase</th>
-<th>範囲 (機能 / 段階)</th>
+<th>フェーズ</th>
+<th>対象サービス</th>
 <th>実装済 (master 取り込み済)</th>
-<th>未実装 (HLD 提案のみ)</th>
+<th>未実装 / 未配線</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Phase 1 — 基本機能</td>
-<td>HLD §概要 / §設計の中核ユースケース</td>
-<td>取り込み済 — 本ページの「実装の概観」「実装詳細」節および <code>diff</code> admonition の現状側を参照</td>
-<td>— (Phase 1 は実装済)</td>
-</tr>
-<tr>
-<td>Phase 2 — 拡張機能</td>
-<td>HLD §拡張 / §追加要件 / §周辺統合</td>
-<td>一部のみ取り込み済 — 本ページ「実装詳細」の補足参照</td>
-<td>未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および <code>diff</code> admonition の差分側に列挙</td>
-</tr>
-<tr>
-<td>Phase 3 — 将来拡張</td>
-<td>HLD §Future Work / §将来課題</td>
+<td>Phase 1 — gNMI server handler 取り込み済</td>
+<td>Certz / Authz / Pathz</td>
+<td><code>sonic-gnmi/gnmi_server/gnsi_certz.go</code> / <code>gnsi_authz.go</code> / <code>gnsi_pathz.go</code> が存在し、Rotate / Probe / Profile 操作を提供<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 <td>—</td>
-<td>未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点)</td>
+</tr>
+<tr>
+<td>Phase 2 — dbus client のみ存在、server handler 未配線</td>
+<td>Credentialz</td>
+<td><code>sonic-gnmi/sonic_service_client/dbus_client.go</code> の Credentialz dbus API 部分のみ準備済<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+<td>gNMI server 側の <code>gnsi_credentialz.go</code> 相当が未配置。Credentialz.Rotate は現状 <code>Unimplemented</code></td>
+</tr>
+<tr>
+<td>Phase 3 — HLD 上の host service 仕様待ち</td>
+<td>Credentialz の <code>console_mgmt</code> / <code>ssh_mgmt</code> host service</td>
+<td>—</td>
+<td>HLD §5.5 / §5.6 で API 定義のみ<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>sonic-host-services</code> 側の実装と gNMI dispatch の双方が必要</td>
 </tr>
 </tbody>
 </table>
-<p>凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。</p>
+<p>凡例: 「実装済」=現行 master のコードに存在しテストがある範囲 / 「未配線」=コードの一部は存在するが他の経路（server dispatch、host service 等）が未実装で end-to-end では動かない範囲。</p>
 </div>
 <!-- /phase-boundary -->
 
@@ -36075,7 +36074,13 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/mgmt/gnmi/gnsi.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/mgmt/gnmi/gnsi.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-gnmi</code> <code>gnmi_server/gnsi_certz.go</code> / <code>gnmi_server/gnsi_authz.go</code> / <code>gnmi_server/gnsi_pathz.go</code>（同階層に <code>*_test.go</code> も存在）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-gnmi</code> <code>sonic_service_client/dbus_client.go</code> の <code>//Credentialz service APIs</code> ブロック（53 行目付近〜）&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
