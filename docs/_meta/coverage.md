@@ -25,12 +25,12 @@ last_verified: 2026-05-11
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 763 |
-| runbook-verified | 27 |
-| discrepancy-found | 113 |
+| code-verified | 762 |
+| runbook-verified | 28 |
+| discrepancy-found | 114 |
 | issue-confirmed | 6 |
 | hld-only | 2 |
-| meta | 192 |
+| meta | 191 |
 | stub | 1 |
 
 ## area 別マトリクス
@@ -47,10 +47,10 @@ last_verified: 2026-05-11
 | `management` | 31 | 0 | 17 | 2 | 0 | 1 | 0 | 51 |
 | `overlay` | 19 | 0 | 1 | 0 | 0 | 1 | 0 | 21 |
 | `platform` | 35 | 0 | 13 | 3 | 0 | 1 | 0 | 52 |
-| `reference` | 467 | 27 | 8 | 0 | 0 | 13 | 1 | 516 |
+| `reference` | 465 | 28 | 9 | 0 | 0 | 13 | 1 | 516 |
 | `routing` | 45 | 0 | 12 | 0 | 0 | 1 | 0 | 58 |
 | `switching` | 18 | 0 | 8 | 0 | 0 | 1 | 0 | 27 |
 | `system` | 56 | 0 | 18 | 1 | 0 | 2 | 0 | 77 |
-| `topics` | 16 | 0 | 0 | 0 | 1 | 144 | 0 | 161 |
+| `topics` | 17 | 0 | 0 | 0 | 1 | 143 | 0 | 161 |
 
 推移情報（時系列）は本ページでは扱いません。スナップショットのみ。

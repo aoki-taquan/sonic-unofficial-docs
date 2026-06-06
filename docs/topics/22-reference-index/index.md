@@ -93,7 +93,7 @@ related:
 | concept | 107 | ✅ 完成 | meta | 概念・位置付け |
 | setup | 125 | ✅ 完成 | meta | セットアップ手順 |
 | operations | 113 | ✅ 完成 | meta | 運用・デバッグ |
-| internals | 134 | ✅ 完成 | meta | 内部実装 |
+| internals | 138 | ✅ 完成 | meta | 内部実装 |
 | advanced | 101 | ✅ 完成 | meta | 発展トピック |
 | cli-index | 182 | ✅ 完成 | meta | CLI リファレンス索引 |
 | config-db-index | 121 | ✅ 完成 | meta | CONFIG_DB リファレンス索引 |

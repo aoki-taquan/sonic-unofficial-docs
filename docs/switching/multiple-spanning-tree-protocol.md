@@ -1,15 +1,21 @@
 ---
 title: Multiple Spanning Tree Protocol (MSTP) on SONiC
-description: Multiple Spanning Tree Protocol (MSTP) on SONiC — IEEE 802.1Q-2014 準拠の
-  Spanning Tree。RSTP / PVST に対し 「VLAN 群を 1 つの MSTI（インスタンス）にまとめてインスタンス単位でトポロジを計算する」
-  のが特徴。
+description: SONiC の MSTP (IEEE 802.1Q-2014) サポート。stpmgrd / stpd と STP_MST*
+  テーブル、CIST / MSTI、MST Region の決まり方、SAI マッピング、モード切替時のトポロジ揺れまでを
+  実装裏取り付きで整理する。
 area: switching
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-06-06
 sources:
 - repo: sonic-net/SONiC
   path: doc/MSTP/MSTP.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss
+  path: cfgmgr/stpmgrd.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-spanning-tree.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db:
   - STP
@@ -38,7 +44,18 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified（基本構成のみ）"
-    現行 master の `sonic-swss/cfgmgr/stpmgrd.cpp:47-49` で `STP_MST` / `STP_MST_INST` / `STP_MST_PORT` テーブルを TableConnector に登録、`stpmgr` クラスが存在することを確認。`sonic-yang-models` の `sonic-spanning-tree.yang` も存在。CLI / IS-IS のような MSTP 専用 CLI 詳細は元 HLD 参照（verified at: 2026-05-09）。
+    現行 master の `sonic-swss/cfgmgr/stpmgrd.cpp:47-49` で `STP_MST` / `STP_MST_INST` / `STP_MST_PORT` テーブルを `TableConnector` に登録し[^2]、`stpmgr` クラスへ subscribe させていることを確認。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-spanning-tree.yang` に `STP_MST` / `STP_MST_INST` / `STP_MST_PORT` の各コンテナとリスト定義が存在することも確認した[^3]。MSTP 専用 CLI サブコマンドの細部は元 HLD 参照（verified at: 2026-06-06）。
+
+<!-- evidence
+source: sonic-swss/cfgmgr/stpmgrd.cpp#L47-L65
+note: STP_MST / STP_MST_INST / STP_MST_PORT を CONFIG_DB の TableConnector として宣言し、StpMgr の subscribe テーブル群に組み込んでいる。
+-->
+
+<!-- evidence
+source: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-spanning-tree.yang#L336-L490
+note: container STP_MST / STP_MST_INST / STP_MST_PORT がそれぞれ STP_MST_TABLE / STP_MST_INST_TABLE / STP_MST_PORT_TABLE にマップされ、region_name / revision / instance / vlan_list / bridge_priority / priority / path_cost を定義する。
+-->
+
 
 # Multiple Spanning Tree Protocol (MSTP) on SONiC
 
@@ -198,6 +215,8 @@ MSTP が必要な場合は本 HLD（MSTP サポート）の実装を使用する
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/MSTP/MSTP.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss` `cfgmgr/stpmgrd.cpp` L47-L65 @ `4305596156d70e9797e8a881b3d19b46de0bce0d`
+[^3]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-spanning-tree.yang` L336-L490 @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
 <!-- topics-back-ref -->
 ## 関連 Topics

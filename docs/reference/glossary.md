@@ -1327,7 +1327,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [CONFIG_DB](#term-config_db)
 
-- [サイトマップ](../_meta/sitemap.md) (131)
+- [サイトマップ](../_meta/sitemap.md) (132)
 - [APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)](config-db/appl-mirror.md) (58)
 - [IPv6 Link-local モード](config-db/ipv6-link-local.md) (54)
 - [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (50)
@@ -1589,7 +1589,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [gNMI](#term-gnmi)
 
-- [サイトマップ](../_meta/sitemap.md) (74)
+- [サイトマップ](../_meta/sitemap.md) (75)
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (29)
 - [GNMI / GNMI_CLIENT_CERT テーブル](config-db/gnmi.md) (24)
 - [TELEMETRY テーブル](config-db/telemetry.md) (23)
@@ -1621,11 +1621,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (324)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (326)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
-- [イベント/アラーム拡張監視設定 (extended-monitor)](config-db/extended-monitor.md) (39)
+- [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../architecture/ssdhealth-design.md) (39)
 
 ### [Headroom](#term-headroom)
 
@@ -1944,8 +1944,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [MCLAG_INTERFACE テーブル](config-db/mclag-interface.md) (33)
 - [L2 設定パターン](../topics/06-l2-vlan-lag/setup.md) (32)
 - [PORTCHANNEL_INTERFACE テーブル](config-db/portchannel-interface.md) (29)
-- [IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）](../switching/sonic-ip-lag-incremental-update.md) (23)
 - [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](../switching/switch-port-modes-and-vlan-cli-enhancement.md) (23)
+- [APPL_DB MCLAG/ICCP 関連テーブル](config-db/appl-mclag.md) (21)
 
 ### [Policer](#term-policer)
 
@@ -2213,7 +2213,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (352)
+- [サイトマップ](../_meta/sitemap.md) (353)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (33)
 - [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (28)
@@ -2224,7 +2224,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [TAM テーブル](config-db/tam.md) (177)
 - [Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）](../routing/path-tracing-midpoint.md) (19)
 - [運用](../topics/17-srv6-mpls/operations.md) (11)
-- [変更履歴](../_meta/changelog.md) (7)
+- [変更履歴](../_meta/changelog.md) (6)
 - [内部実装](../topics/17-srv6-mpls/internals.md) (3)
 
 ### [TC (Traffic Class)](#term-tc)

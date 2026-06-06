@@ -11,7 +11,7 @@ last_verified: 2026-05-13
 
     SONiC コミュニティ master の HLD は **設計提案リポジトリ** であり、現行コードと一致しているとは限りません。本ページは「HLD だけ読んで誤解しがちな機能」を一望できる USP ページです。読み手は、まず後述の **monitor subtype 別セクション** で該当機能の乖離タイプ（未実装 / 部分実装 / 進化置換 / 廃止）を把握し、そこから個別ページへ降りて `last_verified` と「実装との乖離」セクションの裏取り根拠を確認してください。area 横断で探す場合は末尾の **area 別索引** から辿れます。
 
-`verification: discrepancy-found` が付いた全 **113** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
+`verification: discrepancy-found` が付いた全 **114** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
 
 ## サマリ
 
@@ -21,7 +21,7 @@ last_verified: 2026-05-13
 |---------|-----:|------|
 | [`not_implemented`](#monitor-not-implemented) | 18 | 未実装 |
 | [`partially_implemented`](#monitor-partially-implemented) | 60 | 部分実装 |
-| [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 32 | HLD と乖離した形で実装/進化 |
+| [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 33 | HLD と乖離した形で実装/進化 |
 | [`deprecated`](#monitor-deprecated) | 3 | deprecated（廃止予定 / 撤去済み） |
 
 ### area 別件数
@@ -34,7 +34,7 @@ last_verified: 2026-05-13
 | [`management`](#area-management) | 17 |
 | [`overlay`](#area-overlay) | 1 |
 | [`platform`](#area-platform) | 13 |
-| [`reference`](#area-reference) | 8 |
+| [`reference`](#area-reference) | 9 |
 | [`routing`](#area-routing) | 12 |
 | [`switching`](#area-switching) | 8 |
 | [`system`](#area-system) | 18 |
@@ -439,7 +439,7 @@ last_verified: 2026-05-13
   
   `monitor: partially_implemented` — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
 
-### `evolved_beyond_hld` — HLD と乖離した形で実装/進化 (32 件) {#monitor-evolved-beyond-hld}
+### `evolved_beyond_hld` — HLD と乖離した形で実装/進化 (33 件) {#monitor-evolved-beyond-hld}
 
 !!! info "HLD と乖離した形で実装/進化"
 
@@ -567,6 +567,11 @@ last_verified: 2026-05-13
   area: `platform` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
+
+- [config vxlan サブコマンド](../../reference/cli/config-vxlan.md)  
+  area: `reference` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-06-06`
+  
+  `config vxlan map_range del` のスキップ判定が、コマンド意図 (範囲一括削除) と逆方向に効いている。`config/vxlan.py` L353 で `is_vni_vrf_mapped(config_db, vni_name) is False` のとき `continue` するため、実際には **[VRF](../../reference/glossary.md#term-vrf) にマップされている VNI のみ削除され、未マップ VNI はスキップ**される[^2]。`map del` 側は「VRF 参照があればエラー」という逆方向の保護で整合しており、本コマンドのみ反転していることから upstream のバグ可能性が高い。本ページとしては安全側に振って実装そのままを記述し、回避策として `config vxlan map del` の単発呼び出し…
 
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../../routing/evpn-vxlan-hld.md)  
   area: `routing` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-26`
@@ -1001,6 +1006,11 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
   
   - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。`--namespace` 引数サポートの有無は CLI コマンド間で混在しており、本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は [HLD](../../reference/glossary.md#term-hld) と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [config vxlan サブコマンド](../../reference/cli/config-vxlan.md)  
+  area: `reference` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-06-06`
+  
+  `config vxlan map_range del` のスキップ判定が、コマンド意図 (範囲一括削除) と逆方向に効いている。`config/vxlan.py` L353 で `is_vni_vrf_mapped(config_db, vni_name) is False` のとき `continue` するため、実際には **[VRF](../../reference/glossary.md#term-vrf) にマップされている VNI のみ削除され、未マップ VNI はスキップ**される[^2]。`map del` 側は「VRF 参照があればエラー」という逆方向の保護で整合しており、本コマンドのみ反転していることから upstream のバグ可能性が高い。本ページとしては安全側に振って実装そのままを記述し、回避策として `config vxlan map del` の単発呼び出し…
 
 - [イベント/アラーム拡張監視設定 (extended-monitor)](../../reference/config-db/extended-monitor.md)  
   area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-26`

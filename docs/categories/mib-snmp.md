@@ -66,11 +66,13 @@ SNMP IPv6 では応答 SRC IP が listening address と一致しない問題が�
 
 ## verification ステータス注意点
 
-- **hld-only**: `port-illegal-packets-drop-design.md`
+このカテゴリの 9 ページ中 8 ページ（約 89%）が `code-verified` で、CONFIG_DB スキーマ (`sonic-buildimage` の `dockers/docker-snmp/`) と sonic_ax_impl のソース (`src/sonic-snmpagent/`) を直接参照済みです。残る 1 ページのみ [HLD](../reference/glossary.md#term-hld) 段階の提案で master 実装と乖離する可能性があります。
+
+- **hld-only**: `port-illegal-packets-drop-design.md`（ポート不正パケットドロップ用 Interface MIB / L3 カウンタ拡張提案。master の `sonic-snmpagent` 側 OID 追加は未確認のため、運用前に該当 OID の実装有無を要確認）
 
 ## 関連カテゴリ
 
 - [Multi-ASIC / VOQ chassis 関連](multi-asic.md)
 - [gNMI / gNOI / OpenConfig 関連](gnmi-openconfig.md)
 
-<!-- glossary-links-injected: b6ab8efb7c2d -->
+<!-- glossary-links-injected: 167700005048 -->

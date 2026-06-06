@@ -51,16 +51,16 @@ related:
 admin@sonic:~$ show queue counters Ethernet0
        Port    TxQ    Counter/pkts    Counter/bytes    Drop/pkts    Drop/bytes
 -----------  -----  --------------  ---------------  -----------  ------------
-  Ethernet0   UC0          1.2M           1.5G              0             0
-  Ethernet0   UC1            42K           63M              0             0
-  Ethernet0   UC3           890K          1.3G          12.3K          18M
-  Ethernet0   UC4              0             0              0             0
+  Ethernet0    UC0            1.2M             1.5G            0             0
+  Ethernet0    UC1             42K              63M            0             0
+  Ethernet0    UC3            890K             1.3G        12.3K           18M
+  Ethernet0    UC4               0                0            0             0
 
 admin@sonic:~$ show pfc counters Ethernet0
-       Port    PFC0    PFC1    PFC2    PFC3    PFC4    PFC5    PFC6    PFC7
------------  ------  ------  ------  ------  ------  ------  ------  ------
-Ethernet0 Rx     0       0       0     12K     0       0       0       0
-Ethernet0 Tx     0       0       0       0     0       0       0       0
+          Port    PFC0    PFC1    PFC2    PFC3    PFC4    PFC5    PFC6    PFC7
+--------------  ------  ------  ------  ------  ------  ------  ------  ------
+ Ethernet0 Rx        0       0       0     12K       0       0       0       0
+ Ethernet0 Tx        0       0       0       0       0       0       0       0
 ```
 
 `UC3` で drop が伸び、同じ port の `PFC3 Rx` が増えていれば、上流が PFC で止めているのに自分側の egress も同じ TC で詰まっている、というよくある絵です。
@@ -103,15 +103,16 @@ Apr 30 12:34:02 sw01 INFO pfc_wd: storm restored on Ethernet24 queue 3
 
 ```text
 admin@sonic:~$ show pfcwd stats
-                     QUEUE    STATUS    STORM DETECTED    TX OK    TX DROP    RX OK    RX DROP
--------------------------    ------    --------------    -----    -------    -----    -------
-Ethernet24:3                operational             3        0       12.3K        0      8.5K
-Ethernet48:3                operational             0        0           0        0         0
+         QUEUE         STATUS    STORM DETECTED    TX OK    TX DROP    RX OK    RX DROP
+--------------  -------------  ----------------  -------  ---------  -------  ---------
+  Ethernet24:3    operational                 3        0      12.3K        0       8.5K
+  Ethernet48:3    operational                 0        0          0        0          0
 
 admin@sonic:~$ show pfcwd config
        PORT    ACTION    DETECTION TIME    RESTORATION TIME
 -----------  --------  ----------------  ------------------
-Ethernet24      drop               200                 200
+ Ethernet24      drop               200                 200
+ Ethernet48      drop               200                 200
 ```
 
 `STORM DETECTED` の累計が秒〜分のオーダーで増え続けるなら、PFC を出している側を直さない限り収束しません。応急で PFCWD `action: forward` にすると drop を止められますが、ingress 側の buffer 圧迫が他 PG に飛び火するので恒久対応にはしません。

@@ -88,12 +88,28 @@ module: sonic-loopback-interface
 | `name` | `sonic-loopback-interface/LOOPBACK_INTERFACE/LOOPBACK_INTERFACE_IPPREFIX_LIST/name` | `leafref` | yes |  | ../../LOOPBACK_INTERFACE_LIST/name | Loopback interface name |
 | `ip-prefix` | `sonic-loopback-interface/LOOPBACK_INTERFACE/LOOPBACK_INTERFACE_IPPREFIX_LIST/ip-prefix` | `union` | yes |  | union(stypes:sonic-ip4-prefix, stypes:sonic-ip6-prefix) | IPv4 or IPv6 address with prefix length assigned to the loopback interface |
 | `scope` | `sonic-loopback-interface/LOOPBACK_INTERFACE/LOOPBACK_INTERFACE_IPPREFIX_LIST/scope` | `enumeration` |  |  | global, local | Address scope indicating global or link-local reachability |
-| `family` | `sonic-loopback-interface/LOOPBACK_INTERFACE/LOOPBACK_INTERFACE_IPPREFIX_LIST/family` | `stypes:ip-family` |  |  |  | IP address family, must match the format of ip-prefix |
+| `family` | `sonic-loopback-interface/LOOPBACK_INTERFACE/LOOPBACK_INTERFACE_IPPREFIX_LIST/family` | `stypes:ip-family` |  |  | `IPv4` / `IPv6` (must 制約あり、下記参照) | IP address family, must match the format of ip-prefix。`ip-prefix` の表記と整合させる必要があり、[YANG](../../reference/glossary.md#term-yang) `must` で検証される[^2] |
 
 ## leafref / 依存
 
 - `sonic-loopback-interface/LOOPBACK_INTERFACE/LOOPBACK_INTERFACE_LIST/vrf_name` → `/vrf:sonic-vrf/vrf:VRF/vrf:VRF_LIST/vrf:name`
 - `sonic-loopback-interface/LOOPBACK_INTERFACE/LOOPBACK_INTERFACE_IPPREFIX_LIST/name` → `../../LOOPBACK_INTERFACE_LIST/name`
+
+## 制約 (must)
+
+`LOOPBACK_INTERFACE_IPPREFIX_LIST/family` には以下の `must` 式が定義されており、`family` と `ip-prefix` の整合性が [YANG](../../reference/glossary.md#term-yang) validation で強制される[^2]:
+
+```yang
+must "(contains(../ip-prefix, ':') and current()='IPv6') or
+      (contains(../ip-prefix, '.') and current()='IPv4')";
+```
+
+意味:
+
+- `ip-prefix` に `:` が含まれる (IPv6 表記) かつ `family='IPv6'`、または
+- `ip-prefix` に `.` が含まれる (IPv4 表記) かつ `family='IPv4'`
+
+のいずれかが成立しない場合、設定は [YANG](../../reference/glossary.md#term-yang) validation で reject される。例えば `ip-prefix='10.0.0.1/32'` に対して `family='IPv6'` を指定すると弾かれる。`family` leaf 自体は省略可能 (backward compatibility のため後付け) だが、指定する場合は `ip-prefix` と整合させる必要がある。
 
 ## augment / deviation
 
@@ -128,5 +144,6 @@ module: sonic-loopback-interface
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-loopback-interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^2]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-loopback-interface.yang` L99-L111 (`leaf family` の `must` 式 + 後方互換コメント) @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: e7d158f734a4 -->
