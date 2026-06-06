@@ -83,22 +83,27 @@ module: sonic-wred-profile
 
 ## leaf 一覧
 
-| leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
+| leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref / 制約 | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `name` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/name` | `string` | yes |  |  | [WRED](../../reference/glossary.md#term-wred) profile name |
-| `yellow_min_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/yellow_min_threshold` | `uint64` |  |  |  | Queue depth (bytes) at which WRED begins dropping yellow packets |
-| `green_min_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/green_min_threshold` | `uint64` |  |  |  | Queue depth (bytes) at which WRED begins dropping green packets |
-| `red_min_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/red_min_threshold` | `uint64` |  |  |  | Queue depth (bytes) at which WRED begins dropping red packets |
-| `yellow_max_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/yellow_max_threshold` | `uint64` |  |  |  | Queue depth (bytes) at which WRED drops all yellow packets |
-| `green_max_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/green_max_threshold` | `uint64` |  |  |  | Queue depth (bytes) at which WRED drops all green packets |
-| `red_max_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/red_max_threshold` | `uint64` |  |  |  | Queue depth (bytes) at which WRED drops all red packets |
-| `ecn` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/ecn` | `enumeration` |  |  | ecn_none, ecn_green, ecn_yellow, ecn_red, ecn_green_yellow, ecn_green_red, ecn_yellow_red, ecn_all | [ECN](../../reference/glossary.md#term-ecn) marking mode |
-| `wred_green_enable` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/wred_green_enable` | `boolean` |  |  |  | Enable WRED for green traffic |
-| `wred_yellow_enable` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/wred_yellow_enable` | `boolean` |  |  |  | Enable WRED for yellow traffic |
-| `wred_red_enable` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/wred_red_enable` | `boolean` |  |  |  | Enable WRED for red traffic |
-| `yellow_drop_probability` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/yellow_drop_probability` | `uint64` |  |  | range 0..100 | Max drop probability between min/max thresholds (yellow) |
-| `green_drop_probability` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/green_drop_probability` | `uint64` |  |  | range 0..100 | Max drop probability between min/max thresholds (green) |
-| `red_drop_probability` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/red_drop_probability` | `uint64` |  |  | range 0..100 | Max drop probability between min/max thresholds (red) |
+| `name` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/name` | `string` | yes | — | pattern `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})`, length 1..32 | [WRED](../../reference/glossary.md#term-wred) profile name |
+| `yellow_min_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/yellow_min_threshold` | `uint64` |  | — | units `bytes` | Queue depth (bytes) at which WRED begins dropping yellow packets |
+| `green_min_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/green_min_threshold` | `uint64` |  | — | units `bytes` | Queue depth (bytes) at which WRED begins dropping green packets |
+| `red_min_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/red_min_threshold` | `uint64` |  | — | units `bytes` | Queue depth (bytes) at which WRED begins dropping red packets |
+| `yellow_max_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/yellow_max_threshold` | `uint64` |  | — | units `bytes`, must `current() >= ../yellow_min_threshold` | Queue depth (bytes) at which WRED drops all yellow packets |
+| `green_max_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/green_max_threshold` | `uint64` |  | — | units `bytes`, must `current() >= ../green_min_threshold` | Queue depth (bytes) at which WRED drops all green packets |
+| `red_max_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/red_max_threshold` | `uint64` |  | — | units `bytes`, must `current() >= ../red_min_threshold` | Queue depth (bytes) at which WRED drops all red packets |
+| `ecn` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/ecn` | `enumeration` |  | `ecn_none` | ecn_none, ecn_green, ecn_yellow, ecn_red, ecn_green_yellow, ecn_green_red, ecn_yellow_red, ecn_all | [ECN](../../reference/glossary.md#term-ecn) marking mode |
+| `wred_green_enable` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/wred_green_enable` | `boolean` |  | `false` |  | Enable WRED for green traffic |
+| `wred_yellow_enable` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/wred_yellow_enable` | `boolean` |  | `false` |  | Enable WRED for yellow traffic |
+| `wred_red_enable` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/wred_red_enable` | `boolean` |  | `false` |  | Enable WRED for red traffic |
+| `yellow_drop_probability` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/yellow_drop_probability` | `uint64` |  | `100` | range 0..100, units `percent` | Max drop probability between min/max thresholds (yellow) |
+| `green_drop_probability` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/green_drop_probability` | `uint64` |  | `100` | range 0..100, units `percent` | Max drop probability between min/max thresholds (green) |
+| `red_drop_probability` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/red_drop_probability` | `uint64` |  | `100` | range 0..100, units `percent` | Max drop probability between min/max thresholds (red) |
+
+!!! note "制約 (must / pattern)"
+    - `name` は英数字始まり 1〜32 文字 (`[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})`)。違反時 `wred-profile-name-invalid-length` を返す[^1]。
+    - `{color}_max_threshold` は同色の `{color}_min_threshold` 以上でなければならない (`must` 制約、3 色それぞれ独立に評価)[^1]。
+    - `{color}_drop_probability` の単位は percent。未設定時は `100` (= 閾値間で常にドロップ) として扱われる[^1]。
 
 ## leafref / 依存
 
