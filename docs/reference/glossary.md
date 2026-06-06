@@ -1257,10 +1257,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ASIC SDK](#term-asic-sdk)
 
 - [FDB Aging Time (SWITCH_TABLE.fdb_aging_time)](config-db/fdb-aging.md) (3)
+- [全体俯瞰と必読 10 (Essentials)](../getting-started.md) (2)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (2)
 - [SUPPRESS_ASIC_SDK_HEALTH_EVENT テーブル](config-db/suppress-asic-sdk-health-event.md) (2)
-- [L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show](../internals/l3-scaling-and-performance-enhancements.md) (1)
-- [P4Runtime PacketIO（generic netlink + send_to_ingress）](../management/packetio.md) (1)
+- [SONiC 非公式ドキュメント](../index.md) (1)
 
 ### [AsterNOS](#term-asternos)
 
@@ -1704,8 +1704,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）](../system/persistent-log-level-hld.md) (23)
 - [Redis DB 設定 (database_config.json)](config-db/redis-db-config.md) (3)
 - [サイトマップ](../_meta/sitemap.md) (2)
+- [全体俯瞰と必読 10 (Essentials)](../getting-started.md) (2)
 - [Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）](../internals/support-redis-databases-in-multiple-namespaces.md) (2)
-- [APPL_DB VRF_TABLE テーブル](config-db/appl-vrf.md) (2)
 
 ### [LACP](#term-lacp)
 
