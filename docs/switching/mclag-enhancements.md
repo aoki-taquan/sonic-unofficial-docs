@@ -75,7 +75,7 @@ flowchart LR
     CFG0[CONFIG_DB MCLAG_*]
     ICC0[iccpd]
     MS0[MclagSyncd]
-    APP0[APPL_DB APP_MCLAG_FDB_TABLE]
+    APP0[APPL_DB MCLAG_FDB_TABLE]
     OR0[FdbOrch / PortsOrch / IsolGroupOrch]
     SAI0[ASIC]
   end
@@ -97,7 +97,7 @@ flowchart LR
 
 - **`iccpd`** が ICCP メッセージで peer と同期
 - **`MclagSyncd`** が ICCP 由来の MAC / interface state を [APPL_DB](../reference/glossary.md#term-appl_db) に橋渡し
-- 旧 MclagSyncd 内部 [FDB](../reference/glossary.md#term-fdb) はリファクタで撤廃され、APPL_DB の `APP_MCLAG_FDB_TABLE` に集約[^1]
+- 旧 MclagSyncd 内部 [FDB](../reference/glossary.md#term-fdb) はリファクタで撤廃され、APPL_DB の `MCLAG_FDB_TABLE`（schema 定数 `APP_MCLAG_FDB_TABLE_NAME` の値）に集約[^2]
 
 ## 各拡張ポイント
 
@@ -121,8 +121,8 @@ CONFIG_DB:
     unique_ip = "enable"
 
 APPL_DB:
-  ISOLATION_GROUP_TABLE:<group_id>      members = "...", exclude = "<peer-link>"
-  APP_MCLAG_FDB_TABLE:<vlan>:<mac>      port, type=static|dynamic, mclag=remote|local
+  ISOLATION_GROUP_TABLE:<group_name>    TYPE=port|bridge-port, PORTS="<bound-ports>", MEMBERS="<isolated-ports>", DESCRIPTION="..."[^3]
+  MCLAG_FDB_TABLE:<vlan>:<mac>          port, type=static|dynamic, mclag=remote|local[^2]
 
 STATE_DB:
   STATE_MCLAG_TABLE|<domain>            oper_status, role, system_mac
@@ -176,13 +176,15 @@ iccpd / FdbOrch / PortsOrch / [VRRP](../reference/glossary.md#term-vrrp) / OSPF 
 show mclag brief
 redis-cli -n 6 HGETALL "STATE_MCLAG_TABLE|1"
 redis-cli -n 6 KEYS "STATE_MCLAG_REMOTE_FDB_TABLE|*" | head
-redis-cli -n 0 KEYS "APP_MCLAG_FDB_TABLE:*" | head
-redis-cli -n 0 HGETALL "ISOLATION_GROUP_TABLE:1"
+redis-cli -n 0 KEYS "MCLAG_FDB_TABLE:*" | head
+redis-cli -n 0 HGETALL "ISOLATION_GROUP_TABLE:<group_name>"
 ```
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mclag/MCLAG_Enhancements_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss-common` `common/schema.h:118` で `#define APP_MCLAG_FDB_TABLE_NAME "MCLAG_FDB_TABLE"`、`sonic-net/sonic-swss` `mclagsyncd/mclaglink.cpp:1812` の `ProducerStateTable(p_appl_db, APP_MCLAG_FDB_TABLE_NAME)` で APPL_DB に publish される実テーブル名は `MCLAG_FDB_TABLE`
+[^3]: `sonic-net/sonic-swss` `orchagent/isolationgrouporch.h:25-30` でフィールド名定数 `DESCRIPTION` / `TYPE` / `PORTS` / `MEMBERS` を定義、`type` 値は `port` / `bridge-port`。HLD で言及される `exclude` フィールドは現行 isolationgrouporch.cpp:103-134 のパーサに存在しない
 
 <!-- topics-back-ref -->
 ## 関連 Topics
