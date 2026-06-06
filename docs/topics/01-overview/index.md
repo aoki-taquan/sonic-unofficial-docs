@@ -4,8 +4,16 @@ description: SONiC 全体像と設定基盤 — この章は、SONiC を読む�
 area: topics
 verification: meta
 page_kind: chapter-index
-last_verified: 2026-05-10
-sources: []
+last_verified: 2026-06-06
+sources:
+- repo: sonic-buildimage
+  path: files/build_templates/init_cfg.json.j2
+  lines: 67-98
+  note: 標準ビルドで起動される FEATURE 一覧
+- repo: sonic-swss-common
+  path: common/database_config.json
+  lines: 14-114
+  note: 論理 Redis DB id 割り当て
 keywords:
 - SONiC overview
 - 全体像
@@ -56,6 +64,62 @@ related:
 - `config reload`、`config replace`、`config apply-patch`、rollback、[ZTP](../../reference/glossary.md#term-ztp)、factory reset はどう使い分けるか。
 - 既存の `guides/`、`categories/`、`reference/`、area 別 HLD ページは読み物章からどう辿るか。
 
+## SONiC の component 俯瞰
+
+この章の議論はすべて、下図の「Linux host + Docker container 群 + Redis 論理 DB + SAI library を載せた [syncd](../../reference/glossary.md#term-syncd)」というアーキテクチャを前提とする。各 container と DB の対応関係は `sonic-buildimage/files/build_templates/init_cfg.json.j2:67-98` の FEATURE 一覧と `sonic-swss-common/common/database_config.json:14-114` の DB id 定義を裏取りに使っている。
+
+```mermaid
+flowchart TB
+  subgraph HOST[Linux host - Debian based]
+    direction TB
+    KERN[Linux kernel<br/>netlink / FIB / bridge]
+    subgraph CTRS[Docker container 群]
+      direction LR
+      DBC[database<br/>= 単一 Redis instance]
+      SW[swss<br/>orchagent + *mgrd / *syncd]
+      SY[syncd<br/>+ vendor SAI .so]
+      BGP[bgp<br/>FRR + fpmsyncd]
+      TM[teamd]
+      LL[lldp]
+      SN[snmp]
+      DR[dhcp_relay]
+      RA[radv]
+      PMON[pmon<br/>xcvrd / psud / ledd]
+      MF[mgmt-framework]
+      GN[gnmi]
+      TEL[telemetry]
+    end
+    subgraph DBS[論理 DB - 単一 Redis instance 内]
+      direction LR
+      CFG[(CONFIG_DB id=4)]
+      APPL[(APPL_DB id=0)]
+      ASDB[(ASIC_DB id=1)]
+      ST[(STATE_DB id=6)]
+      COU[(COUNTERS_DB id=2)]
+    end
+  end
+  PORT[front panel ports]
+  MGMT[management port - eth0]
+  ASIC[ASIC vendor SDK + ASIC]
+
+  CFG -.-> SW
+  CFG -.-> BGP
+  SW --> APPL
+  SW --> ASDB
+  ASDB --> SY
+  SY <--> ASIC
+  ASIC <--> PORT
+  BGP <--> KERN
+  KERN -. FPM .-> BGP
+  MGMT --> KERN
+  MF --> CFG
+  GN --> CFG
+  TEL -.read.-> COU
+  SY -.observed.-> ST
+```
+
+この章のサブページでは、上図のうち **CONFIG_DB → swss container 内 manager 群 → [APPL_DB](../../reference/glossary.md#term-appl_db) → orchagent → [ASIC_DB](../../reference/glossary.md#term-asic_db)** の経路を中心に扱う。同様の俯瞰図と Essentials 10 は [全体俯瞰と必読 10](../../getting-started.md) に置いてあるので、最初の 10 分はそちらから入ると良い。
+
 ## サブページ
 
 - [概念と読み始め方](concept.md): 読者別の最短導線、CLI / ConfigDB / YANG / GCU の役割、既存 guides / categories の使い方。
@@ -82,7 +146,7 @@ related:
 
 | ページ | 行数 | 状態 | verification | 主目的 |
 |---|---|---|---|---|
-| concept | 153 | ✅ 完成 | meta | 概念・位置付け |
+| concept | 209 | ✅ 完成 | meta | 概念・位置付け |
 | setup | 123 | ✅ 完成 | meta | セットアップ手順 |
 | architecture | 74 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
 | configuration | 61 | ⚠️ プレースホルダ | meta | 設定手段の選び方 |
@@ -139,4 +203,4 @@ related:
 - [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
 - [Lab / Virtual SONiC / Developer Entry](../21-lab-vs-developer/index.md)
 
-<!-- glossary-links-injected: 3abb11a5818e -->
+<!-- glossary-links-injected: 7014a8c73f96 -->
