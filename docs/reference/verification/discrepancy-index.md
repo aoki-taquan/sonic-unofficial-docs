@@ -11,7 +11,7 @@ last_verified: 2026-05-13
 
     SONiC コミュニティ master の HLD は **設計提案リポジトリ** であり、現行コードと一致しているとは限りません。本ページは「HLD だけ読んで誤解しがちな機能」を一望できる USP ページです。読み手は、まず後述の **monitor subtype 別セクション** で該当機能の乖離タイプ（未実装 / 部分実装 / 進化置換 / 廃止）を把握し、そこから個別ページへ降りて `last_verified` と「実装との乖離」セクションの裏取り根拠を確認してください。area 横断で探す場合は末尾の **area 別索引** から辿れます。
 
-`verification: discrepancy-found` が付いた全 **116** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
+`verification: discrepancy-found` が付いた全 **117** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
 
 ## サマリ
 
@@ -21,7 +21,7 @@ last_verified: 2026-05-13
 |---------|-----:|------|
 | [`not_implemented`](#monitor-not-implemented) | 18 | 未実装 |
 | [`partially_implemented`](#monitor-partially-implemented) | 61 | 部分実装 |
-| [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 34 | HLD と乖離した形で実装/進化 |
+| [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 35 | HLD と乖離した形で実装/進化 |
 | [`deprecated`](#monitor-deprecated) | 3 | deprecated（廃止予定 / 撤去済み） |
 
 ### area 別件数
@@ -412,7 +412,7 @@ last_verified: 2026-05-13
   
   per-page queue で既出の通り、[HLD](../../reference/glossary.md#term-hld) が定義する専用機構は未取り込み。`.cache/sonic-sources/` 全体を再走査した結果:
 
-### `evolved_beyond_hld` — HLD と乖離した形で実装/進化 (34 件) {#monitor-evolved-beyond-hld}
+### `evolved_beyond_hld` — HLD と乖離した形で実装/進化 (35 件) {#monitor-evolved-beyond-hld}
 
 !!! info "HLD と乖離した形で実装/進化"
 

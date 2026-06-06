@@ -1621,7 +1621,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (266)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (270)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
@@ -1837,7 +1837,6 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [Reboot / warm restart の設定](../topics/11-reboot/setup.md) (18)
 - [NEIGH テーブル](config-db/neigh.md) (11)
 - [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](runbooks/arp-entry-stuck.md) (7)
-- [config warm_restart サブコマンド](cli/config-warm_restart.md) (6)
 
 ### [Netlink](#term-netlink)
 
