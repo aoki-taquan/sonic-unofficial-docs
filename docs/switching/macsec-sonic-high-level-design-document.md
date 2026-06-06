@@ -35,7 +35,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified（基本構成のみ）"
-    現行 master の `sonic-swss/orchagent/macsecorch.cpp` で `PAUSE_ETHER_TYPE 0x8808`（L26）、`PFC_MODE_BYPASS`（L29）、PFC バイパス ACL を構築する分岐（L3120）を確認[^pfc-bypass]。`cfgmgr/macsecmgr.cpp` の `MACsecProfile::update`（L355-L393）で `cipher_suite` / `primary_cak` / `primary_ckn` を必須、`fallback_cak` / `fallback_ckn` / `rekey_period` / `send_sci` / `replay_window` / `enable_replay_protect` をオプションとして受理[^macsecmgr-fields]。`docker-macsec/etc/wpa_supplicant.conf` および MACsec Orch の XPN ハンドリング（`SAI_MACSEC_SA_ATTR_CONFIGURED_EGRESS_XPN` / `MINIMUM_INGRESS_XPN`）も存在。`wpa_supplicant` 側 SONiC 拡張パッチの取り込み具合は本リポでは未追跡（verified at: 2026-05-09）。
+    現行 master の `sonic-swss/orchagent/macsecorch.cpp` で `PAUSE_ETHER_TYPE 0x8808`（L26）、`PFC_MODE_BYPASS`（L29）、PFC バイパス ACL を構築する分岐（L3120）を確認[^pfc-bypass]。`cfgmgr/macsecmgr.cpp` の `MACsecProfile::update`（L356-L393）で `cipher_suite` / `primary_cak` / `primary_ckn` を必須、`fallback_cak` / `fallback_ckn` / `rekey_period` / `send_sci` / `replay_window` / `enable_replay_protect` をオプションとして受理[^macsecmgr-fields]。`docker-macsec/etc/wpa_supplicant.conf` および MACsec Orch の XPN ハンドリング（`SAI_MACSEC_SA_ATTR_CONFIGURED_EGRESS_XPN` / `MINIMUM_INGRESS_XPN`）も存在。`wpa_supplicant` 側 SONiC 拡張パッチの取り込み具合は本リポでは未追跡（裏取り日は frontmatter `last_verified` を参照）。
 
 # MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）
 
@@ -207,7 +207,7 @@ MACsec を [LAG](../reference/glossary.md#term-lag) と組み合わせる場合�
 
 [^1]: `sonic-net/SONiC` `doc/macsec/MACsec_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 [^pfc-bypass]: `sonic-net/sonic-swss` `orchagent/macsecorch.cpp` L26（`PAUSE_ETHER_TYPE 0x8808`）, L29（`PFC_MODE_BYPASS`）, L3120（`pfc_mode == PFC_MODE_BYPASS` 分岐で `SAI_ACL_ENTRY_ATTR_FIELD_ETHER_TYPE = 0x8808` を持つ ACL エントリを生成）
-[^macsecmgr-fields]: `sonic-net/sonic-swss` `cfgmgr/macsecmgr.cpp` `MACsecProfile::update` (L355-L393): 必須フィールド `cipher_suite` / `primary_cak` / `primary_ckn`、オプション `fallback_cak` / `fallback_ckn` / `enable_replay_protect` / `replay_window` / `send_sci` / `rekey_period` / `priority` / `policy`
+[^macsecmgr-fields]: `sonic-net/sonic-swss` `cfgmgr/macsecmgr.cpp` `MACsecProfile::update` (L356-L393): 必須フィールド `cipher_suite` / `primary_cak` / `primary_ckn`、オプション `fallback_cak` / `fallback_ckn` / `enable_replay_protect` / `replay_window` / `send_sci` / `rekey_period` / `priority` / `policy`
 
 <!-- topics-back-ref -->
 ## 関連 Topics
