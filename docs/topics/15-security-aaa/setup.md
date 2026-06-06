@@ -4,8 +4,17 @@ description: 設定 — ここでは AAA バックエンドと管理面ポリシ
   CLI / DB スキーマは個別 reference ページに既に存在するため、本ページはあくまで導線として機能します。
 area: topics
 verification: meta
-last_verified: 2026-05-10
-sources: []
+last_verified: 2026-06-06
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-ssh-server.yang
+    lines: 20-132
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-serial-console.yang
+    lines: 13-34
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-banner.yang
+    lines: 1-1
 related:
   cli:
   - config aaa
@@ -55,7 +64,9 @@ CLI の全体像は [config aaa](../../reference/cli/config-aaa.md) を、[YANG]
 
 ## SSH と serial console のポリシー
 
-SSH の listen address、port、ciphers、login grace time、max auth tries などは `SSH_SERVER` テーブルにまとめ、`hostcfgd` 経由で `sshd_config` に展開されます。詳細フィールドと意図は [SSH server global config HLD](../../management/ssh-server-global-config-hld.md) を参照してください。
+SSH の listen port、ciphers、認証リトライ回数、ログインタイムアウトなどは `SSH_SERVER\|POLICIES` にまとめ、`hostcfgd` 経由で `sshd_config` に展開されます。YANG 上の leaf 名は `ports` / `authentication_retries` / `login_timeout` / `inactivity_timeout` / `max_sessions` / `permit_root_login` / `password_authentication` / `ciphers` / `kex_algorithms` / `macs` であり、`sshd_config` の `MaxAuthTries` / `LoginGraceTime` のような sshd 用語とは綴りが異なる点に注意してください[^ssh-yang]。詳細フィールドと意図は [SSH server global config HLD](../../management/ssh-server-global-config-hld.md) を参照してください。
+
+[^ssh-yang]: `sonic-net/sonic-buildimage` の [`src/sonic-yang-models/yang-models/sonic-ssh-server.yang`](https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-ssh-server.yang) (container `SSH_SERVER/POLICIES`, 20-132 行) で定義。`authentication_retries` の既定は 6 (range 1..100)、`login_timeout` は秒で既定 120 (range 1..600)、`inactivity_timeout` は**分**で既定 15 (range 0..35000) と単位が混在しています。
 
 serial console 側は inactivity timeout、login banner との組み合わせ、root login の可否などを `SERIAL_CONSOLE` テーブルで制御します。設計意図は [serial console global config HLD](../../management/serial-console-global-config-hld.md) にあります。
 
@@ -138,14 +149,14 @@ sudo config ldap global set --base "dc=corp,dc=example,dc=com" \
 
 sudo config aaa authentication login ldap local
 
-# SSH 強化
+# SSH 強化（leaf 名は sonic-ssh-server.yang に従う。sshd_config の用語ではない点に注意）
 sudo sonic-cfggen -a '{
   "SSH_SERVER":{"POLICIES":{
      "permit_root_login":"no",
-     "max_auth_tries":"3",
-     "login_grace_time":"60",
-     "ciphers":"aes256-gcm@openssh.com,aes256-ctr",
-     "kex_algorithms":"curve25519-sha256,diffie-hellman-group16-sha512"
+     "authentication_retries":"3",
+     "login_timeout":"60",
+     "ciphers":["aes256-gcm@openssh.com","aes256-ctr"],
+     "kex_algorithms":["curve25519-sha256","diffie-hellman-group16-sha512"]
   }}
 }' -w
 sudo systemctl restart hostcfgd
@@ -166,7 +177,7 @@ sudo sshd -T | grep -Ei 'permitrootlogin|ciphers|kex|maxauthtries'
 ```bash
 sudo config banner login    "Authorized access only. Activity is logged."
 sudo config banner motd     "SONiC NOS - production fabric"
-sudo config serial-console inactivity-timeout 600
+sudo config serial-console inactivity-timeout 10  # 単位は「分」（sonic-serial-console.yang)
 sudo config serial-console sysrq-capabilities disabled
 ```
 
@@ -175,7 +186,7 @@ CONFIG_DB:
 ```json
 {
     "BANNER_MESSAGE": {"global": {"state":"enabled","login":"Authorized access only. Activity is logged.","motd":"SONiC NOS - production fabric"}},
-    "SERIAL_CONSOLE": {"POLICIES":{"inactivity_timeout":"600","sysrq_capabilities":"disabled"}}
+    "SERIAL_CONSOLE": {"POLICIES":{"inactivity_timeout":"10","sysrq_capabilities":"disabled"}}
 }
 ```
 
@@ -224,7 +235,7 @@ CONFIG_DB:
 2. TACACS+ / RADIUS / LDAP のサーバを最低 2 台登録し、`login_method` の末尾に `local` を残す。
 3. SSH の `permit_root_login` を `no` 相当に倒し、`ciphers` / `kex` を必要なものだけに絞る。
 4. banner で「許可された運用者のみ」「アクセスは記録される」旨を明示し、法的要件を満たす。
-5. serial console の `inactivity_timeout` を有効にし、置き忘れセッションを切る。
+5. serial console の `inactivity_timeout`（分単位）を有効にし、置き忘れセッションを切る。
 
 これ以降の運用面（password reset、default credential、トラブルシュート）は [運用](operations.md) に続きます。
 
@@ -232,7 +243,7 @@ CONFIG_DB:
 
 - CLI: `config aaa`、`config tacacs`、`config ldap`、`config banner`、`config serial-console`、`show aaa`、`show tacacs`、`show ldap-server`、`show ssh-server`、`show banner`
 - CONFIG_DB: `AAA`、`TACPLUS`、`TACPLUS_SERVER`、`RADIUS`、`RADIUS_SERVER`、`LDAP`、`LDAP_SERVER`、`SSH_SERVER`、`SERIAL_CONSOLE`、`BANNER_MESSAGE`
-- YANG: [`sonic-system-aaa`](../../reference/yang/sonic-system-aaa.md)、`sonic-system-tacacs`、`sonic-system-ldap`、`sonic-ssh-server`、`sonic-system-banner`
+- YANG: [`sonic-system-aaa`](../../reference/yang/sonic-system-aaa.md)、`sonic-system-tacacs`、`sonic-system-ldap`、`sonic-ssh-server`、`sonic-serial-console`、`sonic-banner`
 - 関連 HLD: [TACACS+ HLD](../../management/tacacs-authentication.md)、[RADIUS HLD](../../management/radius-management-user-authentication.md)、[LDAP HLD](../../management/hld-ldap.md)、[SSH server global config HLD](../../management/ssh-server-global-config-hld.md)、[serial console HLD](../../management/serial-console-global-config-hld.md)、[banner messages HLD](../../system/banner-messages-hld.md)
 
 <!-- glossary-links-injected: db62d2100cef -->
