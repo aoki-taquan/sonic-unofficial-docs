@@ -1338,8 +1338,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [CONFIG_DB の永続化が失敗する](runbooks/config-db-persistence-failure.md) (12)
 - [gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）](../management/gnoi-hld-for-file-and-factory-reset-apis.md) (11)
 - [multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）](../platform/db-design-for-multi-asic-scenarios.md) (11)
+- [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (9)
 - [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP](../management/sonic-nos-configuration-methods.md) (8)
-- [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (8)
 
 ### [config-setup](#term-config-setup)
 
@@ -1764,8 +1764,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [minigraph.xml](#term-minigraph.xml)
 
 - [DEVICE_NEIGHBOR テーブル](config-db/device-neighbor.md) (10)
+- [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (9)
 - [CONFIG_DB save / load が反映されない](runbooks/config-save-load.md) (7)
-- [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (7)
 - [DEVICE_NEIGHBOR_METADATA テーブル](config-db/device-neighbor-metadata.md) (5)
 - [SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約](../switching/control-sonic-behaviors-with-system-defaults-table.md) (5)
 

@@ -101,7 +101,7 @@ docker logs syncd 2>&1 | grep -iE "ERR|SAI_STATUS" | tail -50
 ## 対処方法
 
 - minigraph 修正後 `sudo config load_minigraph -y` 再実行
-- hwsku 差し替え: `sudo sonic-cfggen -H -m -k <hwsku> --write-to-db`
+- hwsku 差し替え: [minigraph.xml](../../reference/glossary.md#term-minigraph.xml) 内の `<HwSku>` を編集し `sudo config load_minigraph -y` で再ロードするのが基本。`config_db.json` を直接再生成したい場合は `sudo sonic-cfggen -H -k <hwsku> --write-to-db` を使う（`-H` は `device_info` から platform を読み、`-k` で hwsku を指定する。minigraph を読み込む場合は `-m [<path>]` を併用するが、`load_minigraph` が同等の処理を内部で行うので通常は不要）[^3]
 - 最悪時の復旧: `sudo cp config_db.json.bak.<ts> /etc/sonic/config_db.json && sudo config reload -y -f`
 
 ## 関連ページ
@@ -116,5 +116,6 @@ docker logs syncd 2>&1 | grep -iE "ERR|SAI_STATUS" | tail -50
 
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config/main.py
 [^2]: sonic-net/[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) @ 4305596 — sonic-config-engine/minigraph.py
+[^3]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config/main.py L1648 (`sonic-cfggen -H -k <hwsku> --write-to-db`) および sonic-net/[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) @ 4305596 — src/sonic-config-engine/[sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) L335-L358（`-H`/`-k`/`-m`/`--write-to-db` の引数定義）
 
-<!-- glossary-links-injected: 8772b091b635 -->
+<!-- glossary-links-injected: f6deafdbb4e5 -->
