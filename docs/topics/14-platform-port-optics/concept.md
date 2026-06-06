@@ -42,7 +42,10 @@ related:
 
 SONiC は、ベンダーハードウェアの差を `sonic_platform` パッケージとして抽象化します。`psuutil` のような旧来クラスは platform 固有実装でしたが、現在は global な base class とプラグイン的な platform 実装に分かれており、共通 CLI / daemon が同じ API を呼びます。詳細は [global platform specific PSU util class instance](../../platform/global-platform-specific-psuutil-class-instance.md) を参照してください。
 
-この抽象化があるため、`show platform` 系コマンドや pmon の各 daemon (`thermalctld`、`psud`、`pcied`、`ssdmon`、`xcvrd` など) は、ハード差を意識せずに同じ DB / sysfs パスへ書き込めます。
+この抽象化があるため、`show platform` 系コマンドや pmon の各 daemon (`thermalctld`、`psud`、`pcied`、`stormond`、`xcvrd` など) は、ハード差を意識せずに同じ DB / sysfs パスへ書き込めます[^pmon-daemons]。なお `stormond` はかつて SSD 監視のみを担当した `ssdmon` の後継で、現在は SSD/eMMC を含むストレージ全般を監視する storage monitor daemon です[^stormond-naming]。
+
+[^pmon-daemons]: pmon コンテナの supervisord 構成は `sonic-buildimage/dockers/docker-platform-monitor/docker-pmon.supervisord.conf.j2` で定義され、`chassisd` / `ledd` / `xcvrd` / `psud` / `pcied` / `thermalctld` / `stormond` / `sensormond` などをスキップフラグ付きで起動する。
+[^stormond-naming]: `sonic-platform-daemons/sonic-stormond/scripts/stormond` 冒頭のモジュール docstring に "Storage device Monitoring daemon for SONiC" と明記されており、SYSLOG identifier も `stormond`。リポジトリ上に `ssdmon` ディレクトリは存在しない。
 
 ## Port lifecycle
 
@@ -115,7 +118,7 @@ flowchart TB
         TH[thermalctld]
         PS[psud]
         PC[pcied]
-        SS[ssdmon]
+        SS[stormond]
     end
     subgraph PLAT[sonic_platform / HW]
         SAI[(SAI / syncd)]
@@ -133,7 +136,7 @@ flowchart TB
 ### 用語定義
 
 - **`sonic_platform`**: Python パッケージ。各ベンダー platform 実装が継承する base クラス群（Chassis / Module / PSU / Fan / Thermal / Sfp / Eeprom）を提供。
-- **`pmon`**: Platform MONitor container。`thermalctld` / `psud` / `pcied` / `ledd` / `xcvrd` / `ssdmon` / `chassisd` を抱える。
+- **`pmon`**: Platform MONitor container。`thermalctld` / `psud` / `pcied` / `ledd` / `xcvrd` / `stormond` (旧 `ssdmon`) / `sensormond` / `chassisd` / `bmcctld` / `ycabled` / `syseepromd` などをスキップフラグ付きで抱える。
 - **`xcvrd`**: Transceiver daemon。SFP/QSFP/OSFP の EEPROM 読み出し、CMIS state machine、DOM 監視、PM（performance monitoring）を STATE_DB に書く。
 - **PortMgr / `portsyncd`**: CONFIG_DB の `PORT` を読んで APP_DB に流す側と、Linux netdev 状態を APP_DB に同期する側。
 - **PortOrch**: orchagent 内の port object responsible。SAI port を生成 / 設定する。
