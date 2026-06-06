@@ -31291,6 +31291,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#must" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        must 制約
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#augment-deviation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36142,6 +36153,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#must" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        must 制約
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#augment-deviation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36524,6 +36546,38 @@
 <ul>
 <li><code>sonic-syslog/SYSLOG_CONFIG_FEATURE/SYSLOG_CONFIG_FEATURE_LIST/service</code> → <code>/feature:sonic-feature/feature:FEATURE/feature:FEATURE_LIST/feature:name</code></li>
 </ul>
+<h2 id="must">must 制約<a class="headerlink" href="#must" title="Permanent link">&para;</a></h2>
+<p><a href="../../glossary/#term-yang">YANG</a> 上で <code>must</code> として明示されている制約。違反すると CONFIG_DB 反映時に検証エラー / rsyslog 起動失敗の原因となる。</p>
+<table>
+<thead>
+<tr>
+<th>leaf</th>
+<th>制約 (要約)</th>
+<th><a href="../../glossary/#term-yang">YANG</a> XPath</th>
+<th>失敗時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>source</code> (SYSLOG_SERVER_LIST)</td>
+<td><code>source</code> と <code>server_address</code> は同一の address family (両方 IPv4 か両方 IPv6) でなければならない</td>
+<td><code>(contains(current(), '.') and contains(../server_address, '.')) or (contains(current(), ':') and contains(../server_address, ':'))</code></td>
+<td>YANG validation 失敗、CONFIG_DB 反映が拒否される<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>vrf</code> (SYSLOG_SERVER_LIST)</td>
+<td><code>vrf = 'mgmt'</code> を指定する場合は <code>MGMT_VRF_CONFIG/vrf_global/mgmtVrfEnabled = 'true'</code> でなければならない</td>
+<td><code>(current() != 'mgmt') or (/mvrf:sonic-mgmt_vrf/mvrf:MGMT_VRF_CONFIG/mvrf:vrf_global/mvrf:mgmtVrfEnabled = 'true')</code></td>
+<td>mgmt-vrf 未有効状態で <code>mgmt</code> を指定すると検証失敗。CONFIG_DB へ直接 set した場合は rsyslog 起動側で routing 解決に失敗する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+<tr>
+<td><code>welf_firewall_name</code> (SYSLOG_CONFIG/GLOBAL)</td>
+<td><code>format != 'standard'</code> のときのみ設定可能 (実質 <code>format=welf</code> 時のみ)</td>
+<td><code>(../format != 'standard')</code></td>
+<td><code>format=standard</code> のまま <code>welf_firewall_name</code> を指定すると検証失敗<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+</tr>
+</tbody>
+</table>
 <h2 id="augment-deviation">augment / deviation<a class="headerlink" href="#augment-deviation" title="Permanent link">&para;</a></h2>
 <ul>
 <li>なし</li>
@@ -36563,7 +36617,9 @@
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>vrf</code> leaf で <code>mgmt</code> 指定したのに mgmt-vrf 未有効だと rsyslog 起動失敗。両方の整合が必要。</li>
+<li><code>vrf</code> leaf で <code>mgmt</code> 指定したのに mgmt-vrf 未有効だと rsyslog 起動失敗。両方の整合が必要 (上記 must 制約参照)。</li>
+<li><code>source</code> を指定する場合、<code>server_address</code> と同じ address family (IPv4/IPv6) を選ぶこと。混在は YANG validation 失敗。</li>
+<li><code>format=welf</code> (=<code>format != 'standard'</code>) のときのみ <code>welf_firewall_name</code> を設定可能。逆に <code>format=standard</code> のまま <code>welf_firewall_name</code> を埋めても validation 失敗で反映されない。</li>
 </ul>
 <h3 id="config-show">関連する config / show コマンド<a class="headerlink" href="#config-show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;SYSLOG_SERVER|*&#39;</span>
@@ -36579,13 +36635,22 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-syslog.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-syslog.yang</code> L105-L110 (<code>leaf source</code> の <code>must "(contains(current(), '.') and contains(../server_address, '.')) or (contains(current(), ':') and contains(../server_address, ':'))"</code>) @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-syslog.yang</code> L117-L127 (<code>leaf vrf</code> の <code>must "(current() != 'mgmt') or (/mvrf:sonic-mgmt_vrf/mvrf:MGMT_VRF_CONFIG/mvrf:vrf_global/mvrf:mgmtVrfEnabled = 'true')"</code>) @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-syslog.yang</code> L178-L182 (<code>leaf welf_firewall_name</code> の <code>must "(../format != 'standard')"</code>) @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

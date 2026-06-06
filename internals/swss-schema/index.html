@@ -36262,7 +36262,7 @@
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>生きたドキュメント</strong>であるため、master が更新されるたびにフィールドが追加・変更される。本ページに列挙した内容は執筆時点（commit <code>4305596145e57e15e4c6a1a3902c0bc6c44a09c5</code>）のスナップショット。</li>
-<li>ABNF 表記はあくまで <strong>人間とパーサ向けの参考形式</strong> で、orchagent 等の実装はこのファイルを直接読まない。実装側の <code>swss-common/schema.h</code> が定数定義の正規ソース。</li>
+<li>ABNF 表記はあくまで <strong>人間とパーサ向けの参考形式</strong> で、orchagent 等の実装はこのファイルを直接読まない。実装側の <code>sonic-swss-common/common/schema.h</code> が定数定義（テーブル名・フィールド名）の正規ソースで、約 450 個の <code>#define APP_*_TABLE_NAME</code> / <code>STATE_*_TABLE_NAME</code> が並ぶ<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
 <li>全テーブルを網羅的にここで再掲はしない（54KB のうちの中心テーブルのみピックアップ）。<strong>完全な定義は <a href="../../reference/glossary/#term-hld">HLD</a> <code>sonic-net/sonic-swss/doc/swss-schema.md</code> を参照。</strong></li>
 <li><strong><code>ConsumerStateTable</code> の KEY_SET メソッドで DEL メッセージが欠落する問題</strong> (<a href="https://github.com/sonic-net/sonic-swss/issues/1812">sonic-swss#1812</a>): <code>ProducerStateTable</code> / <code>ConsumerStateTable</code> を使って swss / orchagent にメッセージを届ける際、KEY_SET メソッドを経由した場合 DEL メッセージが <code>ConsumerStateTable::pops</code> で取得できないことがある。インターフェースの高速 DEL/SET（削除後即再作成）を行う場合に発生しやすい。この問題は <code>ProducerTable</code> ではなく <code>ProducerStateTable</code> を使用している場合のみ該当する。</li>
 <li><strong>APPLY_VIEW 前の buffer profile 属性照会</strong> (<a href="https://github.com/sonic-net/sonic-swss/issues/2231">sonic-swss#2231</a>): zero-buffer pool 構成で起動時 INIT_VIEW → APPLY_VIEW 切替前に buffer profile 属性を SAI に照会すると、プロファイルが存在しない状態での照会となり問題が発生する可能性がある。buffer 関連の設定は APPLY_VIEW 完了後に orchagent が実施することが前提であり、初期化シーケンスの実装には注意が必要。</li>
@@ -36271,13 +36271,13 @@
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>CONFIG_DB / sonic-yang-models</strong>: 設定面のスキーマは別途 YANG が正規。本ドキュメントは状態・運用面 (APPL_DB / STATE_DB) を扱う。</li>
-<li><strong><code>sonic-swss-common/common/schema.h</code></strong>: 実装側の定数定義（テーブル名・フィールド名）の正規ソース。本 .md と乖離した場合は <code>.h</code> 側を信用する。</li>
+<li><strong><code>sonic-net/sonic-swss-common</code> の <code>common/schema.h</code></strong>: 実装側の定数定義（テーブル名・フィールド名）の正規ソース。本 .md と乖離した場合は <code>.h</code> 側を信用する<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
 <li><strong>CONFIG_DB 由来の APPL_DB 投影</strong>: <code>*Mgr</code> プロセスが CONFIG_DB → APPL_DB 投影を行うため、テーブル名や field 名が概念的に対応していても、層を跨ぐと微妙に変わる場合がある（例: CONFIG_DB <code>PORT|...</code> → APPL_DB <code>PORT_TABLE:...</code>）。</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>期待する APPL_DB エントリが無い → CONFIG_DB → APPL_DB の投影を担う <code>*mgrd</code>（<a href="../../reference/glossary/#term-intfmgrd">intfmgrd</a> / <a href="../../reference/glossary/#term-vlanmgrd">vlanmgrd</a> / <a href="../../reference/glossary/#term-portmgrd">portmgrd</a> 等）の状態を確認。</li>
-<li>フィールド名が違って見える → <code>swss-schema.md</code> と <code>swss-common/schema.h</code> の <strong>両方</strong> を見て、どちらが最新かを確認する。</li>
+<li>フィールド名が違って見える → <code>sonic-swss/doc/swss-schema.md</code> と <code>sonic-swss-common/common/schema.h</code> の <strong>両方</strong> を見て、どちらが最新かを確認する。</li>
 <li>自分のページが参照する APPL_DB スキーマが本書と食い違う → 直近の <a href="../../reference/glossary/#term-sonic-swss">sonic-swss</a> master コミットの <code>doc/swss-schema.md</code> で再確認するのが望ましい。</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
@@ -36295,6 +36295,9 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/sonic-swss</code> <code>doc/swss-schema.md</code> @ <code>4305596145e57e15e4c6a1a3902c0bc6c44a09c5</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss-common</code> <code>common/schema.h</code> (565 行、約 450 個の <code>#define APP_*_TABLE_NAME</code> / <code>STATE_*_TABLE_NAME</code> / <code>CFG_*_TABLE_NAME</code> 定義) @ <code>158de8d3463ff4b841653f6d57190bb142b80d9c</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

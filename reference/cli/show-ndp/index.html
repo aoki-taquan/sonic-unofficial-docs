@@ -36177,8 +36177,8 @@
 </span></code></pre></div>
 <p>注意: <code>show arp</code> 側は <code>alias</code> モード時に <code>iface_alias_converter.alias_to_name()</code> でインタフェース名を変換するロジックがあるが、<strong><code>show ndp</code> 側にはそれが無い</strong>。<code>alias</code> モード環境で <code>-if</code> を使う場合、内部名（例: <code>Ethernet0</code>）を直接指定する必要がある。</p>
 <h2 id="_4">別名と関連<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p><code>show ipv6</code> グループにも <code>add_command(ndp)</code> されており、<code>show ipv6 neighbors</code> 系のサブコマンド経由でも近い情報が引ける。</p>
-<p>クリア側は <code>sonic-clear ndp [&lt;ipaddress&gt;] [-n &lt;ns&gt;]</code>。詳細は <a href="../clear/">clear (sonic-clear) コマンド</a> を参照。</p>
+<p><code>show ndp</code> は <code>cli</code> ルート直下に登録されている (<code>@cli.command()</code>) のみで、master 時点では <code>show ipv6</code> グループ配下にエイリアス登録されていない<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。同グループのサブコマンドは <code>interfaces</code> / <code>prefix-list</code> / <code>route</code> / <code>protocol</code> (および routing-stack に応じた <code>bgp</code>) で、IPv6 近隣テーブル参照は <code>show ndp</code> が唯一のエントリポイント。</p>
+<p>IPv4 側の対称コマンドは <a href="../show-arp/"><code>show arp</code></a> で、同じく <code>nbrshow</code> を <code>-4</code> 付きで呼び出す。クリア側は <code>sonic-clear ndp [&lt;ipaddress&gt;] [-n &lt;ns&gt;]</code> (内部で <code>ip -6 neigh del</code> を実行)<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。詳細は <a href="../clear/">clear (sonic-clear) コマンド</a> を参照。</p>
 <h2 id="config_db">CONFIG_DB との接点<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <p><a href="../../glossary/#term-ndp">NDP</a> テーブルは <strong>kernel の IPv6 neighbor table</strong> および swss/<a href="../../glossary/#term-neighsyncd">neighsyncd</a> で <a href="../../glossary/#term-appl_db">APPL_DB</a> に同期されるもので、<a href="../../glossary/#term-config_db">CONFIG_DB</a> を読まない。</p>
 <!-- cli-mermaid -->
@@ -36222,13 +36222,12 @@
 <!-- /ops-hint -->
 
 <!-- cli-sibling -->
+<!-- cli-sibling:manual -->
 <h3 id="cli">関連 CLI コマンド<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../config-bgp/"><code>config bgp</code></a> — config bgp サブコマンド</li>
-<li><a href="../config-default-route/"><code>config default route</code></a> — config default-route（デフォルトルート設定パターン）</li>
-<li><a href="../config-route/"><code>config route</code></a> — config route サブコマンド（static route）</li>
-<li><a href="../config-vrf/"><code>config vrf</code></a> — config vrf サブコマンド</li>
-<li><a href="../show-arp/"><code>show arp</code></a> — show arp サブコマンド</li>
+<li><a href="../show-arp/"><code>show arp</code></a> — IPv4 ARP テーブル表示 (<code>nbrshow -4</code>、対称コマンド)</li>
+<li><a href="../clear/"><code>clear</code></a> — <code>sonic-clear ndp</code> を含むクリア系コマンド群</li>
+<li><a href="../show-ip/"><code>show ip</code></a> — <code>show ip</code> グループ (route / interfaces / bgp など)</li>
 </ul>
 <!-- /cli-sibling -->
 
@@ -36239,6 +36238,12 @@
 <ol>
 <li id="fn:1">
 <p><code>ndp</code> の click 定義と <code>nbrshow -6</code> 起動は <code>show/main.py</code> L452-L472。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L452">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L452</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>ipv6</code> グループの定義と subcommand 列挙 (<code>prefix-list</code> / <code>interfaces</code> / <code>route</code> / <code>protocol</code>) は <code>show/main.py</code> L1495-L1565。<code>ipv6.add_command(ndp)</code> 相当の登録は無く、<code>ipv6.add_command(bgp)</code> のみが routing-stack 依存で行われる (L1571 周辺)。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1495">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1495</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-clear ndp</code> の実装は <code>clear/main.py</code> L553-L580 で、<code>ip -6 neigh show</code> で dev を引いた後 <code>ip -6 neigh del</code> を実行する。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/clear/main.py#L553">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/clear/main.py#L553</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

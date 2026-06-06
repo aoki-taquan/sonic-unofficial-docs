@@ -36225,7 +36225,7 @@
 </tr>
 <tr>
 <td>Cons</td>
-<td>全体 YANG を当てられない（分割必要）、namespace 間で重複する table が冗長</td>
+<td>全体 YANG を当てられない（分割必要）、host-mirror 系 table（<code>DEVICE_METADATA</code> / <code>FEATURE</code> など各 namespace 共通に持たせがちな table）は namespace 間で重複記述になりやすい（<code>PORT</code> / <code>PORTCHANNEL</code> のような ASIC 固有 table は実際には重複しない）</td>
 </tr>
 </tbody>
 </table>
@@ -36253,7 +36253,7 @@ reasoning: namespace layer 1 段追加でスキーマ拡張する設計の根拠
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>全体 YANG validate 不可、namespace 単位 validate に留まる</li>
-<li>各 ASIC で重複する table は NDM 側でも冗長記述が必要</li>
+<li>host-mirror 系 table（<code>DEVICE_METADATA</code> / <code>FEATURE</code> など）は NDM 側でも namespace 毎に冗長記述が必要（<code>PORT</code> 系 ASIC 固有 table は重複しない）</li>
 <li>minigraph 廃止前提のため、minigraph 併用時の挙動はスコープ外</li>
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>

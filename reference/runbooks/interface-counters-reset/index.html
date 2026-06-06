@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: show interfaces counters が突然リセットされる — : sonic-net/sonic-utilities @ 39732bceb — scripts/portstat : sonic-net/sonic-swss @ 4305596 — orchagent/flexcoun…">
+        <meta name="description" content="Runbook: show interfaces counters が突然リセットされる際の切り分け手順。portstat の差分 cache (/tmp/cache/portstat/) 喪失・sonic-clear counters の誤実行・syncd 再起動を順に確認する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="show interfaces counters が突然リセットされる - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: show interfaces counters が突然リセットされる — : sonic-net/sonic-utilities @ 39732bceb — scripts/portstat : sonic-net/sonic-swss @ 4305596 — orchagent/flexcoun…" />
+<meta property="og:description" content="Runbook: show interfaces counters が突然リセットされる際の切り分け手順。portstat の差分 cache (/tmp/cache/portstat/) 喪失・sonic-clear counters の誤実行・syncd 再起動を順に確認する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/interface-counters-reset.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/interface-counters-reset/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="show interfaces counters が突然リセットされる - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: show interfaces counters が突然リセットされる — : sonic-net/sonic-utilities @ 39732bceb — scripts/portstat : sonic-net/sonic-swss @ 4305596 — orchagent/flexcoun…" />
+<meta property="twitter:description" content="Runbook: show interfaces counters が突然リセットされる際の切り分け手順。portstat の差分 cache (/tmp/cache/portstat/) 喪失・sonic-clear counters の誤実行・syncd 再起動を順に確認する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/interface-counters-reset.png" />
 </head>
   
@@ -36112,7 +36112,7 @@
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong><code>sonic-clear counters</code> の意図しない実行</strong>: cron / Ansible / 監視スクリプト</li>
-<li><strong>portstat の clear ファイル (<code>/tmp/portstat-*.cnt</code>) が削除された</strong>: <code>/tmp</code> cleanup</li>
+<li><strong>portstat の cache ファイル (<code>/tmp/cache/portstat/&lt;uid&gt;[-&lt;tag&gt;]/portstat</code>) が削除された</strong>: <code>/tmp</code> cleanup により差分計算 base が失われ「見かけ上のリセット」になる <sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong><a href="../../glossary/#term-syncd">syncd</a> 再起動で <a href="../../glossary/#term-asic">ASIC</a> counter 自体リセット</strong></li>
 <li><strong>container 再起動で <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> が初期化</strong>: redis ephemeral</li>
 </ol>
@@ -36128,8 +36128,12 @@
 <h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-clear">1. 直近の clear 実行<a class="headerlink" href="#1-clear" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;sonic-clear|portstat&quot;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>ls<span class="w"> </span>-la<span class="w"> </span>/tmp/portstat-*<span class="w"> </span>/tmp/.portstat-*<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># portstat の差分計算 cache (UserCache.CACHE_DIR = &quot;/tmp/cache/&quot; 配下) [^1]</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo<span class="w"> </span>ls<span class="w"> </span>-la<span class="w"> </span>/tmp/cache/portstat/<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># SONIC_CLI_CACHE_DIR が設定されている場合はそちらを参照</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;SONIC_CLI_CACHE_DIR=</span><span class="si">${</span><span class="nv">SONIC_CLI_CACHE_DIR</span><span class="k">:-</span><span class="p">/tmp/cache/</span><span class="si">}</span><span class="s2">&quot;</span>
 </span></code></pre></div>
+<p><code>utilities_common.cli.UserCache</code> は <code>/tmp/cache/&lt;app_name&gt;/&lt;uid&gt;[-&lt;tag&gt;]/</code> に cache を作り、<code>portstat</code> はその下に <code>portstat</code> ファイルとして snapshot を保存する。clear ファイルが見当たらない場合は差分 base が失われており、次回 <code>show interfaces counters</code> 実行時に「見かけ上 0」が表示される。<!-- evidence: sonic-utilities@39732bceb scripts/portstat L107-L117, utilities_common/cli.py L922-L947 --></p>
 <h3 id="2-counters_db">2. COUNTERS_DB の生値<a class="headerlink" href="#2-counters_db" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>hget<span class="w"> </span><span class="s2">&quot;COUNTERS:oid:0x1000000000001&quot;</span><span class="w"> </span>SAI_PORT_STAT_IF_IN_OCTETS
 </span></code></pre></div>
@@ -36146,7 +36150,7 @@
 <ul>
 <li>監視は <code>COUNTERS_DB</code> の raw 値を直接 poll（portstat 差分 cache に依存しない）</li>
 <li><a href="../../glossary/#term-gnmi">gNMI</a> / telemetry で counters subscribe する方式に切り替え</li>
-<li>portstat 用 cache を別ディレクトリへ: 環境変数 <code>SONIC_CLI_CACHE_DIR</code> を設定（<code>utilities_common.cli.UserCache</code> がこの変数を参照）</li>
+<li>portstat 用 cache を <code>/tmp</code> cleanup の影響を受けないディレクトリへ: 環境変数 <code>SONIC_CLI_CACHE_DIR</code> を設定（<code>utilities_common.cli.UserCache.__init__</code> がこの変数を参照、デフォルトは <code>/tmp/cache/</code>）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="_6">確認<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>対処後の正常化を以下で裏取りする。</p>
@@ -36171,7 +36175,7 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — scripts/portstat&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — scripts/portstat L107-L117 / utilities_common/cli.py L922-L947 (<code>UserCache.CACHE_DIR = "/tmp/cache/"</code>, <code>SONIC_CLI_CACHE_DIR</code> env で上書き)&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <a href="../../glossary/#term-orchagent">orchagent</a>/flexcounterorch.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>

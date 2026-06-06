@@ -35827,7 +35827,7 @@
 <li><a href="../../topics/02-bgp/concept/">概要</a> — [meta] 概要 — 「SONiC で BGP を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、SONiC と FRR の境界がどこにあるか…</li>
 <li><a href="../../topics/02-bgp/architecture/">アーキテクチャ</a> — [code-verified] BGP 経路が転送可能になるまでの主経路と、設定反映の経路を分けて整理する。bgpd/zebra → FPM → fpmsyncd → APPL_DB → o…</li>
 <li><a href="../../topics/02-bgp/setup/">設定</a> — [meta] 設定 — BGP の設定入口は複数ある。運用コマンドで触るなら CLI、宣言的に管理するなら CONFIG_DB、外部 controller から投入するなら…</li>
-<li><a href="../../topics/02-bgp/operations/">運用</a> — [meta] 運用 — BGP の運用確認は、neighbor の状態確認だけでは足りない。route が FRR で選ばれているか、SONiC に渡っているか、ASIC…</li>
+<li><a href="../../topics/02-bgp/operations/">運用</a> — [meta] BGP の運用確認は neighbor 状態だけでは足りない。FRR で best path か、APPL_DB / ASIC に届いたか、BMP や SNM…</li>
 <li><a href="../../topics/02-bgp/internals/">内部実装</a> — [meta] 内部実装 — BGP の内部実装トピックは、同じ「BGP の改善」でも狙っている問題が違う。大量 route 投入を速くするもの、障害時の収束を速くするもの、…</li>
 <li><a href="../../topics/02-bgp/advanced/">発展トピック</a> — [meta] 発展トピック — この章の基本経路を押さえた後は、VoQ、BFD、EVPN の順に読むと BGP が他章へどうつながるかが見える。いずれも BGP 単体の話で…</li>
 </ul>
@@ -36928,13 +36928,13 @@
 <li><a href="../../reference/runbooks/">Runbooks (症状逆引き)</a> — [code-verified] Runbooks (症状逆引き) — 現場で観測される症状から逆引きで切り分け手順に辿り着くことを目的とした実務向けハンドブック集。症状・原因・確認コマンド・…</li>
 <li><a href="../../reference/runbooks/bgp-session-down/">BGP セッションが UP しない</a> — [runbook-verified] Runbook: BGP セッションが UP しない — : sonic-net/sonic-frr @ 799f47f — bgpd FSM : sonic…</li>
 <li><a href="../../reference/runbooks/vlan-tagging/">VLAN メンバーを追加してもタグが付かない</a> — [runbook-verified] Runbook: VLAN メンバーを追加してもタグが付かない症状の切り分け。CONFIG_DB / APPL_DB / ASIC_DB および kernel…</li>
-<li><a href="../../reference/runbooks/fec-errors/">FEC エラーが多発する</a> — [runbook-verified] Runbook: FEC エラーが多発する — : sonic-net/sonic-platform-daemons @ 4ba9612 — xcvrd /…</li>
+<li><a href="../../reference/runbooks/fec-errors/">FEC エラーが多発する</a> — [runbook-verified] Runbook: FEC エラーが多発する。両端 FEC モード不一致 / 物理層異常 / 光モジュール非互換 / DAC 規格不一致 / speed ミスマ…</li>
 <li><a href="../../reference/runbooks/warm-reboot-failure/">Warm Reboot が失敗 / 通信断が長引く</a> — [runbook-verified] Warm Reboot が失敗もしくは通信断が長引くケースの切り分け runbook。WARM_RESTART テーブルの enable 状態、reconci…</li>
 <li><a href="../../reference/runbooks/pfc-bandwidth/">PFC で帯域が出ない / Buffer overflow</a> — [runbook-verified] Runbook: PFC で帯域が出ない / Buffer overflow — : sonic-net/sonic-swss @ 4305596 — buf…</li>
 <li><a href="../../reference/runbooks/dhcp-relay/">DHCP Relay で IP が払い出されない</a> — [runbook-verified] Runbook: DHCP Relay で IP が払い出されない — : sonic-net/sonic-dhcp-relay @ 7316417 — re…</li>
 <li><a href="../../reference/runbooks/multi-asic-namespace/">Multi-ASIC で namespace 間通信できない</a> — [code-verified] Runbook: Multi-ASIC で namespace 間通信できない — : sonic-net/sonic-utilities @ 39732bc…</li>
 <li><a href="../../reference/runbooks/dualtor-mux/">Dual-ToR mux が切り替わらない</a> — [code-verified] Runbook: Dual-ToR mux が切り替わらない — : sonic-net/sonic-linkmgrd @ 65f5633 — LinkMan…</li>
-<li><a href="../../reference/runbooks/sai-failure/">SAI failure / syncd リスタート多発</a> — [runbook-verified] Runbook: SAI failure / syncd リスタート多発 — : sonic-net/sonic-sairedis @ 88bc51a — s…</li>
+<li><a href="../../reference/runbooks/sai-failure/">SAI failure / syncd リスタート多発</a> — [runbook-verified] syncd の異常終了や SAI API 連続失敗を切り分けるための runbook。CRM 枯渇 / SDK 非対応属性 / object 削除順序 / O…</li>
 <li><a href="../../reference/runbooks/container-not-starting/">コンテナが起動しない (FEATURE)</a> — [runbook-verified] Runbook: コンテナが起動しない (FEATURE) — : sonic-net/sonic-host-services @ c5bbbe8 — hos…</li>
 <li><a href="../../reference/runbooks/techsupport-timeout/">show techsupport が timeout する</a> — [runbook-verified] Runbook: show techsupport が長時間 / global-timeout で abort する症状の切り分け と auto-techsu…</li>
 <li><a href="../../reference/runbooks/flex-counter-stuck/">counter が更新されない (FLEX_COUNTER)</a> — [code-verified] Runbook: counter が更新されない (FLEX_COUNTER) — : sonic-net/sonic-swss @ 4305596 — fl…</li>
@@ -36970,7 +36970,7 @@
 <li><a href="../../reference/runbooks/sai-table-full/">SAI table full (route / nexthop / FDB 上限到達)</a> — [code-verified] Runbook: SAI table full (route / nexthop / FDB 上限到達) の切り分けと対処。CRM threshold 越え…</li>
 <li><a href="../../reference/runbooks/smartswitch-dpu-image-install-failure/">SmartSwitch DPU image インストールが失敗する</a> — [code-verified] Runbook: SmartSwitch DPU image インストールが失敗する — : sonic-net/sonic-platform-daemons…</li>
 <li><a href="../../reference/runbooks/platform-fan-psu-anomaly/">show platform fan / psu で異常値が出る</a> — [code-verified] Runbook: show platform fan / psu で異常値が出る — : sonic-net/sonic-platform-daemons @…</li>
-<li><a href="../../reference/runbooks/interface-counters-reset/">show interfaces counters が突然リセットされる</a> — [runbook-verified] Runbook: show interfaces counters が突然リセットされる — : sonic-net/sonic-utilities @ 39…</li>
+<li><a href="../../reference/runbooks/interface-counters-reset/">show interfaces counters が突然リセットされる</a> — [runbook-verified] Runbook: show interfaces counters が突然リセットされる際の切り分け手順。portstat の差分 cache (/tmp/c…</li>
 <li><a href="../../reference/runbooks/bgp-graceful-restart-failure/">BGP Graceful Restart のネゴシエーションに失敗する</a> — [runbook-verified] Runbook: BGP Graceful Restart (GR) capability が対向と合致せず restart 時に経路断が発生する場合の切り分け</li>
 <li><a href="../../reference/runbooks/lldp-neighbor-flapping/">LLDP 隣接が頻繁に up/down する</a> — [runbook-verified] Runbook: LLDP neighbor が短周期で消える / 再出現する場合の切り分け</li>
 <li><a href="../../reference/runbooks/port-admin-up-oper-down/">Port が admin up なのに oper down のまま</a> — [runbook-verified] Runbook: <code>config interface startup</code> 済みでも oper down が解けない場合の切り分け</li>

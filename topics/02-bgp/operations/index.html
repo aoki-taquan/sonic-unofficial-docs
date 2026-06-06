@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="運用 — BGP の運用確認は、neighbor の状態確認だけでは足りない。route が FRR で選ばれているか、SONiC に渡っているか、ASIC に入ったか、外部監視に見えているかを分けて確認する。">
+        <meta name="description" content="BGP の運用確認は neighbor 状態だけでは足りない。FRR で best path か、APPL_DB / ASIC に届いたか、BMP や SNMP CiscoBgp4MIB の外部監視に出ているかを分けて確認する手順をまとめる。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="運用 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="運用 — BGP の運用確認は、neighbor の状態確認だけでは足りない。route が FRR で選ばれているか、SONiC に渡っているか、ASIC に入ったか、外部監視に見えているかを分けて確認する。" />
+<meta property="og:description" content="BGP の運用確認は neighbor 状態だけでは足りない。FRR で best path か、APPL_DB / ASIC に届いたか、BMP や SNMP CiscoBgp4MIB の外部監視に出ているかを分けて確認する手順をまとめる。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/02-bgp/operations.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/02-bgp/operations/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="運用 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="運用 — BGP の運用確認は、neighbor の状態確認だけでは足りない。route が FRR で選ばれているか、SONiC に渡っているか、ASIC に入ったか、外部監視に見えているかを分けて確認する。" />
+<meta property="twitter:description" content="BGP の運用確認は neighbor 状態だけでは足りない。FRR で best path か、APPL_DB / ASIC に届いたか、BMP や SNMP CiscoBgp4MIB の外部監視に出ているかを分けて確認する手順をまとめる。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/02-bgp/operations.png" />
 </head>
   
@@ -36203,29 +36203,141 @@
 <li>orchagent が route/nexthop group を処理し、SAI エラーを出していないかを見る。</li>
 <li>Suppress FIB Pending が有効な構成では、offload 完了まで advertise が抑止されていないか確認する。</li>
 </ol>
-<p>歴史的な Route Install Error Handling <a href="../../../reference/glossary/#term-hld">HLD</a> は <code>ERROR_ROUTE_TABLE</code> と <code>FIB-install pending</code> 表示を提案しているが、現行実装とは乖離がある扱いで残っている。実運用では <a href="../../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/">BGP Suppress FIB Pending</a> と組み合わせて読む。</p>
+<!-- evidence:
+source: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L110-L115 (sha: 4305596)
+excerpt: |
+  deviceMetadataTable.hget("localhost", "suppress-fib-pending", suppressionEnabledStr);
+  if (suppressionEnabledStr == "enabled")
+reasoning: fpmsyncd は DEVICE_METADATA の suppress-fib-pending フラグを読み、enable 時のみ FIB pending 検出フローを起動する。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L110-L115 (sha: 4305596)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L110-L115 (sha: 4305596)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>deviceMetadataTable.hget(&quot;localhost&quot;, &quot;suppress-fib-pending&quot;, suppressionEnabledStr);
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>if (suppressionEnabledStr == &quot;enabled&quot;)
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: fpmsyncd は DEVICE_METADATA の suppress-fib-pending フラグを読み、enable 時のみ FIB pending 検出フローを起動する。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<p>歴史的な Route Install Error Handling <a href="../../../reference/glossary/#term-hld">HLD</a> は <code>ERROR_ROUTE_TABLE</code> と <code>FIB-install pending</code> 表示を提案しているが、現行 master の orchagent / fpmsyncd にはこの table 名のコードは存在せず、後発の Suppress FIB Pending（fpmsyncd の <code>suppress-fib-pending</code> フラグ + zebra <code>bgp suppress-fib-pending</code> 連携）で部分的に置換されている扱いになっている。</p>
+<!-- evidence:
+source: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L110-L300 (sha: 4305596)
+excerpt: |
+  // fpmsyncd では suppress-fib-pending のハンドリングのみが存在し、
+  // ERROR_ROUTE_TABLE / fib-install pending という旧 HLD の table 名は存在しない。
+reasoning: Route Install Error Handling HLD は現行 master では別経路（suppress-fib-pending）に置き換わっており、HLD と実装に乖離がある旨を裏取り。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L110-L300 (sha: 4305596)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L110-L300 (sha: 4305596)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>// fpmsyncd では suppress-fib-pending のハンドリングのみが存在し、
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>// ERROR_ROUTE_TABLE / fib-install pending という旧 HLD の table 名は存在しない。
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: Route Install Error Handling HLD は現行 master では別経路（suppress-fib-pending）に置き換わっており、HLD と実装に乖離がある旨を裏取り。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<p>実運用では <a href="../../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/">BGP Suppress FIB Pending</a> と組み合わせて読む。</p>
 <h2 id="bmp">BMP は何を見る機能か<a class="headerlink" href="#bmp" title="Permanent link">&para;</a></h2>
-<p>BMP は BGP の Adj-RIB-In/Out や peer state を外部 collector に送るための監視機構である。SONiC では BMP_STATE_DB と FRR 側の BMP 有効化が関わる。<a href="../../../reference/glossary/#term-multi-asic">Multi-ASIC</a> や <a href="../../../reference/glossary/#term-gnmi">gNMI</a> Streaming との接点もあるため、単なる <code>show bgp</code> の置き換えではなく、継続監視用の出口として読む。</p>
+<p>BMP は BGP の Adj-RIB-In/Out や peer state を外部 collector に送るための監視機構である。SONiC では <code>BMP_STATE_DB</code>（<code>sonic-swss-common/common/schema.h</code> で database id 20 として定義）と、<code>bmpcfgd</code> が <code>BGP_NEIGHBOR</code> / <code>BGP_RIB_IN_TABLE</code> / <code>BGP_RIB_OUT_TABLE</code> を書く構成、および FRR 側の BMP 有効化が関わる。</p>
+<!-- evidence:
+source: sonic-net/sonic-swss-common/common/schema.h#L33-L33 (sha: 158de8d)
+excerpt: |
+  #define BMP_STATE_DB        20
+reasoning: BMP_STATE_DB が swss-common 側で database id 20 として正式に定義されている裏取り。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss-common/common/schema.h#L33-L33 (sha: 158de8d)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss-common/common/schema.h#L33-L33 (sha: 158de8d)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>#define BMP_STATE_DB        20
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: BMP_STATE_DB が swss-common 側で database id 20 として正式に定義されている裏取り。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py#L21-L76 (sha: 799f47f)
+excerpt: |
+  BMP_STATE_DB = "BMP_STATE_DB"
+  self.state_db_conn.delete_all_by_pattern(BMP_STATE_DB, 'BGP_NEIGHBOR*')
+  self.state_db_conn.delete_all_by_pattern(BMP_STATE_DB, 'BGP_RIB_IN_TABLE*')
+  self.state_db_conn.delete_all_by_pattern(BMP_STATE_DB, 'BGP_RIB_OUT_TABLE*')
+reasoning: bmpcfgd が BMP_STATE_DB 上の BGP_NEIGHBOR / BGP_RIB_IN_TABLE / BGP_RIB_OUT_TABLE を管理しており、Adj-RIB-In/Out が DB に出る構造が確認できる。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py#L21-L76 (sha: 799f47f)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py#L21-L76 (sha: 799f47f)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>BMP_STATE_DB = &quot;BMP_STATE_DB&quot;
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>self.state_db_conn.delete_all_by_pattern(BMP_STATE_DB, &#39;BGP_NEIGHBOR*&#39;)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>self.state_db_conn.delete_all_by_pattern(BMP_STATE_DB, &#39;BGP_RIB_IN_TABLE*&#39;)
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>self.state_db_conn.delete_all_by_pattern(BMP_STATE_DB, &#39;BGP_RIB_OUT_TABLE*&#39;)
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: bmpcfgd が BMP_STATE_DB 上の BGP_NEIGHBOR / BGP_RIB_IN_TABLE / BGP_RIB_OUT_TABLE を管理しており、Adj-RIB-In/Out が DB に出る構造が確認できる。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<p><a href="../../../reference/glossary/#term-multi-asic">Multi-ASIC</a> や <a href="../../../reference/glossary/#term-gnmi">gNMI</a> Streaming との接点もあるため、単なる <code>show bgp</code> の置き換えではなく、継続監視用の出口として読む。</p>
 <h2 id="ciscobgp4mib-state_db">CiscoBgp4MIB はなぜ STATE_DB 経由か<a class="headerlink" href="#ciscobgp4mib-state_db" title="Permanent link">&para;</a></h2>
 <p>CiscoBgp4MIB は SNMP から BGP neighbor 情報を見せるための互換面である。旧設計のように SNMP 実装が FRR の VTY socket に直接依存すると、daemon 間結合が強い。<a href="../../../reference/glossary/#term-state_db">STATE_DB</a> 経由化では <code>bgpmon</code> が FRR から情報を収集し、<code>NEIGH_STATE_TABLE</code> に書き、SNMP 側は DB を読む。運用上は、SNMP に出ない場合に FRR、bgpmon、STATE_DB、snmp_ax_impl のどこで止まっているかを分けて確認できる。</p>
+<!-- evidence:
+source: sonic-net/sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py#L29-L40 (sha: 329f1cc)
+excerpt: |
+  self.neigh_state_map = Namespace.dbs_keys_namespace(self.db_conn, mibs.STATE_DB, "NEIGH_STATE_TABLE|*")
+  ...
+  neigh_info = self.db_conn[db_index].get_all(mibs.STATE_DB, neigh_key, blocking=False)
+  state = neigh_info['state']
+reasoning: CiscoBgp4MIB の実装が FRR VTY ではなく STATE_DB の NEIGH_STATE_TABLE から neighbor state を読み出していることを確認。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py#L29-L40 (sha: 329f1cc)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py#L29-L40 (sha: 329f1cc)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>self.neigh_state_map = Namespace.dbs_keys_namespace(self.db_conn, mibs.STATE_DB, &quot;NEIGH_STATE_TABLE|*&quot;)
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>...
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>neigh_info = self.db_conn[db_index].get_all(mibs.STATE_DB, neigh_key, blocking=False)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>state = neigh_info[&#39;state&#39;]
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: CiscoBgp4MIB の実装が FRR VTY ではなく STATE_DB の NEIGH_STATE_TABLE から neighbor state を読み出していることを確認。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="show-bgp-summary">show bgp summary の出力サンプル<a class="headerlink" href="#show-bgp-summary" title="Permanent link">&para;</a></h2>
 <p><code>show ip bgp summary</code> は FRR の <code>show bgp ipv4 unicast summary</code> を整形したものである。代表的な T1 ToR の構成では次のように 24 neighbor が並ぶ。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>IPv4 Unicast Summary:
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>BGP router identifier 10.1.0.32, local AS number 65100 vrf-id 0
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>BGP table version 12811
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>RIB entries 12817, using 2358328 bytes of memory
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Peers 24, using 502080 KiB of memory
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>Peer groups 4, using 256 bytes of memory
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>Neighbor       V     AS    MsgRcvd    MsgSent    TblVer    InQ    OutQ  Up/Down    State/PfxRcd    NeighborName
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>-----------  ---  -----  ---------  ---------  --------  -----  ------  ---------  --------------  --------------
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>10.0.0.1       4  65200       5919       2717         0      0       0  1d21h11m   6402            ARISTA01T2
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>10.0.0.5       4  65200       5916       2714         0      0       0  1d21h10m   6402            ARISTA03T2
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>10.0.0.33      4  64001          0          0         0      0       0  never      Active          ARISTA01T0
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>10.0.0.35      4  64002          0          0         0      0       0  never      Active          ARISTA02T0
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>...
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>Total number of neighbors 24
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>IPv4 Unicast Summary:
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>BGP router identifier 10.1.0.32, local AS number 65100 vrf-id 0
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>BGP table version 12811
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>RIB entries 12817, using 2358328 bytes of memory
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>Peers 24, using 502080 KiB of memory
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>Peer groups 4, using 256 bytes of memory
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>Neighbor       V     AS    MsgRcvd    MsgSent    TblVer    InQ    OutQ  Up/Down    State/PfxRcd    NeighborName
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>-----------  ---  -----  ---------  ---------  --------  -----  ------  ---------  --------------  --------------
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>10.0.0.1       4  65200       5919       2717         0      0       0  1d21h11m   6402            ARISTA01T2
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>10.0.0.5       4  65200       5916       2714         0      0       0  1d21h10m   6402            ARISTA03T2
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>10.0.0.33      4  64001          0          0         0      0       0  never      Active          ARISTA01T0
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>10.0.0.35      4  64002          0          0         0      0       0  never      Active          ARISTA02T0
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>...
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>Total number of neighbors 24
 </span></code></pre></div>
 <p><a href="../../../reference/glossary/#term-vrf">VRF</a> 指定時（<code>show ip bgp summary vrf Vrf_red</code> 等）は <code>vrf-id</code> が 0 ではなく VRF の数値 ID になり、neighbor 集合も VRF スコープに限定される。</p>
 <p>カラムの読み方:</p>
@@ -36283,16 +36395,16 @@
 </table>
 <h2 id="frr-swss">典型的な FRR / SWSS ログサンプル<a class="headerlink" href="#frr-swss" title="Permanent link">&para;</a></h2>
 <p>FRR / bgpd の <code>Last reset reason</code> 系メッセージは syslog にも出る。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>bgpd[28]: %ADJCHANGE: neighbor 10.0.0.1(ARISTA01T2) in vrf default Up
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>bgpd[28]: %NOTIFICATION: sent to neighbor 10.0.0.1 4/0 (Hold Timer Expired) 0 bytes
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>bgpd[28]: %ADJCHANGE: neighbor 10.0.0.1(ARISTA01T2) in vrf default Down BGP Notification send
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>zebra[18]: client 5 disconnected
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>fpmsyncd[15]: Received route update for prefix 10.1.0.32/32 nexthop 10.0.0.0 (RTM_NEWROUTE)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>bgpd[28]: %ADJCHANGE: neighbor 10.0.0.1(ARISTA01T2) in vrf default Up
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>bgpd[28]: %NOTIFICATION: sent to neighbor 10.0.0.1 4/0 (Hold Timer Expired) 0 bytes
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>bgpd[28]: %ADJCHANGE: neighbor 10.0.0.1(ARISTA01T2) in vrf default Down BGP Notification send
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>zebra[18]: client 5 disconnected
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>fpmsyncd[15]: Received route update for prefix 10.1.0.32/32 nexthop 10.0.0.0 (RTM_NEWROUTE)
 </span></code></pre></div>
 <p>orchagent / syncd 側の典型エラー（route programming 失敗時）:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>orchagent: :- create: Failed to create next hop 10.0.0.1 on Ethernet0, rv:-2
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>orchagent: :- doTask: Failed to remove still referenced next hop 10.0.0.1 on Ethernet0
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>syncd: :- processQuadEvent: api SAI_API_ROUTE failed in syncd mode: SAI_STATUS_ITEM_ALREADY_EXISTS
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>orchagent: :- create: Failed to create next hop 10.0.0.1 on Ethernet0, rv:-2
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>orchagent: :- doTask: Failed to remove still referenced next hop 10.0.0.1 on Ethernet0
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>syncd: :- processQuadEvent: api SAI_API_ROUTE failed in syncd mode: SAI_STATUS_ITEM_ALREADY_EXISTS
 </span></code></pre></div>
 <p><code>SAI_STATUS_INSUFFICIENT_RESOURCES</code> が出る場合は LPM / NextHop / NHG のいずれかが枯渇している。<code>crm</code> を確認する。</p>
 <h2 id="_4">対応コマンド早見表<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -36374,32 +36486,61 @@
 </ul>
 <h2 id="show">追加の show 出力例<a class="headerlink" href="#show" title="Permanent link">&para;</a></h2>
 <p><code>show ip bgp neighbor 10.0.0.1</code> の主要部抜粋である。Established 確認時はまず <code>BGP state</code> と <code>Last reset</code> を見る。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>BGP neighbor is 10.0.0.1, remote AS 65200, local AS 65100, external link
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  Description: ARISTA01T2
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  BGP version 4, remote router ID 10.1.0.1
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  BGP state = Established, up for 1d21h11m
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  Last read 00:00:01, Last write 00:00:00
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  Hold time is 180, keepalive interval is 60 seconds
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  Neighbor capabilities:
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    4 Byte AS: advertised and received
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    Route refresh: advertised and received(old &amp; new)
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    Graceful Restart Capability: advertised and received
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>      Remote Restart timer is 120 seconds
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>  Graceful restart information:
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    End-of-RIB send: IPv4 Unicast
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    End-of-RIB received: IPv4 Unicast
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>  Message statistics:
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>                         Sent       Rcvd
-</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>    Opens:                  1          1
-</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>    Notifications:          0          0
-</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>    Updates:              641       3204
-</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>    Keepalives:          2074       2713
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>BGP neighbor is 10.0.0.1, remote AS 65200, local AS 65100, external link
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  Description: ARISTA01T2
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>  BGP version 4, remote router ID 10.1.0.1
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>  BGP state = Established, up for 1d21h11m
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>  Last read 00:00:01, Last write 00:00:00
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>  Hold time is 180, keepalive interval is 60 seconds
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>  Neighbor capabilities:
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    4 Byte AS: advertised and received
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>    Route refresh: advertised and received(old &amp; new)
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    Graceful Restart Capability: advertised and received
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>      Remote Restart timer is 120 seconds
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>  Graceful restart information:
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>    End-of-RIB send: IPv4 Unicast
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>    End-of-RIB received: IPv4 Unicast
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>  Message statistics:
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>                         Sent       Rcvd
+</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>    Opens:                  1          1
+</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>    Notifications:          0          0
+</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>    Updates:              641       3204
+</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a>    Keepalives:          2074       2713
 </span></code></pre></div>
 <p><code>Last reset</code> 行が無いケースは初回 Established 維持中である。<code>Dropped</code> カウンタが増えている場合は session が一度落ちてから再確立されている。</p>
 <h2 id="_6">典型的な運用シナリオ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>新規 peer 追加</strong> — <code>config bgp ...</code> または <a href="../../../reference/glossary/#term-gcu">GCU</a> patch で <code>BGP_NEIGHBOR</code> を追加し、<code>show ip bgp summary</code> で <code>Up/Down</code> が <code>never</code> から時刻に切り替わるかを観察する。<code>Active</code> のまま停滞するなら ACL / source IP / MD5 を疑う。</li>
-<li><strong>メンテナンスモード移行</strong> — <code>sudo TSA</code>（Traffic Shift Away）で community-based route policy を切り替え、上流に低 LOCAL_PREF を広告して traffic を引き受けないようにしてから、debug や upgrade を行う。復旧は <code>sudo TSB</code>。</li>
+<li><strong>メンテナンスモード移行</strong> — <code>sudo TSA</code>（Traffic Shift Away）で外部 neighbor 向け route-map を <code>bgpd/tsa/bgpd.tsa.isolate.conf.j2</code> テンプレートから生成して <code>vtysh -f</code> で適用し、AS-path prepend や community 操作で上流から traffic を引き寄せないようにしてから、debug や upgrade を行う。復旧は <code>sudo TSB</code>（unisolate）。スクリプト本体は docker-fpm-frr コンテナの <code>/usr/bin/TSA</code>、<code>/usr/bin/TSB</code> にある。</li>
+</ol>
+<!-- evidence:
+source: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/TSA#L1-L40 (sha: 799f47f)
+excerpt: |
+  source /usr/bin/TS
+  ...
+  sonic-cfggen ... -t /usr/share/sonic/templates/bgpd/tsa/bgpd.tsa.isolate.conf.j2 > "$TSA_FILE"
+  vtysh -f "$TSA_FILE"
+  echo "System Mode: Normal -> Maintenance"
+reasoning: TSA が community ではなく vtysh + tsa isolate テンプレートで route-map を差し替える形を取っており、本文の「community-based route policy 切り替え + 低 LOCAL_PREF 広告」という表現を「外部 neighbor 向け route-map を tsa テンプレートで差し替え + AS-path prepend / community 操作」に補正。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/TSA#L1-L40 (sha: 799f47f)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-buildimage/dockers/docker-fpm-frr/TSA#L1-L40 (sha: 799f47f)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>source /usr/bin/TS
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>...
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>sonic-cfggen ... -t /usr/share/sonic/templates/bgpd/tsa/bgpd.tsa.isolate.conf.j2 &gt; &quot;$TSA_FILE&quot;
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>vtysh -f &quot;$TSA_FILE&quot;
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>echo &quot;System Mode: Normal -&gt; Maintenance&quot;
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: TSA が community ではなく vtysh + tsa isolate テンプレートで route-map を差し替える形を取っており、本文の「community-based route policy 切り替え + 低 LOCAL_PREF 広告」という表現を「外部 neighbor 向け route-map を tsa テンプレートで差し替え + AS-path prepend / community 操作」に補正。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<ol>
 <li><strong>peer flap の調査</strong> — <code>show ip bgp neighbor X</code> の <code>Dropped</code> と <code>Last reset reason</code> を見て、hold-timer expired か NOTIFICATION 受信か、TCP RST かを切り分ける。<code>bgpd</code> syslog の <code>%ADJCHANGE</code> の連続を時系列で並べると周期が見える。</li>
 <li><strong>policy 変更後の収束確認</strong> — <code>vtysh -c "clear ip bgp &lt;ip&gt; soft"</code> で再 advertise を促し、<code>received-routes</code> / <code>advertised-routes</code> 数の変化を見る。<code>clear ip bgp *</code> は全 peer に影響するので避ける。</li>
 <li><strong>route leak 疑い</strong> — VRF 内 BGP の <code>show ip bgp vrf &lt;vrf&gt;</code> と <code>show ip route vrf &lt;vrf&gt;</code> を突き合わせ、想定外の prefix がどの peer / route-map / import から来たかを調べる。<code>show bgp ipv4 unicast &lt;prefix&gt; bestpath</code> で attribute も確認する。</li>

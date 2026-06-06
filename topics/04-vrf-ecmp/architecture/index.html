@@ -1917,10 +1917,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#route_table-next_hop_group_table" class="md-nav__link">
+  <a href="#route_table-nexthop_group_table" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ROUTE_TABLE と NEXT_HOP_GROUP_TABLE
+        ROUTE_TABLE と NEXTHOP_GROUP_TABLE
       
     </span>
   </a>
@@ -35942,10 +35942,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#route_table-next_hop_group_table" class="md-nav__link">
+  <a href="#route_table-nexthop_group_table" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ROUTE_TABLE と NEXT_HOP_GROUP_TABLE
+        ROUTE_TABLE と NEXTHOP_GROUP_TABLE
       
     </span>
   </a>
@@ -36056,12 +36056,12 @@
 <li><code>RouteOrch</code> は route を <a href="../../../reference/glossary/#term-sai">SAI</a> route object にし、VRF OID、<a href="../../../reference/glossary/#term-rif">RIF</a>、next hop、NHG の準備ができるまで pending します。</li>
 <li><code>syncd</code> が SAI API を通じて ASIC に反映します。</li>
 </ul>
-<h2 id="route_table-next_hop_group_table">ROUTE_TABLE と NEXT_HOP_GROUP_TABLE<a class="headerlink" href="#route_table-next_hop_group_table" title="Permanent link">&para;</a></h2>
+<h2 id="route_table-nexthop_group_table">ROUTE_TABLE と NEXTHOP_GROUP_TABLE<a class="headerlink" href="#route_table-nexthop_group_table" title="Permanent link">&para;</a></h2>
 <p>従来の <code>ROUTE_TABLE</code> は route ごとに <code>nexthop</code> と <code>ifname</code> を直接持ちます。大量 prefix が同じ next-hop set を共有する環境では、この形は <a href="../../../reference/glossary/#term-redis">Redis</a> payload と orchagent の処理量が増えます。</p>
-<p><a href="../../../routing/routing-and-next-hop-table-enhancement/">NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離</a> は、next-hop set を <code>NEXT_HOP_GROUP_TABLE</code> に切り出し、route 側は <code>nexthop_group</code> で参照する形を説明しています。RouteOrch は <code>nexthop_group</code> を見つけると NhgOrch に SAI OID を問い合わせ、準備できていなければ route を pending に残します。</p>
+<p><a href="../../../routing/routing-and-next-hop-table-enhancement/">NEXTHOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離</a> は、next-hop set を <code>NEXTHOP_GROUP_TABLE</code> に切り出し、route 側は <code>nexthop_group</code> で参照する形を説明しています。RouteOrch は <code>nexthop_group</code> を見つけると NhgOrch に SAI OID を問い合わせ、準備できていなければ route を pending に残します。<code>APP_NEXTHOP_GROUP_TABLE_NAME</code> は <code>sonic-swss-common</code> の <code>common/schema.h</code> で <code>"NEXTHOP_GROUP_TABLE"</code> として定義され、<code>orchagent</code> と <code>fpmsyncd</code> が同名で参照します。<!-- evidence: sonic-net/sonic-swss-common common/schema.h L55; sonic-net/sonic-swss orchagent/orchdaemon.cpp L338 --></p>
 <h2 id="frr-nhg">FRR から NHG を直接運ぶ拡張<a class="headerlink" href="#frr-nhg" title="Permanent link">&para;</a></h2>
 <p><a href="../../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/">fpmsyncd NextHop Group 拡張</a> は、FRR <a href="../../../reference/glossary/#term-zebra">zebra</a> の nexthop group netlink 情報を <code>fpmsyncd</code> が受け、<code>NEXTHOP_GROUP_TABLE</code> と <code>ROUTE_TABLE.nexthop_group</code> に分けて書く設計です。BGP PIC や recursive route のように、多数 prefix が同じ next-hop group を共有する構成で効きます。</p>
-<p>ただし、このページは <a href="../../../reference/glossary/#term-hld">HLD</a>-only として整理されています。現行実装で有効かどうかを判断する場合は、該当ページの裏取りステータスと実装メモを確認してください。</p>
+<p>この拡張ページは現行 <code>fpmsyncd</code> 実装との乖離 (<code>discrepancy-found</code>) として整理されています。有効化条件と挙動の細部は、リンク先ページの discrepancy ノートを確認してください。</p>
 <h2 id="frr-sonic">FRR-SONiC 通信チャネル<a class="headerlink" href="#frr-sonic" title="Permanent link">&para;</a></h2>
 <p>FRR と SONiC の境界は FPM です。<a href="../../../routing/new-frr-sonic-communication-channel/">新 FRR-SONiC 通信チャネル</a> は、既存 <code>dplane_fpm_nl</code> では SONiC 固有属性を運びにくい問題に対し、SONiC 側で保守する <code>dplane_fpm_sonic</code> モジュールを使う設計を説明しています。</p>
 <p>この章の通常 L3 route だけを見るなら「FRR zebra から <code>fpmsyncd</code> へ FPM で渡る」で十分です。<a href="../../../reference/glossary/#term-srv6">SRv6</a> のように SONiC 固有 TLV が必要な機能へ進むと、この通信チャネルの違いが重要になります。</p>
@@ -36102,7 +36102,7 @@
 <p><a href="../../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化</a> は、route programming、ARP/ND、bulk API、<code>show arp</code> / <code>show ndp</code> の性能改善をまとめています。大量 route や大きい <a href="../../../reference/glossary/#term-ecmp">ECMP</a> を扱うときは、route 数だけでなく ARP/ND、<a href="../../../reference/glossary/#term-copp">CoPP</a>、bulk route API、show コマンドの応答も同時に見ます。</p>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../../routing/routing-and-next-hop-table-enhancement/">NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離</a></li>
+<li><a href="../../../routing/routing-and-next-hop-table-enhancement/">NEXTHOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離</a></li>
 <li><a href="../../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/">fpmsyncd NextHop Group 拡張</a></li>
 <li><a href="../../../routing/new-frr-sonic-communication-channel/">新 FRR-SONiC 通信チャネル</a></li>
 <li><a href="../../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化</a></li>

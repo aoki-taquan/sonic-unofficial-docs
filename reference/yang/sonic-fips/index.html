@@ -36336,11 +36336,12 @@
 <h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="_7">典型的なデプロイ位置<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li>FIPS モード (連邦暗号規格) 制御。<code>FIPS|global</code> を <a href="../../glossary/#term-hostcfgd">hostcfgd</a> が openssl / kernel crypto に反映。</li>
+<li>FIPS モード (連邦暗号規格) 制御。<code>FIPS|global</code> の変更を <a href="../../glossary/#term-hostcfgd">hostcfgd</a> の <code>FipsCfg</code> ハンドラが subscribe し、<code>enable</code> 時には OpenSSL の FIPS フラグファイル <code>/etc/fips/fips_enable</code> を <code>1</code> に更新したうえで対象サービス (ssh, telemetry.service, restapi) を再起動する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。<code>enforce</code> 時には bootloader (grub/uboot/aboot) のカーネル cmdline に <code>sonic_fips=1</code> を書き込み、次回ブートで kernel FIPS モードを有効化する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</li>
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li>FIPS 有効化後は md5 ベース TACACS+ 認証が拒否される。事前に SHA 系へ移行が必要。</li>
+<li><code>enforce=true</code> で書き込んだ kernel cmdline の反映は再起動が必要。<code>/etc/fips/fips_enable</code> 経由の OpenSSL 反映 (<code>enable=true</code>) との二段構成である点に注意<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
+<li><code>enforce</code> モードでは <code>FipsCfg</code> がサービス再起動をスキップする (kernel 強制側に委ねる) ため、設定変更直後に sshd が再起動しないことがある<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
 </ul>
 <h3 id="config-show">関連する config / show コマンド<a class="headerlink" href="#config-show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FIPS|global&#39;</span>
@@ -36356,6 +36357,12 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-fips.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-host-services</code> <code>scripts/hostcfgd</code> の <code>FipsCfg</code> クラス (L1753-L1846) — <code>OPENSSL_FIPS_CONFIG_FILE = '/etc/fips/fips_enable'</code>, <code>DEFAULT_FIPS_RESTART_SERVICES = ['ssh', 'telemetry.service', 'restapi']</code>, <code>update_noneenforce_config</code> がフラグファイル書き換えとサービス再起動、<code>update_enforce_config</code> が bootloader 経由の cmdline 書き換えを担当する。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-utilities</code> <code>sonic_installer/bootloader/grub.py</code> <code>set_fips()</code> (L126) — grub の cmdline へ <code>sonic_fips=1</code> を追記。<code>aboot.py</code> / <code>uboot.py</code> にも同等実装あり。<code>sonic_installer/main.py</code> <code>set_fips</code> コマンド (L693) からも CLI で操作可能。&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

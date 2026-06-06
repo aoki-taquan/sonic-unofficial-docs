@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: FEC エラーが多発する — : sonic-net/sonic-platform-daemons @ 4ba9612 — xcvrd / DOM 監視 : sonic-net/sonic-swss @ 4305596 — portsorch">
+        <meta name="description" content="Runbook: FEC エラーが多発する。両端 FEC モード不一致 / 物理層異常 / 光モジュール非互換 / DAC 規格不一致 / speed ミスマッチを切り分け、portsorch の FEC mode 設定 (SAI_PORT_ATTR_FEC_MODE) と xcvrd の DOM 監視を起点に手順を示す。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="FEC エラーが多発する - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: FEC エラーが多発する — : sonic-net/sonic-platform-daemons @ 4ba9612 — xcvrd / DOM 監視 : sonic-net/sonic-swss @ 4305596 — portsorch" />
+<meta property="og:description" content="Runbook: FEC エラーが多発する。両端 FEC モード不一致 / 物理層異常 / 光モジュール非互換 / DAC 規格不一致 / speed ミスマッチを切り分け、portsorch の FEC mode 設定 (SAI_PORT_ATTR_FEC_MODE) と xcvrd の DOM 監視を起点に手順を示す。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/fec-errors.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/fec-errors/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="FEC エラーが多発する - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: FEC エラーが多発する — : sonic-net/sonic-platform-daemons @ 4ba9612 — xcvrd / DOM 監視 : sonic-net/sonic-swss @ 4305596 — portsorch" />
+<meta property="twitter:description" content="Runbook: FEC エラーが多発する。両端 FEC モード不一致 / 物理層異常 / 光モジュール非互換 / DAC 規格不一致 / speed ミスマッチを切り分け、portsorch の FEC mode 設定 (SAI_PORT_ATTR_FEC_MODE) と xcvrd の DOM 監視を起点に手順を示す。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/fec-errors.png" />
 </head>
   
@@ -36107,7 +36107,7 @@
 <ul>
 <li><code>show interfaces counters errors</code> で <code>RX_ERR</code> / <code>SYMBOL_ERR</code> が継続的に増加</li>
 <li>リンク自体は UP するが、BER が高く上位プロトコル（<a href="../../glossary/#term-bgp">BGP</a> / <a href="../../glossary/#term-lacp">LACP</a>）が flap</li>
-<li><code>show interfaces counters fec-stats</code> で FEC corrected/uncorrected カウンタが急増</li>
+<li><code>show interfaces counters fec-stats</code> で FEC corrected/uncorrected カウンタが急増 (<a href="../../glossary/#term-portsorch">portsorch</a> が <code>SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES</code> / <code>..._NOT_CORRECTABLE_FRAMES</code> を <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> に集計)<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
@@ -36135,6 +36135,7 @@
 <ul>
 <li>期待: 両端で一致 (<code>rs</code> 推奨 for 100G+)</li>
 <li>異常: 片側のみ <code>none</code> → 即時不一致</li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>fec</code> は <a href="../../glossary/#term-portsorch">portsorch</a> (<code>PortsOrch::doPortTask</code> → <code>setPortFec</code>) が <a href="../../glossary/#term-sai">SAI</a> 属性 <code>SAI_PORT_ATTR_FEC_MODE</code> として <a href="../../glossary/#term-asic">ASIC</a> に適用する。<a href="../../glossary/#term-sai">SAI</a> 反映に失敗した場合 syslog に <code>Failed to set FEC mode</code> が出る<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
 <h3 id="2">2. エラーカウンタの内訳<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span>errors
@@ -36182,16 +36183,16 @@
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: 889740d66e5f -->
+<!-- glossary-links-injected: 0fef3ea5b562 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-platform-daemons @ 4ba9612 — xcvrd / DOM 監視&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/sonic-platform-daemons @ 4ba9612 — xcvrd / DOM 監視 (<code>sonic-xcvrd/xcvrd/xcvrd.py</code>)&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <a href="../../glossary/#term-portsorch">portsorch</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <a href="../../glossary/#term-portsorch">portsorch</a> (<code>orchagent/portsorch.cpp</code> <code>setPortFec</code> L2386-L2411 / FEC カウンタ <code>SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES</code> 等 L306-L325)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
