@@ -98,7 +98,7 @@ VLAN_SUB_INTERFACE|<subif>|<prefix>:
 
 ### Linux 連携
 
-intfmgrd は kernel host 側に **vlan device**（`ip link add link Ethernet0 name Eth0.10 type vlan id 10`）を作る。route / neighbor は通常通り netlink 経由で APPDB に流れる[^1]。
+[intfmgrd](../reference/glossary.md#term-intfmgrd) は kernel host 側に **vlan device**（`ip link add link Ethernet0 name Eth0.10 type vlan id 10`）を作る。route / neighbor は通常通り netlink 経由で APPDB に流れる[^1]。
 
 ### Runtime admin status / MTU
 
@@ -207,4 +207,4 @@ ip -d link show Ethernet0.10
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 183909f005dc -->
+<!-- glossary-links-injected: d1e382c60610 -->

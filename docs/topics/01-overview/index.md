@@ -83,7 +83,7 @@ related:
 | ページ | 行数 | 状態 | verification | 主目的 |
 |---|---|---|---|---|
 | concept | 153 | ✅ 完成 | meta | 概念・位置付け |
-| setup | 121 | ✅ 完成 | meta | セットアップ手順 |
+| setup | 123 | ✅ 完成 | meta | セットアップ手順 |
 | architecture | 74 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
 | configuration | 61 | ⚠️ プレースホルダ | meta | 設定手段の選び方 |
 | operations | 181 | ✅ 完成 | meta | 運用・デバッグ |

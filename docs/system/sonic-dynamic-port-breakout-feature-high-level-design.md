@@ -78,7 +78,7 @@ flowchart LR
 
 ### `-f` / `--force-remove-dependencies`
 
-`config interface breakout` の `-f` フラグ（正式名は `--force-remove-dependencies`）は、削除対象 port を参照している周辺設定（VLAN_MEMBER / PORT_CHANNEL_MEMBER / ACL / IP / neighbor 等）を **YANG dependency tree から自動削除した上で** port 削除・追加を続行するためのもの[^2]。
+`config interface breakout` の `-f` フラグ（正式名は `--force-remove-dependencies`）は、削除対象 port を参照している周辺設定（VLAN_MEMBER / PORT_CHANNEL_MEMBER / ACL / IP / neighbor 等）を **[YANG](../reference/glossary.md#term-yang) dependency tree から自動削除した上で** port 削除・追加を続行するためのもの[^2]。
 
 挙動の境界:
 
@@ -156,4 +156,4 @@ show platform summary
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: d5320e852f7a -->
