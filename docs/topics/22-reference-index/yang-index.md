@@ -13,7 +13,7 @@ related:
 
 # YANG 横断索引
 
-`docs/reference/yang/` 配下に辞書化済みの **84** native [SONiC](../../reference/glossary.md#term-sonic) [YANG](../../reference/glossary.md#term-yang) モジュールを、機能章ごとに並べ直した逆引き索引である。SONiC の native YANG は概ね `sonic-<feature>.yang` の命名で [CONFIG_DB](../../reference/glossary.md#term-config_db) の table family に 1 対 1 ないし 1 対多で対応している。
+`docs/reference/yang/` 配下に辞書化済みの **84** native [SONiC](../../reference/glossary.md#term-sonic) [YANG](../../reference/glossary.md#term-yang) モジュールを、機能章ごとに並べ直した逆引き索引である<!-- evidence: docs/reference/yang/sonic-*.md (84 pages) -->。SONiC の native YANG は概ね `sonic-<feature>.yang` の命名で [CONFIG_DB](../../reference/glossary.md#term-config_db) の table family に 1 対 1 ないし 1 対多で対応している。
 
 management framework (Sonic-MGMT-Framework) / [gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig との対応関係は別章で扱う方針で、本ページは native SONiC YANG モジュールから機能章へ戻る逆引きに専念する。アルファベット順の一覧が必要な場合は [リファレンス: YANG モジュール](../../reference/yang/index.md) を参照すること。
 
@@ -168,7 +168,7 @@ native SONiC YANG は CONFIG_DB の table 構造を素直に表す。一方、ma
 
 ## 未カバーのモジュール
 
-upstream の `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/` には約 136 の `.yang` ファイルが存在するが、本サイトで個別ページ化済みなのは上記 84 モジュールである。差分には以下のような共通モジュール / 内部モジュール / 派生機能が含まれる:
+upstream の `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/` には 136 個の `sonic-*.yang` ファイルが存在するが<!-- evidence: src/sonic-yang-models/yang-models/sonic-*.yang (sonic-buildimage master, 136 entries) -->、本サイトで個別ページ化済みなのは上記 84 モジュールである。差分には以下のような共通モジュール / 内部モジュール / 派生機能が含まれる:
 
 - 共通: `sonic-bgp-common`、`sonic-bgp-internal-neighbor`、`sonic-bgp-voq-chassis-neighbor`、`sonic-bgp-prefix-list`、`sonic-bgp-allowed-prefix`
 - DASH: `sonic-dash`
