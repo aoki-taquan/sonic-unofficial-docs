@@ -68,19 +68,18 @@ sequenceDiagram
 <!-- phase-boundary -->
 ## 実装フェーズ境界
 
-!!! info "Phase 別の実装済 / 未実装 サマリ"
-    本ページは `monitor: partially_implemented` で、HLD で示された一連の機能
-    が **段階的に取り込まれている** 状態を扱う。フェーズ毎の実装境界を
-    1 枚の表に集約する (詳細は本ページ上部の `diff` admonition および
-    [discrepancy-index](../reference/verification/discrepancy-index.md) を参照)。
+!!! info "gNSI サービス別の取り込み状況"
+    冒頭の note と同じ事実を、HLD の 4 サービスを軸に整理する。詳細な PR / コード
+    根拠は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を、横断索引は
+    [discrepancy-index](../reference/verification/discrepancy-index.md) を参照。
 
-    | Phase | 範囲 (機能 / 段階) | 実装済 (master 取り込み済) | 未実装 (HLD 提案のみ) |
+    | フェーズ | 対象サービス | 実装済 (master 取り込み済) | 未実装 / 未配線 |
     |---|---|---|---|
-    | Phase 1 — 基本機能 | HLD §概要 / §設計の中核ユースケース | 取り込み済 — 本ページの「実装の概観」「実装詳細」節および `diff` admonition の現状側を参照 | — (Phase 1 は実装済) |
-    | Phase 2 — 拡張機能 | HLD §拡張 / §追加要件 / §周辺統合 | 一部のみ取り込み済 — 本ページ「実装詳細」の補足参照 | 未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および `diff` admonition の差分側に列挙 |
-    | Phase 3 — 将来拡張 | HLD §Future Work / §将来課題 | — | 未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点) |
+    | Phase 1 — gNMI server handler 取り込み済 | Certz / Authz / Pathz | `sonic-gnmi/gnmi_server/gnsi_certz.go` / `gnsi_authz.go` / `gnsi_pathz.go` が存在し、Rotate / Probe / Profile 操作を提供[^2] | — |
+    | Phase 2 — dbus client のみ存在、server handler 未配線 | Credentialz | `sonic-gnmi/sonic_service_client/dbus_client.go` の Credentialz dbus API 部分のみ準備済[^3] | gNMI server 側の `gnsi_credentialz.go` 相当が未配置。Credentialz.Rotate は現状 `Unimplemented` |
+    | Phase 3 — HLD 上の host service 仕様待ち | Credentialz の `console_mgmt` / `ssh_mgmt` host service | — | HLD §5.5 / §5.6 で API 定義のみ[^1]。`sonic-host-services` 側の実装と gNMI dispatch の双方が必要 |
 
-    凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。
+    凡例: 「実装済」=現行 master のコードに存在しテストがある範囲 / 「未配線」=コードの一部は存在するが他の経路（server dispatch、host service 等）が未実装で end-to-end では動かない範囲。
 <!-- /phase-boundary -->
 
 ## 実装との乖離
@@ -90,5 +89,7 @@ sequenceDiagram
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnsi.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-gnmi` `gnmi_server/gnsi_certz.go` / `gnmi_server/gnsi_authz.go` / `gnmi_server/gnsi_pathz.go`（同階層に `*_test.go` も存在）
+[^3]: `sonic-net/sonic-gnmi` `sonic_service_client/dbus_client.go` の `//Credentialz service APIs` ブロック（53 行目付近〜）
 
 <!-- glossary-links-injected: 8ba32e5aa69d -->
