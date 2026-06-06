@@ -1269,7 +1269,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ASIC](#term-asic)
 
 - [SUPPRESS_ASIC_SDK_HEALTH_EVENT テーブル](config-db/suppress-asic-sdk-health-event.md) (112)
-- [サイトマップ](../_meta/sitemap.md) (100)
+- [サイトマップ](../_meta/sitemap.md) (101)
 - [CHASSIS_STATE_DB テーブル群](config-db/chassis-state.md) (65)
 - [概念](../topics/12-multi-asic-voq/concept.md) (65)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (54)
@@ -1279,8 +1279,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [BFD_SESSION_TABLE (STATE_DB)](config-db/bfd-state.md) (164)
 - [APPL_DB BFD_SESSION_TABLE (bfdorch)](config-db/bfd-orch.md) (155)
 - [BFD_SESSION テーブル](config-db/bfd-session.md) (155)
+- [BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）](../routing/bfd-hw-offload.md) (80)
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (77)
-- [BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）](../routing/bfd-hw-offload.md) (75)
 
 ### [BGP](#term-bgp)
 
