@@ -86,16 +86,16 @@ HLD §1.1 の性能要件と §2.2.1.1 のターゲットを以下に集約す�
     **個別に取り込まれている / 値が採用されていない** 状態を扱う。各系統の
     現状は以下のとおり（裏取り根拠は [limitations](l3-scaling-and-performance-enhancements-limitations.md) §2-3）。
 
-    | 系統 | 現状 | 補足 |
+    | Phase (系統) | 現状 | 補足 |
     |---|---|---|
-    | sairedis bulk route (`RouteOrch` + `gRouteBulker`) | 取り込み済 | `sonic-swss/orchagent/routeorch.cpp` L41 ほか |
-    | `fpmsyncd` の master device lookup スキップ | 取り込み済 | `sonic-swss/fpmsyncd/routesync.cpp` L2077-L2082 |
-    | kernel ARP/ND `gc_thresh` 引き上げ | 未採用 | 現行値は v4/v6 とも `1024/2048/4096`（HLD 提案 v4 16k/32k/48k は不採用） |
-    | CoPP ARP/ND 上限 8000 pps 化 | 未採用 | `copp_cfg.j2` で `arp` trap は `queue4_group2`（cir 600 のまま） |
+    | sairedis bulk route (`RouteOrch` + `gRouteBulker`) | 実装済 (取り込み済) | `sonic-swss/orchagent/routeorch.cpp` L41 ほか |
+    | `fpmsyncd` の master device lookup スキップ | 実装済 (取り込み済) | `sonic-swss/fpmsyncd/routesync.cpp` L2077-L2082 |
+    | kernel ARP/ND `gc_thresh` 引き上げ | 未実装 (未採用) | 現行値は v4/v6 とも `1024/2048/4096`（HLD 提案 v4 16k/32k/48k は不採用） |
+    | CoPP ARP/ND 上限 8000 pps 化 | 未実装 (未採用) | `copp_cfg.j2` で `arp` trap は `queue4_group2`（cir 600 のまま） |
     | sairedis 内 nlohmann/json v3.6 更新 | 未検証 | 取り込み年代が古く本確認のスコープ外 |
     | `show arp` / `show ndp` 個別 FDB lookup | 未検証 | 本確認のスコープ外 |
 
-    凡例: 「取り込み済」=現行 master でコード確認 / 「未採用」=HLD 値は採用されず保守側で据え置き / 「未検証」=本確認スコープ外。
+    凡例: 「実装済 (取り込み済)」=現行 master でコード確認 / 「未実装 (未採用)」=HLD 値は採用されず保守側で据え置き / 「未検証」=本確認スコープ外。
 <!-- /phase-boundary -->
 
 ## 実装との乖離

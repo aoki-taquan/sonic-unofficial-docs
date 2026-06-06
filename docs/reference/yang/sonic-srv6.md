@@ -145,6 +145,6 @@ module: sonic-srv6
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-srv6.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
-[^2]: RFC 7950 §7.8.2 ("The list's "key" Statement") — list key leafs はインスタンスを一意に識別するため事実上必須だが、`mandatory` substatement の指定有無とは独立である。
+[^2]: RFC 7950 §7.8.2 ("The list's "key" Statement") — list key leafs はインスタンスを一意に識別するため事実上必須だが、`mandatory` substatement の指定有無とは独立した扱いとなる。
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
