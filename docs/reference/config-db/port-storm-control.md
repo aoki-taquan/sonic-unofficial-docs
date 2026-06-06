@@ -136,17 +136,17 @@ YANG および CLI には存在しないが、[orchagent](../../reference/glossa
 
 証跡: `policerorch.cpp:157-169`
 
-### kbps → SAI CIR 変換 (integer truncation)
+### kbps → SAI CIR 変換 (bytes/s 換算)
 
 ```
-CIR (bytes/s) = kbps * 1000 / 8
+CIR (bytes/s) = kbps * 1000 / 8 = kbps * 125
 ```
 
-整数演算のため、`kbps` が 8 の倍数でない場合は **切り捨て** が発生する (silent rounding)。  
-例: `kbps=1` → CIR=125 bytes/s (正確)、`kbps=3` → CIR=375 bytes/s (正確)、`kbps=7` → CIR=875 bytes/s (正確)。  
-kbps は通常大きな値のため実用上の影響は限定的だが、低レートでは注意が必要。
+`kbps * 1000` は常に 8 で割り切れる (1000 = 8 × 125) ため、C++ の整数除算でも端数は発生せず、任意の `kbps` 値が `kbps * 125` バイト/秒の CIR にマップされる。例: `kbps=1` → 125 bytes/s、`kbps=3` → 375 bytes/s、`kbps=7` → 875 bytes/s。
 
-証跡: `policerorch.cpp:181-184`
+注意点として、SAI 側および ASIC 側のレート量子化単位 (HW granularity) によっては要求 CIR と実効レートが完全一致しない可能性があるが、これは orchagent 層ではなく SAI / プラットフォームドライバ依存。
+
+証跡: `policerorch.cpp:181-184` (`attr.value.u64 = (stoul(value)*1000/8)`)
 
 ### update 時 remove-then-reapply による瞬間的 storm control 解除
 
