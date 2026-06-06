@@ -2,9 +2,21 @@
 title: 設定
 description: 設定 — ここでは、port 設定と platform 関連設定を、CLI / CONFIG_DB / YANG のどれから入るかという観点で整理します。全オプションは個別リファレンスに任せ、この章では入口の対応関係を示します。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: code-verified
+last_verified: 2026-06-06
+sources:
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: fwutil/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-platform-daemons
+  path: sonic-xcvrd/xcvrd/xcvrd_utilities/xcvr_table_helper.py
+  ref: 4ba9612cb7756651062d37f977e3df17d57f740d
+- repo: sonic-net/sonic-platform-daemons
+  path: sonic-xcvrd/xcvrd/xcvrd_utilities/optics_si_parser.py
+  ref: 4ba9612cb7756651062d37f977e3df17d57f740d
 related:
   cli:
   - config interface
@@ -120,21 +132,113 @@ show interfaces counters errors Ethernet8
 
 ## 設定シナリオ 3: platform firmware のステージング更新
 
-`fw-util` は装置上で BIOS / CPLD / [FPGA](../../reference/glossary.md#term-fpga) / SSD / optics を統一して扱います。本番投入前に「DUT 上に新 firmware を仕込み、次回 cold reboot で適用する」というステージング運用が典型です。
+`fwutil` は装置上で BIOS / CPLD / [FPGA](../../reference/glossary.md#term-fpga) / SSD / optics を統一して扱います。`config platform firmware install` / `config platform firmware update` は内部で `fwutil install` / `fwutil update` をそのまま呼ぶ薄いラッパーで、引数はそのまま透過されます[^cfg-platform-fw]。本番投入前に「ローカルファイルから直接 flash する」運用と、「次回起動する [SONiC](../../reference/glossary.md#term-sonic) イメージに同梱された firmware を使う」運用の 2 系統があります。
+
+ローカル firmware ファイルを直接インストールする例（`install` 経路、`fw_install` のシグネチャは `fw <fw_path> -y`[^fwutil-install]）:
 
 ```bash
 # 現状
 show platform firmware status
 
-# 取得
-sudo config platform firmware install chassis component BIOS fw /tmp/bios-2.0.bin --yes
+# ローカルパスから flash（-y で確認プロンプトを抑止）
+sudo config platform firmware install chassis component BIOS fw /tmp/bios-2.0.bin -y
+```
 
-# 次回 cold reboot で適用するように予約
-sudo config platform firmware update chassis component BIOS fw policy next
+次回起動予定の SONiC イメージに同梱されている firmware を使って更新する場合は `update` 経路を使い、`-i next` で「next image に同梱された fw_package」を参照させます[^fwutil-update]。「現在のイメージ側を更新する」のが default (`-i current`)、`-f` でバージョンチェックを無視して強制更新できます。
 
-# 適用は cold reboot 後
+```bash
+# 次回 boot 用 image に同梱の firmware で更新
+sudo config platform firmware update chassis component BIOS fw -i next -y
+
+# 適用に再起動が必要な component なら cold reboot
 sudo reboot
 ```
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/main.py#L8740-L8775 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @firmware.command(...)
+  @click.argument('args', nargs=-1, type=click.UNPROCESSED)
+  def install(args):
+      """Install platform firmware"""
+      cmd = ["fwutil", "install"] + list(args)
+  ...
+  def update(args):
+      """Update platform firmware"""
+      cmd = ["fwutil", "update"] + list(args)
+reasoning: config platform firmware install/update は fwutil install/update への passthrough。引数は無加工で渡る。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L8740-L8775 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L8740-L8775 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @firmware.command(...)
+    @click.argument('args', nargs=-1, type=click.UNPROCESSED)
+    def install(args):
+        """Install platform firmware"""
+        cmd = ["fwutil", "install"] + list(args)
+    ...
+    def update(args):
+        """Update platform firmware"""
+        cmd = ["fwutil", "update"] + list(args)
+    ```
+
+    **判断根拠**: config platform firmware install/update は fwutil install/update への passthrough。引数は無加工で渡る。
+
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/fwutil/main.py#L271-L356 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @component_install.command(name='fw')
+  @click.option('-y', '--yes', ...)
+  @click.argument('fw_path', metavar='<fw_path>', callback=validate_fw)
+  def fw_install(ctx, yes, fw_path):
+      """Install firmware from local path or URL"""
+  ...
+  @component_update.command(name='fw')
+  @click.option('-y', '--yes', ...)
+  @click.option('-f', '--force', ...)
+  @click.option('-i', '--image', type=click.Choice(["current", "next"]), default="current", ...)
+  def fw_update(ctx, yes, force, image):
+      """Update firmware from SONiC image"""
+reasoning: fwutil の真のサブコマンドツリーは chassis|module|component の component の下に install fw / update fw があり、policy next のような構文は存在しない。next image 参照は `-i next` オプションで行う。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/fwutil/main.py#L271-L356 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/fwutil/main.py#L271-L356 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @component_install.command(name='fw')
+    @click.option('-y', '--yes', ...)
+    @click.argument('fw_path', metavar='<fw_path>', callback=validate_fw)
+    def fw_install(ctx, yes, fw_path):
+        """Install firmware from local path or URL"""
+    ...
+    @component_update.command(name='fw')
+    @click.option('-y', '--yes', ...)
+    @click.option('-f', '--force', ...)
+    @click.option('-i', '--image', type=click.Choice(["current", "next"]), default="current", ...)
+    def fw_update(ctx, yes, force, image):
+        """Update firmware from SONiC image"""
+    ```
+
+    **判断根拠**: fwutil の真のサブコマンドツリーは chassis|module|component の component の下に install fw / update fw があり、policy next のような構文は存在しない。next image 参照は `-i next` オプションで行う。
+
+<!-- evidence-rendered:end -->
 
 `show platform firmware status` の典型出力:
 
@@ -146,7 +250,7 @@ Chassis1   N/A       CPLD1        12            CPLD firmware
 Chassis1   N/A       SSD          2024.1        Internal SSD
 ```
 
-更新後の expected version とコンポーネントの一覧は platform 実装の `platform_components.json` に列挙され、`fw-util` はこの JSON に書かれた component しか触らないため、想定外のデバイスを誤って flash することはありません。
+更新後の expected version とコンポーネントの一覧は platform 実装の `platform_components.json` に列挙され、`fwutil` はこの JSON に書かれた component しか触らないため、想定外のデバイスを誤って flash することはありません。
 
 ## 設定エラーと対処
 
@@ -156,7 +260,7 @@ Chassis1   N/A       SSD          2024.1        Internal SSD
 | `config interface speed 400000` が `SAI_STATUS_INVALID_ATTR_VALUE_0` でログに残る | [ASIC](../../reference/glossary.md#term-asic) は対応していても [SerDes](../../reference/glossary.md#term-serdes) / FEC 組合せが NG | `port_config.ini` / `media_settings.json` で許可された組合せを確認 |
 | 子ポートが Oper down のまま | 対向側のブレイクアウトモード不一致、または FEC 不一致 | 対向の `show int status` と FEC をそろえる |
 | `show int transceiver eeprom` が空 | SFP I2C エラー / `xcvrd` 未起動 | `docker logs pmon`、`xcvrd` のステータスを確認 |
-| `fw-util` が `policy next` 後も適用されない | warm reboot を使った / power cycle が必要な component | component の reboot 要件を `platform_components.json` で確認、`cold reboot` で再試行 |
+| `fwutil update ... -i next` で更新したのに反映されない | warm reboot を使った / power cycle が必要な component | component の reboot 要件を `platform_components.json` で確認、`cold reboot` で再試行 |
 
 ## Platform firmware
 
@@ -169,12 +273,14 @@ CLI から呼ばれる `fw-util` は、`platform.json` と platform 実装が公
 
 ## 設定シナリオ 4: 光モジュール DOM の常時モニタリング
 
-`xcvrd` は SFP / QSFP の Digital Optical Monitoring (DOM) 値を `STATE_DB:TRANSCEIVER_DOM_SENSOR|<port>` に書き続けます。アラート閾値を CLI で設定する場合:
+`xcvrd` は SFP / QSFP の Digital Optical Monitoring (DOM) 値を STATE_DB の `TRANSCEIVER_DOM_SENSOR` テーブルに書き続けます[^xcvrd-tables]。port ごとの DOM polling は `PORT` テーブルの `dom_polling` カラムで制御され、CLI からは以下で切り替えます[^cfg-dom]:
 
 ```bash
 sudo config interface transceiver dom Ethernet0 enable
 show interfaces transceiver dom Ethernet0
 ```
+
+なお `config interface transceiver dom` は **非 breakout port、または breakout 時の第 1 サブポート** (`subport=0|1`) でのみ受理されます[^cfg-dom]。
 
 `show interfaces transceiver dom` 出力例:
 
@@ -187,11 +293,11 @@ Ethernet0:
         tx1bias:     7.5 mA
 ```
 
-各値の Warning / Alarm 閾値は EEPROM の A0/A2 page から `xcvrd` が読み、`STATE_DB:TRANSCEIVER_STATUS_FLAG_*` に立てます。`COUNTERS_DB` に直接落ちないことに注意。[SNMP](../../reference/glossary.md#term-snmp) / telemetry で監視する場合は `xcvrd` の `TRANSCEIVER_DOM_FLAG_TABLE` を subscribe します。
+DOM 値や status の閾値超過は `xcvrd` が STATE_DB の `TRANSCEIVER_DOM_FLAG` / `TRANSCEIVER_STATUS_FLAG` 系テーブル群に立てます[^xcvrd-tables]。`COUNTERS_DB` に直接落ちないことに注意。[SNMP](../../reference/glossary.md#term-snmp) / telemetry で監視する場合は `TRANSCEIVER_DOM_FLAG` を subscribe します。
 
 ## 設定シナリオ 5: media_settings.json による per-port preemphasis
 
-ASIC の SerDes preemphasis / 振幅は default では `port_config.ini` の lane に紐づくテンプレートが適用されますが、特定の光モジュール vendor / part-number の組合せだけ調整したいときは `/usr/share/sonic/device/<platform>/<hwsku>/media_settings.json` を編集します。
+ASIC の SerDes preemphasis / 振幅は default では `port_config.ini` の lane に紐づくテンプレートが適用されますが、特定の光モジュール vendor / part-number の組合せだけ調整したいときは `/usr/share/sonic/device/<platform>/<hwsku>/media_settings.json` を編集します。トップレベルキーは `GLOBAL_MEDIA_SETTINGS`（全ポートに適用）と `PORT_MEDIA_SETTINGS`（ポート番号レンジごとに適用）の 2 種があり、`xcvrd` の `optics_si_parser.py` が両方を解釈します[^optics-si]。
 
 ```json
 {
@@ -228,4 +334,18 @@ ASIC や platform が「何ができるか」を宣言する capability ファ�
 - [SONiC fw-utility](../../platform/sonic-fw-utility.md)
 - [platform capability file enhancement](../../platform/platform-capability-file-enhancement.md)
 
-<!-- glossary-links-injected: c006405759d8 -->
+## 引用元
+
+[^cfg-platform-fw]: `config platform firmware install` / `update` は `fwutil install` / `update` への薄いラッパー。`sonic-net/sonic-utilities/config/main.py` L8740-L8775 ([sha 39732bceb8](https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8740-L8775))。
+
+[^fwutil-install]: `fwutil` の component スコープ `install fw <fw_path>` は `-y` のみオプションを持ち、ローカルパスまたは URL からの flash を行う。`sonic-net/sonic-utilities/fwutil/main.py` L271-L297 ([sha 39732bceb8](https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/fwutil/main.py#L271-L297))。
+
+[^fwutil-update]: `fwutil` の component スコープ `update fw` は `-y` (確認スキップ) / `-f` (バージョンチェック無視) / `-i {current,next}` (どの SONiC イメージに同梱の fw_package を見るか) の 3 オプション。`policy next` のような構文は存在しない。`sonic-net/sonic-utilities/fwutil/main.py` L301-L356 ([sha 39732bceb8](https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/fwutil/main.py#L301-L356))。
+
+[^xcvrd-tables]: `xcvrd` の STATE_DB テーブル定数は `TRANSCEIVER_DOM_SENSOR` / `TRANSCEIVER_DOM_FLAG` / `TRANSCEIVER_STATUS_FLAG` 等。`sonic-net/sonic-platform-daemons/sonic-xcvrd/xcvrd/xcvrd_utilities/xcvr_table_helper.py` L13-L24 ([sha 4ba9612cb7](https://github.com/sonic-net/sonic-platform-daemons/blob/4ba9612cb7756651062d37f977e3df17d57f740d/sonic-xcvrd/xcvrd/xcvrd_utilities/xcvr_table_helper.py#L13-L24))。
+
+[^cfg-dom]: `config interface transceiver dom <if> (enable|disable)` は `PORT` テーブルの `dom_polling` を書き換える。受理されるのは `subport=0|1` のポートのみ。`sonic-net/sonic-utilities/config/main.py` L6472-L6506 ([sha 39732bceb8](https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L6472-L6506))。
+
+[^optics-si]: `media_settings.json` のトップレベルキー `GLOBAL_MEDIA_SETTINGS` / `PORT_MEDIA_SETTINGS` 両方を `xcvrd` が解釈する。`sonic-net/sonic-platform-daemons/sonic-xcvrd/xcvrd/xcvrd_utilities/optics_si_parser.py` L54-L113 ([sha 4ba9612cb7](https://github.com/sonic-net/sonic-platform-daemons/blob/4ba9612cb7756651062d37f977e3df17d57f740d/sonic-xcvrd/xcvrd/xcvrd_utilities/optics_si_parser.py#L54-L113))。
+
+<!-- glossary-links-injected: 8ba32e5aa69d -->

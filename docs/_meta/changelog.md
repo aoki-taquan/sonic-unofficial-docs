@@ -23,6 +23,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-06 #5430 fix(quality): iter12 integration (13 rewrites)
 - 2026-06-06 #5429 fix(quality): iter11 integration (14 rewrites)
 - 2026-06-06 #5428 fix(quality): iter12 integration (15 rewrites)
 - 2026-06-06 #5397 fix(quality): iter10 integration (15 rewrites)
@@ -525,5 +526,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3963 docs(config-db): add Phase E hardcoded-constants block to NVGRE_TUNNEL
 - 2026-05-19 #3962 docs(config-db): add Phase H platform block to subnet-decap
 - 2026-05-19 #3961 docs(config-db): add Phase H platform block to gnmi-state
-- 2026-05-19 #3959 docs(config-db): add Phase E hardcoded-constants block to KUBERNETES_MASTER
 

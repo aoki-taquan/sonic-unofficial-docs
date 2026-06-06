@@ -2137,7 +2137,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離](../switching/switch-port-modes-and-vlan-cli-discrepancy.md) (15)
 - [Overlay 運用](../topics/03-vxlan-evpn/operations.md) (15)
 - [BREAKOUT_CFG テーブル](config-db/breakout-cfg.md) (14)
-- [[STATE_DB] DEVICE_NEIGHBOR 動作状態（device op state）](config-db/deviceop-state.md) (13)
+- [設定](../topics/14-platform-port-optics/setup.md) (14)
 
 ### [Scheduler](#term-scheduler)
 
