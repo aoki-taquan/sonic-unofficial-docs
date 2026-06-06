@@ -3,7 +3,7 @@ title: MIB / SNMP 関連
 description: SONiC の SNMP エージェントは Net-SNMP + sonic_ax_impl (AgentX subagent) で構成され、snmpd が標準 MIB を提供し、Python ベースの subagent がポート / インタフェース / 物理エンティティ / センサー / トランシーバ等の SONiC 固有 MIB を実装する。
 area: categories
 verification: meta
-last_verified: 2026-05-10
+last_verified: 2026-06-06
 related:
   cli: []
   config_db: []
@@ -21,7 +21,9 @@ related:
 
 SNMP IPv6 では応答 SRC IP が listening address と一致しない問題があり、`SNMP_AGENT_ADDRESS_CONFIG` で送信元 IP を縛る運用回避が標準です。Entity MIB はシャーシ・ラインカード・PSU / Fan / Sensor を `entPhysicalEntry` の階層に並べる構造で、chassis 環境で重要です。
 
-主要キーワード: `MIB`, `SNMP`, `Entity MIB`, `Sensor MIB`, `trap`, `community`, `IPv6`, `AgentX`
+[BGP](../reference/glossary.md#term-bgp) 監視では CiscoBgp4MIB（OID 1.3.6.1.4.1.9.9.187）が bgpd vty 直結から `bgpmon` daemon 経由で [STATE_DB](../reference/glossary.md#term-state_db) `NEIGH_STATE_TABLE` を読む形に再設計され、multi-[ASIC](../reference/glossary.md#term-asic) でも namespace を跨いで近隣状態を集約できるようになっています。
+
+主要キーワード: `MIB`, `SNMP`, `Entity MIB`, `Sensor MIB`, `CiscoBgp4MIB`, `trap`, `community`, `IPv6`, `AgentX`
 
 ## 関連ページ
 
@@ -32,6 +34,10 @@ SNMP IPv6 では応答 SRC IP が listening address と一致しない問題が�
 - [SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避](../system/sonic-snmp-changes-to-support-ipv6.md) (area: `system`, verification: `code-verified`)
 - [Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加）](../system/sonic-entity-mib-and-entity-sensor-mib-extension.md) (area: `system`, verification: `code-verified`)
 - [SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB）](../system/snmp-transceiver-monitoring-testbed-test-plan.md) (area: `system`, verification: `code-verified`)
+
+### routing（BGP MIB）
+
+- [CiscoBgp4MIB の STATE_DB 経由化（bgpmon / NEIGH_STATE_TABLE）](../routing/ciscobgp4mib-implementation-changes.md) (area: `routing`, verification: `code-verified`) — CiscoBgp4MIB（OID 1.3.6.1.4.1.9.9.187）を bgpd vty 直結から STATE_DB `NEIGH_STATE_TABLE` 経由に切替え、multi-ASIC 対応
 
 ### architecture / switching
 
@@ -48,8 +54,9 @@ SNMP IPv6 では応答 SRC IP が listening address と一致しない問題が�
 2. **移行** → `snmp-migration-from-snmp-yml-to-configdb.md` で snmp.yml ベース運用からの変更点
 3. **IPv6 注意点** → `sonic-snmp-changes-to-support-ipv6.md`
 4. **物理情報** → `sonic-entity-mib-and-entity-sensor-mib-extension.md` → `snmp-transceiver-monitoring-testbed-test-plan.md` でシャーシ / センサー / トランシーバ
-5. **CLI** → `config-snmp.md` で実機での設定変更
-6. **テスト** → `sonic-basic-l2-mode-test-plan.md`（L2 mode + SNMP）
+5. **BGP MIB** → `ciscobgp4mib-implementation-changes.md` で multi-ASIC 対応の STATE_DB 経路
+6. **CLI** → `config-snmp.md` で実機での設定変更
+7. **テスト** → `sonic-basic-l2-mode-test-plan.md`（L2 mode + SNMP）
 
 ## 関連 Topics 章
 
@@ -66,4 +73,4 @@ SNMP IPv6 では応答 SRC IP が listening address と一致しない問題が�
 - [Multi-ASIC / VOQ chassis 関連](multi-asic.md)
 - [gNMI / gNOI / OpenConfig 関連](gnmi-openconfig.md)
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: b6ab8efb7c2d -->

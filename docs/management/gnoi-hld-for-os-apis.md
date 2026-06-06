@@ -13,10 +13,6 @@ sources:
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - DPU
-  - DPUS
   - TELEMETRY
   - GNMI
   cli:
@@ -166,7 +162,7 @@ reasoning: 3 RPC が image_service の 3 DBUS endpoint に 1:1 対応する根�
 
 ### 関連する CONFIG_DB
 
-専用 [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマ無し。telemetry 認証認可と RBAC を再利用。
+OS API 専用の [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマは存在しない。gNOI OS サーバは既存の gNMI/telemetry サーバ（TCP 9339）にマウントされるため、`TELEMETRY` / `GNMI` テーブルの認証・認可（cert / RBAC）設定をそのまま再利用する[^1]。
 
 ### 関連する CLI
 
@@ -179,7 +175,7 @@ reasoning: 3 RPC が image_service の 3 DBUS endpoint に 1:1 対応する根�
 
 ### 関連する YANG
 
-該当 [YANG](../reference/glossary.md#term-yang) モジュールは HLD で言及無し（OS 操作は OpenConfig 側の `system` / `components` モデル流用想定）。
+OS 操作そのものを表現する [YANG](../reference/glossary.md#term-yang) モジュールは HLD に存在せず、Install / Activate / Verify は OpenConfig 側の `system` / `components` モデル流用想定として HLD に記載されている[^1]。本ページが related に挙げる `sonic-gnmi` / `sonic-telemetry` は、上記の再利用される `GNMI` / `TELEMETRY` CONFIG_DB テーブルを定義する SONiC YANG モジュール（`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-gnmi.yang`、`sonic-telemetry.yang`）である。
 
 ### 設定例
 

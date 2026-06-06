@@ -55,6 +55,7 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`NVGRE_TUNNEL`](../config-db/nvgre-tunnel.md)
+- [`NVGRE_TUNNEL_MAP`](../config-db/nvgre-tunnel.md)
 
 <!-- /yang-xref -->
 

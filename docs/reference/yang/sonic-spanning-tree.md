@@ -61,8 +61,11 @@ flowchart LR
 
 - [`STP`](../config-db/stp.md)
 - [`STP_VLAN`](../config-db/stp-vlan.md)
+- [`STP_VLAN_PORT`](../config-db/stp-vlan.md)
 - [`STP_PORT`](../config-db/stp-port.md)
 - [`STP_MST`](../config-db/stp-mst.md)
+- [`STP_MST_INST`](../config-db/stp-mst.md)
+- [`STP_MST_PORT`](../config-db/stp-mst.md)
 
 <!-- /yang-xref -->
 

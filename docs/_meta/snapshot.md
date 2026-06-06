@@ -2,7 +2,7 @@
 title: スナップショット
 area: meta
 verification: meta
-last_verified: 2026-06-04
+last_verified: 2026-06-06
 sources: []
 ---
 
@@ -20,24 +20,24 @@ sources: []
 
 | verification | 件数 |
 |---|---:|
-| code-verified | 762 |
+| code-verified | 763 |
 | runbook-verified | 27 |
 | discrepancy-found | 113 |
 | issue-confirmed | 6 |
 | hld-only | 2 |
-| meta | 193 |
+| meta | 192 |
 | stub | 1 |
 | **合計** | **1104** |
 
 ## last_verified 鮮度
 
-基準日 **2026-06-04**。
+基準日 **2026-06-06**。
 
 | バケツ | 件数 |
 |---|---:|
-| 今日 (0d) | 53 |
-| 7 日以内 (1-7d) | 2 |
-| 30 日以内 (8-30d) | 1046 |
+| 今日 (0d) | 10 |
+| 7 日以内 (1-7d) | 51 |
+| 30 日以内 (8-30d) | 1040 |
 | 30 日超 / 古い | 0 |
 | 不明 / パース不可 | 3 |
 
@@ -79,7 +79,7 @@ sources: []
 | 項目 | 値 |
 |---|---:|
 | 用語数 (`### ` アンカー) | 325 |
-| docs 内被リンク数 | 20030 |
+| docs 内被リンク数 | 20044 |
 
 ## 直近 5 round quality-audit
 

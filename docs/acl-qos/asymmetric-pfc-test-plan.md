@@ -1,7 +1,8 @@
 ---
 title: Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）
 description: Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures） — Asymmetric PFC は SONiC
-  機能だが、本ドキュメントはその 機能テスト計画 を扱う。
+  機能だが、本ドキュメントはその機能テスト計画を扱う。CONFIG_DB の PORT.pfc_asym フィールドを切り替えて
+  swss / SAI に反映させる経路を、PTF と Fanout の pfc_gen.py で検証する手順をまとめる。
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11
@@ -11,19 +12,12 @@ sources:
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-  - PFC_WD
-  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
-  - BUFFER_POOL
-  - BUFFER_PROFILE
+  - PORT
   cli:
-  - show arp
-  - show pfc
+  - show pfc asymmetric
+  - pfcstat
   yang:
-  - sonic-pfc-priority-queue-map
-  - sonic-pfc-priority-priority-group-map
-  - sonic-pfcwd
-  - sonic-buffer-pool
-  - sonic-buffer-profile
+  - sonic-port
 ---
 
 <!-- topics-tip -->
@@ -142,7 +136,11 @@ reasoning: pfc_gen.py の役割と配備 fixture の根拠。
 
 ### 関連する CONFIG_DB / CLI / YANG
 
-該当なし（テスト計画文書）。
+テスト計画そのものは設定対象を持たないが、検証対象の Asymmetric PFC 本体機能は以下を触る:
+
+- **CONFIG_DB**: `PORT|<alias>` ハッシュの `pfc_asym` フィールド (`on` / `off`)。`portsorch.cpp` L5407-L5434 で値変化を検知して `setPortPfcAsym()` を呼ぶ[^2]。
+- **CLI**: `show pfc asymmetric [<interface>]` で現在のモードを表示 (`sonic-utilities/show/main.py` L706-L720)[^3]。
+- **[YANG](../reference/glossary.md#term-yang)**: `sonic-port` の `pfc-asym` leaf。
 
 ### 設定例（テスト実行）
 
@@ -194,6 +192,8 @@ docker exec swss supervisorctl status | grep orchagent
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pfc_asym/PFC_Asymmetric_Test_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss` `orchagent/portsorch.cpp` L5407-L5434 (CONFIG_DB.PORT.pfc_asym 適用経路)
+[^3]: `sonic-net/sonic-utilities` `show/main.py` L706-L720 (`show pfc asymmetric` サブコマンド定義)
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -202,4 +202,4 @@ docker exec swss supervisorctl status | grep orchagent
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: d5320e852f7a -->

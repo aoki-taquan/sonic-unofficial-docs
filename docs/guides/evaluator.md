@@ -59,7 +59,7 @@ sudo vtysh -c 'configure terminal' \
            -c 'neighbor 10.0.0.1 remote-as 65001'
 ```
 
-`config interface startup` の引数は単一インタフェース名で、内部で `PORT` テーブルの `admin_status` を `up` に更新する<!-- evidence: sonic-utilities config/main.py:5184-5210 -->。`config vlan add` は `vlan.py` で実装されており、`VLAN` テーブルに `Vlan<vid>` エントリを作成する<!-- evidence: sonic-utilities config/vlan.py:95-142 -->。BGP については `config bgp` サブコマンドが `shutdown` / `startup` / `remove` の 3 サブグループのみで neighbor 追加コマンドを持たず<!-- evidence: sonic-utilities config/main.py:4918-5054 (bgp group: shutdown/startup/remove のみ、add 系なし) -->、設定本体は FRR が握っているため、評価ラボでは `vtysh` から直接 FRR を叩くか、`config_db.json` の `BGP_NEIGHBOR` / `DEVICE_NEIGHBOR` テーブルを編集して `config reload` する流れになる ([config bgp](../reference/cli/config-bgp.md) も参照)。
+`config interface startup` の引数は単一インタフェース名で、内部で `PORT` テーブルの `admin_status` を `up` に更新する<!-- evidence: sonic-utilities config/main.py:5184-5210 -->。`config vlan add` は `vlan.py` で実装されており、`VLAN` テーブルに `Vlan<vid>` エントリを作成する<!-- evidence: sonic-utilities config/vlan.py:95-142 -->。BGP については `config bgp` 直下のサブコマンドが neighbor ごとの `shutdown` / `startup` / `remove` と、`device-global` (TSA / W-ECMP 等) ・ `aggregate-address` の追加グループに限られ、neighbor を新規に作成する `add` 系コマンドは存在しない<!-- evidence: sonic-utilities config/main.py:4918-5054 (bgp group: shutdown/startup/remove サブグループ)、config/main.py:4926-4927 (bgp_cli.DEVICE_GLOBAL / AGGREGATE_ADDRESS を add_command) -->。設定本体は FRR が握っているため、評価ラボでは `vtysh` から直接 FRR を叩くか、`config_db.json` の `BGP_NEIGHBOR` / `DEVICE_NEIGHBOR` テーブルを編集して `config reload` する流れになる ([config bgp](../reference/cli/config-bgp.md) も参照)。
 
 ## 評価シナリオ別の分岐
 

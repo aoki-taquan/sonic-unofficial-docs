@@ -15,12 +15,12 @@ sources:
 related:
   config_db: []
   cli:
-  - show pfc
-  - show pfcwd
+    - show pfc
+    - show pfcwd
   yang:
-  - sonic-pfcwd
-  - sonic-pfc-priority-priority-group-map
-  - sonic-pfc-priority-queue-map
+    - sonic-pfcwd
+    - sonic-pfc-priority-priority-group-map
+    - sonic-pfc-priority-queue-map
 ---
 
 # show pfc サブコマンド
@@ -54,7 +54,7 @@ related:
 
 ## 関連リファレンス
 
-- (関連リンクなし)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-pfcwd`](../yang/sonic-pfcwd.md) / [`sonic-pfc-priority-priority-group-map`](../yang/sonic-pfc-priority-priority-group-map.md) / [`sonic-pfc-priority-queue-map`](../yang/sonic-pfc-priority-queue-map.md)
 
 <!-- ref-triangle:end -->
 
@@ -147,4 +147,4 @@ show pfcwd stats
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: e82be350a384 -->
+<!-- glossary-links-injected: d5320e852f7a -->

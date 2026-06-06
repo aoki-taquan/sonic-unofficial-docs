@@ -1285,7 +1285,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [BGP](#term-bgp)
 
 - [sonic-bgp-neighbor YANG](yang/sonic-bgp-neighbor.md) (245)
-- [sonic-bgp-peergroup YANG](yang/sonic-bgp-peergroup.md) (233)
+- [sonic-bgp-peergroup YANG](yang/sonic-bgp-peergroup.md) (234)
 - [sonic-bgp-global YANG](yang/sonic-bgp-global.md) (216)
 - [STATE_DB BGP 関連テーブル](config-db/state-bgp.md) (169)
 - [BGP_PEER_GROUP テーブル](config-db/bgp-peer-group.md) (139)
@@ -1589,8 +1589,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [gNMI](#term-gnmi)
 
-- [サイトマップ](../_meta/sitemap.md) (75)
-- [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (28)
+- [サイトマップ](../_meta/sitemap.md) (74)
+- [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (29)
 - [GNMI / GNMI_CLIENT_CERT テーブル](config-db/gnmi.md) (24)
 - [TELEMETRY テーブル](config-db/telemetry.md) (23)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (23)
@@ -1599,8 +1599,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）](../management/sonic-config-update-validation-via-yang.md) (19)
 - [Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）](../architecture/sonic-generic-configuration-update-and-rollback.md) (8)
+- [サイトマップ](../_meta/sitemap.md) (6)
 - [設定変更の選び方](../topics/01-overview/configuration.md) (6)
-- [サイトマップ](../_meta/sitemap.md) (5)
 - [概念と読み始め方](../topics/01-overview/concept.md) (5)
 
 ### [gNOI](#term-gnoi)
@@ -2048,8 +2048,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SNMP テーブル](config-db/snmp.md) (160)
 - [SNMP_AGENT_ADDRESS_CONFIG / SNMP_USER テーブル (デフォルト詳細)](config-db/snmp-agent.md) (139)
 - [SNMP_COMMUNITY テーブル](config-db/community-list.md) (86)
+- [sonic-snmp YANG](yang/sonic-snmp.md) (75)
 - [SNMP 設定の snmp.yml → CONFIG_DB 移行](../system/snmp-migration-from-snmp-yml-to-configdb.md) (74)
-- [sonic-snmp YANG](yang/sonic-snmp.md) (73)
 
 ### [SRv6](#term-srv6)
 
@@ -2185,7 +2185,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ROUTE_TABLE (STATE_DB / APPL_STATE_DB)](config-db/route-state.md) (101)
 - [FEATURE (STATE_DB)](config-db/feature-state.md) (91)
 - [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (85)
-- [サイトマップ](../_meta/sitemap.md) (81)
+- [サイトマップ](../_meta/sitemap.md) (80)
 
 ### [swssconfig](#term-swssconfig)
 
@@ -2213,7 +2213,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (354)
+- [サイトマップ](../_meta/sitemap.md) (352)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (33)
 - [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (28)
@@ -2301,7 +2301,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VNET_ROUTE / VNET_ROUTE_TUNNEL テーブル](config-db/vnet-route.md) (183)
 - [VNET テーブル](config-db/vnet.md) (177)
 - [DASH_VNET テーブル](config-db/dash-vnet.md) (119)
-- [sonic-vnet YANG](yang/sonic-vnet.md) (87)
+- [sonic-vnet YANG](yang/sonic-vnet.md) (88)
 - [VXLAN / VNET / EVPN の概要](../topics/03-vxlan-evpn/concept.md) (47)
 
 ### [VRF](#term-vrf)

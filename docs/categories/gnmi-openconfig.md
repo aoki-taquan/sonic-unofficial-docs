@@ -1,11 +1,10 @@
 ---
 title: gNMI / gNOI / OpenConfig 関連
-description: gNMI / gNOI / OpenConfig 関連 — SONiC の管理プレーンは Management Framework（REST
-  / gNMI / Translib / Transformer）と sonic-gnmi（gNMI Server）を中心に、CONFIG_DB と SONiC
-  YANG / O…
+description: gNMI / gNOI / OpenConfig 関連カテゴリのインデックス。Management Framework / sonic-gnmi
+  / GCU / YANG / Telemetry / gNOI を扱うページを area 横断でまとめる。
 area: categories
 verification: meta
-last_verified: 2026-05-10
+last_verified: 2026-06-06
 related:
   cli: []
   config_db: []
@@ -17,11 +16,11 @@ related:
 
 ## 概要
 
-[SONiC](../reference/glossary.md#term-sonic) の管理プレーンは **Management Framework**（REST / [gNMI](../reference/glossary.md#term-gnmi) / Translib / Transformer）と **sonic-gnmi**（gNMI Server）を中心に、[CONFIG_DB](../reference/glossary.md#term-config_db) と SONiC [YANG](../reference/glossary.md#term-yang) / OpenConfig YANG の双方を扱う構造になっています。`telemetryd` が gNMI Subscribe を提供し、`gnmi-native` モード（SONiC YANG）と `gnmi-translib` モード（OpenConfig 経由）が共存します。設定経路では **Generic Config Updater ([GCU](../reference/glossary.md#term-gcu))** が JSON Patch を YANG 制約に従って段階的に apply する仕組みを担当します。
+[SONiC](../reference/glossary.md#term-sonic) の管理プレーンは **Management Framework**（REST / [gNMI](../reference/glossary.md#term-gnmi) / Translib / Transformer）と **sonic-gnmi**（gNMI Server）を中心に、[CONFIG_DB](../reference/glossary.md#term-config_db) と SONiC [YANG](../reference/glossary.md#term-yang) / OpenConfig YANG の双方を扱う構造になっている。`/usr/sbin/telemetry` バイナリ（`sonic-gnmi/telemetry` パッケージ）が gNMI Subscribe を含む gNMI Server を提供し<!-- evidence: sonic-gnmi/Makefile:105,436 telemetry binary build & install path -->、`gnmi_native_write` ビルドタグ経由の SONiC YANG パスと、`gnmi_translib_write` ビルドタグ経由の OpenConfig / Translib パスが共存する<!-- evidence: sonic-gnmi/Makefile:39,42 BLD_TAGS gnmi_translib_write / gnmi_native_write -->。設定経路では **Generic Config Updater ([GCU](../reference/glossary.md#term-gcu))** が JSON Patch を YANG 制約に従って段階的に apply する仕組みを担当する。
 
-[gNOI](../reference/glossary.md#term-gnoi) は gRPC ベースの **運用 API**（OS install / System reboot / File / FactoryReset / Healthz / Wake-on-LAN など）で、DBUS 経由でホスト側サービスを叩く構造になっています。SONiC 内では `system / OS / file / factory_reset / healthz / wol` などのサービス実装が `sonic-gnmi` 配下にあり、[SmartSwitch](../reference/glossary.md#term-smartswitch) では [DPU](../reference/glossary.md#term-dpu) 単位の gNOI を持ちます。
+[gNOI](../reference/glossary.md#term-gnoi) は gRPC ベースの **運用 API**（OS install / System reboot / File / FactoryReset / Healthz / Wake-on-LAN など）で、DBUS 経由でホスト側サービスを叩く構造になっている。SONiC 内では `system / OS / file / factory_reset / healthz / wol` などのサービス実装が `sonic-gnmi` 配下にあり、[SmartSwitch](../reference/glossary.md#term-smartswitch) では [DPU](../reference/glossary.md#term-dpu) 単位の gNOI を持つ。
 
-このカテゴリは gNMI / gNOI / OpenConfig / YANG・Management Framework に関わるページを area 横断でまとめます。本ドキュメントで最も関連ページが多い（57 件）カテゴリで、YANG リファレンスが大半を占めるのは設計通りです。
+このカテゴリは gNMI / gNOI / OpenConfig / YANG・Management Framework に関わるページを area 横断でまとめる。本カテゴリは関連ページが最も多く、YANG リファレンスが大半を占めるのは設計通りである。
 
 主要キーワード: `gNMI`, `gNOI`, `OpenConfig`, `YANG`, `REST`, `Management Framework`, `telemetry`, `GCU`, `Translib`
 
