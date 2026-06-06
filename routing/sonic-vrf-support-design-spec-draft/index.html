@@ -36098,7 +36098,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-swss/orchagent/vrforch.cpp</code> / <code>cfgmgr/vrfmgrd.cpp</code> 実装、<code>sonic-yang-models/yang-models/sonic-vrf.yang:24/27</code> (<code>container VRF</code> / <code>list VRF_LIST</code>)、<code>sonic-utilities/config/main.py</code> の <code>config vrf</code> CLI を確認。SAI Virtual Router + Linux VRF master device 連携は現行 master でも維持（verified at: 2026-05-09）。</p>
+<p><code>sonic-swss/orchagent/vrforch.cpp</code> の <code>create_virtual_router</code> 呼び出し、<code>cfgmgr/vrfmgr.cpp</code> の <code>VrfMgr</code> 本体（<code>CFG_VRF_TABLE</code> 消費 → Linux VRF master 設定 + <code>APP_VRF_TABLE</code> / <code>STATE_VRF_TABLE</code> 同期、<code>cfgmgr/vrfmgrd.cpp</code> は select() ループの daemon entrypoint）、<code>sonic-yang-models/yang-models/sonic-vrf.yang</code> の <code>container VRF</code> / <code>list VRF_LIST</code>、<code>sonic-utilities/config/main.py</code> の <code>config vrf</code> CLI を確認。SAI Virtual Router + Linux VRF master device 連携は現行 master でも維持（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="vrf-vrfmgrd-vrforch-frr-vrf-aware">VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）<a class="headerlink" href="#vrf-vrfmgrd-vrforch-frr-vrf-aware" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜこの構成なのか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

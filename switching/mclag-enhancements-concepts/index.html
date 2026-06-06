@@ -36081,7 +36081,12 @@
 <p>このページは <a href="../mclag-enhancements/">MCLAG Enhancements（概要ハブ）</a> の派生で、<strong>7 軸の機能拡張をユースケース観点で整理</strong> する。実装詳細は <a href="../mclag-enhancements-internals/">mclag-enhancements-internals.md</a>、CLI / 運用は <a href="../mclag-enhancements-operations/">mclag-enhancements-operations.md</a> を参照。</p>
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p>スキーマ名・SAI 属性・テーブル定義は <code>sonic-swss-common/common/schema.h</code>・<code>sonic-swss/orchagent/fdborch.cpp</code>・<code>sonic-swss/mclagsyncd/mclaglink.cpp</code> で確認済み。</p>
+<p>主要なスキーマ名・SAI 属性・テーブル定義は以下で確認済み:</p>
+<ul>
+<li><code>MCLAG_DOMAIN</code> / <code>MCLAG_INTERFACE</code> / <code>MCLAG_FDB_TABLE</code> / <code>ISOLATION_GROUP_TABLE</code>: <code>sonic-swss-common</code> <code>common/schema.h</code> L118–L119, L378–L379<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><code>SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE</code> を使った aging 抑止: <code>sonic-swss</code> <code>orchagent/fdborch.cpp</code> L507 / L583 / L1444 / L1491<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
+<li>MclagSyncd ↔ ICCPd メッセージング: <code>sonic-swss</code> <code>mclagsyncd/mclaglink.cpp</code><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup></li>
+</ul>
 </div>
 <h2 id="1">1. なぜ拡張するのか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
 <p>オリジナルの <a href="../../reference/glossary/#term-sonic">SONiC</a> <a href="../../reference/glossary/#term-mclag">MCLAG</a> は <code>config_db.json</code> 直書きで起動時にしか反映できず、また static MAC 同期 / L3 プロトコル / BUM 制御に弱点があった。本 <a href="../../reference/glossary/#term-hld">HLD</a> はこれらを 7 軸で塞ぐ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -36272,6 +36277,15 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/mclag/MCLAG_Enhancements_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss-common</code> <code>common/schema.h</code> L118–L119, L378–L379 @ <code>158de8d3463ff4b841653f6d57190bb142b80d9c</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/fdborch.cpp</code> L507, L583, L1444, L1491 @ <code>4305596156d70e9797e8a881b3d19b46de0bce0d</code>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>sonic-net/sonic-swss</code> <code>mclagsyncd/mclaglink.cpp</code> @ <code>4305596156d70e9797e8a881b3d19b46de0bce0d</code>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

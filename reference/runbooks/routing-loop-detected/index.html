@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: Routing loop が発生している — : sonic-net/sonic-frr @ 799f47f — zebra/zebra_rib.c : sonic-net/sonic-swss @ 4305596 — routeorch.cpp">
+        <meta name="description" content="Runbook: traceroute が同一 hop を繰り返し、TTL exceeded と control plane CPU が急上昇する routing loop の切り分けと対処手順。FRR zebra RIB / sonic-swss routeorch を根拠に static / BGP 経路の競合を診断する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Routing loop が発生している - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: Routing loop が発生している — : sonic-net/sonic-frr @ 799f47f — zebra/zebra_rib.c : sonic-net/sonic-swss @ 4305596 — routeorch.cpp" />
+<meta property="og:description" content="Runbook: traceroute が同一 hop を繰り返し、TTL exceeded と control plane CPU が急上昇する routing loop の切り分けと対処手順。FRR zebra RIB / sonic-swss routeorch を根拠に static / BGP 経路の競合を診断する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/routing-loop-detected.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/routing-loop-detected/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Routing loop が発生している - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: Routing loop が発生している — : sonic-net/sonic-frr @ 799f47f — zebra/zebra_rib.c : sonic-net/sonic-swss @ 4305596 — routeorch.cpp" />
+<meta property="twitter:description" content="Runbook: traceroute が同一 hop を繰り返し、TTL exceeded と control plane CPU が急上昇する routing loop の切り分けと対処手順。FRR zebra RIB / sonic-swss routeorch を根拠に static / BGP 経路の競合を診断する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/routing-loop-detected.png" />
 </head>
   
@@ -36152,7 +36152,7 @@
 </span></code></pre></div>
 <h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>怪しい static を一時 disable: <code>sudo config route del prefix &lt;p&gt;</code></li>
+<li>怪しい static を削除: <code>sudo config route del prefix &lt;A.B.C.D/M&gt; nexthop &lt;A.B.C.D&gt;</code> (<code>config route del</code> は <code>prefix</code> と <code>nexthop</code> の両指定が必要<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup>)</li>
 <li><a href="../../glossary/#term-bgp">BGP</a> の default 広告抑制: <code>neighbor &lt;peer&gt; default-originate</code> を外す</li>
 <li>summary 配下を明示 announce: <code>aggregate-address &lt;p&gt; as-set</code> の見直し</li>
 <li>ループ確定箇所の interface を一時 admin down: <code>sudo config interface shutdown Ethernet0</code></li>
@@ -36163,17 +36163,20 @@
 <li><a href="../../../topics/04-vrf-ecmp/concept/">../../topics/04-vrf-ecmp/concept.md</a></li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: 758aafff1fd5 -->
+<p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup> を参照。</p>
+<!-- glossary-links-injected: 2484d31b0a57 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-frr @ 799f47f — <a href="../../glossary/#term-zebra">zebra</a>/zebra_rib.c&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/sonic-frr @ 799f47f — <a href="../../glossary/#term-zebra">zebra</a>/zebra_rib.c (RIB best-path 選定と FIB install)&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — routeorch.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <a href="../../glossary/#term-orchagent">orchagent</a>/routeorch.cpp L150-L171 (<code>m_syncdRoutes</code> への default route 登録)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> — <a href="https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py">config/main.py L7787-L7900</a> (<code>config route add/del</code> の <code>prefix [vrf &lt;vrf_name&gt;] &lt;A.B.C.D/M&gt; nexthop ...</code> 引数定義)&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

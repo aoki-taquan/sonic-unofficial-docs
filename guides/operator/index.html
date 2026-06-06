@@ -36057,7 +36057,7 @@
 <tr>
 <th>症状</th>
 <th>まず叩く CLI</th>
-<th>関連 CONFIG_DB</th>
+<th>関連テーブル (CONFIG_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a>)</th>
 <th>関連リファレンス / HLD</th>
 </tr>
 </thead>
@@ -36065,25 +36065,25 @@
 <tr>
 <td><a href="../../reference/glossary/#term-bgp">BGP</a> セッションが上がらない</td>
 <td><code>show ip bgp summary</code> / <code>show ip bgp neighbors &lt;peer&gt;</code></td>
-<td><a href="../../reference/config-db/bgp-neighbor/"><code>BGP_NEIGHBOR</code></a> / <a href="../../reference/config-db/bgp-peer-range/"><code>BGP_PEER_RANGE</code></a></td>
+<td><a href="../../reference/config-db/bgp-neighbor/"><code>BGP_NEIGHBOR</code></a> / <a href="../../reference/config-db/bgp-peer-range/"><code>BGP_PEER_RANGE</code></a> (CONFIG_DB)</td>
 <td><a href="../../reference/cli/show-bgp/">show bgp</a> / <a href="../../reference/cli/config-bgp/">config bgp</a></td>
 </tr>
 <tr>
 <td>物理ポートが down のまま</td>
 <td><code>show interfaces status</code> / <code>show interfaces counters</code></td>
-<td><a href="../../reference/config-db/port/"><code>PORT</code></a> / <a href="../../reference/config-db/interface/"><code>INTERFACE</code></a></td>
+<td><a href="../../reference/config-db/port/"><code>PORT</code></a> / <a href="../../reference/config-db/interface/"><code>INTERFACE</code></a> (CONFIG_DB)</td>
 <td><a href="../../reference/cli/show-interfaces/">show interfaces</a> / <a href="../../reference/cli/config-interface/">config interface</a></td>
 </tr>
 <tr>
 <td><a href="../../reference/glossary/#term-vlan">VLAN</a> 内で疎通しない</td>
 <td><code>show vlan brief</code> / <code>show mac</code></td>
-<td><a href="../../reference/config-db/vlan/"><code>VLAN</code></a> / <a href="../../reference/config-db/vlan-member/"><code>VLAN_MEMBER</code></a> / <a href="../../reference/config-db/vlan-interface/"><code>VLAN_INTERFACE</code></a></td>
+<td><a href="../../reference/config-db/vlan/"><code>VLAN</code></a> / <a href="../../reference/config-db/vlan-member/"><code>VLAN_MEMBER</code></a> / <a href="../../reference/config-db/vlan-interface/"><code>VLAN_INTERFACE</code></a> (CONFIG_DB)</td>
 <td><a href="../../reference/cli/config-vlan/">config vlan</a></td>
 </tr>
 <tr>
 <td>ルーティングが期待どおりでない</td>
 <td><code>show ip route</code> / <code>show ip route &lt;prefix&gt;</code></td>
-<td><a href="../../reference/config-db/interface/"><code>INTERFACE</code></a> / <a href="../../reference/config-db/"><code>STATIC_ROUTE</code></a></td>
+<td><a href="../../reference/config-db/interface/"><code>INTERFACE</code></a> / <a href="../../reference/config-db/static-route/"><code>STATIC_ROUTE</code></a> (CONFIG_DB)</td>
 <td><a href="../../reference/cli/show-ip/">show ip</a></td>
 </tr>
 <tr>
@@ -36095,13 +36095,13 @@
 <tr>
 <td>CPU / メモリ / ディスク等の health</td>
 <td><code>show system-health summary</code> / <code>show system-health detail</code></td>
-<td><a href="../../reference/config-db/"><code>SYSTEM_HEALTH_INFO</code></a></td>
+<td><code>SYSTEM_HEALTH_INFO</code> (STATE_DB)<sup id="fnref:system-health-info"><a class="footnote-ref" href="#fn:system-health-info">1</a></sup></td>
 <td><a href="../../reference/cli/show-system-health/">show system-health</a> / <a href="../../system/sonic-system-health-monitor-high-level-design/">System Health Monitor 設計</a></td>
 </tr>
 <tr>
 <td>サポート依頼用の dump 取得</td>
 <td><code>show techsupport</code></td>
-<td><a href="../../reference/config-db/auto-techsupport/"><code>AUTO_TECHSUPPORT</code></a> / <a href="../../reference/config-db/auto-techsupport-feature/"><code>AUTO_TECHSUPPORT_FEATURE</code></a></td>
+<td><a href="../../reference/config-db/auto-techsupport/"><code>AUTO_TECHSUPPORT</code></a> / <a href="../../reference/config-db/auto-techsupport-feature/"><code>AUTO_TECHSUPPORT_FEATURE</code></a> (CONFIG_DB)</td>
 <td><a href="../../reference/cli/show-techsupport/">show techsupport</a> / <a href="../../system/show-techsupport/">show techsupport 設計</a></td>
 </tr>
 <tr>
@@ -36173,7 +36173,16 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: eda153721dca -->
+<!-- glossary-links-injected: 6981be1a469d -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:system-health-info">
+<p><code>SYSTEM_HEALTH_INFO</code> は CONFIG_DB ではなく <strong>STATE_DB</strong> に置かれる読み取り専用の集計結果テーブル。<code>healthd</code> が定期的に <code>HealthCheckerManager.check()</code> の結果を <code>STATE_DB.SYSTEM_HEALTH_INFO</code> に書き込む (<code>sonic-buildimage</code> <code>src/system-health/scripts/healthd</code> L30, L38, L113-L116)。<code>show system-health</code> CLI 自体は STATE_DB を読まず、プロセス内で同じ <code>HealthCheckerManager.check(chassis)</code> を実行する (<code>sonic-utilities</code> 側の挙動、本ガイドの <a href="../../reference/cli/show-system-health/">show system-health</a> 参照)。&#160;<a class="footnote-backref" href="#fnref:system-health-info" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

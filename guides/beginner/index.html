@@ -35937,17 +35937,28 @@
 <li><strong>設定反映フロー</strong>: 概ね <code>config</code> コマンド / <a href="../../reference/glossary/#term-gnmi">gNMI</a> → CONFIG_DB → <a href="../../reference/glossary/#term-orchagent">orchagent</a>（<a href="https://github.com/sonic-net/sonic-swss/tree/master/orchagent"><code>sonic-swss/orchagent</code></a>）が解釈し APPL_DB に書き込み → syncd が ASIC_DB を経由して SAI 経由で ASIC に反映、観測結果は逆向きに STATE_DB / <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> に集約される、という単方向パイプラインで動作します。</li>
 </ul>
 <h2 id="reading-path">推奨 reading path<a class="headerlink" href="#reading-path" title="Permanent link">&para;</a></h2>
+<p><a href="../../getting-started/">初めての方の必読 10</a> は「順序付き 10 本」で全領域を浅く通し読みする導線ですが、こちらは<strong>目的別 3 トラック</strong>にグルーピングして「どこから読むと迷子になりにくいか」を示します。トラック間に依存はあるので、原則は A → B → C の順で読み進めるのが安全です。</p>
+<p><strong>トラック A: 全体像を掴む（最初に必ず）</strong></p>
+<p>CONFIG_DB / APPL_DB / ASIC_DB のデータフローと SwSS / syncd / SAI の責務分担を理解しないと、後段のリファレンスを読んでもどの DB の話なのか判別できません。</p>
 <ol>
-<li><a href="../../">SONiC 非公式ドキュメント</a></li>
-<li><a href="../../architecture/">アーキテクチャ</a></li>
-<li><a href="../../reference/config-db/">CONFIG_DB リファレンス</a></li>
-<li><a href="../../reference/cli/">CLI リファレンス</a></li>
-<li><a href="../../management/sonic-nos-configuration-methods/">SONiC NOS 設定方式</a></li>
-<li><a href="../../architecture/sonic-on-gns3-vm/">GNS3 VM 上での SONiC 動作</a></li>
-<li><a href="../../architecture/steps-to-bring-up-sonic-vs/">SONiC-VS のビルドと libvirt 起動手順</a></li>
-<li><a href="../../system/zero-touch-provisioning-ztp/">Zero Touch Provisioning</a></li>
-<li>関心に応じて <a href="../../routing/">ルーティング</a>、<a href="../../switching/">スイッチング</a>、<a href="../../system/">システム</a></li>
+<li><a href="../../">SONiC 非公式ドキュメント</a> — このドキュメントの目的と範囲</li>
+<li><a href="../../architecture/">アーキテクチャ</a> — コンテナ構成と DB パイプライン全体像</li>
 </ol>
+<p><strong>トラック B: 設定の入口と出口を知る（運用者寄り）</strong></p>
+<p>CONFIG_DB が設定の真の源であり、CLI / gNMI / <a href="../../reference/glossary/#term-config_db.json">config_db.json</a> はすべて CONFIG_DB への書き込みに収束します。先にデータモデル（CONFIG_DB）を見てから操作面（CLI / 設定方式）に進むほうが、CLI が裏でどの table を触っているか辿りやすくなります。</p>
+<ol>
+<li><a href="../../reference/config-db/">CONFIG_DB リファレンス</a> — 設定の真の源となるスキーマ</li>
+<li><a href="../../reference/cli/">CLI リファレンス</a> — CONFIG_DB を操作する <code>config</code> / <code>show</code> 系コマンド</li>
+<li><a href="../../management/sonic-nos-configuration-methods/">SONiC NOS 設定方式</a> — CLI / gNMI / config_db.json / minigraph の使い分け</li>
+<li><a href="../../system/zero-touch-provisioning-ztp/">Zero Touch Provisioning</a> — 初期投入の自動化（CONFIG_DB を生成する側の話）</li>
+</ol>
+<p><strong>トラック C: 実機なしで動かす（学習・検証）</strong></p>
+<p>仮想環境でデータプレーンを再現してから実装に踏み込むほうが、ログと CONFIG_DB の対応を観察しやすく、トラック A/B の理解が定着します。</p>
+<ol>
+<li><a href="../../architecture/sonic-on-gns3-vm/">GNS3 VM 上での SONiC 動作</a> — お手軽に試す</li>
+<li><a href="../../architecture/steps-to-bring-up-sonic-vs/">SONiC-VS のビルドと libvirt 起動手順</a> — ソースからビルドして動かす</li>
+</ol>
+<p><strong>その先</strong>: 関心領域に応じて <a href="../../routing/">ルーティング</a> / <a href="../../switching/">スイッチング</a> / <a href="../../system/">システム</a> に進んでください。</p>
 <h2 id="_3">補足情報<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>全体像と DB の関係（CONFIG_DB / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a>、SwSS、syncd、SAI）については <a href="../../getting-started/">初めての方の必読 10</a> の推奨読破順 1〜4 に沿って読むと把握しやすいです。</li>
@@ -35962,7 +35973,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 158f1c95daa3 -->
+<!-- glossary-links-injected: 935537b65c91 -->
 
 <div class="footnote">
 <hr />

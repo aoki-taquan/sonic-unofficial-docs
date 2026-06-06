@@ -36188,7 +36188,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-swss/orchagent/nhgorch.h:117</code> で <code>NhgOrch</code>、<code>sonic-swss-common/common/schema.h:56</code> で <code>APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME</code>、<code>sonic-swss/orchagent/routeorch.cpp:771</code> で <code>ROUTE_TABLE.nexthop_group</code> パース、<code>routeorch.cpp:807-815</code> で <code>nexthop_group</code> と <code>ips/aliases</code> の排他検証を確認 (verified at: 2026-05-09)。</p>
+<p><code>sonic-swss-common/common/schema.h:55</code> で <code>APP_NEXTHOP_GROUP_TABLE_NAME = "NEXTHOP_GROUP_TABLE"</code>、<code>sonic-swss/orchagent/nhgorch.h:114-117</code> で「<code>NEXTHOP_GROUP_TABLE</code> updates をハンドルする」コメントと <code>NhgOrch</code> クラス、<code>sonic-swss/orchagent/routeorch.cpp:771</code> で <code>ROUTE_TABLE.nexthop_group</code> フィールドのパース、<code>routeorch.cpp:807-812</code> で <code>nexthop_group</code> と <code>ips/aliases</code> の排他検証を確認 (verified at: 2026-05-09)。なお HLD 表記 <code>NEXT_HOP_GROUP_TABLE</code> に対し実装の APP_DB テーブル名は <code>NEXTHOP_GROUP_TABLE</code> （アンダースコアなし）である点に注意<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 </div>
 <h1 id="next_hop_group_table-app_db">NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離<a class="headerlink" href="#next_hop_group_table-app_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36301,6 +36301,9 @@ reasoning: 単一/複数メンバ分岐・暫定モード・参照カウント�
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/ip/next_hop_group_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss-common</code> <code>common/schema.h:55</code> で <code>#define APP_NEXTHOP_GROUP_TABLE_NAME "NEXTHOP_GROUP_TABLE"</code>、<code>sonic-net/sonic-swss</code> <code>orchagent/nhgorch.h:114-117</code> で <code>NEXTHOP_GROUP_TABLE</code> ハンドラとしての <code>NhgOrch</code> 定義。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

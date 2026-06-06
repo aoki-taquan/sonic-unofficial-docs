@@ -29200,10 +29200,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kbps-sai-cir-integer-truncation" class="md-nav__link">
+  <a href="#kbps-sai-cir-bytess" class="md-nav__link">
     <span class="md-ellipsis">
       
-        kbps → SAI CIR 変換 (integer truncation)
+        kbps → SAI CIR 変換 (bytes/s 換算)
       
     </span>
   </a>
@@ -36857,10 +36857,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kbps-sai-cir-integer-truncation" class="md-nav__link">
+  <a href="#kbps-sai-cir-bytess" class="md-nav__link">
     <span class="md-ellipsis">
       
-        kbps → SAI CIR 変換 (integer truncation)
+        kbps → SAI CIR 変換 (bytes/s 換算)
       
     </span>
   </a>
@@ -37782,13 +37782,12 @@
 </tbody>
 </table>
 <p>証跡: <code>policerorch.cpp:157-169</code></p>
-<h3 id="kbps-sai-cir-integer-truncation">kbps → SAI CIR 変換 (integer truncation)<a class="headerlink" href="#kbps-sai-cir-integer-truncation" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>CIR (bytes/s) = kbps * 1000 / 8
+<h3 id="kbps-sai-cir-bytess">kbps → SAI CIR 変換 (bytes/s 換算)<a class="headerlink" href="#kbps-sai-cir-bytess" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>CIR (bytes/s) = kbps * 1000 / 8 = kbps * 125
 </span></code></pre></div>
-<p>整数演算のため、<code>kbps</code> が 8 の倍数でない場合は <strong>切り捨て</strong> が発生する (silent rounding)。<br />
-例: <code>kbps=1</code> → CIR=125 bytes/s (正確)、<code>kbps=3</code> → CIR=375 bytes/s (正確)、<code>kbps=7</code> → CIR=875 bytes/s (正確)。<br />
-kbps は通常大きな値のため実用上の影響は限定的だが、低レートでは注意が必要。</p>
-<p>証跡: <code>policerorch.cpp:181-184</code></p>
+<p><code>kbps * 1000</code> は常に 8 で割り切れる (1000 = 8 × 125) ため、C++ の整数除算でも端数は発生せず、任意の <code>kbps</code> 値が <code>kbps * 125</code> バイト/秒の CIR にマップされる。例: <code>kbps=1</code> → 125 bytes/s、<code>kbps=3</code> → 375 bytes/s、<code>kbps=7</code> → 875 bytes/s。</p>
+<p>注意点として、SAI 側および ASIC 側のレート量子化単位 (HW granularity) によっては要求 CIR と実効レートが完全一致しない可能性があるが、これは orchagent 層ではなく SAI / プラットフォームドライバ依存。</p>
+<p>証跡: <code>policerorch.cpp:181-184</code> (<code>attr.value.u64 = (stoul(value)*1000/8)</code>)</p>
 <h3 id="update-remove-then-reapply-storm-control">update 時 remove-then-reapply による瞬間的 storm control 解除<a class="headerlink" href="#update-remove-then-reapply-storm-control" title="Permanent link">&para;</a></h3>
 <p>既存エントリを更新する際、<a href="../../glossary/#term-orchagent">orchagent</a> は:
 1. ポートの SAI 属性を <code>SAI_NULL_OBJECT_ID</code> に設定 (storm control 一時解除)

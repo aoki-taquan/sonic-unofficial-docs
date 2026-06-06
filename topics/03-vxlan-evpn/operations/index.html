@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Overlay 運用 — Overlay の障害切り分けは、underlay、VTEP、control plane、route programming、QoS / hash の順に見ると無駄が少なくなります。">
+        <meta name="description" content="SONiC で VXLAN / EVPN / VNET 由来の overlay 障害を underlay、VTEP、control plane、route programming、QoS / hash の順に切り分けるための運用ノート。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Overlay 運用 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Overlay 運用 — Overlay の障害切り分けは、underlay、VTEP、control plane、route programming、QoS / hash の順に見ると無駄が少なくなります。" />
+<meta property="og:description" content="SONiC で VXLAN / EVPN / VNET 由来の overlay 障害を underlay、VTEP、control plane、route programming、QoS / hash の順に切り分けるための運用ノート。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/03-vxlan-evpn/operations.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/03-vxlan-evpn/operations/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Overlay 運用 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Overlay 運用 — Overlay の障害切り分けは、underlay、VTEP、control plane、route programming、QoS / hash の順に見ると無駄が少なくなります。" />
+<meta property="twitter:description" content="SONiC で VXLAN / EVPN / VNET 由来の overlay 障害を underlay、VTEP、control plane、route programming、QoS / hash の順に切り分けるための運用ノート。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/03-vxlan-evpn/operations.png" />
 </head>
   
@@ -1827,6 +1827,17 @@
     <span class="md-ellipsis">
       
         関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
       
     </span>
   </a>
@@ -36117,6 +36128,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36155,7 +36177,30 @@
 </ol>
 <h2 id="overlay-ecmp-bfd">Overlay ECMP と BFD<a class="headerlink" href="#overlay-ecmp-bfd" title="Permanent link">&para;</a></h2>
 <p>Overlay ECMP は、1 prefix に複数 tunnel endpoint を持たせ、VnetOrch が tunnel nexthop group を作る仕組みです。BFD monitoring 付きでは、<code>endpoint_monitor</code> に対応する BFD state が Down になると、その endpoint は NHG から外れます。</p>
-<p>拡張版では primary/secondary の優先集合、custom monitoring、per-route BFD timer、<code>pinned_state</code> が追加されます。運用上は、route が「消えた」のか「secondary に退避した」のか「pinned_state で固定された」のかを区別する必要があります。</p>
+<p>拡張版では primary/secondary の優先集合、custom monitoring、per-route BFD timer、<code>pinned_state</code> が追加されます。運用上は、route が「消えた」のか「secondary に退避した」のか「pinned_state で固定された」のかを区別する必要があります<sup id="fnref:vnet-pinned"><a class="footnote-ref" href="#fn:vnet-pinned">3</a></sup>.</p>
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/vnetorch.cpp#L1013-L1076 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  (monitor.second.pinned_state == PINNED_STATE_UP ||
+       monitor.second.pinned_state != PINNED_STATE_DOWN)))
+  updateMonitorPinnedState(vnet, ipPrefix, monitor_addr_to_pinned_state);
+reasoning: VnetOrch は monitor ごとに pinned_state (UP/DOWN) を保持し、BFD/custom monitor の素の状態を controller 指示で上書きできる。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/orchagent/vnetorch.cpp#L1013-L1076 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/orchagent/vnetorch.cpp#L1013-L1076 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>(monitor.second.pinned_state == PINNED_STATE_UP ||
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>     monitor.second.pinned_state != PINNED_STATE_DOWN)))
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>updateMonitorPinnedState(vnet, ipPrefix, monitor_addr_to_pinned_state);
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: VnetOrch は monitor ごとに pinned_state (UP/DOWN) を保持し、BFD/custom monitor の素の状態を controller 指示で上書きできる。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <pre class="mermaid"><code>flowchart LR
   Route[VNET route&lt;br/&gt;prefix + endpoints] --&gt; Vnet[VnetOrch]
   Vnet --&gt; BFD[BFD / custom monitor]
@@ -36165,42 +36210,158 @@
   State -- pinned up/down --&gt; Override[Controller override]</code></pre>
 <h2 id="dscp-remap">DSCP remap<a class="headerlink" href="#dscp-remap" title="Permanent link">&para;</a></h2>
 <p>Tunnel traffic の DSCP remap は、特に Dual-ToR の bounce-back 経路で <a href="../../../reference/glossary/#term-pfc">PFC</a> deadlock を避けるための QoS 機能です。VXLAN/VNET そのものの到達性ではなく、tunnel encap / decap 時の DSCP、TC、PG、Queue の対応を変えます。</p>
-<p>切り分けでは、<code>TUNNEL</code> / <code>TUNNEL_DECAP_TABLE</code> に QoS map が紐付いているか、<code>dscp_mode</code> が想定どおりか、<a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> に <code>SAI_TUNNEL_ATTR_ENCAP_QOS_*</code> / <code>DECAP_QOS_*</code> が入っているかを確認します。</p>
+<p>切り分けでは、<code>TUNNEL</code> / <code>TUNNEL_DECAP_TABLE</code> に QoS map が紐付いているか、<code>dscp_mode</code> が想定どおりか、<a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> に <code>SAI_TUNNEL_ATTR_ENCAP_QOS_*</code> / <code>DECAP_QOS_*</code> が入っているかを確認します<sup id="fnref:sai-tunnel-qos"><a class="footnote-ref" href="#fn:sai-tunnel-qos">4</a></sup>。具体的には decap 側で <code>SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP</code> / <code>SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP</code>、encap 側 (Dual-ToR mux) で <code>SAI_TUNNEL_ATTR_ENCAP_DSCP_MODE</code> / <code>SAI_TUNNEL_ATTR_ENCAP_QOS_TC_AND_COLOR_TO_DSCP_MAP</code> / <code>SAI_TUNNEL_ATTR_ENCAP_QOS_TC_TO_QUEUE_MAP</code> が代表的な属性です。</p>
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/tunneldecaporch.cpp#L834-L1091 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  attr.id = SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP;
+  attr.id = SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP;
+reasoning: TUNNEL_DECAP_TABLE の QoS map は decap 側で 2 種の SAI 属性として ASIC に投入される。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/orchagent/tunneldecaporch.cpp#L834-L1091 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/orchagent/tunneldecaporch.cpp#L834-L1091 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>attr.id = SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>attr.id = SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP;
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: TUNNEL_DECAP_TABLE の QoS map は decap 側で 2 種の SAI 属性として ASIC に投入される。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/muxorch.cpp#L281-L319 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  attr.id = SAI_TUNNEL_ATTR_ENCAP_DSCP_MODE;
+  attr.id = SAI_TUNNEL_ATTR_ENCAP_QOS_TC_AND_COLOR_TO_DSCP_MAP;
+  attr.id = SAI_TUNNEL_ATTR_ENCAP_QOS_TC_TO_QUEUE_MAP;
+reasoning: encap 側 QoS map は muxorch (Dual-ToR) で設定される。一般 VXLAN encap は ASIC dependent で属性経路が異なる。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/orchagent/muxorch.cpp#L281-L319 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/orchagent/muxorch.cpp#L281-L319 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>attr.id = SAI_TUNNEL_ATTR_ENCAP_DSCP_MODE;
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>attr.id = SAI_TUNNEL_ATTR_ENCAP_QOS_TC_AND_COLOR_TO_DSCP_MAP;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>attr.id = SAI_TUNNEL_ATTR_ENCAP_QOS_TC_TO_QUEUE_MAP;
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: encap 側 QoS map は muxorch (Dual-ToR) で設定される。一般 VXLAN encap は ASIC dependent で属性経路が異なる。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="inner-packet-hashing">Inner packet hashing<a class="headerlink" href="#inner-packet-hashing" title="Permanent link">&para;</a></h2>
 <p>Encapsulated traffic の ECMP 偏りを見るときは、outer 5-tuple で hash しているのか、inner 5-tuple で hash しているのかを確認します。PBH の inner hash テストでは、VXLAN/NVGRE の outer を変えても inner が同じなら同一 nexthop に寄ること、inner を変えれば複数 nexthop に分散することを確認します。</p>
 <h2 id="local-ars">Local ARS との境界<a class="headerlink" href="#local-ars" title="Permanent link">&para;</a></h2>
 <p>Local ARS は ECMP の next-hop 選択を static hash ではなく queue depth や port utilization で動的に変える発展機能です。既存ページでは現行 master で SWSS / <a href="../../../reference/glossary/#term-yang">YANG</a> / CLI への取り込み未完了の可能性が示されているため、VXLAN/VNET の通常運用手順として前提にしない方が安全です。設計比較や将来機能として読む位置づけです。</p>
 <h2 id="show-vxlan">show vxlan の出力サンプル<a class="headerlink" href="#show-vxlan" title="Permanent link">&para;</a></h2>
-<p><code>show vxlan tunnel</code> は <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>VXLAN_TUNNEL</code> と <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> の oper 状態を結合します。EVPN 由来の場合 <code>Creation Source = EVPN</code>、static 設定なら <code>CLI</code> 等が出ます。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>+---------+-------------+-------------------+--------------+
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>| SIP     | DIP         | Creation Source   | OperStatus   |
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>+=========+=============+===================+==============+
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>| 1.1.1.1 | 25.25.25.25 | EVPN              | oper_down    |
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>+---------+-------------+-------------------+--------------+
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>| 1.1.1.1 | 25.25.25.26 | EVPN              | oper_down    |
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>+---------+-------------+-------------------+--------------+
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>| 1.1.1.1 | 25.25.25.27 | EVPN              | oper_down    |
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>+---------+-------------+-------------------+--------------+
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>Total count : 3
+<p><code>show vxlan tunnel</code> は <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>VXLAN_TUNNEL</code> と <code>VXLAN_TUNNEL_MAP</code> を結合し、<code>vxlan tunnel name</code> / <code>source ip</code> / <code>destination ip</code> / <code>tunnel map name</code> / <code>tunnel map mapping(vni -&gt; vlan)</code> の 5 カラムを表示します。一方、リモート VTEP の oper 状態と生成元 (EVPN / CLI) を確認するには <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> の <code>VXLAN_TUNNEL_TABLE</code> を読む <code>show vxlan remotevtep</code> を使います<sup id="fnref:vxlan-cli"><a class="footnote-ref" href="#fn:vxlan-cli">1</a></sup>。</p>
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/vxlan.py#L61-L102 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  def tunnel():
+      header = ['vxlan tunnel name', 'source ip', 'destination ip', 'tunnel map name', 'tunnel map mapping(vni -> vlan)']
+      vxlan_data = config_db.get_table('VXLAN_TUNNEL')
+reasoning: show vxlan tunnel は CONFIG_DB ベースの 5 カラム出力で、SIP/DIP/Creation Source/OperStatus の 4 カラムは別コマンド (remotevtep) の出力。混同しやすいので明示分離する。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/show/vxlan.py#L61-L102 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/show/vxlan.py#L61-L102 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>def tunnel():
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    header = [&#39;vxlan tunnel name&#39;, &#39;source ip&#39;, &#39;destination ip&#39;, &#39;tunnel map name&#39;, &#39;tunnel map mapping(vni -&gt; vlan)&#39;]
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    vxlan_data = config_db.get_table(&#39;VXLAN_TUNNEL&#39;)
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: show vxlan tunnel は CONFIG_DB ベースの 5 カラム出力で、SIP/DIP/Creation Source/OperStatus の 4 カラムは別コマンド (remotevtep) の出力。混同しやすいので明示分離する。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/vxlan.py#L233-L279 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  def remotevtep(count):
+      header = ['SIP', 'DIP', 'Creation Source', 'OperStatus']
+      vxlan_keys = db.keys(db.STATE_DB, 'VXLAN_TUNNEL_TABLE|*')
+      body.append([vxlan_table['src_ip'], vxlan_table['dst_ip'], vxlan_table['tnl_src'], 'oper_' + vxlan_table['operstatus']])
+reasoning: 下記の grid サンプル (SIP/DIP/Creation Source/OperStatus) は show vxlan remotevtep の出力。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/show/vxlan.py#L233-L279 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/show/vxlan.py#L233-L279 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>def remotevtep(count):
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    header = [&#39;SIP&#39;, &#39;DIP&#39;, &#39;Creation Source&#39;, &#39;OperStatus&#39;]
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    vxlan_keys = db.keys(db.STATE_DB, &#39;VXLAN_TUNNEL_TABLE|*&#39;)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    body.append([vxlan_table[&#39;src_ip&#39;], vxlan_table[&#39;dst_ip&#39;], vxlan_table[&#39;tnl_src&#39;], &#39;oper_&#39; + vxlan_table[&#39;operstatus&#39;]])
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 下記の grid サンプル (SIP/DIP/Creation Source/OperStatus) は show vxlan remotevtep の出力。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<p><code>show vxlan remotevtep</code> は STATE_DB の <code>VXLAN_TUNNEL_TABLE</code> を読み、リモート VTEP の oper 状態と生成元 (EVPN / CLI 等) を 4 カラムで出します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>+---------+-------------+-------------------+--------------+
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>| SIP     | DIP         | Creation Source   | OperStatus   |
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>+=========+=============+===================+==============+
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>| 1.1.1.1 | 25.25.25.25 | EVPN              | oper_down    |
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>+---------+-------------+-------------------+--------------+
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>| 1.1.1.1 | 25.25.25.26 | EVPN              | oper_down    |
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>+---------+-------------+-------------------+--------------+
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>| 1.1.1.1 | 25.25.25.27 | EVPN              | oper_down    |
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>+---------+-------------+-------------------+--------------+
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>Total count : 3
 </span></code></pre></div>
 <p><code>show vxlan vlanvnimap</code> は <a href="../../../reference/glossary/#term-vlan">VLAN</a> と VNI の対応を表示します。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>+---------+-------+
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>| VLAN    |   VNI |
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>+=========+=======+
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>| Vlan100 |   100 |
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>+---------+-------+
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>| Vlan101 |   101 |
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>+---------+-------+
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>Total count : 2
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>+---------+-------+
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>| VLAN    |   VNI |
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>+=========+=======+
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>| Vlan100 |   100 |
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>+---------+-------+
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>| Vlan101 |   101 |
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>+---------+-------+
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>Total count : 2
 </span></code></pre></div>
 <p><code>show vxlan remotevni</code> は受信した Type-2 / Type-3 EVPN route 由来の remote VTEP を表示します。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>+---------+--------------+-------+
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>| VLAN    | RemoteVTEP   |   VNI |
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>+=========+==============+=======+
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>| Vlan100 | 25.25.25.25  |   100 |
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>+---------+--------------+-------+
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>+---------+--------------+-------+
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>| VLAN    | RemoteVTEP   |   VNI |
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>+=========+==============+=======+
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>| Vlan100 | 25.25.25.25  |   100 |
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>+---------+--------------+-------+
 </span></code></pre></div>
-<p>VNET 構成では <code>show vnet routes all</code> で <code>Vnet name</code>、<code>Prefix</code>、<code>Endpoints</code>、<code>MAC</code>、<code>VNI</code>、<code>Metric</code>、<code>State</code> の 7 カラムが並びます。Endpoints が複数あるときは 3 つずつ折り返されます。</p>
+<p>VNET 構成では <code>show vnet routes all</code> で <code>Vnet name</code>、<code>Prefix</code>、<code>Endpoints</code>、<code>MAC</code>、<code>VNI</code>、<code>Metric</code>、<code>State</code> の 7 カラムが並びます。Endpoints が複数あるときは長さに応じて 2〜3 個ずつ折り返されます (長い IPv6 / MAC が混ざる場合は 2 個ずつ)<sup id="fnref:vnet-routes"><a class="footnote-ref" href="#fn:vnet-routes">2</a></sup>。</p>
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/vnet.py#L529-L567 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  def pretty_print(table, r, epval, mac_addr, vni, metric, state):
+      max_len = max((len(item) for item in all_items), default=0)
+      row_width = 2 if max_len > 15 else 3
+reasoning: 折り返し幅は固定 3 ではなく、endpoint/MAC/VNI のうち最長要素が 15 文字超なら 2、それ以下なら 3。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/show/vnet.py#L529-L567 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/show/vnet.py#L529-L567 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>def pretty_print(table, r, epval, mac_addr, vni, metric, state):
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    max_len = max((len(item) for item in all_items), default=0)
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    row_width = 2 if max_len &gt; 15 else 3
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 折り返し幅は固定 3 ではなく、endpoint/MAC/VNI のうち最長要素が 15 文字超なら 2、それ以下なら 3。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_2">異常検出パターン<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36250,17 +36411,17 @@
 </table>
 <h2 id="_3">典型的なログサンプル<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>vxlanorch / VnetOrch / <a href="../../../reference/glossary/#term-frr">FRR</a> EVPN 関連の代表ログ:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>vxlanmgrd: VxlanTunnel &#39;tunnel_v4&#39; was added
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>vxlanmgrd: Tunnel Decap term entry added for tunnel: tunnel_v4 src_ip: 25.25.25.25
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>orchagent: :- create: Can&#39;t create a tunnel object
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>orchagent: :- removeNextHopTunnel: delete NH tunnel for ip &#39;25.25.25.25&#39;, mac &#39;00:00:00:00:00:00&#39; vni 100 failed
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>orchagent: :- addEndpointMonitor: Endpoint 25.25.25.25 for prefix 10.1.1.0/24 set to DOWN
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>bgpd[28]: %ADJCHANGE: neighbor 10.0.0.1 in vrf default Up (BGP-EVPN)
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>zebra: EVPN: Failed to install MAC 00:11:22:33:44:55 in VNI 100
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>vxlanmgrd: VxlanTunnel &#39;tunnel_v4&#39; was added
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>vxlanmgrd: Tunnel Decap term entry added for tunnel: tunnel_v4 src_ip: 25.25.25.25
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>orchagent: :- create: Can&#39;t create a tunnel object
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>orchagent: :- removeNextHopTunnel: delete NH tunnel for ip &#39;25.25.25.25&#39;, mac &#39;00:00:00:00:00:00&#39; vni 100 failed
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>orchagent: :- addEndpointMonitor: Endpoint 25.25.25.25 for prefix 10.1.1.0/24 set to DOWN
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>bgpd[28]: %ADJCHANGE: neighbor 10.0.0.1 in vrf default Up (BGP-EVPN)
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>zebra: EVPN: Failed to install MAC 00:11:22:33:44:55 in VNI 100
 </span></code></pre></div>
 <p>SAI fail パターン例:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>syncd: SAI_API_TUNNEL: SAI_STATUS_INSUFFICIENT_RESOURCES
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>syncd: SAI_API_NEXT_HOP_GROUP: SAI_STATUS_TABLE_FULL
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>syncd: SAI_API_TUNNEL: SAI_STATUS_INSUFFICIENT_RESOURCES
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>syncd: SAI_API_NEXT_HOP_GROUP: SAI_STATUS_TABLE_FULL
 </span></code></pre></div>
 <h2 id="_4">対応コマンド早見表<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <table>
@@ -36313,7 +36474,7 @@
 </tr>
 <tr>
 <td>BFD endpoint</td>
-<td><code>show bfd summary</code>、APPL_DB の BFD_SESSION</td>
+<td><code>show bfd summary</code>、<a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> の BFD_SESSION</td>
 </tr>
 <tr>
 <td>Counter clear</td>
@@ -36357,7 +36518,27 @@
 <li><a href="../../../architecture/sonic-policy-based-hashing/">Policy Based Hashing</a></li>
 <li><a href="../../../routing/local-ars-hld/">Local ARS</a></li>
 </ul>
-<!-- glossary-links-injected: a05b1a0422d1 -->
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>VNET_ROUTE_TUNNEL_TABLE / VXLAN_TUNNEL_MAP のスキーマは <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/doc/swss-schema.md#L927-L949"><code>sonic-swss/doc/swss-schema.md</code> L927-L949</a> を参照。</p>
+<!-- glossary-links-injected: 9cc90e2e6da0 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:vxlan-cli">
+<p><code>show vxlan tunnel</code> の 5 カラム実装 — <a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/vxlan.py#L61-L102"><code>sonic-utilities/show/vxlan.py</code> L61-L102</a>、<code>show vxlan remotevtep</code> の 4 カラム実装 — <a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/vxlan.py#L233-L279"><code>sonic-utilities/show/vxlan.py</code> L233-L279</a>。&#160;<a class="footnote-backref" href="#fnref:vxlan-cli" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:vnet-routes">
+<p><code>pretty_print</code> の折り返し幅算出 — <a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/vnet.py#L529-L567"><code>sonic-utilities/show/vnet.py</code> L529-L567</a>。&#160;<a class="footnote-backref" href="#fnref:vnet-routes" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:vnet-pinned">
+<p><code>VnetOrch::updateMonitorPinnedState</code> — <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vnetorch.cpp#L1013-L1076"><code>sonic-swss/orchagent/vnetorch.cpp</code> L1013-L1076</a>。&#160;<a class="footnote-backref" href="#fnref:vnet-pinned" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:sai-tunnel-qos">
+<p>Tunnel decap QoS map 投入 — <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L834-L1091"><code>sonic-swss/orchagent/tunneldecaporch.cpp</code> L834-L1091</a>、Dual-ToR mux encap QoS map 投入 — <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/muxorch.cpp#L281-L319"><code>sonic-swss/orchagent/muxorch.cpp</code> L281-L319</a>。&#160;<a class="footnote-backref" href="#fnref:sai-tunnel-qos" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

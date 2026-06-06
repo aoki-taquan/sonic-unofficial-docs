@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み） — PINS (P4 Integrated Network Stack) は SONiC を P4 / P4Runtime で遠隔制御 する。">
+        <meta name="description" content="P4Orch は PINS (P4 Integrated Network Stack) の中核 orchagent。APPL_DB.P4RT を購読し、SAI を同期書き込みで叩いて P4Runtime controller に完了応答を返す。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み） — PINS (P4 Integrated Network Stack) は SONiC を P4 / P4Runtime で遠隔制御 する。" />
+<meta property="og:description" content="P4Orch は PINS (P4 Integrated Network Stack) の中核 orchagent。APPL_DB.P4RT を購読し、SAI を同期書き込みで叩いて P4Runtime controller に完了応答を返す。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/p4-orchagent.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/p4-orchagent/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み） — PINS (P4 Integrated Network Stack) は SONiC を P4 / P4Runtime で遠隔制御 する。" />
+<meta property="twitter:description" content="P4Orch は PINS (P4 Integrated Network Stack) の中核 orchagent。APPL_DB.P4RT を購読し、SAI を同期書き込みで叩いて P4Runtime controller に完了応答を返す。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/p4-orchagent.png" />
 </head>
   
@@ -19001,10 +19001,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#topics" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 Topics
+        関連サブページ
       
     </span>
   </a>
@@ -19012,7 +19012,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -19023,7 +19023,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#topics_1" class="md-nav__link">
+  <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連 Topics
@@ -36085,10 +36085,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#topics" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 Topics
+        関連サブページ
       
     </span>
   </a>
@@ -36096,7 +36096,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36107,7 +36107,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#topics_1" class="md-nav__link">
+  <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連 Topics
@@ -36331,14 +36331,14 @@
 <li>restart 後に消える → 仕様。Controller が再投入</li>
 <li>ref_count 異常 → Centralized Mapper の値を debug log で確認、CrmOrch カウンタも対照</li>
 </ul>
-<h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連サブページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/18-p4-pins/concept/">18-p4-pins/concept</a>: PINS / P4Runtime の全体像</li>
 <li><a href="../../topics/20-swss-sai-redis/internals/">20-swss-sai-redis/internals</a>: orchagent 同期モードと APPL_STATE_DB</li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
-<h2 id="topics_1">関連 Topics<a class="headerlink" href="#topics_1" title="Permanent link">&para;</a></h2>
+<h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/18-p4-pins/">Topics: P4 / PINS / Programmable Pipeline</a></li>
 </ul>

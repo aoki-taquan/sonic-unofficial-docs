@@ -35946,7 +35946,7 @@
 
 <h1 id="yang">YANG リファレンス<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h1>
 <p>このページは、機能章 (本書の章 01〜21) から <a href="../../../reference/glossary/#term-yang">YANG</a> モジュールを逆引きするための索引である。<a href="../../../reference/glossary/#term-sonic">SONiC</a> native YANG のページは <code>docs/reference/yang/*.md</code> に並んでおり、<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> のテーブルスキーマと 1:1 対応する。OpenConfig 側のマップ範囲は、機能ごとに <a href="../concept/">概要</a> の表と、各機能 <a href="../../../reference/glossary/#term-hld">HLD</a> を参照する。</p>
-<p>native YANG のソースは <code>sonic-buildimage</code> リポジトリの <code>src/sonic-yang-models/yang-models/</code> 配下にまとまっている <!-- evidence: sonic-net/sonic-buildimage src/sonic-yang-models/yang-models @9ea932ec --> 。本ページに挙げる sonic-*.yang はすべてここに実在するモジュールに対応する。個別ページが未整備のモジュールは <code>.yang</code> のパス表記のままにしてある。</p>
+<p>native YANG のソースは <code>sonic-buildimage</code> リポジトリの <code>src/sonic-yang-models/yang-models/</code> 配下にまとまっている <!-- evidence: sonic-net/sonic-buildimage src/sonic-yang-models/yang-models @9ea932ec (136 module) --> 。本ページに挙げる sonic-*.yang はすべてここに実在するモジュールに対応する。個別ページが未整備のモジュールは <code>.yang</code> のパス表記のままにしてある。</p>
 <h2 id="yang_1">機能章別 YANG モジュール<a class="headerlink" href="#yang_1" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36004,7 +36004,7 @@
 </tr>
 <tr>
 <td>10 <a href="../../../reference/glossary/#term-gnmi">gNMI</a> / OpenConfig</td>
-<td><code>sonic-gnmi.yang</code>, <code>sonic-telemetry.yang</code>, <code>sonic-telemetry_client.yang</code>, <code>sonic-grpcclient.yang</code>, <code>sonic-high-frequency-telemetry.yang</code> (個別ページは未整備、source: <code>src/sonic-yang-models/yang-models/</code>)</td>
+<td><code>sonic-gnmi.yang</code>, <code>sonic-telemetry.yang</code>, <code>sonic-telemetry_client.yang</code>, <code>sonic-grpcclient.yang</code>, <code>sonic-high-frequency-telemetry.yang</code> (個別ページは未整備、source: <code>src/sonic-yang-models/yang-models/</code>) <!-- evidence: sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-{gnmi,telemetry,telemetry_client,grpcclient,high-frequency-telemetry}.yang @9ea932ec --></td>
 <td>gNMI / streaming telemetry / gRPC client 設定</td>
 </tr>
 <tr>
@@ -36044,7 +36044,7 @@
 </tr>
 <tr>
 <td>18 P4 / <a href="../../../reference/glossary/#term-pins">PINS</a></td>
-<td>（該当する <code>sonic-p4*.yang</code> / <code>sonic-pins*.yang</code> は master の yang-models 配下に存在しない。PINS 側スキーマは別リポ sonic-net/sonic-pins を参照）</td>
+<td>（該当する <code>sonic-p4*.yang</code> / <code>sonic-pins*.yang</code> は master の yang-models 配下に存在しない <!-- evidence: sonic-net/sonic-buildimage src/sonic-yang-models/yang-models @9ea932ec — p4/pins 接頭辞のモジュール無し --> 。PINS 側スキーマは別リポ sonic-net/sonic-pins を参照）</td>
 <td>P4 / PINS は YANG ではなく gNMI/P4Runtime で扱われる</td>
 </tr>
 <tr>

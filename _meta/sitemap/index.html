@@ -35837,7 +35837,7 @@
 <li><a href="../../topics/03-vxlan-evpn/concept/">VXLAN / VNET / EVPN の概要</a> — [meta] VXLAN / VNET / EVPN の概要 — SONiC の overlay 周りは、「VXLAN」「VNET」「EVPN」という 3 つの単語がほぼ同…</li>
 <li><a href="../../topics/03-vxlan-evpn/architecture/">Overlay アーキテクチャ</a> — [meta] Overlay アーキテクチャ — Overlay を読むときの中心は、設定テーブルそのものではなく「誰がどの table を見て、最終的にどの SAI ob…</li>
 <li><a href="../../topics/03-vxlan-evpn/setup/">Overlay 設定</a> — [code-verified] Overlay 設定 — Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN の NVO を…</li>
-<li><a href="../../topics/03-vxlan-evpn/operations/">Overlay 運用</a> — [meta] Overlay 運用 — Overlay の障害切り分けは、underlay、VTEP、control plane、route programming、QoS…</li>
+<li><a href="../../topics/03-vxlan-evpn/operations/">Overlay 運用</a> — [code-verified] SONiC で VXLAN / EVPN / VNET 由来の overlay 障害を underlay、VTEP、control plane、route p…</li>
 <li><a href="../../topics/03-vxlan-evpn/internals/">内部実装</a> — [meta] 内部実装 — VXLAN / EVPN / VNET の内部実装は「FRR (bgpd) が EVPN type-2/type-5 を学習し、zebra が…</li>
 <li><a href="../../topics/03-vxlan-evpn/advanced/">Overlay 発展トピック</a> — [meta] Overlay 発展トピック — ここでは、基本の VXLAN / VNET / EVPN の延長に見えるが、別の前提や別の orch を持つ機能を整理します…</li>
 </ul>
@@ -36314,7 +36314,7 @@
 <li><a href="../../system/sonic-snmp-table-schema-proposal/">SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）</a> — [code-verified] SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER） — SONiC の SNMP 設定（コミュニティ・ロ…</li>
 <li><a href="../../system/sonic-storage-monitoring-daemon-design/">storagemond（SSD / eMMC の health 監視）</a> — [discrepancy-found] storagemond は SSD / eMMC など内部ストレージの health / wear-out を定期監視して STATE_DB に publis…</li>
 <li><a href="../../system/static-dns-configuration/">静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）</a> — [code-verified] 静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携） — SONiC は管理インタフェース経由で DHCP から DNS リゾル…</li>
-<li><a href="../../system/system-ready-hld/">System Ready（sysmonitor + per-app closest UP status の event 集約）</a> — [code-verified] System Ready — SONiC の起動は 非同期。systemd の service が active でも、その内部の SWSS 系 daemon…</li>
+<li><a href="../../system/system-ready-hld/">System Ready（sysmonitor + per-app closest UP status の event 集約）</a> — [code-verified] System Ready — SONiC の起動は非同期で、systemd の service が active でも内部の SWSS 系 daemon が…</li>
 <li><a href="../../system/twamp-light-hld/">TWAMP Light（Session-Sender / Session-Reflector）</a> — [discrepancy-found] TWAMP Light（Session-Sender / Session-Reflector） — RFC 5357 に基づく軽量な双方向性能測定（laten…</li>
 <li><a href="../../system/useful-sysctl-settings/">FRR 用 sysctl チューニングのデフォルト</a> — [code-verified] FRR 用 sysctl チューニングのデフォルト — SONiC の制御プレーンでは FRR を使ってルーティングプロトコル（BGP / OSPF / 等）…</li>
 <li><a href="../../system/zero-touch-provisioning-ztp/">Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）</a> — [code-verified] Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine） — ZTP は 箱出し直後…</li>
@@ -36432,7 +36432,7 @@
 <li><a href="../../internals/">内部実装</a> — [meta] 内部実装 — Redis、SwSS、orchagent、counter、P4Orch など実装内部の構造を扱う章。</li>
 <li><a href="../../internals/support-multiple-user-defined-redis-database-instances/">複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）</a> — [code-verified] 複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散） — 従来の SONiC は 単一の Redis イン…</li>
 <li><a href="../../internals/support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）</a> — [code-verified] Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig） — Multi-ASIC SONiC…</li>
-<li><a href="../../internals/p4-orchagent/">P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）</a> — [code-verified] P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み） — PINS (P4 Integrated Network Sta…</li>
+<li><a href="../../internals/p4-orchagent/">P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）</a> — [code-verified] P4Orch は PINS (P4 Integrated Network Stack) の中核 orchagent。APPL_DB.P4RT を購読し、SAI…</li>
 <li><a href="../../internals/swss-schema/">swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）</a> — [code-verified] swss-schema（APPL_DB / STATE_DB の中心スキーマ参照） — SONiC の APPL_DB / STATE_DB に存在する主要テ…</li>
 <li><a href="../../internals/zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a> — [code-verified] ZMQ ProducerStateTable / ConsumerStateTable 設計 — 通常の ProducerStateTable / Consu…</li>
 <li><a href="../../internals/aggregate-voq-counters-in-sonic/">VOQ カウンタ集約（chassis supervisor からの aggregate 表示）</a> — [code-verified] VOQ カウンタ集約（chassis supervisor からの aggregate 表示） — distributed VOQ アーキテクチャでは、ある…</li>
@@ -36961,7 +36961,7 @@
 <li><a href="../../reference/runbooks/bgp-route-not-advertised/">BGP route が広告されない</a> — [runbook-verified] Runbook: BGP route が想定 peer へ広告されない事象を、FRR の Adj-RIB-Out 判定と fpmsyncd の APP_DB…</li>
 <li><a href="../../reference/runbooks/acl-rule-no-hit/">ACL ルールが効かない / counter が増えない</a> — [runbook-verified] Runbook: ACL ルールが効かない / counter が増えない — : sonic-net/sonic-swss @ 4305596 — orch…</li>
 <li><a href="../../reference/runbooks/interface-mtu-mismatch/">Interface MTU mismatch によるパケットドロップ</a> — [runbook-verified] Runbook: Interface MTU mismatch によるパケットドロップ — : sonic-net/sonic-swss @ 4305596…</li>
-<li><a href="../../reference/runbooks/routing-loop-detected/">Routing loop が発生している</a> — [runbook-verified] Runbook: Routing loop が発生している — : sonic-net/sonic-frr @ 799f47f — zebra/zebra_r…</li>
+<li><a href="../../reference/runbooks/routing-loop-detected/">Routing loop が発生している</a> — [runbook-verified] Runbook: traceroute が同一 hop を繰り返し、TTL exceeded と control plane CPU が急上昇する routi…</li>
 <li><a href="../../reference/runbooks/minigraph-reload-stuck/">minigraph 適用後に reload が完了しない / 起動が固まる</a> — [code-verified] <code>config load_minigraph</code> 実行後に reload が終わらない / swss が activating のまま固まる際の切り分け run…</li>
 <li><a href="../../reference/runbooks/link-flapping/">T0/T1 リンクが flap し続ける</a> — [runbook-verified] Runbook: T0/T1 リンクが flap し続ける — : sonic-net/sonic-swss @ 4305596 — portsorch.cp…</li>
 <li><a href="../../reference/runbooks/config-db-persistence-failure/">CONFIG_DB の永続化が失敗する</a> — [code-verified] Runbook: CONFIG_DB の永続化が失敗する (config save 失敗) — : sonic-net/sonic-utilities @ 3…</li>

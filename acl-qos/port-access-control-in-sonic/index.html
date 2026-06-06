@@ -13192,6 +13192,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG モデルの現状
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36061,6 +36072,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG モデルの現状
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36308,6 +36330,8 @@
 </tr>
 </tbody>
 </table>
+<h3 id="yang">YANG モデルの現状<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>PAC 専用 (<code>PAC_PORT_CONFIG_TABLE</code> / <code>HOSTAPD_GLOBAL_CONFIG_TABLE</code>) の <a href="../../reference/glossary/#term-yang">YANG</a> モデルは現行 community master の <code>sonic-buildimage/src/sonic-yang-models/yang-models/</code> には未収録（<code>sonic-pac.yang</code> 等は存在しない）。RADIUS / AAA 側は <code>sonic-system-radius.yang</code> / <code>sonic-system-aaa.yang</code> に取り込み済みで、ポート / VLAN 側は <code>sonic-port.yang</code> / <code>sonic-vlan.yang</code> を流用する形となる。PAC 固有テーブルの YANG 定義追加は別 PR を要する。</p>
 <h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">PAC_PORT_CONFIG_TABLE|&lt;port&gt;</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">pac_enabled  = true | false</span>
@@ -36471,7 +36495,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1c626534d7ce -->
+<!-- glossary-links-injected: d5320e852f7a -->
 
 <div class="footnote">
 <hr />
