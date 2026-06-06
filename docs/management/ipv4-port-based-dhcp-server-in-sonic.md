@@ -115,7 +115,7 @@ flowchart LR
 `dhcp-server-identifier` (Option 54) は **DHCP インタフェース（dhcrelay 下流）IP** に書き換える。client が unicast RELEASE を投げる先を relay に向け、relay から server へ転送させるため[^1][^3]。
 
 !!! note "実装上の差分"
-    HLD の例では `"test": "relay4[1].hex == 'hostname:etp1'"` と完全一致式で書かれているが、実コード (`dhcp_cfggen.py` L240-243[^3]) は `substring(relay4[1].hex, -<class_len>, <class_len>) == '<hostname>:<port_name>'` の **末尾部分一致** で生成する。Option 82 sub-option 1 (circuit-id) のヘッダー先頭バイトを除外するため。
+    HLD の例では `"test": "relay4[1].hex == 'hostname:etp1'"` と完全一致式で書かれているが、実コード (`dhcp_cfggen.py` L240-243[^3]) は `substring(relay4[1].hex, -<class_len>, <class_len>) == '<hostname>:<port_name>'` の **末尾部分一致** で生成する。Option 82 sub-option 1 (circuit-id) のヘッダ先頭バイトを除外するため。
 
 ### dhcrelay の起動例
 
