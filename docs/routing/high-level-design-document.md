@@ -1,32 +1,71 @@
 ---
-title: Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
-description: Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance
-  に固定） — T0 配下に flow state を持つ appliance（FW / SLB 等）が居て、可用性のためペア構成（異 T0 配下）になっている。
+title: Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定）
+description: Ordered ECMP は nexthop を IP 昇順で並べ SAI に sequence_id 付きで投入することで、全 T1 から同じフローを必ず同じ T0
+  に landing させ、flow state を持つ appliance ペアでの state miss を防ぐ。
 area: routing
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-06-06
 sources:
 - repo: sonic-net/SONiC
   path: doc/ecmp/ordered_ecmp_next_hop_hld.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss
+  path: orchagent/switchorch.cpp
+  ref: master
+- repo: sonic-net/sonic-swss
+  path: orchagent/routeorch.cpp
+  ref: master
 related:
   config_db:
   - SWITCH
-  cli:
-  - show bgp
-  - show techsupport
+  cli: []
   yang:
   - sonic-route-common
   - sonic-hash
-  - sonic-fine-grained-ecmp
-  - sonic-system-defaults
-  - sonic-crm
+  _no_related_cli: true
 ---
 
 !!! success "裏取りステータス: code-verified"
-    `sonic-swss/orchagent/switchorch.cpp` L488-501 で `SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP` の capability query と `SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE` (switchorch.h L18) の APP_DB 公開を確認。`routeorch.cpp` L1557 / `vnetorch.cpp` L804 で `checkOrderedEcmpEnable()` 経由の nexthop group type 切替を確認。`sonic-swss/tests/test_nhg.py` L1006 / `tests/vnet_lib.py` L1139-1187 で `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID` 検証 UT を確認（verified 2026-05-09）。
+    `sonic-swss/orchagent/switchorch.cpp` L488-501 で `SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP` の capability query と `SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE` (`switchorch.h` L18) の APP_DB 公開を確認。`routeorch.cpp` L499 / L1557 / L1612 と `vnetorch.cpp` L804 / L841 / L2778 で `checkOrderedEcmpEnable()` 経由の nexthop group type 切替を確認。`sonic-swss/tests/test_nhg.py` / `tests/vnet_lib.py` で `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID` 検証 UT を確認（verified 2026-06-06）。
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/switchorch.cpp#L485-L502
+excerpt: |
+  if (values.list[i] == SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP)
+      fvVector.emplace_back(SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE, "true");
+  ...
+  fvVector.emplace_back(SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE, "false");
+reasoning: |
+  capability query で SAI が DYNAMIC_ORDERED_ECMP をサポートしているか確認し、
+  サポート有無を APP_DB の SWITCH_CAPABILITY_TABLE に書き出す箇所。
+  Backward Compatibility 節で言及している「SAI 非対応 ASIC では feature を無効化」の実体。
+-->
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/routeorch.cpp#L1555-L1615
+excerpt: |
+  nhg_attr.value.s32 = m_switchOrch->checkOrderedEcmpEnable()
+      ? SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP
+      : SAI_NEXT_HOP_GROUP_TYPE_ECMP;
+reasoning: |
+  RouteOrch が nexthop group 作成時に、SwitchOrch の global flag を見て
+  DYNAMIC_ORDERED_ECMP / ECMP を切り替える。HLD の "ECMP group 作成時 SAI に
+  DYNAMIC_ORDERED_ECMP" の実体。
+-->
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/switchorch.h#L18
+excerpt: |
+  #define SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE "ORDERED_ECMP_CAPABLE"
+reasoning: |
+  ORDERED_ECMP_CAPABLE field name の定義箇所。APP_DB.SWITCH_TABLE に書き込まれる。
+-->
+
 
 # Ordered ECMP（IP ソート順で nexthop に `sequence_id` を付け同一フローを同 ToR/Appliance に固定）
+
+!!! note "URL slug について"
+    本ページの URL slug `high-level-design-document` は upstream HLD ファイル名（`ordered_ecmp_next_hop_hld.md` の親リポジトリ内での一般名）に由来する歴史的経緯のもので、内容は **Ordered ECMP** に特化している。slug rename は既存 URL を破壊するため保持している。検索する際は「Ordered ECMP」「ordered-ecmp」で本ページを参照すること。
 
 ## 概要
 
@@ -127,10 +166,6 @@ sequenceDiagram
 
 - [Topics: VRF / ECMP](../topics/04-vrf-ecmp/index.md)
 - [Topic 04 ECMP](../topics/04-vrf-ecmp/ecmp.md)
-- [CLI: config route](../reference/cli/config-route.md)
-- [CLI: config bgp](../reference/cli/config-bgp.md)
-- [CLI: show bgp](../reference/cli/show-bgp.md)
-- [CONFIG_DB: STATIC_ROUTE](../reference/config-db/static-route.md)
 - [Glossary](../reference/glossary.md)
 - [Reference 索引](../reference/index.md)
 

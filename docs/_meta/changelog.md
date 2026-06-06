@@ -23,6 +23,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-06 #5284 fix(quality): iter3 integration (15 rewrites)
 - 2026-06-06 #5268 fix(quality): iter2 integration (15 rewrites)
 - 2026-06-06 #5252 fix(quality): iter1 integration (15 rewrites)
 - 2026-06-04 #5236 fix(quality): iter4 integration (12 rewrites)
@@ -525,5 +526,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3951 docs(config-db): add Phase H platform block to pbh-state
 - 2026-05-19 #3948 docs(config-db): add Phase G pubsub block to LOGGER table page
 - 2026-05-19 #3949 docs(config-db): add Phase F side-effects block to lossless-traffic-pattern
-- 2026-05-19 #3947 docs(config-db): add Phase H platform block to pin-config
 
