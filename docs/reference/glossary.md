@@ -2276,8 +2276,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [STP / STP_VLAN / STP_PORT テーブル — 暗黙デフォルト詳細](config-db/stp.md) (66)
 - [STP_PORT テーブル — 暗黙デフォルト詳細](config-db/stp-port.md) (43)
+- [内部実装](../topics/21-lab-vs-developer/internals.md) (41)
 - [STP_VLAN / STP_VLAN_PORT テーブル](config-db/stp-vlan.md) (40)
-- [内部実装](../topics/21-lab-vs-developer/internals.md) (40)
 - [概念](../topics/21-lab-vs-developer/concept.md) (26)
 
 ### [VLAN](#term-vlan)

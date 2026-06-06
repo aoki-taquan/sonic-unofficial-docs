@@ -73,7 +73,7 @@ flowchart LR
 
 | コンポーネント | 主実体 | 責務 |
 | --- | --- | --- |
-| `SAI VS` | `meta/sai_vs_*.cpp`（libsai-vs） | SAI API を Linux netdev / bridge / route で代替 |
+| `SAI VS` | `sonic-sairedis/vslib/`（生成物 `libsaivs.la`）[^vslib] | SAI API を Linux netdev / bridge / route で代替 |
 | `syncd` (VS mode) | syncd binary を `--asicType vs` で起動 | SAI VS を load |
 | `sonic-vs.img` build | `sonic-buildimage` の `PLATFORM=vs` target | KVM 用 image |
 | PTF | `ptf` python framework | port-level packet I/O テスト |
@@ -148,5 +148,7 @@ VS test plan に書かれているテストでも、CI 側で実行対象にな�
 ## verification: meta を選ぶ理由
 
 このページが `verification: meta` なのは、lab / 開発者ワークフローは「実装の状態」ではなく「複数 HLD への横断ガイド」だからです。SAI VS / [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt) / PTF / KNE / Alpine それぞれに別途 `code-verified` ページがあり、ここで重複して裏取りする必要はありません。サブ章で言及するコンポーネント別の挙動裏取りは、リンク先の章を参照してください。
+
+[^vslib]: SAI VS の実装は `sonic-sairedis/vslib/` 配下にあり、`lib_LTLIBRARIES = libsaivs.la` として共有ライブラリ `libsaivs` を生成する。FDB / route / hostif などの状態遷移は `SwitchStateBase*.cpp`（例: `SwitchStateBaseFdb.cpp`）に集約される。出典: [sonic-sairedis vslib/Makefile.am L12](https://github.com/sonic-net/sonic-sairedis/blob/master/vslib/Makefile.am#L12)、[debian/libsaivs.install](https://github.com/sonic-net/sonic-sairedis/blob/master/debian/libsaivs.install)、[vslib/SwitchStateBaseFdb.cpp](https://github.com/sonic-net/sonic-sairedis/blob/master/vslib/SwitchStateBaseFdb.cpp)。
 
 <!-- glossary-links-injected: 9fb3fca99a59 -->
