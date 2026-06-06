@@ -20,12 +20,12 @@ sources: []
 
 | verification | 件数 |
 |---|---:|
-| code-verified | 764 |
+| code-verified | 765 |
 | runbook-verified | 28 |
 | discrepancy-found | 117 |
 | issue-confirmed | 5 |
 | hld-only | 2 |
-| meta | 187 |
+| meta | 186 |
 | stub | 1 |
 | **合計** | **1104** |
 
@@ -35,9 +35,9 @@ sources: []
 
 | バケツ | 件数 |
 |---|---:|
-| 今日 (0d) | 50 |
+| 今日 (0d) | 51 |
 | 7 日以内 (1-7d) | 50 |
-| 30 日以内 (8-30d) | 1001 |
+| 30 日以内 (8-30d) | 1000 |
 | 30 日超 / 古い | 0 |
 | 不明 / パース不可 | 3 |
 
@@ -47,8 +47,8 @@ sources: []
 
 | 状態 | 件数 |
 |---|---:|
-| 完成 | 73 |
-| placeholder | 37 |
+| 完成 | 74 |
+| placeholder | 36 |
 | 欠落 | 0 |
 | **合計** | **110** |
 
