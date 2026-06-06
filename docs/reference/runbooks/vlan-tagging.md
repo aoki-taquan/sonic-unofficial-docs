@@ -1,6 +1,6 @@
 ---
 title: VLAN メンバーを追加してもタグが付かない
-description: "Runbook: VLAN メンバーを追加してもタグが付かない — : sonic-net/sonic-swss @ 4305596 — vlanmgrd : sonic-net/sonic-utilities @ 39732bceb — config vlan member"
+description: "Runbook: VLAN メンバーを追加してもタグが付かない症状の切り分け。CONFIG_DB / APPL_DB / ASIC_DB および kernel bridge での確認手順と、別 VLAN untagged 多重設定が config vlan member add -u で明示失敗する挙動の説明。sonic-swss vlanmgrd / sonic-utilities config vlan member を引用。"
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
@@ -31,7 +31,7 @@ related:
 ## 想定原因
 
 1. **`add` 時に `-u` (untagged) フラグの付け忘れ / 余計**: デフォルトは tagged 動作
-2. **既存の Untagged [VLAN](../../reference/glossary.md#term-vlan) 多重設定**: ポートが既に別 [VLAN](../../reference/glossary.md#term-vlan) の untagged member であるため新規 untagged 追加に失敗（silently fallback）
+2. **既存の Untagged [VLAN](../../reference/glossary.md#term-vlan) 多重設定**: ポートが既に別 [VLAN](../../reference/glossary.md#term-vlan) の untagged member の場合、`config vlan member add -u` は `is already untagged member!` で明示的に失敗する（silent fallback ではない[^2]）。先に既存 untagged member を `config vlan member del` で削除する必要がある
 3. **VLAN_MEMBER の `tagging_mode` が `priority_tagged` になっている**: 0 priority tag 付与で意図と違う動作
 4. **対向側がトランクではなく access ポート**: 自機側が tagged 送出しても対向で drop / strip
 5. **[PortChannel](../../reference/glossary.md#term-portchannel) メンバーに対する add 操作**: 物理ポートではなく [LAG](../../reference/glossary.md#term-lag) 名で追加する必要がある
@@ -131,6 +131,6 @@ config vlan member add -u 100 Ethernet8
 本ページの根拠は引用元 [^1][^2] を参照。
 
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [vlanmgrd](../../reference/glossary.md#term-vlanmgrd)
-[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config vlan member
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `config/vlan.py` L383-385: `if (clicommon.interface_is_untagged_member(db.cfgdb, port) and untagged): ctx.fail("{} is already untagged member!".format(port))` により別 [VLAN](../../reference/glossary.md#term-vlan) の untagged 既存時は明示的に exit する
 
-<!-- glossary-links-injected: f57fec79b708 -->
+<!-- glossary-links-injected: f7808c6675e0 -->
