@@ -20,10 +20,9 @@ last_verified: 2026-05-13
 | monitor | 件数 | 意味 |
 |---------|-----:|------|
 | [`not_implemented`](#monitor-not-implemented) | 18 | 未実装 |
-| [`partially_implemented`](#monitor-partially-implemented) | 60 | 部分実装 |
+| [`partially_implemented`](#monitor-partially-implemented) | 61 | 部分実装 |
 | [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 33 | HLD と乖離した形で実装/進化 |
 | [`deprecated`](#monitor-deprecated) | 3 | deprecated（廃止予定 / 撤去済み） |
-| `(未指定)` | 1 | (未指定) |
 
 ### area 別件数
 
@@ -136,7 +135,7 @@ last_verified: 2026-05-13
   
   per-page queue で既出の通り提案 HLD は未採用。再走査でも:
 
-### `partially_implemented` — 部分実装 (60 件) {#monitor-partially-implemented}
+### `partially_implemented` — 部分実装 (61 件) {#monitor-partially-implemented}
 
 !!! warning "部分実装"
 
@@ -259,6 +258,11 @@ last_verified: 2026-05-13
   area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
   
   2026-05-09 時点の現行 master を裏取り。
+
+- [gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）](../../management/gnoi-hld-for-system-apis.md)  
+  area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-06-06`
+  
+  本 HLD は gnoi.system.System の RPC 群を網羅的に提案するが、現行 master ではサブセットのみが実装されている (`partially_implemented`)。具体的には Reboot / RebootStatus / CancelReboot が実装済で、KillProcess / Ping / SetPackage / SwitchControlProcessor / Time / Traceroute 等は未実装または部分実装。詳細は本文の HLD 提案部分と実装現状を比較すること。
 
 - [gNSI 内部実装（Certz / Authz / Pathz / Credentialz handler と host service）](../../management/gnsi-hld-internals.md)  
   area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
@@ -804,7 +808,9 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b7679b260c3fd0786a6d0734fc8e82c9a22`）:
 
 - [gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）](../../management/gnoi-hld-for-system-apis.md)  
-  area: `management` / monitor: `(未指定)` / last_verified: `2026-06-06`
+  area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-06-06`
+  
+  本 HLD は gnoi.system.System の RPC 群を網羅的に提案するが、現行 master ではサブセットのみが実装されている (`partially_implemented`)。具体的には Reboot / RebootStatus / CancelReboot が実装済で、KillProcess / Ping / SetPackage / SwitchControlProcessor / Time / Traceroute 等は未実装または部分実装。詳細は本文の HLD 提案部分と実装現状を比較すること。
 
 - [gNSI 内部実装（Certz / Authz / Pathz / Credentialz handler と host service）](../../management/gnsi-hld-internals.md)  
   area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`

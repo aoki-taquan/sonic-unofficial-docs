@@ -3,6 +3,7 @@ title: gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sani
 description: gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check） — gnoi.system.System のうち SONiC が初期サポートする RPC は Reboot / RebootStatus / CancelReb…
 area: management
 verification: discrepancy-found
+monitor: partially_implemented
 last_verified: 2026-06-06
 sources:
 - repo: sonic-net/SONiC
@@ -332,3 +333,7 @@ redis-cli -n 4 hgetall 'GNMI|certs'
 <!-- /ops-entry -->
 
 <!-- glossary-links-injected: 809619d7ad9f -->
+
+## 実装との乖離
+
+本 HLD は gnoi.system.System の RPC 群を網羅的に提案するが、現行 master ではサブセットのみが実装されている (`partially_implemented`)。具体的には Reboot / RebootStatus / CancelReboot が実装済で、KillProcess / Ping / SetPackage / SwitchControlProcessor / Time / Traceroute 等は未実装または部分実装。詳細は本文の HLD 提案部分と実装現状を比較すること。
