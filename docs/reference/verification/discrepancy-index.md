@@ -337,7 +337,7 @@ last_verified: 2026-05-13
 - [Switchport モードと VLAN CLI 拡張 — 概念](../../switching/switch-port-modes-and-vlan-cli-concepts.md)  
   area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
   
-  `monitor: partially_implemented` — 部分実装。本ページが扱う 概念 / モード定義 / 状態遷移 / 一括 CLI のスコープのうち、`access` / `trunk` CLI と複数 VLAN 一括 add/del は master に取り込み済みだが、`routed` モードへの明示遷移と PORTCHANNEL 一括移行は HLD 提案段階に留まる。差分の根拠 / 影響 / 回避策は派生先 [discrepancy](../../switching/switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
+  `monitor: partially_implemented` — 部分実装。本ページが扱う 概念 / モード定義 / 状態遷移 / 一括 CLI のスコープのうち、`access` / `trunk` / `routed` の 3 モード CLI（`config switchport mode <type> <port>`）と複数 VLAN 一括 add/del（`-m` フラグ）は master に取り込み済み[^cli-switchport][^cli-vlan]。PORTCHANNEL に対する一括モード移行など、HLD が示唆していた一部の運用便宜オプションは取り込まれていない。差分の根拠 / 影響 / 回避策は派生先 [discrepancy](../../switching/switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
 
 - [Switchport モードと VLAN CLI 拡張 — 設定と運用](../../switching/switch-port-modes-and-vlan-cli-operations.md)  
   area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
@@ -1021,7 +1021,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
 - [Switchport モードと VLAN CLI 拡張 — 概念](../../switching/switch-port-modes-and-vlan-cli-concepts.md)  
   area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
   
-  `monitor: partially_implemented` — 部分実装。本ページが扱う 概念 / モード定義 / 状態遷移 / 一括 CLI のスコープのうち、`access` / `trunk` CLI と複数 VLAN 一括 add/del は master に取り込み済みだが、`routed` モードへの明示遷移と PORTCHANNEL 一括移行は HLD 提案段階に留まる。差分の根拠 / 影響 / 回避策は派生先 [discrepancy](../../switching/switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
+  `monitor: partially_implemented` — 部分実装。本ページが扱う 概念 / モード定義 / 状態遷移 / 一括 CLI のスコープのうち、`access` / `trunk` / `routed` の 3 モード CLI（`config switchport mode <type> <port>`）と複数 VLAN 一括 add/del（`-m` フラグ）は master に取り込み済み[^cli-switchport][^cli-vlan]。PORTCHANNEL に対する一括モード移行など、HLD が示唆していた一部の運用便宜オプションは取り込まれていない。差分の根拠 / 影響 / 回避策は派生先 [discrepancy](../../switching/switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
 
 - [Switchport モードと VLAN CLI 拡張 — 設定と運用](../../switching/switch-port-modes-and-vlan-cli-operations.md)  
   area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
