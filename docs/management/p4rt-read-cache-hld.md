@@ -34,15 +34,27 @@ P4 Runtime ([P4RT](../reference/glossary.md#term-p4rt)) サーバはコントロ
 
 ### キャッシュ実体
 
+HLD 提案時点と現行 master 実装で型が異なる。両者を併記する。
+
+**HLD 提案 (初版)**[^1]:
+
 ```cpp
 absl::flat_hash_map<TableEntryKey, p4::v1::TableEntry> table_entry_cache_;
 ```
 
 Key は `TableEntryKey`（テーブル + match key の合成）、値は **PI 形式の `p4::v1::TableEntry`**。Read リクエスト時の翻訳コストをゼロにするため、書き込み時点で PI に変換した状態で持つ[^1]。
 
+**現行 master 実装**:
+
+```cpp
+absl::flat_hash_map<pdpi::EntityKey, p4::v1::Entity> entity_cache_;
+```
+
+実装では `TableEntry` 専用ではなく **`p4::v1::Entity`** に汎化されており、`TableEntry` だけでなく `PacketReplicationEngineEntry`（マルチキャストグループ / クローンセッション）も同じキャッシュに保持できる。Key も `pdpi::EntityKey` に置き換わっている。この変更は HLD の意図（PI 形式キャッシュで Redis 往復を消す）と完全に整合しており、対応エンティティ範囲を広げる正常進化と読める（上掲の success ブロック参照）。
+
 ### Write 連動
 
-P4Orch から成功応答が返ったら、Write 種別に応じてキャッシュを更新する[^1]:
+P4Orch から成功応答が返ったら、Write 種別に応じてキャッシュを更新する[^1]。現行実装では `UpdateCacheAndUtilizationState` という単一関数に集約されており、INSERT/MODIFY で `entity_cache_` への反映、DELETE で `erase` を行う（上掲 success ブロック参照）:
 
 | Write 種別 | 結果 | キャッシュ操作 |
 |-----------|------|---------------|
@@ -68,7 +80,7 @@ sequenceDiagram
 
 ### Read
 
-Read リクエストは Redis を見ずキャッシュを直接走査して返す。これにより `KEYS P4RT_TABLE:*` + `HGETALL` ループの O(N) Redis 往復が消える[^1]。
+Read リクエストは Redis を見ずキャッシュを直接走査して返す。これにより `KEYS P4RT_TABLE:*` + `HGETALL` ループの O(N) Redis 往復が消える[^1]。実装上は `p4runtime_read.cc` の `AppendTableEntryReads` が `entity_cache_` を直接走査する経路となっている（上掲 success ブロック参照）。
 
 ### キャッシュと AppDb の同期検証
 
@@ -79,7 +91,7 @@ P4Orch は P4 エントリを **独自に書き換えない** 想定なので、
 3. キャッシュと比較
 4. 差分（片方にしかない / 値違い）をレポート
 
-実行頻度はオペレータが設定する。
+実行頻度はオペレータが設定する。実装上は `P4RuntimeImpl::VerifyState()` 内の `VerifyP4rtTableWithCacheEntities` が同等の突合を担う（上掲 success ブロック参照）。
 
 ### Warm boot
 
