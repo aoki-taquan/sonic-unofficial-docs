@@ -1,7 +1,7 @@
 ---
 title: 発展トピック
 description: 発展トピック — この章の基本経路を押さえた後は、VoQ、BFD、EVPN の順に読むと BGP が他章へどうつながるかが見える。いずれも
-  BGP 単体の話ではなく、シャーシ構成、障害検出、overlay control plane と結びつく。
+  BGP 単体の話ではなく、シャーシ構成、障害検出、overlay control plane と結びつく hub ページ。
 area: topics
 verification: meta
 last_verified: 2026-05-10
@@ -24,6 +24,7 @@ related:
   yang:
   - sonic-srv6
   - sonic-bgp-monitor
+  - sonic-bmp
   - sonic-bgp-peergroup
   - sonic-bgp-peerrange
   - sonic-bgp-global
@@ -63,11 +64,11 @@ EVPN/[VXLAN](../../reference/glossary.md#term-vxlan) では [FRR](../../referenc
 
 基本の peer/policy 設定を超えた領域では、SONiC は FRR の機能を [Redis](../../reference/glossary.md#term-redis) スキーマ経由で順次取り込んでいる。代表的なものを挙げる。
 
-- **BGP Suppress FIB Pending**: FIB 未投入の prefix を peer に広告しないことで、[ASIC](../../reference/glossary.md#term-asic) が経路を持っていない状態で advertise してトラフィックブラックホールになるのを防ぐ。SONiC では `bgpcfgd` テンプレートと FRR の `bgp suppress-fib-pending` を組み合わせる。
-- **BGP PIC (Prefix Independent Convergence) Core/Edge**: edge link 障害時の収束を nexthop group レベルで行い、prefix 数に依存しない切替を実現する。SONiC では nexthop group 構造 (`NEXTHOP_GROUP_TABLE`) と [orchagent](../../reference/glossary.md#term-orchagent) の対応で表現される。
-- **BMP (BGP Monitoring Protocol, RFC 7854)**: FRR の `bmpd` を Redis 経由で利用し、Adj-RIB-In / Adj-RIB-Out を外部 collector に流す。複数 station への並走 export を SONiC schema が `BGP_BMP` で表現する。
-- **Dynamic Neighbor / Listen Range**: 大規模 ToR で peer 数を事前列挙したくない場合に有効。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) で `BGP_PEER_RANGE` を組み立てる流れがある。
-- **大規模経路ロード最適化**: `bgp-loading-optimization` [HLD](../../reference/glossary.md#term-hld) が、起動直後の peer 受信を加速するための queue tuning と `bgpd` の起動引数を扱う。経路投入のスループットが warm/cold reboot の収束時間を支配する。
+- **BGP Suppress FIB Pending**: FIB 未投入の prefix を peer に広告しないことで、[ASIC](../../reference/glossary.md#term-asic) が経路を持っていない状態で advertise してトラフィックブラックホールになるのを防ぐ。SONiC では `bgpd.main.conf.j2` テンプレートが `bgp suppress-fib-pending` を既定で有効化しており、FRR 側の zebra ACK を待ってから announcement する挙動になる。<!-- evidence: sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2 L107 "bgp suppress-fib-pending" -->
+- **BGP PIC (Prefix Independent Convergence) Core/Edge**: edge link 障害時の収束を nexthop group レベルで行い、prefix 数に依存しない切替を実現する。SONiC では nexthop group 構造を `NEXTHOP_GROUP_TABLE` で表現し、[orchagent](../../reference/glossary.md#term-orchagent) の `NhgOrch` (nhgorch.h) が SAI next-hop-group との対応をとる。<!-- evidence: sonic-swss/orchagent/nhgorch.h, orchdaemon.cpp NextHopGroupOrch -->
+- **BMP (BGP Monitoring Protocol, RFC 7854)**: FRR の `bmpd` を Redis 経由で利用し、Adj-RIB-In / Adj-RIB-Out / BGP neighbor table dump を外部 collector に流す。SONiC schema 上は `sonic-bmp` YANG の `BMP` コンテナ (`bgp_neighbor_table` / `bgp_rib_in_table` / `bgp_rib_out_table` leaf) で各テーブル dump を on/off する。<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bmp.yang container BMP / table leaf bgp_rib_in_table -->
+- **Dynamic Neighbor / Listen Range**: 大規模 ToR で peer 数を事前列挙したくない場合に有効。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) の `BGPPeerMgrBase` が `BGP_PEER_RANGE` を購読し FRR の `bgp listen range <ip_range> peer-group <peer-group>` コマンドへ変換する。<!-- evidence: sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py L90 BGPPeerMgrBase("BGP_PEER_RANGE", "dynamic"), managers_bgp.py L109 "bgp listen range" template -->
+- **大規模経路ロード最適化**: `bgp-loading-optimization` [HLD](../../reference/glossary.md#term-hld) が、起動直後の peer 受信を加速するための起動シーケンス制御を扱う (`bgpd` 起動順 / staggered peer up / zebra FPM 送出待ち)。経路投入のスループットが warm/cold reboot の収束時間を支配する。
 
 ## 既知の制約と回避方法
 
@@ -105,7 +106,7 @@ EVPN/[VXLAN](../../reference/glossary.md#term-vxlan) では [FRR](../../referenc
 
 ## 検証パスとラボ要件
 
-- 大量経路投入のスループット計測は `bgperf` / `goBGP` injector を使い、`zebra` の `fpm queue` メトリクス (`/var/log/syslog` の `FPM message dropped`) を観察する。queue drop が出る場合は `bgp-loading-optimization` の queue size 拡張パラメータを使う。
+- 大量経路投入のスループット計測は `bgperf` / `goBGP` injector を使い、`zebra` の FPM 送出メトリクス (`/var/log/syslog` の FPM 関連メッセージ、`fpmsyncd` 側の受信ログ) を観察する。drop / queue 滞留が出る場合は `bgp-loading-optimization` 系の起動順制御と zebra FPM 設定を見直す。
 - BFD offload の検証では、SAI `bfd_session_state` の notification 順序と control plane `show bfd peers` の整合を確認する。BFD up なのに BGP が peer 切替を起こさない場合、`bfdd` ↔ `bgpd` の `peer-link` 紐付けが抜けていることが多い。
 - VoQ シャーシでは Supervisor と Line Card の BGP 状態同期 (`bgp-setup-for-voq-chassis` 参照) が、warm reboot 後の収束で支配的になる。`CHASSIS_APP_DB` 上の BGP-related entry も併せて点検する。
 
