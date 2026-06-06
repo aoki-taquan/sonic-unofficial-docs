@@ -1,34 +1,58 @@
 ---
 title: Overlay 運用
-description: Overlay 運用 — Overlay の障害切り分けは、underlay、VTEP、control plane、route programming、QoS
-  / hash の順に見ると無駄が少なくなります。
+description: SONiC で VXLAN / EVPN / VNET 由来の overlay 障害を underlay、VTEP、control plane、route programming、QoS
+  / hash の順に切り分けるための運用ノート。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: code-verified
+last_verified: 2026-06-06
+sources:
+- repo: sonic-net/sonic-utilities
+  path: show/vxlan.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/vnet.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-swss
+  path: doc/swss-schema.md
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/vnetorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/tunneldecaporch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/muxorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   cli:
-  - show bgp
-  - show ip
-  - show mac
-  - show muxcable
-  - show bfd
-  - clear
-  - show pfc
+  - show vxlan tunnel
+  - show vxlan remotevtep
+  - show vxlan remotevni
+  - show vxlan remotemac
+  - show vxlan vlanvnimap
+  - show vxlan vrfvnimap
+  - show vxlan interface
+  - show vxlan counters
+  - show vnet brief
+  - show vnet routes
+  - show vnet endpoint
+  - show bfd summary
+  - vtysh
   config_db:
   - VNET
   - VXLAN_TUNNEL
+  - VXLAN_TUNNEL_MAP
+  - VXLAN_EVPN_NVO
+  - VNET_ROUTE_TUNNEL_TABLE
+  - TUNNEL_DECAP_TABLE
   - VLAN
   - VRF
-  - VXLAN_TUNNEL_MAP
-  - TUNNEL
   yang:
-  - sonic-pfc-priority-queue-map
-  - sonic-pfc-priority-priority-group-map
-  - sonic-vlan
-  - sonic-vlan-sub-interface
+  - sonic-vxlan
   - sonic-vnet
-  - sonic-bgp-monitor
+  - sonic-vlan
+  - sonic-vrf
   - sonic-bgp-peergroup
 ---
 
@@ -49,7 +73,17 @@ Overlay の障害切り分けは、underlay、[VTEP](../../reference/glossary.md
 
 Overlay ECMP は、1 prefix に複数 tunnel endpoint を持たせ、VnetOrch が tunnel nexthop group を作る仕組みです。BFD monitoring 付きでは、`endpoint_monitor` に対応する BFD state が Down になると、その endpoint は NHG から外れます。
 
-拡張版では primary/secondary の優先集合、custom monitoring、per-route BFD timer、`pinned_state` が追加されます。運用上は、route が「消えた」のか「secondary に退避した」のか「pinned_state で固定された」のかを区別する必要があります。
+拡張版では primary/secondary の優先集合、custom monitoring、per-route BFD timer、`pinned_state` が追加されます。運用上は、route が「消えた」のか「secondary に退避した」のか「pinned_state で固定された」のかを区別する必要があります[^vnet-pinned].
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/vnetorch.cpp#L1013-L1076 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  (monitor.second.pinned_state == PINNED_STATE_UP ||
+       monitor.second.pinned_state != PINNED_STATE_DOWN)))
+  updateMonitorPinnedState(vnet, ipPrefix, monitor_addr_to_pinned_state);
+reasoning: VnetOrch は monitor ごとに pinned_state (UP/DOWN) を保持し、BFD/custom monitor の素の状態を controller 指示で上書きできる。
+-->
+
 
 ```mermaid
 flowchart LR
@@ -65,7 +99,25 @@ flowchart LR
 
 Tunnel traffic の DSCP remap は、特に Dual-ToR の bounce-back 経路で [PFC](../../reference/glossary.md#term-pfc) deadlock を避けるための QoS 機能です。VXLAN/VNET そのものの到達性ではなく、tunnel encap / decap 時の DSCP、TC、PG、Queue の対応を変えます。
 
-切り分けでは、`TUNNEL` / `TUNNEL_DECAP_TABLE` に QoS map が紐付いているか、`dscp_mode` が想定どおりか、[ASIC_DB](../../reference/glossary.md#term-asic_db) に `SAI_TUNNEL_ATTR_ENCAP_QOS_*` / `DECAP_QOS_*` が入っているかを確認します。
+切り分けでは、`TUNNEL` / `TUNNEL_DECAP_TABLE` に QoS map が紐付いているか、`dscp_mode` が想定どおりか、[ASIC_DB](../../reference/glossary.md#term-asic_db) に `SAI_TUNNEL_ATTR_ENCAP_QOS_*` / `DECAP_QOS_*` が入っているかを確認します[^sai-tunnel-qos]。具体的には decap 側で `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` / `SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP`、encap 側 (Dual-ToR mux) で `SAI_TUNNEL_ATTR_ENCAP_DSCP_MODE` / `SAI_TUNNEL_ATTR_ENCAP_QOS_TC_AND_COLOR_TO_DSCP_MAP` / `SAI_TUNNEL_ATTR_ENCAP_QOS_TC_TO_QUEUE_MAP` が代表的な属性です。
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/tunneldecaporch.cpp#L834-L1091 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  attr.id = SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP;
+  attr.id = SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP;
+reasoning: TUNNEL_DECAP_TABLE の QoS map は decap 側で 2 種の SAI 属性として ASIC に投入される。
+-->
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/muxorch.cpp#L281-L319 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  attr.id = SAI_TUNNEL_ATTR_ENCAP_DSCP_MODE;
+  attr.id = SAI_TUNNEL_ATTR_ENCAP_QOS_TC_AND_COLOR_TO_DSCP_MAP;
+  attr.id = SAI_TUNNEL_ATTR_ENCAP_QOS_TC_TO_QUEUE_MAP;
+reasoning: encap 側 QoS map は muxorch (Dual-ToR) で設定される。一般 VXLAN encap は ASIC dependent で属性経路が異なる。
+-->
+
 
 ## Inner packet hashing
 
@@ -77,7 +129,28 @@ Local ARS は ECMP の next-hop 選択を static hash ではなく queue depth �
 
 ## show vxlan の出力サンプル
 
-`show vxlan tunnel` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `VXLAN_TUNNEL` と [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) の oper 状態を結合します。EVPN 由来の場合 `Creation Source = EVPN`、static 設定なら `CLI` 等が出ます。
+`show vxlan tunnel` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `VXLAN_TUNNEL` と `VXLAN_TUNNEL_MAP` を結合し、`vxlan tunnel name` / `source ip` / `destination ip` / `tunnel map name` / `tunnel map mapping(vni -> vlan)` の 5 カラムを表示します。一方、リモート VTEP の oper 状態と生成元 (EVPN / CLI) を確認するには [STATE_DB](../../reference/glossary.md#term-state_db) の `VXLAN_TUNNEL_TABLE` を読む `show vxlan remotevtep` を使います[^vxlan-cli]。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/vxlan.py#L61-L102 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  def tunnel():
+      header = ['vxlan tunnel name', 'source ip', 'destination ip', 'tunnel map name', 'tunnel map mapping(vni -> vlan)']
+      vxlan_data = config_db.get_table('VXLAN_TUNNEL')
+reasoning: show vxlan tunnel は CONFIG_DB ベースの 5 カラム出力で、SIP/DIP/Creation Source/OperStatus の 4 カラムは別コマンド (remotevtep) の出力。混同しやすいので明示分離する。
+-->
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/vxlan.py#L233-L279 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  def remotevtep(count):
+      header = ['SIP', 'DIP', 'Creation Source', 'OperStatus']
+      vxlan_keys = db.keys(db.STATE_DB, 'VXLAN_TUNNEL_TABLE|*')
+      body.append([vxlan_table['src_ip'], vxlan_table['dst_ip'], vxlan_table['tnl_src'], 'oper_' + vxlan_table['operstatus']])
+reasoning: 下記の grid サンプル (SIP/DIP/Creation Source/OperStatus) は show vxlan remotevtep の出力。
+-->
+
+`show vxlan remotevtep` は STATE_DB の `VXLAN_TUNNEL_TABLE` を読み、リモート VTEP の oper 状態と生成元 (EVPN / CLI 等) を 4 カラムで出します。
 
 ```text
 +---------+-------------+-------------------+--------------+
@@ -115,7 +188,17 @@ Total count : 2
 +---------+--------------+-------+
 ```
 
-VNET 構成では `show vnet routes all` で `Vnet name`、`Prefix`、`Endpoints`、`MAC`、`VNI`、`Metric`、`State` の 7 カラムが並びます。Endpoints が複数あるときは 3 つずつ折り返されます。
+VNET 構成では `show vnet routes all` で `Vnet name`、`Prefix`、`Endpoints`、`MAC`、`VNI`、`Metric`、`State` の 7 カラムが並びます。Endpoints が複数あるときは長さに応じて 2〜3 個ずつ折り返されます (長い IPv6 / MAC が混ざる場合は 2 個ずつ)[^vnet-routes]。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/vnet.py#L529-L567 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  def pretty_print(table, r, epval, mac_addr, vni, metric, state):
+      max_len = max((len(item) for item in all_items), default=0)
+      row_width = 2 if max_len > 15 else 3
+reasoning: 折り返し幅は固定 3 ではなく、endpoint/MAC/VNI のうち最長要素が 15 文字超なら 2、それ以下なら 3。
+-->
+
 
 ## 異常検出パターン
 
@@ -196,5 +279,14 @@ syncd: SAI_API_NEXT_HOP_GROUP: SAI_STATUS_TABLE_FULL
 - [ECMP inner packet hashing テストプラン](../../routing/test-plan-for-inner-packet-hashing-in-ecmp.md)
 - [Policy Based Hashing](../../architecture/sonic-policy-based-hashing.md)
 - [Local ARS](../../routing/local-ars-hld.md)
+
+## 引用元
+
+[^vxlan-cli]: `show vxlan tunnel` の 5 カラム実装 — [`sonic-utilities/show/vxlan.py` L61-L102](https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/vxlan.py#L61-L102)、`show vxlan remotevtep` の 4 カラム実装 — [`sonic-utilities/show/vxlan.py` L233-L279](https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/vxlan.py#L233-L279)。
+[^vnet-routes]: `pretty_print` の折り返し幅算出 — [`sonic-utilities/show/vnet.py` L529-L567](https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/vnet.py#L529-L567)。
+[^vnet-pinned]: `VnetOrch::updateMonitorPinnedState` — [`sonic-swss/orchagent/vnetorch.cpp` L1013-L1076](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vnetorch.cpp#L1013-L1076)。
+[^sai-tunnel-qos]: Tunnel decap QoS map 投入 — [`sonic-swss/orchagent/tunneldecaporch.cpp` L834-L1091](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L834-L1091)、Dual-ToR mux encap QoS map 投入 — [`sonic-swss/orchagent/muxorch.cpp` L281-L319](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/muxorch.cpp#L281-L319)。
+
+VNET_ROUTE_TUNNEL_TABLE / VXLAN_TUNNEL_MAP のスキーマは [`sonic-swss/doc/swss-schema.md` L927-L949](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/doc/swss-schema.md#L927-L949) を参照。
 
 <!-- glossary-links-injected: a05b1a0422d1 -->
