@@ -20,12 +20,12 @@ sources: []
 
 | verification | 件数 |
 |---|---:|
-| code-verified | 762 |
+| code-verified | 763 |
 | runbook-verified | 27 |
 | discrepancy-found | 113 |
 | issue-confirmed | 6 |
 | hld-only | 2 |
-| meta | 193 |
+| meta | 192 |
 | stub | 1 |
 | **合計** | **1104** |
 
@@ -79,7 +79,7 @@ sources: []
 | 項目 | 値 |
 |---|---:|
 | 用語数 (`### ` アンカー) | 325 |
-| docs 内被リンク数 | 20030 |
+| docs 内被リンク数 | 20032 |
 
 ## 直近 5 round quality-audit
 
