@@ -23,6 +23,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-06 #5381 fix(quality): iter9 integration (13 rewrites)
 - 2026-06-06 #5380 fix(quality): iter4 recover integration (15 rewrites)
 - 2026-06-06 #5379 fix(quality): iter9 integration (15 rewrites)
 - 2026-06-06 #5363 fix(quality): iter8 integration (15 rewrites)
@@ -525,5 +526,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3959 docs(config-db): add Phase E hardcoded-constants block to KUBERNETES_MASTER
 - 2026-05-19 #3958 docs(config-db): add Phase E constants marker to GNMI page
 - 2026-05-19 #3957 docs(config-db): normalize Phase D failure marker in image-state
-- 2026-05-19 #3955 docs(config-db): fix Phase E constants tag in gnmi page
 
