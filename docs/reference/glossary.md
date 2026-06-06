@@ -1625,7 +1625,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
-- [イベント/アラーム拡張監視設定 (extended-monitor)](config-db/extended-monitor.md) (39)
+- [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../architecture/ssdhealth-design.md) (39)
 
 ### [Headroom](#term-headroom)
 
