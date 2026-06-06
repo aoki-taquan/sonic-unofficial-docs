@@ -11,23 +11,11 @@ sources:
 related:
   config_db:
   - FEATURE
-  - CRM
-  - ACL_RULE
-  - ACL_TABLE
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - DPU
-  cli:
-  - show techsupport
-  - show platform
-  - show version
-  - show acl
-  - config acl
+  cli: []
   yang:
   - sonic-feature
   - sonic-versions
-  - sonic-system-defaults
-  - sonic-crm
+  _no_related_cli: true
 ---
 
 !!! info "本ページはガバナンス文書"
@@ -90,11 +78,13 @@ related:
 
 ## 干渉する機能
 
-- **HLD テンプレート**: メモリ使用量セクションが追加される
-- **CONFIG_DB feature flag**: ほぼ全機能が `FEATURE` テーブルや個別 enable で制御される設計を要求
+- **HLD テンプレート**: メモリ使用量セクションが追加される（[`doc/guidelines/hld_template.md`](https://github.com/sonic-net/SONiC/blob/master/doc/guidelines/hld_template.md) と整合）
+- **CONFIG_DB `FEATURE` テーブル**: 機能の `state` (enabled/disabled) を runtime 切替する標準 schema が `sonic-feature.yang` の `FEATURE_LIST` に定義されており[^2]、本ガイドラインの「runtime 切替可能」「disabled 既定」要件はこの schema を前提とする
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-feature.yang L39-L94 (FEATURE container / FEATURE_LIST / state leaf default) -->
 
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/guidelines/SONiC feature quality definition.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/guidelines/SONiC%20feature%20quality%20definition.md)
+[^2]: [sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-feature.yang (FEATURE container / FEATURE_LIST L39-L94)](https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-feature.yang#L39-L94)
 
 <!-- glossary-links-injected: 9fb3fca99a59 -->
