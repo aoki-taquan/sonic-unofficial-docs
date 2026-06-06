@@ -29,6 +29,12 @@ STOP_TOPICS = {"group", "all", "config", "version", "uptime"}
 
 START_MARK = "<!-- cli-sibling -->"
 END_MARK = "<!-- /cli-sibling -->"
+# 手動キュレーション宣言。ブロック内にこのマーカーがあれば自動更新しない。
+# 自動 token/area マッチで誤った sibling を引き当てるページ
+# (例: `show system-health` の topic=system-health が area=platform の
+# `config-banner` 等を拾ってしまうケース) で、編集者が siblings を固定したい
+# ときに使う。
+MANUAL_MARK = "<!-- cli-sibling:manual -->"
 
 TITLE_RE = re.compile(r"^title:\s*(.+?)\s*$", re.MULTILINE)
 
@@ -169,7 +175,11 @@ RELATED_HEAD_RE = re.compile(r"^## 関連ページ\s*$", re.MULTILINE)
 
 
 def insert_block(text: str, block: str) -> str:
-    if BLOCK_RE.search(text):
+    existing = BLOCK_RE.search(text)
+    if existing:
+        if MANUAL_MARK in existing.group(0):
+            # 手動キュレーションされたブロックは触らない
+            return text
         return BLOCK_RE.sub(block, text)
     m = RELATED_HEAD_RE.search(text)
     if m:
