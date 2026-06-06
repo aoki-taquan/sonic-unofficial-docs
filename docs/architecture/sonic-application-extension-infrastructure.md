@@ -1,6 +1,6 @@
 ---
 title: SONiC Application Extension Infrastructure（sonic-package-manager / SPM）
-description: SONiC Application Extension Infrastructure（sonic-package-manager / SPM） — 3rd-party / 任意の docker コンテナを「SONiC application extension」として inbox 機能と同じ管理面で扱う ためのフレー…
+description: SONiC Application Extension Infrastructure（sonic-package-manager / SPM） — 3rd-party / 任意の docker コンテナを「SONiC application extension」として inbox 機能と同じ管理面で扱うためのフレームワーク。manifest 検証・FEATURE 登録・hostcfgd 連携の流れと制約を整理する。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10
@@ -62,7 +62,7 @@ flowchart LR
 主要コンポーネント[^1]:
 
 - **CLI `sonic-package-manager`（別名 SPM）**: install / uninstall / upgrade / list / show / repository
-- **manifest**: コンテナイメージ同梱の JSON。package 名、version、依存（base image / 他 package / SONiC version 範囲）、起動引数、warm-reboot 対応フラグ、CLI 拡張・showtech プラグイン宣言
+- **manifest**: コンテナイメージ同梱の JSON。package 名、version、`base-os`（SONiC を含む component 単位の version 制約）、`depends` / `breaks`（他 package との制約）、起動引数、warm-reboot 対応フラグ、CLI 拡張・showtech プラグイン宣言[^manifest-schema]
 - **`hostcfgd`**: `FEATURE` 追加に追従して systemd unit を rendering し start/stop を駆動
 - **CLI plugin**: 各 package が `click` ベース CLI を `sonic-utilities` に動的 register（plugin entry-point）
 
@@ -79,11 +79,11 @@ flowchart LR
     UNINST --> CLEAN["disable → FEATURE 削除<br/>image / plugin 削除"]
 ```
 
-manifest が必須宣言する項目[^1]:
+manifest が宣言する主要項目[^1][^manifest-schema]:
 
-- `name` / `version`
-- `base-os` / `min-sonic-version` / `max-sonic-version`
-- `depends` / `breaks`（他 package との互換性）
+- `package.name` / `package.version`
+- `package.base-os`: component → version 制約の dict（`ComponentConstraints`）。`sonic` キーを含めれば SONiC 本体の version 範囲を表現できる。`min-sonic-version` / `max-sonic-version` といった独立フィールドは存在せず、すべて `base-os` または `depends` の version 制約として表す[^manifest-schema][^constraint-impl]
+- `package.depends` / `package.breaks`: 他 package との互換性（`PackageConstraint` の配列。各要素は package 名・version 制約・任意の component 制約を含む）
 - `service` / `container` 起動オプション（warm-reboot 対応、privileged、namespaces）
 - `cli`（`config` / `show` への拡張サブコマンド）
 - `processes`（critical process として監視するか）
@@ -105,7 +105,7 @@ manifest が必須宣言する項目[^1]:
 
 ## 制限事項
 
-- **manifest 検査の限界**: `min-sonic-version` / `depends` で表せない暗黙依存（kernel module、[SAI](../reference/glossary.md#term-sai) 拡張等）は捕まえられない
+- **manifest 検査の限界**: `base-os` / `depends` の version 制約で表せない暗黙依存（kernel module、[SAI](../reference/glossary.md#term-sai) 拡張等）は捕まえられない
 - **warm reboot 対応**: package 側の対応が必要。非対応 package は warm reboot でリセット
 - **CLI plugin 衝突**: 同じ `config <subcommand>` を複数 package が登録すると挙動不定
 - **資源管理**: cgroup / メモリ / CPU 上限はコンテナ起動オプションでしか制御できない
@@ -169,5 +169,7 @@ yang-models ディレクトリからの [YANG](../reference/glossary.md#term-yan
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-application-extension/sonic-application-extention-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^manifest-schema]: manifest schema 実装: `sonic-net/sonic-utilities` `sonic_package_manager/manifest.py` の `SCHEMA = ManifestRoot(...)` 定義（`package.base-os` は `ParsedMarshaller(ComponentConstraints)`、`depends` / `breaks` は `PackageConstraint` 配列。`min-sonic-version` / `max-sonic-version` は存在しない）
+[^constraint-impl]: `ComponentConstraints` / `PackageConstraint` 定義: `sonic-net/sonic-utilities` `sonic_package_manager/constraint.py`（`ComponentConstraints.components` は component 名 → `VersionConstraint` の dict）
 
 <!-- glossary-links-injected: 9e0fe49ced27 -->
