@@ -40,31 +40,37 @@ related:
 
 ## 最小 bring-up 例
 
-評価者がそのまま打てる最小構成として、image インストールから 1 物理ポート up・VLAN 作成・BGP neighbor 投入までの 4 ステップを示す。BGP は `config bgp` CLI が neighbor 追加コマンドを持たないため、ラボでは [vtysh](../reference/glossary.md#term-vtysh) から [FRR](../reference/glossary.md#term-frr) を直接設定するのが最短である (恒久化したい場合は `config_db.json` の `BGP_NEIGHBOR` テーブル編集 + `config reload`)。詳細パラメータは上記 reading path のリファレンスを参照すること。
+評価者がそのまま打てる最小構成として、image インストールから管理 IP 投入・1 物理ポート up・VLAN 作成・BGP neighbor 投入、最後に状態確認までの 6 ステップを示す。BGP は `config bgp` CLI が neighbor 追加コマンドを持たないため、ラボでは [vtysh](../reference/glossary.md#term-vtysh) から [FRR](../reference/glossary.md#term-frr) を直接設定するのが最短である (恒久化したい場合は `config_db.json` の `BGP_NEIGHBOR` テーブル編集 + `config reload`)。詳細パラメータは上記 reading path のリファレンスを参照すること。
 
 ```bash
 # 1. SONiC image をインストールして再起動
 sudo sonic-installer install sonic-broadcom.bin
 
-# 2. 物理ポートを admin-up にする
+# 2. 管理 IP を投入する (eth0 = MGMT_INTERFACE)
+sudo config interface ip add eth0 192.0.2.10/24 192.0.2.1
+
+# 3. 物理ポートを admin-up にする
 sudo config interface startup Ethernet0
 
-# 3. VLAN 100 を作成しメンバーポートを追加
+# 4. VLAN 100 を作成しメンバーポートを追加
 sudo config vlan add 100
 sudo config vlan member add 100 Ethernet0
 
-# 4. BGP neighbor を投入する (vtysh 経由)
+# 5. BGP neighbor を投入する (vtysh 経由)
 sudo vtysh -c 'configure terminal' \
            -c 'router bgp 65000' \
            -c 'neighbor 10.0.0.1 remote-as 65001'
+
+# 6. 投入結果を確認する
+show interfaces status
 ```
 
-`config interface startup` の引数は単一インタフェース名で、内部で `PORT` テーブルの `admin_status` を `up` に更新する<!-- evidence: sonic-utilities config/main.py:5184-5210 -->。`config vlan add` は `vlan.py` で実装されており、`VLAN` テーブルに `Vlan<vid>` エントリを作成する<!-- evidence: sonic-utilities config/vlan.py:95-142 -->。BGP については `config bgp` 直下のサブコマンドが neighbor ごとの `shutdown` / `startup` / `remove` と、`device-global` (TSA / W-ECMP 等) ・ `aggregate-address` の追加グループに限られ、neighbor を新規に作成する `add` 系コマンドは存在しない<!-- evidence: sonic-utilities config/main.py:4918-5054 (bgp group: shutdown/startup/remove サブグループ)、config/main.py:4926-4927 (bgp_cli.DEVICE_GLOBAL / AGGREGATE_ADDRESS を add_command) -->。設定本体は FRR が握っているため、評価ラボでは `vtysh` から直接 FRR を叩くか、`config_db.json` の `BGP_NEIGHBOR` / `DEVICE_NEIGHBOR` テーブルを編集して `config reload` する流れになる ([config bgp](../reference/cli/config-bgp.md) も参照)。
+`config interface ip add` は `eth0` に対しては `MGMT_INTERFACE` テーブルへ `(eth0, <ip/prefix>)` キーで書き込み、ゲートウェイ指定時は `gwaddr` を併記する<!-- evidence: sonic-utilities config/main.py:5676-5716 (add_interface_ip: eth0 分岐で MGMT_INTERFACE set_entry) -->。`config interface startup` の引数は単一インタフェース名で、内部で `PORT` テーブルの `admin_status` を `up` に更新する<!-- evidence: sonic-utilities config/main.py:5184-5210 -->。`config vlan add` は `vlan.py` で実装されており、`VLAN` テーブルに `Vlan<vid>` エントリを作成する<!-- evidence: sonic-utilities config/vlan.py:95-142 -->。BGP については `config bgp` 直下のサブコマンドが neighbor ごとの `shutdown` / `startup` / `remove` と、`device-global` (TSA / W-ECMP 等) ・ `aggregate-address` の追加グループに限られ、neighbor を新規に作成する `add` 系コマンドは存在しない<!-- evidence: sonic-utilities config/main.py:4918-5054 (bgp group: shutdown/startup/remove サブグループ)、config/main.py:4926-4927 (bgp_cli.DEVICE_GLOBAL / AGGREGATE_ADDRESS を add_command) -->。設定本体は FRR が握っているため、評価ラボでは `vtysh` から直接 FRR を叩くか、`config_db.json` の `BGP_NEIGHBOR` / `DEVICE_NEIGHBOR` テーブルを編集して `config reload` する流れになる ([config bgp](../reference/cli/config-bgp.md) も参照)。最後の `show interfaces status` は内部で `intfutil -c status` を起動し、admin/oper 状態と速度・MTU 等の一覧を表示する<!-- evidence: sonic-utilities show/interfaces/__init__.py:148-160 (status: intfutil -c status を subprocess 起動) -->。
 
 ## 評価シナリオ別の分岐
 
 - 仮想評価 ([SONiC-VS](../reference/glossary.md#term-vs) / [GNS3](../architecture/sonic-on-gns3-vm.md)): 上記ステップ 1 は不要で、`steps-to-bring-up-sonic-vs` の libvirt 起動から開始する。
-- 単体スイッチ評価: 上記 4 ステップが基本フロー。`sonic-installer install` 後に管理 IP / NTP / DNS を入れる。
+- 単体スイッチ評価: 上記 6 ステップが基本フロー。管理 IP 投入後に必要に応じて NTP / DNS を追加する。
 - ToR 評価: VLAN / portchannel / BGP の組み合わせが必要で、reading path の portchannel と config_db の各テーブルを併読する。
 
 ## 既知のコンテンツ不足
