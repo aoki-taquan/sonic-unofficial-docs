@@ -13,8 +13,6 @@ sources:
 related:
   config_db:
   - PORT
-  - PORTCHANNEL
-  - BREAKOUT_CFG
   cli:
   - sfputil read-eeprom
   - sfputil write-eeprom
@@ -22,8 +20,6 @@ related:
   - show interfaces
   yang:
   - sonic-port
-  - sonic-xcvrd-log
-  - sonic-system-defaults
 ---
 
 <!-- topics-tip -->
@@ -63,11 +59,12 @@ sfputil write-eeprom -p Ethernet0 -n 0 -o 100 -d 4a44 --verify
 Error: Write data failed! Write: 4a44, read: 0000.
 ```
 
+<!-- evidence: sonic-net/SONiC doc/sfputil/read_write_eeprom_by_page.md @49bab5b L48-L102 (CMIS / sff8436 / sff8636 / sff8472 各規格の passive/active 範囲定義) -->
 ### page / offset 範囲チェック[^1]
 
 | 規格 | passive cable | active cable |
 |------|---------------|---------------|
-| **CMIS** | page 0 / offset 0-255 | page 0-255、page 0 (0-255)、他 (128-255) |
+| **CMIS** | page 0 / offset 0-255 | page 0-255 / offset: page 0 は 0-255、page>0 は 128-255 |
 | **sff8436 / sff8636** | 同上 | 同上 |
 | **sff8472** | wire `A0h` / offset 0-128 | wire `A0h` (0-255) + `A2h` (0-255) |
 
