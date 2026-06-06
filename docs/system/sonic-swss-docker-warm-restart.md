@@ -10,6 +10,24 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/warm-reboot/swss_warm_restart.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss
+  path: orchagent/orch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss-common
+  path: common/warm_restart.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-swss-common
+  path: common/producerstatetable.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-swss-common
+  path: common/consumerstatetable.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-warm-restart.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: dockers/docker-pde/syncd_init_common.sh
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db:
   - WARM_RESTART
@@ -85,7 +103,7 @@ sequenceDiagram
     ORCH->>DB: sync up（ARP/port/FDB/LAG/route）
 ```
 
-`m_toSync` に未処理が残っている状態では warm restart に入れない（依存解消待ち）[^1]。`ProducerStateTable` / `ConsumerStateTable` は consumer 側だけが実テーブルを書くように改修される。
+`m_toSync` に未処理が残っている状態では warm restart に入れない（依存解消待ち）[^1][^2]。`ProducerStateTable` / `ConsumerStateTable` は consumer 側だけが実テーブルを書くように改修される[^3]。
 
 ### Sync up
 
@@ -101,7 +119,7 @@ warm start が失敗したら **automatic fallback to system cold restart**（�
 
 ## 設定
 
-`config warm_restart enable swss` 系を CLI で叩いて `WARM_RESTART` テーブルを enable。
+`config warm_restart enable swss` 系を CLI で叩いて `WARM_RESTART` テーブル[^4]を enable。
 
 ## 制限事項
 
@@ -132,6 +150,9 @@ docker logs swss 2>&1 | grep -iE "warm|bake|reconcile" | tail -50
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/warm-reboot/swss_warm_restart.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss` `orchagent/orch.cpp:606` `if (!m_toSync.empty())` @ `4305596156d70e9797e8a881b3d19b46de0bce0d`
+[^3]: `sonic-net/sonic-swss-common` `common/producerstatetable.h:10` / `common/consumerstatetable.h:10` @ `158de8d3463ff4b841653f6d57190bb142b80d9c`、および `common/warm_restart.h:13` `class WarmStart`
+[^4]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-warm-restart.yang:46` `container WARM_RESTART` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
 <!-- concerns hint:
 - m_toSync 空判定 + restart prepare API の現行 orchagent 実装確認
