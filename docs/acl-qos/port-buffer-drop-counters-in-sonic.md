@@ -9,6 +9,12 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss
+  path: orchagent/portsorch.cpp
+  ref: master
+- repo: sonic-net/sonic-utilities
+  path: counterpoll/main.py
+  ref: master
 related:
   config_db:
   - FLEX_COUNTER_TABLE
@@ -113,6 +119,38 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 
 <!-- evidence-rendered:end -->
 
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/portsorch.cpp#L383-L386 (sha: master)
+excerpt: |
+  const vector<sai_port_stat_t> port_buffer_drop_stat_ids =
+  {
+      SAI_PORT_STAT_IN_DROPPED_PKTS,
+      SAI_PORT_STAT_OUT_DROPPED_PKTS
+  };
+reasoning: PORT_BUFFER_DROP FC group が実際に拾う SAI counter は IN/OUT_DROPPED_PKTS の 2 種であることを示す実装側の根拠。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/portsorch.cpp#L383-L386 (sha: master)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/portsorch.cpp#L383-L386 (sha: master)`
+
+    **抜粋**:
+
+    ```text
+    const vector<sai_port_stat_t> port_buffer_drop_stat_ids =
+    {
+        SAI_PORT_STAT_IN_DROPPED_PKTS,
+        SAI_PORT_STAT_OUT_DROPPED_PKTS
+    };
+    ```
+
+    **判断根拠**: PORT_BUFFER_DROP FC group が実際に拾う SAI counter は IN/OUT_DROPPED_PKTS の 2 種であることを示す実装側の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 関連する CONFIG_DB / CLI
 
 | Table | Key | フィールド | 用途 |
@@ -147,16 +185,26 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 
 ### コマンド例: Port buffer drop counter 確認
 
-下記コマンドを順に実行することで、関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
-CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+下記コマンドで [CONFIG_DB](../reference/glossary.md#term-config_db) の FC グループ設定と [FLEX_COUNTER_DB](../reference/glossary.md#term-flex_counter_db) の登録状況、CLI 表示の整合を突き合わせ確認できる。
 
 ```bash
-# buffer-drop counter の polling と現在値
+# FC グループの polling 設定一覧 (PORT_BUFFER_DROP 行が出ること)
 counterpoll show
-show queue counters
-# COUNTERS_DB の BUFFER_DROP 系キー
-redis-cli -n 2 keys '*BUFFER_DROP*' | head
+
+# CONFIG_DB (-n 4) 側の FLEX_COUNTER_TABLE エントリ
+redis-cli -n 4 hgetall 'FLEX_COUNTER_TABLE|PORT_BUFFER_DROP'
+
+# FLEX_COUNTER_DB (-n 5) 側で flexcounterd が拾った FC グループ
+#   (swss 内部のグループ名は "PORT_BUFFER_DROP_STAT")
+redis-cli -n 5 hgetall 'FLEX_COUNTER_GROUP_TABLE:PORT_BUFFER_DROP_STAT'
+
+# ポート単位の IN/OUT DROPPED_PKTS は portstat (= show interfaces counters)
+# 経由で COUNTERS_DB (-n 2) から取得される
+show interfaces counters
 ```
+
+!!! note "redis キー命名について"
+    COUNTERS_DB (`-n 2`) に格納される SAI counter は OID キー (例: `COUNTERS:oid:0x1000000000004`) でハッシュ化されており、`BUFFER_DROP` のような文字列でキー検索しても直接ヒットしない。CLI 側の名前 `PORT_BUFFER_DROP` は CONFIG_DB の `FLEX_COUNTER_TABLE` キー、内部グループ名 `PORT_BUFFER_DROP_STAT` は FLEX_COUNTER_DB の `FLEX_COUNTER_GROUP_TABLE` 側キーとして使われる[^2]。
 
 ## 関連ページ
 
@@ -166,6 +214,7 @@ redis-cli -n 2 keys '*BUFFER_DROP*' | head
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss` `orchagent/portsorch.h` L31 で `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP="PORT_BUFFER_DROP_STAT"`、`orchagent/portsorch.cpp` L383-L386 で `port_buffer_drop_stat_ids = { SAI_PORT_STAT_IN_DROPPED_PKTS, SAI_PORT_STAT_OUT_DROPPED_PKTS }`、`sonic-net/sonic-utilities` `counterpoll/main.py` L10, L165, L174, L183 で CONFIG_DB 側のキーは `FLEX_COUNTER_TABLE|PORT_BUFFER_DROP`。
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -174,4 +223,4 @@ redis-cli -n 2 keys '*BUFFER_DROP*' | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: 9d85d51e09d0 -->

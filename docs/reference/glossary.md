@@ -1368,7 +1368,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [CRM](#term-crm)
 
 - [CRM テーブル](config-db/crm.md) (150)
-- [Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）](../system/generic-sai-extension-critical-resource-monitoring-crm.md) (43)
+- [Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）](../system/generic-sai-extension-critical-resource-monitoring-crm.md) (51)
 - [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (35)
 - [ROUTE_TABLE (APPL_DB)](config-db/app-route.md) (29)
 - [DASH_ACL_* テーブル](config-db/dash-acl.md) (25)
@@ -1621,7 +1621,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (262)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (270)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
@@ -1834,9 +1834,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [IPv6 Link-local モード](config-db/ipv6-link-local.md) (28)
 - [WARM_RESTART テーブル](config-db/warm-restart.md) (28)
+- [Reboot / warm restart の設定](../topics/11-reboot/setup.md) (18)
 - [NEIGH テーブル](config-db/neigh.md) (11)
-- [config warm_restart サブコマンド](cli/config-warm_restart.md) (6)
-- [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](runbooks/arp-entry-stuck.md) (6)
+- [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](runbooks/arp-entry-stuck.md) (7)
 
 ### [Netlink](#term-netlink)
 
@@ -2038,7 +2038,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ROUTE_MAP](#term-route_map)
 
 - [sonic-route-map YANG](yang/sonic-route-map.md) (106)
-- [ROUTE_MAP_SET テーブル](config-db/route-map-set.md) (75)
+- [ROUTE_MAP_SET テーブル](config-db/route-map-set.md) (76)
 - [ROUTE_MAP テーブル](config-db/route-map.md) (65)
 - [sonic-bgp-global YANG](yang/sonic-bgp-global.md) (24)
 - [sonic-bgp-neighbor YANG](yang/sonic-bgp-neighbor.md) (24)

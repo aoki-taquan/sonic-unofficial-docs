@@ -9,10 +9,8 @@ sources:
   path: doc/voq/aggregate_voq_counters.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - VOQ_INBAND_INTERFACE
-  - CHASSIS_MODULE
-  - DPU
+  _no_related_config_db: true
+  config_db: []
   cli:
   - show queue counters --voq
   - show queue
@@ -146,7 +144,7 @@ reasoning: midplane IP に Redis を公開してから supervisor の queuestat 
 
 ### 関連する CONFIG_DB
 
-該当エントリは HLD 内で定義されていない。
+この HLD は [CONFIG_DB](../reference/glossary.md#term-config_db) に新規スキーマを追加しない。midplane IP 経由の Redis アクセス経路と CLI 改修だけで構成されており、distributed VOQ chassis の前提となる `CHASSIS_MODULE` / `VOQ_INBAND_INTERFACE` / `DPU` 等の既存テーブルはこの HLD のスコープ外（前提インフラ側で定義済み）。そのため frontmatter `related.config_db` も意図的に空とし、`_no_related_config_db: true` で opt-out している。
 
 ### 関連する CLI
 
@@ -199,4 +197,4 @@ HLD が明示している制限[^1]:
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: 896d391185a9 -->

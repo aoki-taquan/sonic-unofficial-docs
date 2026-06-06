@@ -11,7 +11,7 @@ last_verified: 2026-05-13
 
     SONiC コミュニティ master の HLD は **設計提案リポジトリ** であり、現行コードと一致しているとは限りません。本ページは「HLD だけ読んで誤解しがちな機能」を一望できる USP ページです。読み手は、まず後述の **monitor subtype 別セクション** で該当機能の乖離タイプ（未実装 / 部分実装 / 進化置換 / 廃止）を把握し、そこから個別ページへ降りて `last_verified` と「実装との乖離」セクションの裏取り根拠を確認してください。area 横断で探す場合は末尾の **area 別索引** から辿れます。
 
-`verification: discrepancy-found` が付いた全 **115** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
+`verification: discrepancy-found` が付いた全 **117** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
 
 ## サマリ
 
@@ -21,7 +21,7 @@ last_verified: 2026-05-13
 |---------|-----:|------|
 | [`not_implemented`](#monitor-not-implemented) | 18 | 未実装 |
 | [`partially_implemented`](#monitor-partially-implemented) | 61 | 部分実装 |
-| [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 33 | HLD と乖離した形で実装/進化 |
+| [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 35 | HLD と乖離した形で実装/進化 |
 | [`deprecated`](#monitor-deprecated) | 3 | deprecated（廃止予定 / 撤去済み） |
 
 ### area 別件数
@@ -31,13 +31,13 @@ last_verified: 2026-05-13
 | [`acl-qos`](#area-acl-qos) | 6 |
 | [`architecture`](#area-architecture) | 25 |
 | [`internals`](#area-internals) | 5 |
-| [`management`](#area-management) | 18 |
+| [`management`](#area-management) | 19 |
 | [`overlay`](#area-overlay) | 1 |
 | [`platform`](#area-platform) | 13 |
 | [`reference`](#area-reference) | 9 |
 | [`routing`](#area-routing) | 12 |
 | [`switching`](#area-switching) | 8 |
-| [`system`](#area-system) | 18 |
+| [`system`](#area-system) | 19 |
 
 ## monitor subtype 別
 
@@ -337,7 +337,7 @@ last_verified: 2026-05-13
 - [Switchport モードと VLAN CLI 拡張 — 概念](../../switching/switch-port-modes-and-vlan-cli-concepts.md)  
   area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
   
-  `monitor: partially_implemented` — 部分実装。本ページが扱う 概念 / モード定義 / 状態遷移 / 一括 CLI のスコープのうち、`access` / `trunk` CLI と複数 VLAN 一括 add/del は master に取り込み済みだが、`routed` モードへの明示遷移と PORTCHANNEL 一括移行は HLD 提案段階に留まる。差分の根拠 / 影響 / 回避策は派生先 [discrepancy](../../switching/switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
+  `monitor: partially_implemented` — 部分実装。本ページが扱う 概念 / モード定義 / 状態遷移 / 一括 CLI のスコープのうち、`access` / `trunk` / `routed` の 3 モード CLI（`config switchport mode <type> <port>`）と複数 VLAN 一括 add/del（`-m` フラグ）は master に取り込み済み[^cli-switchport][^cli-vlan]。PORTCHANNEL に対する一括モード移行など、HLD が示唆していた一部の運用便宜オプションは取り込まれていない。差分の根拠 / 影響 / 回避策は派生先 [discrepancy](../../switching/switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
 
 - [Switchport モードと VLAN CLI 拡張 — 設定と運用](../../switching/switch-port-modes-and-vlan-cli-operations.md)  
   area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
@@ -412,7 +412,7 @@ last_verified: 2026-05-13
   
   per-page queue で既出の通り、[HLD](../../reference/glossary.md#term-hld) が定義する専用機構は未取り込み。`.cache/sonic-sources/` 全体を再走査した結果:
 
-### `evolved_beyond_hld` — HLD と乖離した形で実装/進化 (33 件) {#monitor-evolved-beyond-hld}
+### `evolved_beyond_hld` — HLD と乖離した形で実装/進化 (35 件) {#monitor-evolved-beyond-hld}
 
 !!! info "HLD と乖離した形で実装/進化"
 
@@ -487,6 +487,11 @@ last_verified: 2026-05-13
   
   実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b76`）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという **一部のみの部分実装** 状態:
 
+- [ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）](../../management/ipv4-port-based-dhcp-server-in-sonic.md)  
+  area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-06-06`
+  
+  HLD と master の [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) 実装で以下の差分を確認した:
+
 - [既定パスワードの初回ログイン強制変更（California SB-327 準拠）](../../management/default-credential-management-for-california-sb-327-conformance.md)  
   area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-06-04`
   
@@ -546,6 +551,11 @@ last_verified: 2026-05-13
   area: `routing` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   `sonic-swss/fpmsyncd/routesync.cpp` と `sonic-swss/fpmsyncd/routesync.h` を確認。HLD のコア部分は master に取り込み済み:
+
+- [Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）](../../system/generic-sai-extension-critical-resource-monitoring-crm.md)  
+  area: `system` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-06-06`
+  
+  つまり HLD が `「used/available の publish のみ・閾値は他リソースで提供されている既定挙動を流用」` と書いた当初設計から、master では **CrmResourceType ごとの閾値マップを揃える形** に拡張されており、extension table も他の `*_threshold_type` / `*_low_threshold` / `*_high_threshold` パターンに乗っている。
 
 - [SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）](../../system/sonic-fips-deployment.md)  
   area: `system` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-09`
@@ -831,6 +841,11 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   
   実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b76`）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという **一部のみの部分実装** 状態:
 
+- [ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）](../../management/ipv4-port-based-dhcp-server-in-sonic.md)  
+  area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-06-06`
+  
+  HLD と master の [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) 実装で以下の差分を確認した:
+
 - [既定パスワードの初回ログイン強制変更（California SB-327 準拠）](../../management/default-credential-management-for-california-sb-327-conformance.md)  
   area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-06-04`
   
@@ -1021,7 +1036,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
 - [Switchport モードと VLAN CLI 拡張 — 概念](../../switching/switch-port-modes-and-vlan-cli-concepts.md)  
   area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
   
-  `monitor: partially_implemented` — 部分実装。本ページが扱う 概念 / モード定義 / 状態遷移 / 一括 CLI のスコープのうち、`access` / `trunk` CLI と複数 VLAN 一括 add/del は master に取り込み済みだが、`routed` モードへの明示遷移と PORTCHANNEL 一括移行は HLD 提案段階に留まる。差分の根拠 / 影響 / 回避策は派生先 [discrepancy](../../switching/switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
+  `monitor: partially_implemented` — 部分実装。本ページが扱う 概念 / モード定義 / 状態遷移 / 一括 CLI のスコープのうち、`access` / `trunk` / `routed` の 3 モード CLI（`config switchport mode <type> <port>`）と複数 VLAN 一括 add/del（`-m` フラグ）は master に取り込み済み[^cli-switchport][^cli-vlan]。PORTCHANNEL に対する一括モード移行など、HLD が示唆していた一部の運用便宜オプションは取り込まれていない。差分の根拠 / 影響 / 回避策は派生先 [discrepancy](../../switching/switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
 
 - [Switchport モードと VLAN CLI 拡張 — 設定と運用](../../switching/switch-port-modes-and-vlan-cli-operations.md)  
   area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
@@ -1047,6 +1062,11 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   area: `system` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
   
   - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。coredump_gen_handler / techsupport_cleanup の現行 master 取り込み、rate-limit と quota 既定値は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）](../../system/generic-sai-extension-critical-resource-monitoring-crm.md)  
+  area: `system` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-06-06`
+  
+  つまり HLD が `「used/available の publish のみ・閾値は他リソースで提供されている既定挙動を流用」` と書いた当初設計から、master では **CrmResourceType ごとの閾値マップを揃える形** に拡張されており、extension table も他の `*_threshold_type` / `*_low_threshold` / `*_high_threshold` パターンに乗っている。
 
 - [Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）](../../system/show-techsupport.md)  
   area: `system` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`

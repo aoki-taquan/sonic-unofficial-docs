@@ -60,7 +60,8 @@ config ntp add <ntp_ip_address>
 1. `ADHOC_VALIDATION` が真のとき、IP 検証を実施 (`association_type != "pool"` の場合)
 2. 既存 `NTP_SERVER` テーブルを取得し、同 IP が既存なら `NTP server <ip> is already configured` で no-op return
 3. options を辞書化（version / association_type / iburst）し、`db.set_entry('NTP_SERVER', <ip>, opts)` で [CONFIG_DB](../../reference/glossary.md#term-config_db) に書く
-4. `systemctl restart chrony` を実行。失敗時は `ctx.fail`
+4. `NTP server <ip> added to configuration` を `click.echo` で表示
+5. `Restarting chrony service...` を `click.echo` で表示してから `systemctl restart chrony` を `display_cmd=False` で実行。失敗時は `ctx.fail`
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/config/main.py#L8982-L9016 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -110,8 +111,8 @@ config ntp del <ntp_ip_address>
 **動作**:
 
 1. 既存 `NTP_SERVER` テーブルを取得、未登録 IP なら `NTP server <ip> is not configured.` でエラー終了
-2. `db.set_entry('NTP_SERVER', <ip>, None)` で entry を削除
-3. `systemctl restart chrony` を実行
+2. `db.set_entry('NTP_SERVER', <ip>, None)` で entry を削除し、`NTP server <ip> removed from configuration` を `click.echo`
+3. `Restarting chrony service...` を `click.echo` し、`systemctl restart chrony` を `display_cmd=False` で実行
 
 ## 関連する CONFIG_DB
 
@@ -155,6 +156,8 @@ flowchart LR
 
 [^1]: `config ntp` グループ定義は `config/main.py` L8968-L9037。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8968>
 
+[^2]: `add_ntp_server` の `click.echo("NTP server {} added to configuration".format(...))` と `click.echo("Restarting chrony service...")` は `config/main.py` L9011-L9013、`del_ntp_server` の対応出力は同 L9030, L9034 にある。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9011>
+
 <!-- usage-example -->
 ## 実行例
 
@@ -169,15 +172,33 @@ sudo config ntp add 10.0.0.10
 
 ```bash
 sudo config ntp del 10.0.0.10
-# Management VRF 経由で NTP を引く
-sudo config ntp add 10.0.0.10 --association-type pool
+# pool 指定 + iburst + NTP v4 で追加 (FQDN も許容)
+sudo config ntp add pool.ntp.org --association-type pool --iburst --version 4
 ```
 
 ### 期待される出力 (抜粋)
 
-```bash
-# 実装は `systemctl restart chrony` を `display_cmd=False` で実行するため
-# CLI への出力は通常空。chrony サービスが再起動される。
+`add` は `click.echo` で 2 行 (追加完了 + chrony 再起動) を出力する。`systemctl restart chrony` 自体は `display_cmd=False` で実行されるためコマンドラインの再表示は無い[^2]。
+
+```text
+$ sudo config ntp add 10.0.0.10
+NTP server 10.0.0.10 added to configuration
+Restarting chrony service...
+```
+
+`del` も同様に削除完了 + 再起動の 2 行を出力する。
+
+```text
+$ sudo config ntp del 10.0.0.10
+NTP server 10.0.0.10 removed from configuration
+Restarting chrony service...
+```
+
+既存 IP に再 `add` した場合は no-op となり、以下 1 行のみ出力して return する。
+
+```text
+$ sudo config ntp add 10.0.0.10
+NTP server 10.0.0.10 is already configured
 ```
 <!-- /usage-example -->
 

@@ -22,10 +22,10 @@ sources: []
 |---|---:|
 | code-verified | 764 |
 | runbook-verified | 28 |
-| discrepancy-found | 115 |
+| discrepancy-found | 117 |
 | issue-confirmed | 5 |
 | hld-only | 2 |
-| meta | 189 |
+| meta | 187 |
 | stub | 1 |
 | **合計** | **1104** |
 
@@ -35,9 +35,9 @@ sources: []
 
 | バケツ | 件数 |
 |---|---:|
-| 今日 (0d) | 44 |
+| 今日 (0d) | 50 |
 | 7 日以内 (1-7d) | 50 |
-| 30 日以内 (8-30d) | 1007 |
+| 30 日以内 (8-30d) | 1001 |
 | 30 日超 / 古い | 0 |
 | 不明 / パース不可 | 3 |
 
@@ -79,7 +79,7 @@ sources: []
 | 項目 | 値 |
 |---|---:|
 | 用語数 (`### ` アンカー) | 325 |
-| docs 内被リンク数 | 20099 |
+| docs 内被リンク数 | 20107 |
 
 ## 直近 5 round quality-audit
 

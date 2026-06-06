@@ -1,11 +1,22 @@
 ---
 title: 設定
-description: 設定 — gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC
-  native のどちらで指定するかを最初に決める。
+description: gNMI からの Get / Set / Subscribe を OpenConfig / SONiC native YANG いずれの path で発行するかを決め、telemetry コンテナの起動・mTLS・代表機能 (interface / VLAN / PortChannel / BGP) のマップまでを設定手順としてまとめる。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: code-verified
+last_verified: 2026-06-06
+sources:
+- repo: sonic-net/sonic-utilities
+  path: scripts/db_migrator.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-gnmi
+  path: doc/grpc_telemetry.md
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-gnmi
+  path: doc/gNMI_usage_examples.md
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-gnmi.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   cli:
   - show ip
@@ -15,6 +26,8 @@ related:
   - config vlan
   - show vlan
   config_db:
+  - GNMI
+  - TELEMETRY
   - VLAN
   - VLAN_INTERFACE
   - VLAN_MEMBER
@@ -23,7 +36,12 @@ related:
   - BGP_PEER_GROUP_AF
   - BGP_GLOBALS_AF_NETWORK
   yang:
+  - sonic-gnmi
   - sonic-bgp-neighbor
+  - openconfig-interfaces
+  - openconfig-vlan
+  - openconfig-if-aggregate
+  - openconfig-bgp
 ---
 
 # 設定
@@ -193,7 +211,7 @@ CLI と gNMI を併用する運用では、同じノードを CLI で書いて g
 
 ## CONFIG_DB / GNMI 関連 table
 
-gNMI server の起動制御に使う table（旧 `TELEMETRY` は `db_migrator` の `migrate_gnmi()` で `GNMI` に移行済み）。
+gNMI server の起動制御に使う table。旧 `TELEMETRY` は `db_migrator` の `migrate_gnmi()` で `GNMI` に移行される (CONFIG_DB に `GNMI` が無い場合のみ、minigraph / golden config の `GNMI` セクション、もしくは既存 `TELEMETRY` の `gnmi` / `certs` キーを `GNMI` 配下にコピーする)[^migrate-gnmi]。
 
 ```json
 {
@@ -206,7 +224,15 @@ gNMI server の起動制御に使う table（旧 `TELEMETRY` は `db_migrator` �
 }
 ```
 
-`client_auth=true` で mTLS、`false` で server 認証のみ。`log_level` は 0–9 で大きいほど詳細。
+`client_auth=true` で mTLS、`false` で server 認証のみ[^gnmi-yang]。`log_level` は `sonic-gnmi.yang` 上は `uint8 range 0..100` で定義され、値が大きいほど詳細[^gnmi-yang]。`certs` 配下の `server_crt` / `server_key` / `ca_crt` は YANG の pattern では `.cer` / `.key` 拡張子を要求するため、`.crt` で揃える場合は telemetry コンテナの起動引数 (`--server_crt` 等) 経由か、CLI / 直接 redis-cli で YANG バリデーションを通さずに書き込む必要がある[^gnmi-yang][^telemetry-args]。
+
+<!-- evidence: sonic-net/sonic-utilities@39732bc scripts/db_migrator.py lines 634-657 define migrate_gnmi() which copies TELEMETRY → GNMI when GNMI is absent. -->
+<!-- evidence: sonic-net/sonic-buildimage@9ea932e src/sonic-yang-models/yang-models/sonic-gnmi.yang lines 28-79 define GNMI container with port / client_auth / log_level (uint8 range 0..100) / save_on_set and certs (ca_crt / server_crt / server_key, .cer/.key pattern). -->
+<!-- evidence: sonic-net/sonic-gnmi@eb635b7 doc/grpc_telemetry.md describes telemetry binary flags (-port, -server_crt, -server_key, -allow_no_client_auth). -->
+
+[^migrate-gnmi]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `scripts/db_migrator.py` の `migrate_gnmi()` (commit `39732bc`、ファイル中 634〜657 行付近) で実装。`init_cfg.json` 等で minigraph / golden config に `GNMI` キーがあればそれを優先し、無ければ既存 `TELEMETRY|gnmi` / `TELEMETRY|certs` のエントリを `GNMI` 配下にコピーする。
+[^gnmi-yang]: sonic-net/[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `src/sonic-yang-models/yang-models/sonic-gnmi.yang` (commit `9ea932e`、container `GNMI` 配下の `gnmi` / `certs`)。`port` は `inet:port-number`、`client_auth` は boolean、`log_level` は `uint8 { range 0..100; }`、`save_on_set` は boolean、`certs` の各 leaf は `.cer` / `.key` 拡張子の pattern を要求する。
+[^telemetry-args]: sonic-net/sonic-gnmi `doc/grpc_telemetry.md` (commit `eb635b7`)。telemetry バイナリの起動オプションとして `-port`、`-server_crt`、`-server_key`、`-ca_crt`、`-allow_no_client_auth` 等が列挙されている。
 
 ## よくある設定エラーと対処
 
@@ -232,4 +258,4 @@ gNMI server の起動制御に使う table（旧 `TELEMETRY` は `db_migrator` �
 - [SONiC CLI auto-generation tool](../../management/sonic-cli-auto-generation-tool.md)
 - 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md) / [yang-reference](yang-reference.md)
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9aad8bf0c717 -->

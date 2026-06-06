@@ -2,12 +2,23 @@
 title: ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）
 description: "ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携） — SONiC に 組み込み IPv4 DHCP Server を持つ。"
 area: management
-verification: code-verified
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-06-06
 sources:
   - repo: sonic-net/SONiC
     path: doc/dhcp_server/port_based_dhcp_server_high_level_design.md
     ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang
+  - repo: sonic-net/sonic-buildimage
+    path: dockers/docker-dhcp-relay/docker-dhcp-relay.supervisord.conf.j2
+monitor: evolved_beyond_hld
 related:
   config_db:
     - DHCP_SERVER_IPV4
@@ -27,8 +38,8 @@ related:
     この HLD は実装詳細を含む。機能の概念・設定・運用を読み物として読みたい場合は [Topics 16 章: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: code-verified"
-    `sonic-buildimage/dockers/docker-dhcp-server/` で dhcp_server コンテナ（Dockerfile.j2 / kea-dhcp4.conf.j2 / lease_update.sh / docker_init.sh / supervisord.conf）を確認。`sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py` で dhcpservd daemon、`dhcp_utilities/dhcprelayd/dhcprelayd.py` で dhcprelayd を確認。`sonic-buildimage/dockers/docker-dhcp-relay/docker-dhcp-relay.supervisord.conf.j2` L92-93 で `[program:dhcprelayd]` の supervisord 起動を確認。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang` で YANG を確認（verified 2026-05-09）。
+!!! warning "裏取りステータス: discrepancy-found"
+    `sonic-buildimage/dockers/docker-dhcp-server/` で dhcp_server コンテナ（Dockerfile.j2 / kea-dhcp4.conf.j2 / lease_update.sh / docker_init.sh / supervisord.conf）を確認。`sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py` で dhcpservd daemon、`dhcp_utilities/dhcprelayd/dhcprelayd.py` で dhcprelayd を確認。`sonic-buildimage/dockers/docker-dhcp-relay/docker-dhcp-relay.supervisord.conf.j2` L92-93 で `[program:dhcprelayd]` の supervisord 起動を確認。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang` で YANG を確認（verified 2026-06-06）。**HLD-master 差分**: (1) HLD の customized option `type` 候補 `binary`/`boolean` は master YANG で削除済み (`string`/`ipv4-address`/`uint8/16/32` のみ)[^5]、(2) STATE_DB テーブル名は HLD `DHCP_SERVER_IPV4_IP` ではなく master では `DHCP_SERVER_IPV4_SERVER_IP`[^4]、(3) client-class の `test` 式が HLD では完全一致、master では `substring(...)==` の末尾部分一致[^3]。
 
 # ポートベース IPv4 DHCP Server（`kea-dhcp-server` + `dhcrelay` Option 82 連携）
 
@@ -73,11 +84,11 @@ flowchart LR
   dhcprelayd -->|kill/start/restart| dhcrelay
 ```
 
-`dhcprelayd` は `VLAN` / `VLAN_MEMBER` / `DHCP_SERVER_IPV4*` を [CONFIG_DB](../reference/glossary.md#term-config_db) から subscribe し、関連変更や `dhcp_relay` container 起動時に `dhcrelay` プロセスを起動・再起動する[^1]。
+`dhcprelayd` は `FEATURE` / `VLAN` / `VLAN_INTF` / `DHCP_SERVER_IPV4` を [CONFIG_DB](../reference/glossary.md#term-config_db) から subscribe し、関連変更や `dhcp_relay` container 起動時に `dhcrelay` プロセスを起動・再起動する[^1][^2]。`FEATURE_CHECKER` と `DHCP_SERVER_CHECKER` は常時有効で、VLAN 系の checker は dhcp_server が有効化された VLAN がある時のみ enable される[^2]。
 
 ### kea-dhcp-server の設定（dhcpservd が生成）
 
-`dhcrelay` の Option 82 に **circuit-id = `<hostname>:<port_alias>` (例 `hostname:etp1`)** が乗ることを使い、kea 側で `client-classes` でクライアントを分類し、対応 pool から払い出す[^1]:
+`dhcrelay` の Option 82 に **circuit-id = `<hostname>:<port_alias>` (例 `hostname:etp1`)** が乗ることを使い、kea 側で `client-classes` でクライアントを分類し、対応 pool から払い出す[^1][^3]:
 
 ```json
 {
@@ -101,7 +112,10 @@ flowchart LR
 }
 ```
 
-`dhcp-server-identifier` (Option 54) は **DHCP インタフェース（dhcrelay 下流）IP** に書き換える。client が unicast RELEASE を投げる先を relay に向け、relay から server へ転送させるため[^1]。
+`dhcp-server-identifier` (Option 54) は **DHCP インタフェース（dhcrelay 下流）IP** に書き換える。client が unicast RELEASE を投げる先を relay に向け、relay から server へ転送させるため[^1][^3]。
+
+!!! note "実装上の差分"
+    HLD の例では `"test": "relay4[1].hex == 'hostname:etp1'"` と完全一致式で書かれているが、実コード (`dhcp_cfggen.py` L240-243[^3]) は `substring(relay4[1].hex, -<class_len>, <class_len>) == '<hostname>:<port_name>'` の **末尾部分一致** で生成する。Option 82 sub-option 1 (circuit-id) のヘッダ先頭バイトを除外するため。
 
 ### dhcrelay の起動例
 
@@ -111,11 +125,11 @@ flowchart LR
   -id Vlan1000 -iu docker0 240.127.1.2
 ```
 
-dhcp_server コンテナ側 IP は `240.127.1.2`（`DHCP_SERVER_IPV4_IP` テーブルで管理）[^1]。
+dhcp_server コンテナ側 IP は `240.127.1.2`（`STATE_DB` の `DHCP_SERVER_IPV4_SERVER_IP|<dhcp_interface>` で公開、`dhcpservd` が起動時に書き込む）[^4]。
 
 ### lease の STATE_DB 反映
 
-kea の `libdhcp_run_script.so` フック経由で `/tmp/lease_update.sh` が走り、`/tmp/kea-lease.csv` を読んだ `dhcpservd` が `STATE_DB` の `DHCP_SERVER_IPV4_LEASE` を更新する[^1]:
+kea の `libdhcp_run_script.so` フック経由で `/etc/kea/lease_update.sh` が走り、`/var/lib/kea/kea-lease.csv` を読んだ `dhcpservd` が `STATE_DB` の `DHCP_SERVER_IPV4_LEASE` を更新する[^1][^3]:
 
 ```text
 address,hwaddr,client_id,valid_lifetime,expire,subnet_id,...
@@ -124,7 +138,10 @@ address,hwaddr,client_id,valid_lifetime,expire,subnet_id,...
 
 ### Customized DHCP option
 
-option 60 等を per-DHCP-interface で配るテーブル `DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS` を持つ[^1]。**禁止 option** は `1`（Subnet Mask）/ `3`（Router）/ `51`（Lease Time）/ `53`（Message Type）/ `54`（Server ID）。型は `binary` / `boolean` / `string` / `ipv4-address` / `uint8/16/32`[^1]。
+option 60 等を per-DHCP-interface で配るテーブル `DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS` を持つ[^1]。**禁止 option** は `1`（Subnet Mask）/ `3`（Router）/ `51`（Lease Time）/ `53`（Message Type）/ `54`（Server ID）[^1]。`id` の YANG `range` は `1..254`[^5]。
+
+!!! warning "型の HLD-master 乖離"
+    HLD は型として `binary` / `boolean` / `string` / `ipv4-address` / `uint8/16/32` を挙げる[^1] が、master の `sonic-dhcp-server-ipv4.yang` (`type` leaf の enumeration[^5]) は `string` / `ipv4-address` / `uint8` / `uint16` / `uint32` のみで、**`binary` と `boolean` は YANG 上は受け付けられない**。実体の `dhcp_option.csv` 上は option 54 (server-id) が `defined_supported`、option 1/3/12/50/51/53 等は `defined_unsupported`/`unsupported`[^3]。
 
 ## 設定
 
@@ -190,9 +207,26 @@ redis-cli -n 4 hgetall 'DHCP_SERVER_IPV4|Vlan1000'
 ```
 
 
+## 実装との乖離
+
+HLD と master の [sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) 実装で以下の差分を確認した:
+
+| 項目 | HLD の主張[^1] | master 実装 | 出典 |
+|------|------|------|------|
+| `customized_options` の `type` enum | `binary` / `boolean` / `string` / `ipv4-address` / `uint8/16/32` | `string` / `ipv4-address` / `uint8` / `uint16` / `uint32` のみ | [^5] |
+| dhcp_server コンテナ IP の公開先 | `DHCP_SERVER_IPV4_IP` テーブル | `STATE_DB` の `DHCP_SERVER_IPV4_SERVER_IP|<intf>` | [^4] |
+| client-class の `test` 式 | `relay4[1].hex == 'hostname:etp1'` | `substring(relay4[1].hex, -<len>, <len>) == 'hostname:etp1'` | [^3] |
+| lease ファイル / hook script のパス | `/tmp/kea-lease.csv` / `/tmp/lease_update.sh` | `/var/lib/kea/kea-lease.csv` / `/etc/kea/lease_update.sh` | [^3] |
+
+いずれも振る舞いに直結する差分であり、master の値を正とする。
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/dhcp_server/port_based_dhcp_server_high_level_design.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dhcp_server/port_based_dhcp_server_high_level_design.md)
+[^2]: [sonic-net/sonic-buildimage src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py @ master L17-29, L82-108](https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py)
+[^3]: [sonic-net/sonic-buildimage src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py @ master L31, L223-249](https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py)
+[^4]: [sonic-net/sonic-buildimage src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py @ master L22, L80](https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py)
+[^5]: [sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang @ master L131-148](https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang)
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -225,4 +259,4 @@ redis-cli -n 4 hgetall 'DHCP_SERVER_IPV4|Vlan1000'
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 987cec9fd0c5 -->
+<!-- glossary-links-injected: 75921d013977 -->
