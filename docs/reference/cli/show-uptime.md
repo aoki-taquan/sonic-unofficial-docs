@@ -12,10 +12,9 @@ sources:
 related:
   config_db: []
   cli:
-  - show uptime
   - show version
-  yang:
-  - sonic-device_metadata
+  yang: []
+  related_opt_out: 'show uptime は /proc/uptime を読む uptime(1) のラッパで CONFIG_DB / YANG とは無関係'
 ---
 
 # show uptime サブコマンド
@@ -76,15 +75,15 @@ flowchart LR
 ## 関連リファレンス
 
 - CLI: [show version](show-version.md) / [show system-health](show-system-health.md) / [reboot-fast-warm](reboot-fast-warm.md)
-- [YANG](../../reference/glossary.md#term-yang): [sonic-device_metadata](../yang/sonic-device_metadata.md)
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): [DEVICE_METADATA](../config-db/device-metadata.md)
 - Topic: [リブート / アップグレード](../../topics/11-reboot/index.md)
+
+> `show uptime` は kernel の `/proc/uptime` を読む `uptime(1)` のラッパで、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) とは関連しない（[実装](#実装)参照）。
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: `uptime` コマンドの実装は `show/main.py` L2211-L2216。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2211>
+[^1]: `uptime` コマンドの実装は `show/main.py` L2208-L2216。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2208-L2216>
 
 
 <!-- usage-example -->
