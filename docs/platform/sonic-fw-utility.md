@@ -10,6 +10,8 @@ sources:
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 - repo: sonic-net/sonic-utilities
   path: fwutil/main.py
+- repo: sonic-net/sonic-utilities
+  path: fwutil/lib.py
 - repo: sonic-net/sonic-platform-common
   path: sonic_platform_base/component_base.py
 related:
@@ -56,6 +58,52 @@ flowchart LR
 - **`platform_components.json`**: platform ごとに **install 可能な component と既定 firmware path** を宣言する manifest
 - **plugin API**: `Chassis.get_component_list()` / `Component.install_firmware(image_path)` / `Component.get_firmware_version()` 等を platform 実装が提供
 - **CLI サブコマンド**: `show` / `install` / `update` / `show status` 等を統一フォーマットで提供
+
+### `platform_components.json` のスキーマ
+
+`fwutil` 本体（`sonic-utilities/fwutil/lib.py` の `PlatformComponentsParser`）は manifest を `/usr/share/sonic/device/<platform>/platform_components.json` から読み出す[^3]。トップレベルキーは `chassis`（必須・1 件のみ）と `module`（modular chassis 用、任意）の 2 種で、それぞれの配下に **`component` 辞書を 1 つだけ** 持ち、各 component のレコードは **`firmware` / `version` / `utility` の 3 キーまで** に制限される（`firmware` は必須）[^4]。fixed chassis の最小例は次の形になる[^1]。
+
+```json
+{
+    "chassis": {
+        "Chassis1": {
+            "component": {
+                "BIOS": {
+                    "firmware": "/lib/firmware/<vendor>/bios.bin",
+                    "version": "0ACLH003_02.02.010"
+                },
+                "CPLD": {
+                    "firmware": "/lib/firmware/<vendor>/cpld.bin",
+                    "version": "10"
+                }
+            }
+        }
+    }
+}
+```
+
+modular chassis では同一構造の `module` セクションを並べる（こちらは複数 module 可）[^1]。`<vendor>` 部は platform 配布側で実 path に置換する。
+
+### Component plugin API（`ComponentBase`）
+
+platform plugin は `sonic-platform-common/sonic_platform_base/component_base.py` の `ComponentBase` を継承し、最低限 **`get_name` / `get_description` / `get_firmware_version` / `get_available_firmware_version` / `install_firmware`** を実装する（`update_firmware` / `auto_update_firmware` も同 base にシグネチャがある）[^5]。
+
+```python
+class ComponentBase(device_base.DeviceBase):
+    # 識別と現行 version
+    def get_name(self): ...                      # -> str
+    def get_description(self): ...               # -> str
+    def get_firmware_version(self): ...          # HW から読み出す
+
+    # image 側 version と install/update
+    def get_available_firmware_version(self, image_path): ...   # image から読む
+    def get_firmware_update_notification(self, image_path): ... # 既定 None
+    def install_firmware(self, image_path): ...                 # -> bool
+    def update_firmware(self, image_path): ...                  # install + load
+    def auto_update_firmware(self, image_path, boot_type): ...  # boot_type: none/fast/warm/cold
+```
+
+`auto_update_firmware` の `boot_type` は `none` / `fast` / `warm` / `cold` を受け、戻り値の正の整数（`status_installed=1` / `status_updated=2` / `status_scheduled=3`）/ 負（`-1`〜`-3`）で結果を区別する仕様が docstring に明記されている[^5]。
 
 ### 主な操作
 
@@ -117,6 +165,9 @@ ls /usr/share/sonic/device/*/fw/ 2>/dev/null | head
 
 [^1]: `sonic-net/SONiC` `doc/fwutil/fwutil.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 [^2]: `sonic-net/sonic-utilities` `fwutil/main.py` の `show` サブグループ定義（`status` L467-475 / `updates` L478 付近 / `update-all-status` L479-487 / `version` L490-494）と `VERSION = '2.0.0.0'`（L20）を参照。
+[^3]: `sonic-net/sonic-utilities` `fwutil/lib.py` `PlatformComponentsParser` クラス（L344 以降）。`PLATFORM_COMPONENTS_PATH_TEMPLATE = "{}/usr/share/sonic/device/{}/{}"`（L348）、`PLATFORM_COMPONENTS_FILE = "platform_components.json"`（L36）。
+[^4]: 同 `fwutil/lib.py` L351-356 の `CHASSIS_KEY="chassis"` / `MODULE_KEY="module"` / `COMPONENT_KEY="component"` / `FIRMWARE_KEY="firmware"` / `UTILITY_KEY="utility"` / `VERSION_KEY="version"` と、`__parse_component_section` (L397-433) のレコード数 `1〜3` 制限・`firmware` キー必須チェック、`__parse_chassis_section` (L435-461) の `chassis` 1 件制約。
+[^5]: `sonic-net/sonic-platform-common` `sonic_platform_base/component_base.py` の `ComponentBase` クラス（L24 `get_name` / L42 `get_firmware_version` / L53 `get_available_firmware_version` / L67 `get_firmware_update_notification` / L81 `install_firmware` / L100 `update_firmware` / L120 `auto_update_firmware`）。
 
 <!-- concerns hint:
 - sonic-utilities/fwutil/ の現行 master 取り込みと CLI subcommand 一覧確認
