@@ -105,7 +105,9 @@ VNET_TABLE:<vnet>
 | `config vxlan map add <vxlan_name> <vlan_id> <vni>` | VLAN ↔ VNI のマップ追加（`VXLAN_TUNNEL_MAP` を書く）[^3] |
 | `config vxlan map del <vxlan_name> <vlan_id> <vni>` | VLAN ↔ VNI マップ削除[^3] |
 | `config vxlan map_range add <vxlan_name> <vlan_start> <vlan_end> <vni_start>` | VLAN レンジ ↔ VNI レンジの一括マップ[^3] |
+| `config vxlan map_range del <vxlan_name> <vlan_start> <vlan_end> <vni_start>` | VLAN レンジ ↔ VNI レンジの一括マップ削除[^3] |
 | `config vxlan evpn_nvo add <nvo_name> <vxlan_name>` | EVPN NVO エントリ追加[^3] |
+| `config vxlan evpn_nvo del <nvo_name>` | EVPN NVO エントリ削除[^3] |
 | `show vxlan name <vxlan_name>` | 個別 [VXLAN](../reference/glossary.md#term-vxlan) tunnel 情報[^2] |
 | `show vxlan tunnel` | 全 VTEP tunnel と src/dst を一覧[^2] |
 | `show vxlan interface` | VTEP 情報（src IP・status）[^2] |
