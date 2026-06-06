@@ -56,7 +56,7 @@ IEEE 802.3 の auto-negotiation はリンクの両端で **複数の speed / int
 | `SAI_PORT_ATTR_INTERFACE_TYPE` | enum | NONE | AN 無効時の固定 interface type |
 | `SAI_PORT_ATTR_ADVERTISED_INTERFACE_TYPE` | enum list | empty | AN 有効時の advertise interface type 集合（empty=全サポート、SAI 1.7.1+）|
 
-### SAI 共通要件（重要 9 点）
+### SAI 共通要件（重要 10 点）
 
 実装が満たすべき不変条件[^1]:
 
@@ -69,6 +69,7 @@ IEEE 802.3 の auto-negotiation はリンクの両端で **複数の speed / int
 7. AN 有効中の `interface_type` の **[CONFIG_DB](../reference/glossary.md#term-config_db) 経由更新は block**。ただし `pmon#xcvrd` 経由 [APPL_DB](../reference/glossary.md#term-appl_db) の **動的 interface_type 更新は SAI に伝達** して advertisement を更新する
 8. SFP/QSFP 系で AN 有効 → SAI は **link-training も同時に活性化**（TX FIR 動的調整）
 9. SFP/QSFP 系で AN を ON → OFF にした瞬間 → speed / FEC / interface_type / TX FIR を APPL_DB の値に **復元**。APPL_DB に該当が無ければ SAI driver default（IT=NONE, FEC=NONE, TX FIR=ベンダ依存）
+10. SFP/QSFP 系で AN 有効時、APPL_DB の `fec` フィールドは AN 結果を **override** する[^1]
 
 ### CONFIG_DB / APPL_DB / STATE_DB スキーマ
 
