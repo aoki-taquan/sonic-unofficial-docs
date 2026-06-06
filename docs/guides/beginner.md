@@ -39,7 +39,7 @@ CONFIG_DB / APPL_DB / ASIC_DB のデータフローと SwSS / syncd / SAI の責
 
 **トラック B: 設定の入口と出口を知る（運用者寄り）**
 
-CONFIG_DB が設定の真の源であり、CLI / gNMI / config_db.json はすべて CONFIG_DB への書き込みに収束します。先にデータモデル（CONFIG_DB）を見てから操作面（CLI / 設定方式）に進むほうが、CLI が裏でどの table を触っているか辿りやすくなります。
+CONFIG_DB が設定の真の源であり、CLI / gNMI / [config_db.json](../reference/glossary.md#term-config_db.json) はすべて CONFIG_DB への書き込みに収束します。先にデータモデル（CONFIG_DB）を見てから操作面（CLI / 設定方式）に進むほうが、CLI が裏でどの table を触っているか辿りやすくなります。
 
 3. [CONFIG_DB リファレンス](../reference/config-db/index.md) — 設定の真の源となるスキーマ
 4. [CLI リファレンス](../reference/cli/index.md) — CONFIG_DB を操作する `config` / `show` 系コマンド
@@ -73,4 +73,4 @@ CONFIG_DB が設定の真の源であり、CLI / gNMI / config_db.json はすべ
 
 [^syncd]: `syncd` の起点は [`sonic-sairedis/syncd/Syncd.cpp`](https://github.com/sonic-net/sonic-sairedis/blob/master/syncd/Syncd.cpp) で、Redis (ASIC_DB) からの SAI オブジェクト操作通知を受けてベンダ SAI 実装に橋渡しします。
 
-<!-- glossary-links-injected: 158f1c95daa3 -->
+<!-- glossary-links-injected: 935537b65c91 -->

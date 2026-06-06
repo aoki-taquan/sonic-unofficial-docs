@@ -1494,7 +1494,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VXLAN_EVPN_NVO テーブル](config-db/vxlan-evpn-nvo.md) (66)
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (58)
 - [VXLAN トンネルポート (Port::TUNNEL)](config-db/tunnel-port.md) (56)
-- [サイトマップ](../_meta/sitemap.md) (49)
+- [サイトマップ](../_meta/sitemap.md) (50)
 
 ### [EVPN-MH](#term-evpn-mh)
 
@@ -1989,7 +1989,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [QoS](#term-qos)
 
-- [サイトマップ](../_meta/sitemap.md) (33)
+- [サイトマップ](../_meta/sitemap.md) (32)
 - [PORT_QOS_MAP テーブル](config-db/port-qos-map.md) (17)
 - [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (14)
 - [EXP_TO_FC_MAP テーブル](config-db/exp-to-fc-map.md) (12)
@@ -2135,9 +2135,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [AUTO_TECHSUPPORT_FEATURE テーブル](config-db/auto-techsupport-feature.md) (37)
 - [Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離](../switching/switch-port-modes-and-vlan-cli-discrepancy.md) (15)
+- [Overlay 運用](../topics/03-vxlan-evpn/operations.md) (15)
 - [BREAKOUT_CFG テーブル](config-db/breakout-cfg.md) (14)
 - [[STATE_DB] DEVICE_NEIGHBOR 動作状態（device op state）](config-db/deviceop-state.md) (13)
-- [config bgp サブコマンド](cli/config-bgp.md) (12)
 
 ### [Scheduler](#term-scheduler)
 
@@ -2213,7 +2213,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (353)
+- [サイトマップ](../_meta/sitemap.md) (354)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (33)
 - [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (28)
@@ -2326,7 +2326,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VXLAN_TUNNEL テーブル](config-db/vxlan-tunnel.md) (94)
 - [VxlanTunnelOrch — encap 処理詳細](config-db/tunnel-encap-orch.md) (68)
 - [VXLAN_EVPN_NVO テーブル](config-db/vxlan-evpn-nvo.md) (67)
-- [サイトマップ](../_meta/sitemap.md) (62)
+- [サイトマップ](../_meta/sitemap.md) (63)
 
 ### [vxlanmgrd](#term-vxlanmgrd)
 

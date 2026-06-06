@@ -84,6 +84,24 @@ excerpt: |
 reasoning: VnetOrch は monitor ごとに pinned_state (UP/DOWN) を保持し、BFD/custom monitor の素の状態を controller 指示で上書きできる。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/vnetorch.cpp#L1013-L1076 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/vnetorch.cpp#L1013-L1076 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    (monitor.second.pinned_state == PINNED_STATE_UP ||
+         monitor.second.pinned_state != PINNED_STATE_DOWN)))
+    updateMonitorPinnedState(vnet, ipPrefix, monitor_addr_to_pinned_state);
+    ```
+
+    **判断根拠**: VnetOrch は monitor ごとに pinned_state (UP/DOWN) を保持し、BFD/custom monitor の素の状態を controller 指示で上書きできる。
+
+<!-- evidence-rendered:end -->
 
 ```mermaid
 flowchart LR
@@ -109,6 +127,24 @@ excerpt: |
 reasoning: TUNNEL_DECAP_TABLE の QoS map は decap 側で 2 種の SAI 属性として ASIC に投入される。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/tunneldecaporch.cpp#L834-L1091 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/tunneldecaporch.cpp#L834-L1091 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    attr.id = SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP;
+    attr.id = SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP;
+    ```
+
+    **判断根拠**: TUNNEL_DECAP_TABLE の QoS map は decap 側で 2 種の SAI 属性として ASIC に投入される。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-net/sonic-swss/orchagent/muxorch.cpp#L281-L319 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
 excerpt: |
@@ -118,6 +154,24 @@ excerpt: |
 reasoning: encap 側 QoS map は muxorch (Dual-ToR) で設定される。一般 VXLAN encap は ASIC dependent で属性経路が異なる。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/muxorch.cpp#L281-L319 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/muxorch.cpp#L281-L319 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    attr.id = SAI_TUNNEL_ATTR_ENCAP_DSCP_MODE;
+    attr.id = SAI_TUNNEL_ATTR_ENCAP_QOS_TC_AND_COLOR_TO_DSCP_MAP;
+    attr.id = SAI_TUNNEL_ATTR_ENCAP_QOS_TC_TO_QUEUE_MAP;
+    ```
+
+    **判断根拠**: encap 側 QoS map は muxorch (Dual-ToR) で設定される。一般 VXLAN encap は ASIC dependent で属性経路が異なる。
+
+<!-- evidence-rendered:end -->
 
 ## Inner packet hashing
 
@@ -140,6 +194,25 @@ excerpt: |
 reasoning: show vxlan tunnel は CONFIG_DB ベースの 5 カラム出力で、SIP/DIP/Creation Source/OperStatus の 4 カラムは別コマンド (remotevtep) の出力。混同しやすいので明示分離する。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/vxlan.py#L61-L102 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/vxlan.py#L61-L102 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    def tunnel():
+        header = ['vxlan tunnel name', 'source ip', 'destination ip', 'tunnel map name', 'tunnel map mapping(vni -> vlan)']
+        vxlan_data = config_db.get_table('VXLAN_TUNNEL')
+    ```
+
+    **判断根拠**: show vxlan tunnel は CONFIG_DB ベースの 5 カラム出力で、SIP/DIP/Creation Source/OperStatus の 4 カラムは別コマンド (remotevtep) の出力。混同しやすいので明示分離する。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-net/sonic-utilities/show/vxlan.py#L233-L279 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
 excerpt: |
@@ -149,6 +222,26 @@ excerpt: |
       body.append([vxlan_table['src_ip'], vxlan_table['dst_ip'], vxlan_table['tnl_src'], 'oper_' + vxlan_table['operstatus']])
 reasoning: 下記の grid サンプル (SIP/DIP/Creation Source/OperStatus) は show vxlan remotevtep の出力。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/vxlan.py#L233-L279 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/vxlan.py#L233-L279 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    def remotevtep(count):
+        header = ['SIP', 'DIP', 'Creation Source', 'OperStatus']
+        vxlan_keys = db.keys(db.STATE_DB, 'VXLAN_TUNNEL_TABLE|*')
+        body.append([vxlan_table['src_ip'], vxlan_table['dst_ip'], vxlan_table['tnl_src'], 'oper_' + vxlan_table['operstatus']])
+    ```
+
+    **判断根拠**: 下記の grid サンプル (SIP/DIP/Creation Source/OperStatus) は show vxlan remotevtep の出力。
+
+<!-- evidence-rendered:end -->
 
 `show vxlan remotevtep` は STATE_DB の `VXLAN_TUNNEL_TABLE` を読み、リモート VTEP の oper 状態と生成元 (EVPN / CLI 等) を 4 カラムで出します。
 
@@ -199,6 +292,24 @@ excerpt: |
 reasoning: 折り返し幅は固定 3 ではなく、endpoint/MAC/VNI のうち最長要素が 15 文字超なら 2、それ以下なら 3。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/vnet.py#L529-L567 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/vnet.py#L529-L567 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    def pretty_print(table, r, epval, mac_addr, vni, metric, state):
+        max_len = max((len(item) for item in all_items), default=0)
+        row_width = 2 if max_len > 15 else 3
+    ```
+
+    **判断根拠**: 折り返し幅は固定 3 ではなく、endpoint/MAC/VNI のうち最長要素が 15 文字超なら 2、それ以下なら 3。
+
+<!-- evidence-rendered:end -->
 
 ## 異常検出パターン
 
@@ -247,7 +358,7 @@ syncd: SAI_API_NEXT_HOP_GROUP: SAI_STATUS_TABLE_FULL
 | EVPN MAC / Type-2 | `vtysh -c "show evpn mac vni all"` |
 | EVPN IP-prefix / Type-5 | `vtysh -c "show evpn next-hops vni all"` |
 | EVPN [VRF](../../reference/glossary.md#term-vrf) route | `vtysh -c "show bgp l2vpn evpn route"` |
-| BFD endpoint | `show bfd summary`、APPL_DB の BFD_SESSION |
+| BFD endpoint | `show bfd summary`、[APPL_DB](../../reference/glossary.md#term-appl_db) の BFD_SESSION |
 | Counter clear | `sonic-clear vxlancounters` |
 | PBH 設定 | `show pbh table`、`show pbh rule`、`show pbh hash` |
 | DSCP map | `show qos map dscp_to_tc`、`show qos map tc_to_dscp` |
@@ -289,4 +400,4 @@ syncd: SAI_API_NEXT_HOP_GROUP: SAI_STATUS_TABLE_FULL
 
 VNET_ROUTE_TUNNEL_TABLE / VXLAN_TUNNEL_MAP のスキーマは [`sonic-swss/doc/swss-schema.md` L927-L949](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/doc/swss-schema.md#L927-L949) を参照。
 
-<!-- glossary-links-injected: a05b1a0422d1 -->
+<!-- glossary-links-injected: 9cc90e2e6da0 -->

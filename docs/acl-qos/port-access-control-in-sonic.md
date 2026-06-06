@@ -85,7 +85,7 @@ flowchart TB
 
 ### YANG モデルの現状
 
-PAC 専用 (`PAC_PORT_CONFIG_TABLE` / `HOSTAPD_GLOBAL_CONFIG_TABLE`) の YANG モデルは現行 community master の `sonic-buildimage/src/sonic-yang-models/yang-models/` には未収録（`sonic-pac.yang` 等は存在しない）。RADIUS / AAA 側は `sonic-system-radius.yang` / `sonic-system-aaa.yang` に取り込み済みで、ポート / VLAN 側は `sonic-port.yang` / `sonic-vlan.yang` を流用する形となる。PAC 固有テーブルの YANG 定義追加は別 PR を要する。
+PAC 専用 (`PAC_PORT_CONFIG_TABLE` / `HOSTAPD_GLOBAL_CONFIG_TABLE`) の [YANG](../reference/glossary.md#term-yang) モデルは現行 community master の `sonic-buildimage/src/sonic-yang-models/yang-models/` には未収録（`sonic-pac.yang` 等は存在しない）。RADIUS / AAA 側は `sonic-system-radius.yang` / `sonic-system-aaa.yang` に取り込み済みで、ポート / VLAN 側は `sonic-port.yang` / `sonic-vlan.yang` を流用する形となる。PAC 固有テーブルの YANG 定義追加は別 PR を要する。
 
 ### CONFIG_DB
 
@@ -246,4 +246,4 @@ sudo grep -Ei 'hostapd|pac' /var/log/syslog | tail -50
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1c626534d7ce -->
+<!-- glossary-links-injected: d5320e852f7a -->
