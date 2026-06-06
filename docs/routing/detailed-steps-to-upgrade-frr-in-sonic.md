@@ -4,7 +4,7 @@ description: SONiC における FRR upgrade の手順とパッチ管理 — SONi
   スナップショット + per-release patch 集 という形で取り込んでいる。
 area: routing
 verification: code-verified
-last_verified: 2026-05-10
+last_verified: 2026-06-06
 sources:
 - repo: sonic-net/SONiC
   path: doc/frr_maintainer/sonic-frr_upgrade_process.md
@@ -23,8 +23,9 @@ related:
 !!! warning "裏取りステータス: code-verified / メタドキュメント"
     本ページは「SONiC FRR 保守者向けの作業手順」を再構成したもの。実際の手順は upstream / SONiC 双方の実装事情に依存し、頻繁に変わる。
 
-!!! note "Verifier 注記（2026-05-10）"
-    実コード裏取り: `sonic-buildimage/src/sonic-frr/patch/`（**単数形**）に `series` ファイルと `0001-SONiC-ONLY-*` 等の patch を確認。適用は **quilt ではなく StGit（`stg import -S ../patch/series`）** で行う。`sonic-frr` は submodule pin で FRR upstream に SONiC 向け patch を適用するビルド構造であり、HLD の手順と整合する。
+!!! note "実装裏取りと master 追従状況"
+    実コード裏取り: `sonic-buildimage/src/sonic-frr/patch/`（**単数形**）に `series` ファイルと `0001-SONiC-ONLY-*` 等の patch を確認[^code-patch]。適用は **quilt ではなく StGit（`stg import -S ../patch/series`）** で行う。`sonic-frr` は submodule pin で FRR upstream に SONiC 向け patch を適用するビルド構造であり、HLD の手順と整合する。
+    なお HLD は FRR 10.3 → 10.4.1 の作業を例示しているが、master の `rules/frr.mk` は既に `FRR_VERSION = 10.5.1` / `FRR_TAG = frr-10.5.1` まで進んでおり、`patch/series` の base commit も `frr-10.5.1` を指す[^code-frrmk]。本ページは HLD に記された **手順そのもの** が対象であり、特定バージョン値は再現の参考に留める。
 
 # SONiC における FRR upgrade の手順とパッチ管理
 
@@ -70,9 +71,8 @@ git push origin refs/heads/frr-10.4.1   # branch と tag が同名のため明�
 
 続いて `sonic-buildimage` 側でバージョンを上げる[^1]:
 
-- `rules/frr.mk`: `FRR_VERSION` / `FRR_BRANCH` / `FRR_TAG` を `10.3` / `frr-10.3` から `10.4.1` / `frr-10.4.1` へ
-- `.gitmodules`: `src/sonic-frr/frr` submodule の `branch` を `frr-10.4.1` へ
-- `src/sonic-frr/frr` submodule を新 release commit に更新して commit
+- `rules/frr.mk`: `FRR_VERSION` / `FRR_TAG` を新バージョン（HLD 例では `10.4.1` / `frr-10.4.1`）へ更新[^code-frrmk]。`FRR_TAG` は `frr-$(FRR_VERSION)` で派生する。
+- `.gitmodules` の `src/sonic-frr/frr` entry を確認のうえ、`src/sonic-frr/frr` submodule pointer を新 release commit に更新して commit する（master の `.gitmodules` には `branch =` 行は無く、submodule pin のみで管理されている[^code-gitmodules]）。
 
 ## 2. Patch と変更
 
@@ -184,6 +184,9 @@ docker exec bgp dpkg -l | grep -i frr
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/frr_maintainer/sonic-frr_upgrade_process.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^code-patch]: `sonic-net/sonic-buildimage` `src/sonic-frr/patch/series` および同 `patch/` 配下の `*.patch` ファイル群（`SONiC-ONLY-` prefix と通し番号で管理）。
+[^code-frrmk]: `sonic-net/sonic-buildimage` `rules/frr.mk` の `FRR_VERSION` / `FRR_SUBVERSION` / `FRR_TAG` 定義。
+[^code-gitmodules]: `sonic-net/sonic-buildimage` `.gitmodules` の `[submodule "src/sonic-frr/frr"]` entry（`path` と `url` のみ）。
 
 <!-- concerns hint:
 - src/sonic-frr/patch/ (単数) ディレクトリ構造と StGit (series) 適用機構の現行実装確認
