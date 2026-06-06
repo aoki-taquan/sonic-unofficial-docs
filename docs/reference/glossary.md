@@ -1623,7 +1623,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (270)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (266)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
@@ -2215,7 +2215,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (352)
+- [サイトマップ](../_meta/sitemap.md) (353)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (33)
 - [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）](../architecture/sonic-on-gns3-vm.md) (30)

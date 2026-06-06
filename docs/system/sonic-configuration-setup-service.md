@@ -64,7 +64,7 @@ related:
 | `factory` | factory default を生成し `/etc/sonic/config_db.json` に保存。`keep-basic` オプションで基本設定のみ温存可能[^3] |
 | `backup` | `/etc/sonic` を `/host/old_config` 配下にコピーし、`CONFIG_PRE_MIGRATION_HOOKS` を実行[^5] |
 
-ソース上は他に `apply_tacacs` 分岐 (usage 未記載の内部用途) が存在するが、`usage()` には現れない[^3]。HLD が「backup / restore / migrate / factory」と機能カテゴリで説明している内容は、実装上はサブコマンド `boot` 1 つの中で migration ロジックがフラグ駆動 (`/etc/sonic/pending_config_migration`) で起動する形に集約されている[^4]。
+ソース上は他に `apply_tacacs` 分岐 (usage 未記載の内部用途) が存在するが、`usage()` には現れない[^3]。[HLD](../reference/glossary.md#term-hld) が「backup / restore / migrate / factory」と機能カテゴリで説明している内容は、実装上はサブコマンド `boot` 1 つの中で migration ロジックがフラグ駆動 (`/etc/sonic/pending_config_migration`) で起動する形に集約されている[^4]。
 
 ### Boot 時のフロー
 
@@ -202,4 +202,4 @@ systemctl is-enabled updategraph
 [^4]: `sonic-net/sonic-buildimage` `files/image_config/config-setup/config-setup` L388-L423 (`do_config_migration` 対象ファイル列挙)、L443-L492 (`boot_config` の warm-boot / migration / initialization 分岐)
 [^5]: `sonic-net/sonic-buildimage` `files/image_config/config-setup/config-setup` L425-L435 (`do_config_backup`: `/etc/sonic` → `/host/old_config`)
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 167700005048 -->

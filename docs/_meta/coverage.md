@@ -25,12 +25,12 @@ last_verified: 2026-05-11
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 769 |
+| code-verified | 771 |
 | runbook-verified | 28 |
-| discrepancy-found | 117 |
+| discrepancy-found | 116 |
 | issue-confirmed | 5 |
 | hld-only | 3 |
-| meta | 181 |
+| meta | 180 |
 | stub | 1 |
 
 ## area 別マトリクス
@@ -50,7 +50,7 @@ last_verified: 2026-05-11
 | `reference` | 465 | 28 | 9 | 0 | 0 | 13 | 1 | 516 |
 | `routing` | 45 | 0 | 12 | 0 | 0 | 1 | 0 | 58 |
 | `switching` | 18 | 0 | 8 | 0 | 0 | 1 | 0 | 27 |
-| `system` | 55 | 0 | 19 | 1 | 0 | 2 | 0 | 77 |
-| `topics` | 26 | 0 | 0 | 0 | 2 | 133 | 0 | 161 |
+| `system` | 56 | 0 | 18 | 1 | 0 | 2 | 0 | 77 |
+| `topics` | 27 | 0 | 0 | 0 | 2 | 132 | 0 | 161 |
 
 推移情報（時系列）は本ページでは扱いません。スナップショットのみ。
