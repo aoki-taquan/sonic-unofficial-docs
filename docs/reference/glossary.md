@@ -1327,7 +1327,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [CONFIG_DB](#term-config_db)
 
-- [サイトマップ](../_meta/sitemap.md) (131)
+- [サイトマップ](../_meta/sitemap.md) (132)
 - [APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)](config-db/appl-mirror.md) (58)
 - [IPv6 Link-local モード](config-db/ipv6-link-local.md) (54)
 - [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (50)
@@ -1944,8 +1944,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [MCLAG_INTERFACE テーブル](config-db/mclag-interface.md) (33)
 - [L2 設定パターン](../topics/06-l2-vlan-lag/setup.md) (32)
 - [PORTCHANNEL_INTERFACE テーブル](config-db/portchannel-interface.md) (29)
-- [IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）](../switching/sonic-ip-lag-incremental-update.md) (23)
 - [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](../switching/switch-port-modes-and-vlan-cli-enhancement.md) (23)
+- [APPL_DB MCLAG/ICCP 関連テーブル](config-db/appl-mclag.md) (21)
 
 ### [Policer](#term-policer)
 
