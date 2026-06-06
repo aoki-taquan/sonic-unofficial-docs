@@ -36160,9 +36160,11 @@
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>HLD テンプレート</strong>: メモリ使用量セクションが追加される</li>
-<li><strong>CONFIG_DB feature flag</strong>: ほぼ全機能が <code>FEATURE</code> テーブルや個別 enable で制御される設計を要求</li>
+<li><strong>HLD テンプレート</strong>: メモリ使用量セクションが追加される（<a href="https://github.com/sonic-net/SONiC/blob/master/doc/guidelines/hld_template.md"><code>doc/guidelines/hld_template.md</code></a> と整合）</li>
+<li><strong>CONFIG_DB <code>FEATURE</code> テーブル</strong>: 機能の <code>state</code> (enabled/disabled) を runtime 切替する標準 schema が <code>sonic-feature.yang</code> の <code>FEATURE_LIST</code> に定義されており<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>、本ガイドラインの「runtime 切替可能」「disabled 既定」要件はこの schema を前提とする</li>
 </ul>
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-feature.yang L39-L94 (FEATURE container / FEATURE_LIST / state leaf default) -->
+
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 9fb3fca99a59 -->
 
@@ -36171,6 +36173,9 @@
 <ol>
 <li id="fn:1">
 <p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/guidelines/SONiC%20feature%20quality%20definition.md">sonic-net/SONiC doc/guidelines/SONiC feature quality definition.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-feature.yang#L39-L94">sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-feature.yang (FEATURE container / FEATURE_LIST L39-L94)</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

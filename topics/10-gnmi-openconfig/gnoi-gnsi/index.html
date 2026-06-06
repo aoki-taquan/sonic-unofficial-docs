@@ -3568,10 +3568,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#api-sonic-service" class="md-nav__link">
+  <a href="#api-sonic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        API と SONiC service の対応
+        API と SONiC 実装状況
       
     </span>
   </a>
@@ -35931,10 +35931,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#api-sonic-service" class="md-nav__link">
+  <a href="#api-sonic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        API と SONiC service の対応
+        API と SONiC 実装状況
       
     </span>
   </a>
@@ -36035,12 +36035,14 @@
 <h1 id="gnoi-gnsi">gNOI / gNSI<a class="headerlink" href="#gnoi-gnsi" title="Permanent link">&para;</a></h1>
 <p><a href="../../../reference/glossary/#term-gnoi">gNOI</a> (gRPC Network Operations Interface) は、設定読み書き (<a href="../../../reference/glossary/#term-gnmi">gNMI</a>) の隣で「操作」を担当する。reboot、OS install、file transfer、factory reset、health check のような operational action を、ベンダー非依存の API として呼べるようにする。gNSI (gRPC Network Security Interface) は、その隣で証明書配布、認証ポリシー、attestation のような security action を担当する。</p>
 <p><a href="../../../reference/glossary/#term-sonic">SONiC</a> の gNOI / gNSI 実装は、telemetry container 内の同じプロセスで gNMI と一緒に動く。API ごとに SONiC のどの service / script を呼んでいるかを押さえると、障害時の切り分けが速い。</p>
-<h2 id="api-sonic-service">API と SONiC service の対応<a class="headerlink" href="#api-sonic-service" title="Permanent link">&para;</a></h2>
+<h2 id="api-sonic">API と SONiC 実装状況<a class="headerlink" href="#api-sonic" title="Permanent link">&para;</a></h2>
+<p>gNOI / gNSI の proto には多数の RPC が定義されているが、SONiC の <code>sonic-gnmi</code> サーバが実装しているのはその一部に限られる。下表は SONiC 実装 (master) でどの RPC が動くかを基準に整理したもので、<code>Unimplemented</code> 列に挙げた RPC は呼んでも <code>gRPC codes.Unimplemented</code> を返す。proto に存在しても SONiC で呼ぶと失敗する API があるため、運用ツール側の前提を作るときに注意する。</p>
 <table>
 <thead>
 <tr>
 <th>gNOI service</th>
-<th>主な API</th>
+<th>SONiC で実装済の RPC</th>
+<th>proto 定義のみで未実装</th>
 <th>SONiC 側の到達点</th>
 <th>参照 <a href="../../../reference/glossary/#term-hld">HLD</a></th>
 </tr>
@@ -36048,50 +36050,63 @@
 <tbody>
 <tr>
 <td>System</td>
-<td>Reboot, RebootStatus, CancelReboot, Time, Ping, Traceroute, SetPackage, SwitchControlProcessor</td>
-<td><code>reboot</code>、reboot-cause、<code>sonic-installer</code></td>
+<td>Reboot, RebootStatus, CancelReboot, Time, SetPackage, SwitchControlProcessor, KillProcess</td>
+<td>Ping, Traceroute</td>
+<td>reboot 系スクリプト、<code>sonic-installer</code> (SetPackage 経由)、<code>supervisorctl</code> (KillProcess 経由)</td>
 <td><a href="../../../management/gnoi-hld-for-system-apis/">gNOI System</a></td>
 </tr>
 <tr>
 <td>OS</td>
 <td>Install, Activate, Verify</td>
+<td>(なし)</td>
 <td><code>sonic-installer</code> で image インストール</td>
 <td><a href="../../../management/gnoi-hld-for-os-apis/">gNOI OS</a></td>
 </tr>
 <tr>
 <td>File</td>
-<td>Get, Put, Stat, Remove, TransferToRemote</td>
-<td>local file system、tech-support、log</td>
+<td>Stat, Put, Remove, TransferToRemote</td>
+<td>Get</td>
+<td>local file system、tech-support、log (DBus 経由でホスト側に到達)</td>
 <td><a href="../../../management/gnoi-hld-for-file-and-factory-reset-apis/">gNOI File / Factory Reset</a></td>
 </tr>
 <tr>
 <td>FactoryReset</td>
 <td>Start</td>
+<td>(なし)</td>
 <td><code>reset-factory</code> 系の処理</td>
 <td><a href="../../../management/gnoi-hld-for-file-and-factory-reset-apis/">gNOI File / Factory Reset</a></td>
 </tr>
 <tr>
 <td>Healthz</td>
 <td>Get, List, Acknowledge, Artifact, Check</td>
+<td>(なし)</td>
 <td>container / service の health 状態</td>
 <td><a href="../../../management/gnoi-hld-for-healthz-api/">gNOI Healthz</a></td>
 </tr>
 <tr>
 <td>gNSI</td>
-<td>CertZ / Authz / Pathz など</td>
+<td>CertZ, Authz, Pathz</td>
+<td>(上記 3 service 以外の gNSI service は未対応)</td>
 <td>証明書、認証ポリシー、attestation</td>
 <td><a href="../../../management/gnsi-hld/">gNSI HLD</a></td>
 </tr>
 </tbody>
 </table>
-<p>各 API の引数、エラーコード、SONiC 固有の制限事項は対応する HLD に書かれている。たとえば Reboot は warm/fast/cold の指定をどの SONiC reboot に対応させるか、Healthz の component 階層をどう SONiC service に割り当てるかが、それぞれの HLD で具体化されている。</p>
+<!-- evidence: sonic-gnmi/gnmi_server/gnoi_system.go L193-L344 で Reboot/RebootStatus/CancelReboot/SetPackage/SwitchControlProcessor/Time/KillProcess を実装、Ping (L295) と Traceroute (L306) は codes.Unimplemented を返す stub -->
+<!-- evidence: sonic-gnmi/gnmi_server/gnoi_file.go L20-L138 で Stat/TransferToRemote/Put/Remove を実装、Get (L92) は codes.Unimplemented を返す stub -->
+<!-- evidence: SONiC/doc/mgmt/gnmi/gnoi_system_hld.md L26 "Removed non-Reboot gNOI APIs" / L34 "The System RPCs covered in this doc include: Reboot, RebootStatus, CancelReboot" — HLD 範囲は Reboot 3 種、その他は後続実装 -->
+<!-- evidence: SONiC/doc/mgmt/gnmi/gnoi_file_factory_reset_hld.md L33 "The File RPCs covered in this doc include: Remove" — HLD 範囲は Remove のみ -->
+
+<p>各 API の引数、エラーコード、SONiC 固有の制限事項は対応する HLD に書かれている。HLD は提案単位で分割されているため、たとえば System であれば Reboot 系 (本表の HLD) と SetPackage / SwitchControlProcessor (後続の sonic-gnmi PR で追加) のように、コード上の実装と HLD の範囲が一致しない点に注意する。</p>
 <h2 id="system-reboot-package-process">System (reboot / package / process)<a class="headerlink" href="#system-reboot-package-process" title="Permanent link">&para;</a></h2>
-<p><a href="../../../management/gnoi-hld-for-system-apis/">gNOI System APIs</a> は、reboot 操作と OS package 配布、control processor 切替を扱う。SONiC 側では <code>Reboot</code> が <code>/usr/local/bin/reboot</code> 経由か、warm/fast の場合は別経路で走る。CancelReboot、RebootStatus は delayed reboot のキャンセル・状態確認に使う。</p>
+<p><a href="../../../management/gnoi-hld-for-system-apis/">gNOI System APIs</a> は、reboot 操作と OS package 配布、control processor 切替を扱う。SONiC 側では <code>Reboot</code> が <code>reboot</code> / <code>warm-reboot</code> / <code>fast-reboot</code> のいずれかにマップされ、CancelReboot と RebootStatus は delayed reboot のキャンセル・状態確認に使う。SetPackage は SetPackage stream を受けて <code>sonic-installer</code> の image upload 相当の処理に流す。KillProcess は systemd 配下の service を <code>supervisorctl</code> で再起動・停止する。</p>
+<p>System service の <code>Ping</code> と <code>Traceroute</code> は proto には定義されているが、sonic-gnmi 側では <code>codes.Unimplemented</code> を返す stub になっている。NMS から network reachability を測りたい場合は別経路 (SSH + <code>ping</code> / <code>traceroute</code> など) を使う。</p>
 <p>reboot 種別の SONiC 内部設計は章 11 (Reboot / Upgrade / Lifecycle) を参照する。</p>
 <h2 id="os-install-activate-verify">OS (install / activate / verify)<a class="headerlink" href="#os-install-activate-verify" title="Permanent link">&para;</a></h2>
 <p><a href="../../../management/gnoi-hld-for-os-apis/">gNOI OS APIs</a> は、image を upload して install し、次回 boot で activate する、という標準的な lifecycle を SONiC でどう実装するかを定義する。<code>sonic-installer</code> が backend で動く。Install と Activate を別 RPC に分けているため、image 検証と切替を独立にスケジュールできる。</p>
 <h2 id="file-factoryreset">File / FactoryReset<a class="headerlink" href="#file-factoryreset" title="Permanent link">&para;</a></h2>
-<p><a href="../../../management/gnoi-hld-for-file-and-factory-reset-apis/">gNOI File / FactoryReset APIs</a> は、log や tech-support の取り出し、設定 file の配置、factory reset を扱う。File.Get / Put のパス権限と、Factory Reset の対象範囲 (config だけか、ログまでか) は SONiC 側のポリシーで決まる。</p>
+<p><a href="../../../management/gnoi-hld-for-file-and-factory-reset-apis/">gNOI File / FactoryReset APIs</a> は、log や tech-support の取り出し、設定 file の配置、factory reset を扱う。SONiC では File service の <code>Stat</code> / <code>Put</code> / <code>Remove</code> / <code>TransferToRemote</code> が DBus 経由でホスト側 (<code>sonic-host-services</code>) のファイル操作にマップされる。</p>
+<p>ただし File service の <code>Get</code> (stream による file download) は sonic-gnmi 側では <code>codes.Unimplemented</code> を返す stub になっている。NMS から log や tech-support を取り出したい場合は <code>TransferToRemote</code> で remote の HTTP / SFTP に push する経路を使う。FactoryReset.Start の対象範囲 (config だけか、ログまでか) は SONiC 側のポリシーで決まる。</p>
 <p>Factory reset の SONiC 実装 (<code>reset-factory</code> design) は章 11 や reset-factory HLD を参照する。</p>
 <h2 id="healthz">Healthz<a class="headerlink" href="#healthz" title="Permanent link">&para;</a></h2>
 <p><a href="../../../management/gnoi-hld-for-healthz-api/">gNOI Healthz API</a> は、container や service の health 状態を gRPC で問い合わせる。SONiC で container health を集約する仕組みと組み合わせて、特定の component の status / artifact (たとえば core dump、log) を取れるように設計されている。NMS から「障害発生時のスナップショット取得」を自動化したいときの入口になる。</p>

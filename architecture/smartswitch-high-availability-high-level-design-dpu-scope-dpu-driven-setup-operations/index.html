@@ -36070,19 +36070,60 @@
 </span></code></pre></div>
 <p>順序を守らずに <code>AdminState=Enabled</code> を先行させると、policy 不整合のまま <code>Active</code> に上がる事故になりうる。role activation 承認は <strong>両カードの policy 一致を SDN が裏取りした後</strong> に出すこと<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="3-forwarding">3. 状態と forwarding の確認<a class="headerlink" href="#3-forwarding" title="Permanent link">&para;</a></h2>
-<p>DPU の HA 状態は telemetry（gNMI）でのみ正規に取得できると HLD は述べているが、<strong>具体的な gNMI path や CLI コマンドは HLD に記載がない</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。以下のコマンド例は <a href="../../reference/glossary/#term-sonic">SONiC</a> 既存 NOS 機能（<code>show bfd</code> / <code>show platform</code> / <code>show chassis modules</code>）と DASH SDN config object 名から推定した運用ガイドであり、HLD に裏取りされた仕様ではない（本ページが <code>verification: hld-only</code> である理由）。実環境では platform / SDN controller 側のドキュメントを優先すること。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># DPU の HA 状態（telemetry / gNMI 経由 — path は SDN controller 実装依存、HLD 未記載）</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>&lt;switch&gt;<span class="w"> </span>get<span class="w"> </span>--path<span class="w"> </span>&lt;HA<span class="w"> </span>scope<span class="w"> </span>state<span class="w"> </span>path&gt;
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># NPU 上の next hop が想定 DPU VIP を向いているか</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>ip<span class="w"> </span>route<span class="w"> </span>show<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>&lt;DPU<span class="w"> </span>VIP<span class="w"> </span>range&gt;
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># BFD セッション一覧（両 DPU が応答していること）</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>show<span class="w"> </span>bfd<span class="w"> </span>sessions
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># DPU カード状態（PMON 検知系）</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>show<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>status
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>show<span class="w"> </span>platform<span class="w"> </span>inventory
+<p>DPU-Scope-DPU-Driven setup HLD は telemetry/gNMI の具体的な path を持たず、SmartSwitch HA detailed design に委譲している<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後者は <strong>NPU の <code>DASH_STATE_DB</code> 上の <code>DASH_HA_SCOPE_STATE</code> テーブルを gNMI 経由で SDN controller に公開</strong> すると定義しており<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>、運用者が参照する主な状態フィールドは以下のとおり:</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>local_ha_state</code></td>
+<td>NPU <code>hamgrd</code> が見ている HA state machine の状態</td>
+</tr>
+<tr>
+<td><code>local_target_asic_ha_state</code> / <code>local_acked_asic_ha_state</code></td>
+<td>hamgrd が DPU <a href="../../reference/glossary/#term-asic">ASIC</a> に要求中の state / ASIC が ack した state</td>
+</tr>
+<tr>
+<td><code>local_target_term</code> / <code>local_acked_term</code></td>
+<td>現在の target term / ASIC ack 済み term</td>
+</tr>
+<tr>
+<td><code>peer_ha_state</code> / <code>peer_term</code></td>
+<td>相手 DPU の HA state / term</td>
+</tr>
+<tr>
+<td><code>local_vdpu_midplane_state</code> / <code>local_vdpu_control_plane_state</code> / <code>local_vdpu_data_plane_state</code></td>
+<td>midplane / control / data plane の health（<code>up</code> / <code>down</code> / <code>unknown</code>）</td>
+</tr>
+<tr>
+<td><code>local_vdpu_up_bfd_sessions_v4</code> / <code>_v6</code></td>
+<td>up になっている BFD セッションの peer NPU IP</td>
+</tr>
+<tr>
+<td><code>pending_operation_types</code> / <code>switchover_state</code> / <code>flow_sync_session_state</code></td>
+<td>進行中の switchover / flow_reconcile / brainsplit_recover の状態</td>
+</tr>
+</tbody>
+</table>
+<p>これらは detailed design の §2.2 "External facing state tables" に定義されている<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。DPU 側にも別途 <code>DASH_HA_SET_STATE</code> / <code>DASH_HA_SCOPE_STATE</code>（ASIC ack 済みの <code>ha_role</code> = <code>dead</code> / <code>active</code> / <code>standby</code> / <code>standalone</code> / <code>switching_to_active</code> を保持）がある<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>が、SDN controller への公開は NPU 側のみ。</p>
+<p>以下のコマンド例は上記スキーマに対する参照例で、<code>gnmic</code> の path 文字列は platform 実装ごとに decorate 形式が異なる（OC-style か proprietary か）ため、実環境では platform/SDN controller 側のドキュメントを優先すること。CLI 名（<code>show bfd</code> / <code>show chassis modules</code> / <code>show platform</code>）は <a href="../../reference/glossary/#term-sonic">SONiC</a> 既存 NOS 機能であり、本 HLD に裏取りされた HA 専用 CLI ではない（本ページが <code>verification: hld-only</code> である理由）。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># DPU の HA 状態（NPU DASH_STATE_DB / DASH_HA_SCOPE_STATE を gNMI で取得）</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># path は SDN controller の YANG/OC モデル依存。テーブル名と field 名は detailed design §2.2 を参照</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>&lt;switch&gt;<span class="w"> </span>get<span class="w"> </span>--path<span class="w"> </span><span class="s1">&#39;/.../DASH_HA_SCOPE_STATE/&lt;vdpu_id&gt;/&lt;ha_scope_id&gt;&#39;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># NPU 上の next hop が想定 DPU VIP を向いているか</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>ip<span class="w"> </span>route<span class="w"> </span>show<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>&lt;DPU<span class="w"> </span>VIP<span class="w"> </span>range&gt;
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># BFD セッション一覧（両 DPU が応答していること）</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>show<span class="w"> </span>bfd<span class="w"> </span>sessions
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="c1"># DPU カード状態（PMON 検知系）</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>show<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>status
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>show<span class="w"> </span>platform<span class="w"> </span>inventory
 </span></code></pre></div>
 <p><code>Active</code> 確定後は <a href="../../reference/glossary/#term-bfd">BFD</a> が両 DPU で Up になり、preferred DPU が next hop に選ばれる。<code>PendingActiveActivation</code> 段階では BFD は Down のままで、これは正常な dormant 状態<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="4-failover">4. failover の確認<a class="headerlink" href="#4-failover" title="Permanent link">&para;</a></h2>
@@ -36092,17 +36133,17 @@
 <li>SDN から <code>HA_SCOPE</code> の <code>desired state=dead</code> を送出</li>
 <li><code>show bfd sessions</code> で対象 DPU の BFD が Down に落ちる（応答停止）</li>
 <li><code>ip route</code> の next hop が standby 側に切り替わる</li>
-<li>telemetry で対象 DPU が <code>Destroying</code> → <code>Dead</code> に推移</li>
-<li>相手 DPU が <code>SwitchingToStandalone</code> → <code>Standalone</code> に推移</li>
-<li>SDN から <code>flow reconcile</code> 承認が出されたことを SDN controller のログで確認</li>
+<li>telemetry（<code>DASH_HA_SCOPE_STATE.local_ha_state</code>）で対象 DPU が <code>Destroying</code> → <code>Dead</code> に推移<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li>相手 DPU の <code>local_ha_state</code> が <code>SwitchingToStandalone</code> → <code>Standalone</code> に推移<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><code>DASH_HA_SCOPE_STATE.pending_operation_types</code> から <code>flow_reconcile</code> が落ち、<code>flow_sync_session_state</code> が <code>completed</code> になることを SDN controller 側で確認<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ol>
 <p><code>Destroying</code> 中の収束タイマー満了前に DPU が完全停止すると残留 traffic が drop するので、タイマー値は SDN policy の MTBF / 収束時間に合わせて調整する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="42-unplanned-failover">4.2 Unplanned failover<a class="headerlink" href="#42-unplanned-failover" title="Permanent link">&para;</a></h3>
 <ol>
-<li><code>show platform</code> で対象 DPU が PMON により dead 認識されているか確認</li>
+<li><code>show platform</code> で対象 DPU が PMON により dead 認識されているか確認（NPU <code>CHASSIS_STATE_DB</code> の <code>DPU_STATE</code> 経由<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup>）</li>
 <li><code>show bfd sessions</code> で対象 DPU の BFD が Down</li>
-<li>telemetry で相手 DPU が <code>Standalone</code> に上がっていること</li>
-<li>SDN controller 側に <code>flow reconcile needed</code> notification が届いていること</li>
+<li>telemetry の <code>DASH_HA_SCOPE_STATE.local_ha_state</code> で相手 DPU が <code>Standalone</code> に上がっていること<sup id="fnref8:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><code>DASH_HA_SCOPE_STATE.pending_operation_types</code> に <code>flow_reconcile</code> が積まれ、SDN controller 側に承認要求が届いていること<sup id="fnref9:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ol>
 <h2 id="5">5. トラブルシュート<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <table>
@@ -36135,11 +36176,12 @@
 </tr>
 </tbody>
 </table>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 代表トラブルシュート（CLI 名・gNMI path は HLD 未記載の推定ガイド、§3 参照）</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 代表トラブルシュート（CLI 名は SONiC 既存 NOS 機能、gNMI path は §3 参照）</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>bfd<span class="w"> </span>sessions
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>ip<span class="w"> </span>route<span class="w"> </span>show<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>&lt;DPU<span class="w"> </span>VIP<span class="w"> </span>range&gt;
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>show<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>status
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>&lt;switch&gt;<span class="w"> </span>get<span class="w"> </span>--path<span class="w"> </span>&lt;HA<span class="w"> </span>scope<span class="w"> </span>state<span class="w"> </span>path&gt;
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># DASH_HA_SCOPE_STATE の local_ha_state / pending_operation_types を見る</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>&lt;switch&gt;<span class="w"> </span>get<span class="w"> </span>--path<span class="w"> </span><span class="s1">&#39;/.../DASH_HA_SCOPE_STATE/&lt;vdpu_id&gt;/&lt;ha_scope_id&gt;&#39;</span>
 </span></code></pre></div>
 <h2 id="6">6. 制限事項<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36159,13 +36201,16 @@
 <li><strong>PMON / Chassis modules</strong>: DPU dead 検知の起点。<code>show chassis modules status</code> で状態を見る</li>
 </ul>
 <h2 id="_1">引用元<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: ec18b66e3507 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/smart-switch/high-availability/smart-switch-ha-dpu-scope-dpu-driven-setup.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/SONiC</code> <code>doc/smart-switch/high-availability/smart-switch-ha-detailed-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code> (§2.2 External facing state tables / §3 Telemetry)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="config ssh サブコマンド — config ssh は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を CONFIG_DB の SSH_SERVER|POLICIES に書き込む CLI グループ。実 sshd への反映は hostcfgd 系の設定再生成パスを通じて行われる。">
+        <meta name="description" content="config ssh は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を CONFIG_DB の SSH_SERVER|POLICIES に書き込む CLI グループ。実 sshd への反映は hostcfgd が CONFIG_DB の変更を検知して sshd_config を再生成するパスを通じて行う。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="config ssh サブコマンド - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="config ssh サブコマンド — config ssh は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を CONFIG_DB の SSH_SERVER|POLICIES に書き込む CLI グループ。実 sshd への反映は hostcfgd 系の設定再生成パスを通じて行われる。" />
+<meta property="og:description" content="config ssh は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を CONFIG_DB の SSH_SERVER|POLICIES に書き込む CLI グループ。実 sshd への反映は hostcfgd が CONFIG_DB の変更を検知して sshd_config を再生成するパスを通じて行う。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/cli/config-ssh.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-ssh/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="config ssh サブコマンド - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="config ssh サブコマンド — config ssh は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を CONFIG_DB の SSH_SERVER|POLICIES に書き込む CLI グループ。実 sshd への反映は hostcfgd 系の設定再生成パスを通じて行われる。" />
+<meta property="twitter:description" content="config ssh は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を CONFIG_DB の SSH_SERVER|POLICIES に書き込む CLI グループ。実 sshd への反映は hostcfgd が CONFIG_DB の変更を検知して sshd_config を再生成するパスを通じて行う。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/cli/config-ssh.png" />
 </head>
   
@@ -36129,7 +36129,7 @@
 </span></code></pre></div>
 <p><strong>引数</strong>:</p>
 <ul>
-<li><code>&lt;timeout&gt;</code> ... <code>0</code> 〜 <code>35000</code> の整数。<code>0</code> で無効化（<code>click.IntRange(0, 35000)</code>）</li>
+<li><code>&lt;timeout&gt;</code> ... <code>0</code> 〜 <code>35000</code> の整数（単位は分）。<code>0</code> でタイムアウトを無効化（<code>click.IntRange(0, 35000)</code>）。<a href="../../glossary/#term-yang">YANG</a> <code>sonic-ssh-server</code> のデフォルトは <code>15</code><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
 </ul>
 <p><strong>動作</strong>:
 <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>SSH_SERVER|POLICIES</code> テーブルに <code>inactivity_timeout</code> フィールドを <code>mod_entry</code> で書き込む<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
@@ -36164,10 +36164,37 @@ excerpt: |
 </span></code></pre></div>
 <p><strong>引数</strong>:</p>
 <ul>
-<li><code>&lt;max-sessions&gt;</code> ... <code>0</code> 〜 <code>100</code> の整数（<code>click.IntRange(0, 100)</code>）</li>
+<li><code>&lt;max-sessions&gt;</code> ... <code>0</code> 〜 <code>100</code> の整数（<code>click.IntRange(0, 100)</code>）。<a href="../../glossary/#term-yang">YANG</a> <code>sonic-ssh-server</code> のデフォルトは <code>0</code>（=無制限）<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
 </ul>
 <p><strong>動作</strong>:
-<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>SSH_SERVER|POLICIES</code> テーブルに <code>max_sessions</code> フィールドを書き込む。</p>
+<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>SSH_SERVER|POLICIES</code> テーブルに <code>max_sessions</code> フィールドを <code>mod_entry</code> で書き込む<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</p>
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/main.py#L9991-L10000 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @ssh.command('max-sessions')
+  @click.argument('max-sessions', metavar='<max-sessions>', required=True,
+                  type=click.IntRange(0, 100))
+  def max_sessions(max_sessions):
+      config_db.mod_entry("SSH_SERVER", 'POLICIES',
+                          {'max_sessions': max_sessions})
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L9991-L10000 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/config/main.py#L9991-L10000 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>@ssh.command(&#39;max-sessions&#39;)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>@click.argument(&#39;max-sessions&#39;, metavar=&#39;&lt;max-sessions&gt;&#39;, required=True,
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>                type=click.IntRange(0, 100))
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>def max_sessions(max_sessions):
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    config_db.mod_entry(&quot;SSH_SERVER&quot;, &#39;POLICIES&#39;,
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>                        {&#39;max_sessions&#39;: max_sessions})
+</span></code></pre></div>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36225,7 +36252,7 @@ excerpt: |
 </ul>
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->
 
 <div class="footnote">
 <hr />
@@ -36234,7 +36261,13 @@ excerpt: |
 <p><code>config ssh</code> グループ定義は <code>config/main.py</code> L9970-L10000。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9970">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9970</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>書き込みは <code>ConfigDBConnector().mod_entry("SSH_SERVER", "POLICIES", ...)</code> で行う。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>書き込みは <code>ConfigDBConnector().mod_entry("SSH_SERVER", "POLICIES", ...)</code> で行う。<code>config/main.py</code> L9985-L9988。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang</code> L49-L62 に <code>inactivity_timeout</code> (default 15、range 0..35000) / <code>max_sessions</code> (default 0、range 0..100) を定義。<a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-ssh-server.yang">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-ssh-server.yang</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>config/main.py</code> L9991-L10000 で <code>max-sessions</code> サブコマンドを定義し、<code>SSH_SERVER|POLICIES</code> に <code>max_sessions</code> を <code>mod_entry</code> で書く。&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

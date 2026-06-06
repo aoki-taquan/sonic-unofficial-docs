@@ -36203,12 +36203,14 @@
 </span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>           +--rw decap_dscp_mode?  enumeration
 </span></code></pre></div>
 <h2 id="leaf">leaf 一覧<a class="headerlink" href="#leaf" title="Permanent link">&para;</a></h2>
+<p>「キー」列は当該 leaf が list の <code>key</code> 文を構成するかを示し、「必須」列は <a href="../../glossary/#term-yang">YANG</a> の <code>mandatory true</code> 文の有無を示す。list key は実装上必ず指定する必要があるが、<a href="../../glossary/#term-yang">YANG</a> 上では <code>mandatory</code> 文は付かない（RFC 7950 §7.8.2）<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。よって <code>prefix</code> のみが純粋な mandatory leaf で、<code>locator_name</code> / <code>ip_prefix</code> / <code>locator</code> は key として暗黙的に必須となる。</p>
 <table>
 <thead>
 <tr>
 <th>leaf</th>
 <th>パス</th>
 <th>型</th>
+<th>キー</th>
 <th>必須</th>
 <th>デフォルト</th>
 <th>enum / 範囲 / leafref</th>
@@ -36223,12 +36225,14 @@
 <td>yes</td>
 <td></td>
 <td></td>
+<td></td>
 <td><a href="../../glossary/#term-srv6">SRv6</a> locator name.</td>
 </tr>
 <tr>
 <td><code>prefix</code></td>
 <td><code>sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/prefix</code></td>
 <td><code>inet:ipv6-address</code></td>
+<td></td>
 <td>yes</td>
 <td></td>
 <td></td>
@@ -36239,6 +36243,7 @@
 <td><code>sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/block_len</code></td>
 <td><code>uint8</code></td>
 <td></td>
+<td></td>
 <td><code>32</code></td>
 <td>range 1..128</td>
 <td>Length in bits of the <a href="../../glossary/#term-srv6">SRv6</a> locator block portion.</td>
@@ -36247,6 +36252,7 @@
 <td><code>node_len</code></td>
 <td><code>sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/node_len</code></td>
 <td><code>uint8</code></td>
+<td></td>
 <td></td>
 <td><code>16</code></td>
 <td>range 1..128</td>
@@ -36257,6 +36263,7 @@
 <td><code>sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/func_len</code></td>
 <td><code>uint8</code></td>
 <td></td>
+<td></td>
 <td><code>16</code></td>
 <td>range 0..128</td>
 <td>Length in bits of the SRv6 SID function portion.</td>
@@ -36266,6 +36273,7 @@
 <td><code>sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/arg_len</code></td>
 <td><code>uint8</code></td>
 <td></td>
+<td></td>
 <td><code>0</code></td>
 <td>range 0..128</td>
 <td>Length in bits of the SRv6 SID argument portion.</td>
@@ -36274,6 +36282,7 @@
 <td><code>vrf</code></td>
 <td><code>sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/vrf</code></td>
 <td><code>union</code></td>
+<td></td>
 <td></td>
 <td><code>default</code></td>
 <td>leafref(<a href="../../glossary/#term-vrf">VRF</a>) or <code>default</code></td>
@@ -36286,6 +36295,7 @@
 <td>yes</td>
 <td></td>
 <td></td>
+<td></td>
 <td>IPv6 prefix representing this SID.</td>
 </tr>
 <tr>
@@ -36293,6 +36303,7 @@
 <td><code>sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/locator</code></td>
 <td><code>leafref</code></td>
 <td>yes</td>
+<td></td>
 <td></td>
 <td>/srv6:sonic-srv6/srv6:SRV6_MY_LOCATORS/srv6:SRV6_MY_LOCATORS_LIST/srv6:locator_name</td>
 <td>Reference to the parent SRv6 locator.</td>
@@ -36303,6 +36314,7 @@
 <td><code>enumeration</code></td>
 <td></td>
 <td></td>
+<td></td>
 <td><code>uN</code>, <code>uDT46</code></td>
 <td>SRv6 endpoint behavior (uN for prefix SID, uDT46 for decap with <a href="../../glossary/#term-vrf">VRF</a> lookup).</td>
 </tr>
@@ -36310,6 +36322,7 @@
 <td><code>decap_vrf</code></td>
 <td><code>sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/decap_vrf</code></td>
 <td><code>union</code></td>
+<td></td>
 <td></td>
 <td><code>default</code></td>
 <td>leafref(VRF) or <code>default</code></td>
@@ -36321,11 +36334,15 @@
 <td><code>enumeration</code></td>
 <td></td>
 <td></td>
+<td></td>
 <td><code>uniform</code>, <code>pipe</code></td>
 <td><a href="../../glossary/#term-dscp">DSCP</a> handling mode for decapsulated packets.</td>
 </tr>
 </tbody>
 </table>
+<!-- evidence: sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-srv6.yang lines 27-29 (key "locator_name"), 35-39 (prefix mandatory true), 98-99 (key "locator ip_prefix") -->
+
+<p>なお <code>must 'block_len + node_len + func_len + arg_len &lt;= 128'</code> 制約は <code>SRV6_MY_LOCATORS_LIST</code> 直下に置かれており、各長 leaf の合計が IPv6 アドレス長 128 ビットを超えないことを強制する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="must">must 制約<a class="headerlink" href="#must" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>SRV6_MY_LOCATORS_LIST</code>: <code>block_len + node_len + func_len + arg_len &lt;= 128</code></li>
@@ -36365,13 +36382,16 @@
 <!-- ref-triangle:end -->
 
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-srv6.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-srv6.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>RFC 7950 §7.8.2 ("The list's "key" Statement") — list key leafs はインスタンスを一意に識別するため事実上必須だが、<code>mandatory</code> substatement の指定有無とは独立した扱いとなる。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

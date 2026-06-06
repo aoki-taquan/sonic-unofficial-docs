@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="sonic-snmpagent の RFC1213-MIB ifTable がサポートするインターフェース種別と、管理インターフェース（eth0）が含まれない制約。">
+        <meta name="description" content="sonic-snmpagent の RFC1213-MIB ifTable が列挙するインターフェース種別（フロントパネル / LAG / 管理 / VLAN）と、管理インターフェースのカウンタが SNMP では取得できない制約を実装ソースから整理する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SNMP エージェントがサポートするインターフェーススコープ - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="sonic-snmpagent の RFC1213-MIB ifTable がサポートするインターフェース種別と、管理インターフェース（eth0）が含まれない制約。" />
+<meta property="og:description" content="sonic-snmpagent の RFC1213-MIB ifTable が列挙するインターフェース種別（フロントパネル / LAG / 管理 / VLAN）と、管理インターフェースのカウンタが SNMP では取得できない制約を実装ソースから整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/snmp-interface-scope.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/management/snmp-interface-scope/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SNMP エージェントがサポートするインターフェーススコープ - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="sonic-snmpagent の RFC1213-MIB ifTable がサポートするインターフェース種別と、管理インターフェース（eth0）が含まれない制約。" />
+<meta property="twitter:description" content="sonic-snmpagent の RFC1213-MIB ifTable が列挙するインターフェース種別（フロントパネル / LAG / 管理 / VLAN）と、管理インターフェースのカウンタが SNMP では取得できない制約を実装ソースから整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/snmp-interface-scope.png" />
 </head>
   
@@ -17094,10 +17094,21 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#iftable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ifTable 列挙対象
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        サポートされるインターフェース
+        管理インターフェースの扱い
       
     </span>
   </a>
@@ -17108,7 +17119,18 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        背景
+        監視ツール側での回避策
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CLI から状態を確認する
       
     </span>
   </a>
@@ -17117,56 +17139,6 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        影響
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="影響">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        監視ツールでの注意点
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        回避策
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連インターフェース情報の取得方法
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連
@@ -35916,10 +35888,21 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#iftable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ifTable 列挙対象
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        サポートされるインターフェース
+        管理インターフェースの扱い
       
     </span>
   </a>
@@ -35930,7 +35913,18 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        背景
+        監視ツール側での回避策
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CLI から状態を確認する
       
     </span>
   </a>
@@ -35939,56 +35933,6 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        影響
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="影響">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        監視ツールでの注意点
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        回避策
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連インターフェース情報の取得方法
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連
@@ -36057,6 +36001,13 @@
         <span class="md-tag">snmpagent</span>
       
     
+      
+      
+      
+      
+        <span class="md-tag">vlan</span>
+      
+    
   </nav>
 
 
@@ -36071,68 +36022,119 @@
 
 <h1 id="snmp">SNMP エージェントがサポートするインターフェーススコープ<a class="headerlink" href="#snmp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>sonic-snmpagent</code> が実装する RFC1213-MIB の <code>ifTable</code> には、<strong>フロントパネルインターフェース</strong>と <strong><a href="../../reference/glossary/#term-lag">LAG</a>（ポートチャネル）インターフェース</strong>のみが含まれる。管理インターフェース（eth0）・ループバックインターフェース・<a href="../../reference/glossary/#term-vlan">VLAN</a> インターフェースは含まれない。</p>
-<h2 id="_2">サポートされるインターフェース<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p><code>sonic-snmpagent</code> が実装する RFC1213-MIB の <code>ifTable</code> は、次の 4 種を 1 つのインデックス空間 (<code>if_range</code>) に統合して列挙する<sup id="fnref:if-range"><a class="footnote-ref" href="#fn:if-range">1</a></sup>。</p>
+<ul>
+<li>フロントパネルポート（<code>Ethernet*</code> / Backplane / IB / Recirc）</li>
+<li><a href="../../reference/glossary/#term-lag">LAG</a>（<code>PortChannel*</code>）</li>
+<li>管理インターフェース（<code>Management0</code> / <code>eth0</code> 等、<code>CONFIG_DB.MGMT_PORT</code> 由来）</li>
+<li><a href="../../reference/glossary/#term-vlan">VLAN</a> インターフェース（<code>Vlan*</code>）</li>
+</ul>
+<p>ループバック（<code>Loopback*</code>）は ifTable には含まれない。また、管理インターフェースはエントリこそ列挙されるが、<a href="../../reference/glossary/#term-snmp">SNMP</a> 経由のトラフィックカウンタは常に 0 が返る（未実装）<sup id="fnref:mgmt-counter"><a class="footnote-ref" href="#fn:mgmt-counter">2</a></sup>。</p>
+<p>この振る舞いは <a href="https://github.com/sonic-net/sonic-snmpagent/issues/83">Issue #83</a> で取り上げられた「管理インターフェースが ifTable に出てこない」という当初の挙動から進化しており、現在の master では <code>mgmt_oid_name_map</code> / <code>vlan_oid_name_map</code> を <code>if_range</code> に取り込んで返している<sup id="fnref2:if-range"><a class="footnote-ref" href="#fn:if-range">1</a></sup>。</p>
+<h2 id="iftable">ifTable 列挙対象<a class="headerlink" href="#iftable" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>インターフェース種別</th>
 <th>ifTable に含まれるか</th>
+<th>カウンタ取得</th>
+<th>備考</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>フロントパネルポート（Ethernet0, Ethernet4, ...）</td>
-<td><strong>含まれる</strong></td>
+<td>フロントパネルポート（<code>Ethernet*</code> 等）</td>
+<td>含まれる</td>
+<td>可（<a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a>）</td>
+<td><code>init_sync_d_interface_tables</code><sup id="fnref:init-port"><a class="footnote-ref" href="#fn:init-port">3</a></sup></td>
 </tr>
 <tr>
-<td>LAG / <a href="../../reference/glossary/#term-portchannel">PortChannel</a>（PortChannel0001, ...）</td>
-<td><strong>含まれる</strong></td>
+<td>LAG / <a href="../../reference/glossary/#term-portchannel">PortChannel</a></td>
+<td>含まれる</td>
+<td>可（メンバ加算 + <a href="../../reference/glossary/#term-rif">RIF</a>）</td>
+<td><code>init_sync_d_lag_tables</code> 経由、メンバの値を合算しさらに必要なら router-interface カウンタを足す<sup id="fnref:lag-counter"><a class="footnote-ref" href="#fn:lag-counter">4</a></sup></td>
 </tr>
 <tr>
-<td>管理インターフェース（eth0, Management0）</td>
-<td><strong>含まれない</strong></td>
+<td>管理インターフェース（<code>Management0</code> / <code>eth0</code>）</td>
+<td>含まれる</td>
+<td><strong>不可（常に 0）</strong></td>
+<td><code>init_mgmt_interface_tables</code><sup id="fnref:init-mgmt"><a class="footnote-ref" href="#fn:init-mgmt">5</a></sup>。COUNTERS_DB に generic Linux インターフェース用カウンタが無いため <code>_get_counter</code> は 0 を返す<sup id="fnref4:mgmt-counter"><a class="footnote-ref" href="#fn:mgmt-counter">2</a></sup></td>
 </tr>
 <tr>
-<td>ループバック（Loopback0, ...）</td>
-<td><strong>含まれない</strong></td>
+<td>VLAN（<code>Vlan*</code>）</td>
+<td>含まれる</td>
+<td>可（COUNTERS_DB の RIF カウンタ）</td>
+<td><code>init_sync_d_vlan_tables</code><sup id="fnref:init-vlan"><a class="footnote-ref" href="#fn:init-vlan">6</a></sup></td>
 </tr>
 <tr>
-<td>VLAN（Vlan100, ...）</td>
-<td><strong>含まれない</strong></td>
+<td>ループバック（<code>Loopback*</code>）</td>
+<td>含まれない</td>
+<td>—</td>
+<td>ifTable 構築側で取り込み処理が存在しない</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_3">背景<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>RFC1213-MIB（MIB-II）の <code>ifTable</code> はネットワーク機器の全インターフェースを列挙する設計だが、<code>sonic-snmpagent</code> の実装では主にデータプレーンのインターフェースのみを対象としている。</p>
-<p>管理インターフェース（eth0）の扱いについて、標準上の定義が曖昧であること（管理プレーンのインターフェースを含めるべきかどうかの解釈の相違）が、実装を複雑にしている。</p>
-<h2 id="_4">影響<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="_5">監視ツールでの注意点<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p><a href="../../reference/glossary/#term-snmp">SNMP</a> ポーリングで帯域使用量や統計を収集する際：</p>
+<p><code>if_range</code> は上記 4 マップのキー（OID インデックス）を <code>sorted()</code> で連結したものとして <code>update_data</code> 内で再構築される<sup id="fnref3:if-range"><a class="footnote-ref" href="#fn:if-range">1</a></sup>。</p>
+<h2 id="_2">管理インターフェースの扱い<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>管理インターフェースは ifTable に <strong>エントリは現れる</strong> が、以下の差異がある。</p>
 <ul>
-<li><code>eth0</code> の IN/OUT バイト数は <code>ifTable</code> からは取得できない</li>
-<li>代替として Linux の <code>/proc/net/dev</code> 経由の情報を利用するか、別途 SNMP OID を実装する必要がある</li>
+<li>設定情報（admin status / 説明など）は <code>CONFIG_DB</code> の <code>MGMT_PORT|&lt;name&gt;</code> から、oper status は <code>STATE_DB</code> の対応エントリから読む<sup id="fnref:mgmt-entry"><a class="footnote-ref" href="#fn:mgmt-entry">7</a></sup></li>
+<li>帯域 / パケットカウンタは取得経路自体が未実装で、<code>_get_counter</code> は管理インターフェース OID に対し早期 return で 0 を返す<sup id="fnref2:mgmt-counter"><a class="footnote-ref" href="#fn:mgmt-counter">2</a></sup></li>
+<li>ソース注釈にも <code># TODO: mgmt counters not available through SNMP right now</code> / <code># COUNTERS DB does not have support for generic linux (mgmt) interface counters</code> と明記されている<sup id="fnref3:mgmt-counter"><a class="footnote-ref" href="#fn:mgmt-counter">2</a></sup></li>
 </ul>
-<h3 id="_6">回避策<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p><code>eth0</code> の統計を SNMP で取得したい場合、プライベート OID を実装する方法があるが、標準に準拠しないため相互運用性が下がる（Issue #83 でのコメント参照）。</p>
-<p>より適切な解決策は、<code>sonic-snmpagent</code> に対して管理インターフェースサポートを追加するコントリビューションを行うことである。</p>
-<h2 id="_7">関連インターフェース情報の取得方法<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<p>管理インターフェースの情報は CLI から取得できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 管理インターフェースの状態確認</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>management_interface<span class="w"> </span>addresses
+<p>したがって、管理プレーンの帯域使用量を SNMP ポーリングで取得しようとしても、ifTable 上では値が 0 のまま伸びない。</p>
+<h2 id="_3">監視ツール側での回避策<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p><code>eth0</code> の統計を取りたい場合、現状の代替は以下のいずれか:</p>
+<ul>
+<li>ノード上で <code>/proc/net/dev</code> や <code>ip -s link show eth0</code> を直接読む（SNMP 経由でなく out-of-band 監視で取り扱う）</li>
+<li>別途 net-snmp 等の汎用 SNMP エージェントを併走させ、Linux インターフェースのカウンタを公開する</li>
+<li><code>sonic-snmpagent</code> 側で COUNTERS_DB に mgmt インターフェース用エントリを追加するコントリビューションを行う（Issue #83 で議論されている方向）</li>
+</ul>
+<p>プライベート OID で独自実装する選択肢もあるが、相互運用性が下がるため通常は避けるべきである。</p>
+<h2 id="cli">関連 CLI から状態を確認する<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
+<p>管理インターフェースそのものの設定は CLI / <a href="../../reference/glossary/#term-redis">Redis</a> から確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 管理インターフェースの IP 設定確認</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>management_interface<span class="w"> </span>address
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># eth0 の詳細確認</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># eth0 の状態とカウンタ（Linux 側）</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>ip<span class="w"> </span>addr<span class="w"> </span>show<span class="w"> </span>eth0
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>ip<span class="w"> </span>-s<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span>eth0
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># Redis での確認（MGMT_PORT テーブル）</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;MGMT_PORT|eth0&quot;</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># Redis での CONFIG_DB MGMT_PORT 確認</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;MGMT_PORT|eth0&quot;</span>
 </span></code></pre></div>
-<h2 id="_8">関連<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_4">関連<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>GitHub Issue: <a href="https://github.com/sonic-net/sonic-snmpagent/issues/83">sonic-net/sonic-snmpagent#83</a></li>
+<li>GitHub Issue: <a href="https://github.com/sonic-net/sonic-snmpagent/issues/83">sonic-net/sonic-snmpagent#83</a> — 管理インターフェースの ifTable 露出と counter 不在に関する議論</li>
 </ul>
-<!-- glossary-links-injected: 1bb2312a6ed4 -->
+<!-- glossary-links-injected: 686c7b94339a -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:if-range">
+<p><!-- evidence: sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc1213.py L253-L268 --> <code>InterfacesUpdater.update_data</code> は <code>oid_name_map</code>（フロントパネル）/ <code>oid_lag_name_map</code>（LAG）/ <code>mgmt_oid_name_map</code>（管理）/ <code>vlan_oid_name_map</code>（VLAN）の OID を結合して <code>if_range</code> を構築する。&#160;<a class="footnote-backref" href="#fnref:if-range" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:if-range" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:if-range" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:mgmt-counter">
+<p><!-- evidence: sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc1213.py L397-L400 --> <code>_get_if_counter</code> 内で <code>if oid in self.mgmt_oid_name_map: return 0</code> と早期 return しており、<code># TODO: mgmt counters not available through SNMP right now</code> / <code># COUNTERS DB does not have support for generic linux (mgmt) interface counters</code> のコメントが付いている。&#160;<a class="footnote-backref" href="#fnref:mgmt-counter" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:mgmt-counter" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:mgmt-counter" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:mgmt-counter" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:init-port">
+<p><!-- evidence: sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py L276-L295 --> <code>init_sync_d_interface_tables</code> がフロントパネル系 (<code>SONIC_ETHERNET_RE_PATTERN</code> 等) を <code>if_name_map</code> に取り込む。&#160;<a class="footnote-backref" href="#fnref:init-port" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:lag-counter">
+<p><!-- evidence: sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc1213.py L401-L442 --> LAG OID のカウンタはメンバの <code>_get_counter</code> を合算し、<code>lag_sai_map</code> → <code>port_rif_map</code> → <code>rif_counters</code> 経由で router-interface 側のドロップ系も足し込む。&#160;<a class="footnote-backref" href="#fnref:lag-counter" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:init-mgmt">
+<p><!-- evidence: sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py L246-L274 --> <code>init_mgmt_interface_tables</code> が <code>CONFIG_DB.MGMT_PORT|*</code> を読み、<code>mgmt_oid_name_map</code> と <code>mgmt_alias_map</code> を構築する。&#160;<a class="footnote-backref" href="#fnref:init-mgmt" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:init-vlan">
+<p><!-- evidence: sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py L349 --> <code>init_sync_d_vlan_tables</code> が <code>vlan_name_map</code> / <code>vlan_oid_sai_map</code> / <code>vlan_oid_name_map</code> を構築し、<code>update_data</code> 経由で <code>if_range</code> に統合される。&#160;<a class="footnote-backref" href="#fnref:init-vlan" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:mgmt-entry">
+<p><!-- evidence: sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc1213.py L465-L496 --> <code>_get_if_entry</code> は mgmt OID なら <code>CONFIG_DB</code> の <code>mgmt_if_entry_table</code> を、<code>_get_if_entry_state_db</code> は <code>STATE_DB</code> の同テーブル相当を読む。&#160;<a class="footnote-backref" href="#fnref:mgmt-entry" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

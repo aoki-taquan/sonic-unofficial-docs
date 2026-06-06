@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="404 - ページが見つかりません — ページ上部の検索ボックスで日本語キーワード（例: BGP, VXLAN, dual-tor, dhcprelayd）を入力すると、横断検索ができます。">
+        <meta name="description" content="404 — お探しのページは存在しないか、再構成で URL が変わった可能性があります。トップページ・各章 index・サイト内検索から目的のページに辿り着くための入り口を案内する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="ページが見つかりません (404) - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="404 - ページが見つかりません — ページ上部の検索ボックスで日本語キーワード（例: BGP, VXLAN, dual-tor, dhcprelayd）を入力すると、横断検索ができます。" />
+<meta property="og:description" content="404 — お探しのページは存在しないか、再構成で URL が変わった可能性があります。トップページ・各章 index・サイト内検索から目的のページに辿り着くための入り口を案内する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/404.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/404/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="ページが見つかりません (404) - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="404 - ページが見つかりません — ページ上部の検索ボックスで日本語キーワード（例: BGP, VXLAN, dual-tor, dhcprelayd）を入力すると、横断検索ができます。" />
+<meta property="twitter:description" content="404 — お探しのページは存在しないか、再構成で URL が変わった可能性があります。トップページ・各章 index・サイト内検索から目的のページに辿り着くための入り口を案内する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/404.png" />
 </head>
   
@@ -35810,24 +35810,32 @@
 <p>お探しのページは存在しないか、移動しました。リンク切れだったり、再構成で URL が変わった可能性もあります。落ち込まないでください — ここから目的のページに辿り着くお手伝いをします。</p>
 <h2 id="_1">主要な入り口<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><a href="../">トップページに戻る</a></strong> — 目的別の入口を整理しています</li>
+<li><strong><a href="../">トップページに戻る</a></strong> — 目的別の入口を整理している</li>
 <li><strong><a href="../topics/">topics 一覧</a></strong> — 機能別の読み物</li>
 <li><strong><a href="../reference/">リファレンス</a></strong> — CLI / <a href="../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../reference/glossary/#term-yang">YANG</a> / Runbooks</li>
 <li><strong><a href="../guides/">読み手別ガイド</a></strong> — developer / evaluator / operator</li>
 </ul>
 <h2 id="_2">検索<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>ページ上部の検索ボックスで日本語キーワード（例: <code>BGP</code>, <code>VXLAN</code>, <code>dual-tor</code>, <code>dhcprelayd</code>）を入力すると、横断検索ができます。サイト内の全ページが対象です（最新のページ数は <a href="../_meta/sitemap/">サイトマップ</a> を参照）。</p>
+<p>ページ上部の検索ボックスで日本語キーワード（例: <code>BGP</code>, <code>VXLAN</code>, <code>dual-tor</code>, <code>dhcprelayd</code>）を入力すると、横断検索ができる。サイト内の全ページが対象（最新のページ数は <a href="../_meta/sitemap/">サイトマップ</a> を参照）。</p>
 <h2 id="_3">もしかしてこれ?<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>よく参照される人気ページです:</p>
+<p>よく参照されるページの入口:</p>
+<!--
+このリストは手動メンテ。リンク先 slug が rename / split された場合は
+ここを更新する必要がある。リンク切れ自体は mkdocs --strict（CI build job）
+と lychee（informational、docs/**/*.md を対象）で検出される。
+- mkdocs --strict: 内部相対リンク切れで CI fail
+- lychee: 全 docs/**/*.md を走査するため 404.md も対象に含まれる
+-->
+
 <ul>
 <li><strong><a href="../architecture/">アーキテクチャ概観</a></strong> — <a href="../reference/glossary/#term-sonic">SONiC</a> のコンテナ構成と <a href="../reference/glossary/#term-sai">SAI</a>/SWSS/<a href="../reference/glossary/#term-asic">ASIC</a> スタック</li>
-<li><strong><a href="../routing/evpn-vxlan-hld/">EVPN-VXLAN HLD</a></strong> — <a href="../reference/glossary/#term-frr">FRR</a> ベースの <a href="../reference/glossary/#term-bgp">BGP</a>-<a href="../reference/glossary/#term-evpn">EVPN</a> とオーバーレイ</li>
-<li><strong><a href="../overlay/vxlan-sonic/">VXLAN in SONiC</a></strong> — <a href="../reference/glossary/#term-vxlan">VXLAN</a> 実装の全体像</li>
+<li><strong><a href="../routing/evpn-vxlan-hld/">EVPN VXLAN（FRR BGP-EVPN）</a></strong> — <a href="../reference/glossary/#term-frr">FRR</a> ベースの <a href="../reference/glossary/#term-bgp">BGP</a>-<a href="../reference/glossary/#term-evpn">EVPN</a> とオーバーレイ（concepts / internals / operations に分割済み）</li>
+<li><strong><a href="../overlay/vxlan-sonic/">VXLAN / VNet 全体設計</a></strong> — <a href="../reference/glossary/#term-vxlan">VXLAN</a> 実装の全体像</li>
 <li><strong><a href="../reference/cli/">CLI リファレンス</a></strong> — <code>show</code> / <code>config</code> / <code>sonic-installer</code> 系</li>
 <li><strong><a href="../reference/config-db/">CONFIG_DB スキーマ</a></strong> — 全テーブル一覧</li>
 </ul>
 <h2 id="_4">誤リンクの報告<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>リンク切れを見つけた場合は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/issues/new/choose">GitHub Issues</a> に報告してください。<code>feedback</code> テンプレートが用意されています。</p>
+<p>リンク切れを見つけた場合は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/issues/new/choose">GitHub Issues</a> に報告してほしい。<code>feedback</code> テンプレートが用意されている。</p>
 <!-- glossary-links-injected: ec18b66e3507 -->
 
 

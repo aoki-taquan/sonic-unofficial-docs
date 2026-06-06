@@ -35983,7 +35983,7 @@
     F -- Yes --&gt; H{End-of-RIB を受信できているか}
     H -- No --&gt; I[control plane の負荷 / TCP MSS / MD5 を確認]</code></pre>
 <h2 id="_3">確認コマンド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># GR capability の現状</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># GR capability の現状 (End-of-RIB send/received / Restart Time を含む)[^2]</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show bgp neighbor &lt;peer_ip&gt;&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A20<span class="w"> </span><span class="s2">&quot;Graceful Restart&quot;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># 設定値</span>
@@ -35999,7 +35999,7 @@
 <ol>
 <li><strong>片側でしか graceful-restart が有効化されていない</strong> — <code>bgp graceful-restart</code> が router bgp 配下に無い</li>
 <li><strong>Restart Time が短すぎる</strong> — bgpd 再起動が完了する前に対向が stale path を破棄</li>
-<li><strong>GR-Notification capability の非互換</strong> — RFC 8538 対応版とそれ以前で挙動が異なる</li>
+<li><strong>GR-Notification capability の非互換</strong> — <a href="https://datatracker.ietf.org/doc/html/rfc8538">RFC 8538</a> 対応版とそれ以前で挙動が異なる</li>
 <li><strong><a href="../../glossary/#term-bfd">BFD</a> と併用時の即 down</strong> — <a href="../../glossary/#term-bfd">BFD</a> が即 session down を通知するため GR をスキップする</li>
 <li><strong>TCP セッションが MD5 / MSS で再確立できない</strong> — control plane の再ハンドシェイクが失敗</li>
 </ol>
@@ -36017,7 +36017,10 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/sonic-frr</code> <code>bgpd/bgp_open.c</code> における <a href="../../glossary/#term-graceful-restart">Graceful Restart</a> capability (Type 64) のパース。Restart Time / Flags / AFI-SAFI の対称性が両端で合っていなければ GR は片側だけ "advertised" 表示となり実際には機能しない。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-frr</code> <code>bgpd/bgp_open.c</code> <code>bgp_capability_restart()</code> (L444-477) における <a href="../../glossary/#term-graceful-restart">Graceful Restart</a> capability (Type 64) のパース。<code>PEER_CAP_RESTART_RCV</code> と <code>peer-&gt;v_gr_restart</code> を seed し、Restart Time / Flags / AFI-SAFI の対称性が両端で合っていなければ GR は片側だけ "advertised" 表示となり実際には機能しない。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-frr</code> <code>bgpd/bgp_vty.c</code> L10406 以降の "Graceful restart information:" ブロックが <code>show bgp neighbor &lt;peer&gt;</code> に End-of-RIB send / received と stale-path timer を出力する (<code>PEER_STATUS_EOR_SEND</code> / <code>PEER_STATUS_EOR_RECEIVED</code> の AFI/SAFI 別チェック)。End-of-RIB の受信欄が空なら対向の収束完了通知が届いておらず、stale path が早期に廃棄される原因となる。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

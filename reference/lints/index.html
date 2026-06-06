@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="lint 一覧と CI 状態">
+        <meta name="description" content="meta/scripts/ 配下の lint / 生成スクリプトの目的と CI ゲート状態を一覧化する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Lint 一覧と CI 状態 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="lint 一覧と CI 状態" />
+<meta property="og:description" content="meta/scripts/ 配下の lint / 生成スクリプトの目的と CI ゲート状態を一覧化する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/lints.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/lints/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Lint 一覧と CI 状態 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="lint 一覧と CI 状態" />
+<meta property="twitter:description" content="meta/scripts/ 配下の lint / 生成スクリプトの目的と CI ゲート状態を一覧化する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/lints.png" />
 </head>
   
@@ -33493,10 +33493,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#gen_" class="md-nav__link">
+  <a href="#gen_-inject_-render_" class="md-nav__link">
     <span class="md-ellipsis">
       
-        機械生成スクリプト (gen_*)
+        機械生成スクリプト (gen_* / inject_* / render_*)
       
     </span>
   </a>
@@ -35851,10 +35851,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#gen_" class="md-nav__link">
+  <a href="#gen_-inject_-render_" class="md-nav__link">
     <span class="md-ellipsis">
       
-        機械生成スクリプト (gen_*)
+        機械生成スクリプト (gen_* / inject_* / render_*)
       
     </span>
   </a>
@@ -35936,10 +35936,16 @@
 <h1 id="lint-ci">Lint 一覧と CI 状態<a class="headerlink" href="#lint-ci" title="Permanent link">&para;</a></h1>
 <p>本リポジトリには <code>meta/scripts/</code> 配下に多数の lint / 機械生成スクリプトがあり、
 PR ごとに GitHub Actions (<code>.github/workflows/ci.yml</code>) で実行される。
-各スクリプトの目的と、CI ゲートとしての位置付け（<strong>strict</strong> = 失敗で CI 落ち /
-<strong>informational</strong> = 失敗しても CI は通る / <strong>gen-check</strong> = 機械生成出力の drift 検査 /
-<strong>local-only</strong> = CI 未連携） を一覧化する。</p>
-<p>スクリプト本体は <code>meta/scripts/&lt;name&gt;.py</code> にあり、いずれも <code>python3</code> で直接実行できる。</p>
+各スクリプトの目的と CI ゲートとしての位置付け を一覧化する。</p>
+<p>CI 状態のラベル定義:</p>
+<ul>
+<li><strong>strict</strong> — exit != 0 で job が落ちる (PR ブロッキング)</li>
+<li><strong>informational</strong> — <code>|| true</code> で吸収。失敗しても CI は通る (report 用途)</li>
+<li><strong>gen-check</strong> — 機械生成物の drift 検査。strict / informational をさらに併記</li>
+<li><strong>local-only</strong> — CI に組み込まれていない。手元で手動実行する</li>
+</ul>
+<p>スクリプト本体は <code>meta/scripts/&lt;name&gt;.py</code> にあり、いずれも <code>python3</code> で直接実行できる
+(<code>--help</code> でオプション確認可能)。</p>
 <h2 id="lint-check_-frontmatter_lint">Lint スクリプト (<code>check_*</code> / <code>frontmatter_lint</code>)<a class="headerlink" href="#lint-check_-frontmatter_lint" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -35956,6 +35962,11 @@ PR ごとに GitHub Actions (<code>.github/workflows/ci.yml</code>) で実行さ
 <td>strict</td>
 </tr>
 <tr>
+<td><code>check_invisible_chars.py</code></td>
+<td>zero-width / bidi 制御 / tag char (prompt-injection ベクター) / NBSP 等の非標準空白を docs と meta 全体から検出。<code>&lt;!-- allow-invisible --&gt;</code> でファイル単位の許可可。0 件キープが必須</td>
+<td>strict</td>
+</tr>
+<tr>
 <td><code>check_runbook_status.py</code></td>
 <td><code>docs/reference/runbooks/*.md</code> の <code>verification</code> が <code>hld-only</code> / <code>issue-confirmed</code> に退化していないか検証</td>
 <td>strict</td>
@@ -35966,13 +35977,58 @@ PR ごとに GitHub Actions (<code>.github/workflows/ci.yml</code>) で実行さ
 <td>strict</td>
 </tr>
 <tr>
+<td><code>check_pages_integrity.py</code></td>
+<td><code>docs/**/.pages</code> (mkdocs-awesome-pages) の <code>nav:</code> と実ファイルの整合: missing / orphan / duplicate 検出</td>
+<td>strict</td>
+</tr>
+<tr>
 <td><code>check_discrepancy_related.py</code></td>
 <td><code>verification: discrepancy-found</code> ページが <code>related.yang</code> を 1 件以上持つか検証 (<code>_no_related: true</code> で opt-out)</td>
 <td>strict</td>
 </tr>
 <tr>
-<td><code>check_pages_integrity.py</code></td>
-<td><code>docs/**/.pages</code> (mkdocs-awesome-pages) の <code>nav:</code> と実ファイルの整合: missing / orphan / duplicate 検出</td>
+<td><code>check_link_density.py</code> (<code>--strict-split-child</code>)</td>
+<td><code>split-child</code> ページのナビゲーション整合性検証</td>
+<td>strict</td>
+</tr>
+<tr>
+<td><code>check_link_density.py</code> (density report)</td>
+<td>本文字数あたりリンク数 (density) が極端に低い / 高いページの report</td>
+<td>informational</td>
+</tr>
+<tr>
+<td><code>check_mermaid_syntax.py</code></td>
+<td>mermaid フェンス内の構文を node ベース parser (<code>mermaid_parse.mjs</code>) または高確度静的ヒューリスティックで検査</td>
+<td>strict</td>
+</tr>
+<tr>
+<td><code>check_partial_boundary.py</code> (<code>--strict-phase-table</code>)</td>
+<td><a href="../glossary/#term-hld">HLD</a> 系 <code>monitor: partially_implemented</code> ページにフェーズ別表 (Phase × 実装済 × 未実装 が同一表に揃う) を必須化</td>
+<td>strict</td>
+</tr>
+<tr>
+<td><code>check_partial_boundary.py</code> (default)</td>
+<td>「実装済」「未実装」両側のキーワード片寄り検出</td>
+<td>informational</td>
+</tr>
+<tr>
+<td><code>check_citation_quality.py</code> (<code>--strict</code>)</td>
+<td>裏取り済み (<code>code-verified</code> / <code>runbook-verified</code> / <code>discrepancy-found</code>) なのに脚注も <code>&lt;!-- evidence: --&gt;</code> も無いページの検出。Reference / <code>_meta</code> / guides 系はデフォルト除外</td>
+<td>strict</td>
+</tr>
+<tr>
+<td><code>check_broken_links.py</code> (<code>--strict</code>)</td>
+<td><code>docs/**/*.md</code> の intra-doc Markdown リンク (相対パス + <code>#anchor</code>) の解決可否を検証</td>
+<td>strict</td>
+</tr>
+<tr>
+<td><code>check_heading_hierarchy.py</code></td>
+<td>a11y: 見出しレベルが 2 段以上跳ぶ (<code>##</code> → <code>####</code> 等) ページの検出</td>
+<td>strict</td>
+</tr>
+<tr>
+<td><code>check_image_alt.py</code></td>
+<td>a11y: 空 alt の inline image (markdown 記法 <code>! [ ] ( url )</code> のスペース無し形式) を検出</td>
 <td>strict</td>
 </tr>
 <tr>
@@ -35986,23 +36042,23 @@ PR ごとに GitHub Actions (<code>.github/workflows/ci.yml</code>) で実行さ
 <td>informational</td>
 </tr>
 <tr>
-<td><code>check_citation_quality.py</code></td>
-<td>裏取り済み (<code>code-verified</code> / <code>runbook-verified</code> / <code>discrepancy-found</code>) なのに脚注も <code>&lt;!-- evidence: --&gt;</code> も無いページの検出</td>
+<td><code>check_evolved_6c.py</code></td>
+<td><code>monitor: evolved_beyond_hld</code> ページが 6C (Change / Cause / Code / Commit / Compat / Citation) を本文で説明しているかの軽量チェック</td>
 <td>informational</td>
 </tr>
 <tr>
-<td><code>check_broken_links.py</code></td>
-<td><code>docs/**/*.md</code> の intra-doc Markdown リンク (相対パス + <code>#anchor</code>) の解決可否を検証</td>
+<td><code>check_ni_workaround_depth.py</code></td>
+<td><code>monitor: not_implemented</code> ページに代替 / ワークアラウンド記述の深さがあるかの検出</td>
 <td>informational</td>
 </tr>
 <tr>
-<td><code>check_link_density.py</code> (<code>--strict-split-child</code>)</td>
-<td><code>split-child</code> のナビゲーション整合性検証 (CI で strict 実行)</td>
-<td><strong>strict</strong></td>
+<td><code>check_troubleshoot_section.py</code></td>
+<td>100 行以上の HLD 系 <code>code-verified</code> / <code>discrepancy-found</code> ページに「トラブルシュート / 確認コマンド / 動作確認」セクション + コードブロックがあるか検証</td>
+<td>informational</td>
 </tr>
 <tr>
-<td><code>check_link_density.py</code> (density report)</td>
-<td>本文字数あたりリンク数 (density) が極端に低い / 高いページの report</td>
+<td><code>check_code_lang.py</code></td>
+<td>言語タグ無しの fenced code block 検出 (PyMdown superfences ではプレーンテキスト化される)</td>
 <td>informational</td>
 </tr>
 <tr>
@@ -36011,15 +36067,30 @@ PR ごとに GitHub Actions (<code>.github/workflows/ci.yml</code>) で実行さ
 <td>informational</td>
 </tr>
 <tr>
+<td><code>check_built_html.py</code></td>
+<td><code>mkdocs build</code> 後の <code>site/</code> 配下を走査し <code>&lt;h1&gt;</code> 重複・空 <code>&lt;a&gt;</code>/<code>&lt;img&gt;</code>・空コードブロック・mermaid placeholder 残骸を <code>meta/built-html-report.md</code> に出力</td>
+<td>informational</td>
+</tr>
+<tr>
+<td><code>check_limitations_section.py</code></td>
+<td>HLD 系ページの「Limitations / 制約」節のカバレッジ報告</td>
+<td>local-only</td>
+</tr>
+<tr>
 <td><code>check_sources_freshness.py</code></td>
 <td><code>meta/index/repos.json</code> の pinned SHA と <code>.cache/sonic-sources/&lt;repo&gt;/</code> の HEAD / upstream を突合し behind 件数を表示</td>
 <td>local-only</td>
 </tr>
 </tbody>
 </table>
-<h2 id="gen_">機械生成スクリプト (<code>gen_*</code>)<a class="headerlink" href="#gen_" title="Permanent link">&para;</a></h2>
-<p><code>gen_*</code> 系は静的サイトに含めるページや埋め込みブロックを自動生成する。CI では生成出力の
-<strong>drift 検査</strong>として <code>--check</code> モードで動作し、ローカルで再生成し忘れていないかを検出する。</p>
+<p>textlint (日本語表記揺れ + prh での <a href="../glossary/#term-sonic">SONiC</a> 固有用語統一) と typos (crate-ci/typos) は Python スクリプト
+ではなく外部 action / Node ベースで動くため、別 job (<code>typos</code> / <code>textlint</code>) として並行する。
+Python 品質は <code>ruff check meta/scripts/</code> (pyflakes + isort + bugbear 一部) を lint job 内で
+strict 実行する。</p>
+<h2 id="gen_-inject_-render_">機械生成スクリプト (<code>gen_*</code> / <code>inject_*</code> / <code>render_*</code>)<a class="headerlink" href="#gen_-inject_-render_" title="Permanent link">&para;</a></h2>
+<p><code>gen_*</code> / <code>inject_*</code> / <code>render_*</code> は静的サイトに含めるページや埋め込みブロックを自動生成する。
+CI では生成出力の <strong>drift 検査</strong>として <code>--check</code> モードで動作し、ローカルで再生成し忘れていないかを
+検出する。strict なものは drift 検出で CI を落とす。</p>
 <table>
 <thead>
 <tr>
@@ -36055,13 +36126,68 @@ PR ごとに GitHub Actions (<code>.github/workflows/ci.yml</code>) で実行さ
 <td>gen-check (strict)</td>
 </tr>
 <tr>
-<td><code>gen_next_reads.py</code></td>
-<td>Topics 章 index の「次に読むべき記事」ブロック</td>
-<td>gen-check (informational)</td>
+<td><code>gen_cdb_mermaid.py</code></td>
+<td><a href="../glossary/#term-config_db">CONFIG_DB</a> reference ページにミニ data-flow mermaid 埋め込み</td>
+<td>gen-check (strict)</td>
+</tr>
+<tr>
+<td><code>gen_cli_mermaid.py</code></td>
+<td>CLI reference ページにミニ data-flow mermaid 埋め込み</td>
+<td>gen-check (strict)</td>
+</tr>
+<tr>
+<td><code>gen_yang_mermaid.py</code></td>
+<td><a href="../glossary/#term-yang">YANG</a> reference ページにミニ data-flow mermaid 埋め込み</td>
+<td>gen-check (strict)</td>
+</tr>
+<tr>
+<td><code>gen_changelog.py</code></td>
+<td><code>docs/_meta/changelog.md</code> を merged PR 一覧から生成</td>
+<td>gen-check (strict)</td>
 </tr>
 <tr>
 <td><code>gen_chapter_progress.py</code></td>
 <td>Topics 章 index の「章構成と進捗」テーブル</td>
+<td>gen-check (strict)</td>
+</tr>
+<tr>
+<td><code>gen_snapshot.py</code></td>
+<td><code>docs/_meta/snapshot.md</code> を verification 分布 / Reference カバレッジ / audit / lint 件数 / 鮮度などから生成</td>
+<td>gen-check (strict)</td>
+</tr>
+<tr>
+<td><code>inject_yang_xref.py</code></td>
+<td>YANG ref ページに「関連ページ」ブロック (CONFIG_DB / CLI / HLD への直リンク) 挿入</td>
+<td>gen-check (strict)</td>
+</tr>
+<tr>
+<td><code>inject_yang_sibling.py</code></td>
+<td>YANG ref ページに sibling YANG モジュール block 挿入</td>
+<td>gen-check (strict)</td>
+</tr>
+<tr>
+<td><code>inject_cli_sibling.py</code></td>
+<td>CLI ref ページに verb 跨ぎ sibling block 挿入</td>
+<td>gen-check (strict)</td>
+</tr>
+<tr>
+<td><code>inject_glossary_links.py</code></td>
+<td>glossary 用語の docs 内本文初出箇所を glossary anchor リンク化</td>
+<td>gen-check (strict)</td>
+</tr>
+<tr>
+<td><code>enrich_chapter_index_related.py</code></td>
+<td>章 index の <code>related.{cli,config_db,yang}</code> を子ページから aggregate</td>
+<td>gen-check (strict)</td>
+</tr>
+<tr>
+<td><code>render_evidence.py</code></td>
+<td><code>&lt;!-- evidence: --&gt;</code> HTML コメントを <code>&lt;!-- evidence-rendered --&gt;</code> 内 collapsible admonition として現出</td>
+<td>gen-check (strict)</td>
+</tr>
+<tr>
+<td><code>gen_next_reads.py</code></td>
+<td>Topics 章 index の「次に読むべき記事」ブロック</td>
 <td>gen-check (informational)</td>
 </tr>
 <tr>
@@ -36070,28 +36196,8 @@ PR ごとに GitHub Actions (<code>.github/workflows/ci.yml</code>) で実行さ
 <td>gen-check (informational)</td>
 </tr>
 <tr>
-<td><code>gen_changelog.py</code></td>
-<td><code>docs/_meta/changelog.md</code> を merged PR 一覧から生成</td>
-<td>local-only</td>
-</tr>
-<tr>
 <td><code>gen_descriptions.py</code></td>
 <td>各ページの <code>description:</code> frontmatter を H1 + 冒頭段落から自動補完</td>
-<td>local-only</td>
-</tr>
-<tr>
-<td><code>gen_cdb_mermaid.py</code></td>
-<td><a href="../glossary/#term-config_db">CONFIG_DB</a> reference ページにミニ data-flow mermaid 埋め込み</td>
-<td>local-only</td>
-</tr>
-<tr>
-<td><code>gen_cli_mermaid.py</code></td>
-<td>CLI reference ページにミニ data-flow mermaid 埋め込み</td>
-<td>local-only</td>
-</tr>
-<tr>
-<td><code>gen_yang_mermaid.py</code></td>
-<td><a href="../glossary/#term-yang">YANG</a> reference ページにミニ data-flow mermaid 埋め込み</td>
 <td>local-only</td>
 </tr>
 <tr>
@@ -36101,7 +36207,12 @@ PR ごとに GitHub Actions (<code>.github/workflows/ci.yml</code>) で実行さ
 </tr>
 <tr>
 <td><code>gen_topics_admonition.py</code></td>
-<td><a href="../glossary/#term-hld">HLD</a> 派生ページ冒頭に Topics 章への誘導 admonition を挿入</td>
+<td>HLD 派生ページ冒頭に Topics 章への誘導 admonition を挿入</td>
+<td>local-only</td>
+</tr>
+<tr>
+<td><code>gen_runtime_trace.py</code></td>
+<td>runtime trace 系ドキュメントの自動更新</td>
 <td>local-only</td>
 </tr>
 </tbody>
@@ -36109,23 +36220,31 @@ PR ごとに GitHub Actions (<code>.github/workflows/ci.yml</code>) で実行さ
 <h2 id="ci">CI ワークフロー<a class="headerlink" href="#ci" title="Permanent link">&para;</a></h2>
 <p>CI の実体は <code>.github/workflows/ci.yml</code> にあり、以下ジョブに分かれる:</p>
 <ul>
-<li><code>build</code> — <code>mkdocs build --strict</code> で全ページのビルド検証</li>
-<li><code>frontmatter-lint</code> — <code>frontmatter_lint.py</code> を始め、上記 lint 群の大部分を実行</li>
-<li><code>quality-banner</code> — <code>gen_index_banner.py --check</code></li>
-<li><code>discrepancy-index</code> — <code>gen_discrepancy_index.py --check</code></li>
-<li><code>coverage-matrix</code> — <code>gen_coverage.py --check</code> + <code>check_stale_verified.py --check</code> + <code>gen_sitemap.py --check</code></li>
-<li><code>topics-back-ref</code> — <code>gen_cross_ref.py --check</code></li>
-<li><code>glossary-xref</code> — <code>gen_glossary_xref.py --check</code></li>
+<li><code>build</code> — <code>mkdocs build --strict</code> で全ページのビルド検証 + <code>check_built_html.py</code> を informational で実行</li>
+<li><code>typos</code> — crate-ci/typos で docs / meta / README / CONTRIBUTING を strict 検査 (<code>.typos.toml</code>)</li>
+<li><code>textlint</code> — npx textlint (<code>.textlintrc.json</code> + <code>meta/prh-sonic.yml</code>) で strict 検査</li>
+<li><code>link-check</code> — lychee で外部 URL を informational 検査 (<code>.lychee.toml</code>)</li>
+<li><code>lint</code> — frontmatter_lint と上記 lint 群、<code>run_all_checks.sh</code> での drift 検査、ruff を 1 job に集約</li>
 </ul>
-<p>deploy は <code>.github/workflows/deploy.yml</code> が main push 契機で <code>gh-pages</code> ブランチへ <code>mkdocs gh-deploy --force --clean</code> を実行する。</p>
+<p><code>lint</code> job は strict step (frontmatter_lint / invisible_chars / runbook_status / runbook_structure /
+pages_integrity / discrepancy_related / link_density --strict-split-child / mermaid_syntax /
+partial_boundary --strict-phase-table / citation_quality --strict / broken_links --strict /
+heading_hierarchy / image_alt / enrich_chapter_index_related --check / ruff) と、
+<code>run_all_checks.sh</code> (上表 gen-check strict の大半 + <code>gen_snapshot.py</code> / <code>gen_chapter_progress.py</code>) と、
+informational step (<code>gen_next_reads</code> / <code>verification_self_consistency</code> / <code>monitor_consistency</code> /
+<code>evolved_6c</code> / <code>ni_workaround_depth</code> / <code>partial_boundary</code> default / <code>link_density</code> / <code>code_lang</code> /
+<code>stale_verified</code> / <code>troubleshoot_section</code> / <code>gen_sitemap</code>) を順に流す。</p>
+<p>deploy は <code>.github/workflows/deploy.yml</code> が main push 契機で <code>gh-pages</code> ブランチへ
+<code>mkdocs gh-deploy --force --clean</code> を実行する。</p>
 <h2 id="_1">運用メモ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>strict lint を新規追加するときは</strong>、先に <code>informational</code> で 1 リリース走らせ、違反 0 を確認してから <code>--check</code> 失敗で exit 1 に昇格させる。違反 0 のうちに strict 化しないと既存ページが大量に refused されて運用が止まる</li>
-<li><strong>gen-check</strong> が drift で落ちたときは、ローカルで対応する <code>gen_*.py</code> を <code>--check</code> 無しで再実行 → 出力ファイルを commit に含めて push し直すのが手順</li>
-<li><code>check_sources_freshness.py</code> / <code>gen_changelog.py</code> 等の <strong>local-only</strong> スクリプトは <code>.cache/</code> や <code>gh</code> 認証に依存するため CI からは除外している。定期メンテのときに手動で回す</li>
+<li><strong>gen-check</strong> が drift で落ちたときは、ローカルで対応する <code>gen_*.py</code> を <code>--check</code> 無しで再実行 (もしくは <code>bash meta/scripts/run_all_generators.sh</code>) → 出力ファイルを commit に含めて push し直すのが手順</li>
+<li><code>check_sources_freshness.py</code> / <code>gen_descriptions.py</code> / <code>gen_ref_triangle.py</code> 等の <strong>local-only</strong> スクリプトは <code>.cache/</code> や <code>gh</code> 認証や手元判断に依存するため CI からは除外している。定期メンテのときに手動で回す</li>
+<li><code>bash meta/scripts/run_all_checks.sh</code> を手元で 1 回流せば lint job の strict drift 検査群と同等の結果が得られる</li>
 <li>すべての lint は <code>python3 meta/scripts/&lt;name&gt;.py --help</code> で詳細オプションを確認できる</li>
 </ul>
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: f4ecfec41d28 -->
 
 
 

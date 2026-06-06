@@ -36374,7 +36374,7 @@
 <li><a href="../../management/sonic-cli-auto-generation-tool/">SONiC CLI 自動生成ツール（YANG → click plugin 自動生成）</a> — [code-verified] SONiC CLI 自動生成ツール — SONiC Application Extension (SAE) として 3rd party 機能を 追加 dock…</li>
 <li><a href="../../management/gnmi-streaming-telemetry-pitfalls/">gNMI ストリーミングテレメトリの落とし穴</a> — [issue-confirmed] dial-in ストリーミングテレメトリで発生する OOM・メモリリーク・RESOURCE_EXHAUSTED エラーの原因と対策。</li>
 <li><a href="../../management/gnmi-translib-write-enable/">gNMI SET / Translib 書き込み有効化</a> — [code-verified] gNMI SET リクエストが失敗する場合の原因と、Translib 書き込みを有効化してビルドする方法を説明する。</li>
-<li><a href="../../management/snmp-interface-scope/">SNMP エージェントがサポートするインターフェーススコープ</a> — [issue-confirmed] sonic-snmpagent の RFC1213-MIB ifTable がサポートするインターフェース種別と、管理インターフェース（eth0）が含まれない…</li>
+<li><a href="../../management/snmp-interface-scope/">SNMP エージェントがサポートするインターフェーススコープ</a> — [code-verified] sonic-snmpagent の RFC1213-MIB ifTable が列挙するインターフェース種別（フロントパネル / LAG / 管理 / VLAN…</li>
 <li><strong>プラットフォーム</strong> (<code>platform/</code>)</li>
 <li><a href="../../platform/">プラットフォーム</a> — [meta] プラットフォーム — SAI、PMON、センサー、トランシーバ、プラットフォーム API、シャーシ機能を扱う章。</li>
 <li><a href="../../platform/dump-on-sai-failure/">SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）</a> — [discrepancy-found] SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP） — SAI 呼び出し…</li>
@@ -36395,7 +36395,7 @@
 <li><a href="../../platform/fec-flr-support-in-sonic-limitations/">FEC FLR 制限事項と HLD との乖離（CLI 未取り込み / ハードコード値）</a> — [discrepancy-found] FEC FLR の制限事項。SAI counter 未サポート interface、interleaving factor X の固定テーブル前提、線形回帰の…</li>
 <li><a href="../../platform/media-based-port-settings-in-sonic/">Media-based Port Settings（media_settings.json による SerDes プロファイル）</a> — [code-verified] Media-based Port Settings（media_settings.json による SerDes プロファイル） — vendor / med…</li>
 <li><a href="../../platform/recirculation-port-support-on-voq-chassis/">VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）</a> — [code-verified] VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール） — VOQ ベースのシャシでは 入口 chip（ing…</li>
-<li><a href="../../platform/sonic-port-fec-ber/">Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張）</a> — [code-verified] Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張） — ポートの FEC（Forward Error C…</li>
+<li><a href="../../platform/sonic-port-fec-ber/">Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張）</a> — [code-verified] ポートの FEC (Forward Error Correction) 統計から Pre / Post FEC BER を算出し、show interface…</li>
 <li><a href="../../platform/sonic-port-naming-convention-change/">SONiC ポート命名規則の変更案（et[sX]pY[abcd]）</a> — [discrepancy-found] SONiC ポート命名規則の変更案（et[sX]pY[abcd]） — SONiC は伝統的に Ethernet0 / Ethernet4 / ... のよう…</li>
 <li><a href="../../platform/support-bmc-flows-in-sonic/">BMC / Redfish 統合（platform_common RedfishClient + show platform bmc）</a> — [code-verified] BMC / Redfish 統合 — BMC (Board Management Controller) は switch メインボード上の out-of-b…</li>
 <li><a href="../../platform/global-platform-specific-psuutil-class-instance/">新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）</a> — [code-verified] 新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層） — 旧設計では p…</li>
@@ -36500,7 +36500,7 @@
 <li><a href="../../reference/cli/config-pfcwd/">config pfcwd サブコマンド</a> — [code-verified] config pfcwd サブコマンド — config pfcwd は PFC watchdog の設定操作を pfcwd 実行ファイルへ委譲するラッパー。…</li>
 <li><a href="../../reference/cli/config-platform-firmware/">config platform firmware サブコマンド</a> — [code-verified] config platform firmware サブコマンド — config platform firmware は platform firmware…</li>
 <li><a href="../../reference/cli/config-qos/">config qos サブコマンド</a> — [code-verified] config qos サブコマンド — config qos は QoS と buffer 関連テンプレートを再生成して CONFIG_DB に反映する CL…</li>
-<li><a href="../../reference/cli/config-ssh/">config ssh サブコマンド</a> — [code-verified] config ssh サブコマンド — config ssh は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を CONFIG_…</li>
+<li><a href="../../reference/cli/config-ssh/">config ssh サブコマンド</a> — [code-verified] config ssh は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を CONFIG_DB の SSH_SERVER|POLI…</li>
 <li><a href="../../reference/cli/config-vnet/">config vnet サブコマンド</a> — [code-verified] config vnet サブコマンド — config vnet は overlay VNET と VNET route を CONFIG_DB に作成・削除…</li>
 <li><a href="../../reference/cli/config-warm_restart/">config warm_restart サブコマンド</a> — [code-verified] config warm_restart サブコマンド — config warm_restart は warm restart の enable 状態と da…</li>
 <li><a href="../../reference/cli/show-aaa/">show aaa サブコマンド</a> — [code-verified] show aaa サブコマンド — show aaa は CONFIG_DB の AAA テーブルを読み、authentication / authoriza…</li>
@@ -36913,7 +36913,7 @@
 </ul>
 </li>
 <li><a href="../../reference/style-guide/">スタイルガイド</a> — [meta] ドキュメント執筆ルール</li>
-<li><a href="../../reference/lints/">Lint 一覧と CI 状態</a> — [meta] lint 一覧と CI 状態</li>
+<li><a href="../../reference/lints/">Lint 一覧と CI 状態</a> — [meta] meta/scripts/ 配下の lint / 生成スクリプトの目的と CI ゲート状態を一覧化する。</li>
 <li><a href="../../reference/glossary/">用語集 (Glossary)</a> — [meta] 用語集 (Glossary) — SONiC NOS で頻出する固有用語・略語・コンポーネント名・データベース名・デーモン名を、アルファベット順に整理した日本…</li>
 <li><a href="../../reference/sai-attributes/">頻出 SAI 属性早見表</a> — [code-verified] 頻出 SAI 属性早見表 — SONiC syncd が SAI (Switch Abstraction Interface) 経由で ASIC に投入する代…</li>
 <li><strong>裏取り</strong> (<code>reference/verification/</code>)<ul>

@@ -36402,6 +36402,7 @@ reasoning: 3 RPC が image_service の 3 DBUS endpoint に 1:1 対応する根�
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p>OS API 専用の <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマは存在しない。gNOI OS サーバは既存の gNMI/telemetry サーバ（TCP 9339）にマウントされるため、<code>TELEMETRY</code> / <code>GNMI</code> テーブルの認証・認可（cert / RBAC）設定をそのまま再利用する<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p><code>gnoi_client</code> は OS / System 等のサブコマンドではなく <code>-module</code> / <code>-rpc</code> フラグでディスパッチする（<code>gnoi_client.go</code> L37-80）。引数は <code>-jsonin</code> に JSON で渡し、Install では別途 <code>-input_file</code> で OS イメージを指定する（<code>config/flag.go</code> L7-17、<code>os/os.go</code> L60-73）<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -36411,16 +36412,20 @@ reasoning: 3 RPC が image_service の 3 DBUS endpoint に 1:1 対応する根�
 </thead>
 <tbody>
 <tr>
-<td><code>gnoi_client os install ...</code></td>
-<td>Install RPC（JSON / proto 双方サポート予定）<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><code>gnoi_client -module OS -rpc Install -jsonin '{...}' -input_file &lt;image&gt;</code></td>
+<td>Install RPC。<code>transferRequest</code> を JSON、bytes を <code>-input_file</code> で送る<sup id="fnref4:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
 </tr>
 <tr>
-<td><code>gnoi_client os activate ...</code></td>
-<td>Activate RPC</td>
+<td><code>gnoi_client -module OS -rpc Activate -jsonin '{...}'</code></td>
+<td>Activate RPC。<code>ActivateRequest</code> を JSON で渡す<sup id="fnref5:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
 </tr>
 <tr>
-<td><code>gnoi_client os verify</code></td>
-<td>Verify RPC</td>
+<td><code>gnoi_client -module OS -rpc Verify</code></td>
+<td>Verify RPC。引数なし<sup id="fnref6:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+<tr>
+<td><code>gnoi_client -module System -rpc Reboot -jsonin '{...}'</code></td>
+<td>gNOI System Reboot。OS API には含まれない別 RPC<sup id="fnref7:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
 </tr>
 <tr>
 <td><code>sonic-installer ...</code></td>
@@ -36431,18 +36436,23 @@ reasoning: 3 RPC が image_service の 3 DBUS endpoint に 1:1 対応する根�
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p>OS 操作そのものを表現する <a href="../../reference/glossary/#term-yang">YANG</a> モジュールは HLD に存在せず、Install / Activate / Verify は OpenConfig 側の <code>system</code> / <code>components</code> モデル流用想定として HLD に記載されている<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本ページが related に挙げる <code>sonic-gnmi</code> / <code>sonic-telemetry</code> は、上記の再利用される <code>GNMI</code> / <code>TELEMETRY</code> CONFIG_DB テーブルを定義する SONiC YANG モジュール（<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-gnmi.yang</code>、<code>sonic-telemetry.yang</code>）である。</p>
 <h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Install: tar.gz バイナリを stream 転送</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>gnoi_client<span class="w"> </span>os<span class="w"> </span>install<span class="w"> </span>--version<span class="w"> </span><span class="m">20240801</span>.45<span class="w"> </span>--image<span class="w"> </span>./sonic.bin
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Activate: 次回起動 image としてセット（reboot は別 RPC）</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>gnoi_client<span class="w"> </span>os<span class="w"> </span>activate<span class="w"> </span>--version<span class="w"> </span><span class="m">20240801</span>.45<span class="w"> </span>--no_reboot
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># 反映のため reboot</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>gnoi_client<span class="w"> </span>system<span class="w"> </span>reboot
+<p>実行例（フラグ名・引数形式は <code>sonic-gnmi/gnoi_client</code> master 実装に準拠<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup>）:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Install: TransferRequest を JSON、image bytes を -input_file で渡す stream</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>gnoi_client<span class="w"> </span>-module<span class="w"> </span>OS<span class="w"> </span>-rpc<span class="w"> </span>Install<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span>-jsonin<span class="w"> </span><span class="s1">&#39;{&quot;transferRequest&quot;:{&quot;version&quot;:&quot;20240801.45&quot;}}&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>-input_file<span class="w"> </span>./sonic.bin
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># Activate: 次回起動 image としてセット（reboot は別 RPC）</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>gnoi_client<span class="w"> </span>-module<span class="w"> </span>OS<span class="w"> </span>-rpc<span class="w"> </span>Activate<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span>-jsonin<span class="w"> </span><span class="s1">&#39;{&quot;version&quot;:&quot;20240801.45&quot;,&quot;no_reboot&quot;:true}&#39;</span>
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># 確認</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>gnoi_client<span class="w"> </span>os<span class="w"> </span>verify
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># 反映のため reboot（gNOI System Reboot）</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>gnoi_client<span class="w"> </span>-module<span class="w"> </span>System<span class="w"> </span>-rpc<span class="w"> </span>Reboot<span class="w"> </span>-jsonin<span class="w"> </span><span class="s1">&#39;{&quot;method&quot;:&quot;COLD&quot;,&quot;message&quot;:&quot;post-activate&quot;}&#39;</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="c1"># 確認（引数なし）</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>gnoi_client<span class="w"> </span>-module<span class="w"> </span>OS<span class="w"> </span>-rpc<span class="w"> </span>Verify
 </span></code></pre></div>
+<p><code>-target</code> / <code>-target_name</code> / TLS 関連フラグも実行時に必要だが省略している（<code>config/flag.go</code> L7-17）<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>同時 Install は不可</strong>。複数クライアントが同時に Install を投げると後発が拒否される<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -36505,10 +36515,13 @@ reasoning: 3 RPC が image_service の 3 DBUS endpoint に 1:1 対応する根�
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/mgmt/gnmi/gnoi_os_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/mgmt/gnmi/gnoi_os_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p><code>sonic-net/sonic-host-services</code> <code>host_modules/image_service.py</code> @ <code>master</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-gnmi</code> <code>gnoi_client/gnoi_client.go</code> L37-80（<code>-module</code> / <code>-rpc</code> 分岐）/ <code>gnoi_client/config/flag.go</code> L7-17（<code>-jsonin</code> / <code>-input_file</code> 等のフラグ定義）/ <code>gnoi_client/os/os.go</code> L20-72（OS Verify / Activate / Install 引数読み取り）@ <code>master</code>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

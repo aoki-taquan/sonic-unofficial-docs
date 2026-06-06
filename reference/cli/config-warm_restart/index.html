@@ -36186,12 +36186,17 @@
 <h3 id="enable-disable">enable / disable<a class="headerlink" href="#enable-disable" title="Permanent link">&para;</a></h3>
 <p><code>&lt;module&gt;</code> を省略すると <code>system</code>。<code>module != system</code> の場合は <a href="../../glossary/#term-config_db">CONFIG_DB</a> <code>FEATURE</code> テーブルに存在する feature 名だけを受け付ける。namespace 指定が無い場合、single-<a href="../../glossary/#term-asic">ASIC</a> では default namespace、multi-<a href="../../glossary/#term-asic">ASIC</a> では default + <a href="../../glossary/#term-asic">ASIC</a> namespace 群に反映する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h3 id="timer">timer 系<a class="headerlink" href="#timer" title="Permanent link">&para;</a></h3>
+<p>範囲チェックは <code>config/main.py</code> 冒頭の <code>ADHOC_VALIDATION = True</code> というモジュール定数でゲートされる。これは master のソースコード上で <strong>常に <code>True</code> 固定</strong>（CLI option や環境変数で切り替える経路は無い）であり、コミュニティ版 <a href="../../glossary/#term-sonic">SONiC</a> を <code>sonic-utilities</code> の標準ビルドで使う限り範囲外値は CLI 段で <code>ctx.fail</code> され CONFIG_DB には書かれない<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <ul>
-<li><code>neighsyncd_timer</code> は <code>WARM_RESTART|swss</code> の <code>neighsyncd_timer</code> を更新する。adhoc validation が有効な場合は 1-9998 秒。</li>
-<li><code>bgp_timer</code> は <code>WARM_RESTART|bgp</code> の <code>bgp_timer</code> を更新する。adhoc validation が有効な場合は 1-3599 秒。</li>
-<li><code>teamsyncd_timer</code> は <code>WARM_RESTART|teamd</code> の <code>teamsyncd_timer</code> を更新する。adhoc validation が有効な場合は 1-3599 秒。</li>
-<li><code>bgp_eoiu</code> は <code>WARM_RESTART|bgp</code> の <code>bgp_eoiu</code> を <code>true</code> / <code>false</code> で更新する。</li>
+<li><code>neighsyncd_timer</code> は <code>WARM_RESTART|swss</code> の <code>neighsyncd_timer</code> を更新する。許容範囲は 1-9998 秒（<code>range(1, 9999)</code>）。範囲外で <code>neighsyncd warm restart timer must be in range 1-9999</code> を返し abort する<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</li>
+<li><code>bgp_timer</code> は <code>WARM_RESTART|bgp</code> の <code>bgp_timer</code> を更新する。許容範囲は 1-3599 秒（<code>range(1, 3600)</code>）。範囲外で <code>bgp warm restart timer must be in range 1-3600</code> を返し abort する<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</li>
+<li><code>teamsyncd_timer</code> は <code>WARM_RESTART|teamd</code> の <code>teamsyncd_timer</code> を更新する。許容範囲は 1-3599 秒（<code>range(1, 3600)</code>）。範囲外で <code>teamsyncd warm restart timer must be in range 1-3600</code> を返し abort する<sup id="fnref4:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</li>
+<li><code>bgp_eoiu</code> は <code>WARM_RESTART|bgp</code> の <code>bgp_eoiu</code> を <code>true</code> / <code>false</code> で更新する。Click の <code>Choice(["true", "false"])</code> で値を制限するため、それ以外を渡すと CLI usage error になる<sup id="fnref5:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">エラーメッセージと実際の許容範囲</p>
+<p>エラーメッセージは <code>1-9999</code> / <code>1-3600</code> と表示されるが、内部判定は <code>range(1, 9999)</code> / <code>range(1, 3600)</code> で <strong>upper bound は exclusive</strong>。したがって 9999 / 3600 自体は <strong>拒否される</strong>。実運用での上限はそれぞれ 9998 / 3599 秒<sup id="fnref6:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
+</div>
 <!-- ref-triangle:start -->
 
 <h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -36247,7 +36252,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 8df9850464d2 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->
 
 <div class="footnote">
 <hr />
@@ -36257,6 +36262,9 @@
 </li>
 <li id="fn:2">
 <p><code>enable</code> / <code>disable</code> は <code>WARM_RESTART_ENABLE_TABLE|&lt;module&gt;</code> の <code>enable</code> フィールドを書き込む。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3973">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3973</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>ADHOC_VALIDATION = True</code> のモジュール定数と各 timer サブコマンドの <code>range(1, 9999)</code> / <code>range(1, 3600)</code> チェック、および <code>bgp_eoiu</code> の <code>click.Choice(["true", "false"])</code>。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L132">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L132</a> / <a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L4015-L4096">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L4015-L4096</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

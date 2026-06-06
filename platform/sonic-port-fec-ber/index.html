@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張） — ポートの FEC（Forward Error Correction）統計 から Pre / Post FEC BER を計算し、show interface counter fec-stat に列を 2 つ追…">
+        <meta name="description" content="ポートの FEC (Forward Error Correction) 統計から Pre / Post FEC BER を算出し、show interface counter fec-stat に 2 列追加するとともに COUNTER_DB RATES へ書き込んでテレメトリ公開する機能の解説。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張） — ポートの FEC（Forward Error Correction）統計 から Pre / Post FEC BER を計算し、show interface counter fec-stat に列を 2 つ追…" />
+<meta property="og:description" content="ポートの FEC (Forward Error Correction) 統計から Pre / Post FEC BER を算出し、show interface counter fec-stat に 2 列追加するとともに COUNTER_DB RATES へ書き込んでテレメトリ公開する機能の解説。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/platform/sonic-port-fec-ber.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sonic-port-fec-ber/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張） — ポートの FEC（Forward Error Correction）統計 から Pre / Post FEC BER を計算し、show interface counter fec-stat に列を 2 つ追…" />
+<meta property="twitter:description" content="ポートの FEC (Forward Error Correction) 統計から Pre / Post FEC BER を算出し、show interface counter fec-stat に 2 列追加するとともに COUNTER_DB RATES へ書き込んでテレメトリ公開する機能の解説。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/platform/sonic-port-fec-ber.png" />
 </head>
   
@@ -17816,6 +17816,17 @@
   
     <nav class="md-nav" aria-label="何をどう計算するか">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#serdes-lookup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        serdes lookup テーブル
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#sai" class="md-nav__link">
@@ -35939,6 +35950,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#serdes-lookup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        serdes lookup テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#sai" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36054,7 +36076,7 @@
 
 <div class="admonition info">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-swss/orchagent/port_rates.lua</code> に <code>compute_ber()</code> と <code>SAI_PORT_STAT_IF_IN_FEC_CORRECTED_BITS</code> / <code>SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES</code> の HGET、Pre/Post FEC BER 計算（<code>rs_average_frame_ber</code> 使用）、lanes / serdes_speed lookup を確認。<code>sonic-utilities/scripts/portstat</code> に <code>-f</code>/<code>--fec-stats</code>、<code>-fh</code>/<code>--fec_hist</code> flag を実装済み（verified at: 2026-05-09）。</p>
+<p><code>sonic-swss/orchagent/port_rates.lua</code> に <code>compute_ber()</code><sup id="fnref4:src1"><a class="footnote-ref" href="#fn:src1">2</a></sup> と <code>SAI_PORT_STAT_IF_IN_FEC_CORRECTED_BITS</code> / <code>SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES</code> の HGET、Pre/Post FEC BER 計算 (<code>rs_average_frame_ber = 1e-8</code>)、<code>calculate_lane_and_serdes_speed()</code> による serdes lookup (1G/10G/25G/50G/100G/200G の 6 段階) を確認。さらに <code>find_maxT()</code> で FEC codeword エラーの最大 bin (<code>FEC_MAX_T</code>) も <code>RATES</code> に書き込む。<code>sonic-utilities/scripts/portstat</code> に <code>-f</code>/<code>--fec-stats</code>、<code>-fh</code>/<code>--fec_hist</code> flag を実装済み (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="port-fec-berprepost-fec-ber-show-fec-stat">Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張）<a class="headerlink" href="#port-fec-berprepost-fec-ber-show-fec-stat" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜこの機能が必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36071,17 +36093,55 @@
     PR --&gt;|read| ADB[(APPL_DB PORT_TABLE\nspeed/lanes)]
     PR --&gt;|write| RT[(COUNTER_DB RATES\nFEC_PRE_BER / FEC_POST_BER)]
     RT --&gt; CLI[portstat -f]</code></pre>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>port_data_rate = port_speed / lanes_count
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>serdes = lookup(port_data_rate)        # 1G→1.25e9, 25G→25.78125e9, 100G→106.25e9 ...
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>interval_s = 1.0
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>lane_speed = port_speed / lanes_count   # Mbps
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>serdes = lookup(lane_speed)             # bits/s, 6 段階 lookup (下表)
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>delta_ms = ARGV[3]                      # ポーリング間隔 (ms, FlexCounter から渡される)
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>pre_ber  = ΔSAI_PORT_STAT_IF_IN_FEC_CORRECTED_BITS
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>           / (serdes * lanes_count * interval_s)
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>post_ber = ΔSAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>           * rs_average_frame_ber (1e-8)
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>           / (serdes * lanes_count * interval_s)
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>serdes_rate_total = lanes_count * serdes * delta_ms / 1000
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>pre_ber  = ΔSAI_PORT_STAT_IF_IN_FEC_CORRECTED_BITS
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>           / serdes_rate_total
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>post_ber = ΔSAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>           * rs_average_frame_ber (1e-8)
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>           / serdes_rate_total
 </span></code></pre></div>
-<p>Post BER は「フレーム内全 bit 誤り」最悪ケース + 1e-8 の統計係数で近似<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>Post BER は「フレーム内全 bit 誤り」最悪ケース + 1e-8 の統計係数で近似<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。なお <code>serdes_rate_total</code> は lane 当たり serdes 速度 × lane 数 × 経過時間 (ms→s 換算) で得られる総 bit 数のため、ポーリング間隔は FlexCounter 側設定 (一般に 1000 ms) に追従する<sup id="fnref:src1"><a class="footnote-ref" href="#fn:src1">2</a></sup>。</p>
+<h3 id="serdes-lookup">serdes lookup テーブル<sup id="fnref2:src1"><a class="footnote-ref" href="#fn:src1">2</a></sup><a class="headerlink" href="#serdes-lookup" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>lane speed</th>
+<th>serdes (bps)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1G   (1000 Mbps)</td>
+<td>1.25e9</td>
+</tr>
+<tr>
+<td>10G  (10000 Mbps)</td>
+<td>10.3125e9</td>
+</tr>
+<tr>
+<td>25G  (25000 Mbps)</td>
+<td>25.78125e9</td>
+</tr>
+<tr>
+<td>50G  (50000 Mbps)</td>
+<td>53.125e9</td>
+</tr>
+<tr>
+<td>100G (100000 Mbps)</td>
+<td>106.25e9</td>
+</tr>
+<tr>
+<td>200G (200000 Mbps)</td>
+<td>212.5e9</td>
+</tr>
+</tbody>
+</table>
+<p>lane speed が <code>speed / lanes_count</code> で割り切れない場合、または上記いずれにも合致しない場合は <code>serdes = 0</code> となり、<code>compute_ber()</code> は当該ポートの FEC BER 更新をスキップする<sup id="fnref3:src1"><a class="footnote-ref" href="#fn:src1">2</a></sup>。</p>
 <h3 id="sai">関連 SAI カウンタ<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -36100,7 +36160,7 @@
 <tr>
 <td>COUNTER_DB</td>
 <td>RATES</td>
-<td><code>*_last</code>、<code>FEC_PRE_BER</code>、<code>FEC_POST_BER</code>（新規）</td>
+<td><code>SAI_PORT_STAT_IF_FEC_CORRECTED_BITS_last</code> / <code>SAI_PORT_STAT_IF_FEC_NOT_CORRECTABLE_FARMES_last</code> (原文ママ、typo あり)、<code>FEC_PRE_BER</code> / <code>FEC_POST_BER</code> / <code>FEC_PRE_BER_MAX</code> / <code>FEC_MAX_T</code> (いずれも新規)<sup id="fnref7:src1"><a class="footnote-ref" href="#fn:src1">2</a></sup></td>
 </tr>
 <tr>
 <td><a href="../../reference/glossary/#term-appl_db">APPL_DB</a></td>
@@ -36119,9 +36179,10 @@
 </span></code></pre></div>
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>SAI 側で対応カウンタが未実装の platform では値が空（<a href="../../reference/glossary/#term-hld">HLD</a> で「return not support」と明記）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>SAI 側で対応カウンタが未実装の platform では値が空 (<a href="../../reference/glossary/#term-hld">HLD</a> で「return not support」と明記)<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>Post FEC BER は worst-case 推定。<strong>絶対値比較ではなく時系列トレンド</strong> に使う</li>
-<li>serdes lookup は限定セット（1G/10G/25G/50G/100G）。範囲外 data rate は <code>serdes=0</code> で計算が壊れる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>serdes lookup は <strong>1G / 10G / 25G / 50G / 100G / 200G の 6 段階のみ</strong><sup id="fnref5:src1"><a class="footnote-ref" href="#fn:src1">2</a></sup>。<code>speed / lanes_count</code> がこのいずれにも一致しない (例: 40G の 10G×4 以外の特殊な lane 構成、400G 1lane=400Gbps) と <code>serdes = 0</code> となり、当該ポートの <code>FEC_PRE_BER</code> / <code>FEC_POST_BER</code> は更新されない (<code>compute_ber()</code> は早期 return)。なお 400G/800G ポートは通常 200G×2 / 100G×8 / 200G×4 のように複数 lane で構成されるため上表でカバーされる</li>
+<li><code>speed</code> が <code>lanes_count</code> で割り切れない (<code>math.fmod(speed, count) ~= 0</code>) 場合も同様に <code>serdes = 0</code> に倒れる<sup id="fnref6:src1"><a class="footnote-ref" href="#fn:src1">2</a></sup></li>
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36153,7 +36214,10 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/port_fec-ber/port_fec_ber.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/port_fec-ber/port_fec_ber.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:src1">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/port_rates.lua</code> の <code>calculate_lane_and_serdes_speed()</code> (lane→serdes lookup、99〜113 行)、<code>compute_ber()</code> (213〜276 行)、<code>find_maxT()</code> (197〜210 行)&#160;<a class="footnote-backref" href="#fnref:src1" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:src1" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:src1" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:src1" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:src1" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:src1" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:src1" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

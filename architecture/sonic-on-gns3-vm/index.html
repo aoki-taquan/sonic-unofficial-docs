@@ -7386,10 +7386,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#gns3_1" class="md-nav__link">
+  <a href="#sonic-gns3ash-gns3a" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定例（GNS3 への登録の最小コマンド相当）
+        設定例: sonic-gns3a.sh が生成する .gns3a の主要キー
       
     </span>
   </a>
@@ -36142,10 +36142,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#gns3_1" class="md-nav__link">
+  <a href="#sonic-gns3ash-gns3a" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定例（GNS3 への登録の最小コマンド相当）
+        設定例: sonic-gns3a.sh が生成する .gns3a の主要キー
       
     </span>
   </a>
@@ -36299,9 +36299,9 @@
 <li><strong>Auto Start Console</strong>: ON</li>
 <li>ディスク image として展開済みの <code>sonic-vs.img</code> を指定</li>
 </ol>
-<p>これらの値は HLD で「推奨」として明示されている<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>これらの値は HLD で「推奨」として明示されている<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。なお方法 B の <code>sonic-gns3a.sh</code> が生成する <code>.gns3a</code> のデフォルト RAM は 2048 MB であり、HLD 推奨値（8192 MB）とは一致しない（後述「設定例」参照）<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h4 id="b-sonic-gns3ash-gns3a">方法 B: <code>sonic-gns3a.sh</code> で <code>.gns3a</code> を生成<a class="headerlink" href="#b-sonic-gns3ash-gns3a" title="Permanent link">&para;</a></h4>
-<p><code>sonic-buildimage</code> の <code>platform/vs/sonic-gns3a.sh</code> は <code>sonic-vs.img</code> を入力に GNS3 アプライアンス定義 (<code>.gns3a</code>) を吐く。GNS3 GUI の <code>File → Import appliance</code> で取り込むだけで同等のテンプレートが登録される<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
+<p><code>sonic-buildimage</code> の <code>platform/vs/sonic-gns3a.sh</code> は <code>sonic-vs.img</code> を入力に GNS3 アプライアンス定義 (<code>.gns3a</code>) を吐く。GNS3 GUI の <code>File → Import appliance</code> で取り込むだけで同等のテンプレートが登録される<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>./sonic-gns3a.sh<span class="w"> </span>-r<span class="w"> </span><span class="m">1</span>.1<span class="w"> </span>-b<span class="w"> </span>&lt;store_path&gt;/sonic-vs.img
 </span></code></pre></div>
 <p><code>-r</code> はアプライアンスのリビジョン、<code>-b</code> は <code>sonic-vs.img</code> の絶対パス。生成された <code>.gns3a</code> をインポートすれば手順 1〜4 をスキップできる。</p>
@@ -36359,14 +36359,46 @@ reasoning: 推奨リソースとデフォルト認証情報の根拠。
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
 <p>該当なし。本ページは <strong>動作環境のセットアップ手順</strong> であり、SONiC 内部の設定スキーマは扱わない。</p>
-<h3 id="gns3_1">設定例（GNS3 への登録の最小コマンド相当）<a class="headerlink" href="#gns3_1" title="Permanent link">&para;</a></h3>
-<p>GNS3 GUI 操作の代替として CLI で扱う場合、<code>gns3server</code> の REST API でテンプレートを作る方法もあるが、HLD では明示されていない<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="sonic-gns3ash-gns3a">設定例: <code>sonic-gns3a.sh</code> が生成する <code>.gns3a</code> の主要キー<a class="headerlink" href="#sonic-gns3ash-gns3a" title="Permanent link">&para;</a></h3>
+<p>方法 B で <code>./sonic-gns3a.sh -r 1.1 -b sonic-vs.img</code> を実行すると、<code>SONiC-1.1.gns3a</code> という名前の JSON が出力される。GNS3 GUI の <code>File → Import appliance</code> で取り込むのに必要な核となるキーは以下である<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SONiC&quot;</span><span class="p">,</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;category&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;router&quot;</span><span class="p">,</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;registry_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">&quot;first_port_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;eth0&quot;</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">&quot;qemu&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="nt">&quot;adapter_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;e1000&quot;</span><span class="p">,</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="nt">&quot;adapters&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span><span class="nt">&quot;ram&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2048</span><span class="p">,</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">        </span><span class="nt">&quot;hda_disk_interface&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;virtio&quot;</span><span class="p">,</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">        </span><span class="nt">&quot;arch&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;x86_64&quot;</span><span class="p">,</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">        </span><span class="nt">&quot;console_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;telnet&quot;</span><span class="p">,</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">        </span><span class="nt">&quot;boot_priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;d&quot;</span><span class="p">,</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">        </span><span class="nt">&quot;kvm&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;require&quot;</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">    </span><span class="nt">&quot;images&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">        </span><span class="p">{</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">            </span><span class="nt">&quot;filename&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sonic-vs.img&quot;</span><span class="p">,</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.1&quot;</span><span class="p">,</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">            </span><span class="nt">&quot;md5sum&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;md5sum of sonic-vs.img&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">            </span><span class="nt">&quot;filesize&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;bytes&gt;&quot;</span>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="w">    </span><span class="p">]</span>
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>注意点:</p>
+<ul>
+<li><strong><code>adapters: 10</code></strong>: 1 ノードあたり 10 個の e1000 NIC が割り当てられる。トポロジで使わない NIC は GNS3 GUI 側で未接続のまま残しておけば良い。</li>
+<li><strong><code>ram: 2048</code></strong>: スクリプトのデフォルト RAM は 2048 MB であり、方法 A の HLD 推奨値 8192 MB とは一致しない。多機能トポロジ（<a href="../../reference/glossary/#term-bgp">BGP</a> / <a href="../../reference/glossary/#term-evpn">EVPN</a> / 全 SONiC コンテナ起動）では 2 GB だと OOM になりやすいため、インポート後に GNS3 GUI から RAM を 8192 MB に引き上げるか、<code>.gns3a</code> の <code>ram</code> フィールドを編集してから取り込むのが安全である<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
+<li><strong><code>kvm: "require"</code></strong>: ホストで KVM が有効でないとインポート後の起動に失敗する。GNS3 VM そのものをネスト仮想化下で動かす場合は ホスト hypervisor 側で nested virtualization を有効化しておく必要がある。</li>
+</ul>
+<p>GNS3 GUI 操作の代替として <code>gns3server</code> の REST API (<code>POST /v2/templates</code>) でテンプレートを作る方法もあるが、SONiC 公式 HLD では言及されていないため、本ガイドでも標準手順としては扱わない<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Azure Pipeline URL の有効性</strong>: pipeline ID（HLD 執筆時点 <code>142</code>）や URL は将来変わる可能性がある。直リンクではなく <code>https://sonic-build.azurewebsites.net/ui/sonic/pipelines</code> の一覧から辿る、もしくは <code>sonic-buildimage</code> から <code>make</code> で直接 <code>sonic-vs.img.gz</code> を build するのが URL 腐敗に強い。</li>
 <li><strong>VS ビルドの位置づけ</strong>: <code>sonic-vs.img</code> は機能テスト・トポロジ実験用。実 <a href="../../reference/glossary/#term-asic">ASIC</a> を持たないため、<a href="../../reference/glossary/#term-sai">SAI</a> コールはソフト VS で受ける。性能ベンチマーク用途には不向き。</li>
 <li><strong>GNS3 自体の制約</strong>: GUI 中心。CI 用途には KVM 直接または別の自動化基盤（<a href="https://github.com/sonic-net/sonic-mgmt"><code>sonic-mgmt</code> のテストベッド</a>）が一般的。</li>
-<li><strong>ホスト OS 依存</strong>: Windows ホスト、Linux ホスト（GNS3 サーバモード）で手順が分かれる。本ドキュメントは Windows 中心の手順を示している<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>ホスト OS 依存</strong>: Windows ホスト、Linux ホスト（GNS3 サーバモード）で手順が分かれる。本ドキュメントは Windows 中心の手順を示している<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36383,16 +36415,17 @@ reasoning: 推奨リソースとデフォルト認証情報の根拠。
 <h3 id="gns3-vm-sonic">コマンド例: GNS3 VM 上の SONiC 動作確認<a class="headerlink" href="#gns3-vm-sonic" title="Permanent link">&para;</a></h3>
 <p>下記コマンドで関連する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># GNS3 上で起動した SONiC-VS の認識ポートと neighbor</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>neighbor
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># qemu / virtio NIC 接続状態</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>ip<span class="w"> </span>-br<span class="w"> </span>link<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># GNS3 上で起動した SONiC-VS の認識ポートと neighbor</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>neighbor
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># qemu / virtio NIC 接続状態</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>ip<span class="w"> </span>-br<span class="w"> </span>link<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span></code></pre></div>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-20):
 - sonic-buildimage/platform/vs/README.gns3.md (HOWTO Create a GNS3 Appliance File)
 - sonic-buildimage/platform/vs/sonic-gns3a.sh (HLD と同じ手順スクリプト)
+- sonic-buildimage/platform/vs/sonic-gns3a.sh:53-62 (qemu キー: adapter_type=e1000, adapters=10, ram=2048, kvm=require)
 - sonic-buildimage/rules/config:81 DEFAULT_PASSWORD = YourPaSsWoRd
 - sonic-buildimage/check_install.py:13 default password='YourPaSsWoRd'
 -->
@@ -36404,16 +36437,16 @@ reasoning: 推奨リソースとデフォルト認証情報の根拠。
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9fb3fca99a59 -->
+<!-- glossary-links-injected: 6d8bb7aa6d25 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/sonic-gns3/GNS3 VM for SONiC.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/sonic-gns3/GNS3 VM for SONiC.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>sonic-net/sonic-buildimage</code> <code>platform/vs/README.gns3.md</code> および <code>platform/vs/sonic-gns3a.sh</code>（<code>.gns3a</code> アプライアンスファイル生成スクリプト、<code>-r &lt;ReleaseNumber&gt; -b &lt;sonic-vs.img&gt;</code>）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-buildimage</code> <code>platform/vs/README.gns3.md</code> および <code>platform/vs/sonic-gns3a.sh</code>（<code>.gns3a</code> アプライアンスファイル生成スクリプト、<code>-r &lt;ReleaseNumber&gt; -b &lt;sonic-vs.img&gt;</code>）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
