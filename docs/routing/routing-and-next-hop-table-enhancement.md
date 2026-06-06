@@ -9,6 +9,12 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/ip/next_hop_group_hld.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+- repo: sonic-net/sonic-swss
+  path: orchagent/nhgorch.h
+- repo: sonic-net/sonic-swss
+  path: orchagent/routeorch.cpp
 related:
   config_db:
   - BGP_NEIGHBOR
@@ -40,7 +46,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
-    `sonic-swss/orchagent/nhgorch.h:117` で `NhgOrch`、`sonic-swss-common/common/schema.h:56` で `APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME`、`sonic-swss/orchagent/routeorch.cpp:771` で `ROUTE_TABLE.nexthop_group` パース、`routeorch.cpp:807-815` で `nexthop_group` と `ips/aliases` の排他検証を確認 (verified at: 2026-05-09)。
+    `sonic-swss-common/common/schema.h:55` で `APP_NEXTHOP_GROUP_TABLE_NAME = "NEXTHOP_GROUP_TABLE"`、`sonic-swss/orchagent/nhgorch.h:114-117` で「`NEXTHOP_GROUP_TABLE` updates をハンドルする」コメントと `NhgOrch` クラス、`sonic-swss/orchagent/routeorch.cpp:771` で `ROUTE_TABLE.nexthop_group` フィールドのパース、`routeorch.cpp:807-812` で `nexthop_group` と `ips/aliases` の排他検証を確認 (verified at: 2026-05-09)。なお HLD 表記 `NEXT_HOP_GROUP_TABLE` に対し実装の APP_DB テーブル名は `NEXTHOP_GROUP_TABLE` （アンダースコアなし）である点に注意[^2]。
 
 # NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離
 
@@ -175,6 +181,7 @@ show ip route summary
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ip/next_hop_group_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss-common` `common/schema.h:55` で `#define APP_NEXTHOP_GROUP_TABLE_NAME "NEXTHOP_GROUP_TABLE"`、`sonic-net/sonic-swss` `orchagent/nhgorch.h:114-117` で `NEXTHOP_GROUP_TABLE` ハンドラとしての `NhgOrch` 定義。
 
 <!-- topics-back-ref -->
 ## 関連 Topics
