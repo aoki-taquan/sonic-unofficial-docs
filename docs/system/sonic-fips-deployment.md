@@ -12,21 +12,11 @@ sources:
 related:
   config_db:
   - FIPS
-  - SYSLOG_SERVER
-  - SYSLOG_CONFIG
-  - SYSLOG_CONFIG_FEATURE
-  - PORT
-  - PORTCHANNEL
-  - BREAKOUT_CFG
   cli:
-  - show interfaces
-  - show ip
-  - config syslog
+  - sonic-installer get-fips
+  - sonic-installer set-fips
   yang:
   - sonic-fips
-  - sonic-system-defaults
-  - sonic-syslog
-  _no_related_cli: true
 ---
 
 !!! danger "裏取りステータス: Discrepancy-found（実装名と HLD 記載に差異あり）"
@@ -147,7 +137,7 @@ sonic-db-cli STATE_DB hgetall 'FIPS_STATS|state'
 FIPS モード有効状態と OpenSSL provider を確認する。
 
 ```bash
-show fips status
+sudo sonic-installer get-fips
 openssl list -providers
 cat /proc/sys/crypto/fips_enabled
 grep -i fips /var/log/syslog | tail
