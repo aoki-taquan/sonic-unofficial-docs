@@ -94,7 +94,7 @@ cold/warm/fast/soft reboot の違い、image install、config の保持境界を
 
 1. [Telemetry / SNMP / Observability](topics/09-telemetry-snmp/index.md) → [gNMI / OpenConfig](topics/10-gnmi-openconfig/index.md)
 2. [Reboot / Upgrade / Lifecycle](topics/11-reboot/index.md) → [運用入口](topics/01-overview/operations.md)
-3. [Runbooks (症状逆引き)](reference/runbooks/index.md) → [Runbooks 目次](reference/runbooks/index.md)
+3. [Runbooks (症状逆引き)](reference/runbooks/index.md) → [BGP session down](reference/runbooks/bgp-session-down.md)
 4. [Security / AAA](topics/15-security-aaa/index.md) → [Platform / Port / Optics](topics/14-platform-port-optics/index.md)
 5. [読み手別: 運用者ガイド](guides/operator.md)
 

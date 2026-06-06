@@ -1,11 +1,18 @@
 ---
 title: 発展トピック
-description: 発展トピック — PINS は data plane を P4Runtime で書く経路ですが、SDN コントローラから見ると 状態取得
-  / config push の管理面（gNMI / OpenConfig）と組で読む のが自然です。
+description: PINS の data plane (P4Runtime) と管理面 (gNMI / OpenConfig) を組で読み、HashOrch HLD 乖離 / WCMP scale / PacketIO scale / standard ACL との TCAM 共存といった発展論点を扱う。
 area: topics
 verification: meta
-last_verified: 2026-05-10
+last_verified: 2026-06-06
 sources: []
+keywords:
+- PINS
+- P4Runtime
+- gNMI
+- HashOrch
+- WCMP
+- PacketIO
+- 発展トピック
 related:
   cli:
   - show acl
@@ -13,14 +20,11 @@ related:
   config_db:
   - ACL_RULE
   - ACL_TABLE
-  - COPP_GROUP
   - COPP_TRAP
-  - CRM
-  - TELEMETRY
-  - GNMI
+  - P4RT_TABLE
+  - SWITCH_HASH
   yang:
   - sonic-copp
-  - sonic-crm
 ---
 
 # 発展トピック
@@ -46,7 +50,7 @@ SONiC の管理面は [YANG](../../reference/glossary.md#term-yang)（OpenConfig
 
 ## HashOrch HLD と実装の乖離
 
-[P4RT](../../reference/glossary.md#term-p4rt) App HLD では **HashOrch（[orchagent](../../reference/glossary.md#term-orchagent) 新規追加）** がハッシュ属性を扱う前提で書かれていますが、現行 master では独立コンポーネントとしては存在せず、**既存の `SwitchOrch`（`switch_helper.cpp` の `SWITCH_HASH_FIELD_*` マップ）が `CFG_SWITCH_HASH_TABLE_NAME` 経由で扱う形** になっています。PINS 側でハッシュフィールドを controller から制御したい場合、現状は SwitchOrch 経由の経路を読む必要があります。詳細は [P4RT App HLD の Discrepancy 節](../../management/p4rt-application-hld.md) を参照してください。
+[P4RT](../../reference/glossary.md#term-p4rt) App HLD では **HashOrch（[orchagent](../../reference/glossary.md#term-orchagent) 新規追加）** がハッシュ属性を扱う前提で書かれていますが、現行 master では独立コンポーネントとしては存在せず、**既存の `SwitchOrch` が `CFG_SWITCH_HASH_TABLE_NAME` を消費し、`orchagent/switch/switch_helper.cpp` の `SWITCH_HASH_FIELD_*` ↔ `SAI_NATIVE_HASH_FIELD_*` マップ経由で SAI 属性を設定する形** になっています。PINS 側でハッシュフィールドを controller から制御したい場合、現状は SwitchOrch 経由の経路を読む必要があります。詳細は [P4RT App HLD の Discrepancy 節](../../management/p4rt-application-hld.md) を参照してください。
 
 ## ベンダ依存の境界
 

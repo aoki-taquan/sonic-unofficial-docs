@@ -158,6 +158,9 @@ sonic-installer upgrade_docker swss test_v03 docker-orchagent-brcm_v03.gz --clea
 - SWSS docker upgrade でデータプレーンが切れる → `WARM_RESTART_TABLE:*` の `restart_count` が増えているかを確認。
 - `swss-flushdb` 失敗 → APPL_DB の状態が不整合な可能性。手動で `redis-cli -n 0 keys *_TABLE:*` で確認。
 - 復元後に同一エントリが二重登録される → libsairedis 冪等性パッチが効いていない可能性。
+- reconciliation がタイムアウトする場合、`config warm_restart bgp_timer` / `neighsyncd_timer` を延長して再試行する。デフォルトは [BGP](../reference/glossary.md#term-bgp) 600s / [neighsyncd](../reference/glossary.md#term-neighsyncd) 60s。
+- `STATE_DB` の `WARM_RESTART_TABLE|<app>` が `reconciled` に遷移しないアプリケーションを特定し、該当 syncd のログを優先確認。
+- 同一ホスト上で swss と syncd の warm-restart タイミングがずれると [ASIC](../reference/glossary.md#term-asic) 上の stale エントリが残る。`docker exec syncd ls /var/warmboot/` の checkpoint ファイル mtime で順序を確認。
 - 詳細実装は HLD `doc/warm-reboot/code_implementation.md` を参照（このドキュメントは要点のみ）。
 
 ```bash
@@ -219,12 +222,6 @@ sonic-db-cli STATE_DB KEYS 'WARM_RESTART_ENABLE_TABLE|*'
 # swss コンテナの warm-boot 関連ログ
 docker logs swss 2>&1 | grep -iE 'warm|restoration|reconcile' | tail -40
 ```
-
-## トラブルシュート
-
-- reconciliation がタイムアウトする場合、`config warm_restart bgp_timer` / `neighsyncd_timer` を延長して再試行する。デフォルトは [BGP](../reference/glossary.md#term-bgp) 600s / [neighsyncd](../reference/glossary.md#term-neighsyncd) 60s。
-- `STATE_DB` の `WARM_RESTART_TABLE|<app>` が `reconciled` に遷移しないアプリケーションを特定し、該当 syncd のログを優先確認。
-- 同一ホスト上で swss と syncd の warm-restart タイミングがずれると [ASIC](../reference/glossary.md#term-asic) 上の stale エントリが残る。`docker exec syncd ls /var/warmboot/` の checkpoint ファイル mtime で順序を確認。
 
 ## 実装との乖離
 

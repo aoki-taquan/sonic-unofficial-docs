@@ -3,14 +3,17 @@ title: sonic-mgmt_vrf YANG
 description: "sonic-mgmt_vrf YANG — マネジメント VRF (mgmt traffic を data-plane と分離する VRF) のグローバル有効/無効を保持する YANG モジュール。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-06-06
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/vrfmgr.cpp
+    ref: master
 related:
   config_db: [MGMT_VRF_CONFIG]
-  cli: ["config vrf"]
+  cli: ["config vrf", "show mgmt-vrf"]
   yang: [sonic-mgmt_interface, sonic-mgmt_port]
 ---
 
@@ -55,6 +58,7 @@ flowchart LR
 ### 関連 CLI
 
 - [`config vrf`](../cli/config-vrf.md)
+- [`show mgmt-vrf`](../cli/show-mgmt-vrf.md)
 
 ### 関連 HLD
 
@@ -119,7 +123,7 @@ module: sonic-mgmt_vrf
 
 ### 典型的なデプロイ位置
 
-- management VRF 制御。`MGMT_VRF_CONFIG|vrf_global` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) が iproute2 + iptables に反映。
+- management VRF 制御。`MGMT_VRF_CONFIG|vrf_global` を `vrfmgrd` ([sonic-swss](../../reference/glossary.md#term-sonic-swss) `cfgmgr/vrfmgr.cpp`) が subscribe し、`mgmtVrfEnabled` の値に応じて mgmt VRF を作成/削除する[^2]。
 
 ### よくある落とし穴
 
@@ -135,6 +139,7 @@ show mgmt-vrf
 
 ## 引用元
 
-[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` (L1-L37, module / revision 2021-04-07 / `mgmtVrfEnabled` boolean default false)
+[^2]: `sonic-net/sonic-swss` `cfgmgr/vrfmgr.cpp` L229-L324 (`CFG_MGMT_VRF_CONFIG_TABLE_NAME` を subscribe し `mgmtVrfEnabled` フィールドを参照) および `cfgmgr/vrfmgrd.cpp` L33 ([vrfmgrd](../../reference/glossary.md#term-vrfmgrd) の table 登録)
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 7dff185c05bf -->

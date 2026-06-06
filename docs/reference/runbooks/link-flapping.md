@@ -1,9 +1,9 @@
 ---
 title: T0/T1 リンクが flap し続ける
-description: "Runbook: T0/T1 リンクが flap し続ける — : sonic-net/sonic-swss @ 4305596 — portsorch.cpp port_state notification : sonic-net/sonic-platform-common @ 4305596 — sfp_base…"
+description: "T0/T1 間のリンクが頻繁に up/down する場合の切り分け runbook。flap 頻度の定量化、DOM 値とベンダー別 threshold の確認、FEC / autoneg / 物理層の順で原因を追い込む。"
 area: reference
 verification: runbook-verified
-last_verified: 2026-05-13
+last_verified: 2026-06-06
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/portsorch.cpp
@@ -11,9 +11,12 @@ sources:
   - repo: sonic-net/sonic-platform-common
     path: sonic_platform_base/sfp_base.py
     ref: 64beade8cddecdbc154531bc84bed2fa86581ea8
+  - repo: sonic-net/sonic-utilities
+    path: scripts/sfpshow
+    ref: master
 related:
   config_db: [PORT]
-  cli: [show interfaces status, show transceiver]
+  cli: [show interfaces status, show interfaces transceiver eeprom]
   yang: [sonic-port]
 ---
 
@@ -30,14 +33,13 @@ related:
 
 ## 想定原因（優先度順）
 
-1. **光モジュール (SFP/QSFP) の劣化**: DOM 値が閾値外
+1. **光モジュール (SFP/QSFP) の劣化**: DOM 値がベンダー定義の閾値外
 2. **FEC mismatch**: 両端 FEC mode 違い → [fec-errors.md](fec-errors.md)
 3. **autoneg / speed mismatch**: → [asic-link-autoneg-mismatch.md](asic-link-autoneg-mismatch.md)
 4. **ケーブル / patch panel の物理劣化**
 5. **対向側 OS の panic / reboot ループ**
 
 ## 切り分け手順
-
 
 ```mermaid
 flowchart TD
@@ -58,14 +60,17 @@ flowchart TD
 sudo grep "oper status changed" /var/log/syslog | grep Ethernet0 | tail -20
 ```
 
-### 2. DOM 値
+### 2. DOM 値と threshold
 
 ```bash
 show interfaces transceiver eeprom -d Ethernet0
 show interfaces transceiver lpmode
 ```
 
-- RX power が `-15dBm` 未満 / TX power が異常 → 物理層の問題
+DOM 出力には `RX Power` / `TX Power` / `Temperature` / `Voltage` 等の現在値と、`RxPowerLowAlarm` / `RxPowerHighAlarm` / `TxPowerLowWarning` 等の **threshold** がモジュールから読み出されて表示される[^2][^3]。
+
+!!! warning "閾値はモジュール依存"
+    SFP/QSFP の alarm/warning threshold (`rxpowerlowalarm` 等) は **トランシーバ自身の EEPROM に格納されたベンダー定義値** であり、SONiC は `sfp_base.get_transceiver_threshold_info()` API で読み出すだけで固定の閾値を持たない[^2]。「RX power が -15dBm 未満なら異常」のような一律基準は誤りで、現在値が同モジュールの `RxPowerLowAlarm` / `RxPowerLowWarning` を下回るか、あるいは隣接ポートと比べて明らかに劣化しているかで判断する。
 
 ### 3. FEC / counter
 
@@ -79,6 +84,8 @@ show interfaces counters errors Ethernet0
 ```bash
 docker logs syncd 2>&1 | grep -i "port_state_change" | tail -20
 ```
+
+`portsorch` が [SAI](../../reference/glossary.md#term-sai) port state change を受け取り `PORT_TABLE` の `oper_status` を更新する[^1]。
 
 ## 対処方法
 
@@ -105,9 +112,8 @@ docker logs syncd 2>&1 | grep -i "port_state_change" | tail -20
 
 ## 引用元
 
-本ページの根拠は引用元 [^1][^2] を参照。
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — `orchagent/[portsorch](../../reference/glossary.md#term-portsorch).cpp` の port state change handler が [SAI](../../reference/glossary.md#term-sai) からの notification を `APPL_DB:PORT_TABLE` に反映する。
+[^2]: sonic-net/sonic-platform-common @ 64beade8 — `sonic_platform_base/sfp_base.py` L182-L213 `get_transceiver_threshold_info()` が `rxpowerlowalarm` / `rxpowerhighalarm` / `txpowerlowalarm` 等のモジュール固有閾値を返す抽象 API。各 platform 実装が EEPROM から値を読み取り供給する。
+[^3]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ master — `scripts/sfpshow` (`show interfaces transceiver eeprom -d` の実体) が DOM 値と threshold をフォーマットして表示する (`rxpowerlowalarm` 等のキーを `dBm` 単位でレンダリング)。
 
-[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [portsorch](../../reference/glossary.md#term-portsorch).cpp port_state notification
-[^2]: sonic-net/sonic-platform-common @ 64beade8 — sfp_base DOM
-
-<!-- glossary-links-injected: 889740d66e5f -->
+<!-- glossary-links-injected: 765a25b13022 -->
