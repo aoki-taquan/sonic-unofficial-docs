@@ -3,7 +3,7 @@ title: sonic-copp YANG
 description: "sonic-copp YANG — Control Plane Policing (CoPP) の YANG モデル。COPP_GROUP でポリサーを定義し COPP_TRAP でトラップ ID を紐付ける。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-06-06
 sources:
 - repo: sonic-net/sonic-buildimage
   path: src/sonic-yang-models/yang-models/sonic-copp.yang
@@ -127,6 +127,27 @@ module: sonic-copp
 
 - `sonic-copp/COPP_TRAP/COPP_TRAP_LIST/trap_group` → `/sonic-copp/COPP_GROUP/COPP_GROUP_LIST/name`
 
+## 制約 (when / must)
+
+`COPP_GROUP_LIST` の token bucket 関連 leaf には複数の `when` / `must` 制約が定義されている。設定バリデーション ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) / `config load_minigraph`) が `libyang` でこれらを評価するため、違反する CONFIG_DB 値は load 段階で reject される[^2]。
+
+| leaf | 種別 | 条件 | error-message / 効果 |
+|------|------|------|----------------------|
+| `cbs` | `must` | `cir` が存在し `cir > 0` | `cbs can't be configured without cir.` |
+| `cbs` | `must` | `cbs >= cir` | `cbs must be greater than or equal to cir` |
+| `pir` | `when` | `mode = 'tr_tcm'` | `mode` が `sr_tcm` / `storm` のとき `pir` leaf 自体が無効化される |
+| `pir` | `must` | `cir` が存在し `cir > 0` | `pir can't be configured without cir.` |
+| `pir` | `must` | `pir >= cir` | `pir must be greater than or equal to cir` |
+| `pbs` | `when` | `mode = 'sr_tcm'` または `mode = 'tr_tcm'` | `mode = storm` のとき `pbs` leaf 自体が無効化される |
+| `pbs` | `must` | `cbs` 未設定、または `pbs >= cbs` | `pbs must be greater than or equal to cbs` |
+| `yellow_action` | `when` | `mode = 'sr_tcm'` または `mode = 'tr_tcm'` | `mode = storm` のとき `yellow_action` は無効化される (storm control は 2 色のみ) |
+
+実装上の留意点:
+
+- `cir` / `cbs` には `default 0` が宣言されているため、`cbs` の `cir > 0` 制約は「`cir` を明示設定しなければ `cbs` も設定不可」を意味する。
+- `pir` / `pbs` には `default` がない (オプショナル)。`mode = sr_tcm` で `pir` を指定すると `when` 違反になる。
+- `yellow_action` のデフォルトは `forward` だが、`mode = storm` では leaf 自体が schema 上存在しなくなる点に注意。
+
 ## augment / deviation
 
 - なし
@@ -177,6 +198,7 @@ show copp config
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-copp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^2]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-copp.yang` L82-L121 (`cbs` / `pir` / `pbs` の `must` / `when` ブロック) および L129-L134 (`yellow_action` の `when`) @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
 
 <!-- topics-back-ref -->
@@ -186,4 +208,4 @@ show copp config
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: d8db323b4114 -->
