@@ -3,8 +3,15 @@ title: config vxlan サブコマンド
 description: config vxlan サブコマンド — config vxlan は VXLAN VTEP (VXLAN_TUNNEL)、EVPN NVO
   (VXLAN_EVPN_NVO)、および VLAN-VNI マッピング (VXLAN_TUNNEL_MAP) を管理する。
 area: reference
-verification: code-verified
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-06-06
+monitor: evolved_beyond_hld
+discrepancy:
+- summary: '`config vxlan map_range del` の VRF 紐付けチェックが反転している。コードは `is_vni_vrf_mapped(...) is False`
+    のとき `continue` するため、実際には VRF にマップ済みの VNI のみが削除され、未マップ VNI はスキップされる。コマンド意図 (一括削除) と逆方向に保護が効いており、SONiC
+    側のバグ可能性が高い'
+  refs:
+  - sonic-net/sonic-utilities/config/vxlan.py#L349-L361
 sources:
 - repo: sonic-net/sonic-utilities
   path: config/vxlan.py
@@ -25,6 +32,10 @@ related:
 ---
 
 # config vxlan サブコマンド
+
+## 実装との乖離
+
+`config vxlan map_range del` のスキップ判定が、コマンド意図 (範囲一括削除) と逆方向に効いている。`config/vxlan.py` L353 で `is_vni_vrf_mapped(config_db, vni_name) is False` のとき `continue` するため、実際には **[VRF](../../reference/glossary.md#term-vrf) にマップされている VNI のみ削除され、未マップ VNI はスキップ**される[^2]。`map del` 側は「VRF 参照があればエラー」という逆方向の保護で整合しており、本コマンドのみ反転していることから upstream のバグ可能性が高い。本ページとしては安全側に振って実装そのままを記述し、回避策として `config vxlan map del` の単発呼び出しを推奨する。
 
 ## 概要
 
@@ -133,7 +144,10 @@ excerpt: |
 
 ### `config vxlan map_range del <vxlan_name> <vlan_start> <vlan_end> <vni_start>`
 
-範囲内の各 (vlan, vni) について、**[VRF](../../reference/glossary.md#term-vrf) に紐付いていない VNI のみ削除**し、[VRF](../../reference/glossary.md#term-vrf) にマップ済みの VNI はスキップ（保護）する仕様[^2]。完全に削除したい場合は先に `config vrf del_vrf_vni_map` で VRF-VNI マッピングを解除してから `map del` を使う。スキップされた行は print メッセージのみで警告扱い。
+!!! warning "実装が反転している（discrepancy）"
+    現在の実装は `is_vni_vrf_mapped(config_db, vni_name) is False` のとき `continue` する[^2]。これは **[VRF](../../reference/glossary.md#term-vrf) に紐付いていない VNI をスキップし、[VRF](../../reference/glossary.md#term-vrf) にマップ済みの VNI のみを削除する** という動作で、`map_range del` の意図 (一括削除) と逆方向に保護が効いている。VRF-VNI マッピングのある VNI は通常 VRF 側から参照されているため、本来は `is_vni_vrf_mapped(...) is True` のときスキップする実装が期待される。`map del`（単発）側は逆に「VRF 参照があればエラー」で正しく保護している点と矛盾する。SONiC 側のバグ可能性が高く、本ページとしては実装どおりの挙動を記述する。
+
+範囲内の各 (vlan, vni) について、実装上は **[VRF](../../reference/glossary.md#term-vrf) に紐付いていない VNI はスキップ**し（`Skipping Vlan ... VNI ... mapped delete.` を print）、[VRF](../../reference/glossary.md#term-vrf) にマップ済みの VNI のみ `VXLAN_TUNNEL_MAP` から削除する[^2]。範囲内の全 VLAN-VNI を確実に消したい場合は `config vxlan map del` を 1 件ずつ実行する方が安全。
 
 ## 関連する CONFIG_DB
 
@@ -148,7 +162,7 @@ excerpt: |
 ## 注意点
 
 - VTEP / NVO は **デバイス 1 つあたり 1 つ限定**
-- `map_range del` は **VRF 紐付けのない VNI のみ削除**し、VRF に紐付け済みの VNI はスキップ（保護）する。スキップされた行は print メッセージのみ。VRF 紐付け済み VNI を含めて削除するには先に `config vrf del_vrf_vni_map` を実行する
+- `map_range del` の VRF 紐付けチェックは **実装が反転している**（discrepancy）。コード上は VRF にマップされていない VNI をスキップし、VRF にマップされた VNI のみ削除する挙動になっている[^2]。範囲削除を確実に行いたい場合は `config vxlan map del` を 1 件ずつ呼ぶ方が安全
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
@@ -192,7 +206,7 @@ flowchart LR
 
 [^1]: `vxlan` グループ全体の定義は `config/vxlan.py` L14-L17。`-n` 必須。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vxlan.py>
 
-[^2]: `map_range del` の VRF 紐付けスキップは L353-L355。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vxlan.py#L353>
+[^2]: `map_range del` の `is_vni_vrf_mapped(...) is False` → `continue` は L353-L355、削除本体は L357-L359。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vxlan.py#L349-L361>
 
 <!-- usage-example -->
 ## 実行例
