@@ -11,7 +11,7 @@ last_verified: 2026-05-13
 
     SONiC コミュニティ master の HLD は **設計提案リポジトリ** であり、現行コードと一致しているとは限りません。本ページは「HLD だけ読んで誤解しがちな機能」を一望できる USP ページです。読み手は、まず後述の **monitor subtype 別セクション** で該当機能の乖離タイプ（未実装 / 部分実装 / 進化置換 / 廃止）を把握し、そこから個別ページへ降りて `last_verified` と「実装との乖離」セクションの裏取り根拠を確認してください。area 横断で探す場合は末尾の **area 別索引** から辿れます。
 
-`verification: discrepancy-found` が付いた全 **114** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
+`verification: discrepancy-found` が付いた全 **115** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
 
 ## サマリ
 
@@ -23,6 +23,7 @@ last_verified: 2026-05-13
 | [`partially_implemented`](#monitor-partially-implemented) | 60 | 部分実装 |
 | [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 33 | HLD と乖離した形で実装/進化 |
 | [`deprecated`](#monitor-deprecated) | 3 | deprecated（廃止予定 / 撤去済み） |
+| `(未指定)` | 1 | (未指定) |
 
 ### area 別件数
 
@@ -31,7 +32,7 @@ last_verified: 2026-05-13
 | [`acl-qos`](#area-acl-qos) | 6 |
 | [`architecture`](#area-architecture) | 25 |
 | [`internals`](#area-internals) | 5 |
-| [`management`](#area-management) | 17 |
+| [`management`](#area-management) | 18 |
 | [`overlay`](#area-overlay) | 1 |
 | [`platform`](#area-platform) | 13 |
 | [`reference`](#area-reference) | 9 |
@@ -801,6 +802,9 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b7679b260c3fd0786a6d0734fc8e82c9a22`）:
+
+- [gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）](../../management/gnoi-hld-for-system-apis.md)  
+  area: `management` / monitor: `(未指定)` / last_verified: `2026-06-06`
 
 - [gNSI 内部実装（Certz / Authz / Pathz / Credentialz handler と host service）](../../management/gnsi-hld-internals.md)  
   area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`

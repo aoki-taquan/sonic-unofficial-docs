@@ -2,8 +2,8 @@
 title: gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
 description: gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check） — gnoi.system.System のうち SONiC が初期サポートする RPC は Reboot / RebootStatus / CancelReb…
 area: management
-verification: code-verified
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-06-06
 sources:
 - repo: sonic-net/SONiC
   path: doc/mgmt/gnmi/gnoi_system_hld.md
@@ -26,8 +26,8 @@ related:
     この HLD は実装詳細を含む。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: code-verified"
-    `sonic-gnmi/gnmi_server/gnoi_system.go` L34 `ValidateRebootRequest`、L116 `sendRebootReqOnNotifCh`（DB notification 経由で reboot 要求を書き込む）、L193 `Server.Reboot`、L241 `Server.RebootStatus`、L270 `Server.CancelReboot` のハンドラ実装を確認。`sonic-gnmi/pkg/gnoi/system/system.go` L22 `HandleReboot`、L180 `HandleDPUReboot` で DPU 対応も確認。`sonic-gnmi/gnoi_client/system/reboot.go` L13/25/42 で client 側 Reboot / CancelReboot / RebootStatus の 3 RPC を確認（verified at: 2026-05-09）。
+!!! warning "裏取りステータス: discrepancy-found"
+    `sonic-gnmi/gnmi_server/gnoi_system.go` L34 `ValidateRebootRequest`、L116 `sendRebootReqOnNotifCh`（DB notification 経由で reboot 要求を書き込む）、L193 `Server.Reboot`、L241 `Server.RebootStatus`、L270 `Server.CancelReboot` のハンドラ実装を確認。`sonic-gnmi/pkg/gnoi/system/system.go` L22 `HandleReboot`、L180 `HandleDPUReboot` で DPU 対応も確認。`sonic-gnmi/gnoi_client/system/reboot.go` L13/25/42 で client 側 Reboot / CancelReboot / RebootStatus の 3 RPC を確認。一方で **HLD と現行実装の乖離** を確認: 実装 `ValidateRebootRequest` (L37-L46) は `delay > 0` および method=`POWERUP` を一律 reject するため、HLD が示唆する「遅延付き reboot」「POWERUP を sanity check 対象 method として並列扱い」とは挙動が異なる。詳細は下記「実装との差異」節を参照（verified at: 2026-06-06）。
 
 # gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
 
@@ -188,8 +188,9 @@ reasoning: 受理条件が「validation OK + 既存 reboot 無し + DB 書込成
 # 即時 cold reboot
 gnoi_client system reboot --method COLD --message "scheduled maintenance"
 
-# 30 秒後 reboot
-gnoi_client system reboot --method COLD --delay 30000000000
+# 注: 現行 sonic-gnmi 実装では delay>0 は ValidateRebootRequest で reject される
+# （`gnoi_system.go` L43-L46）。遅延 reboot は upstream HLD 文面上は許容だが、
+# 実機では `INVALID_ARGUMENT` を返すため、遅延スケジューリングは呼出側で行う。
 
 # 状態確認
 gnoi_client system reboot_status
@@ -198,9 +199,38 @@ gnoi_client system reboot_status
 gnoi_client system cancel_reboot --message "delayed by SRE"
 ```
 
+## 実装との差異
+
+現行 `sonic-net/sonic-gnmi` master の `ValidateRebootRequest` (`gnmi_server/gnoi_system.go` L34-L49) は HLD よりも厳格で、以下を一律拒否する:
+
+| 拒否対象 | 実装根拠 | HLD 上の位置付け |
+|---------|---------|-----------------|
+| `method == POWERUP` | L37 で `UNKNOWN` と並んで unsupported 扱い | HLD では POWERUP を有効な reboot method として列挙[^1] |
+| `method == UNKNOWN` | L37 | HLD でも 0 値は無効扱い（差異なし） |
+| `delay > 0`（任意の遅延） | L43 で `Invalid request: reboot is not immediate.` | HLD では `delay` を `uint64` で受け取り、サニティチェックの例として「1 年後 delay」のような極端値のみ NG と例示[^1] |
+
+つまり、現行 master では実質的に「`method ∈ {COLD, POWERDOWN, HALT, WARM, NSF}` かつ `delay == 0`」のみが validation を通る。HLD で示される 6 method（POWERUP を含む）の並列扱いや、ns 単位 delay スケジューリングは実機で動作しない。
+
+<!-- evidence:
+source: sonic-net/sonic-gnmi/gnmi_server/gnoi_system.go#L34-L49 (master)
+excerpt: |
+  func ValidateRebootRequest(req *syspb.RebootRequest) error {
+      if req.GetMethod() == syspb.RebootMethod_UNKNOWN || req.GetMethod() == syspb.RebootMethod_POWERUP {
+          return fmt.Errorf("Invalid request: reboot method is not supported.")
+      }
+      if req.GetDelay() > 0 {
+          return fmt.Errorf("Invalid request: reboot is not immediate.")
+      }
+      return nil
+  }
+reasoning: 実装が POWERUP と delay>0 を一律 reject している事実の根拠。
+-->
+
+
 ## 制限事項
 
 - **`COLD` のみ全 target 必須**[^1]。それ以外（POWERDOWN / HALT / WARM / NSF / POWERUP）は platform 依存
+- 現行 sonic-gnmi 実装では **`POWERUP` および `delay > 0` は一律 reject**（上記「実装との差異」節）
 - `RESET` は **deprecated**。代わりに `gnoi.factory_reset.FactoryReset.Start` を使う[^1]
 - active control processor への reboot pending 中は別の reboot 要求は **reject**[^1]
 - `Time` RPC は initial scope **対象外**（v0.2 で削除）[^1]
