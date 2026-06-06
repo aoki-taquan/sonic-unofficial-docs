@@ -9,6 +9,27 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/database/multi_database_instances.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-buildimage
+  path: dockers/docker-database/docker-database-init.sh
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: dockers/docker-database/database_config.json.j2
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: dockers/docker-database/multi_database_config.json.j2
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: dockers/docker-database/supervisord.conf.j2
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-swss-common
+  path: common/dbconnector.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-swss-common
+  path: common/database_config.json
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-swss-common
+  path: tests/redis_multi_db_ut_config
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
 related:
   config_db: []
   cli: []
