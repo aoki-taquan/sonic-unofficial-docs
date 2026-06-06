@@ -3,7 +3,7 @@ title: sonic-bgp-device-global YANG
 description: "sonic-bgp-device-global YANG — デバイスレベル BGP のグローバル設定。TSA (Traffic Shift Away)、 WCMP (Weighted ECMP)、 IDF isolation 状態、および BGP confederation 設定を保持する。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-06-06
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang
@@ -76,11 +76,14 @@ module: sonic-bgp-device-global
 
 ## leaf 一覧
 
+<!-- evidence: sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang L33-L60 (tsa_enabled/wcmp_enabled default false, idf_isolation_state default "unisolated") @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd -->
+<!-- evidence: sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang L69-L80 (CONFED asn range 1..4294967295, peers string) @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd -->
+
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `tsa_enabled` | `sonic-bgp-device-global/BGP_DEVICE_GLOBAL/STATE/tsa_enabled` | `boolean` |  | false |  | When true, traffic is shifted away (TSA); BGP routes are not advertised to neighbors |
 | `wcmp_enabled` | `sonic-bgp-device-global/BGP_DEVICE_GLOBAL/STATE/wcmp_enabled` | `boolean` |  | false |  | Enable Weighted [ECMP](../../reference/glossary.md#term-ecmp) using BGP link bandwidth |
-| `idf_isolation_state` | `sonic-bgp-device-global/BGP_DEVICE_GLOBAL/STATE/idf_isolation_state` | `enumeration` |  |  | isolated_no_export, isolated_withdraw_all, unisolated | IDF (Internet-Facing Datacenter Fabric) isolation state |
+| `idf_isolation_state` | `sonic-bgp-device-global/BGP_DEVICE_GLOBAL/STATE/idf_isolation_state` | `enumeration` |  | unisolated | isolated_no_export, isolated_withdraw_all, unisolated | IDF (Internet-Facing Datacenter Fabric) isolation state |
 | `asn` | `sonic-bgp-device-global/BGP_DEVICE_GLOBAL/CONFED/asn` | `uint32` |  |  | range 1..4294967295 | Autonomous System Number for BGP confederation |
 | `peers` | `sonic-bgp-device-global/BGP_DEVICE_GLOBAL/CONFED/peers` | `string` |  |  |  | List of sub-ASNs in the confederation separated by semi-colon |
 
