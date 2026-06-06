@@ -8,6 +8,9 @@ sources:
 - repo: sonic-net/sonic-buildimage
   path: src/sonic-yang-models/yang-models/sonic-banner.yang
   ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: files/image_config/bannerconfig/banner-config.sh
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db:
   - BANNER_MESSAGE
@@ -127,11 +130,13 @@ module: sonic-banner
 
 ### 典型的なデプロイ位置
 
-- ログインバナー / MOTD 設定。`BANNER_MESSAGE|global` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) (banner-config.sh) が `/etc/issue.net` (SSH バナー)、`/etc/issue` (コンソール)、`/etc/motd`、`/etc/logout_message` の 4 ファイルに書き出す。
+- ログインバナー / MOTD 設定。`BANNER_MESSAGE|global` の `state` が `enabled` のとき、`banner-config.sh` が `login` を `/etc/issue.net` (SSH バナー) と `/etc/issue` (コンソール) に、`motd` を `/etc/motd` に、`logout` を `/etc/logout_message` に `echo -e` で書き出す。[^2]
 
 ### よくある落とし穴
 
-- `motd` は複数行文字列。改行を含む値を CLI から渡す場合の [YANG](../../reference/glossary.md#term-yang) 側 string 制約 (1024 文字) に注意。
+- `login` / `motd` / `logout` の各 leaf は [YANG](../../reference/glossary.md#term-yang) 上 `type string` のみで **長さ制約 (length statement) は定義されていない**。[^1] [hostcfgd](../../reference/glossary.md#term-hostcfgd) 側も `sonic-db-cli HGET` の結果をそのまま `echo -e` でファイルに流すだけで、独自のサイズ上限を設けていない。[^2] [CONFIG_DB](../../reference/glossary.md#term-config_db) ([Redis](../../reference/glossary.md#term-redis)) の値長制約に従う形となるため、極端に長い値を投入する場合はバナー文言が安全に表示されるか個別に検証すること。
+- `banner-config.sh` は `echo -e` を使うため、`\n` などのバックスラッシュエスケープが解釈される。リテラルなバックスラッシュを表示したい場合は二重エスケープが必要。[^2]
+- `state` が `disabled` の間は `banner-config.sh` が出力ファイルを更新しない。バナーを無効化した直後でも、過去に書き込まれた `/etc/issue` 等の内容が残り続ける点に注意。[^2]
 
 ### 関連する config / show コマンド
 
@@ -143,6 +148,7 @@ show banner
 
 ## 引用元
 
-[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-banner.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-banner.yang` L1-L52 @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` — module 定義、`login` / `motd` / `logout` は `type string` のみで `length` 制約なし。
+[^2]: `sonic-net/sonic-buildimage` `files/image_config/bannerconfig/banner-config.sh` L1-L17 @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` — `state == enabled` のとき `sonic-db-cli HGET` で各 leaf を取得し `echo -e` で 4 ファイル (`/etc/issue.net`、`/etc/issue`、`/etc/motd`、`/etc/logout_message`) に書き出す。長さチェックなし。
 
-<!-- glossary-links-injected: 92c530e50bae -->
+<!-- glossary-links-injected: c6ea86570098 -->
