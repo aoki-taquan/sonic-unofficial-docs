@@ -71,10 +71,18 @@ module: sonic-mgmt_interface
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `name` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/name` | `leafref` | yes |  | `/mgmtprt:sonic-mgmt_port/MGMT_PORT/MGMT_PORT_LIST/name` | 対象マネジメントポート名（`eth0` 等） |
-| `ip_prefix` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/ip_prefix` | `stypes:sonic-ip-prefix` | yes |  | must: `gwaddr` と family が一致 | マネジメントインタフェース IP/プレフィックス |
-| `gwaddr` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/gwaddr` | `inet:ip-address` |  |  | must: `ip_prefix` と family が一致 | デフォルトゲートウェイアドレス |
-| `forced_mgmt_routes` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/forced_mgmt_routes` | `leaf-list union(sonic-ip-prefix, ip-address)` |  |  | ordered-by user | デフォルト [VRF](../../reference/glossary.md#term-vrf) または management [VRF](../../reference/glossary.md#term-vrf) に追加する強制ルート（`interfaces.j2` で展開） |
+| `name` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/name` | `leafref` | yes (list key) |  | `/mgmtprt:sonic-mgmt_port/MGMT_PORT/MGMT_PORT_LIST/name` | 対象マネジメントポート名（`eth0` 等） |
+| `ip_prefix` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/ip_prefix` | `stypes:sonic-ip-prefix` | yes (list key) |  | must: `gwaddr` と IP family が一致（双方向適用、後述） | マネジメントインタフェース IP/プレフィックス |
+| `gwaddr` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/gwaddr` | `inet:ip-address` | optional | (なし／null) | must: `ip_prefix` と IP family が一致（双方向適用、後述） | デフォルトゲートウェイアドレス |
+| `forced_mgmt_routes` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/forced_mgmt_routes` | `leaf-list union(sonic-ip-prefix, ip-address)` | optional |  | ordered-by user | デフォルト [VRF](../../reference/glossary.md#term-vrf) または management [VRF](../../reference/glossary.md#term-vrf) に追加する強制ルート（`interfaces.j2` で展開） |
+
+!!! note "`must` 制約の意味（family 一致）"
+    `ip_prefix` と `gwaddr` の双方に同一趣旨の `must` 式が記述されており、いずれの leaf を更新した場合でも以下の関係が成立することを要求する[^1]。
+
+    - `ip_prefix` が `:` を含む（IPv6）なら、`gwaddr` も `:` を含む必要がある
+    - `ip_prefix` が `.` を含む（IPv4）なら、`gwaddr` も `.` を含む必要がある
+
+    したがって両 leaf が存在する場合は同じ IP family である必要がある。なお YANG ツリー上 `gwaddr` は optional（`gwaddr?`）だが、`ip_prefix` 側の must 式は `contains(../gwaddr, …)` を参照しているため、`gwaddr` を省略したまま投入する場合の挙動はバリデータ実装に依存しうる。
 
 ## leafref / 依存
 
@@ -131,6 +139,8 @@ show management_interface address
 
 ## 引用元
 
-[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+<!-- evidence: src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang L46-L56 (must constraints on ip_prefix / gwaddr), L58-L68 (forced_mgmt_routes leaf-list) @ 9ea932ec -->
+
+[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang` L46-L56（`ip_prefix` / `gwaddr` の `must` 制約）@ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
 <!-- glossary-links-injected: 20dbc11976b6 -->
