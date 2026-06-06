@@ -70,7 +70,7 @@ Bulk 化の前後で外向きの API は変わりませんが、起動直後の 
 
 syslog は container ごとの rsyslogd と host の rsyslogd が二段でつながります。Container の rsyslogd は `omfwd` で host の `/dev/log` 相当に転送し、host 側がさらに `SYSLOG_SERVER` で設定された外部宛先に送ります。`SYSLOG_CONFIG_FEATURE` は container 単位の severity 切替を許し、不要な debug を本番で抑えられます。
 
-Auto-techsupport は、`coredump_gen_handler` が core 生成イベントを受け、当該 container の `AUTO_TECHSUPPORT|<container>.state == enabled` かつ global / per-container の `rate_limit_interval` を超えていれば `show techsupport` を rate-limited で起動します<sup id="fn-coredump-ref">[1](#fn-coredump)</sup>。古い core / techsupport dump は `core_usage_limit` で指定された **`/var/core` 等のディスク使用率パーセント** を超えた段階で古いものから順に削除されるため、生成直後の dump がすぐ消える可能性があります<sup id="fn-cleanup-ref">[2](#fn-cleanup)</sup>。
+Auto-techsupport は、`coredump_gen_handler` が core 生成イベントを受け、当該 container の `AUTO_TECHSUPPORT|<container>.state == enabled` かつ global / per-container の `rate_limit_interval` を超えていれば `show techsupport` を rate-limited で起動します[^coredump]。古い core / techsupport dump は `core_usage_limit` で指定された **`/var/core` 等のディスク使用率パーセント** を超えた段階で古いものから順に削除されるため、生成直後の dump がすぐ消える可能性があります[^cleanup]。
 
 ## SNMP Subagent の構造
 
@@ -127,7 +127,7 @@ flowchart LR
 | ACL | counter object 経由（`SAI_ACL_COUNTER_ATTR_PACKETS / BYTES`） |
 | trap ([CoPP](../../reference/glossary.md#term-copp)) | `SAI_HOSTIF_TRAP_GROUP_STAT_PACKETS` |
 
-`queryStatsCapability` 経由で「使える stat id」を group 初期化時に問い合わせ、サポート外の id は group から除外する設計です<sup id="fn-cap-ref">[3](#fn-cap)</sup>（→ 20 章）。実際の周期取得は `bulkGetStats` を batch で呼び出します<sup id="fn-bulk-ref">[4](#fn-bulk)</sup>。
+`queryStatsCapability` 経由で「使える stat id」を group 初期化時に問い合わせ、サポート外の id は group から除外する設計です[^cap]（→ 20 章）。実際の周期取得は `bulkGetStats` を batch で呼び出します[^bulk]。
 
 ## Redis テーブル参照関係
 
@@ -161,13 +161,13 @@ STATE_DB:
 
 ## 脚注
 
-<a id="fn-coredump"></a>[1]: `sonic-utilities/scripts/coredump_gen_handler.py` L41-60 で feature 有効性チェックの後 `invoke_ts_command_rate_limited(...)` を呼ぶ。rate limit の実装は `sonic-utilities/utilities_common/auto_techsupport_helper.py` の `verify_rate_limit_intervals` (L282-310) と `invoke_ts_command_rate_limited` (L313-340)。[↩](#fn-coredump-ref)
+[^coredump]: `sonic-utilities/scripts/coredump_gen_handler.py` L41-60 で feature 有効性チェックの後 `invoke_ts_command_rate_limited(...)` を呼ぶ。rate limit の実装は `sonic-utilities/utilities_common/auto_techsupport_helper.py` の `verify_rate_limit_intervals` (L282-310) と `invoke_ts_command_rate_limited` (L313-340)。
 
-<a id="fn-cleanup"></a>[2]: `sonic-utilities/utilities_common/auto_techsupport_helper.py` `cleanup_process` L170-196。`limit` (= `core_usage_limit` パーセント) と `shutil.disk_usage(dir).total` から `max_limit_bytes` を計算し、超過分だけ古いファイルから削除する。本文の旧記述「メモリ使用量の threshold」は実装上は disk 使用率のみで、メモリ閾値は存在しない。[↩](#fn-cleanup-ref)
+[^cleanup]: `sonic-utilities/utilities_common/auto_techsupport_helper.py` `cleanup_process` L170-196。`limit` (= `core_usage_limit` パーセント) と `shutil.disk_usage(dir).total` から `max_limit_bytes` を計算し、超過分だけ古いファイルから削除する。本文の旧記述「メモリ使用量の threshold」は実装上は disk 使用率のみで、メモリ閾値は存在しない。
 
-<a id="fn-cap"></a>[3]: `sonic-sairedis/syncd/FlexCounter.cpp` L1582 / L1592 / L2921 / L2930 付近で `m_vendorSai->queryStatsCapability(...)` を呼んでサポート stat id を絞り込む。[↩](#fn-cap-ref)
+[^cap]: `sonic-sairedis/syncd/FlexCounter.cpp` L1582 / L1592 / L2921 / L2930 付近で `m_vendorSai->queryStatsCapability(...)` を呼んでサポート stat id を絞り込む。
 
-<a id="fn-bulk"></a>[4]: `sonic-sairedis/syncd/FlexCounter.cpp` L1016 / L1329 / L1529 / L2819 / L2882 付近で `m_vendorSai->bulkGetStats(...)` を polling thread から呼ぶ。[↩](#fn-bulk-ref)
+[^bulk]: `sonic-sairedis/syncd/FlexCounter.cpp` L1016 / L1329 / L1529 / L2819 / L2882 付近で `m_vendorSai->bulkGetStats(...)` を polling thread から呼ぶ。
 
 ## 関連ページ
 
