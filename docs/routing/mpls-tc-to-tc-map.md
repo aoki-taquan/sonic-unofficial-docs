@@ -1,8 +1,8 @@
 ---
 title: MPLS TC → TC map（MPLS パケットの QoS classification）
-description: MPLS TC → TC map（MPLS パケットの QoS classification） — SONiC の QoS は DSCP
-  / DOT1P / TC の各値間でマップを定義し、CONFIG_DB の _TO__MAP テーブルとポート毎の PORT_QOS_MAP を介して SAI
-  に降ろす設計を取って…
+description: MPLS パケットの TC（旧 EXP、RFC 5462）から内部 TC への classification map
+  を SONiC の既存 QoS フロー（MPLS_TC_TO_TC_MAP テーブル + PORT_QOS_MAP の mpls_tc_to_tc_map フィールド）に追加し、
+  SAI_QOS_MAP_MPLS_EXP_TO_TC を介して ASIC に降ろす仕組みを解説する。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,16 +16,12 @@ related:
   - PORT_QOS_MAP
   - DSCP_TO_TC_MAP
   - DOT1P_TO_TC_MAP
-  - MAP_PFC_PRIORITY_TO_QUEUE
-  - CRM
-  - BUFFER_PORT_INGRESS_PROFILE_LIST
   cli:
   - config reload
   - config clear
   - config qos
   yang:
   - sonic-port-qos-map
-  - sonic-crm
 ---
 
 <!-- topics-tip -->

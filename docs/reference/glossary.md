@@ -1989,7 +1989,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [QoS](#term-qos)
 
-- [サイトマップ](../_meta/sitemap.md) (32)
+- [サイトマップ](../_meta/sitemap.md) (31)
 - [PORT_QOS_MAP テーブル](config-db/port-qos-map.md) (17)
 - [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (14)
 - [EXP_TO_FC_MAP テーブル](config-db/exp-to-fc-map.md) (12)
