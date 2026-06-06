@@ -52,6 +52,7 @@ flowchart LR
 
 - [`BGP_PEER_GROUP`](../config-db/bgp-peer-group.md)
 - [`BGP_PEER_GROUP_AF`](../config-db/bgp-peer-group-af.md)
+- [`BGP_GLOBALS_LISTEN_PREFIX`](../config-db/bgp-globals.md)
 
 ### 関連 CLI
 

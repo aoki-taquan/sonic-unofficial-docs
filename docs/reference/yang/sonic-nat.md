@@ -62,6 +62,7 @@ flowchart LR
 
 ### 対応 CONFIG_DB
 
+- [`NAT_GLOBAL`](../config-db/nat.md)
 - [`NAT_POOL`](../config-db/nat-pool.md)
 - [`NAT_BINDINGS`](../config-db/nat-bindings.md)
 
