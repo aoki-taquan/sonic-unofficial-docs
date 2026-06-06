@@ -211,6 +211,25 @@ excerpt: |
 reasoning: BBR の頭字は "BGP Border Router" であり、過去に「Bounce Back Routing」と説明していたのは誤り。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-bbr.yang#L15-L40"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-bbr.yang#L15-L40`
+
+    **抜粋**:
+
+    ```text
+    description "BGP Border Router (BBR) state for aggregate address awareness.";
+    ...
+    description "Enable or disable BGP BBR functionality on this device.";
+    ```
+
+    **判断根拠**: BBR の頭字は "BGP Border Router" であり、過去に「Bounce Back Routing」と説明していたのは誤り。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/general/peer-group.conf.j2#L5-L30
 excerpt: |
@@ -220,6 +239,24 @@ excerpt: |
 reasoning: BBR enable は LeafRouter peer-group に allowas-in 1 を流し込むスイッチとして実装されている。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/general/peer-group.conf.j2#L5-L30"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/general/peer-group.conf.j2#L5-L30`
+
+    **抜粋**:
+
+    ```text
+    {% elif CONFIG_DB__DEVICE_METADATA['localhost']['type'] == 'LeafRouter' %}
+    {%   if CONFIG_DB__BGP_BBR['status'] == 'enabled' %}
+        neighbor PEER_V4 allowas-in 1
+    ```
+
+    **判断根拠**: BBR enable は LeafRouter peer-group に allowas-in 1 を流し込むスイッチとして実装されている。
+
+<!-- evidence-rendered:end -->
 
 <!-- evidence:
 source: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/critical_processes.j2#L1-L10
@@ -228,6 +265,22 @@ excerpt: |
 reasoning: 切替キーは文字列 "true" との比較であり、bool true ではない。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/critical_processes.j2#L1-L10"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/critical_processes.j2#L1-L10`
+
+    **抜粋**:
+
+    ```text
+    {% if DEVICE_METADATA.localhost.frr_mgmt_framework_config is defined and DEVICE_METADATA.localhost.frr_mgmt_framework_config == "true" %}
+    ```
+
+    **判断根拠**: 切替キーは文字列 "true" との比較であり、bool true ではない。
+
+<!-- evidence-rendered:end -->
 
 ## 経路が ASIC に入るまでの段
 

@@ -148,7 +148,6 @@ CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference
 
 <!-- evidence: sonic-swss/orchagent/p4orch/p4orch.cpp:41 (m_publisher("APPL_DB", ...))、:65-72 (m_p4TableToManagerMap[APP_P4RT_*_TABLE_NAME]) — CONFIG_DB のサブスクリプションは存在しない -->
 
-
 ```bash
 docker exec swss ps aux | grep orchagent
 sonic-db-cli APPL_DB keys 'FIXED_*_TABLE*'

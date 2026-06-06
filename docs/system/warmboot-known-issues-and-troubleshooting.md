@@ -205,6 +205,26 @@ reasoning: >
   空 trap に差し替えられる二段構造であることを実コードで確認。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/scripts/warm-reboot#L947,L962,L1151-L1152 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/scripts/warm-reboot#L947,L962,L1151-L1152 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    trap clear_boot EXIT HUP INT QUIT TERM KILL ABRT ALRM
+    ...
+    # disable trap-handlers which were set before
+    trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM
+    ```
+
+    **判断根拠**: 前段では clear_boot による中断クリーンアップ trap が掛かっており、kexec 直前で初めて 空 trap に差し替えられる二段構造であることを実コードで確認。
+
+<!-- evidence-rendered:end -->
+
 ---
 
 ## 4. fast-reboot ダウンタイム超過 (#7140)[^7140]
