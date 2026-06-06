@@ -137,45 +137,91 @@ def _rewrite_same_dir_links_for_depth2(text: str, src_dir: str) -> str:
     )
 
 
-def extract_disc_summary(body: str, src_dir: str = "") -> str:
-    """「実装との乖離」セクションの最初の段落を返す。
+# 既知のボイラープレート段落の判定。これらの「定型枕」が `## 実装との乖離`
+# セクションの先頭に置かれている場合は、より具体的な後段の段落 (または
+# 本文末尾の `!!! diff` admonition の内容) を一覧 snippet に優先採用する。
+#
+# - split-child 枕: 「本ページは split-child のため、差分の主要根拠 / 影響 /
+#   回避策は親ページ ... を参照のこと。」
+# - diff-admonition 枕: 「本ページ末尾近くの `!!! diff "HLD と実装の差分"`
+#   ブロックに ... 詳細はそのブロックを参照のこと。」
+# - monitor ラベルだけを反復した内容のない段落 (`monitor: xxx` —
+#   「未実装」 — 「HLD 提案がコードベース master に取り込まれていない…」 のみ)
+_BOILERPLATE_MARKERS = (
+    "本ページは split-child",
+    "本ページ末尾近くの `!!! diff",
+)
 
-    Markdown の admonition / コードブロックなどは雑に剥がし、最初の段落のみ。
-    """
-    m = DISC_HEADING_RE.search(body)
-    if not m:
-        return ""
-    start = m.end()
+
+def _is_boilerplate(text: str) -> bool:
+    return any(marker in text for marker in _BOILERPLATE_MARKERS)
+
+
+def _extract_section(body: str, heading_match: re.Match) -> str:
+    start = heading_match.end()
     rest = body[start:]
     nxt = NEXT_HEADING_RE.search(rest)
     section = rest[: nxt.start()] if nxt else rest
-
     # `!!! diff` admonition の body は 4 スペース indent されているので剥がす
-    if m.group(0).startswith("!!! diff"):
+    if heading_match.group(0).startswith("!!! diff"):
         section = "\n".join(
             line[4:] if line.startswith("    ") else line
             for line in section.split("\n")
         )
+    return section
 
-    # 最初の段落（空行区切り）を取り出す
+
+def _first_meaningful_paragraph(section: str) -> str:
+    """Return the first paragraph that is neither boilerplate nor markup-only."""
     paragraphs = [p.strip() for p in re.split(r"\n\s*\n", section) if p.strip()]
     for p in paragraphs:
-        # 単なる admonition マーカ / コードブロック / 表 / リスト見出しは skip
-        if p.startswith(("```", "|", "!!!", "???")):
+        if p.startswith(("```", "|", "!!!", "???", "<!--")):
             continue
-        # 行頭の `- ` を残す通常のリストはそのまま 1 段落として扱う
-        # 改行は半角スペースに畳む
         text = re.sub(r"\s+", " ", p).strip()
-        # 長すぎる場合は途中で切る
-        if len(text) > 400:
-            text = text[:400].rstrip() + "…"
-        # 相対 link のうち glossary 参照は本ページ (depth 2) からの形に書き換える
-        text = _rewrite_glossary_links_for_depth2(text)
-        # 同一ディレクトリの相対 link（split-child などへの sibling 参照）を
-        # discrepancy-index 側で解決可能な形に書き換える
-        text = _rewrite_same_dir_links_for_depth2(text, src_dir)
+        if not text:
+            continue
+        if _is_boilerplate(text):
+            continue
         return text
     return ""
+
+
+def extract_disc_summary(body: str, src_dir: str = "") -> str:
+    """「実装との乖離」セクションの最初の段落を返す。
+
+    Markdown の admonition / コードブロックなどは雑に剥がし、最初の段落のみ。
+    既知のテンプレ流用ボイラープレート (split-child の親ページ参照案内、
+    `!!! diff` ブロックへの誘導文、monitor ラベルの説明のみの段落) は skip し、
+    一覧 snippet が「読み手に固有差分を 1 行で伝える」価値を保つようにする。
+    本文中の `## 実装との乖離` セクションに固有差分が無い場合は、
+    末尾の `!!! diff "HLD と実装の差分"` admonition から最初の意味段落を拾う
+    フォールバックを試みる。
+    """
+    matches = list(DISC_HEADING_RE.finditer(body))
+    if not matches:
+        return ""
+
+    text = ""
+    # ボイラープレートを skip しつつ、各ヒット (`## 実装との乖離` および
+    # `!!! diff`) を順番に試行して最初に得られた意味段落を採用する。
+    for m in matches:
+        section = _extract_section(body, m)
+        text = _first_meaningful_paragraph(section)
+        if text:
+            break
+
+    if not text:
+        return ""
+
+    # 長すぎる場合は途中で切る
+    if len(text) > 400:
+        text = text[:400].rstrip() + "…"
+    # 相対 link のうち glossary 参照は本ページ (depth 2) からの形に書き換える
+    text = _rewrite_glossary_links_for_depth2(text)
+    # 同一ディレクトリの相対 link（split-child などへの sibling 参照）を
+    # discrepancy-index 側で解決可能な形に書き換える
+    text = _rewrite_same_dir_links_for_depth2(text, src_dir)
+    return text
 
 
 def collect() -> list[dict]:
