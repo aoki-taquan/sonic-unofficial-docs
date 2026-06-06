@@ -3,11 +3,17 @@ title: sonic-feature YANG
 description: sonic-feature YANG — SONiC service/feature enable, disable, and auto-restart control YANG module.
 area: reference
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-06-06
 sources:
 - repo: sonic-net/sonic-buildimage
   path: src/sonic-yang-models/yang-models/sonic-feature.yang
   ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-host-services
+  path: scripts/featured
+  ref: master
+- repo: sonic-net/sonic-swss
+  path: cfgmgr/coppmgr.cpp
+  ref: master
 related:
   config_db:
   - FEATURE
@@ -38,7 +44,7 @@ flowchart LR
   Y["sonic-feature"]
   C1[("CONFIG_DB<br/>FEATURE")]
   Y --> C1
-  D1["coppmgrd"]
+  D1["featured"]
   C1 --> D1
 ```
 
@@ -142,7 +148,7 @@ module: sonic-feature
 
 ### 典型的なデプロイ位置
 
-- feature コンテナの有効化 / 自動起動制御。`FEATURE|<name>` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) が systemd unit にマッピング。
+- feature コンテナの有効化 / 自動起動制御。`FEATURE|<name>` を `featured` (sonic-host-services の daemon、`scripts/featured`) が subscribe して systemd unit の enable/disable と auto-restart 設定に反映する。[^2] `coppmgrd` も同テーブルを読み、有効な feature の [CoPP](../../reference/glossary.md#term-copp) trap だけを [APPL_DB](../../reference/glossary.md#term-appl_db) に push する trap enable filter として利用する。[^3]
 
 ### よくある落とし穴
 
@@ -159,5 +165,7 @@ show feature status
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-feature.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^2]: `sonic-net/sonic-host-services` `scripts/featured` (`FEATURE_TBL = swsscommon.CFG_FEATURE_TABLE_NAME`, FEATURE table updates を subscribe する `FeatureHandler`、`state` / `auto_restart` / `delayed` を systemd unit に反映)。
+[^3]: `sonic-net/sonic-swss` `cfgmgr/coppmgr.cpp` (`m_cfgFeatureTable(cfgDb, CFG_FEATURE_TABLE_NAME)`、`else if (table == CFG_FEATURE_TABLE_NAME)` 分岐で feature 有効/無効に応じた COPP trap を APP_COPP_TABLE に出力)。
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: 3a40a40bb067 -->

@@ -29,7 +29,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>FEATURE")]
-  DM["coppmgrd"]
+  DM["featured"]
   CDB --> DM
 ```
 
