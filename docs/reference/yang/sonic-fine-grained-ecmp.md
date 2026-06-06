@@ -58,6 +58,8 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`FG_NHG`](../config-db/fg-nhg.md)
+- [`FG_NHG_PREFIX`](../config-db/fg-nhg.md)
+- [`FG_NHG_MEMBER`](../config-db/fg-nhg.md)
 
 ### 関連 Topics
 

@@ -71,6 +71,24 @@ def cdb_slug(name: str) -> str:
     return name.lower().replace("_", "-")
 
 
+def resolve_cdb_slug(name: str) -> str | None:
+    """Resolve a CONFIG_DB table name to an existing slug under ``CDB_DIR``.
+
+    Mirrors the trailing-segment fallback used by ``gen_ref_triangle.py`` so
+    sub-tables that are documented inside a parent page (e.g. ``SNMP_COMMUNITY``
+    / ``SNMP_USER`` → ``snmp.md``) still resolve to a real link target instead
+    of being silently dropped from the auto-generated xref block.
+    """
+    base = cdb_slug(name)
+    parts = base.split("-")
+    while parts:
+        candidate = "-".join(parts)
+        if candidate and (CDB_DIR / f"{candidate}.md").exists():
+            return candidate
+        parts.pop()
+    return None
+
+
 def cli_slug(name: str) -> str:
     """`config bgp bbr` -> `config-bgp-bbr`."""
     return re.sub(r"\s+", "-", name.strip().lower())
@@ -136,11 +154,16 @@ def render_block(module: str, fm: dict, yang_to_hld: dict[str, list[str]],
     cli_names = list(related.get("cli") or [])
 
     cdb_links: list[tuple[str, str]] = []
+    seen_cdb_names: set[str] = set()
     for name in cdb_names:
-        slug = cdb_slug(str(name))
-        target = CDB_DIR / f"{slug}.md"
-        if target.exists():
-            cdb_links.append((str(name), f"../config-db/{slug}.md"))
+        name_s = str(name)
+        if name_s in seen_cdb_names:
+            continue
+        slug = resolve_cdb_slug(name_s)
+        if not slug:
+            continue
+        seen_cdb_names.add(name_s)
+        cdb_links.append((name_s, f"../config-db/{slug}.md"))
 
     cli_links: list[tuple[str, str]] = []
     for name in cli_names:

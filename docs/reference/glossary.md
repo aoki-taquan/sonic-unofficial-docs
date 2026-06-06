@@ -1285,7 +1285,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [BGP](#term-bgp)
 
 - [sonic-bgp-neighbor YANG](yang/sonic-bgp-neighbor.md) (245)
-- [sonic-bgp-peergroup YANG](yang/sonic-bgp-peergroup.md) (233)
+- [sonic-bgp-peergroup YANG](yang/sonic-bgp-peergroup.md) (234)
 - [sonic-bgp-global YANG](yang/sonic-bgp-global.md) (216)
 - [STATE_DB BGP 関連テーブル](config-db/state-bgp.md) (169)
 - [BGP_PEER_GROUP テーブル](config-db/bgp-peer-group.md) (139)
@@ -2048,8 +2048,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SNMP テーブル](config-db/snmp.md) (160)
 - [SNMP_AGENT_ADDRESS_CONFIG / SNMP_USER テーブル (デフォルト詳細)](config-db/snmp-agent.md) (139)
 - [SNMP_COMMUNITY テーブル](config-db/community-list.md) (86)
+- [sonic-snmp YANG](yang/sonic-snmp.md) (75)
 - [SNMP 設定の snmp.yml → CONFIG_DB 移行](../system/snmp-migration-from-snmp-yml-to-configdb.md) (74)
-- [sonic-snmp YANG](yang/sonic-snmp.md) (73)
 
 ### [SRv6](#term-srv6)
 
@@ -2301,7 +2301,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VNET_ROUTE / VNET_ROUTE_TUNNEL テーブル](config-db/vnet-route.md) (183)
 - [VNET テーブル](config-db/vnet.md) (177)
 - [DASH_VNET テーブル](config-db/dash-vnet.md) (119)
-- [sonic-vnet YANG](yang/sonic-vnet.md) (87)
+- [sonic-vnet YANG](yang/sonic-vnet.md) (88)
 - [VXLAN / VNET / EVPN の概要](../topics/03-vxlan-evpn/concept.md) (47)
 
 ### [VRF](#term-vrf)

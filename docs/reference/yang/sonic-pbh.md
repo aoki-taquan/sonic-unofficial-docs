@@ -59,6 +59,8 @@ flowchart LR
 
 ### 対応 CONFIG_DB
 
+- [`PBH_HASH_FIELD`](../config-db/pbh.md)
+- [`PBH_HASH`](../config-db/pbh.md)
 - [`PBH_RULE`](../config-db/pbh-rule.md)
 - [`PBH_TABLE`](../config-db/pbh-table.md)
 

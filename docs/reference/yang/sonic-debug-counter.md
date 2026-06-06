@@ -54,6 +54,7 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`DEBUG_COUNTER`](../config-db/debug-counter.md)
+- [`DEBUG_COUNTER_DROP_REASON`](../config-db/debug-counter.md)
 
 ### 関連 HLD
 
