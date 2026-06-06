@@ -1576,7 +1576,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [FRR](#term-frr)
 
 - [COMMUNITY_SET テーブル](config-db/community-set.md) (87)
-- [BGP_GLOBALS_AF テーブル](config-db/bgp-globals-af.md) (65)
+- [BGP_GLOBALS_AF テーブル](config-db/bgp-globals-af.md) (68)
 - [ROUTE_MAP テーブル](config-db/route-map.md) (63)
 - [BGP_AGGREGATE_ADDRESS テーブル](config-db/bgp-aggregate-address.md) (58)
 - [PREFIX_SET テーブル](config-db/prefix-set.md) (58)
