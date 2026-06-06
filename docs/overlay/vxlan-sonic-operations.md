@@ -15,6 +15,15 @@ sources:
 - repo: sonic-net/sonic-utilities
   path: config/vxlan.py
   ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  ref: master
+- repo: sonic-net/sonic-swss
+  path: neighsyncd/neighsync.cpp
+  ref: master
+- repo: sonic-net/sonic-swss
+  path: cfgmgr/intfmgr.cpp
+  ref: master
 related:
   config_db:
   - VXLAN_TUNNEL
@@ -22,7 +31,6 @@ related:
   - VNET
   - INTERFACE
   - VLAN_INTERFACE
-  - NEIGH_TABLE
   - VLAN
   cli:
   - config vxlan
@@ -65,12 +73,12 @@ VLAN_INTERFACE|<vlan_intf>
 
 VLAN_INTERFACE|<vlan_intf>|<prefix>
     {}
-
-NEIGH_TABLE|<intf>|<ip>
-    family : IPv4 | IPv6
 ```
 
-`VXLAN_TUNNEL` に `src_ip` 必須、`dst_ip` は P2P 用にオプション。`VXLAN_TUNNEL_MAP` で [VLAN](../reference/glossary.md#term-vlan) ↔ VNI を関連付ける[^1]。
+`VXLAN_TUNNEL` に `src_ip` 必須、`dst_ip` は P2P 用にオプション。`VXLAN_TUNNEL_MAP` で [VLAN](../reference/glossary.md#term-vlan) ↔ VNI を関連付ける[^1]。`VNET.peer_list` は空文字列 `""` で「ピアなし」を表す（HLD `2.1.3 ConfigDB Schemas` の `PEER_LIST` 注記が明示）[^1]。
+
+!!! note "HLD と master の乖離: `NEIGH_TABLE`"
+    元の HLD `2.1.2 VNET/Interface Table` は `NEIGH_TABLE|<intf>|<ip>` を CONFIG_DB のテーブルとして列挙している[^1]が、master の実装では `NEIGH_TABLE` は APP_DB のテーブル名であり、CONFIG_DB 用の `CFG_NEIGH_TABLE_NAME` マクロは定義されていない（`APP_NEIGH_TABLE_NAME = "NEIGH_TABLE"` のみ存在）[^4]。`intfmgrd` / `neighsyncd` 等の producer はいずれも APP_DB に対して書き込む[^5]。本ページでは混乱を避けるため、`NEIGH_TABLE` を CONFIG_DB スキーマから除外した。
 
 ## 2. APP_DB スキーマ
 
@@ -92,9 +100,12 @@ VNET_TABLE:<vnet>
     vni          : <int>
     scope        : "default"
     peer_list    : <vnet,...>
+
+NEIGH_TABLE:<intf>:<ip>
+    family : IPv4 | IPv6
 ```
 
-`VNET_ROUTE_TABLE` は **同 VNet 内の直接到達**、`VNET_ROUTE_TUNNEL_TABLE` は **tunnel nexthop 経由のリモート経路**[^1]。
+`VNET_ROUTE_TABLE` は **同 VNet 内の直接到達**、`VNET_ROUTE_TUNNEL_TABLE` は **tunnel nexthop 経由のリモート経路**[^1]。`NEIGH_TABLE` は APP_DB 側のテーブルで、kernel neighbor を `neighsyncd` が同期し、`intfmgrd` も VNet neighbor を APP_DB に書く[^4][^5]。
 
 ## 3. CLI
 
@@ -180,5 +191,7 @@ docker exec bgp vtysh -c 'show bgp l2vpn evpn summary'
 [^1]: `sonic-net/SONiC` `doc/vxlan/Vxlan_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 [^2]: `sonic-net/sonic-utilities` `show/vxlan.py` (`vxlan` click group) L12-L392 @ `39732bceb8bdefe706518ab40623bbbba6ff33b9`
 [^3]: `sonic-net/sonic-utilities` `config/vxlan.py` (`vxlan` click group, `add/del/map/map_range/evpn_nvo` subcommands) L14-L325 @ `39732bceb8bdefe706518ab40623bbbba6ff33b9`
+[^4]: `sonic-net/sonic-swss-common` `common/schema.h` L46 (`APP_NEIGH_TABLE_NAME = "NEIGH_TABLE"`、CONFIG_DB 用 `CFG_NEIGH_TABLE_NAME` は未定義) @ master
+[^5]: `sonic-net/sonic-swss` `neighsyncd/neighsync.cpp` L23, L33, L179 / `cfgmgr/intfmgr.cpp` L43 (いずれも `APP_NEIGH_TABLE_NAME` を APP_DB に対して open) @ master
 
 <!-- glossary-links-injected: 302f3d074477 -->
