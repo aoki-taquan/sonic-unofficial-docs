@@ -9,20 +9,14 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/pins/p4orch_hld.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss
+  path: orchagent/p4orch/p4orch.cpp
+  ref: master
 related:
-  config_db:
-  - VRF
-  - ACL_RULE
-  - ACL_TABLE
-  - MGMT_VRF_CONFIG
-  - VXLAN_TUNNEL_MAP
-  - SYSLOG_SERVER
-  cli:
-  - config vrf
-  - show acl
-  - config acl
-  yang:
-  - sonic-vrf
+  config_db: []
+  cli: []
+  yang: []
+  _no_related: true
 ---
 
 <!-- topics-tip -->
@@ -150,7 +144,10 @@ sequenceDiagram
 
 ## 設定
 
-CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) / SAI への変更は **無し**[^1]。設定は P4Runtime controller 経由。確認は:
+CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) / SAI への変更は **無し**[^1]。P4Orch は `APPL_DB` の `P4RT_TABLE` (`APP_P4RT_*_TABLE_NAME`) のみを購読する[^2]。設定は P4Runtime controller 経由。確認は:
+
+<!-- evidence: sonic-swss/orchagent/p4orch/p4orch.cpp:41 (m_publisher("APPL_DB", ...))、:65-72 (m_p4TableToManagerMap[APP_P4RT_*_TABLE_NAME]) — CONFIG_DB のサブスクリプションは存在しない -->
+
 
 ```bash
 docker exec swss ps aux | grep orchagent
@@ -189,6 +186,7 @@ sonic-db-cli APPL_STATE_DB keys '*'
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pins/p4orch_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss` `orchagent/p4orch/p4orch.cpp` L41, L65-L72（`m_publisher("APPL_DB", ...)` および `APP_P4RT_*_TABLE_NAME` への `m_p4TableToManagerMap` 登録）
 
 <!-- topics-back-ref -->
 ## 関連 Topics
