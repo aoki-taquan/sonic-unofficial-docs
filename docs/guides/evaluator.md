@@ -3,7 +3,7 @@ title: 評価者向けガイド
 description: ラボで SONiC を試用する読者向けに、仮想環境または評価機で起動し、管理 IP、ポート、VLAN、BGP などの基本設定を入れて状態確認まで辿る導線と、最小 bring-up 例を提供する。
 area: guides
 verification: meta
-last_verified: 2026-06-04
+last_verified: 2026-06-06
 related:
   cli: []
   config_db: []
@@ -61,11 +61,15 @@ sudo vtysh -c 'configure terminal' \
            -c 'router bgp 65000' \
            -c 'neighbor 10.0.0.1 remote-as 65001'
 
-# 6. 投入結果を確認する
+# 6. 投入結果を確認する (ポート / VLAN / BGP neighbor)
 show interfaces status
+show vlan brief
+show ip bgp summary
 ```
 
-`config interface ip add` は `eth0` に対しては `MGMT_INTERFACE` テーブルへ `(eth0, <ip/prefix>)` キーで書き込み、ゲートウェイ指定時は `gwaddr` を併記する<!-- evidence: sonic-utilities config/main.py:5676-5716 (add_interface_ip: eth0 分岐で MGMT_INTERFACE set_entry) -->。`config interface startup` の引数は単一インタフェース名で、内部で `PORT` テーブルの `admin_status` を `up` に更新する<!-- evidence: sonic-utilities config/main.py:5184-5210 -->。`config vlan add` は `vlan.py` で実装されており、`VLAN` テーブルに `Vlan<vid>` エントリを作成する<!-- evidence: sonic-utilities config/vlan.py:95-142 -->。BGP については `config bgp` 直下のサブコマンドが neighbor ごとの `shutdown` / `startup` / `remove` と、`device-global` (TSA / W-ECMP 等) ・ `aggregate-address` の追加グループに限られ、neighbor を新規に作成する `add` 系コマンドは存在しない<!-- evidence: sonic-utilities config/main.py:4918-5054 (bgp group: shutdown/startup/remove サブグループ)、config/main.py:4926-4927 (bgp_cli.DEVICE_GLOBAL / AGGREGATE_ADDRESS を add_command) -->。設定本体は FRR が握っているため、評価ラボでは `vtysh` から直接 FRR を叩くか、`config_db.json` の `BGP_NEIGHBOR` / `DEVICE_NEIGHBOR` テーブルを編集して `config reload` する流れになる ([config bgp](../reference/cli/config-bgp.md) も参照)。最後の `show interfaces status` は内部で `intfutil -c status` を起動し、admin/oper 状態と速度・MTU 等の一覧を表示する<!-- evidence: sonic-utilities show/interfaces/__init__.py:148-160 (status: intfutil -c status を subprocess 起動) -->。
+`config interface ip add` は `eth0` に対しては `MGMT_INTERFACE` テーブルへ `(eth0, <ip/prefix>)` キーで書き込み、ゲートウェイ指定時は `gwaddr` を併記する<!-- evidence: sonic-utilities config/main.py:5676-5716 (add_interface_ip: eth0 分岐で MGMT_INTERFACE set_entry) -->。`config interface startup` の引数は単一インタフェース名で、内部で `PORT` テーブルの `admin_status` を `up` に更新する<!-- evidence: sonic-utilities config/main.py:5184-5210 -->。`config vlan add` は `vlan.py` で実装されており、`VLAN` テーブルに `Vlan<vid>` エントリを作成する<!-- evidence: sonic-utilities config/vlan.py:95-142 -->。BGP については `config bgp` 直下のサブコマンドが neighbor ごとの `shutdown` / `startup` / `remove` と、`device-global` (TSA / W-ECMP 等) ・ `aggregate-address` の追加グループに限られ、neighbor を新規に作成する `add` 系コマンドは存在しない<!-- evidence: sonic-utilities config/main.py:4918-5054 (bgp group: shutdown/startup/remove サブグループ)、config/main.py:4926-4927 (bgp_cli.DEVICE_GLOBAL / AGGREGATE_ADDRESS を add_command) -->。設定本体は FRR が握っているため、評価ラボでは `vtysh` から直接 FRR を叩くか、`config_db.json` の `BGP_NEIGHBOR` / `DEVICE_NEIGHBOR` テーブルを編集して `config reload` する流れになる ([config bgp](../reference/cli/config-bgp.md) も参照)。
+
+確認系のうち `show interfaces status` は内部で `intfutil -c status` を起動し、admin/oper 状態と速度・MTU 等の一覧を表示する<!-- evidence: sonic-utilities show/interfaces/__init__.py:148-160 (status: intfutil -c status を subprocess 起動) -->。`show vlan brief` は CONFIG_DB の `VLAN` / `VLAN_INTERFACE` / `VLAN_MEMBER` テーブルを直接読み、VLAN ID・IP アドレス・メンバーポート・モード (tagged/untagged) を grid 表で出力する<!-- evidence: sonic-utilities show/vlan.py:119-141 (brief: get_table('VLAN'/'VLAN_INTERFACE'/'VLAN_MEMBER') → tabulate) -->ので、ステップ 4 で投入した `Vlan100` とメンバーの `Ethernet0` が反映されているかをここで確認する。`show ip bgp summary` は `bgp` サブグループの `summary` サブコマンドで実装され、内部で全 BGP インスタンスから summary を取り出し、neighbor ごとの State/PfxRcd 等を表示する<!-- evidence: sonic-utilities show/bgp_frr_v4.py:36-40 (summary subcommand) / show/bgp_frr_v4.py:160-164 (summary_helper: get_bgp_summary_from_all_bgp_instances → display_bgp_summary) -->ため、ステップ 5 で投入した `10.0.0.1` の neighbor が `Established` に到達しているかをここで判別できる (対向側未設定なら `Active` / `Idle` のまま停まる)。
 
 ## 評価シナリオ別の分岐
 
