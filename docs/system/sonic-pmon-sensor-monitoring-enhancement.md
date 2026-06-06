@@ -131,13 +131,16 @@ CLI は HLD で「provided to display the sensor devices, their measurements, th
 ### 設定例
 
 ```bash
-# STATE_DB の確認
+# STATE_DB の確認 (キー名は plugin 実装依存。
+#  HLD は "VOLTAGE_INFO|sensor_name" のみ規定し、sensor_name の具体値はベンダ実装)
 redis-cli -n 6 KEYS "VOLTAGE_INFO|*"
-redis-cli -n 6 HGETALL "VOLTAGE_INFO|board_3v3"
+redis-cli -n 6 HGETALL "VOLTAGE_INFO|<sensor_name>"
 
 # 警告ログ
 journalctl | grep -iE "voltage.*alarm|current.*alarm"
 ```
+
+`sensor_name` は platform plugin の `VoltageSensorBase.get_name()` 戻り値が用いられ、未実装時は `sensormond` が `'{parent_name} voltage_sensor {index}'`（例: `Chassis voltage_sensor 1`）にフォールバックする[^2]。
 
 ## 制限事項
 
@@ -161,12 +164,12 @@ journalctl | grep -iE "voltage.*alarm|current.*alarm"
 # SensorMon の動作確認
 docker exec pmon supervisorctl status sensormond  # 名称はベンダ次第の可能性
 
-# voltage 値
+# voltage 値 (実キーは redis-cli KEYS で列挙してから個別 HGETALL)
 redis-cli -n 6 KEYS "VOLTAGE_INFO|*"
-redis-cli -n 6 HGETALL "VOLTAGE_INFO|<key>"
+redis-cli -n 6 HGETALL "VOLTAGE_INFO|<sensor_name>"
 
-# しきい値チェック
-redis-cli -n 6 HGETALL "VOLTAGE_INFO|<key>" | grep -E "high_threshold|warning_status"
+# しきい値チェック (HLD schema 上のフィールド名)
+redis-cli -n 6 HGETALL "VOLTAGE_INFO|<sensor_name>" | grep -E "high_threshold|critical_high_threshold|warning_status"
 
 # 直近の alarm
 journalctl --since "1 hour ago" | grep -iE "voltage|current.*alarm"
@@ -182,5 +185,6 @@ journalctl --since "1 hour ago" | grep -iE "voltage|current.*alarm"
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pmon/pmon-sensormon.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-platform-daemons` `sonic-sensormond/scripts/sensormond` L246, L394（`try_get(voltage_sensor.get_name, '{} voltage_sensor {}'.format(parent_name, voltage_sensor_index + 1))` 等）
 
 <!-- glossary-links-injected: 8ba32e5aa69d -->
