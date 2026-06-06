@@ -9,7 +9,7 @@ sources:
     path: src/sonic-yang-models/yang-models/sonic-system-ldap.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [LDAP, LDAP_SERVER]
+  config_db: [LDAP_SERVER]
   cli: ["config ldap"]
   yang: [sonic-system-aaa]
 ---
@@ -32,13 +32,10 @@ Lightweight Directory Access Protocol (LDAP) authentication [YANG](../../referen
 ```mermaid
 flowchart LR
   Y["sonic-system-ldap"]
-  C1[("CONFIG_DB<br/>LDAP")]
+  C1[("CONFIG_DB<br/>LDAP_SERVER")]
   Y --> C1
   D1["hostcfgd"]
   C1 --> D1
-  C2[("CONFIG_DB<br/>LDAP_SERVER")]
-  Y --> C2
-  C2 --> D1
 ```
 
 !!! note "凡例"
@@ -108,7 +105,7 @@ module: sonic-system-ldap
 
 ## 関連 CONFIG_DB / CLI
 
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): `LDAP|global`, `LDAP_SERVER|<hostname>`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `LDAP|global`, `LDAP_SERVER|<hostname>` — いずれも [`LDAP_SERVER` テーブル](../config-db/ldap-server.md) ページにまとめて記載
 - CLI: `config ldap`
 
 <!-- yang-sibling -->
@@ -127,7 +124,7 @@ module: sonic-system-ldap
 
 ## 関連リファレンス
 
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): `LDAP` / [`LDAP_SERVER`](../config-db/ldap-server.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`LDAP`](../config-db/ldap-server.md) / [`LDAP_SERVER`](../config-db/ldap-server.md)
 - CLI: `config ldap`
 
 <!-- ref-triangle:end -->
