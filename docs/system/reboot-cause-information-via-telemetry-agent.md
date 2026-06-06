@@ -154,14 +154,16 @@ show reboot-cause history
 
 ### コマンド例
 
-reboot-cause を [gNMI](../reference/glossary.md#term-gnmi) 経由で取得できるか確認する。
+CLI とファイル経由で reboot-cause を確認する手順は以下のとおり。
 
 ```bash
 show reboot-cause
 show reboot-cause history
-gnmi_get -target_addr localhost:8080 -xpath '/reboot-cause'
 cat /host/reboot-cause/previous-reboot-cause.json
+redis-cli -n 6 hgetall "REBOOT_CAUSE|<timestamp>"
 ```
+
+[gNMI](../reference/glossary.md#term-gnmi) 経由での取得は、本機能の HLD で専用 xpath/proto が定義されていないため、現行 master では汎用 STATE_DB 公開経路 (`/sonic-db/STATE_DB/REBOOT_CAUSE/...` 相当) を経由することになる。実機での xpath 形式は telemetry agent の設定 (`TELEMETRY_CLIENT` / `TELEMETRY`) と subscribe スキーマに依存するため、ここでは具体的なコマンド例を示さない。
 
 ## 引用元
 
