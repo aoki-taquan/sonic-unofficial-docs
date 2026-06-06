@@ -3,8 +3,17 @@ title: 設定
 description: 設定 — SRv6 / MPLS / Path Tracing の設定は、いずれも CONFIG_DB のテーブルに置けば最小構成が組めます。
 area: topics
 verification: meta
-last_verified: 2026-05-10
-sources: []
+last_verified: 2026-06-06
+sources:
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-srv6.yang
+  lines: "1-146"
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py
+  lines: "1-150"
+- repo: sonic-net/sonic-swss
+  path: orchagent/srv6orch.cpp
+  lines: "40-70,2204-2228"
 related:
   cli:
   - config interface
@@ -38,18 +47,23 @@ related:
 
 ```text
 SRV6_MY_LOCATORS|<locator_name>:
-  prefix = <ipv6_prefix>
-  block_len = 40
-  node_len  = 24
-  func_len  = 16
-  arg_len   = 0
+  prefix    = <ipv6_address>     ; YANG 型は ipv6-address (例: fcbb:bbbb::)
+  block_len = 40                 ; default 32
+  node_len  = 24                 ; default 16
+  func_len  = 16                 ; default 16
+  arg_len   = 0                  ; default 0
+  vrf       = default            ; optional, default "default"
 
 SRV6_MY_SIDS|<locator_name>|<ip_prefix>:
-  action = end.dt46
-  vrf    = Vrf01
+  action          = uDT46        ; enum: uN | uDT46
+  decap_vrf       = Vrf01        ; optional, default "default"
+  decap_dscp_mode = pipe         ; optional enum: uniform | pipe
 ```
 
-`SRv6Mgr` は locator 不在のまま SID が来た場合に `SRV6_MY_LOCATORS` を subscribe して deferred 解決する経路を持つため、locator と SID の投入順序を厳密にそろえる必要はありません。
+<!-- evidence: .cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-srv6.yang L95-143 SRV6_MY_SIDS leaves action(uN|uDT46) / decap_vrf / decap_dscp_mode -->
+<!-- evidence: .cache/sonic-sources/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py L78-91, L149-150 data['action'] / data['decap_vrf'], FRR command "sid ... locator ... behavior <action> [vrf <decap_vrf>]" -->
+
+CONFIG_DB のフィールド名は `action` / `decap_vrf` ですが、`bgpcfgd` 内の `SRv6Mgr` がこれを FRR の `segment-routing srv6 static-sids sid ... locator ... behavior <action> [vrf <decap_vrf>]` に変換して `vtysh` に流し込むため、FRR 側のキーワードは `behavior` / `vrf` になります。投入時のフィールド名を取り違えないでください。`SRv6Mgr` は locator 不在のまま SID が来た場合に `SRV6_MY_LOCATORS` を subscribe して deferred 解決する経路を持つため、locator と SID の投入順序を厳密にそろえる必要はありません。
 
 ## SRv6 base スキーマ
 
@@ -59,14 +73,10 @@ base [HLD](../../reference/glossary.md#term-hld) では Static SID とは別に�
 SRV6_SID_LIST|<segment_name>:
   path = [<sid>, <sid>, ...]
 
-SRV6_MY_SID_TABLE|<ipv6_addr>:
-  block_len  = 40
-  node_len   = 24
-  func_len   = 16
-  arg_len    = 0
-  action     = end.dt46
-  vrf        = Vrf01
-  adj        = <ipv6_nh>     ; uA / End.X 系で必須
+SRV6_MY_SID_TABLE|<block_len>:<node_len>:<func_len>:<arg_len>:<sid_ipv6>:
+  action = end.dt46          ; srv6orch 側の lowercase 命名 (end.x / end.dt4 / end.dt46 / udx4 / udx6 ...)
+  vrf    = Vrf01             ; decap 用 VRF
+  adj    = <ipv6_nh>         ; end.x / end.dx4 / end.dx6 等で必須
 
 SRV6_POLICY|<policy_name>:
   segment    = <segment_name>
@@ -77,7 +87,9 @@ SRV6_STEER|<key>:
   ...
 ```
 
-`adj` は L3 隣接が必要な behavior（`uA` / `End.X` / `uDX4` / `uDX6` / `End.DX4` / `End.DX6`）のみで意味を持ちます。投入時に Neighbor 未解決でも srv6orch の pending queue が後から flush するため、運用上の neighbor タイミングをそろえる必要はありません（[アーキテクチャ](architecture.md) を参照）。
+<!-- evidence: .cache/sonic-sources/sonic-swss/orchagent/srv6orch.cpp L44-67 endpoint behavior table ("end.x"/"end.dt46" 等), L2204-2228 doTaskMySidTable が action/vrf/adj を読む, L2210 "Key for mySid : block_len:node_len:function_len:args_len:sid-ip" -->
+
+`srv6orch` が直接消費する `SRV6_MY_SID_TABLE` のキーは `<block_len>:<node_len>:<func_len>:<arg_len>:<sid>` 形式で、フィールドは `action` / `vrf` / `adj` の 3 つだけです。前節の `SRV6_MY_SIDS`（`sonic-srv6` YANG 経由で FRR に流す）とはテーブル名・キー構造・action 命名（`uN` / `uDT46` vs `end.dt46`）が異なる点に注意してください。`adj` は L3 隣接が必要な behavior（`end.x` / `end.dx4` / `end.dx6` / `uA` 系）でのみ意味を持ちます。投入時に Neighbor 未解決でも srv6orch の pending queue が後から flush するため、運用上の neighbor タイミングをそろえる必要はありません（[アーキテクチャ](architecture.md) を参照）。
 
 ## MPLS の有効化
 
@@ -123,29 +135,31 @@ PORT|Ethernet0:
 
 PT Source / Sink / Regional Collector は SONiC 外側で構築するため、SONiC 単体としては Midpoint 設定だけで完結します。
 
-## 設定シナリオ 1: VRF "Vrf01" 向け SRv6 End.DT46 SID の最小投入
+## 設定シナリオ 1: VRF "Vrf01" 向け SRv6 uDT46 SID の最小投入
 
-`fcbb:bbbb::/48` を locator として、`fcbb:bbbb:1::/64` を `Vrf01` 向けの `End.DT46` SID として宣言します。`sonic-cfggen` 経由か `redis-cli` 直叩きで CONFIG_DB に書きます。
+locator `loc1` の prefix を `fcbb:bbbb::` （`block_len=40` / `node_len=24` / `func_len=16` / `arg_len=0` で合計 80 bit）として、`fcbb:bbbb:1::/64` を `Vrf01` 向けの `uDT46` SID として宣言します。`sonic-cfggen` 経由か `redis-cli` 直叩きで CONFIG_DB に書きます。
 
 ```bash
 sudo sonic-cfggen -a '{
   "SRV6_MY_LOCATORS": {
-    "loc1": {"prefix":"fcbb:bbbb::/48","block_len":"40","node_len":"24","func_len":"16","arg_len":"0"}
+    "loc1": {"prefix":"fcbb:bbbb::","block_len":"40","node_len":"24","func_len":"16","arg_len":"0"}
   },
   "SRV6_MY_SIDS": {
-    "fcbb:bbbb:1::/64": {"locator":"loc1","behavior":"end.dt46","vrf":"Vrf01"}
+    "loc1|fcbb:bbbb:1::/64": {"action":"uDT46","decap_vrf":"Vrf01"}
   }
 }' -w
 ```
+
+`SRV6_MY_SIDS` のキーは `<locator_name>|<ip_prefix>` 形式で、フィールドは YANG スキーマどおり `action`（`uN` または `uDT46`）と `decap_vrf` を使います。`prefix` は YANG 型が `ipv6-address` のため、サフィックスを付けずに IPv6 アドレスのみを指定します。
 
 確認:
 
 ```bash
 # CONFIG_DB
 sonic-db-cli CONFIG_DB KEYS 'SRV6_MY_*'
-sonic-db-cli CONFIG_DB HGETALL 'SRV6_MY_SIDS|fcbb:bbbb:1::/64'
+sonic-db-cli CONFIG_DB HGETALL 'SRV6_MY_SIDS|loc1|fcbb:bbbb:1::/64'
 
-# FRR への流し込み（SRv6Mgr 経由）
+# FRR への流し込み（SRv6Mgr が behavior/vrf キーワードに変換）
 vtysh -c "show segment-routing srv6 locator"
 vtysh -c "show segment-routing srv6 sid"
 
@@ -237,7 +251,7 @@ Ethernet0     1234              template3
 | 症状 | 原因 | 対処 |
 |---|---|---|
 | `SRV6_MY_SIDS` を入れても FRR に降りない | `bgpcfgd` 側で SRv6Mgr が無効 / FRR バージョンが古い | `docker logs bgp` で `SRv6Mgr` のログを確認、FRR 9.x 以上が必要 |
-| `End.DT46` SID で traffic が drop される | `vrf` 指定の typo、または [VRF](../../reference/glossary.md#term-vrf) が未作成 | `show vrf`、`sonic-db-cli CONFIG_DB HGETALL VRF\|Vrf01` を確認 |
+| `uDT46` SID で traffic が drop される | `decap_vrf` の typo、または [VRF](../../reference/glossary.md#term-vrf) が未作成 | `show vrf`、`sonic-db-cli CONFIG_DB HGETALL VRF\|Vrf01` を確認 |
 | `config interface mpls enable` が `Not supported on platform` | SAI capability に MPLS なし | `show platform syseeprom` / `sai_redis_record` で `SAI_OBJECT_TYPE_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` をチェック |
 | MPLS_TC_TO_TC_MAP 設定後も DSCP マップ動作のまま | `PORT_QOS_MAP|<port>` で `mpls_tc_to_tc_map` を未参照 | 当該 port の `PORT_QOS_MAP` 行を確認 |
 | Path Tracing で MCD が刻まれない | [ASIC](../../reference/glossary.md#term-asic) が Path Tracing 未対応、または FEC / speed 不一致 | capability、`sairedis.rec` のエラーを確認 |
