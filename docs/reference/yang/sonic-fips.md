@@ -8,6 +8,12 @@ sources:
 - repo: sonic-net/sonic-buildimage
   path: src/sonic-yang-models/yang-models/sonic-fips.yang
   ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-host-services
+  path: scripts/hostcfgd
+  ref: master
+- repo: sonic-net/sonic-utilities
+  path: sonic_installer/bootloader/grub.py
+  ref: master
 related:
   config_db:
   - FIPS
@@ -116,11 +122,12 @@ module: sonic-fips
 
 ### 典型的なデプロイ位置
 
-- FIPS モード (連邦暗号規格) 制御。`FIPS|global` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) が openssl / kernel crypto に反映。
+- FIPS モード (連邦暗号規格) 制御。`FIPS|global` の変更を [hostcfgd](../../reference/glossary.md#term-hostcfgd) の `FipsCfg` ハンドラが subscribe し、`enable` 時には OpenSSL の FIPS フラグファイル `/etc/fips/fips_enable` を `1` に更新したうえで対象サービス (ssh, telemetry.service, restapi) を再起動する[^2]。`enforce` 時には bootloader (grub/uboot/aboot) のカーネル cmdline に `sonic_fips=1` を書き込み、次回ブートで kernel FIPS モードを有効化する[^3]。
 
 ### よくある落とし穴
 
-- FIPS 有効化後は md5 ベース TACACS+ 認証が拒否される。事前に SHA 系へ移行が必要。
+- `enforce=true` で書き込んだ kernel cmdline の反映は再起動が必要。`/etc/fips/fips_enable` 経由の OpenSSL 反映 (`enable=true`) との二段構成である点に注意[^2]。
+- `enforce` モードでは `FipsCfg` がサービス再起動をスキップする (kernel 強制側に委ねる) ため、設定変更直後に sshd が再起動しないことがある[^2]。
 
 ### 関連する config / show コマンド
 
@@ -133,5 +140,7 @@ show fips status
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fips.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^2]: `sonic-net/sonic-host-services` `scripts/hostcfgd` の `FipsCfg` クラス (L1753-L1846) — `OPENSSL_FIPS_CONFIG_FILE = '/etc/fips/fips_enable'`, `DEFAULT_FIPS_RESTART_SERVICES = ['ssh', 'telemetry.service', 'restapi']`, `update_noneenforce_config` がフラグファイル書き換えとサービス再起動、`update_enforce_config` が bootloader 経由の cmdline 書き換えを担当する。
+[^3]: `sonic-net/sonic-utilities` `sonic_installer/bootloader/grub.py` `set_fips()` (L126) — grub の cmdline へ `sonic_fips=1` を追記。`aboot.py` / `uboot.py` にも同等実装あり。`sonic_installer/main.py` `set_fips` コマンド (L693) からも CLI で操作可能。
 
 <!-- glossary-links-injected: 8ba32e5aa69d -->
