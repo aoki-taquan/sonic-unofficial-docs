@@ -7538,10 +7538,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sai-9" class="md-nav__link">
+  <a href="#sai-10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SAI 共通要件（重要 9 点）
+        SAI 共通要件（重要 10 点）
       
     </span>
   </a>
@@ -36041,10 +36041,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sai-9" class="md-nav__link">
+  <a href="#sai-10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SAI 共通要件（重要 9 点）
+        SAI 共通要件（重要 10 点）
       
     </span>
   </a>
@@ -36317,7 +36317,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="sai-9">SAI 共通要件（重要 9 点）<a class="headerlink" href="#sai-9" title="Permanent link">&para;</a></h3>
+<h3 id="sai-10">SAI 共通要件（重要 10 点）<a class="headerlink" href="#sai-10" title="Permanent link">&para;</a></h3>
 <p>実装が満たすべき不変条件<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li>未対応属性へのアクセスは <strong>error 返却で済ませる</strong>（crash 禁止）</li>
@@ -36329,6 +36329,7 @@
 <li>AN 有効中の <code>interface_type</code> の <strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 経由更新は block</strong>。ただし <code>pmon#xcvrd</code> 経由 <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の <strong>動的 interface_type 更新は SAI に伝達</strong> して advertisement を更新する</li>
 <li>SFP/QSFP 系で AN 有効 → SAI は <strong>link-training も同時に活性化</strong>（TX FIR 動的調整）</li>
 <li>SFP/QSFP 系で AN を ON → OFF にした瞬間 → speed / FEC / interface_type / TX FIR を APPL_DB の値に <strong>復元</strong>。APPL_DB に該当が無ければ SAI driver default（IT=NONE, FEC=NONE, TX FIR=ベンダ依存）</li>
+<li>SFP/QSFP 系で AN 有効時、APPL_DB の <code>fec</code> フィールドは AN 結果を <strong>override</strong> する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ol>
 <h3 id="config_db-appl_db-state_db">CONFIG_DB / APPL_DB / STATE_DB スキーマ<a class="headerlink" href="#config_db-appl_db-state_db" title="Permanent link">&para;</a></h3>
 <p><code>PORT</code> テーブルに 4 フィールド追加<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -36357,7 +36358,7 @@
 <tr>
 <td><code>config interface advertised-speeds &lt;if&gt; &lt;list&gt;\|all</code></td>
 <td>adv speeds</td>
-<td>AN OFF 時も CONFIG_DB に保存だけはする<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>AN OFF 時も CONFIG_DB に保存だけはする<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
 <td><code>config interface type &lt;if&gt; &lt;type&gt;</code></td>
@@ -36428,7 +36429,7 @@ reasoning: orchagent 内 cache/replay と CONFIG_DB ブロック / APPL_DB 通�
 <h3 id="portsyncd-portmgrd-port-breakout-xcvrd">portsyncd / portmgrd / Port Breakout / xcvrd の影響<a class="headerlink" href="#portsyncd-portmgrd-port-breakout-xcvrd" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong><a href="../../reference/glossary/#term-portsyncd">portsyncd</a></strong>: kernel netlink 連携。AN 関連の状態は STATE_DB に流す</li>
-<li><strong><a href="../../reference/glossary/#term-portmgrd">portmgrd</a></strong>: CONFIG_DB → APPL_DB の incremental 反映。Rev 0.4 で <strong>incremental</strong> 化された<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><a href="../../reference/glossary/#term-portmgrd">portmgrd</a></strong>: CONFIG_DB → APPL_DB の incremental 反映。Rev 0.4 で <strong>incremental</strong> 化された<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>Port Breakout</strong>: breakout で port 集合が変わるたび AN 設定を再構成。breakout config の <code>autoneg</code> を尊重</li>
 <li><strong>PMON xcvrd</strong>: 挿入された transceiver の media 種別に応じて <code>interface_type</code> を APPL_DB に動的更新（AN ON 中もこの経路だけは SAI に届く）</li>
 </ul>
@@ -36467,7 +36468,7 @@ reasoning: orchagent 内 cache/replay と CONFIG_DB ブロック / APPL_DB 通�
 </span></code></pre></div>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Gearbox</strong> 配下の port は scope 外<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Gearbox の場合は別途 PHY 側 AN を考慮</li>
+<li><strong>Gearbox</strong> 配下の port は scope 外<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Gearbox の場合は別途 PHY 側 AN を考慮</li>
 <li>AN ON 中の <code>interface_type</code> 直設定は実効性なし（pmon 経由のみ反映）</li>
 <li>ベンダ SAI が <code>SAI_PORT_ATTR_ADVERTISED_INTERFACE_TYPE</code>（SAI 1.7.1+）未対応だと adv_types は機能しない</li>
 <li>DB migrator が無いリリースから直接アップグレードする場合 <code>autoneg</code> の表記不一致でリンクが立たないリスク</li>
@@ -36475,7 +36476,7 @@ reasoning: orchagent 内 cache/replay と CONFIG_DB ブロック / APPL_DB 通�
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Link Training</strong>: AN 有効時の SFP/QSFP では同時 ON。AN OFF 時には TX FIR 復元</li>
-<li><strong>FEC</strong>: AN 有効時、APPL_DB の <code>fec</code> フィールドが AN 結果を override する<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>FEC</strong>: AN 有効時、APPL_DB の <code>fec</code> フィールドが AN 結果を override する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>PMON xcvrd / media_settings.json</strong>: media 種別から interface_type を動的に決める。AN ON でもこの経路だけは生きる</li>
 <li><strong>port speed</strong>: AN ON 時のみ実効性は AN 結果に従う。<code>speed</code> の手動指定はキャッシュとして orchagent が保持</li>
 <li><strong>port breakout</strong>: 分割後の各 sub-port に AN 設定が継承されるかは vendor SAI 依存</li>
@@ -36515,7 +36516,7 @@ reasoning: orchagent 内 cache/replay と CONFIG_DB ブロック / APPL_DB 通�
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/port_auto_neg/port-auto-negotiation-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/port_auto_neg/port-auto-negotiation-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

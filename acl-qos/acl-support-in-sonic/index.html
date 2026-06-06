@@ -36286,7 +36286,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified（基本構成のみ）</p>
-<p>現行 master の <code>sonic-swss/orchagent/aclorch.cpp</code> で <strong>byte counter</strong> (<code>SAI_ACL_COUNTER_ATTR_ENABLE_BYTE_COUNT</code> 周辺、aclorch.cpp:517)、<strong>IPv6 ルックアップ拡張</strong> (<code>SAI_ACL_IP_TYPE_IPV6ANY</code> / <code>..._NON_IPV6</code> / <code>MATCH_INNER_ETHER_TYPE</code> 等、aclorch.cpp:84,508-509)、<strong>LAG bind</strong> (<code>SAI_ACL_BIND_POINT_TYPE_LAG</code>、aclorch.cpp:106,3733)、<strong>MCLAG/portchannel リダイレクト</strong> が実装されていることを確認済み。本ページは初期 HLD ベースで、後続の追加機能（DASH-ACL / flex counter / show acl 拡張等）は別ページ参照（verified at: 2026-05-09）。</p>
+<p>現行 master の <code>sonic-swss/orchagent/aclorch.cpp</code> で <strong>byte counter</strong> (<code>SAI_ACL_COUNTER_ATTR_ENABLE_BYTE_COUNT</code> 周辺、aclorch.cpp:517)、<strong>IPv6 ルックアップ拡張</strong> (<code>SAI_ACL_IP_TYPE_IPV6ANY</code> / <code>MATCH_INNER_ETHER_TYPE</code> 等、aclorch.cpp:84,508)、<strong>LAG bind</strong> (<code>SAI_ACL_BIND_POINT_TYPE_LAG</code>、aclorch.cpp:106,3733)、<strong>MCLAG/portchannel リダイレクト</strong> が実装されていることを確認済み。本ページは初期 HLD ベースで、後続の追加機能（DASH-ACL / flex counter / show acl 拡張等）は別ページ参照。</p>
 </div>
 <h1 id="acl-acl_table-acl_rule">ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）<a class="headerlink" href="#acl-acl_table-acl_rule" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36359,9 +36359,9 @@
 <p>これだけが初期スコープ。<a href="../../reference/glossary/#term-lag">LAG</a> への bind や port 削除時の自動 unbind はリリース時点では <strong>対象外</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_4">ポート連携<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <ul>
-<li>ACL テーブルの bind は <strong>物理ポート（front panel port）のみ</strong>。LAG への bind は初期版では非対応<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>port の oper status up/down は ACL bind に影響しない</strong>。port が down でも binding は維持される<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>port を削除した場合は unbind が必要</strong>だが、初期リリースでは未実装<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ACL テーブルの bind は <strong>物理ポート（front panel port）のみ</strong>。LAG への bind は初期版では非対応<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>port の oper status up/down は ACL bind に影響しない</strong>。port が down でも binding は維持される<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>port を削除した場合は unbind が必要</strong>だが、初期リリースでは未実装<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <pre class="mermaid"><code>flowchart LR
     PKT[Packet] --&gt; P[Front panel port]
@@ -36443,7 +36443,7 @@ reasoning: 設定フローと full / partial モードの根拠。
 <h3 id="_7">カウンタ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
 <li>ルール毎の <strong>packet counter は Must Have</strong>（必須機能）。</li>
-<li>ルール毎の <strong>byte counter は Should Have</strong>（できれば実装）<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ルール毎の <strong>byte counter は Should Have</strong>（できれば実装）<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <p>具体的なカウンタの保存テーブル名や CLI は本 HLD には記述がない（後続の watermark / flex counter 系 HLD と組み合わせて実装される）。</p>
 <h2 id="_8">設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -36469,9 +36469,9 @@ reasoning: 設定フローと full / partial モードの根拠。
 </tr>
 </tbody>
 </table>
-<p>注: HLD では実際のキー名として <code>ACL_RULE_TABLE</code> も登場する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>が、ここは APP_DB 側の表記揺れ（<code>ACL_TABLE</code> / <code>ACL_RULE_TABLE</code>）として整理されているため、最終実装では <code>aclorch</code> のソースを参照する必要がある（裏取り課題）。</p>
+<p>注: HLD の <code>ACL_RULE_TABLE</code> 表記は <strong>APP_DB 側のキー名</strong>であり、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 側は <code>ACL_RULE</code> となる。実装上 <code>sonic-swss-common/common/schema.h</code> で <code>APP_ACL_RULE_TABLE_NAME "ACL_RULE_TABLE"</code> と <code>CFG_ACL_RULE_TABLE_NAME "ACL_RULE"</code> が分離定義されており<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>、<code>aclorch</code> も両者を別チャネルとして購読する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD の段階では <strong><code>config acl</code> 系 CLI は定義されていない</strong>。設定は <code>swssconfig</code> + JSON ファイルで投入する想定<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後続の <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> では <code>config acl</code> / <code>show acl</code> 系コマンドが追加されているが、それらは別 HLD・別実装の範疇。</p>
+<p>HLD の段階では <strong><code>config acl</code> 系 CLI は定義されていない</strong>。設定は <code>swssconfig</code> + JSON ファイルで投入する想定<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後続の <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> では <code>config acl</code> / <code>show acl</code> 系コマンドが追加されているが、それらは別 HLD・別実装の範疇。</p>
 <h3 id="hld">設定例（HLD ベース）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE:DATAACL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -36490,7 +36490,7 @@ reasoning: 設定フローと full / partial モードの根拠。
 </span></code></pre></div>
 <p>実際の CLI 構文は <code>config acl</code> 系コマンドや <code>aclshow</code> などの後続実装のドキュメントを参照する必要がある。</p>
 <h2 id="_9">制限事項<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<p>HLD 段階で明示されている制限<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>HLD 段階で明示されている制限<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>type は <code>l3</code> と <code>mirror</code> のみ</strong>（初期版）。</li>
 <li><strong><code>l2_prot_type</code> は <code>ipv4</code> のみ</strong>（IPv6 は当時未対応）。</li>
@@ -36503,16 +36503,16 @@ reasoning: 設定フローと full / partial モードの根拠。
 <h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>mirror_session</strong>: <code>mirror</code> ACL テーブルは <code>mirror_session_name</code> を介して mirror セッション設定と連動する。<code>MIRROR_SESSION</code> テーブルが先に存在する必要がある。</li>
-<li><strong>port 設定（PORT, PORTCHANNEL）</strong>: <code>ports</code> フィールドは物理ポート名で参照する。port 削除時に自動 unbind しないため、stale な binding が残る可能性がある<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>port 設定（PORT, PORTCHANNEL）</strong>: <code>ports</code> フィールドは物理ポート名で参照する。port 削除時に自動 unbind しないため、stale な binding が残る可能性がある<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong><code>swssconfig</code> の full/partial モード</strong>: 運用上、本番系で <code>full</code> を打つと一瞬全 ACL が無効化される時間窓ができる。partial モードや stage 環境での試験を推奨。</li>
 <li><strong>後続機能</strong>: ACL flex counter、egress mirroring、egress ACL bug fix、ACL action capability check など、本 HLD 以降の HLD 群がこのスキーマを拡張している。</li>
 </ul>
 <h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ルールが反映されない: <code>seq</code> 値が同一テーブル内で重複していないか、<code>type</code> で許される action のみ使っているかを確認。</li>
-<li>mirror が動かない: <code>mirror_session_name</code> で参照する <code>MIRROR_SESSION</code> の存在と、対象テーブルの <code>type</code> が <code>mirror</code> であることを確認<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>同一ポートで複数テーブルが効かない: HLD 上は併用 OK だが、競合する action（例: 両方とも permit/deny を出す）の組み合わせは未定義。<code>l3</code>+<code>mirror</code> の組み合わせから始めるのが安全<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>ポート削除後にバインドが残る: 初期リリースでは自動 unbind 未実装。手動で <code>swssconfig</code> partial モードで削除する必要<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>mirror が動かない: <code>mirror_session_name</code> で参照する <code>MIRROR_SESSION</code> の存在と、対象テーブルの <code>type</code> が <code>mirror</code> であることを確認<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>同一ポートで複数テーブルが効かない: HLD 上は併用 OK だが、競合する action（例: 両方とも permit/deny を出す）の組み合わせは未定義。<code>l3</code>+<code>mirror</code> の組み合わせから始めるのが安全<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ポート削除後にバインドが残る: 初期リリースでは自動 unbind 未実装。手動で <code>swssconfig</code> partial モードで削除する必要<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <p>確認コマンド例:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># ACL テーブル / ルール / バインドと MIRROR_SESSION を一望</span>
@@ -36537,13 +36537,19 @@ reasoning: 設定フローと full / partial モードの根拠。
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 896d391185a9 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/acl/acl.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/acl/acl.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss-common</code> <code>common/schema.h</code> L96, L515 (master)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/aclorch.cpp</code> L4221-L4287 @ <code>4305596156d70e9797e8a881b3d19b46de0bce0d</code>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

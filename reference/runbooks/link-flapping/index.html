@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: T0/T1 リンクが flap し続ける — : sonic-net/sonic-swss @ 4305596 — portsorch.cpp port_state notification : sonic-net/sonic-platform-common @ 4305596 — sfp_base…">
+        <meta name="description" content="T0/T1 間のリンクが頻繁に up/down する場合の切り分け runbook。flap 頻度の定量化、DOM 値とベンダー別 threshold の確認、FEC / autoneg / 物理層の順で原因を追い込む。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="T0/T1 リンクが flap し続ける - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: T0/T1 リンクが flap し続ける — : sonic-net/sonic-swss @ 4305596 — portsorch.cpp port_state notification : sonic-net/sonic-platform-common @ 4305596 — sfp_base…" />
+<meta property="og:description" content="T0/T1 間のリンクが頻繁に up/down する場合の切り分け runbook。flap 頻度の定量化、DOM 値とベンダー別 threshold の確認、FEC / autoneg / 物理層の順で原因を追い込む。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/link-flapping.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/link-flapping/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="T0/T1 リンクが flap し続ける - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: T0/T1 リンクが flap し続ける — : sonic-net/sonic-swss @ 4305596 — portsorch.cpp port_state notification : sonic-net/sonic-platform-common @ 4305596 — sfp_base…" />
+<meta property="twitter:description" content="T0/T1 間のリンクが頻繁に up/down する場合の切り分け runbook。flap 頻度の定量化、DOM 値とベンダー別 threshold の確認、FEC / autoneg / 物理層の順で原因を追い込む。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/link-flapping.png" />
 </head>
   
@@ -35026,10 +35026,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-dom" class="md-nav__link">
+  <a href="#2-dom-threshold" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. DOM 値
+        2. DOM 値と threshold
       
     </span>
   </a>
@@ -35992,10 +35992,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-dom" class="md-nav__link">
+  <a href="#2-dom-threshold" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. DOM 値
+        2. DOM 値と threshold
       
     </span>
   </a>
@@ -36111,7 +36111,7 @@
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>光モジュール (SFP/QSFP) の劣化</strong>: DOM 値が閾値外</li>
+<li><strong>光モジュール (SFP/QSFP) の劣化</strong>: DOM 値がベンダー定義の閾値外</li>
 <li><strong>FEC mismatch</strong>: 両端 FEC mode 違い → <a href="../fec-errors/">fec-errors.md</a></li>
 <li><strong>autoneg / speed mismatch</strong>: → <a href="../asic-link-autoneg-mismatch/">asic-link-autoneg-mismatch.md</a></li>
 <li><strong>ケーブル / patch panel の物理劣化</strong></li>
@@ -36130,13 +36130,15 @@
 <h3 id="1-flap">1. flap 頻度の定量化<a class="headerlink" href="#1-flap" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;oper status changed&quot;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Ethernet0<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
 </span></code></pre></div>
-<h3 id="2-dom">2. DOM 値<a class="headerlink" href="#2-dom" title="Permanent link">&para;</a></h3>
+<h3 id="2-dom-threshold">2. DOM 値と threshold<a class="headerlink" href="#2-dom-threshold" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>transceiver<span class="w"> </span>eeprom<span class="w"> </span>-d<span class="w"> </span>Ethernet0
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>transceiver<span class="w"> </span>lpmode
 </span></code></pre></div>
-<ul>
-<li>RX power が <code>-15dBm</code> 未満 / TX power が異常 → 物理層の問題</li>
-</ul>
+<p>DOM 出力には <code>RX Power</code> / <code>TX Power</code> / <code>Temperature</code> / <code>Voltage</code> 等の現在値と、<code>RxPowerLowAlarm</code> / <code>RxPowerHighAlarm</code> / <code>TxPowerLowWarning</code> 等の <strong>threshold</strong> がモジュールから読み出されて表示される<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
+<div class="admonition warning">
+<p class="admonition-title">閾値はモジュール依存</p>
+<p>SFP/QSFP の alarm/warning threshold (<code>rxpowerlowalarm</code> 等) は <strong>トランシーバ自身の EEPROM に格納されたベンダー定義値</strong> であり、SONiC は <code>sfp_base.get_transceiver_threshold_info()</code> API で読み出すだけで固定の閾値を持たない<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。「RX power が -15dBm 未満なら異常」のような一律基準は誤りで、現在値が同モジュールの <code>RxPowerLowAlarm</code> / <code>RxPowerLowWarning</code> を下回るか、あるいは隣接ポートと比べて明らかに劣化しているかで判断する。</p>
+</div>
 <h3 id="3-fec-counter">3. FEC / counter<a class="headerlink" href="#3-fec-counter" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span>fec-stats
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span>errors<span class="w"> </span>Ethernet0
@@ -36144,6 +36146,7 @@
 <h3 id="4-asic-notification">4. ASIC notification<a class="headerlink" href="#4-asic-notification" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>syncd<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;port_state_change&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
 </span></code></pre></div>
+<p><code>portsorch</code> が <a href="../../glossary/#term-sai">SAI</a> port state change を受け取り <code>PORT_TABLE</code> の <code>oper_status</code> を更新する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>一時 admin down で安定化: <code>sudo config interface shutdown Ethernet0</code></li>
@@ -36166,17 +36169,19 @@
 <li><a href="../asic-link-autoneg-mismatch/">asic-link-autoneg-mismatch.md</a></li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: 889740d66e5f -->
+<!-- glossary-links-injected: 765a25b13022 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <a href="../../glossary/#term-portsorch">portsorch</a>.cpp port_state notification&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <code>orchagent/[portsorch](../../reference/glossary.md#term-portsorch).cpp</code> の port state change handler が <a href="../../glossary/#term-sai">SAI</a> からの notification を <code>APPL_DB:PORT_TABLE</code> に反映する。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-platform-common @ 64beade8 — sfp_base DOM&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/sonic-platform-common @ 64beade8 — <code>sonic_platform_base/sfp_base.py</code> L182-L213 <code>get_transceiver_threshold_info()</code> が <code>rxpowerlowalarm</code> / <code>rxpowerhighalarm</code> / <code>txpowerlowalarm</code> 等のモジュール固有閾値を返す抽象 API。各 platform 実装が EEPROM から値を読み取り供給する。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ master — <code>scripts/sfpshow</code> (<code>show interfaces transceiver eeprom -d</code> の実体) が DOM 値と threshold をフォーマットして表示する (<code>rxpowerlowalarm</code> 等のキーを <code>dBm</code> 単位でレンダリング)。&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

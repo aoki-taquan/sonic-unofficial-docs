@@ -36301,6 +36301,7 @@
 <h3 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../cli/config-vrf/"><code>config vrf</code></a></li>
+<li><a href="../../cli/show-mgmt-vrf/"><code>show mgmt-vrf</code></a></li>
 </ul>
 <h3 id="hld">関連 HLD<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36380,7 +36381,7 @@
 <h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="_7">典型的なデプロイ位置<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li>management VRF 制御。<code>MGMT_VRF_CONFIG|vrf_global</code> を <a href="../../glossary/#term-hostcfgd">hostcfgd</a> が iproute2 + iptables に反映。</li>
+<li>management VRF 制御。<code>MGMT_VRF_CONFIG|vrf_global</code> を <code>vrfmgrd</code> (<a href="../../glossary/#term-sonic-swss">sonic-swss</a> <code>cfgmgr/vrfmgr.cpp</code>) が subscribe し、<code>mgmtVrfEnabled</code> の値に応じて mgmt VRF を作成/削除する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36393,13 +36394,16 @@
 <!-- /ops-hint -->
 
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 7dff185c05bf -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code> (L1-L37, module / revision 2021-04-07 / <code>mgmtVrfEnabled</code> boolean default false)&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>cfgmgr/vrfmgr.cpp</code> L229-L324 (<code>CFG_MGMT_VRF_CONFIG_TABLE_NAME</code> を subscribe し <code>mgmtVrfEnabled</code> フィールドを参照) および <code>cfgmgr/vrfmgrd.cpp</code> L33 (<a href="../../glossary/#term-vrfmgrd">vrfmgrd</a> の table 登録)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

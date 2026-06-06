@@ -36126,7 +36126,7 @@
 <p><a href="../../../reference/glossary/#term-nat">NAT</a> は次のレイヤで構成します。</p>
 <ul>
 <li>グローバル: <code>NAT_GLOBAL</code> で機能 enable / timeout / TCP/UDP の挙動を決めます。CLI は <code>config nat feature enable</code> と <code>config nat add ...</code>。</li>
-<li>ゾーン: <code>NAT_ZONE</code> で interface に inside / outside を付けます（<code>config interface nat add inside|outside</code>）。</li>
+<li>ゾーン: 各 interface の <code>nat_zone</code> 属性 (0〜3) を <code>config nat add interface &lt;interface&gt; -nat_zone &lt;zone&gt;</code> で設定します。値は対応する <code>INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> / <code>LOOPBACK_INTERFACE</code> テーブルへ書かれます<!-- evidence: sonic-utilities/config/nat.py L960-L992, click option <code>-nat_zone</code> type=IntRange(0, 3) -->。</li>
 <li>静的: <code>STATIC_NAT</code> / <code>STATIC_NAPT</code> で 1:1 アドレス / port マッピング。</li>
 <li>動的: <code>NAT_POOL</code> + <code>NAT_BINDINGS</code> + <a href="../../../reference/glossary/#term-acl">ACL</a> でプール / バインディング / マッチ条件を組みます。</li>
 </ul>
@@ -36135,8 +36135,9 @@
 <p>DHCPv4 relay は <a href="../../../reference/glossary/#term-vlan">VLAN</a> ごとに upstream server を指定する形です。</p>
 <ul>
 <li>CLI: <code>config vlan dhcp_relay add &lt;vlan&gt; &lt;server_ip&gt;</code> / <code>config vlan dhcp_relay del ...</code>。CLI plugin の正確な階層は <a href="../../../reference/cli/config-dhcp-relay/">config dhcp_relay リファレンス</a> を参照してください。</li>
-<li>CONFIG_DB: <code>DHCP_RELAY|&lt;vlan&gt;</code> の <code>dhcp_servers</code> リスト。v6 は同 entry の <code>dhcpv6_servers</code> と <code>dhcpv6_option|rfc6939_support</code>。詳細は <a href="../../../reference/config-db/dhcpv4-relay/">DHCPV4_RELAY スキーマ</a> にあります。</li>
-<li>giaddr 固定: <code>config interface ip add --secondary</code> で <code>VLAN_INTERFACE</code> に <code>secondary: "true"</code> を付けると、primary IPv4 が <code>-pg</code> で giaddr に固定されます。</li>
+<li>CONFIG_DB (IPv4 default): server IP は <code>VLAN|&lt;vlan&gt;</code> の <code>dhcp_servers</code> leaf-list に追加されます。<code>DEVICE_METADATA|localhost.has_sonic_dhcpv4_relay</code> が <code>True</code> の場合のみ新しい <code>DHCPV4_RELAY|&lt;vlan&gt;</code> テーブル (<code>dhcpv4_servers</code>) に書かれます<!-- evidence: sonic-buildimage/dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py L5-L20, L60-L105 -->。</li>
+<li>CONFIG_DB (IPv6): <code>DHCP_RELAY|&lt;vlan&gt;</code> の <code>dhcpv6_servers</code> leaf-list と、Option 18/37 系の <code>rfc6939_support</code> / <code>interface_id</code> leaf<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dhcpv6-relay.yang L38-L57 -->。</li>
+<li>giaddr 固定: <code>config interface ip add --secondary</code> で <code>VLAN_INTERFACE</code> に <code>secondary: "true"</code> を付けると、primary IPv4 が <code>dhcrelay -pg</code> で giaddr に固定されます<!-- evidence: sonic-utilities/config/main.py L5680-L5806; sonic-buildimage/dockers/docker-dhcp-relay/dhcpv4-relay.agents.j2 L28 -->。</li>
 </ul>
 <p>per-interface counter / Option 82 は CLI / CONFIG_DB レベルでは特別な操作が要らず、relay 起動時に自動で <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> に書かれます。</p>
 <h2 id="dhcp-server">DHCP server の設定入口<a class="headerlink" href="#dhcp-server" title="Permanent link">&para;</a></h2>
@@ -36154,11 +36155,11 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># NAT を有効化</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>nat<span class="w"> </span>feature<span class="w"> </span><span class="nb">enable</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># inside / outside zone を割り当て</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># inside / outside zone を割り当て (慣習として inside=1, outside=0)</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Vlan10<span class="w"> </span><span class="m">10</span>.10.0.1/24
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>inside<span class="w">  </span>Vlan10
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>sudo<span class="w"> </span>config<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>interface<span class="w"> </span>Vlan10<span class="w"> </span>-nat_zone<span class="w"> </span><span class="m">1</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Ethernet48<span class="w"> </span><span class="m">203</span>.0.113.10/30
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>outside<span class="w"> </span>Ethernet48
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>sudo<span class="w"> </span>config<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>interface<span class="w"> </span>Ethernet48<span class="w"> </span>-nat_zone<span class="w"> </span><span class="m">0</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># 静的 NAPT</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>sudo<span class="w"> </span>config<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>static<span class="w"> </span>tcp<span class="w"> </span><span class="m">10</span>.10.0.5<span class="w"> </span><span class="m">80</span><span class="w"> </span><span class="m">203</span>.0.113.10<span class="w"> </span><span class="m">80</span>
@@ -36198,7 +36199,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>config<span class="w"> </span>vlan<span class="w"> </span>dhcp_relay<span class="w"> </span>add<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">10</span>.0.0.1
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>config<span class="w"> </span>vlan<span class="w"> </span>dhcp_relay<span class="w"> </span>add<span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="m">10</span>.0.0.1
 </span></code></pre></div>
-<p>書き込まれる CONFIG_DB は <code>DHCP_RELAY|Vlan10</code> / <code>Vlan20</code> で、<code>dhcp_servers: ["10.0.0.1"]</code> です。v6 を併用するなら <code>dhcpv6_servers</code> を別途追加します。secondary subnet を運用する場合は VLAN_INTERFACE 側で <code>secondary: "true"</code> の付与を忘れずに。</p>
+<p>書き込まれる CONFIG_DB は default では <code>VLAN|Vlan10</code> / <code>Vlan20</code> の <code>dhcp_servers: ["10.0.0.1"]</code> です (<code>has_sonic_dhcpv4_relay=True</code> で feature を有効化した環境のみ <code>DHCPV4_RELAY</code> テーブル側へ書かれます)<!-- evidence: sonic-buildimage/dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py L60-L105 -->。v6 を併用するなら <code>DHCP_RELAY|&lt;vlan&gt;</code> 側に <code>dhcpv6_servers</code> を別途追加します。secondary subnet を運用する場合は VLAN_INTERFACE 側で <code>secondary: "true"</code> の付与を忘れずに。</p>
 <p>確認:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>show<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv4<span class="w"> </span>interfaces
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>show<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv4<span class="w"> </span>statistics
@@ -36217,7 +36218,7 @@
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>config<span class="w"> </span>dhcp_server<span class="w"> </span>ipv4<span class="w"> </span>range<span class="w"> </span>add<span class="w"> </span>pool1<span class="w"> </span><span class="m">10</span>.10.0.100<span class="w"> </span><span class="m">10</span>.10.0.200
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>config<span class="w"> </span>dhcp_server<span class="w"> </span>ipv4<span class="w"> </span>ip<span class="w"> </span><span class="nb">bind</span><span class="w"> </span>Vlan10<span class="w"> </span>Ethernet4<span class="w"> </span>--range<span class="w"> </span>pool1
 </span></code></pre></div>
-<p><code>config dhcp_server</code> サブコマンド群は現時点で専用 CLI リファレンスページが整備されておらず、ソースコード (<code>sonic-utilities/config/plugins/dhcp_server.py</code>) と <a href="../../../reference/config-db/dhcp-server-ipv4/">DHCP_SERVER_IPV4 系 CONFIG_DB ページ</a> を参照してください。relay 側のコマンドは <a href="../../../reference/cli/config-dhcp-relay/">config dhcp_relay CLI</a> を参照。relay は同 VLAN で kea へ向くよう自動的に dhcprelayd が config を書き換えます。</p>
+<p><code>config dhcp_server</code> サブコマンド群は現時点で専用 CLI リファレンスページが整備されておらず、ソースコード (<code>sonic-buildimage/dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py</code>) と <a href="../../../reference/config-db/dhcp-server-ipv4/">DHCP_SERVER_IPV4 系 CONFIG_DB ページ</a> を参照してください<!-- evidence: sonic-buildimage/dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py L62-L322, click groups <code>dhcp_server ipv4</code> / <code>range</code> / <code>ip bind</code> / <code>option</code> -->。relay 側のコマンドは <a href="../../../reference/cli/config-dhcp-relay/">config dhcp_relay CLI</a> を参照。relay は同 VLAN で kea へ向くよう自動的に dhcprelayd が config を書き換えます。</p>
 <p>CONFIG_DB は次のようになります。</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="nt">&quot;FEATURE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;dhcp_server&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enabled&quot;</span><span class="p">}},</span>
@@ -36254,7 +36255,7 @@
 <tr>
 <td><code>show nat translations</code> が空のまま</td>
 <td>inside / outside zone が貼られていない</td>
-<td><code>show interfaces nat-zone</code>、各 interface に対して <code>config interface nat add inside/outside</code></td>
+<td><code>show interfaces nat-zone</code>、各 interface に対して <code>config nat add interface &lt;ifname&gt; -nat_zone &lt;0-3&gt;</code></td>
 </tr>
 <tr>
 <td>静的 NAT 投入後も <code>conntrack -L</code> に出ない</td>

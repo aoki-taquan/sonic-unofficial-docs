@@ -35992,18 +35992,26 @@
 <h1 id="switchport-vlan-cli">Switchport モードと VLAN CLI 拡張 — 内部実装<a class="headerlink" href="#switchport-vlan-cli" title="Permanent link">&para;</a></h1>
 <p>本ページは親 <a href="../../reference/glossary/#term-hld">HLD</a> <a href="../switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a> の <strong><a href="../../reference/glossary/#term-yang">YANG</a> / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / db_migrator</strong> 周りを切り出した派生ページ。概要・モード定義は <a href="../switch-port-modes-and-vlan-cli-concepts/">concepts</a> を参照。</p>
 <h2 id="yang-config_db">YANG / CONFIG_DB<a class="headerlink" href="#yang-config_db" title="Permanent link">&para;</a></h2>
-<p><code>sonic-port</code> / <code>sonic-portchannel</code> に新規 leaf を追加<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">typedef</span><span class="w"> </span><span class="nv">switchport-mode-type</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="k">type</span><span class="w"> </span><span class="nc">enumeration</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="nv">routed</span><span class="p">;</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="nv">access</span><span class="p">;</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="nv">trunk</span><span class="p">;</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="k">default</span><span class="w"> </span><span class="nv">routed</span><span class="p">;</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="k">leaf</span><span class="w"> </span><span class="nv">mode</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nn">stypes</span><span class="p">:</span><span class="nv">switchport_mode</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c">// typedef 名は switchport_mode、leaf 名は mode</span>
+<p><code>sonic-port</code> / <code>sonic-portchannel</code> に新規 leaf <code>mode</code> を追加<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。master 上の実体（<code>sonic-types.yang.j2</code> の typedef、<code>sonic-port.yang</code> / <code>sonic-portchannel.yang</code> の leaf）は以下のとおり<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>:</p>
+<div class="language-yang highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c">// sonic-types.yang.j2</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">typedef</span><span class="w"> </span><span class="nv">switchport_mode</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="k">pattern</span><span class="w"> </span><span class="s2">&quot;routed|access|trunk&quot;</span><span class="p">;</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="k">description</span><span class="w"> </span><span class="s2">&quot;SwitchPort Modes for Port &amp; PortChannel&quot;</span><span class="p">;</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c">// sonic-port.yang / sonic-portchannel.yang</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="k">leaf</span><span class="w"> </span><span class="nv">mode</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="k">description</span><span class="w"> </span><span class="s2">&quot;SwitchPort Modes possible values are routed|access|trunk. Default value for mode is routed&quot;</span><span class="p">;</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">  </span><span class="k">type</span><span class="w"> </span><span class="nn">stypes</span><span class="p">:</span><span class="nv">switchport_mode</span><span class="p">;</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">}</span>
 </span></code></pre></div>
+<p>実装上の注意:</p>
+<ul>
+<li>typedef は <code>enumeration</code> ではなく <code>type string</code> + <code>pattern</code> で表現されている（HLD 上の <code>enumeration</code> 記述とは表記が異なる）<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><code>default routed</code> 文は YANG 上には存在せず、既定値は description コメント上の宣言にとどまり、未設定時の振る舞いは consumer 側（CLI / db_migrator 等）の解釈に委ねられる<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
+</ul>
 <p>CONFIG_DB:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>PORT|&lt;name&gt;
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  mode = &quot;routed&quot; | &quot;access&quot; | &quot;trunk&quot;
@@ -36120,6 +36128,15 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-templates/sonic-types.yang.j2</code> L244-L250 @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>（<code>switchport_mode</code> typedef は <code>type string</code> + <code>pattern "routed|access|trunk"</code> 定義、<code>default</code> statement なし）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-port.yang</code> L86-L89 @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>（<code>PORT</code> の <code>leaf mode { type stypes:switchport_mode; }</code>）&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-portchannel.yang</code> L71 周辺 @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>（<code>PORTCHANNEL</code> の <code>leaf mode { type stypes:switchport_mode; }</code>）&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="発展トピック — PINS は data plane を P4Runtime で書く経路ですが、SDN コントローラから見ると 状態取得 / config push の管理面（gNMI / OpenConfig）と組で読む のが自然です。">
+        <meta name="description" content="PINS の data plane (P4Runtime) と管理面 (gNMI / OpenConfig) を組で読み、HashOrch HLD 乖離 / WCMP scale / PacketIO scale / standard ACL との TCAM 共存といった発展論点を扱う。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="発展トピック - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="発展トピック — PINS は data plane を P4Runtime で書く経路ですが、SDN コントローラから見ると 状態取得 / config push の管理面（gNMI / OpenConfig）と組で読む のが自然です。" />
+<meta property="og:description" content="PINS の data plane (P4Runtime) と管理面 (gNMI / OpenConfig) を組で読み、HashOrch HLD 乖離 / WCMP scale / PacketIO scale / standard ACL との TCAM 共存といった発展論点を扱う。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/18-p4-pins/advanced.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/18-p4-pins/advanced/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="発展トピック - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="発展トピック — PINS は data plane を P4Runtime で書く経路ですが、SDN コントローラから見ると 状態取得 / config push の管理面（gNMI / OpenConfig）と組で読む のが自然です。" />
+<meta property="twitter:description" content="PINS の data plane (P4Runtime) と管理面 (gNMI / OpenConfig) を組で読み、HashOrch HLD 乖離 / WCMP scale / PacketIO scale / standard ACL との TCAM 共存といった発展論点を扱う。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/18-p4-pins/advanced.png" />
 </head>
   
@@ -36181,7 +36181,7 @@
 </ul>
 <p>の 2 系統を併用する形になります。詳細は <a href="../../../management/sonic-management-framework/">SONiC management framework</a> と <a href="../../../management/gnmi-usage/">gNMI usage</a> を参照してください。</p>
 <h2 id="hashorch-hld">HashOrch HLD と実装の乖離<a class="headerlink" href="#hashorch-hld" title="Permanent link">&para;</a></h2>
-<p><a href="../../../reference/glossary/#term-p4rt">P4RT</a> App HLD では <strong>HashOrch（<a href="../../../reference/glossary/#term-orchagent">orchagent</a> 新規追加）</strong> がハッシュ属性を扱う前提で書かれていますが、現行 master では独立コンポーネントとしては存在せず、<strong>既存の <code>SwitchOrch</code>（<code>switch_helper.cpp</code> の <code>SWITCH_HASH_FIELD_*</code> マップ）が <code>CFG_SWITCH_HASH_TABLE_NAME</code> 経由で扱う形</strong> になっています。PINS 側でハッシュフィールドを controller から制御したい場合、現状は SwitchOrch 経由の経路を読む必要があります。詳細は <a href="../../../management/p4rt-application-hld/">P4RT App HLD の Discrepancy 節</a> を参照してください。</p>
+<p><a href="../../../reference/glossary/#term-p4rt">P4RT</a> App HLD では <strong>HashOrch（<a href="../../../reference/glossary/#term-orchagent">orchagent</a> 新規追加）</strong> がハッシュ属性を扱う前提で書かれていますが、現行 master では独立コンポーネントとしては存在せず、<strong>既存の <code>SwitchOrch</code> が <code>CFG_SWITCH_HASH_TABLE_NAME</code> を消費し、<code>orchagent/switch/switch_helper.cpp</code> の <code>SWITCH_HASH_FIELD_*</code> ↔ <code>SAI_NATIVE_HASH_FIELD_*</code> マップ経由で SAI 属性を設定する形</strong> になっています。PINS 側でハッシュフィールドを controller から制御したい場合、現状は SwitchOrch 経由の経路を読む必要があります。詳細は <a href="../../../management/p4rt-application-hld/">P4RT App HLD の Discrepancy 節</a> を参照してください。</p>
 <h2 id="_3">ベンダ依存の境界<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>PacketIO の kernel 側（<code>genl_packet</code> filter 等）と、<a href="../../../reference/glossary/#term-sai">SAI</a> pipeline を P4 で表す部分はベンダ実装に依存します。SONiC 本体のリポジトリで読めるのは:</p>
 <ul>

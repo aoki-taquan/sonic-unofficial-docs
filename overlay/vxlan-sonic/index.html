@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC の VXLAN / VNet 全体設計を解説する。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせで実装され、Phase 1 では VM↔ベアメタル間の VNet ピアリングと Symmetric IRB、Phase 2 では BGP EVPN 統合・L2 VXLAN・HER を扱う。VxlanTunnelOrch / VnetOrch / VRF mapper の役割と CONFIG_DB / APP_DB スキーマを網羅する。">
+        <meta name="description" content="SONiC の VXLAN / VNet 全体設計のハブページ。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせで実装され、Phase 1 では VM↔ベアメタル間の VNet ピアリングと Symmetric IRB、Phase 2 では BGP EVPN 統合・L2 VXLAN・HER を扱う。概念・設定/運用・内部実装・制限の派生 4 ページへの導線を示す。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SONiC の VXLAN / VNet 全体設計を解説する。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせで実装され、Phase 1 では VM↔ベアメタル間の VNet ピアリングと Symmetric IRB、Phase 2 では BGP EVPN 統合・L2 VXLAN・HER を扱う。VxlanTunnelOrch / VnetOrch / VRF mapper の役割と CONFIG_DB / APP_DB スキーマを網羅する。" />
+<meta property="og:description" content="SONiC の VXLAN / VNet 全体設計のハブページ。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせで実装され、Phase 1 では VM↔ベアメタル間の VNet ピアリングと Symmetric IRB、Phase 2 では BGP EVPN 統合・L2 VXLAN・HER を扱う。概念・設定/運用・内部実装・制限の派生 4 ページへの導線を示す。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/overlay/vxlan-sonic.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/vxlan-sonic/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SONiC の VXLAN / VNet 全体設計を解説する。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせで実装され、Phase 1 では VM↔ベアメタル間の VNet ピアリングと Symmetric IRB、Phase 2 では BGP EVPN 統合・L2 VXLAN・HER を扱う。VxlanTunnelOrch / VnetOrch / VRF mapper の役割と CONFIG_DB / APP_DB スキーマを網羅する。" />
+<meta property="twitter:description" content="SONiC の VXLAN / VNet 全体設計のハブページ。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせで実装され、Phase 1 では VM↔ベアメタル間の VNet ピアリングと Symmetric IRB、Phase 2 では BGP EVPN 統合・L2 VXLAN・HER を扱う。概念・設定/運用・内部実装・制限の派生 4 ページへの導線を示す。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/overlay/vxlan-sonic.png" />
 </head>
   
@@ -11554,10 +11554,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#1-vtep-vnet-orch" class="md-nav__link">
+  <a href="#vtep-vnet-orch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. 全体像（VTEP + VNet + Orch 群）
+        全体像（VTEP + VNet + Orch 群）
       
     </span>
   </a>
@@ -11565,212 +11565,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-l2-l3-vxlan" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. L2 / L3 VXLAN の作り分け
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-orchagent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Orchagent 各論
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="3. Orchagent 各論">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#vxlanorch-vxlantunnelorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        VxlanOrch（実装は VxlanTunnelOrch 等に分割）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vrfmgrd-vrforch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        VrfMgrD / VrfOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vnetorch-vnetrouteorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        VnetOrch / VnetRouteOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#intfmgrd-intfsorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IntfMgrD / IntfsOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fdborch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FdbOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-config_db-app_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. 設定（CONFIG_DB / APP_DB）
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="4. 設定（CONFIG_DB / APP_DB）">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#app_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        APP_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vnet" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（VNet ピアリング）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-bgp-evpn-warm-restart" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. BGP EVPN と Warm restart
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#6-phase-1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. スケール目標（Phase 1）
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        7. トラブルシューティング
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="7. トラブルシューティング">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -11781,7 +11576,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連トピック
@@ -11792,7 +11587,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -11803,35 +11598,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既知の問題
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="既知の問題">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#201911-vnet-show-vnet-neighborsroutes-sonic-buildimage5795" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        201911 の vnet コマンド (show vnet neighbors/routes) がクラッシュする問題（sonic-buildimage#5795）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36132,10 +35899,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#1-vtep-vnet-orch" class="md-nav__link">
+  <a href="#vtep-vnet-orch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. 全体像（VTEP + VNet + Orch 群）
+        全体像（VTEP + VNet + Orch 群）
       
     </span>
   </a>
@@ -36143,212 +35910,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-l2-l3-vxlan" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. L2 / L3 VXLAN の作り分け
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-orchagent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Orchagent 各論
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="3. Orchagent 各論">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#vxlanorch-vxlantunnelorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        VxlanOrch（実装は VxlanTunnelOrch 等に分割）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vrfmgrd-vrforch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        VrfMgrD / VrfOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vnetorch-vnetrouteorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        VnetOrch / VnetRouteOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#intfmgrd-intfsorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IntfMgrD / IntfsOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fdborch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FdbOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-config_db-app_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. 設定（CONFIG_DB / APP_DB）
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="4. 設定（CONFIG_DB / APP_DB）">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#app_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        APP_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vnet" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（VNet ピアリング）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-bgp-evpn-warm-restart" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. BGP EVPN と Warm restart
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#6-phase-1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. スケール目標（Phase 1）
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        7. トラブルシューティング
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="7. トラブルシューティング">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -36359,7 +35921,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連トピック
@@ -36370,7 +35932,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -36381,35 +35943,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既知の問題
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="既知の問題">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#201911-vnet-show-vnet-neighborsroutes-sonic-buildimage5795" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        201911 の vnet コマンド (show vnet neighbors/routes) がクラッシュする問題（sonic-buildimage#5795）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36468,40 +36002,33 @@
 </div>
 <h1 id="vxlan-vnet-vxlanorch-vnetorch-vrf-mapper">VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）<a class="headerlink" href="#vxlan-vnet-vxlanorch-vnetorch-vrf-mapper" title="Permanent link">&para;</a></h1>
 <div class="admonition info">
-<p class="admonition-title">章分割済み</p>
-<p>本ページは大型 HLD の <strong>概要ハブ</strong> として保持。詳細は以下の派生ページを参照:</p>
+<p class="admonition-title">章分割済み（このページは概要ハブ）</p>
+<p>本ページは元 HLD の <strong>概要ハブ</strong> に絞り、詳細は派生ページに分割している。詳細を読む場合は以下へ:</p>
 <ul>
-<li><a href="../vxlan-sonic-concepts/">vxlan-sonic-concepts.md</a> — 概念・用語・Phase 1 / Phase 2 スコープ</li>
-<li><a href="../vxlan-sonic-operations/">vxlan-sonic-operations.md</a> — CONFIG_DB / APP_DB / CLI / 設定例</li>
-<li><a href="../vxlan-sonic-internals/">vxlan-sonic-internals.md</a> — Orch 群と SAI 属性</li>
-<li><a href="../vxlan-sonic-limitations/">vxlan-sonic-limitations.md</a> — 制限事項と既知の課題</li>
+<li><strong><a href="../vxlan-sonic-concepts/">VXLAN / VNet 概念</a></strong> — VTEP と VNet の関係、L2 / L3 VXLAN の作り分け、Phase 1 / Phase 2 スコープ、スケール目標</li>
+<li><strong><a href="../vxlan-sonic-operations/">VXLAN / VNet 設定と運用</a></strong> — CONFIG_DB / APP_DB スキーマ、<code>config vxlan</code> / <code>show vxlan</code> CLI、VNet ピアリング設定例、トラブルシュート</li>
+<li><strong><a href="../vxlan-sonic-internals/">VXLAN / VNet 内部実装</a></strong> — Orch 群（<code>VxlanTunnelOrch</code> / <code>VnetOrch</code> / <code>VnetRouteOrch</code> / <code>VrfMgrD</code> 等）と SAI 属性対応表</li>
+<li><strong><a href="../vxlan-sonic-limitations/">VXLAN / VNet 制限事項と既知の課題</a></strong> — Warm restart 非対応、Phase 1 スコープ外項目、<code>sonic-swss#2829</code> 等の既知の問題</li>
 </ul>
 </div>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ol>
-<li><a href="../../reference/glossary/#term-sonic">SONiC</a> の <a href="../../reference/glossary/#term-vxlan">VXLAN</a> は <strong><a href="../../reference/glossary/#term-vtep">VTEP</a> と VNet の組合せ</strong> とよく言われるが、両者の関係は？</li>
-<li><strong>L2 VXLAN と L3 VXLAN</strong> はどう作り分けられる？（mapper / tunnel が別なのか）</li>
-<li><strong>どの <a href="../../reference/glossary/#term-orchagent">orchagent</a> が何を担当</strong> するのか？</li>
-<li><strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB に何を入れれば</strong> VNet ピアリングが動くのか？</li>
-<li><strong><a href="../../reference/glossary/#term-bgp">BGP</a> <a href="../../reference/glossary/#term-evpn">EVPN</a> との関係</strong>は？ Phase 1 と Phase 2 で何が違う？</li>
-<li><strong>Warm restart</strong> は使えるのか？</li>
-<li>トラブル時に最低限見るテーブルは？</li>
+<li><a href="../../reference/glossary/#term-sonic">SONiC</a> の <a href="../../reference/glossary/#term-vxlan">VXLAN</a> は <strong><a href="../../reference/glossary/#term-vtep">VTEP</a> と VNet の組合せ</strong> とよく言われるが、両者の関係は？ → <a href="../vxlan-sonic-concepts/">概念</a></li>
+<li><strong>L2 VXLAN と L3 VXLAN</strong> はどう作り分けられる？ → <a href="../vxlan-sonic-concepts/">概念</a> / <a href="../../reference/glossary/#term-sai">SAI</a> 属性は <a href="../vxlan-sonic-internals/">内部実装</a></li>
+<li><strong>どの <a href="../../reference/glossary/#term-orchagent">orchagent</a> が何を担当</strong> するのか？ → <a href="../vxlan-sonic-internals/">内部実装</a></li>
+<li><strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB に何を入れれば</strong> VNet ピアリングが動くのか？ → <a href="../vxlan-sonic-operations/">設定と運用</a></li>
+<li><strong><a href="../../reference/glossary/#term-bgp">BGP</a> <a href="../../reference/glossary/#term-evpn">EVPN</a> との関係</strong>は？ Phase 1 と Phase 2 で何が違う？ → <a href="../vxlan-sonic-concepts/">概念</a> / <a href="../vxlan-sonic-limitations/">制限事項</a></li>
+<li><strong>Warm restart</strong> は使えるのか？ → <a href="../vxlan-sonic-limitations/">制限事項</a></li>
+<li>トラブル時に最低限見るテーブルは？ → <a href="../vxlan-sonic-operations/#5">設定と運用 §トラブルシューティング</a></li>
 </ol>
-<h2 id="1-vtep-vnet-orch">1. 全体像（VTEP + VNet + Orch 群）<a class="headerlink" href="#1-vtep-vnet-orch" title="Permanent link">&para;</a></h2>
+<h2 id="vtep-vnet-orch">全体像（VTEP + VNet + Orch 群）<a class="headerlink" href="#vtep-vnet-orch" title="Permanent link">&para;</a></h2>
 <p>SONiC の VXLAN は <strong>VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ</strong> で実装される。<a href="../../reference/glossary/#term-hld">HLD</a> は次のスコープを定める<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>Phase 1</strong>: VTEP として動作。顧客 VM ↔ ベアメタルサーバ間の VNet ピアリング、Symmetric IRB（RIOT）の分散 VXLAN ルーティング</li>
 <li><strong>Phase 2</strong>: BGP EVPN 統合、L2 VXLAN（タグ・無タグ）、HER（Head End Replication）、CLI 整備</li>
 </ul>
 <p>Kernel <a href="../../reference/glossary/#term-vrf">VRF</a>（L3mdev）の programming は <strong>本 HLD のスコープ外</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>主要 orchagent:</p>
-<ul>
-<li><code>VxlanOrch</code>（実コード上は <code>VxlanTunnelOrch</code> 等に分割）: VXLAN tunnel object、encap/decap mapper、tunnel termination</li>
-<li><code>VnetOrch</code> / <code>VnetRouteOrch</code>: VNet 単位の VRF / BRIDGE、ピアリング、VNet 経路</li>
-<li><code>VrfMgrD</code> / <code>VrfOrch</code>: kernel L3mdev と <a href="../../reference/glossary/#term-sai">SAI</a> VRF の同期</li>
-<li><code>IntfMgrD</code> / <code>IntfsOrch</code>: VNet 配下の <a href="../../reference/glossary/#term-rif">RIF</a></li>
-<li><code>FdbOrch</code>: remote VTEP の MAC 学習</li>
-</ul>
+<p>主要 orchagent と CONFIG_DB → APP_DB → SAI の流れ:</p>
 <pre class="mermaid"><code>flowchart TB
     subgraph CONFIG_DB
       VXT[VXLAN_TUNNEL]
@@ -36518,7 +36045,7 @@
     IM --&gt;|VRF 確認後| ITT[(APP_DB INTF_TABLE)]
     ITT --&gt; IO[IntfsOrch]
     IO --&gt; VNO
-    VXT --&gt; VXO[VxlanOrch]
+    VXT --&gt; VXO[VxlanTunnelOrch]
     VXM --&gt; VXO
     NEIGH --&gt; NB[NeighOrch]
     VNO --&gt; VXO
@@ -36528,274 +36055,16 @@
     VRO --&gt; SAI[SAI/SDK]
     VXO --&gt; SAI
     FDB[FdbOrch] --&gt; VXO</code></pre>
-<h2 id="2-l2-l3-vxlan">2. L2 / L3 VXLAN の作り分け<a class="headerlink" href="#2-l2-l3-vxlan" title="Permanent link">&para;</a></h2>
-<p><code>VxlanOrch</code> は <code>VXLAN_TUNNEL</code> / <code>VXLAN_TUNNEL_MAP</code> から <strong>L2 VXLAN（<a href="../../reference/glossary/#term-vlan">VLAN</a> ↔ VNI）</strong> と <strong>L3 VXLAN（VRF ↔ VNI）</strong> を <strong>別トンネル</strong> として作る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。それぞれに encap/decap mapper を attach。</p>
-<p>SAI 属性の対応:</p>
-<table>
-<thead>
-<tr>
-<th>VXLAN コンポーネント</th>
-<th>SAI 属性</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>VXLAN tunnel 種別</td>
-<td><code>SAI_TUNNEL_TYPE_VXLAN</code></td>
-</tr>
-<tr>
-<td>Encap mapper</td>
-<td><code>SAI_TUNNEL_MAP_TYPE_VIRTUAL_ROUTER_ID_TO_VNI</code></td>
-</tr>
-<tr>
-<td>Decap mapper</td>
-<td><code>SAI_TUNNEL_MAP_TYPE_VNI_TO_VIRTUAL_ROUTER_ID</code></td>
-</tr>
-<tr>
-<td>Nexthop tunnel</td>
-<td><code>SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP</code></td>
-</tr>
-<tr>
-<td>Tunnel termination</td>
-<td><code>SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP</code></td>
-</tr>
-<tr>
-<td>VXLAN MAC</td>
-<td><code>SAI_SWITCH_ATTR_VXLAN_DEFAULT_ROUTER_MAC</code></td>
-</tr>
-<tr>
-<td>VXLAN UDP port</td>
-<td><code>SAI_SWITCH_ATTR_VXLAN_DEFAULT_PORT</code></td>
-</tr>
-</tbody>
-</table>
-<p>L3 VXLAN は <strong><code>VIRTUAL_ROUTER_ID ↔ VNI</code> mapper が中核</strong>。VTEP は P2MP の termination として登録する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="3-orchagent">3. Orchagent 各論<a class="headerlink" href="#3-orchagent" title="Permanent link">&para;</a></h2>
-<h3 id="vxlanorch-vxlantunnelorch">VxlanOrch（実装は VxlanTunnelOrch 等に分割）<a class="headerlink" href="#vxlanorch-vxlantunnelorch" title="Permanent link">&para;</a></h3>
-<p>VXLAN の中核。tunnel オブジェクト + mapper + termination を作る。EVPN remote VTEP の動的生成も <code>vxlanorch.cpp</code> 内（<code>TNL_CREATION_SRC_EVPN</code>）。</p>
-<h3 id="vrfmgrd-vrforch">VrfMgrD / VrfOrch<a class="headerlink" href="#vrfmgrd-vrforch" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant CDB as CONFIG_DB.VNET
-    participant VM as VrfMgrD
-    participant KERN as Linux kernel (L3mdev)
-    participant ST as STATE_DB
-    participant ADB as APP_DB.VNET_TABLE
-    participant VO as VrfOrch / VnetOrch
-    CDB--&gt;&gt;VM: SET
-    VM-&gt;&gt;KERN: L3mdev 作成
-    VM-&gt;&gt;ST: VRF status 更新
-    VM-&gt;&gt;ADB: VNET_TABLE に複製
-    ADB--&gt;&gt;VO: SET
-    VO-&gt;&gt;VO: SAI VRF / Bridge 作成</code></pre>
+<p>各 Orch の責務分担は <a href="../vxlan-sonic-internals/">vxlan-sonic-internals.md</a> を参照。SAI 属性対応（<code>SAI_TUNNEL_TYPE_VXLAN</code> / mapper / termination）も同ページ。</p>
+<h2 id="_2">干渉する機能<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>VrfMgrD</code>: VNet 設定から kernel L3mdev を作成 + <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に状態出力</li>
-<li><code>VrfOrch</code>: 通常 VRF を APP_DB から SAI に投入（RouteOrch が利用）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-</ul>
-<h3 id="vnetorch-vnetrouteorch">VnetOrch / VnetRouteOrch<a class="headerlink" href="#vnetorch-vnetrouteorch" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>VnetOrch</code>: VNet 単位の ingress/egress <strong>VRF または BRIDGE</strong> を SAI に作成。<code>peer_list</code> を保持</li>
-<li><code>VnetRouteOrch</code>: <code>VNET_ROUTE_TABLE</code> → subnet/local route、<code>VNET_ROUTE_TUNNEL_TABLE</code> → tunnel nexthop 経路 を SAI に投入。<code>peer_list</code> がある場合はピア VNet にも経路を複製<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-</ul>
-<h3 id="intfmgrd-intfsorch">IntfMgrD / IntfsOrch<a class="headerlink" href="#intfmgrd-intfsorch" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>IntfMgrD</code>: kernel 側 routing IF を L3mdev に enslave。STATE_DB の VRF 確立を待ってから APP_DB の <code>INTF_TABLE</code> に書く</li>
-<li><code>IntfsOrch</code>: <code>INTF_TABLE</code> + VRF 情報で SAI RIF を作成。VNet 用は <code>VnetOrch</code> API 経由</li>
-</ul>
-<h3 id="fdborch">FdbOrch<a class="headerlink" href="#fdborch" title="Permanent link">&para;</a></h3>
-<p>VxlanOrch をメンバに持ち、<strong>remote VTEP で学習した MAC</strong> を <code>app-fdb-table</code> 経由で SAI に書く<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="4-config_db-app_db">4. 設定（CONFIG_DB / APP_DB）<a class="headerlink" href="#4-config_db-app_db" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>VXLAN_TUNNEL|&lt;tunnel_name&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    src_ip : &lt;ipv4&gt;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    dst_ip : &lt;ipv4&gt;  (OPTIONAL, P2P 用)
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>VXLAN_TUNNEL_MAP|&lt;tunnel_name&gt;|&lt;map_name&gt;
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    vni  : &lt;int&gt;
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    vlan : &lt;vlan_id&gt;
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>VNET|&lt;vnet_name&gt;
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    vxlan_tunnel : &lt;tunnel_name&gt;
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    vni          : &lt;int&gt;
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    scope        : &quot;default&quot;     (OPTIONAL)
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    peer_list    : &lt;vnet_name,...&gt; (OPTIONAL)
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>INTERFACE|&lt;intf&gt;
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    vnet_name : &lt;vnet_name&gt;
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>INTERFACE|&lt;intf&gt;|&lt;prefix&gt;
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    {}
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>VLAN_INTERFACE|&lt;vlan_intf&gt;
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    vnet_name : &lt;vnet_name&gt;
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>VLAN_INTERFACE|&lt;vlan_intf&gt;|&lt;prefix&gt;
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>    {}
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>NEIGH_TABLE|&lt;intf&gt;|&lt;ip&gt;
-</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>    family : IPv4 | IPv6
-</span></code></pre></div>
-<p><code>VXLAN_TUNNEL</code> に <code>src_ip</code> 必須、<code>dst_ip</code> は P2P 用にオプション。<code>VXLAN_TUNNEL_MAP</code> で VLAN ↔ VNI を関連付ける<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="app_db">APP_DB スキーマ<a class="headerlink" href="#app_db" title="Permanent link">&para;</a></h3>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="l l-Scalar l-Scalar-Plain">VNET_ROUTE_TABLE:&lt;vnet&gt;:&lt;prefix&gt;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">nexthop</span><span class="w"> </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ip&gt;      (OPTIONAL)</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">ifname</span><span class="w">  </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;intf&gt;</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="l l-Scalar l-Scalar-Plain">VNET_ROUTE_TUNNEL_TABLE:&lt;vnet&gt;:&lt;prefix&gt;</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">endpoint</span><span class="w">    </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;vtep ip&gt;</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">mac_address</span><span class="w"> </span><span class="nt">: &lt;mac&gt;     (OPTIONAL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">inner DST MAC)</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">vni</span><span class="w">         </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;int&gt;     (OPTIONAL)</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="l l-Scalar l-Scalar-Plain">VXLAN_FDB_TABLE:&lt;tunnel&gt;:&lt;vni&gt;:&lt;mac&gt;</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">remote_vtep</span><span class="w"> </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ip&gt;</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="l l-Scalar l-Scalar-Plain">VNET_TABLE:&lt;vnet&gt;</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">vxlan_tunnel</span><span class="w"> </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;tunnel&gt;</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">vni</span><span class="w">          </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;int&gt;</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">scope</span><span class="w">        </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">    </span><span class="nt">peer_list    </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;vnet,...&gt;</span>
-</span></code></pre></div>
-<p><code>VNET_ROUTE_TABLE</code> は <strong>同 VNet 内の直接到達</strong>、<code>VNET_ROUTE_TUNNEL_TABLE</code> は <strong>tunnel nexthop 経由のリモート経路</strong><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>config vxlan &lt;name&gt; vlan &lt;vid&gt; vni &lt;vni&gt;</code></td>
-<td>VLAN ↔ VNI</td>
-</tr>
-<tr>
-<td><code>config vxlan &lt;name&gt; src_if &lt;intf&gt;</code></td>
-<td>VTEP の source IF</td>
-</tr>
-<tr>
-<td><code>config vxlan &lt;name&gt; vlan &lt;vid&gt; flood vtep &lt;ip,...&gt;</code></td>
-<td>HER 用 flood list</td>
-</tr>
-<tr>
-<td><code>show vxlan &lt;name&gt;</code></td>
-<td>VXLAN tunnel 情報</td>
-</tr>
-<tr>
-<td><code>show mac vxlan &lt;name&gt; &lt;vni&gt;</code></td>
-<td>VNI 別 learned MAC</td>
-</tr>
-</tbody>
-</table>
-<p>VNet ピアリングの CLI は無く、CONFIG_DB を直接編集する想定<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="vnet">設定例（VNet ピアリング）<a class="headerlink" href="#vnet" title="Permanent link">&para;</a></h3>
-<p><code>Vnet_2000</code>（VNI 2000、ベアメタル <code>Ethernet1</code>）と <code>Vnet_3000</code>（VNI 3000、<code>Vlan2000</code>、<code>Vnet_2000</code> をピア）:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;VXLAN_TUNNEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;tunnel1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;src_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.10.10.10&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">&quot;VNET&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;Vnet_2000&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;vxlan_tunnel&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tunnel1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;vni&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2000&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;peer_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">&quot;Vnet_3000&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;vxlan_tunnel&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tunnel1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;vni&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3000&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;peer_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Vnet_2000&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="nt">&quot;INTERFACE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="nt">&quot;Ethernet1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;vnet_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Vnet_2000&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nt">&quot;Ethernet1|100.100.3.1/24&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">  </span><span class="nt">&quot;VLAN_INTERFACE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="nt">&quot;Vlan2000&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;vnet_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Vnet_3000&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">    </span><span class="nt">&quot;Vlan2000|100.100.4.1/24&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>APP_DB に <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> を投入してベアメタル subnet 経路と VM tunnel nexthop 経路を作る<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="5-bgp-evpn-warm-restart">5. BGP EVPN と Warm restart<a class="headerlink" href="#5-bgp-evpn-warm-restart" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Phase 1 で BGP EVPN 統合なし</strong>。経路は外部から <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> に直接投入する前提</li>
-<li><strong>Phase 2</strong> で BGP EVPN 統合、L2 VXLAN、HER、CLI 整備が入る</li>
-<li><strong>Warm restart は Phase 1 で非対応</strong>。SAI VR オブジェクトが warm restart 非互換のため Phase 2 で再検討<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-</ul>
-<h2 id="6-phase-1">6. スケール目標（Phase 1）<a class="headerlink" href="#6-phase-1" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>想定値</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>VNI 数</td>
-<td>8K</td>
-</tr>
-<tr>
-<td>Tunnel encap 数</td>
-<td>128K</td>
-</tr>
-<tr>
-<td>VM 数</td>
-<td>512K</td>
-</tr>
-<tr>
-<td>VRF 数</td>
-<td>128</td>
-</tr>
-<tr>
-<td>ルート数</td>
-<td>512K</td>
-</tr>
-</tbody>
-</table>
-<p>設計目標であり実 <a href="../../reference/glossary/#term-asic">ASIC</a> のスケールに依存する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="7">7. トラブルシューティング<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>症状</th>
-<th>最初に見る場所</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>VTEP が上がらない</td>
-<td><code>VXLAN_TUNNEL.src_ip</code> が実在 IF（Loopback 等）の IP か</td>
-</tr>
-<tr>
-<td>L2 VXLAN で MAC が伝搬しない</td>
-<td><code>VXLAN_FDB_TABLE</code>（APP_DB）に <code>remote_vtep</code></td>
-</tr>
-<tr>
-<td>L3 VXLAN で経路が乗らない</td>
-<td><code>VNET_ROUTE_TUNNEL_TABLE.endpoint</code> が remote VTEP IP と一致</td>
-</tr>
-<tr>
-<td>VRF が SAI に作られない</td>
-<td><code>VrfMgrD</code> の STATE_DB 更新が間に合っているか</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_2">コマンド例<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
-<p>VXLAN トンネルと EVPN ピアの状態を確認する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># VXLAN tunnel / VNI / EVPN</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>vxlan<span class="w"> </span>tunnel
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>vxlan<span class="w"> </span>remotevni<span class="w"> </span>all
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>show<span class="w"> </span>evpn<span class="w"> </span>vni
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VXLAN_TUNNEL|*&#39;</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp l2vpn evpn summary&#39;</span>
-</span></code></pre></div>
-<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Phase 1 では BGP EVPN 統合なし</li>
-<li>Warm restart 未対応<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>L3 VXLAN と L2 VXLAN は別トンネル</li>
-<li>Kernel VRF programming は HLD スコープ外</li>
-<li><strong>MP2P / MP2MP トンネルターム属性の必須化による orchagent 非対応</strong> (<a href="https://github.com/sonic-net/sonic-swss/issues/2829">sonic-swss#2829</a>): SAI のトンネルターミネーション属性において、<code>MP2P</code> / <code>MP2MP</code> タイプのトンネルターム作成時に <code>DST_IP</code> および <code>SRC_IP</code> が必須属性として要求されるよう変更された（<code>opencomputeproject/SAI#1255</code> 関連）。orchagent 側がこれらを必須として渡していない場合、トンネルターム作成が SAI エラーで失敗する。GRE / NVGRE トンネルを MP2MP または MP2P モードで使用している環境では注意が必要。</li>
-</ul>
-<h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>BGP EVPN（Phase 2）</strong>: 経路供給源として <code>VNET_ROUTE_TUNNEL_TABLE</code> を埋める</li>
-<li><strong>VLAN / VLAN_MEMBER</strong>: L2 VXLAN は VLAN ↔ VNI mapping 前提</li>
+<li><strong>BGP EVPN（Phase 2）</strong>: 経路供給源として <code>VNET_ROUTE_TUNNEL_TABLE</code> を埋める。詳細は <a href="../../routing/evpn-vxlan-hld/">EVPN VXLAN HLD</a></li>
+<li><strong><a href="../../reference/glossary/#term-vlan">VLAN</a> / VLAN_MEMBER</strong>: L2 VXLAN は VLAN ↔ VNI mapping 前提</li>
 <li><strong>VRF（通常 VRF）</strong>: <code>VrfOrch</code> 経由</li>
 <li><strong><a href="../../reference/glossary/#term-dash">DASH</a> / <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a></strong>: 新しい HLD（<a href="../smartswitch-eni-based-forwarding/">ENI Based Forwarding</a>）は本 HLD の VxLAN tunnel を利用</li>
 <li><strong>MC-<a href="../../reference/glossary/#term-lag">LAG</a> / dual-ToR</strong>: 拡張あり</li>
 </ul>
+<p>制限事項の詳細は <a href="../vxlan-sonic-limitations/">vxlan-sonic-limitations.md</a> を参照。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/vxlan/Vxlan_hld.md#L299-L330 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -36811,43 +36080,27 @@ reasoning: VxlanOrch / VnetOrch / VnetRouteOrch の責務分担と peer_list 経
 <p><strong>出典</strong>:</p>
 <p><code>sonic-net/SONiC/doc/vxlan/Vxlan_hld.md#L299-L330 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
 <p><strong>抜粋</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>VxlanOrch creates the tunnel and attaches encap and decap mappers. Seperate tunnels are created for L2 Vxlan and L3 Vxlan ...
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>VnetOrch creates ingress/Egress (based on context) VRF or BRIDGE in SAI for a VNet and also maintains the peering list.
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>VnetRouteOrch fetch the VRF and peering information for replicating the routes
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>VxlanOrch creates the tunnel and attaches encap and decap mappers. Seperate tunnels are created for L2 Vxlan and L3 Vxlan ...
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>VnetOrch creates ingress/Egress (based on context) VRF or BRIDGE in SAI for a VNet and also maintains the peering list.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>VnetRouteOrch fetch the VRF and peering information for replicating the routes
 </span></code></pre></div>
 <p><strong>判断根拠</strong>: VxlanOrch / VnetOrch / VnetRouteOrch の責務分担と peer_list 経路複製の根拠。</p>
 </details>
 <!-- evidence-rendered:end -->
 
-<h2 id="_5">関連トピック<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_3">関連トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/03-vxlan-evpn/">Topics: VXLAN / EVPN</a> — VXLAN/EVPN 全体像</li>
 <li><a href="../../routing/evpn-vxlan-hld/">HLD: EVPN VXLAN</a></li>
 </ul>
-<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/cli/config-vxlan/">CLI: config vxlan</a></li>
 <li><a href="../../reference/config-db/vxlan-tunnel/">CONFIG_DB: VXLAN_TUNNEL</a></li>
 <li><a href="../../reference/config-db/vxlan-tunnel-map/">CONFIG_DB: VXLAN_TUNNEL_MAP</a></li>
 <li><a href="../../reference/yang/sonic-vxlan/">YANG: sonic-vxlan</a></li>
 </ul>
-<h2 id="_7">既知の問題<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="201911-vnet-show-vnet-neighborsroutes-sonic-buildimage5795">201911 の vnet コマンド (<code>show vnet neighbors/routes</code>) がクラッシュする問題（sonic-buildimage#5795）<a class="headerlink" href="#201911-vnet-show-vnet-neighborsroutes-sonic-buildimage5795" title="Permanent link">&para;</a></h3>
-<p>201911 の vnet コマンド (<code>show vnet neighbors/routes</code>) がクラッシュする問題。vnet テーブルが空の場合に None 参照が発生する</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5795">sonic-net/sonic-buildimage#5795</a></li>
-</ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- HLD 初版が古いため、現行 master の VxlanOrch / VnetOrch 実装と乖離している可能性が高い
-- BGP EVPN 統合 (Phase 2) の現状
-- Warm restart 対応状況 (Phase 2 で再検討予定だった)
-- VXLAN_TUNNEL_MAP の最終スキーマ (VNI ↔ VLAN / VNI ↔ VRF)
-- FdbOrch と VxlanOrch の協調実装 (HLD で TBD だった部分)
-- HER (head-end replication) の現行実装
-- CLI (config vxlan / show vxlan) の sonic-utilities への取り込み形
--->
-
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36855,13 +36108,13 @@ reasoning: VxlanOrch / VnetOrch / VnetRouteOrch の責務分担と peer_list 経
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 7b27b638c4f3 -->
+<!-- glossary-links-injected: 97b009f45d48 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/vxlan/Vxlan_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/vxlan/Vxlan_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

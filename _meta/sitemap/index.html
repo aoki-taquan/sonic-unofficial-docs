@@ -35985,7 +35985,7 @@
 </ul>
 </li>
 <li><strong>18-p4-pins</strong> (<code>topics/18-p4-pins/</code>)<ul>
-<li><a href="../../topics/18-p4-pins/advanced/">発展トピック</a> — [meta] 発展トピック — PINS は data plane を P4Runtime で書く経路ですが、SDN コントローラから見ると 状態取得 / config p…</li>
+<li><a href="../../topics/18-p4-pins/advanced/">発展トピック</a> — [meta] PINS の data plane (P4Runtime) と管理面 (gNMI / OpenConfig) を組で読み、HashOrch HLD 乖離 /…</li>
 <li><a href="../../topics/18-p4-pins/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — PINS の data path は「コントローラ → P4RT App → APPL_DB → P4Orch → SAI → ASIC」…</li>
 <li><a href="../../topics/18-p4-pins/concept/">概念</a> — [meta] 概念 — PINS は SONiC に「外部の SDN コントローラが P4Runtime gRPC を経由して forwarding を直接書く」経路を o…</li>
 <li><a href="../../topics/18-p4-pins/">P4 / PINS / Programmable Pipeline</a> — [meta] P4 / PINS / Programmable Pipeline — この章は、SONiC を P4Runtime ベースの SDN コントローラから直接プ…</li>
@@ -36190,7 +36190,7 @@
 <li><a href="../../overlay/">オーバーレイ</a> — [meta] オーバーレイ — VXLAN / VNet、DASH、Dual ToR、NVGRE など overlay と SmartSwitch 周辺を扱う章。</li>
 <li><a href="../../overlay/nvgre-tunnel-in-sonic/">NVGRE トンネル（nvgreorch / decap mapper）</a> — [code-verified] NVGRE トンネル（nvgreorch / decap mapper） — NVGRE (Network Virtualization using Gene…</li>
 <li><a href="../../overlay/vnet-local-endpoint-forwarding/">VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）</a> — [code-verified] VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化） — Smart Switch（NPU + 複数 D…</li>
-<li><a href="../../overlay/vxlan-sonic/">VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）</a> — [code-verified] SONiC の VXLAN / VNet 全体設計を解説する。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Netwo…</li>
+<li><a href="../../overlay/vxlan-sonic/">VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）</a> — [code-verified] SONiC の VXLAN / VNet 全体設計のハブページ。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Netw…</li>
 <li><a href="../../overlay/vxlan-sonic-concepts/">VXLAN / VNet 概念（VTEP + VNet + L2/L3 トンネル）</a> — [code-verified] VXLAN / VNet の概念・用語・設計思想。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の関係…</li>
 <li><a href="../../overlay/vxlan-sonic-operations/">VXLAN / VNet 設定と運用（CONFIG_DB / APP_DB / CLI）</a> — [code-verified] VXLAN / VNet の設定経路。CONFIG_DB / APP_DB スキーマ、CLI 一覧、VNet ピアリングの設定例、運用時のトラブルシューティン…</li>
 <li><a href="../../overlay/vxlan-sonic-internals/">VXLAN / VNet 内部実装（VxlanTunnelOrch / VnetOrch / SAI 属性）</a> — [code-verified] VXLAN / VNet の orchagent と SAI 連携の内部実装。VxlanTunnelOrch / VnetOrch / VrfMgrD / I…</li>
@@ -36893,7 +36893,7 @@
 <li><a href="../../reference/yang/sonic-restapi/">sonic-restapi YANG</a> — [code-verified] sonic-restapi YANG — RESTAPI YANG Module for SONiC OS。REST API サーバの TLS 証明書 (ce…</li>
 <li><a href="../../reference/yang/sonic-sflow/">sonic-sflow YANG</a> — [code-verified] sonic-sflow YANG — SFLOW yang Module for SONiC OS. sFlow サンプリングコレクタとセッションを定義する。</li>
 <li><a href="../../reference/yang/sonic-snmp/">sonic-snmp YANG</a> — [code-verified] sonic-snmp YANG — Simple Network Management Protocol (SNMP) agent configuration…</li>
-<li><a href="../../reference/yang/sonic-spanning-tree/">sonic-spanning-tree YANG</a> — [code-verified] sonic-spanning-tree YANG — PVST / RSTP / MSTP のグローバル・VLAN 別・ポート別・MST instance/p…</li>
+<li><a href="../../reference/yang/sonic-spanning-tree/">sonic-spanning-tree YANG</a> — [code-verified] sonic-spanning-tree YANG — PVST / MSTP のグローバル・VLAN 別・ポート別・MST instance/port 別の設…</li>
 <li><a href="../../reference/yang/sonic-srv6/">sonic-srv6 YANG</a> — [code-verified] sonic-srv6 YANG — Segment Routing over IPv6 (SRv6) configuration for SONiC.</li>
 <li><a href="../../reference/yang/sonic-ssh-server/">sonic-ssh-server YANG</a> — [code-verified] sonic-ssh-server YANG — SSH server daemon configuration YANG module for SONiC O…</li>
 <li><a href="../../reference/yang/sonic-static-route/">sonic-static-route YANG</a> — [code-verified] sonic-static-route YANG — STATIC ROUTE yang Module for SONiC OS</li>
@@ -36963,7 +36963,7 @@
 <li><a href="../../reference/runbooks/interface-mtu-mismatch/">Interface MTU mismatch によるパケットドロップ</a> — [runbook-verified] Runbook: Interface MTU mismatch によるパケットドロップ — : sonic-net/sonic-swss @ 4305596…</li>
 <li><a href="../../reference/runbooks/routing-loop-detected/">Routing loop が発生している</a> — [runbook-verified] Runbook: traceroute が同一 hop を繰り返し、TTL exceeded と control plane CPU が急上昇する routi…</li>
 <li><a href="../../reference/runbooks/minigraph-reload-stuck/">minigraph 適用後に reload が完了しない / 起動が固まる</a> — [code-verified] <code>config load_minigraph</code> 実行後に reload が終わらない / swss が activating のまま固まる際の切り分け run…</li>
-<li><a href="../../reference/runbooks/link-flapping/">T0/T1 リンクが flap し続ける</a> — [runbook-verified] Runbook: T0/T1 リンクが flap し続ける — : sonic-net/sonic-swss @ 4305596 — portsorch.cp…</li>
+<li><a href="../../reference/runbooks/link-flapping/">T0/T1 リンクが flap し続ける</a> — [runbook-verified] T0/T1 間のリンクが頻繁に up/down する場合の切り分け runbook。flap 頻度の定量化、DOM 値とベンダー別 threshold の確認…</li>
 <li><a href="../../reference/runbooks/config-db-persistence-failure/">CONFIG_DB の永続化が失敗する</a> — [code-verified] Runbook: CONFIG_DB の永続化が失敗する (config save 失敗) — : sonic-net/sonic-utilities @ 3…</li>
 <li><a href="../../reference/runbooks/container-memory-limit-exceeded/">コンテナ memory limit 超過 / OOM kill</a> — [code-verified] Runbook: コンテナ memory limit 超過 / OOM kill — : sonic-net/sonic-buildimage @ 43055…</li>
 <li><a href="../../reference/runbooks/config-save-diff-unexpected/">config save 後に予期しない diff が出る</a> — [code-verified] Runbook: config save 後に予期しない diff が出る — : sonic-net/sonic-utilities @ 39732bceb…</li>

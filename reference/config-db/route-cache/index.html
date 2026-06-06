@@ -37424,7 +37424,7 @@ APPL_STATE_DB のエントリ（<code>ROUTE_TABLE:&lt;prefix&gt;</code> ハッ�
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">}</span>
 </span></code></pre></div>
 <h2 id="fpmsyncd-onrouteresponse">fpmsyncd による購読 — <code>onRouteResponse()</code><a class="headerlink" href="#fpmsyncd-onrouteresponse" title="Permanent link">&para;</a></h2>
-<p>ソース: <code>fpmsyncd/routesync.cpp</code> lines 3165–3265[^<a href="../../glossary/#term-fpmsyncd">fpmsyncd</a>]</p>
+<p>ソース: <code>fpmsyncd/routesync.cpp</code> lines 3165–3265<sup id="fnref:fpmsyncd"><a class="footnote-ref" href="#fn:fpmsyncd">3</a></sup></p>
 <p><code>fpmsyncd</code> は <code>APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</code> を <code>NotificationConsumer</code> で購読し、通知を <code>onRouteResponse()</code> に渡す。</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// fpmsyncd.cpp:78</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">routeResponseChannelName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="s">&quot;APPL_DB_&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">APP_ROUTE_TABLE_NAME</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;_RESPONSE_CHANNEL&quot;</span><span class="p">;</span>
@@ -37451,7 +37451,7 @@ APPL_STATE_DB のエントリ（<code>ROUTE_TABLE:&lt;prefix&gt;</code> ハッ�
 </span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="p">}</span>
 </span></code></pre></div>
 <h2 id="warm-restart">Warm Restart 時の動作<a class="headerlink" href="#warm-restart" title="Permanent link">&para;</a></h2>
-<p>Warm restart 完了後、<code>fpmsyncd::onWarmStartEnd()</code> が呼ばれる際に <code>markRoutesOffloaded()</code> が実行される[^<a href="../../glossary/#term-fpmsyncd">fpmsyncd</a>]:</p>
+<p>Warm restart 完了後、<code>fpmsyncd::onWarmStartEnd()</code> が呼ばれる際に <code>markRoutesOffloaded()</code> が実行される<sup id="fnref2:fpmsyncd"><a class="footnote-ref" href="#fn:fpmsyncd">3</a></sup>:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">RouteSync::markRoutesOffloaded</span><span class="p">(</span><span class="n">swss</span><span class="o">::</span><span class="n">DBConnector</span><span class="o">&amp;</span><span class="w"> </span><span class="n">db</span><span class="p">)</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="p">{</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="n">sendOffloadReply</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">APP_ROUTE_TABLE_NAME</span><span class="p">);</span>
@@ -37492,7 +37492,7 @@ APPL_STATE_DB のエントリ（<code>ROUTE_TABLE:&lt;prefix&gt;</code> ハッ�
 </tr>
 <tr>
 <td>4</td>
-<td>suppress-fib-pending 有効 → fpmsyncd が RESPONSE_CHANNEL 購読</td>
+<td>suppress-fib-pending 有効 → <a href="../../glossary/#term-fpmsyncd">fpmsyncd</a> が RESPONSE_CHANNEL 購読</td>
 <td>機能有効時のみ</td>
 <td>無効時は APPL_STATE_DB 書き込みは発生するが offload 通知は行われない</td>
 </tr>
@@ -37515,7 +37515,7 @@ APPL_STATE_DB のエントリ（<code>ROUTE_TABLE:&lt;prefix&gt;</code> ハッ�
 </span></code></pre></div>
 <p><strong>VRF 経路の先行制約（依存 #2）</strong>: key が <code>Vrf&lt;name&gt;:&lt;prefix&gt;</code> 形式の場合、RouteOrch は <code>m_vrfOrch-&gt;isVRFexists(vrf_name)</code> を確認し、VRF SAI オブジェクトが未登録の間は処理を <code>it++; continue</code> で後回しにする（routeorch.cpp:L711-714）。VRF が存在しなければ SAI プログラミング自体が行われず、APPL_STATE_DB への書き込みも発生しない。</p>
 <p><strong>バッファリングと flush（依存 #3）</strong>: <code>RouteOrch</code> は <code>m_publisher.setBuffered(true)</code> で RESPONSE_CHANNEL + APPL_STATE_DB 書き込みをバッファリングし、<code>doTask()</code> 末尾の <code>m_publisher.flush()</code> で一括送出する（routeorch.cpp:L57, L1231）。同一 <code>doTask()</code> サイクル内で処理された複数経路の状態変更は、flush 時にまとめて <a href="../../glossary/#term-redis">Redis</a> パイプラインに投入される。consumer は同一バッチ内の書き込みが個別到着順を保証しないことを前提とする必要がある。</p>
-<p><strong>suppression 有効時のみ fpmsyncd が購読（依存 #4）</strong>: APPL_STATE_DB への書き込みは <code>suppress-fib-pending</code> 設定に関わらず発生するが、fpmsyncd がその結果を <code>APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</code> 経由で受け取って FRR zebra へ offload 通知を送るのは <code>suppress-fib-pending = enabled</code> の場合のみ。suppression 無効時は APPL_STATE_DB への書き込みが発生しても FRR の offload フラグは更新されない（fpmsyncd.cpp:L113-118、routesync.cpp:L3174）。</p>
+<p><strong>suppression 有効時のみ <a href="../../glossary/#term-fpmsyncd">fpmsyncd</a> が購読（依存 #4）</strong>: APPL_STATE_DB への書き込みは <code>suppress-fib-pending</code> 設定に関わらず発生するが、fpmsyncd がその結果を <code>APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</code> 経由で受け取って FRR zebra へ offload 通知を送るのは <code>suppress-fib-pending = enabled</code> の場合のみ。suppression 無効時は APPL_STATE_DB への書き込みが発生しても FRR の offload フラグは更新されない（fpmsyncd.cpp:L113-118、routesync.cpp:L3174）。</p>
 <p><strong>Warm Restart の後払い offload（依存 #5）</strong>: Warm restart 完了時には <code>onWarmStartEnd()</code> が APPL_STATE_DB の全 ROUTE_TABLE エントリを走査して FRR zebra に RTM_NEWROUTE を一括送信する。この経路では通常フローと逆に APPL_STATE_DB が先に存在しており、それを読んで offload 通知を送出する（routesync.cpp:L3298-3310）。</p>
 <!-- /ordering -->
 
@@ -37770,7 +37770,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 <code>route_check.py</code> は整合を検出し RESPONSE_CHANNEL への recovery 注入で回復を試みる。</p>
 </div>
 <h3 id="fpmsyncd">fpmsyncd の失敗受け取り<a class="headerlink" href="#fpmsyncd" title="Permanent link">&para;</a></h3>
-<p><code>fpmsyncd</code> は通知チャネルで失敗通知を受け取った場合、<code>err_str != "SWSS_RC_SUCCESS"</code> により offload 通知をスキップする<sup id="fnref:fpmsyncd"><a class="footnote-ref" href="#fn:fpmsyncd">3</a></sup>:</p>
+<p><code>fpmsyncd</code> は通知チャネルで失敗通知を受け取った場合、<code>err_str != "SWSS_RC_SUCCESS"</code> により offload 通知をスキップする<sup id="fnref3:fpmsyncd"><a class="footnote-ref" href="#fn:fpmsyncd">3</a></sup>:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1">// routesync.cpp:3195-3206</span>
 </span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">field</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;err_str&quot;</span><span class="p">)</span>
 </span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="n">isSuccessReply</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;SWSS_RC_SUCCESS&quot;</span><span class="p">);</span>
@@ -38065,7 +38065,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 </span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>  └─▶ FPM (RTM_NEWROUTE + RTM_F_OFFLOAD) ──▶ FRR zebra（一括送出）
 </span></code></pre></div>
 <h3 id="1-fpmsyncd-frr-zebra">1. fpmsyncd → FRR zebra（通常フロー）<a class="headerlink" href="#1-fpmsyncd-frr-zebra" title="Permanent link">&para;</a></h3>
-<p><code>RouteOrch::publishRouteState()</code> が RESPONSE_CHANNEL に通知を送出すると、suppression 有効時に <code>fpmsyncd</code> の <code>onRouteResponse()</code> が受信し、<code>sendOffloadReply()</code> で FRR zebra に RTM_NEWROUTE + <code>RTM_F_OFFLOAD</code> フラグを付加したメッセージを送出する<sup id="fnref2:fpmsyncd"><a class="footnote-ref" href="#fn:fpmsyncd">3</a></sup>。</p>
+<p><code>RouteOrch::publishRouteState()</code> が RESPONSE_CHANNEL に通知を送出すると、suppression 有効時に <code>fpmsyncd</code> の <code>onRouteResponse()</code> が受信し、<code>sendOffloadReply()</code> で FRR zebra に RTM_NEWROUTE + <code>RTM_F_OFFLOAD</code> フラグを付加したメッセージを送出する<sup id="fnref4:fpmsyncd"><a class="footnote-ref" href="#fn:fpmsyncd">3</a></sup>。</p>
 <ul>
 <li><strong>条件</strong>: <code>CONFIG_DB DEVICE_METADATA|localhost.suppress-fib-pending = "enabled"</code> が設定済みであること</li>
 <li><strong>効果</strong>: FRR zebra が当該経路を「HW にオフロード済み」として認識し、経路の offload フラグが立つ</li>
@@ -38080,7 +38080,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 </span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="2-warm-restart-offload">2. Warm Restart: 一括 offload 通知<a class="headerlink" href="#2-warm-restart-offload" title="Permanent link">&para;</a></h3>
-<p>Warm restart 完了時（<code>onWarmStartEnd()</code>）、<code>markRoutesOffloaded()</code> が APPL_STATE_DB <code>ROUTE_TABLE</code> の全エントリを走査して FRR zebra に RTM_NEWROUTE を一括送信する<sup id="fnref3:fpmsyncd"><a class="footnote-ref" href="#fn:fpmsyncd">3</a></sup>。</p>
+<p>Warm restart 完了時（<code>onWarmStartEnd()</code>）、<code>markRoutesOffloaded()</code> が APPL_STATE_DB <code>ROUTE_TABLE</code> の全エントリを走査して FRR zebra に RTM_NEWROUTE を一括送信する<sup id="fnref5:fpmsyncd"><a class="footnote-ref" href="#fn:fpmsyncd">3</a></sup>。</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1">// routesync.cpp:3291-3295</span>
 </span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">RouteSync::onWarmStartEnd</span><span class="p">(</span><span class="n">swss</span><span class="o">::</span><span class="n">DBConnector</span><span class="o">&amp;</span><span class="w"> </span><span class="n">applStateDb</span><span class="p">)</span>
 </span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="p">{</span>
@@ -38155,7 +38155,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 </span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="n">notificationProducer</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">status</span><span class="p">.</span><span class="n">codeStr</span><span class="p">(),</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">intent_attrs_copy</span><span class="p">);</span>
 </span></code></pre></div>
 <h3 id="fpmsyncd-notificationconsumer">購読側: fpmsyncd の NotificationConsumer<a class="headerlink" href="#fpmsyncd-notificationconsumer" title="Permanent link">&para;</a></h3>
-<p><code>fpmsyncd</code> は起動時に <code>suppress-fib-pending = enabled</code> が設定されている場合のみ、<code>APPL_STATE_DB</code> に対して <code>NotificationConsumer</code> を生成し <code>APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</code> チャネルを購読する（<code>fpmsyncd.cpp:L113-118</code>）<sup id="fnref4:fpmsyncd"><a class="footnote-ref" href="#fn:fpmsyncd">3</a></sup>:</p>
+<p><code>fpmsyncd</code> は起動時に <code>suppress-fib-pending = enabled</code> が設定されている場合のみ、<code>APPL_STATE_DB</code> に対して <code>NotificationConsumer</code> を生成し <code>APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</code> チャネルを購読する（<code>fpmsyncd.cpp:L113-118</code>）<sup id="fnref6:fpmsyncd"><a class="footnote-ref" href="#fn:fpmsyncd">3</a></sup>:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1">// fpmsyncd.cpp:113-118</span>
 </span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">suppressionEnabledStr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;enabled&quot;</span><span class="p">)</span>
 </span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="p">{</span>
@@ -38333,7 +38333,7 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 <p>ResponsePublisher publish 実装: <code>orchagent/response_publisher.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp#L96">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp#L96</a>&#160;<a class="footnote-backref" href="#fnref:respub" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:respub" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:respub" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:respub" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:respub" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:fpmsyncd">
-<p>fpmsyncd onRouteResponse / markRoutesOffloaded 実装: <code>fpmsyncd/routesync.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp#L3165">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp#L3165</a>&#160;<a class="footnote-backref" href="#fnref:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>fpmsyncd onRouteResponse / markRoutesOffloaded 実装: <code>fpmsyncd/routesync.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp#L3165">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp#L3165</a>&#160;<a class="footnote-backref" href="#fnref:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:schema">
 <p>テーブル名・DB インデックス定数: <code>common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L27">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L27</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 4 in the text">&#8617;</a></p>
