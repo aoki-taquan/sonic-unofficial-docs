@@ -72,12 +72,22 @@ for db in 4 6; do
   sonic-db-cli $([ "$db" = "4" ] && echo CONFIG_DB || echo STATE_DB) keys "*$PORT*"
 done
 
-# 2) ACL バインド解除
+# 2) ACL バインド解除（ports はカンマ区切りリスト。部分一致で `Ethernet8` が
+#    `Ethernet80` 等に誤マッチしないよう、要素単位で awk で除去する）
 for tbl in $(sonic-db-cli CONFIG_DB keys 'ACL_TABLE|*'); do
   ports=$(sonic-db-cli CONFIG_DB hget "$tbl" ports)
-  if [[ "$ports" == *"$PORT"* ]]; then
-    new=$(echo "$ports" | sed "s/,$PORT//;s/$PORT,//;s/^$PORT$//")
-    sonic-db-cli CONFIG_DB hset "$tbl" ports "$new"
+  # 完全一致要素のみを除外し、空要素を残さない
+  new=$(echo "$ports" | awk -v p="$PORT" 'BEGIN{FS=",";OFS=","} {
+    n=0; for (i=1;i<=NF;i++) if ($i!=p && $i!="") a[++n]=$i;
+    s=""; for (i=1;i<=n;i++) s=(i==1?a[i]:s OFS a[i]); print s
+  }')
+  if [ "$new" != "$ports" ]; then
+    if [ -z "$new" ]; then
+      # ports が空になる場合は ACL_TABLE エントリ自体を消す（空 ports は orchagent 非許容）
+      sonic-db-cli CONFIG_DB del "$tbl"
+    else
+      sonic-db-cli CONFIG_DB hset "$tbl" ports "$new"
+    fi
   fi
 done
 
