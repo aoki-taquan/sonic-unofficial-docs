@@ -1589,7 +1589,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [gNMI](#term-gnmi)
 
-- [サイトマップ](../_meta/sitemap.md) (75)
+- [サイトマップ](../_meta/sitemap.md) (76)
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (29)
 - [GNMI / GNMI_CLIENT_CERT テーブル](config-db/gnmi.md) (24)
 - [TELEMETRY テーブル](config-db/telemetry.md) (23)
@@ -1625,7 +1625,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
-- [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../architecture/ssdhealth-design.md) (39)
+- [サイトマップ](../_meta/sitemap.md) (39)
 
 ### [Headroom](#term-headroom)
 
