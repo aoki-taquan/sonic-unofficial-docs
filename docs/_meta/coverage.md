@@ -25,9 +25,9 @@ last_verified: 2026-05-11
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 764 |
+| code-verified | 763 |
 | runbook-verified | 28 |
-| discrepancy-found | 115 |
+| discrepancy-found | 116 |
 | issue-confirmed | 5 |
 | hld-only | 2 |
 | meta | 189 |
@@ -50,7 +50,7 @@ last_verified: 2026-05-11
 | `reference` | 465 | 28 | 9 | 0 | 0 | 13 | 1 | 516 |
 | `routing` | 45 | 0 | 12 | 0 | 0 | 1 | 0 | 58 |
 | `switching` | 18 | 0 | 8 | 0 | 0 | 1 | 0 | 27 |
-| `system` | 56 | 0 | 18 | 1 | 0 | 2 | 0 | 77 |
+| `system` | 55 | 0 | 19 | 1 | 0 | 2 | 0 | 77 |
 | `topics` | 19 | 0 | 0 | 0 | 1 | 141 | 0 | 161 |
 
 推移情報（時系列）は本ページでは扱いません。スナップショットのみ。
