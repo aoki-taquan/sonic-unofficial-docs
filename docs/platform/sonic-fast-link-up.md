@@ -8,6 +8,16 @@ sources:
   - repo: sonic-net/SONiC
     path: doc/fast-linkup/fast-link-up-hld.md
     ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+  - repo: sonic-net/sonic-swss
+    path: orchagent/switchorch.cpp
+  - repo: sonic-net/sonic-swss
+    path: orchagent/portsorch.h
+  - repo: sonic-net/sonic-swss
+    path: orchagent/portsorch.cpp
+  - repo: sonic-net/sonic-utilities
+    path: show/main.py
+  - repo: sonic-net/sonic-utilities
+    path: config/main.py
 related:
   config_db:
     - SWITCH_FAST_LINKUP
@@ -27,7 +37,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
-    `switchorch.cpp:2094-2271`（`setFastLinkupCapability` / `doCfgSwitchFastLinkupTableTask`）、`portsorch.h:300`（`setPortFastLinkupEnabled`）、SAI `SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIMEOUT[_RANGE]` / `_GUARD_TIMEOUT[_RANGE]` / `_BER_THRESHOLD`、`sonic-utilities/show/main.py:2933` / `config/main.py:5095` の `switch-fast-linkup` CLI を確認済み (verified at: 2026-05-09)。
+    `sonic-swss/orchagent/switchorch.cpp:2094-2271`（`setFastLinkupCapability` / `doCfgSwitchFastLinkupTableTask`）[^2]、`sonic-swss/orchagent/portsorch.h:300`（`setPortFastLinkupEnabled`）[^3]、SAI `SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIMEOUT[_RANGE]` / `_GUARD_TIMEOUT[_RANGE]` / `_BER_THRESHOLD` / `SAI_PORT_ATTR_FAST_LINKUP_ENABLED`、`sonic-utilities/show/main.py:2933`[^4] / `sonic-utilities/config/main.py:5115`[^5] の `switch-fast-linkup` CLI を確認済み (verified at: 2026-05-09)。なお HLD ドキュメントでは `_POLLING_TIME[_RANGE]` / `_GUARD_TIME[_RANGE]` 表記だが、master 実装の SAI 属性名は `_TIMEOUT` 接尾辞である（実装側を正とする）。
 
 # SONiC Fast Link-Up
 
@@ -65,12 +75,12 @@ flowchart LR
 
 ## どこで capability を確認するか
 
-`switchorch` init で次を問い合わせる[^1]:
+`switchorch` init で次を問い合わせる[^2]:
 
-- `SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIME` の create/set 可否で **対応可否**
-- `_POLLING_TIME_RANGE` / `_GUARD_TIME_RANGE` で **許容レンジ**
+- `SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIMEOUT` の create/set 可否で **対応可否**
+- `_POLLING_TIMEOUT_RANGE` / `_GUARD_TIMEOUT_RANGE` で **許容レンジ**（[HLD](../reference/glossary.md#term-hld) は `_TIME_RANGE` 表記、実装は `_TIMEOUT_RANGE`）
 
-結果は `STATE_DB:SWITCH_CAPABILITY|switch` に公開[^1]:
+結果は `STATE_DB:SWITCH_CAPABILITY|switch` に公開[^2]:
 
 ```text
 FAST_LINKUP_CAPABLE             = "true"/"false"
@@ -119,7 +129,7 @@ sequenceDiagram
     end
 ```
 
-`portsorch` init でも `querySwitchCapability(SAI_OBJECT_TYPE_PORT, SAI_PORT_ATTR_FAST_LINKUP_ENABLED)` を打ちキャッシュする[^1]。
+`portsorch` init でも `querySwitchCapability(SAI_OBJECT_TYPE_PORT, SAI_PORT_ATTR_FAST_LINKUP_ENABLED)` を打ちキャッシュする[^6]。
 
 ## エラーハンドリング
 
@@ -200,6 +210,11 @@ docker exec swss show fast-link-status 2>&1 | tail
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/fast-linkup/fast-link-up-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss` `orchagent/switchorch.cpp` L2094-L2271 (`setFastLinkupCapability` / `doCfgSwitchFastLinkupTableTask`)
+[^3]: `sonic-net/sonic-swss` `orchagent/portsorch.h` L300 (`setPortFastLinkupEnabled` 宣言)
+[^4]: `sonic-net/sonic-utilities` `show/main.py` L2933 (`show switch-fast-linkup` group 定義)
+[^5]: `sonic-net/sonic-utilities` `config/main.py` L5115-L5142 (`config switch-fast-linkup global`、capability 検証 + `SWITCH_FAST_LINKUP|GLOBAL` 更新)
+[^6]: `sonic-net/sonic-swss` `orchagent/portsorch.cpp` L1038-L1040 (`querySwitchCapability(SAI_OBJECT_TYPE_PORT, SAI_PORT_ATTR_FAST_LINKUP_ENABLED)` → `m_fastLinkupPortAttrSupported` キャッシュ)
 
 ## 関連ページ
 
@@ -213,4 +228,4 @@ docker exec swss show fast-link-status 2>&1 | tail
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9937abcefc29 -->
+<!-- glossary-links-injected: 167700005048 -->
