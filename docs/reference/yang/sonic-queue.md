@@ -29,7 +29,7 @@ related:
 
 QUEUE yang Module for [SONiC](../../reference/glossary.md#term-sonic) OS[^1]。`QUEUE` コンテナは upstream で「Configures egress queue scheduling and [WRED](../../reference/glossary.md#term-wred) profiles per port.」と記述され[^1]、port × queue index ごとに [`SCHEDULER`](sonic-scheduler.md) と [`WRED_PROFILE`](sonic-wred-profile.md) を紐付ける。`QUEUE_LIST` と `VOQ_QUEUE_LIST` の 2 リストは `DEVICE_METADATA|localhost/switch_type` の値で **排他的に** 有効化される (`switch_type='voq'` のときのみ `VOQ_QUEUE_LIST`、それ以外は `QUEUE_LIST`)[^1]。
 
-実装側では [`QosOrch`](../../reference/glossary.md#term-qosorch) が `CFG_QUEUE_TABLE_NAME` (= `QUEUE`) のハンドラを登録し、`QUEUE|<port>|<qindex>` または `QUEUE|<hostname>|<asic>|<port>|<qindex>` ([VOQ](../../reference/glossary.md#term-voq) chassis 形式) の両方の key パターンを解釈する[^2]。
+実装側では `QosOrch` が `CFG_QUEUE_TABLE_NAME` (= `QUEUE`) のハンドラを登録し、`QUEUE|<port>|<qindex>` または `QUEUE|<hostname>|<asic>|<port>|<qindex>` ([VOQ](../../reference/glossary.md#term-voq) chassis 形式) の両方の key パターンを解釈する[^2]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -136,7 +136,7 @@ module: sonic-queue
 
 ### 典型的なデプロイ位置
 
-- queue ごとの scheduler / wred 紐付け。非 VOQ では `QUEUE|<port>|<qindex>`、VOQ chassis では `QUEUE|<hostname>|<asic>|<port>|<qindex>` を [`QosOrch`](../../reference/glossary.md#term-qosorch) が処理[^2]。
+- queue ごとの scheduler / wred 紐付け。非 VOQ では `QUEUE|<port>|<qindex>`、VOQ chassis では `QUEUE|<hostname>|<asic>|<port>|<qindex>` を `QosOrch` が処理[^2]。
 
 ### よくある落とし穴
 
