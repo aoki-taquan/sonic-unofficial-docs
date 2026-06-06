@@ -26,6 +26,9 @@ related:
 
 Periodic watermark のテレメトリ周期を設定するテーブル[^1]。`WatermarkOrch` ([orchagent](../../reference/glossary.md#term-orchagent)) が購読し、`PERIODIC_WATERMARKS` テーブル ([COUNTERS_DB](../../reference/glossary.md#term-counters_db)) を指定周期で自動クリアする。`FLEX_COUNTER_TABLE` の `QUEUE_WATERMARK` / `PG_WATERMARK` グループが enable になったときにタイマーが起動する。
 
+!!! info "ページ URL について"
+    URL slug の `pwm` は **p**eriodic **w**ater**m**ark の略であり、CONFIG_DB 上のテーブル名は `WATERMARK_TABLE` （シングルトン: `WATERMARK_TABLE|TELEMETRY_INTERVAL`）。本ページは `WATERMARK_TABLE` テーブルを扱う。バッファプール watermark の port-per-PG 設定は [`PG_WATERMARK` グループ](pg-watermark.md) を参照。
+
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
@@ -136,7 +139,7 @@ WATERMARK_TABLE|TELEMETRY_INTERVAL (interval フィールド)
 | WATERMARK_TABLE → | タイマー満了ごとの 0 クリア | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) `PERIODIC_WATERMARKS` | `WatermarkOrch` が telemetry 周期ごとに [SAI](../../reference/glossary.md#term-sai) 統計をリセットして書き込む |
 | → WATERMARK_TABLE | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` / `FLEX_COUNTER_TABLE\|PG_WATERMARK` の `FLEX_COUNTER_STATUS` | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_STATUS` の変化が `m_wmStatus` ビットマスクを更新し、タイマー起動 (`start()`) / 停止 (`stop()`) を制御する (`watermarkorch.cpp:136-138, 254-257`) |
 | → WATERMARK_TABLE | [APPL_DB](../../reference/glossary.md#term-appl_db) `WATERMARK_CLEAR_REQUEST` 通知 | `watermarkstat -c` CLI | `"PERSISTENT"` / `"USER"` op でそれぞれの [COUNTERS_DB](../../reference/glossary.md#term-counters_db) テーブルをリセット。`PERIODIC_WATERMARKS` はタイマーのみがリセット対象 |
-| CLI | `watermarkcfg -c <秒>` / `-s` | [`watermarkcfg`](../cli/) | `interval` フィールドの書き込み（[CONFIG_DB](../../reference/glossary.md#term-config_db) HSET）と読み出し |
+| CLI | `watermarkcfg -c <秒>` / `-s` | `watermarkcfg` (`sonic-utilities/scripts/watermarkcfg`) | `interval` フィールドの書き込み（[CONFIG_DB](../../reference/glossary.md#term-config_db) HSET）と読み出し |
 
 > **ポイント**: `WATERMARK_TABLE` は interval 制御のみを担い、タイマー起動/停止は `FLEX_COUNTER_TABLE` が主導する。両テーブルを `WatermarkOrch` が同一 `Consumer` ループで購読する (`watermarkorch.cpp:72-78`)。
 
