@@ -8,9 +8,13 @@ sources:
   - repo: sonic-net/SONiC
     path: doc/aaa/ldap/hld_ldap.md
     ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-system-ldap.yang
+  - repo: sonic-net/sonic-host-services
+    path: scripts/hostcfgd
 related:
   config_db:
-    - LDAP_TABLE
+    - LDAP
     - LDAP_SERVER
     - AAA
   cli:
@@ -43,7 +47,7 @@ related:
 
 ```mermaid
 flowchart LR
-    CFG[CONFIG_DB\n LDAP_TABLE / LDAP_SERVER / AAA] --> HC[hostcfgd]
+    CFG[CONFIG_DB\n LDAP / LDAP_SERVER / AAA] --> HC[hostcfgd]
     HC --> CONF[/etc/ldap/ldap.conf\n /etc/nslcd.conf\n /etc/nsswitch.conf\n /etc/pam.d/common-auth-sonic/]
     CONF --> NSLCD[nslcd]
     NSLCD --> LDAPSRV[(LDAP server)]
@@ -52,29 +56,34 @@ flowchart LR
     NSS[libnss-ldapd] --> NSLCD
 ```
 
-### CONFIG_DB スキーマ（HLD より）
+### CONFIG_DB スキーマ
+
+HLD 原文は `LDAP_TABLE|global` 表記だが、`sonic-yang-models` の `sonic-system-ldap.yang` で正規化された table 名は **`LDAP`** であり、その下の `global` container に各 leaf が並ぶ[^2]。実際の CONFIG_DB key は **`LDAP|global`** で、`hostcfgd` も `config_db.subscribe('LDAP', ...)` で購読している[^3]。
 
 ```text
-LDAP_TABLE|global
-    bind_dn       = ""             ; default empty (anonymous bind)
-    bind_password = "****"         ; encrypted
-    bind_timeout  = 5              ; seconds
-    version       = 3              ; LDAPv3
+LDAP|global                            ; YANG: container LDAP / container global
+    bind_dn       = ""                 ; string (length 1..65), default 空 (anonymous bind)
+    bind_password = "****"             ; string (length 1..65), 暗号化保存
+    bind_timeout  = 5                  ; uint16 (1..120), default 5
+    version       = 3                  ; uint16 (1..3), default 3
     base_dn       = "ou=users,dc=example,dc=com"
-    port          = 389
-    timeout       = 5
+    port          = 389                ; inet:port-number, default 389
+    timeout       = 5                  ; uint16 (1..60)
 
-LDAP_SERVER|<server_ip>
-    priority = <int>               ; lower = preferred
+LDAP_SERVER|<hostname-or-ip>           ; YANG: list LDAP_SERVER_LIST (max 8 entries)
+    priority = <1..8>                  ; uint8 (1..8), default 1, higher = preferred
 
 AAA
-    ; 既存テーブル。authentication フィールドで ldap を有効化
+    ; 既存テーブル。authentication.login で ldap を有効化
     authentication.login = "ldap,local"
 ```
 
+!!! warning "priority の向き / table 名の差分"
+    HLD 原文では「lower = preferred」と書かれているが、現行 master の `sonic-system-ldap.yang` の `priority` leaf description は **"higher values are tried first"**（高い値が優先）と定義されている[^2]。table 名も HLD の `LDAP_TABLE` ではなく **`LDAP`** が正で、後続実装側で正規化された。本ページの CLI / 例は YANG 由来の名前に従う。
+
 ### Init / 設定変更フロー
 
-`hostcfgd` の [AAA](../reference/glossary.md#term-aaa) クラスは `LDAP_TABLE` / `LDAP_SERVER` / `AAA` 変更を購読し、jinja2 テンプレートから設定ファイルを再生成して `nslcd` を再起動する。LDAP 無効時は `nslcd` を停止し、PAM/NSS から LDAP モジュールを外す[^1]。
+`hostcfgd` の [AAA](../reference/glossary.md#term-aaa) クラスは `LDAP` / `LDAP_SERVER` / `AAA` 変更を購読し、jinja2 テンプレートから設定ファイルを再生成して `nslcd` を再起動する[^3]。LDAP 無効時は `nslcd` を停止し、PAM/NSS から LDAP モジュールを外す[^1]。
 
 ### パッケージ
 
@@ -100,8 +109,8 @@ AAA
 
 | Table | 説明 |
 |-------|------|
-| `LDAP_TABLE` | グローバル LDAP 設定（base_dn / port / version / bind 認証 等） |
-| `LDAP_SERVER` | サーバごとの優先度 |
+| `LDAP` | グローバル LDAP 設定（key=`global`、base_dn / port / version / bind 認証 等） |
+| `LDAP_SERVER` | サーバごとの優先度（最大 8 エントリ） |
 | `AAA` | 既存。`authentication.login` でメソッド順を指定 |
 
 ### 関連する CLI
@@ -118,9 +127,9 @@ AAA
 # LDAP サーバ追加
 sudo config ldap server add 10.0.0.1 --priority 1
 
-# グローバル設定
+# グローバル設定（YANG 正規 table 名は LDAP、key=global）
 sonic-cfggen -a '{
-  "LDAP_TABLE": {
+  "LDAP": {
     "global": {
       "base_dn": "ou=users,dc=example,dc=com",
       "version": "3",
@@ -153,7 +162,7 @@ sudo config aaa authentication login ldap local
 - ログイン失敗 → `journalctl -u nslcd` で LDAP サーバ通信ログを確認。
 - `getent passwd <user>` で LDAP ユーザが見えない → `/etc/nsswitch.conf` の `passwd:` 行に `ldap` が含まれているか確認。
 - 認証は通るが `sudo` で失敗 → group 解決失敗の可能性。`getent group <gid>` で確認。
-- bind 失敗 → `LDAP_TABLE.bind_dn` / `bind_password` と `base_dn` の対応、サーバ FQDN 解決を確認。
+- bind 失敗 → `LDAP|global` の `bind_dn` / `bind_password` と `base_dn` の対応、サーバ FQDN 解決を確認。
 
 確認コマンド例:
 
@@ -169,6 +178,8 @@ journalctl -u nslcd | tail
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/aaa/ldap/hld_ldap.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-system-ldap.yang` L16-L109（`container LDAP` / `container global` / `LDAP_SERVER` `priority` "higher values are tried first"）
+[^3]: `sonic-net/sonic-host-services` `scripts/hostcfgd` L2228-L2229, L2475-L2476（`init_data['LDAP']` / `config_db.subscribe('LDAP', ...)` / `config_db.subscribe('LDAP_SERVER', ...)`）
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -190,7 +201,7 @@ journalctl -u nslcd | tail
 
 ### 関連 CONFIG_DB
 
-- `LDAP_TABLE`
+- `LDAP` (key=`global`、HLD 原文の `LDAP_TABLE` に相当)
 - [LDAP_SERVER](../reference/config-db/ldap-server.md)
 - [AAA](../reference/config-db/aaa.md)
 
