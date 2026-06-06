@@ -42,7 +42,7 @@ related:
     **`SWSS_RC_*` enum (`sonic-swss-common/common/status_code_util.h`) のみ
     取り込み済**。ERROR_DB / ErrorListener / ErrorReporter / `show error-database`
     CLI は未実装である。実装状況の一覧はページ末尾の
-    [phase-boundary 表](#_2) を、未実装内容と回避策は
+    [phase-boundary 表](#phase-boundary) を、未実装内容と回避策は
     [制限事項](error-handling-framework-in-sonic-limitations.md) を参照。
 
 ```mermaid
@@ -91,7 +91,7 @@ app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで **
 - [error-handling-framework-in-sonic-limitations.md](error-handling-framework-in-sonic-limitations.md)
 
 <!-- phase-boundary -->
-## 実装フェーズ境界
+## 実装フェーズ境界 {#phase-boundary}
 
 !!! info "Phase 別の実装済 / 未実装 サマリ"
     本ページは `monitor: partially_implemented` で、HLD で示された一連の機能
