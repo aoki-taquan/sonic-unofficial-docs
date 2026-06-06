@@ -3,7 +3,7 @@ title: show mgmt-vrf サブコマンド
 description: "show mgmt-vrf サブコマンド — show mgmt-vrf は管理 VRF (mgmt) の有効・無効状態、Linux 上の VRF デバイス情報、ルーティングテーブルを表示する。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-06-06
 sources:
   - repo: sonic-net/sonic-utilities
     path: show/main.py
@@ -46,51 +46,67 @@ show mgmt-vrf [routes]
 
 **動作**:
 
-1. `is_mgmt_vrf_enabled(ctx)` で [CONFIG_DB](../../reference/glossary.md#term-config_db) の `MGMT_VRF_CONFIG` を参照し、`mgmtVrfEnabled` が false の場合は `ManagementVRF : Disabled` を表示して終了
-2. `routes` 引数なしで有効な場合: `ManagementVRF : Enabled` を表示し、`ip -d link show mgmt` と `ip link show vrf mgmt` を続けて実行
-3. `routes` 引数ありで有効な場合: `ip route show table 6000` を実行（管理 VRF 専用 routing table の固定 ID）
+1. `is_mgmt_vrf_enabled(ctx)` で [CONFIG_DB](../../reference/glossary.md#term-config_db) の `MGMT_VRF_CONFIG` を参照し、`mgmtVrfEnabled` が `"true"` でない場合は `ManagementVRF : Disabled` を表示して終了
+2. `routes` 引数なしで有効な場合: `ManagementVRF : Enabled` と `Management VRF interfaces in Linux:` を表示してから `ip -d link show mgmt` と `ip link show vrf mgmt` を続けて実行
+3. `routes` 引数ありで有効な場合: `Routes in Management VRF Routing Table:` を表示してから `ip route show table 6000` を実行（管理 VRF 専用 routing table の固定 ID）
 
 <!-- evidence:
-source: sonic-net/sonic-utilities/show/main.py#L540-L561 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+source: sonic-net/sonic-utilities/show/main.py#L539-L559 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
 excerpt: |
   @cli.group('mgmt-vrf', invoke_without_command=True)
   @click.argument('routes', required=False, type=click.Choice(["routes"]))
-  def mgmt_vrf(ctx, routes):
+  @click.pass_context
+  def mgmt_vrf(ctx,routes):
+      """Show management VRF attributes"""
+
       if is_mgmt_vrf_enabled(ctx) is False:
           click.echo("\nManagementVRF : Disabled")
           return
       else:
           if routes is None:
               click.echo("\nManagementVRF : Enabled")
-              run_command(['ip', '-d', 'link', 'show', 'mgmt'])
-              run_command(['ip', 'link', 'show', 'vrf', 'mgmt'])
+              click.echo("\nManagement VRF interfaces in Linux:")
+              cmd = ['ip', '-d', 'link', 'show', 'mgmt']
+              run_command(cmd)
+              cmd = ['ip', 'link', 'show', 'vrf', 'mgmt']
+              run_command(cmd)
           else:
-              run_command(['ip', 'route', 'show', 'table', '6000'])
+              click.echo("\nRoutes in Management VRF Routing Table:")
+              cmd = ['ip', 'route', 'show', 'table', '6000']
+              run_command(cmd)
 -->
 
 <!-- evidence-rendered:start -->
-??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L540-L561 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L539-L559 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
 
     **出典**:
 
-    `sonic-net/sonic-utilities/show/main.py#L540-L561 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+    `sonic-net/sonic-utilities/show/main.py#L539-L559 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
 
     **抜粋**:
 
     ```text
     @cli.group('mgmt-vrf', invoke_without_command=True)
     @click.argument('routes', required=False, type=click.Choice(["routes"]))
-    def mgmt_vrf(ctx, routes):
+    @click.pass_context
+    def mgmt_vrf(ctx,routes):
+        """Show management VRF attributes"""
+    
         if is_mgmt_vrf_enabled(ctx) is False:
             click.echo("\nManagementVRF : Disabled")
             return
         else:
             if routes is None:
                 click.echo("\nManagementVRF : Enabled")
-                run_command(['ip', '-d', 'link', 'show', 'mgmt'])
-                run_command(['ip', 'link', 'show', 'vrf', 'mgmt'])
+                click.echo("\nManagement VRF interfaces in Linux:")
+                cmd = ['ip', '-d', 'link', 'show', 'mgmt']
+                run_command(cmd)
+                cmd = ['ip', 'link', 'show', 'vrf', 'mgmt']
+                run_command(cmd)
             else:
-                run_command(['ip', 'route', 'show', 'table', '6000'])
+                click.echo("\nRoutes in Management VRF Routing Table:")
+                cmd = ['ip', 'route', 'show', 'table', '6000']
+                run_command(cmd)
     ```
 
 <!-- evidence-rendered:end -->
@@ -138,10 +154,5 @@ flowchart LR
 - [`show muxcable`](show-muxcable.md) — show muxcable サブコマンド
 
 <!-- /cli-sibling -->
-
-## 関連ページ
-
-- [CONFIG_DB: MGMT_VRF_CONFIG](../config-db/mgmt-vrf-config.md)
-- [reference/CLI: show ip](show-ip.md)
 
 <!-- glossary-links-injected: 8ba32e5aa69d -->
