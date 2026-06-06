@@ -109,9 +109,9 @@ related:
 - [linkmgrd のデフォルトルート連動（DualToR mux 制御）](../../routing/default-route.md)
 - [Fine Grained ECMP（FG_NHG / fgnhgorch）](../../routing/sonic-fine-grained-ecmp.md)
 - [DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）](../../routing/dhcp-relay-for-ipv6-hld.md)
-- [Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）](../../routing/high-level-design-document.md)
 - [dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）](../../routing/multiple-nexthop-route-hld.md)
 - [Management VRF 設計（201911 release / l3mdev + cgroups）](../../routing/sonic-management-vrf-design-document-201911-release.md)
+- [Route Flow Counter（ROUTE_MATCH / Route Pattern Orch）](../../routing/sonic-route-flow-counter-design.md)
 
 **関連トラブルシュート 5 件**
 
