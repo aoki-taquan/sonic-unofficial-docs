@@ -26,7 +26,7 @@ related:
     
     - HLD は `sonic-utilities/scripts/ssdhealth` という独立スクリプトを示すが、master では Python パッケージ `sonic-utilities/ssdutil/` (`__init__.py` / `main.py`) が唯一の実体で、`ssdhealth` という名前のスクリプトは存在しない。`show platform ssdhealth` (sonic-utilities/show/platform.py) は内部で `sudo ssdutil -d <device>` を呼ぶラッパーになっている。
     - HLD の抽象クラス配置 `sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py` は **存在しない**。master では `sonic-platform-common/sonic_platform_base/sonic_storage/` 配下に `storage_base.py` / `ssd.py` / `emmc.py` / `usb.py` / `storage_devices.py` として再構成されている。
-    - HLD オプションの pmon `ssdmond` デーモンは `sonic-platform-daemons` に **存在しない**（取り込まれていない）。
+    - HLD オプションの pmon `ssdmond` デーモンは `sonic-platform-daemons` に **存在しない**（取り込まれていない）。代わりに後発の `sonic-stormond` が STATE_DB の `STORAGE_INFO` テーブルに FSIO 統計を周期同期する（デフォルト 1h、SSD health の閾値割り込み通知ではない）[^2]。
     
     本ページの記述は HLD 文書としての履歴的価値はあるが、現行コード・パスを参照する場合は ssdutil (`ssdutil/main.py`) と `sonic_storage/` 構成を確認すること。
 
@@ -246,7 +246,7 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
     | `SsdBase` 基底クラス | 必須 | master では `sonic-platform-common/sonic_platform_base/sonic_storage/storage_base.py` 等に再構成（旧パス `sonic_ssd/ssd_base.py` は存在せず） | △ パス変更 |
     | `SsdUtil` ベンダー派生 | 必須 | `device/{vendor}/platform/plugins/ssdutil.py` の plugin 取り込み | ✓ |
     | `show platform ssdhealth [verbose\|vendor]` | 必須 | `sonic-utilities/show/platform.py` のサブコマンドに該当 | ✓ |
-    | `ssdmond` 常時監視デーモン | Open Question | 現行 `sonic-platform-daemons/` 配下に `ssdmond` 名のデーモン無し | ⚠️ 未取り込み |
+    | `ssdmond` 常時監視デーモン | Open Question | `ssdmond` 名のデーモンは無し。代替として `sonic-stormond` が `STORAGE_INFO` を 1h 周期で sync するが、health 閾値アラートではなく FSIO 統計の同期が主目的[^2] | ⚠️ 別実装に置換 |
     | SNMP MIB への露出 | Open Question | 未取り込み（HLD 上もスコープ外と明記） | ⚠️ スコープ外 |
 
     **差分の中身**: 常時バックグラウンドで SSD 健全性を polling し、閾値割れ時に syslog / SNMP trap を発火する `ssdmond` は HLD で「optional」扱いのまま、コミュニティ master には取り込まれていない。健全性確認は **on-demand な `show platform ssdhealth` 実行** に依存する。
@@ -307,23 +307,18 @@ redis-cli -n 6 hgetall 'SSD_INFO|/dev/sda'
 ## 確認コマンド
 
 ```bash
-# ssdhealth が書き込む STATE_DB
-sonic-db-cli STATE_DB KEYS 'SSD_INFO|*'
-sonic-db-cli STATE_DB HGETALL 'SSD_INFO|/dev/sda'
+# stormond (関連デーモン) が書き込む STATE_DB の STORAGE_INFO テーブル[^2]
+# 注: HLD の `ssdmond` ではなく、後発の `sonic-stormond` が STORAGE_INFO を扱う。
+#     SSD ヘルス値ではなく FSIO 統計 (procfs reads/writes) が主目的。
+sonic-db-cli STATE_DB KEYS 'STORAGE_INFO|*'
+sonic-db-cli STATE_DB HGETALL 'STORAGE_INFO|sda'
 
-# プロセス稼働確認
-docker exec pmon supervisorctl status | grep -i ssd
-docker exec pmon ps -ef | grep ssdmon
+# プロセス稼働確認 (stormond は pmon docker に同梱)
+docker exec pmon supervisorctl status | grep -i stormond
 
 # 直接 SMART を読む
 sudo smartctl -A /dev/sda
 ```
-
-## トラブルシュート
-
-- `SSD_INFO` テーブルが空の場合は pmon コンテナ内の `ssdutil` プラグインが platform-specific に実装されているか確認 (`/usr/share/sonic/device/<platform>/plugins/`)。
-- health が `Bad` 報告される場合、`smartctl -a` の `Media_Wearout_Indicator` / `Available_Spare` を確認し、ベンダー RMA 基準と突き合わせる。
-- pmon コンテナ再起動後も値が古い場合、ssdmon の polling 間隔 (デフォルト 1h) を待つか `docker restart pmon` で再取得。
 
 ## 実装との乖離
 
@@ -332,6 +327,7 @@ sudo smartctl -A /dev/sda
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ssdhealth/ssdhealth_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-platform-daemons` `sonic-stormond/scripts/stormond` L28 (`STORAGE_DEVICE_TABLE = "STORAGE_INFO"`) / L34 (`STORMOND_PERIODIC_STATEDB_SYNC_SECS = 3600`)
 
 <!-- next-action -->
 ## このページを読んだ後の次アクション
