@@ -10344,7 +10344,7 @@
   <span class="md-ellipsis">
     
   
-    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
+    Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定）
   
 
     
@@ -36106,8 +36106,16 @@
 <td>VLAN レンジ ↔ VNI レンジの一括マップ<sup id="fnref5:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
 </tr>
 <tr>
+<td><code>config vxlan map_range del &lt;vxlan_name&gt; &lt;vlan_start&gt; &lt;vlan_end&gt; &lt;vni_start&gt;</code></td>
+<td>VLAN レンジ ↔ VNI レンジの一括マップ削除<sup id="fnref6:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+<tr>
 <td><code>config vxlan evpn_nvo add &lt;nvo_name&gt; &lt;vxlan_name&gt;</code></td>
-<td>EVPN NVO エントリ追加<sup id="fnref6:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+<td>EVPN NVO エントリ追加<sup id="fnref7:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+<tr>
+<td><code>config vxlan evpn_nvo del &lt;nvo_name&gt;</code></td>
+<td>EVPN NVO エントリ削除<sup id="fnref8:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
 </tr>
 <tr>
 <td><code>show vxlan name &lt;vxlan_name&gt;</code></td>
@@ -36222,7 +36230,7 @@
 <p><code>sonic-net/sonic-utilities</code> <code>show/vxlan.py</code> (<code>vxlan</code> click group) L12-L392 @ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p><code>sonic-net/sonic-utilities</code> <code>config/vxlan.py</code> (<code>vxlan</code> click group, <code>add/del/map/map_range/evpn_nvo</code> subcommands) L14-L325 @ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-utilities</code> <code>config/vxlan.py</code> (<code>vxlan</code> click group, <code>add/del/map/map_range/evpn_nvo</code> subcommands) L14-L325 @ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -10334,7 +10334,7 @@
   <span class="md-ellipsis">
     
   
-    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
+    Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定）
   
 
     
@@ -19108,10 +19108,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#poc" class="md-nav__link">
+  <a href="#poc-master" class="md-nav__link">
     <span class="md-ellipsis">
       
-        効果（PoC）
+        効果（PoC 試算 / 現 master 実測）
       
     </span>
   </a>
@@ -36018,10 +36018,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#poc" class="md-nav__link">
+  <a href="#poc-master" class="md-nav__link">
     <span class="md-ellipsis">
       
-        効果（PoC）
+        効果（PoC 試算 / 現 master 実測）
       
     </span>
   </a>
@@ -36150,7 +36150,7 @@
 <li>新しい counter type を追加する手数はどう減るのか</li>
 </ul>
 <h2 id="_2">なぜリファクタが要るか（旧構造の問題）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p><code>syncd</code> の <code>FlexCounter</code> は port / queue / buffer pool / priority group など <strong>多数の統計・属性タイプ</strong> を扱う巨大クラス。port counter / queue counter / queue attribute … ごとに <code>setXXXCounterList</code> / <code>removeXXX</code> / <code>collectXXXCounters</code> / <code>collectXXXAttr</code> が独立実装されていて <code>FlexCounter.cpp</code> 約 4000 行、<code>.h</code> 約 600 行に膨らんでいる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>syncd</code> の <code>FlexCounter</code> は port / queue / buffer pool / priority group など <strong>多数の統計・属性タイプ</strong> を扱う巨大クラス。port counter / queue counter / queue attribute … ごとに <code>setXXXCounterList</code> / <code>removeXXX</code> / <code>collectXXXCounters</code> / <code>collectXXXAttr</code> が独立実装されていて <code>FlexCounter.cpp</code> 約 4000 行、<code>.h</code> 約 600 行に膨らんでいる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（リファクタ後の現 master では <code>.cpp</code> は依然 3916 行だが、これは後続の <a href="../../reference/glossary/#term-dash">DASH</a> / <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> 系 counter context 追加分を含む。<code>.h</code> は 231 行まで縮小済<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>）。</p>
 <p>旧来は統計種別ごとに 3 系統のデータを別々に持っていた<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
@@ -36279,48 +36279,53 @@
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>新統計タイプの追加は <strong><code>CounterContext&lt;NewType&gt;</code> の登録 1 行</strong> で済む。</p>
-<h2 id="poc">効果（PoC）<a class="headerlink" href="#poc" title="Permanent link">&para;</a></h2>
+<h2 id="poc-master">効果（PoC 試算 / 現 master 実測）<a class="headerlink" href="#poc-master" title="Permanent link">&para;</a></h2>
+<p>下表は HLD の PoC 時点での試算値<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup> と、現 master の実測値を並べたもの。リファクタは master に取り込まれているが、その後の機能追加（DASH / SmartSwitch <a href="../../reference/glossary/#term-dpu">DPU</a> 系の新 counter context 等）により <code>.cpp</code> 側は当時の試算ほどには減っていない。<code>.h</code> 側は test double を除いた public/private インターフェースのみが残り試算に近い値まで縮小している<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <table>
 <thead>
 <tr>
 <th>項目</th>
-<th>旧</th>
-<th>新</th>
+<th>旧（HLD 記載）</th>
+<th>新（PoC 試算）</th>
+<th>現 master 実測</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>FlexCounter.cpp</code> 行数</td>
 <td>約 4000</td>
-<td><strong>約 1000</strong></td>
+<td>約 1000</td>
+<td><strong>3916</strong><sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
 <td><code>FlexCounter.h</code> 行数</td>
 <td>約 600</td>
-<td><strong>約 200</strong></td>
+<td>約 200</td>
+<td><strong>231</strong><sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
 <td>新統計タイプ追加</td>
 <td><code>setXXXCounterList</code> 等を一式実装</td>
 <td>context 登録 + 振舞フラグ設定</td>
+<td>同左（<code>createCounterContext</code> 経由）<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 </tbody>
 </table>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI / <a href="../../reference/glossary/#term-yang">YANG</a> への影響は <a href="../../reference/glossary/#term-hld">HLD</a> 上 <strong>N/A</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>FLEX_COUNTER_TABLE</code> スキーマは不変、<a href="../../reference/glossary/#term-syncd">syncd</a> 内部実装のみ変更。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI / <a href="../../reference/glossary/#term-yang">YANG</a> への影響は <a href="../../reference/glossary/#term-hld">HLD</a> 上 <strong>N/A</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>FLEX_COUNTER_TABLE</code> スキーマは不変、<a href="../../reference/glossary/#term-syncd">syncd</a> 内部実装のみ変更。</p>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p>HLD は <code>Restrictions/Limitations</code> を <strong>N/A</strong> と明記<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。事実上の前提として C++ テンプレートと SFINAE / <code>if constexpr</code> を多用するため C++17 以降相当のコンパイラが必要（HLD には言及なし）。</p>
+<p>HLD は <code>Restrictions/Limitations</code> を <strong>N/A</strong> と明記<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。事実上の前提として C++ テンプレートと SFINAE / <code>if constexpr</code> を多用するため C++17 以降相当のコンパイラが必要（HLD には言及なし）。</p>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>FlexCounterManager</code></strong>: 呼出し側として変更不要。<code>FlexCounter::addCounter</code> の signature と意味は維持</li>
 <li><strong>既存 Lua plugin (Watermark / RATES / <a href="../../reference/glossary/#term-wred">WRED</a> 等)</strong>: SHA 登録経路と <code>runPlugins</code> 挙動は同等、Lua 側は不変</li>
-<li><strong>warmboot / fastboot</strong>: HLD は影響 N/A。public interface 不変が前提<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>warmboot / fastboot</strong>: HLD は影響 N/A。public interface 不変が前提<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>新規 SAI 統計の追加</strong>: 拡張容易性が向上</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>特定種別だけ counter が取れない → <code>BaseCounterContext</code> の差異吸収フラグ（capability query 有無、<code>getStats</code> / <code>getStatsExt</code> 切替）の設定誤りを疑う</li>
-<li>HLD 内コード断片は <strong>デモンストレーション用</strong> と明記。最終実装と完全一致は保証されない<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>HLD 内コード断片は <strong>デモンストレーション用</strong> と明記。最終実装と完全一致は保証されない<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36335,13 +36340,16 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 78e7206f4df2 -->
+<!-- glossary-links-injected: 39a1d13532f7 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/flex_counter/flex_counter_refactor.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/flex_counter/flex_counter_refactor.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-sairedis</code> <code>syncd/FlexCounter.cpp</code>（3916 行）/ <code>syncd/FlexCounter.h</code>（231 行、<code>getCounterContext</code> <code>createCounterContext</code> <code>removeCounterContext</code> <code>hasCounterContext</code> は L162–L172）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

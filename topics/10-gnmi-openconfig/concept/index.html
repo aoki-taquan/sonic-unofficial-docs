@@ -10586,7 +10586,7 @@
   <span class="md-ellipsis">
     
   
-    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
+    Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定）
   
 
     
@@ -36185,6 +36185,7 @@
   participant TR as Translib / Transformer
   participant YANG as sonic-yang-models
   participant CFG as CONFIG_DB
+  participant STA as STATE_DB
   participant ORCH as portsyncd / orchagent
   NMS-&gt;&gt;GNMI: SetRequest(path=/interfaces/interface[name=Ethernet0]/config/description)
   GNMI-&gt;&gt;TR: convert OpenConfig → internal
@@ -36196,10 +36197,10 @@
   TR--&gt;&gt;GNMI: SetResponse(ok)
   GNMI--&gt;&gt;NMS: ok
   NMS-&gt;&gt;GNMI: Subscribe ON_CHANGE /interfaces/interface/state/oper-status
-  GNMI-&gt;&gt;CFG: STATE_DB watch
-  CFG--&gt;&gt;GNMI: oper-status updates
+  GNMI-&gt;&gt;STA: subscribe PORT_TABLE:Ethernet0 (keyspace notification)
+  STA--&gt;&gt;GNMI: oper_status updates
   GNMI--&gt;&gt;NMS: stream</code></pre>
-<p>ポイントは <strong>Set した path と Subscribe する path がどちらも YANG モデル上の path</strong> で、<code>/config/...</code> と <code>/state/...</code> で writeable / read-only が分かれている、という OpenConfig の規約。SONiC native YANG にも同じ流儀がある。</p>
+<p>ポイントは <strong>Set した path と Subscribe する path がどちらも YANG モデル上の path</strong> で、<code>/config/...</code> と <code>/state/...</code> で writeable / read-only が分かれている、という OpenConfig の規約。SONiC native YANG にも同じ流儀がある。<code>/config/...</code> の書き込み先は CONFIG_DB、<code>/state/...</code> の読み出し元は <a href="../../../reference/glossary/#term-state_db">STATE_DB</a>（一部は <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a>）と DB が分かれている点も合わせて押さえておく。</p>
 <h2 id="_3">入口の責務を分ける<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36320,7 +36321,7 @@
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
 <li><a href="../../09-telemetry-snmp/">Telemetry / SNMP / Observability</a></li>
 </ul>
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 138378bc758f -->
 
 
 

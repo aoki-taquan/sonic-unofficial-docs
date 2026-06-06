@@ -10619,7 +10619,7 @@
   <span class="md-ellipsis">
     
   
-    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
+    Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定）
   
 
     
@@ -36253,7 +36253,7 @@
 <tbody>
 <tr>
 <td><code>SAI VS</code></td>
-<td><code>meta/sai_vs_*.cpp</code>（libsai-vs）</td>
+<td><code>sonic-sairedis/vslib/</code>（生成物 <code>libsaivs.la</code>）<sup id="fnref:vslib"><a class="footnote-ref" href="#fn:vslib">1</a></sup></td>
 <td>SAI API を Linux netdev / bridge / route で代替</td>
 </tr>
 <tr>
@@ -36376,6 +36376,15 @@
 <h2 id="verification-meta">verification: meta を選ぶ理由<a class="headerlink" href="#verification-meta" title="Permanent link">&para;</a></h2>
 <p>このページが <code>verification: meta</code> なのは、lab / 開発者ワークフローは「実装の状態」ではなく「複数 HLD への横断ガイド」だからです。SAI VS / <a href="../../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> / PTF / KNE / Alpine それぞれに別途 <code>code-verified</code> ページがあり、ここで重複して裏取りする必要はありません。サブ章で言及するコンポーネント別の挙動裏取りは、リンク先の章を参照してください。</p>
 <!-- glossary-links-injected: 9fb3fca99a59 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:vslib">
+<p>SAI VS の実装は <code>sonic-sairedis/vslib/</code> 配下にあり、<code>lib_LTLIBRARIES = libsaivs.la</code> として共有ライブラリ <code>libsaivs</code> を生成する。FDB / route / hostif などの状態遷移は <code>SwitchStateBase*.cpp</code>（例: <code>SwitchStateBaseFdb.cpp</code>）に集約される。出典: <a href="https://github.com/sonic-net/sonic-sairedis/blob/master/vslib/Makefile.am#L12">sonic-sairedis vslib/Makefile.am L12</a>、<a href="https://github.com/sonic-net/sonic-sairedis/blob/master/debian/libsaivs.install">debian/libsaivs.install</a>、<a href="https://github.com/sonic-net/sonic-sairedis/blob/master/vslib/SwitchStateBaseFdb.cpp">vslib/SwitchStateBaseFdb.cpp</a>。&#160;<a class="footnote-backref" href="#fnref:vslib" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

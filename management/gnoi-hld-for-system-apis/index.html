@@ -10344,7 +10344,7 @@
   <span class="md-ellipsis">
     
   
-    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
+    Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定）
   
 
     
@@ -16205,7 +16205,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        実装との差異
       
     </span>
   </a>
@@ -16216,7 +16216,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -16227,7 +16227,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
+        干渉する機能
       
     </span>
   </a>
@@ -16238,7 +16238,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        参考リンク
+        トラブルシューティング
       
     </span>
   </a>
@@ -16247,6 +16247,17 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考リンク
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -16268,7 +16279,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -16279,7 +16290,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -16303,6 +16314,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離
+      
+    </span>
+  </a>
   
 </li>
       
@@ -36229,7 +36251,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        実装との差異
       
     </span>
   </a>
@@ -36240,7 +36262,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -36251,7 +36273,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
+        干渉する機能
       
     </span>
   </a>
@@ -36262,7 +36284,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        参考リンク
+        トラブルシューティング
       
     </span>
   </a>
@@ -36271,6 +36293,17 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考リンク
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36292,7 +36325,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -36303,7 +36336,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -36327,6 +36360,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離
+      
+    </span>
+  </a>
   
 </li>
       
@@ -36362,9 +36406,9 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-gnmi/gnmi_server/gnoi_system.go</code> L34 <code>ValidateRebootRequest</code>、L116 <code>sendRebootReqOnNotifCh</code>（DB notification 経由で reboot 要求を書き込む）、L193 <code>Server.Reboot</code>、L241 <code>Server.RebootStatus</code>、L270 <code>Server.CancelReboot</code> のハンドラ実装を確認。<code>sonic-gnmi/pkg/gnoi/system/system.go</code> L22 <code>HandleReboot</code>、L180 <code>HandleDPUReboot</code> で DPU 対応も確認。<code>sonic-gnmi/gnoi_client/system/reboot.go</code> L13/25/42 で client 側 Reboot / CancelReboot / RebootStatus の 3 RPC を確認（verified at: 2026-05-09）。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: discrepancy-found</p>
+<p><code>sonic-gnmi/gnmi_server/gnoi_system.go</code> L34 <code>ValidateRebootRequest</code>、L116 <code>sendRebootReqOnNotifCh</code>（DB notification 経由で reboot 要求を書き込む）、L193 <code>Server.Reboot</code>、L241 <code>Server.RebootStatus</code>、L270 <code>Server.CancelReboot</code> のハンドラ実装を確認。<code>sonic-gnmi/pkg/gnoi/system/system.go</code> L22 <code>HandleReboot</code>、L180 <code>HandleDPUReboot</code> で DPU 対応も確認。<code>sonic-gnmi/gnoi_client/system/reboot.go</code> L13/25/42 で client 側 Reboot / CancelReboot / RebootStatus の 3 RPC を確認。一方で <strong>HLD と現行実装の乖離</strong> を確認: 実装 <code>ValidateRebootRequest</code> (L37-L46) は <code>delay &gt; 0</code> および method=<code>POWERUP</code> を一律 reject するため、HLD が示唆する「遅延付き reboot」「POWERUP を sanity check 対象 method として並列扱い」とは挙動が異なる。詳細は下記「実装との差異」節を参照（verified at: 2026-06-06）。</p>
 </div>
 <h1 id="gnoi-system-reboot-rebootstatus-cancelrebootreboot-method-sanity-check">gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）<a class="headerlink" href="#gnoi-system-reboot-rebootstatus-cancelrebootreboot-method-sanity-check" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36558,52 +36602,118 @@ reasoning: 受理条件が「validation OK + 既存 reboot 無し + DB 書込成
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 即時 cold reboot</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>gnoi_client<span class="w"> </span>system<span class="w"> </span>reboot<span class="w"> </span>--method<span class="w"> </span>COLD<span class="w"> </span>--message<span class="w"> </span><span class="s2">&quot;scheduled maintenance&quot;</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># 30 秒後 reboot</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>gnoi_client<span class="w"> </span>system<span class="w"> </span>reboot<span class="w"> </span>--method<span class="w"> </span>COLD<span class="w"> </span>--delay<span class="w"> </span><span class="m">30000000000</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># 状態確認</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>gnoi_client<span class="w"> </span>system<span class="w"> </span>reboot_status
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># 取消</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>gnoi_client<span class="w"> </span>system<span class="w"> </span>cancel_reboot<span class="w"> </span>--message<span class="w"> </span><span class="s2">&quot;delayed by SRE&quot;</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># 注: 現行 sonic-gnmi 実装では delay&gt;0 は ValidateRebootRequest で reject される</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># （`gnoi_system.go` L43-L46）。遅延 reboot は upstream HLD 文面上は許容だが、</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># 実機では `INVALID_ARGUMENT` を返すため、遅延スケジューリングは呼出側で行う。</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># 状態確認</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>gnoi_client<span class="w"> </span>system<span class="w"> </span>reboot_status
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="c1"># 取消</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>gnoi_client<span class="w"> </span>system<span class="w"> </span>cancel_reboot<span class="w"> </span>--message<span class="w"> </span><span class="s2">&quot;delayed by SRE&quot;</span>
 </span></code></pre></div>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_6">実装との差異<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>現行 <code>sonic-net/sonic-gnmi</code> master の <code>ValidateRebootRequest</code> (<code>gnmi_server/gnoi_system.go</code> L34-L49) は HLD よりも厳格で、以下を一律拒否する:</p>
+<table>
+<thead>
+<tr>
+<th>拒否対象</th>
+<th>実装根拠</th>
+<th>HLD 上の位置付け</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>method == POWERUP</code></td>
+<td>L37 で <code>UNKNOWN</code> と並んで unsupported 扱い</td>
+<td>HLD では POWERUP を有効な reboot method として列挙<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td><code>method == UNKNOWN</code></td>
+<td>L37</td>
+<td>HLD でも 0 値は無効扱い（差異なし）</td>
+</tr>
+<tr>
+<td><code>delay &gt; 0</code>（任意の遅延）</td>
+<td>L43 で <code>Invalid request: reboot is not immediate.</code></td>
+<td>HLD では <code>delay</code> を <code>uint64</code> で受け取り、サニティチェックの例として「1 年後 delay」のような極端値のみ NG と例示<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p>つまり、現行 master では実質的に「<code>method ∈ {COLD, POWERDOWN, HALT, WARM, NSF}</code> かつ <code>delay == 0</code>」のみが validation を通る。HLD で示される 6 method（POWERUP を含む）の並列扱いや、ns 単位 delay スケジューリングは実機で動作しない。</p>
+<!-- evidence:
+source: sonic-net/sonic-gnmi/gnmi_server/gnoi_system.go#L34-L49 (master)
+excerpt: |
+  func ValidateRebootRequest(req *syspb.RebootRequest) error {
+      if req.GetMethod() == syspb.RebootMethod_UNKNOWN || req.GetMethod() == syspb.RebootMethod_POWERUP {
+          return fmt.Errorf("Invalid request: reboot method is not supported.")
+      }
+      if req.GetDelay() > 0 {
+          return fmt.Errorf("Invalid request: reboot is not immediate.")
+      }
+      return nil
+  }
+reasoning: 実装が POWERUP と delay>0 を一律 reject している事実の根拠。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-gnmi/gnmi_server/gnoi_system.go#L34-L49 (master)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-gnmi/gnmi_server/gnoi_system.go#L34-L49 (master)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>func ValidateRebootRequest(req *syspb.RebootRequest) error {
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    if req.GetMethod() == syspb.RebootMethod_UNKNOWN || req.GetMethod() == syspb.RebootMethod_POWERUP {
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>        return fmt.Errorf(&quot;Invalid request: reboot method is not supported.&quot;)
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    }
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    if req.GetDelay() &gt; 0 {
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>        return fmt.Errorf(&quot;Invalid request: reboot is not immediate.&quot;)
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    }
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    return nil
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>}
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 実装が POWERUP と delay&gt;0 を一律 reject している事実の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>COLD</code> のみ全 target 必須</strong><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。それ以外（POWERDOWN / HALT / WARM / NSF / POWERUP）は platform 依存</li>
+<li>現行 sonic-gnmi 実装では <strong><code>POWERUP</code> および <code>delay &gt; 0</code> は一律 reject</strong>（上記「実装との差異」節）</li>
 <li><code>RESET</code> は <strong>deprecated</strong>。代わりに <code>gnoi.factory_reset.FactoryReset.Start</code> を使う<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>active control processor への reboot pending 中は別の reboot 要求は <strong>reject</strong><sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>Time</code> RPC は initial scope <strong>対象外</strong>（v0.2 で削除）<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>subcomponent 指定 reboot の対応は platform 依存</li>
 <li>warm / NSF reboot の意味（同一視するか別物にするか）は <strong>vendor 定義</strong><sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><a href="../../reference/glossary/#term-gnoi">gNOI</a> OS Activate</strong>: <code>Activate(no_reboot=true)</code> 後の本 RPC で実 reboot を発火する想定<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>gNOI FactoryReset.Start</strong>: <code>RESET</code> の代替。reboot とは別のセマンティクス</li>
 <li><strong>Warm / Fast reboot 機構</strong>: SONiC 標準の <code>warm-reboot</code> / <code>fast-reboot</code> スクリプトとの連携経路は別 HLD 側で詳細化</li>
 <li><strong><code>config save</code> / <code>config reload</code></strong>: reboot で揮発する設定が無いか事前確認</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>INVALID_ARGUMENT</code> で reject: <code>RebootMethod</code> が platform 非対応か <code>delay</code> が範囲外。<code>force=true</code> で再試行可だが推奨されない</li>
 <li><code>Reboot</code> 受理後に <code>RebootStatus.active=false</code>: 既に reboot 完了したか、BE が DB 書き込みを処理しなかった</li>
 <li><code>CancelReboot</code> が効かない: subcomponents 指定が unmatched、または既に reboot が走り始めている</li>
 </ul>
 <p>確認コマンド例:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># gNOI/gNSI/gNMI クライアント疎通と server 状態</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>gnmi_cli<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:9339<span class="w"> </span>-capabilities<span class="w"> </span>-insecure
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>gnmi<span class="w"> </span>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;telemetry|gnmi&#39;</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>docker<span class="w"> </span>logs<span class="w"> </span>gnmi<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;GNMI|certs&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># gNOI/gNSI/gNMI クライアント疎通と server 状態</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>gnmi_cli<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:9339<span class="w"> </span>-capabilities<span class="w"> </span>-insecure
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>gnmi<span class="w"> </span>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;telemetry|gnmi&#39;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>docker<span class="w"> </span>logs<span class="w"> </span>gnmi<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;GNMI|certs&#39;</span>
 </span></code></pre></div>
-<h2 id="_9">参考リンク<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">参考リンク<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/10-gnmi-openconfig/">Topics: gNMI / OpenConfig</a></li>
 <li><a href="../../topics/11-reboot/">Topics: Reboot</a></li>
 <li><a href="../../reference/cli/reboot-fast-warm/">CLI: reboot / fast / warm</a></li>
 <li><a href="../gnsi-hld/">HLD: gnsi-hld</a></li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - UMF / sonic-gnmi の System Reboot/RebootStatus/CancelReboot handler 実装存在確認
 - reboot 要求を書き込む DB スキーマ (STATE_DB / CONFIG_DB) の現行実装確認
@@ -36620,7 +36730,7 @@ reasoning: 受理条件が「validation OK + 既存 reboot 無し + DB 書込成
 </ul>
 <!-- /topics-back-ref -->
 
-<h2 id="_11">関連リファレンス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <p>本ページに関連する参照ドキュメント:</p>
 <ul>
 <li><a href="../">management カテゴリ目次</a></li>
@@ -36629,7 +36739,7 @@ reasoning: 受理条件が「validation OK + 既存 reboot 無し + DB 書込成
 <!-- augmented-links: v1 -->
 
 <!-- ops-entry -->
-<h2 id="_12">運用入口<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">運用入口<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <p>この HLD に対応する運用面の入口（CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / YANG / Runbook）を以下にまとめる。</p>
 <h3 id="cli_1">関連 CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36639,11 +36749,70 @@ reasoning: 受理条件が「validation OK + 既存 reboot 無し + DB 書込成
 
 <!-- glossary-links-injected: 809619d7ad9f -->
 
+<h2 id="_14">実装との乖離<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<p>本 HLD は gnoi.system.System の RPC 群を網羅的に提案するが、現行 master ではサブセットのみが実装されている (<code>partially_implemented</code>)。具体的には Reboot / RebootStatus / CancelReboot が実装済で、KillProcess / Ping / SetPackage / SwitchControlProcessor / Time / Traceroute 等は未実装または部分実装。詳細は本文の HLD 提案部分と実装現状を比較すること。</p>
+<p>機能項目別の実装状況は以下のとおり。</p>
+<table>
+<thead>
+<tr>
+<th>機能項目</th>
+<th>HLD 提案</th>
+<th>実装状況</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reboot RPC</td>
+<td>必須</td>
+<td>実装済</td>
+</tr>
+<tr>
+<td>RebootStatus RPC</td>
+<td>必須</td>
+<td>実装済</td>
+</tr>
+<tr>
+<td>CancelReboot RPC</td>
+<td>必須</td>
+<td>実装済</td>
+</tr>
+<tr>
+<td>KillProcess RPC</td>
+<td>提案</td>
+<td>未実装</td>
+</tr>
+<tr>
+<td>Ping RPC</td>
+<td>提案</td>
+<td>未実装</td>
+</tr>
+<tr>
+<td>SetPackage RPC</td>
+<td>提案</td>
+<td>未実装</td>
+</tr>
+<tr>
+<td>Time RPC</td>
+<td>提案</td>
+<td>未実装</td>
+</tr>
+<tr>
+<td>SwitchControlProcessor RPC</td>
+<td>提案</td>
+<td>未対応</td>
+</tr>
+<tr>
+<td>Traceroute RPC</td>
+<td>提案</td>
+<td>未実装</td>
+</tr>
+</tbody>
+</table>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/mgmt/gnmi/gnoi_system_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/mgmt/gnmi/gnoi_system_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

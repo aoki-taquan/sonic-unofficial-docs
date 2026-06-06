@@ -10507,7 +10507,7 @@
   <span class="md-ellipsis">
     
   
-    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
+    Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定）
   
 
     
@@ -36160,7 +36160,7 @@
 <ul>
 <li>変更前: <code>show runningconfiguration all</code> で現状の running を控える</li>
 <li>適用: <code>config &lt;subcommand&gt;</code> で適用（即時反映、CONFIG_DB に書かれる）</li>
-<li>確認: 対応する <code>show</code> コマンドと、必要なら <code>redis-cli -n 4 hgetall '&lt;TABLE&gt;|&lt;key&gt;'</code> で CONFIG_DB を直接覗く</li>
+<li>確認: 対応する <code>show</code> コマンドと、必要なら <code>redis-cli -n 4 hgetall '&lt;TABLE&gt;|&lt;key&gt;'</code> で CONFIG_DB を直接覗く（<code>-n 4</code> は CONFIG_DB の Redis DB index。<code>schema.h</code> で <code>#define CONFIG_DB 4</code>、<code>database_config.json</code> の <code>CONFIG_DB.id</code> も 4 と定義されています<!-- evidence: sonic-net/sonic-swss-common common/schema.h L16 --><!-- evidence: sonic-net/sonic-swss-common common/database_config.json L35-L37 -->）</li>
 <li>保存: <code>config save -y</code>（<code>/etc/sonic/config_db.json</code> に永続化、再起動後も保持）</li>
 <li>rollback: 直前の <code>config_db.json</code> バックアップに対して <code>config reload -y &lt;file&gt;</code></li>
 </ul>

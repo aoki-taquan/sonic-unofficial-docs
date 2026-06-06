@@ -10570,7 +10570,7 @@
   <span class="md-ellipsis">
     
   
-    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
+    Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定）
   
 
     
@@ -36201,8 +36201,9 @@
 <p>本ページは「SONiC FRR 保守者向けの作業手順」を再構成したもの。実際の手順は upstream / SONiC 双方の実装事情に依存し、頻繁に変わる。</p>
 </div>
 <div class="admonition note">
-<p class="admonition-title">Verifier 注記（2026-05-10）</p>
-<p>実コード裏取り: <code>sonic-buildimage/src/sonic-frr/patch/</code>（<strong>単数形</strong>）に <code>series</code> ファイルと <code>0001-SONiC-ONLY-*</code> 等の patch を確認。適用は <strong>quilt ではなく StGit（<code>stg import -S ../patch/series</code>）</strong> で行う。<code>sonic-frr</code> は submodule pin で FRR upstream に SONiC 向け patch を適用するビルド構造であり、HLD の手順と整合する。</p>
+<p class="admonition-title">実装裏取りと master 追従状況</p>
+<p>実コード裏取り: <code>sonic-buildimage/src/sonic-frr/patch/</code>（<strong>単数形</strong>）に <code>series</code> ファイルと <code>0001-SONiC-ONLY-*</code> 等の patch を確認<sup id="fnref:code-patch"><a class="footnote-ref" href="#fn:code-patch">2</a></sup>。適用は <strong>quilt ではなく StGit（<code>stg import -S ../patch/series</code>）</strong> で行う。<code>sonic-frr</code> は submodule pin で FRR upstream に SONiC 向け patch を適用するビルド構造であり、HLD の手順と整合する。
+なお HLD は FRR 10.3 → 10.4.1 の作業を例示しているが、master の <code>rules/frr.mk</code> は既に <code>FRR_VERSION = 10.5.1</code> / <code>FRR_TAG = frr-10.5.1</code> まで進んでおり、<code>patch/series</code> の base commit も <code>frr-10.5.1</code> を指す<sup id="fnref:code-frrmk"><a class="footnote-ref" href="#fn:code-frrmk">3</a></sup>。本ページは HLD に記された <strong>手順そのもの</strong> が対象であり、特定バージョン値は再現の参考に留める。</p>
 </div>
 <h1 id="sonic-frr-upgrade">SONiC における FRR upgrade の手順とパッチ管理<a class="headerlink" href="#sonic-frr-upgrade" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36237,9 +36238,8 @@
 </span></code></pre></div>
 <p>続いて <code>sonic-buildimage</code> 側でバージョンを上げる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>rules/frr.mk</code>: <code>FRR_VERSION</code> / <code>FRR_BRANCH</code> / <code>FRR_TAG</code> を <code>10.3</code> / <code>frr-10.3</code> から <code>10.4.1</code> / <code>frr-10.4.1</code> へ</li>
-<li><code>.gitmodules</code>: <code>src/sonic-frr/frr</code> submodule の <code>branch</code> を <code>frr-10.4.1</code> へ</li>
-<li><code>src/sonic-frr/frr</code> submodule を新 release commit に更新して commit</li>
+<li><code>rules/frr.mk</code>: <code>FRR_VERSION</code> / <code>FRR_TAG</code> を新バージョン（HLD 例では <code>10.4.1</code> / <code>frr-10.4.1</code>）へ更新<sup id="fnref2:code-frrmk"><a class="footnote-ref" href="#fn:code-frrmk">3</a></sup>。<code>FRR_TAG</code> は <code>frr-$(FRR_VERSION)</code> で派生する。</li>
+<li><code>.gitmodules</code> の <code>src/sonic-frr/frr</code> entry を確認のうえ、<code>src/sonic-frr/frr</code> submodule pointer を新 release commit に更新して commit する（master の <code>.gitmodules</code> には <code>branch =</code> 行は無く、submodule pin のみで管理されている<sup id="fnref:code-gitmodules"><a class="footnote-ref" href="#fn:code-gitmodules">4</a></sup>）。</li>
 </ul>
 <h2 id="2-patch">2. Patch と変更<a class="headerlink" href="#2-patch" title="Permanent link">&para;</a></h2>
 <div class="admonition note">
@@ -36379,6 +36379,15 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/frr_maintainer/sonic-frr_upgrade_process.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:code-patch">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-frr/patch/series</code> および同 <code>patch/</code> 配下の <code>*.patch</code> ファイル群（<code>SONiC-ONLY-</code> prefix と通し番号で管理）。&#160;<a class="footnote-backref" href="#fnref:code-patch" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:code-frrmk">
+<p><code>sonic-net/sonic-buildimage</code> <code>rules/frr.mk</code> の <code>FRR_VERSION</code> / <code>FRR_SUBVERSION</code> / <code>FRR_TAG</code> 定義。&#160;<a class="footnote-backref" href="#fnref:code-frrmk" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:code-frrmk" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:code-gitmodules">
+<p><code>sonic-net/sonic-buildimage</code> <code>.gitmodules</code> の <code>[submodule "src/sonic-frr/frr"]</code> entry（<code>path</code> と <code>url</code> のみ）。&#160;<a class="footnote-backref" href="#fnref:code-gitmodules" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定） — T0 配下に flow state を持つ appliance（FW / SLB 等）が居て、可用性のためペア構成（異 T0 配下）になっている。">
+        <meta name="description" content="Ordered ECMP は nexthop を IP 昇順で並べ SAI に sequence_id 付きで投入することで、全 T1 から同じフローを必ず同じ T0 に landing させ、flow state を持つ appliance ペアでの state miss を防ぐ。">
       
       
       
@@ -30,7 +30,7 @@
     
     
       
-        <title>Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定） - SONiC 非公式ドキュメント</title>
+        <title>Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -66,16 +66,16 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定） — T0 配下に flow state を持つ appliance（FW / SLB 等）が居て、可用性のためペア構成（異 T0 配下）になっている。" />
+<meta property="og:title" content="Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定） - SONiC 非公式ドキュメント" />
+<meta property="og:description" content="Ordered ECMP は nexthop を IP 昇順で並べ SAI に sequence_id 付きで投入することで、全 T1 から同じフローを必ず同じ T0 に landing させ、flow state を持つ appliance ペアでの state miss を防ぐ。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/high-level-design-document.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/high-level-design-document/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定） — T0 配下に flow state を持つ appliance（FW / SLB 等）が居て、可用性のためペア構成（異 T0 配下）になっている。" />
+<meta property="twitter:title" content="Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定） - SONiC 非公式ドキュメント" />
+<meta property="twitter:description" content="Ordered ECMP は nexthop を IP 昇順で並べ SAI に sequence_id 付きで投入することで、全 T1 から同じフローを必ず同じ T0 に landing させ、flow state を持つ appliance ペアでの state miss を防ぐ。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/high-level-design-document.png" />
 </head>
   
@@ -130,7 +130,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
+              Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定）
             
           </span>
         </div>
@@ -10355,7 +10355,7 @@
   <span class="md-ellipsis">
     
   
-    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
+    Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定）
   
 
     
@@ -10373,7 +10373,7 @@
   <span class="md-ellipsis">
     
   
-    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
+    Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定）
   
 
     
@@ -36191,9 +36191,87 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-swss/orchagent/switchorch.cpp</code> L488-501 で <code>SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP</code> の capability query と <code>SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE</code> (switchorch.h L18) の APP_DB 公開を確認。<code>routeorch.cpp</code> L1557 / <code>vnetorch.cpp</code> L804 で <code>checkOrderedEcmpEnable()</code> 経由の nexthop group type 切替を確認。<code>sonic-swss/tests/test_nhg.py</code> L1006 / <code>tests/vnet_lib.py</code> L1139-1187 で <code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID</code> 検証 UT を確認（verified 2026-05-09）。</p>
+<p><code>sonic-swss/orchagent/switchorch.cpp</code> L488-501 で <code>SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP</code> の capability query と <code>SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE</code> (<code>switchorch.h</code> L18) の APP_DB 公開を確認。<code>routeorch.cpp</code> L499 / L1557 / L1612 と <code>vnetorch.cpp</code> L804 / L841 / L2778 で <code>checkOrderedEcmpEnable()</code> 経由の nexthop group type 切替を確認。<code>sonic-swss/tests/test_nhg.py</code> / <code>tests/vnet_lib.py</code> で <code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID</code> 検証 UT を確認（verified 2026-06-06）。</p>
 </div>
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/switchorch.cpp#L485-L502
+excerpt: |
+  if (values.list[i] == SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP)
+      fvVector.emplace_back(SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE, "true");
+  ...
+  fvVector.emplace_back(SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE, "false");
+reasoning: |
+  capability query で SAI が DYNAMIC_ORDERED_ECMP をサポートしているか確認し、
+  サポート有無を APP_DB の SWITCH_CAPABILITY_TABLE に書き出す箇所。
+  Backward Compatibility 節で言及している「SAI 非対応 ASIC では feature を無効化」の実体。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/orchagent/switchorch.cpp#L485-L502</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/orchagent/switchorch.cpp#L485-L502</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>if (values.list[i] == SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP)
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    fvVector.emplace_back(SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE, &quot;true&quot;);
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>...
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>fvVector.emplace_back(SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE, &quot;false&quot;);
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: capability query で SAI が DYNAMIC_ORDERED_ECMP をサポートしているか確認し、 サポート有無を APP_DB の SWITCH_CAPABILITY_TABLE に書き出す箇所。 Backward Compatibility 節で言及している「SAI 非対応 ASIC では feature を無効化」の実体。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/routeorch.cpp#L1555-L1615
+excerpt: |
+  nhg_attr.value.s32 = m_switchOrch->checkOrderedEcmpEnable()
+      ? SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP
+      : SAI_NEXT_HOP_GROUP_TYPE_ECMP;
+reasoning: |
+  RouteOrch が nexthop group 作成時に、SwitchOrch の global flag を見て
+  DYNAMIC_ORDERED_ECMP / ECMP を切り替える。HLD の "ECMP group 作成時 SAI に
+  DYNAMIC_ORDERED_ECMP" の実体。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/orchagent/routeorch.cpp#L1555-L1615</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/orchagent/routeorch.cpp#L1555-L1615</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>nhg_attr.value.s32 = m_switchOrch-&gt;checkOrderedEcmpEnable()
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    ? SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    : SAI_NEXT_HOP_GROUP_TYPE_ECMP;
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: RouteOrch が nexthop group 作成時に、SwitchOrch の global flag を見て DYNAMIC_ORDERED_ECMP / ECMP を切り替える。HLD の "ECMP group 作成時 SAI に DYNAMIC_ORDERED_ECMP" の実体。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/switchorch.h#L18
+excerpt: |
+  #define SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE "ORDERED_ECMP_CAPABLE"
+reasoning: |
+  ORDERED_ECMP_CAPABLE field name の定義箇所。APP_DB.SWITCH_TABLE に書き込まれる。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/orchagent/switchorch.h#L18</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/orchagent/switchorch.h#L18</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>#define SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE &quot;ORDERED_ECMP_CAPABLE&quot;
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: ORDERED_ECMP_CAPABLE field name の定義箇所。APP_DB.SWITCH_TABLE に書き込まれる。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h1 id="ordered-ecmpip-nexthop-sequence_id-torappliance">Ordered ECMP（IP ソート順で nexthop に <code>sequence_id</code> を付け同一フローを同 ToR/Appliance に固定）<a class="headerlink" href="#ordered-ecmpip-nexthop-sequence_id-torappliance" title="Permanent link">&para;</a></h1>
+<div class="admonition note">
+<p class="admonition-title">URL slug について</p>
+<p>本ページの URL slug <code>high-level-design-document</code> は upstream HLD ファイル名（<code>ordered_ecmp_next_hop_hld.md</code> の親リポジトリ内での一般名）に由来する歴史的経緯のもので、内容は <strong>Ordered ECMP</strong> に特化している。slug rename は既存 URL を破壊するため保持している。検索する際は「Ordered ECMP」「ordered-ecmp」で本ページを参照すること。</p>
+</div>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>T0 配下に <strong>flow state を持つ appliance</strong>（FW / SLB 等）が居て、可用性のためペア構成（異 T0 配下）になっている。フロー状態が appliance 間で同期されないと <strong>同じフローが別 appliance に行き当たって state miss する</strong> 恐れがある。T1 から T0 への <a href="../../reference/glossary/#term-ecmp">ECMP</a> 選択を <strong>全 T1 で同一順序</strong> にすれば、フローは常に同じ T0 → 同じ appliance に着く<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <a href="../../reference/glossary/#term-sonic">SONiC</a> で <strong>Ordered ECMP</strong>（nexthop の順序を保持した ECMP）を実装する設計。Phase 1 では<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -36219,9 +36297,9 @@
   ToR --&gt; A2[Appliance B]
   Note["Link 状態が T1-A と T1-B で&lt;br&gt;同一の場合、同じフロー&lt;br&gt;は必ず同 T0 (= 同 appliance)&lt;br&gt;に届く"]</code></pre>
 <h3 id="app_db-switch-table"><code>APP_DB</code> Switch Table 拡張<a class="headerlink" href="#app_db-switch-table" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>SWITCH_TABLE:switch
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  ecmp_hash_seed = ...
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  order_ecmp_group = false    # 既定。true で有効化
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>SWITCH_TABLE:switch
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  ecmp_hash_seed = ...
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  order_ecmp_group = false    # 既定。true で有効化
 </span></code></pre></div>
 <p><code>switch.json.j2</code> テンプレートが device role / asic_type で条件付き render する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="orchestration-agent">Orchestration Agent 変更点<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#orchestration-agent" title="Permanent link">&para;</a></h3>
@@ -36272,10 +36350,6 @@
 <ul>
 <li><a href="../../topics/04-vrf-ecmp/">Topics: VRF / ECMP</a></li>
 <li><a href="../../topics/04-vrf-ecmp/ecmp/">Topic 04 ECMP</a></li>
-<li><a href="../../reference/cli/config-route/">CLI: config route</a></li>
-<li><a href="../../reference/cli/config-bgp/">CLI: config bgp</a></li>
-<li><a href="../../reference/cli/show-bgp/">CLI: show bgp</a></li>
-<li><a href="../../reference/config-db/static-route/">CONFIG_DB: STATIC_ROUTE</a></li>
 <li><a href="../../reference/glossary/">Glossary</a></li>
 <li><a href="../../reference/">Reference 索引</a></li>
 </ul>

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: VLAN メンバーを追加してもタグが付かない — : sonic-net/sonic-swss @ 4305596 — vlanmgrd : sonic-net/sonic-utilities @ 39732bceb — config vlan member">
+        <meta name="description" content="Runbook: VLAN メンバーを追加してもタグが付かない症状の切り分け。CONFIG_DB / APPL_DB / ASIC_DB および kernel bridge での確認手順と、別 VLAN untagged 多重設定が config vlan member add -u で明示失敗する挙動の説明。sonic-swss vlanmgrd / sonic-utilities config vlan member を引用。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="VLAN メンバーを追加してもタグが付かない - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: VLAN メンバーを追加してもタグが付かない — : sonic-net/sonic-swss @ 4305596 — vlanmgrd : sonic-net/sonic-utilities @ 39732bceb — config vlan member" />
+<meta property="og:description" content="Runbook: VLAN メンバーを追加してもタグが付かない症状の切り分け。CONFIG_DB / APPL_DB / ASIC_DB および kernel bridge での確認手順と、別 VLAN untagged 多重設定が config vlan member add -u で明示失敗する挙動の説明。sonic-swss vlanmgrd / sonic-utilities config vlan member を引用。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/vlan-tagging.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/vlan-tagging/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="VLAN メンバーを追加してもタグが付かない - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: VLAN メンバーを追加してもタグが付かない — : sonic-net/sonic-swss @ 4305596 — vlanmgrd : sonic-net/sonic-utilities @ 39732bceb — config vlan member" />
+<meta property="twitter:description" content="Runbook: VLAN メンバーを追加してもタグが付かない症状の切り分け。CONFIG_DB / APPL_DB / ASIC_DB および kernel bridge での確認手順と、別 VLAN untagged 多重設定が config vlan member add -u で明示失敗する挙動の説明。sonic-swss vlanmgrd / sonic-utilities config vlan member を引用。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/vlan-tagging.png" />
 </head>
   
@@ -10336,7 +10336,7 @@
   <span class="md-ellipsis">
     
   
-    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
+    Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定）
   
 
     
@@ -36112,7 +36112,7 @@
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong><code>add</code> 時に <code>-u</code> (untagged) フラグの付け忘れ / 余計</strong>: デフォルトは tagged 動作</li>
-<li><strong>既存の Untagged <a href="../../glossary/#term-vlan">VLAN</a> 多重設定</strong>: ポートが既に別 <a href="../../glossary/#term-vlan">VLAN</a> の untagged member であるため新規 untagged 追加に失敗（silently fallback）</li>
+<li><strong>既存の Untagged <a href="../../glossary/#term-vlan">VLAN</a> 多重設定</strong>: ポートが既に別 <a href="../../glossary/#term-vlan">VLAN</a> の untagged member の場合、<code>config vlan member add -u</code> は <code>is already untagged member!</code> で明示的に失敗する（silent fallback ではない<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>）。先に既存 untagged member を <code>config vlan member del</code> で削除する必要がある</li>
 <li><strong>VLAN_MEMBER の <code>tagging_mode</code> が <code>priority_tagged</code> になっている</strong>: 0 priority tag 付与で意図と違う動作</li>
 <li><strong>対向側がトランクではなく access ポート</strong>: 自機側が tagged 送出しても対向で drop / strip</li>
 <li><strong><a href="../../glossary/#term-portchannel">PortChannel</a> メンバーに対する add 操作</strong>: 物理ポートではなく <a href="../../glossary/#term-lag">LAG</a> 名で追加する必要がある</li>
@@ -36191,7 +36191,7 @@
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: f57fec79b708 -->
+<!-- glossary-links-injected: f7808c6675e0 -->
 
 <div class="footnote">
 <hr />
@@ -36200,7 +36200,7 @@
 <p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <a href="../../glossary/#term-vlanmgrd">vlanmgrd</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — config vlan member&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — <code>config/vlan.py</code> L383-385: <code>if (clicommon.interface_is_untagged_member(db.cfgdb, port) and untagged): ctx.fail("{} is already untagged member!".format(port))</code> により別 <a href="../../glossary/#term-vlan">VLAN</a> の untagged 既存時は明示的に exit する&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

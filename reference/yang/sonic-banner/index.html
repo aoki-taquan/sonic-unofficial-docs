@@ -10336,7 +10336,7 @@
   <span class="md-ellipsis">
     
   
-    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
+    Ordered ECMP（nexthop に sequence_id を付け同一フローを同 ToR に固定）
   
 
     
@@ -36408,11 +36408,13 @@
 <h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="_7">典型的なデプロイ位置<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li>ログインバナー / MOTD 設定。<code>BANNER_MESSAGE|global</code> を <a href="../../glossary/#term-hostcfgd">hostcfgd</a> (banner-config.sh) が <code>/etc/issue.net</code> (SSH バナー)、<code>/etc/issue</code> (コンソール)、<code>/etc/motd</code>、<code>/etc/logout_message</code> の 4 ファイルに書き出す。</li>
+<li>ログインバナー / MOTD 設定。<code>BANNER_MESSAGE|global</code> の <code>state</code> が <code>enabled</code> のとき、<code>banner-config.sh</code> が <code>login</code> を <code>/etc/issue.net</code> (SSH バナー) と <code>/etc/issue</code> (コンソール) に、<code>motd</code> を <code>/etc/motd</code> に、<code>logout</code> を <code>/etc/logout_message</code> に <code>echo -e</code> で書き出す。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>motd</code> は複数行文字列。改行を含む値を CLI から渡す場合の <a href="../../glossary/#term-yang">YANG</a> 側 string 制約 (1024 文字) に注意。</li>
+<li><code>login</code> / <code>motd</code> / <code>logout</code> の各 leaf は <a href="../../glossary/#term-yang">YANG</a> 上 <code>type string</code> のみで <strong>長さ制約 (length statement) は定義されていない</strong>。<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup> <a href="../../glossary/#term-hostcfgd">hostcfgd</a> 側も <code>sonic-db-cli HGET</code> の結果をそのまま <code>echo -e</code> でファイルに流すだけで、独自のサイズ上限を設けていない。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup> <a href="../../glossary/#term-config_db">CONFIG_DB</a> (<a href="../../glossary/#term-redis">Redis</a>) の値長制約に従う形となるため、極端に長い値を投入する場合はバナー文言が安全に表示されるか個別に検証すること。</li>
+<li><code>banner-config.sh</code> は <code>echo -e</code> を使うため、<code>\n</code> などのバックスラッシュエスケープが解釈される。リテラルなバックスラッシュを表示したい場合は二重エスケープが必要。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><code>state</code> が <code>disabled</code> の間は <code>banner-config.sh</code> が出力ファイルを更新しない。バナーを無効化した直後でも、過去に書き込まれた <code>/etc/issue</code> 等の内容が残り続ける点に注意。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
 <h3 id="config-show">関連する config / show コマンド<a class="headerlink" href="#config-show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BANNER_MESSAGE|global&#39;</span>
@@ -36421,13 +36423,16 @@
 <!-- /ops-hint -->
 
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 92c530e50bae -->
+<!-- glossary-links-injected: c6ea86570098 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-banner.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-banner.yang</code> L1-L52 @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code> — module 定義、<code>login</code> / <code>motd</code> / <code>logout</code> は <code>type string</code> のみで <code>length</code> 制約なし。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-buildimage</code> <code>files/image_config/bannerconfig/banner-config.sh</code> L1-L17 @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code> — <code>state == enabled</code> のとき <code>sonic-db-cli HGET</code> で各 leaf を取得し <code>echo -e</code> で 4 ファイル (<code>/etc/issue.net</code>、<code>/etc/issue</code>、<code>/etc/motd</code>、<code>/etc/logout_message</code>) に書き出す。長さチェックなし。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
