@@ -2,7 +2,7 @@
 title: ソース pinned SHA の新鮮度（sources-freshness）
 description: "ソース pinned SHA の新鮮度（sources-freshness） — meta/index/repos.json で固定している commit SHA と各リポの upstream HEAD を突き合わせ、本サイトのスナップショットがどれだけ master から遅れているかを一覧化する。"
 verification: meta
-last_verified: 2026-06-04
+last_verified: 2026-06-06
 tags:
   - verification
   - sources
@@ -15,14 +15,14 @@ tags:
 このページは `meta/scripts/check_sources_freshness.py --write` で生成され、各対象リポについて pinned SHA と upstream HEAD の差分を可視化する。**読者はサイトの記述がどの時点の SONiC master を反映しているかをここで確認できる**。
 
 !!! info "生成時刻 / generated-at"
-    この表は **2026-06-04** に `check_sources_freshness.py --write` で生成された。`cache HEAD` と `upstream HEAD` は **生成時点** のローカル shallow clone を反映する。表の `cache HEAD` 列がページ上 frontmatter `last_verified` から大きく時間が空いている場合、本ページ自体が陳腐化している可能性がある（その場合は再生成スクリプトを走らせること）。
+    この表は **2026-06-06** に `check_sources_freshness.py --write` で生成された。`cache HEAD` と `upstream HEAD` は **生成時点** のローカル shallow clone を反映する。表の `cache HEAD` 列がページ上 frontmatter `last_verified` から大きく時間が空いている場合、本ページ自体が陳腐化している可能性がある（その場合は再生成スクリプトを走らせること）。
 
 ## サマリ
 
 - 対象リポ数: **15**
 - upstream より遅れているリポ: **12**
 - ローカル cache が見つからなかったリポ: **0**
-- 生成日（last regenerated）: **2026-06-04**
+- 生成日（last regenerated）: **2026-06-06**
 
 ## 一覧
 
