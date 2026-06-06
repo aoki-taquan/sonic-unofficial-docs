@@ -1,7 +1,8 @@
 ---
 title: Thermal Control テストプラン
-description: Thermal Control テストプラン — Thermal Control 機能（FAN status / thermal status
-  / thermal policy）に対する functional テストプラン。
+description: pmon の thermalctld に対する SONiC-mgmt 機能テストプラン。FAN status monitor
+  / thermal status monitor / thermal policy management の 3 機能を、policy JSON の load
+  と 60 秒周期のアクション発火で検証する。
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -57,10 +58,10 @@ FAN 抜去 / FAN 復旧時の `fanstatus` 表示と policy のアクション動
 PSU 抜去で `psu absence` policy が発火し、**全 FAN を 100% に上げ thermal control algorithm を停止** することを検証[^1]。
 
 ### Invalid Policy Format Load Test
-JSON フォーマット異常（パース不能）な policy file をロードし、daemon がエラーで起動しないこと / 直前 policy で動作継続することを検証。
+JSON としてパースできない `invalid_format_policy.json`（中身が `"invalid"` のような文字列）を load しても **thermal control daemon が exit せず起動を継続** し、policy 実行こそ行えないものの FAN monitor / thermal monitor は引き続き動作することを検証[^1]。エラーログ出力も確認する。
 
 ### Invalid Policy Value Load Test
-JSON 形式は正しいが意味的に誤った値（不明な condition / action type）を含む policy file をロードした場合の挙動検証。
+JSON は valid だが意味的に不正な値（例: `fan.all.set_speed` の `speed` が負値 `"-1"`）を含む `invalid_value_policy.json` を load しても daemon が exit せず、FAN / thermal monitor が継続することを検証[^1]。[HLD](../reference/glossary.md#term-hld) は「全ての invalid 値を網羅するわけではなく、unit test 側で補完する」と明記する。
 
 ## サンプル valid policy
 
@@ -77,17 +78,37 @@ JSON 形式は正しいが意味的に誤った値（不明な condition / actio
   "policies": [
     {
       "name": "any PSU absence",
-      "conditions": [{"type": "psu.any.absence"}],
+      "conditions": [{"type": "fan.any.absence"}],
       "actions": [
         {"type": "thermal_control.control", "status": "false"},
         {"type": "fan.all.set_speed", "speed": "100"}
+      ]
+    },
+    {
+      "name": "any FAN absence",
+      "conditions": [{"type": "fan.any.absence"}],
+      "actions": [
+        {"type": "thermal_control.control", "status": "false"},
+        {"type": "fan.all.set_speed", "speed": "100"}
+      ]
+    },
+    {
+      "name": "all FAN and PSU presence",
+      "conditions": [
+        {"type": "fan.all.presence"},
+        {"type": "psu.all.presence"}
+      ],
+      "actions": [
+        {"type": "thermal_control.control", "status": "true"},
+        {"type": "fan.all.set_speed", "speed": "65"}
       ]
     }
   ]
 }
 ```
 
-([HLD](../reference/glossary.md#term-hld) には "any PSU absence" / "any FAN absence" / "all FAN and PSU presence" の 3 policy 例が示される[^1])
+!!! warning "HLD サンプルの既知の癖"
+    上流 HLD の "any PSU absence" policy では `condition.type` が `fan.any.absence` になっている[^1]（`psu.any.absence` ではない）。テストプラン側のサンプルをそのまま転記しているため、実運用で PSU absent を契機にしたい場合は `psu.any.absence` への置換を検討する。
 
 ### Policy DSL
 
@@ -195,4 +216,4 @@ redis-cli -n 6 keys 'FAN_INFO|*'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 167700005048 -->

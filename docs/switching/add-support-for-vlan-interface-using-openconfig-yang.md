@@ -1,7 +1,7 @@
 ---
 title: VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）
-description: VLAN インタフェースの OpenConfig YANG 対応 — SONiC は従来 VLAN を SONiC 独自 YANG 経由でしか
-  REST / gNMI 公開していなかった。
+description: SONiC は従来 VLAN を独自 YANG 経由でしか REST / gNMI 公開していなかった。本機能で
+  openconfig-interfaces / openconfig-vlan / openconfig-if-ip を追加し相互運用性を上げる。
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
@@ -109,7 +109,35 @@ curl -k "https://<dut>/restconf/data/openconfig-interfaces:interfaces/interface=
   -H "accept: application/yang-data+json"
 ```
 
-gNMI は `Set` (REPLACE / UPDATE / DELETE) / `Get` / `Subscribe` (ON_CHANGE / SAMPLE) をサポート[^1]。詳細ペイロード例とエラーカタログは原文 [HLD](../reference/glossary.md#term-hld) §3〜§6 参照。
+gNMI は `Set` (REPLACE / UPDATE / DELETE) / `Get` / `Subscribe` (ON_CHANGE / SAMPLE) をサポート[^1]。
+
+gNMI で VLAN メンバの access-vlan を取得（`-xpath_target OC-YANG` で OpenConfig 経路を選択）[^1]:
+
+```bash
+gnmi_get -insecure -logtostderr -username USER -password PASSWORD \
+  -target_addr localhost:8080 \
+  -xpath /openconfig-interfaces:interfaces/interface[name=Ethernet0]/openconfig-if-ethernet:ethernet/openconfig-vlan:switched-vlan/config/access-vlan
+```
+
+gNMI で VLAN メンバ設定を書き込み（JSON ペイロードを `-update` に `:@<file>` で渡す）[^1]:
+
+```bash
+gnmi_set -insecure -logtostderr -username USER -password PASSWORD \
+  -target_addr localhost:8080 -xpath_target OC-YANG \
+  -update /openconfig-interfaces:interfaces/interface[name=Ethernet0]/openconfig-if-ethernet:ethernet/openconfig-vlan:switched-vlan/config:@/tmp/vlanParams.json
+# vlanParams.json:
+# { "openconfig-vlan:config": { "interface-mode": "TRUNK", "access-vlan": 10, "trunk-vlans": [20,30] } }
+```
+
+gNMI で VLAN メンバを削除[^1]:
+
+```bash
+gnmi_set -insecure -logtostderr -username USER -password PASSWORD \
+  -target_addr localhost:8080 -xpath_target OC-YANG \
+  -delete /openconfig-interfaces:interfaces/interface[name=Ethernet0]/openconfig-if-ethernet:ethernet/openconfig-vlan:switched-vlan/config
+```
+
+その他のペイロード例とエラーカタログは原文 [HLD](../reference/glossary.md#term-hld) §3〜§6 参照。
 
 ## 制限事項
 

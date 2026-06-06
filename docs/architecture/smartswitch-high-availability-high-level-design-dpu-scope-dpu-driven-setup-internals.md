@@ -203,11 +203,11 @@ HA pair を別 DPU に組み替える手順[^1]:
 
 ## 8. Split-brain 解消
 
-DPU-DPU 通信が両方向で切れ両 DPU が `Standalone` 化したときは、DPU 自律では再 pair しない[^1]。SDN controller が次のいずれかで強制リセットする:
+DPU-DPU 通信が両方向で切れ両 DPU が `Standalone` 化したときは、DPU 自律では再 pair しない[^1]。HLD は救出策を 1 つだけ規定しており、SDN controller が次の手段で強制リセットする:
 
-- 片方の HA scope を `disabled=true` → `false` で再起動（`Destroying` を経ずに即停止し再走）
+- 片方の DPU の HA scope を `disabled=true` → `false` でトグルし、HA state machine を破棄して走り直させる
 
-`AdminState`（desired HA state）は graceful path を走らせるが、`disabled` は **強制 shutdown** であり stuck した状態機械を救出するための非常手段である。
+`AdminState`（desired HA state）の書き換えは graceful path（`Destroying` → 収束タイマー → `Dead`）を走らせるため、状態機械が stuck していると遷移が完了せず救出にならない。一方 `disabled=true` は graceful path を経由しない **強制 shutdown** で、stuck した状態機械をそのまま破棄できる。両者は目的が異なり、split-brain では後者のみが規定の手段である[^1]。
 
 ## 9. Flow tracking と replication
 

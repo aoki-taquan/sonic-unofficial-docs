@@ -1,7 +1,7 @@
 ---
 title: show system-health サブコマンド
-description: show system-health サブコマンド — show system-health は system-health デーモン（HealthCheckerManager）が保持するシステム状態（サービス・ハードウェア・ファイルシステムなど）と、SmartSwitch
-  構成での DPU 状態、システムが boo…
+description: show system-health は system-health デーモン (HealthCheckerManager) が保持するシステム状態 (サービス・ハードウェア・ファイルシステムなど) と、SmartSwitch
+  構成での DPU 状態、システムが boot 完了したかの sysready 状態を表示する CLI サブコマンド群。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -206,13 +206,14 @@ show platform fan
 <!-- /ops-hint -->
 
 <!-- cli-sibling -->
+<!-- cli-sibling:manual -->
 ### 関連 CLI コマンド
 
-- [`config banner`](config-banner.md) — config banner サブコマンド
-- [`config clock`](config-clock.md) — config clock サブコマンド
-- [`config kdump`](config-kdump.md) — config kdump サブコマンド
-- [`config ntp`](config-ntp.md) — config ntp サブコマンド
-- [`config platform firmware`](config-platform-firmware.md) — config platform firmware サブコマンド
+- [`show services`](show-services.md) — show services サブコマンド
+- [`show techsupport`](show-techsupport.md) — show techsupport サブコマンド
+- [`show feature`](show-feature.md) — show feature サブコマンド
+- [`show platform`](show-platform.md) — show platform サブコマンド
+- [`reboot fast-warm`](reboot-fast-warm.md) — reboot fast-warm サブコマンド
 
 <!-- /cli-sibling -->
 

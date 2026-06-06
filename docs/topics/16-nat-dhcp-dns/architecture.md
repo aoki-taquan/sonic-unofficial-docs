@@ -93,7 +93,7 @@ NAT は `docker-nat` という独立 container に閉じています。中で動
 - `natsyncd`: kernel の conntrack notification を購読し、動的 NAT entry を APP_DB に push します。`natsyncd/natsyncd.cpp` がエントリポイント、`natsyncd/natsync.cpp` が conntrack ハンドラ本体です[^natsyncd].
 - `NatOrch`: [orchagent](../../reference/glossary.md#term-orchagent) 側の sub-orch で、APP_DB の NAT entry を SAI NAT API（SAI_OBJECT_TYPE_NAT_ENTRY）にプログラムします。
 
-[^nat-[natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd)]: `sonic-net/sonic-swss` `cfgmgr/natmgrd.cpp` L110-L114 で `CFG_STATIC_NAT_TABLE_NAME` / `CFG_STATIC_NAPT_TABLE_NAME` / `CFG_NAT_POOL_TABLE_NAME` / `CFG_NAT_BINDINGS_TABLE_NAME` / `CFG_NAT_GLOBAL_TABLE_NAME` を subscribe (`ref: 4305596156d70e9797e8a881b3d19b46de0bce0d`).
+[^nat-natmgrd]: `sonic-net/sonic-swss` `cfgmgr/natmgrd.cpp` L110-L114 で `CFG_STATIC_NAT_TABLE_NAME` / `CFG_STATIC_NAPT_TABLE_NAME` / `CFG_NAT_POOL_TABLE_NAME` / `CFG_NAT_BINDINGS_TABLE_NAME` / `CFG_NAT_GLOBAL_TABLE_NAME` を subscribe (`ref: 4305596156d70e9797e8a881b3d19b46de0bce0d`).
 [^natmgr]: `sonic-net/sonic-swss` `cfgmgr/natmgr.cpp` L7499 付近で `NAT_ZONE` フィールドを参照 (`ref: 4305596156d70e9797e8a881b3d19b46de0bce0d`).
 [^natsyncd]: `sonic-net/sonic-swss` `natsyncd/natsyncd.cpp` (entrypoint) と `natsyncd/natsync.cpp` (conntrack handler、約 1000 行) (`ref: 4305596156d70e9797e8a881b3d19b46de0bce0d`).
 
