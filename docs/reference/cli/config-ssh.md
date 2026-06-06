@@ -1,7 +1,7 @@
 ---
 title: config ssh サブコマンド
-description: config ssh サブコマンド — config ssh は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を
-  CONFIG_DB の SSH_SERVER|POLICIES に書き込む CLI グループ。実 sshd への反映は hostcfgd 系の設定再生成パスを通じて行われる。
+description: config ssh は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を CONFIG_DB の
+  SSH_SERVER|POLICIES に書き込む CLI グループ。実 sshd への反映は hostcfgd が CONFIG_DB の変更を検知して sshd_config を再生成するパスを通じて行う。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
@@ -43,7 +43,7 @@ config ssh inactivity-timeout <timeout>
 
 **引数**:
 
-- `<timeout>` ... `0` 〜 `35000` の整数。`0` で無効化（`click.IntRange(0, 35000)`）
+- `<timeout>` ... `0` 〜 `35000` の整数（単位は分）。`0` でタイムアウトを無効化（`click.IntRange(0, 35000)`）。[YANG](../../reference/glossary.md#term-yang) `sonic-ssh-server` のデフォルトは `15`[^3]
 
 **動作**:
 [CONFIG_DB](../../reference/glossary.md#term-config_db) の `SSH_SERVER|POLICIES` テーブルに `inactivity_timeout` フィールドを `mod_entry` で書き込む[^2]。
@@ -87,10 +87,41 @@ config ssh max-sessions <max-sessions>
 
 **引数**:
 
-- `<max-sessions>` ... `0` 〜 `100` の整数（`click.IntRange(0, 100)`）
+- `<max-sessions>` ... `0` 〜 `100` の整数（`click.IntRange(0, 100)`）。[YANG](../../reference/glossary.md#term-yang) `sonic-ssh-server` のデフォルトは `0`（=無制限）[^3]
 
 **動作**:
-[CONFIG_DB](../../reference/glossary.md#term-config_db) の `SSH_SERVER|POLICIES` テーブルに `max_sessions` フィールドを書き込む。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の `SSH_SERVER|POLICIES` テーブルに `max_sessions` フィールドを `mod_entry` で書き込む[^4]。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/main.py#L9991-L10000 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @ssh.command('max-sessions')
+  @click.argument('max-sessions', metavar='<max-sessions>', required=True,
+                  type=click.IntRange(0, 100))
+  def max_sessions(max_sessions):
+      config_db.mod_entry("SSH_SERVER", 'POLICIES',
+                          {'max_sessions': max_sessions})
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L9991-L10000 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L9991-L10000 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @ssh.command('max-sessions')
+    @click.argument('max-sessions', metavar='<max-sessions>', required=True,
+                    type=click.IntRange(0, 100))
+    def max_sessions(max_sessions):
+        config_db.mod_entry("SSH_SERVER", 'POLICIES',
+                            {'max_sessions': max_sessions})
+    ```
+
+<!-- evidence-rendered:end -->
 
 ## 関連する CONFIG_DB
 
@@ -133,7 +164,11 @@ flowchart LR
 
 [^1]: `config ssh` グループ定義は `config/main.py` L9970-L10000。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9970>
 
-[^2]: 書き込みは `ConfigDBConnector().mod_entry("SSH_SERVER", "POLICIES", ...)` で行う。
+[^2]: 書き込みは `ConfigDBConnector().mod_entry("SSH_SERVER", "POLICIES", ...)` で行う。`config/main.py` L9985-L9988。
+
+[^3]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang` L49-L62 に `inactivity_timeout` (default 15、range 0..35000) / `max_sessions` (default 0、range 0..100) を定義。<https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-ssh-server.yang>
+
+[^4]: `config/main.py` L9991-L10000 で `max-sessions` サブコマンドを定義し、`SSH_SERVER|POLICIES` に `max_sessions` を `mod_entry` で書く。
 
 <!-- cli-sibling -->
 ### 関連 CLI コマンド
@@ -145,4 +180,4 @@ flowchart LR
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->
