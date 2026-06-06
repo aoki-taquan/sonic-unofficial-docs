@@ -45,10 +45,15 @@ related:
 
 ### timer 系
 
-- `neighsyncd_timer` は `WARM_RESTART|swss` の `neighsyncd_timer` を更新する。adhoc validation が有効な場合は 1-9998 秒。
-- `bgp_timer` は `WARM_RESTART|bgp` の `bgp_timer` を更新する。adhoc validation が有効な場合は 1-3599 秒。
-- `teamsyncd_timer` は `WARM_RESTART|teamd` の `teamsyncd_timer` を更新する。adhoc validation が有効な場合は 1-3599 秒。
-- `bgp_eoiu` は `WARM_RESTART|bgp` の `bgp_eoiu` を `true` / `false` で更新する。
+範囲チェックは `config/main.py` 冒頭の `ADHOC_VALIDATION = True` というモジュール定数でゲートされる。これは master のソースコード上で **常に `True` 固定**（CLI option や環境変数で切り替える経路は無い）であり、コミュニティ版 [SONiC](../../reference/glossary.md#term-sonic) を `sonic-utilities` の標準ビルドで使う限り範囲外値は CLI 段で `ctx.fail` され CONFIG_DB には書かれない[^3]。
+
+- `neighsyncd_timer` は `WARM_RESTART|swss` の `neighsyncd_timer` を更新する。許容範囲は 1-9998 秒（`range(1, 9999)`）。範囲外で `neighsyncd warm restart timer must be in range 1-9999` を返し abort する[^3]。
+- `bgp_timer` は `WARM_RESTART|bgp` の `bgp_timer` を更新する。許容範囲は 1-3599 秒（`range(1, 3600)`）。範囲外で `bgp warm restart timer must be in range 1-3600` を返し abort する[^3]。
+- `teamsyncd_timer` は `WARM_RESTART|teamd` の `teamsyncd_timer` を更新する。許容範囲は 1-3599 秒（`range(1, 3600)`）。範囲外で `teamsyncd warm restart timer must be in range 1-3600` を返し abort する[^3]。
+- `bgp_eoiu` は `WARM_RESTART|bgp` の `bgp_eoiu` を `true` / `false` で更新する。Click の `Choice(["true", "false"])` で値を制限するため、それ以外を渡すと CLI usage error になる[^3]。
+
+!!! note "エラーメッセージと実際の許容範囲"
+    エラーメッセージは `1-9999` / `1-3600` と表示されるが、内部判定は `range(1, 9999)` / `range(1, 3600)` で **upper bound は exclusive**。したがって 9999 / 3600 自体は **拒否される**。実運用での上限はそれぞれ 9998 / 3599 秒[^3]。
 
 <!-- ref-triangle:start -->
 
@@ -63,6 +68,8 @@ related:
 [^1]: `config warm_restart` グループは CONFIG_DB と [STATE_DB](../../reference/glossary.md#term-state_db) connector を namespace ごとに初期化する。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3940>
 
 [^2]: `enable` / `disable` は `WARM_RESTART_ENABLE_TABLE|<module>` の `enable` フィールドを書き込む。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3973>
+
+[^3]: `ADHOC_VALIDATION = True` のモジュール定数と各 timer サブコマンドの `range(1, 9999)` / `range(1, 3600)` チェック、および `bgp_eoiu` の `click.Choice(["true", "false"])`。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L132> / <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L4015-L4096>
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
@@ -115,4 +122,4 @@ sonic-db-cli STATE_DB keys 'WARM_RESTART_TABLE|*'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 8df9850464d2 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->
