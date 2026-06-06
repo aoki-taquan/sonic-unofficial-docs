@@ -36441,7 +36441,7 @@
 <li><a href="../../../management/smart-switch-gnmi-feedback-design-omit-in-toc/">SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）</a><br />
   area: <code>management</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<p>HLD が要件として掲げる以下の構成要素を現行 master の <code>sonic-gnmi</code> に確認できなかった。</p>
 <ul>
 <li><a href="../../../platform/sonic-port-naming-convention-change/">SONiC ポート命名規則の変更案（et[sX]pY[abcd]）</a><br />
   area: <code>platform</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
@@ -36456,7 +36456,7 @@
 <li><a href="../../../platform/enhanced-lpo-debug-registers-hld/">拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）</a><br />
   area: <code>platform</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<p><code>sonic-platform-common</code> を grep した結果、本 HLD が前提とする <code>CmisEnhancedLpoApi</code> / <code>CmisEnhancedLpoCodes</code> / <code>CmisEnhancedLpoMemMap</code> クラス、<code>xcvr_api_factory.py</code> での Arista 系 vendor 分岐、Page 01h Byte 195 = 0x4C の enhanced LPO 検出ロジック、<code>LPOTxHostInputVMA*</code> / <code>LPORxInputOMA*</code> フィールドのいずれも HEAD に取り込まれていない（<code>grep -rn "CmisEnhancedLpoApi\|LPOTxHostInputVMA\|enhanced_lpo" .cache/sonic-sources/sonic-platform-common/</code> でヒット 0）。…</p>
 <ul>
 <li><a href="../../config-db/hardware/">HARDWARE テーブル</a><br />
   area: <code>reference</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-14</code></li>
@@ -36478,18 +36478,18 @@
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <ul>
-<li><a href="../../../routing/evpn-vxlan-multihoming-internals/">EVPN VXLAN Multihoming 実装内部（EvpnMhOrch / L2nhgOrch / ShlOrch / SAI L2 NHG）</a><br />
-  area: <code>routing</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../routing/evpn-vxlan-multihoming/">EVPN VXLAN Multihoming 実装内部 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../routing/evpn-vxlan-multihoming-concepts/">EVPN VXLAN Multihoming 概念（ESI / DF election / Split-horizon / Aliasing）</a><br />
-  area: <code>routing</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../routing/evpn-vxlan-multihoming/">EVPN VXLAN Multihoming 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../routing/evpn-vxlan-multihoming-operations/">EVPN VXLAN Multihoming 運用（config interface evpn-esi / show vxlan ethernet-segment / 差分）</a><br />
-  area: <code>routing</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../routing/evpn-vxlan-multihoming-internals/">EVPN VXLAN Multihoming 実装内部（EvpnMhOrch / L2nhgOrch / ShlOrch / SAI L2 NHG）</a><br />
+  area: <code>routing</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../routing/evpn-vxlan-multihoming-concepts/">EVPN VXLAN Multihoming 概念（ESI / DF election / Split-horizon / Aliasing）</a><br />
+  area: <code>routing</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../routing/evpn-vxlan-multihoming-operations/">EVPN VXLAN Multihoming 運用（config interface evpn-esi / show vxlan ethernet-segment / 差分）</a><br />
+  area: <code>routing</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-10 時点の現行 master を裏取り。<strong>EVPN Multihoming 機能は SONiC メインリポジトリには取り込まれていない</strong>。</p>
 <ul>
@@ -36506,7 +36506,7 @@
 <li><a href="../../../system/warmboot-manager-hld/">Warmboot Manager（shutdown orchestration / reconciliation 統一）</a><br />
   area: <code>system</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<p>per-page queue で既出の通り提案 HLD は未採用。再走査でも:</p>
 <h3 id="monitor-partially-implemented"><code>partially_implemented</code> — 部分実装 (60 件)<a class="headerlink" href="#monitor-partially-implemented" title="Permanent link">&para;</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">部分実装</p>
@@ -36523,31 +36523,29 @@
 </ul>
 <p>2026-05 時点の <code>.cache/sonic-sources/</code> master を裏取り。</p>
 <ul>
-<li><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-internals/">動的ポート add/del 内部実装（portsyncd / portsorch / mgrd 群と race condition）</a><br />
-  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically/">動的ポート add/del 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-limitations/">動的ポート add/del 制限事項と HLD との乖離（ref counter 未取り込み・race 残存）</a><br />
-  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-internals/">動的ポート add/del 内部実装（portsyncd / portsorch / mgrd 群と race condition）</a><br />
+  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-limitations/">動的ポート add/del 制限事項と HLD との乖離（ref counter 未取り込み・race 残存）</a><br />
+  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05 時点の <code>.cache/sonic-sources/</code> master を裏取り。</p>
 <ul>
-<li><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-concepts/">動的ポート add/del 概念（zero-port 起動と post-init モデル）</a><br />
-  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically/">動的ポート add/del 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-operations/">動的ポート add/del 設定と運用（zero-port 起動・安全削除手順）</a><br />
-  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically/">動的ポート add/del 設定と運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/error-handling-framework-in-sonic-internals/">Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB</a><br />
-  area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — <a href="../../glossary/#term-hld">HLD</a> の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
+<li>
+<p><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-concepts/">動的ポート add/del 概念（zero-port 起動と post-init モデル）</a><br />
+  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-operations/">動的ポート add/del 設定と運用（zero-port 起動・安全削除手順）</a><br />
+  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/error-handling-framework-in-sonic-internals/">Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB</a><br />
+  area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 <li>
 <p><a href="../../../architecture/error-handling-framework-in-sonic-limitations/">Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）</a><br />
   area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
@@ -36556,16 +36554,14 @@
 <p><a href="../../../architecture/error-handling-framework-in-sonic-concepts/">Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）</a><br />
   area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
 </li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/error-handling-framework-in-sonic-operations/">Error Handling Framework 設定・運用（show / clear error-database / ERROR_DB スキーマ）</a><br />
-  area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — <a href="../../glossary/#term-hld">HLD</a> の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework 設定・運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）</a><br />
-  area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../architecture/error-handling-framework-in-sonic-operations/">Error Handling Framework 設定・運用（show / clear error-database / ERROR_DB スキーマ）</a><br />
+  area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）</a><br />
+  area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05 時点で本 framework は <strong>エラーコード enum だけが先行採用され、ERROR_DB / ErrorListener / CLI は丸ごと未実装</strong> な部分採用状態。</p>
 <ul>
@@ -36617,16 +36613,14 @@
 <p><a href="../../../internals/l3-scaling-and-performance-enhancements-concepts/">L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）</a><br />
   area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
 </li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../internals/l3-scaling-and-performance-enhancements-operations/">L3 Scaling と Performance 強化 設定・運用（sysctl / COPP_TABLE / show arp）</a><br />
-  area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化 設定・運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show</a><br />
-  area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../internals/l3-scaling-and-performance-enhancements-operations/">L3 Scaling と Performance 強化 設定・運用（sysctl / COPP_TABLE / show arp）</a><br />
+  area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show</a><br />
+  area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。</p>
 <ul>
@@ -36638,7 +36632,7 @@
 <li><a href="../../../management/sonic-console-switch/">Console Switch（serial hub の reverse SSH 集約）</a><br />
   area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<p>per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:</p>
 <ul>
 <li>
 <p><a href="../../../management/redis-client-manager-rcm-hld/">Redis Client Manager（RCM: connection pool / transactional client）</a><br />
@@ -36666,28 +36660,29 @@
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。</p>
 <ul>
-<li><a href="../../../management/gnsi-hld-internals/">gNSI 内部実装（Certz / Authz / Pathz / Credentialz handler と host service）</a><br />
-  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../management/gnsi-hld/">gNSI 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../management/gnsi-hld-limitations/">gNSI 制限事項と HLD との乖離（Credentialz 未配線・フラグ名差異）</a><br />
-  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../management/gnsi-hld-internals/">gNSI 内部実装（Certz / Authz / Pathz / Credentialz handler と host service）</a><br />
+  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../management/gnsi-hld-limitations/">gNSI 制限事項と HLD との乖離（Credentialz 未配線・フラグ名差異）</a><br />
+  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b76</code>）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという <strong>一部のみの部分実装</strong> 状態:</p>
 <ul>
-<li><a href="../../../management/gnsi-hld-concepts/">gNSI 概念（4 サービスと Rotate モデル）</a><br />
-  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../management/gnsi-hld/">gNSI 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../management/gnsi-hld-operations/">gNSI 設定と運用（gNMI フラグ / YANG / 運用イメージ）</a><br />
-  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../management/gnsi-hld/">gNSI 設定と運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../platform/sai-api-version-check/">SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）</a><br />
-  area: <code>platform</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-09</code></li>
+<li>
+<p><a href="../../../management/gnsi-hld-concepts/">gNSI 概念（4 サービスと Rotate モデル）</a><br />
+  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../management/gnsi-hld-operations/">gNSI 設定と運用（gNMI フラグ / YANG / 運用イメージ）</a><br />
+  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../platform/sai-api-version-check/">SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）</a><br />
+  area: <code>platform</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-09</code></p>
+</li>
 </ul>
 <p><code>monitor: partially_implemented</code> — HLD は SAI バージョン比較を <strong>MAJOR.MINOR の等値比較</strong> とするが、実装（<code>sonic-sairedis/configure.ac</code> l.226-261）は <code>minversion = SAI_VERSION(1,9,0)</code> の <strong>floor チェック</strong> に緩和されている（<code>return (version &lt; minversion) || (SAI_API_VERSION &lt; minversion);</code> のみが失敗条件）。MAJOR ずれや MINOR 上方差も許容するため、HLD 提案より実装は大幅に緩い。緩和の根拠は configure.ac コメントで OCP SAI PR 1297（enum binary backward compat）および PR 1795（structs）を引用。…</p>
 <ul>
@@ -36750,28 +36745,29 @@
 </ul>
 <p>実コード裏取りで判明（verified at: 2026-05-09）:</p>
 <ul>
-<li><a href="../../../switching/switch-port-modes-and-vlan-cli-discrepancy/">Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離</a><br />
-  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child。差分の根拠 / 影響 / 回避策は親ページの同セクションを参照のこと。</p>
-<ul>
-<li><a href="../../../switching/switch-port-modes-and-vlan-cli-internals/">Switchport モードと VLAN CLI 拡張 — 内部実装</a><br />
-  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child。差分の根拠 / 影響 / 回避策は親ページの同セクションを参照のこと。</p>
-<ul>
-<li><a href="../../../switching/switch-port-modes-and-vlan-cli-concepts/">Switchport モードと VLAN CLI 拡張 — 概念</a><br />
-  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../switching/switch-port-modes-and-vlan-cli-discrepancy/">Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離</a><br />
+  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../switching/switch-port-modes-and-vlan-cli-internals/">Switchport モードと VLAN CLI 拡張 — 内部実装</a><br />
+  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p><a href="../../../switching/switch-port-modes-and-vlan-cli-concepts/">Switchport モードと VLAN CLI 拡張 — 概念</a><br />
+  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p><code>monitor: partially_implemented</code> — 部分実装。本ページが扱う 概念 / モード定義 / 状態遷移 / 一括 CLI のスコープのうち、<code>access</code> / <code>trunk</code> CLI と複数 VLAN 一括 add/del は master に取り込み済みだが、<code>routed</code> モードへの明示遷移と PORTCHANNEL 一括移行は HLD 提案段階に留まる。差分の根拠 / 影響 / 回避策は派生先 <a href="../../../switching/switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を参照。</p>
 <ul>
-<li><a href="../../../switching/switch-port-modes-and-vlan-cli-operations/">Switchport モードと VLAN CLI 拡張 — 設定と運用</a><br />
-  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child。差分の根拠 / 影響 / 回避策は親ページの同セクションを参照のこと。</p>
-<ul>
-<li><a href="../../../switching/switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a><br />
-  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../switching/switch-port-modes-and-vlan-cli-operations/">Switchport モードと VLAN CLI 拡張 — 設定と運用</a><br />
+  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../switching/switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a><br />
+  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <ul>
@@ -36858,60 +36854,71 @@
   area: <code>system</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
 </li>
 </ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<p>per-page queue で既出の通り、<a href="../../glossary/#term-hld">HLD</a> が定義する専用機構は未取り込み。<code>.cache/sonic-sources/</code> 全体を再走査した結果:</p>
 <h3 id="monitor-evolved-beyond-hld"><code>evolved_beyond_hld</code> — HLD と乖離した形で実装/進化 (33 件)<a class="headerlink" href="#monitor-evolved-beyond-hld" title="Permanent link">&para;</a></h3>
 <div class="admonition info">
 <p class="admonition-title">HLD と乖離した形で実装/進化</p>
 <p>HLD で示された設計が、その後<strong>別アーキテクチャに置換された</strong>、または<strong>HLD の記述を超えて拡張された</strong>ページ群。HLD と現行コードの両方を読まないと全体像が掴めない。</p>
 </div>
 <ul>
-<li><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-internals/">DIP=SIP PTF 検証 内部実装（パケット仕様 / パラメータ）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-limitations/">DIP=SIP PTF 検証 制限事項と HLD-実装乖離（pytest 移行）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p>2026-05 時点でテスト実体は <strong>PTF スタンドアロンから pytest 配下へ移行済み</strong> で、HLD の記述（ansible + ptftests）はファイル配置レベルで古い。</p>
-<ul>
-<li><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-concepts/">DIP=SIP PTF 検証 概念（テストの目的とトポロジ）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-operations/">DIP=SIP PTF 検証 運用（ファイル構成 / 前処理 / 実行）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証 運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証テスト</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-internals/">DIP=SIP PTF 検証 内部実装（パケット仕様 / パラメータ）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p>HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する</p>
+</li>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-limitations/">DIP=SIP PTF 検証 制限事項と HLD-実装乖離（pytest 移行）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05 時点でテスト実体は <strong>PTF スタンドアロンから pytest 配下へ移行済み</strong> で、HLD の記述（ansible + ptftests）はファイル配置レベルで古い。</p>
 <ul>
-<li><a href="../../../architecture/ssdhealth-design-internals/">SSD ヘルスチェック 内部実装（API 仕様 / ssdmond）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-concepts/">DIP=SIP PTF 検証 概念（テストの目的とトポロジ）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p>HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する</p>
+</li>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-operations/">DIP=SIP PTF 検証 運用（ファイル構成 / 前処理 / 実行）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p>HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する</p>
+</li>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証テスト</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
+<p>2026-05 時点でテスト実体は <strong>PTF スタンドアロンから pytest 配下へ移行済み</strong> で、HLD の記述（ansible + ptftests）はファイル配置レベルで古い。</p>
 <ul>
-<li><a href="../../../architecture/ssdhealth-design-limitations/">SSD ヘルスチェック 制限事項と HLD-実装乖離</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../architecture/ssdhealth-design-internals/">SSD ヘルスチェック 内部実装（API 仕様 / ssdmond）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/ssdhealth-design-limitations/">SSD ヘルスチェック 制限事項と HLD-実装乖離</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD の二段プラグイン構造（<code>SsdBase</code> / <code>SsdUtil</code>）と CLI（<code>show platform ssdhealth</code>）は概ね素直に取り込まれているが、HLD で Open Question として残されていた <strong>常時監視デーモン <code>ssdmond</code> は現状実装が見当たらない</strong>。さらに、HLD で示された <code>sonic_ssd/ssd_base.py</code> の配置は master では <code>sonic_storage/</code> 配下に再構成され、独立スクリプト <code>ssdhealth</code> も <code>ssdutil</code> Python パッケージに置き換わっている。</p>
 <ul>
-<li><a href="../../../architecture/ssdhealth-design-concepts/">SSD ヘルスチェック 概念（SsdBase / SsdUtil 二段プラグイン）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/ssdhealth-design-operations/">SSD ヘルスチェック 運用（CLI / 表示モード）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック 運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../architecture/ssdhealth-design-concepts/">SSD ヘルスチェック 概念（SsdBase / SsdUtil 二段プラグイン）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/ssdhealth-design-operations/">SSD ヘルスチェック 運用（CLI / 表示モード）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD の二段プラグイン構造（<code>SsdBase</code> / <code>SsdUtil</code>）と CLI（<code>show platform ssdhealth</code>）は概ね素直に取り込まれているが、HLD で Open Question として残されていた <strong>常時監視デーモン <code>ssdmond</code> は現状実装が見当たらない</strong>。</p>
 <ul>
@@ -36950,11 +36957,10 @@
 </ul>
 <p>verified at: 2026-05-09。</p>
 <ul>
-<li><a href="../../../platform/fec-flr-support-in-sonic-internals/">FEC FLR 内部実装（port_flr.lua / FlexCounterOrch / SAI counter mapping）</a><br />
-  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../platform/fec-flr-support-in-sonic/">FEC FLR 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
+<li>
+<p><a href="../../../platform/fec-flr-support-in-sonic-internals/">FEC FLR 内部実装（port_flr.lua / FlexCounterOrch / SAI counter mapping）</a><br />
+  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 <li>
 <p><a href="../../../platform/fec-flr-support-in-sonic-limitations/">FEC FLR 制限事項と HLD との乖離（CLI 未取り込み / ハードコード値）</a><br />
   area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
@@ -36963,16 +36969,14 @@
 <p><a href="../../../platform/fec-flr-support-in-sonic-concepts/">FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）</a><br />
   area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
 </li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../platform/fec-flr-support-in-sonic/">FEC FLR 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../platform/fec-flr-support-in-sonic-operations/">FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）</a><br />
-  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../platform/fec-flr-support-in-sonic/">FEC FLR 設定・運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../platform/fec-flr-support-in-sonic/">FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）</a><br />
-  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../platform/fec-flr-support-in-sonic-operations/">FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）</a><br />
+  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../platform/fec-flr-support-in-sonic/">FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）</a><br />
+  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。本機能の <strong>コアロジック (port_flr.lua) と CLI 表示 (portstat) は取り込み済み</strong>だが、<strong><a href="../../glossary/#term-hld">HLD</a> で示唆された動的設定 CLI（<code>counterpoll port flr-interval-factor</code>）は未実装</strong>であり、poll 周期は lua スクリプト内のハードコード値に固定されている。</p>
 <ul>
@@ -37010,7 +37014,7 @@
 <li><a href="../../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/">fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）</a><br />
   area: <code>routing</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<p><code>sonic-swss/fpmsyncd/routesync.cpp</code> と <code>sonic-swss/fpmsyncd/routesync.h</code> を確認。HLD のコア部分は master に取り込み済み:</p>
 <ul>
 <li><a href="../../../system/sonic-fips-deployment/">SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）</a><br />
   area: <code>system</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-09</code></li>
@@ -37065,49 +37069,60 @@
 </ul>
 <p>2026-05 時点の <code>.cache/sonic-sources/</code> master を裏取り。</p>
 <ul>
-<li><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-internals/">動的ポート add/del 内部実装（portsyncd / portsorch / mgrd 群と race condition）</a><br />
-  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically/">動的ポート add/del 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-limitations/">動的ポート add/del 制限事項と HLD との乖離（ref counter 未取り込み・race 残存）</a><br />
-  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-internals/">動的ポート add/del 内部実装（portsyncd / portsorch / mgrd 群と race condition）</a><br />
+  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-limitations/">動的ポート add/del 制限事項と HLD との乖離（ref counter 未取り込み・race 残存）</a><br />
+  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05 時点の <code>.cache/sonic-sources/</code> master を裏取り。</p>
 <ul>
-<li><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-concepts/">動的ポート add/del 概念（zero-port 起動と post-init モデル）</a><br />
-  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-concepts/">動的ポート add/del 概念（zero-port 起動と post-init モデル）</a><br />
+  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-operations/">動的ポート add/del 設定と運用（zero-port 起動・安全削除手順）</a><br />
+  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically/">動的ポート add/del 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically-operations/">動的ポート add/del 設定と運用（zero-port 起動・安全削除手順）</a><br />
-  area: <code>acl-qos</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically/">動的ポート add/del 設定と運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
 <h3 id="area-architecture">architecture<a class="headerlink" href="#area-architecture" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-internals/">DIP=SIP PTF 検証 内部実装（パケット仕様 / パラメータ）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-limitations/">DIP=SIP PTF 検証 制限事項と HLD-実装乖離（pytest 移行）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-internals/">DIP=SIP PTF 検証 内部実装（パケット仕様 / パラメータ）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p>HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する</p>
+</li>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-limitations/">DIP=SIP PTF 検証 制限事項と HLD-実装乖離（pytest 移行）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05 時点でテスト実体は <strong>PTF スタンドアロンから pytest 配下へ移行済み</strong> で、HLD の記述（ansible + ptftests）はファイル配置レベルで古い。</p>
 <ul>
-<li><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-concepts/">DIP=SIP PTF 検証 概念（テストの目的とトポロジ）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-operations/">DIP=SIP PTF 検証 運用（ファイル構成 / 前処理 / 実行）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証 運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証テスト</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-concepts/">DIP=SIP PTF 検証 概念（テストの目的とトポロジ）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p>HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する</p>
+</li>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-operations/">DIP=SIP PTF 検証 運用（ファイル構成 / 前処理 / 実行）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p>HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する</p>
+</li>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証テスト</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05 時点でテスト実体は <strong>PTF スタンドアロンから pytest 配下へ移行済み</strong> で、HLD の記述（ansible + ptftests）はファイル配置レベルで古い。</p>
 <ul>
@@ -37116,11 +37131,10 @@
 </ul>
 <p>2026-05 時点で本 framework は <strong>master に取り込まれておらず、HLD のみ</strong>（2019-07 v0.3 から 6 年以上停滞）。</p>
 <ul>
-<li><a href="../../../architecture/error-handling-framework-in-sonic-internals/">Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB</a><br />
-  area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — <a href="../../glossary/#term-hld">HLD</a> の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
+<li>
+<p><a href="../../../architecture/error-handling-framework-in-sonic-internals/">Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB</a><br />
+  area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 <li>
 <p><a href="../../../architecture/error-handling-framework-in-sonic-limitations/">Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）</a><br />
   area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
@@ -37129,16 +37143,14 @@
 <p><a href="../../../architecture/error-handling-framework-in-sonic-concepts/">Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）</a><br />
   area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
 </li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/error-handling-framework-in-sonic-operations/">Error Handling Framework 設定・運用（show / clear error-database / ERROR_DB スキーマ）</a><br />
-  area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — <a href="../../glossary/#term-hld">HLD</a> の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework 設定・運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）</a><br />
-  area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../architecture/error-handling-framework-in-sonic-operations/">Error Handling Framework 設定・運用（show / clear error-database / ERROR_DB スキーマ）</a><br />
+  area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）</a><br />
+  area: <code>architecture</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05 時点で本 framework は <strong>エラーコード enum だけが先行採用され、ERROR_DB / ErrorListener / CLI は丸ごと未実装</strong> な部分採用状態。</p>
 <ul>
@@ -37147,28 +37159,29 @@
 </ul>
 <p>2026-05 時点で <strong>SAG コード / <a href="../../glossary/#term-yang">YANG</a> / CLI は community master に取り込まれておらず、HLD 提案段階</strong>。</p>
 <ul>
-<li><a href="../../../architecture/ssdhealth-design-internals/">SSD ヘルスチェック 内部実装（API 仕様 / ssdmond）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/ssdhealth-design-limitations/">SSD ヘルスチェック 制限事項と HLD-実装乖離</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../architecture/ssdhealth-design-internals/">SSD ヘルスチェック 内部実装（API 仕様 / ssdmond）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/ssdhealth-design-limitations/">SSD ヘルスチェック 制限事項と HLD-実装乖離</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD の二段プラグイン構造（<code>SsdBase</code> / <code>SsdUtil</code>）と CLI（<code>show platform ssdhealth</code>）は概ね素直に取り込まれているが、HLD で Open Question として残されていた <strong>常時監視デーモン <code>ssdmond</code> は現状実装が見当たらない</strong>。さらに、HLD で示された <code>sonic_ssd/ssd_base.py</code> の配置は master では <code>sonic_storage/</code> 配下に再構成され、独立スクリプト <code>ssdhealth</code> も <code>ssdutil</code> Python パッケージに置き換わっている。</p>
 <ul>
-<li><a href="../../../architecture/ssdhealth-design-concepts/">SSD ヘルスチェック 概念（SsdBase / SsdUtil 二段プラグイン）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/ssdhealth-design-operations/">SSD ヘルスチェック 運用（CLI / 表示モード）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック 運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）</a><br />
-  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../architecture/ssdhealth-design-concepts/">SSD ヘルスチェック 概念（SsdBase / SsdUtil 二段プラグイン）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/ssdhealth-design-operations/">SSD ヘルスチェック 運用（CLI / 表示モード）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）</a><br />
+  area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD の二段プラグイン構造（<code>SsdBase</code> / <code>SsdUtil</code>）と CLI（<code>show platform ssdhealth</code>）は概ね素直に取り込まれているが、HLD で Open Question として残されていた <strong>常時監視デーモン <code>ssdmond</code> は現状実装が見当たらない</strong>。</p>
 <ul>
@@ -37231,16 +37244,14 @@
 <p><a href="../../../internals/l3-scaling-and-performance-enhancements-concepts/">L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）</a><br />
   area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
 </li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../internals/l3-scaling-and-performance-enhancements-operations/">L3 Scaling と Performance 強化 設定・運用（sysctl / COPP_TABLE / show arp）</a><br />
-  area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化 設定・運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show</a><br />
-  area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../internals/l3-scaling-and-performance-enhancements-operations/">L3 Scaling と Performance 強化 設定・運用（sysctl / COPP_TABLE / show arp）</a><br />
+  area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show</a><br />
+  area: <code>internals</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。</p>
 <h3 id="area-management">management<a class="headerlink" href="#area-management" title="Permanent link">&para;</a></h3>
@@ -37253,7 +37264,7 @@
 <li><a href="../../../management/sonic-console-switch/">Console Switch（serial hub の reverse SSH 集約）</a><br />
   area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<p>per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:</p>
 <ul>
 <li><a href="../../../management/p4rt-application-hld/">P4RT アプリケーション（PINS の gRPC サービス、port 9559）</a><br />
   area: <code>management</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
@@ -37294,7 +37305,7 @@
 <li><a href="../../../management/smart-switch-gnmi-feedback-design-omit-in-toc/">SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）</a><br />
   area: <code>management</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<p>HLD が要件として掲げる以下の構成要素を現行 master の <code>sonic-gnmi</code> に確認できなかった。</p>
 <ul>
 <li><a href="../../../management/tacacs-passkey-encryption/">TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）</a><br />
   area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
@@ -37306,28 +37317,29 @@
 </ul>
 <p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b7679b260c3fd0786a6d0734fc8e82c9a22</code>）:</p>
 <ul>
-<li><a href="../../../management/gnsi-hld-internals/">gNSI 内部実装（Certz / Authz / Pathz / Credentialz handler と host service）</a><br />
-  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../management/gnsi-hld/">gNSI 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../management/gnsi-hld-limitations/">gNSI 制限事項と HLD との乖離（Credentialz 未配線・フラグ名差異）</a><br />
-  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../management/gnsi-hld-internals/">gNSI 内部実装（Certz / Authz / Pathz / Credentialz handler と host service）</a><br />
+  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../management/gnsi-hld-limitations/">gNSI 制限事項と HLD との乖離（Credentialz 未配線・フラグ名差異）</a><br />
+  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b76</code>）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという <strong>一部のみの部分実装</strong> 状態:</p>
 <ul>
-<li><a href="../../../management/gnsi-hld-concepts/">gNSI 概念（4 サービスと Rotate モデル）</a><br />
-  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../management/gnsi-hld/">gNSI 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../management/gnsi-hld-operations/">gNSI 設定と運用（gNMI フラグ / YANG / 運用イメージ）</a><br />
-  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../management/gnsi-hld/">gNSI 設定と運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../management/gnsi-hld/">gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル</a><br />
-  area: <code>management</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../management/gnsi-hld-concepts/">gNSI 概念（4 サービスと Rotate モデル）</a><br />
+  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../management/gnsi-hld-operations/">gNSI 設定と運用（gNMI フラグ / YANG / 運用イメージ）</a><br />
+  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../management/gnsi-hld/">gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル</a><br />
+  area: <code>management</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b76</code>）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという <strong>一部のみの部分実装</strong> 状態:</p>
 <ul>
@@ -37343,11 +37355,10 @@
 <p>verified at: 2026-05-09。</p>
 <h3 id="area-platform">platform<a class="headerlink" href="#area-platform" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../../platform/fec-flr-support-in-sonic-internals/">FEC FLR 内部実装（port_flr.lua / FlexCounterOrch / SAI counter mapping）</a><br />
-  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../platform/fec-flr-support-in-sonic/">FEC FLR 内部実装 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
+<li>
+<p><a href="../../../platform/fec-flr-support-in-sonic-internals/">FEC FLR 内部実装（port_flr.lua / FlexCounterOrch / SAI counter mapping）</a><br />
+  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 <li>
 <p><a href="../../../platform/fec-flr-support-in-sonic-limitations/">FEC FLR 制限事項と HLD との乖離（CLI 未取り込み / ハードコード値）</a><br />
   area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
@@ -37356,16 +37367,14 @@
 <p><a href="../../../platform/fec-flr-support-in-sonic-concepts/">FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）</a><br />
   area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
 </li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../platform/fec-flr-support-in-sonic/">FEC FLR 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../platform/fec-flr-support-in-sonic-operations/">FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）</a><br />
-  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../platform/fec-flr-support-in-sonic/">FEC FLR 設定・運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../platform/fec-flr-support-in-sonic/">FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）</a><br />
-  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../platform/fec-flr-support-in-sonic-operations/">FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）</a><br />
+  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../platform/fec-flr-support-in-sonic/">FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）</a><br />
+  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。本機能の <strong>コアロジック (port_flr.lua) と CLI 表示 (portstat) は取り込み済み</strong>だが、<strong><a href="../../glossary/#term-hld">HLD</a> で示唆された動的設定 CLI（<code>counterpoll port flr-interval-factor</code>）は未実装</strong>であり、poll 周期は lua スクリプト内のハードコード値に固定されている。</p>
 <ul>
@@ -37406,7 +37415,7 @@
   area: <code>platform</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></p>
 </li>
 </ul>
-<p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<p><code>sonic-platform-common</code> を grep した結果、本 HLD が前提とする <code>CmisEnhancedLpoApi</code> / <code>CmisEnhancedLpoCodes</code> / <code>CmisEnhancedLpoMemMap</code> クラス、<code>xcvr_api_factory.py</code> での Arista 系 vendor 分岐、Page 01h Byte 195 = 0x4C の enhanced LPO 検出ロジック、<code>LPOTxHostInputVMA*</code> / <code>LPORxInputOMA*</code> フィールドのいずれも HEAD に取り込まれていない（<code>grep -rn "CmisEnhancedLpoApi\|LPOTxHostInputVMA\|enhanced_lpo" .cache/sonic-sources/sonic-platform-common/</code> でヒット 0）。…</p>
 <ul>
 <li><a href="../../../platform/liquid-cooling-leakage-detection-in-sonic/">液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）</a><br />
   area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
@@ -37474,18 +37483,18 @@
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <ul>
-<li><a href="../../../routing/evpn-vxlan-multihoming-internals/">EVPN VXLAN Multihoming 実装内部（EvpnMhOrch / L2nhgOrch / ShlOrch / SAI L2 NHG）</a><br />
-  area: <code>routing</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../routing/evpn-vxlan-multihoming/">EVPN VXLAN Multihoming 実装内部 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../routing/evpn-vxlan-multihoming-concepts/">EVPN VXLAN Multihoming 概念（ESI / DF election / Split-horizon / Aliasing）</a><br />
-  area: <code>routing</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../../../routing/evpn-vxlan-multihoming/">EVPN VXLAN Multihoming 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<ul>
-<li><a href="../../../routing/evpn-vxlan-multihoming-operations/">EVPN VXLAN Multihoming 運用（config interface evpn-esi / show vxlan ethernet-segment / 差分）</a><br />
-  area: <code>routing</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../routing/evpn-vxlan-multihoming-internals/">EVPN VXLAN Multihoming 実装内部（EvpnMhOrch / L2nhgOrch / ShlOrch / SAI L2 NHG）</a><br />
+  area: <code>routing</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../routing/evpn-vxlan-multihoming-concepts/">EVPN VXLAN Multihoming 概念（ESI / DF election / Split-horizon / Aliasing）</a><br />
+  area: <code>routing</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../routing/evpn-vxlan-multihoming-operations/">EVPN VXLAN Multihoming 運用（config interface evpn-esi / show vxlan ethernet-segment / 差分）</a><br />
+  area: <code>routing</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-10 時点の現行 master を裏取り。<strong>EVPN Multihoming 機能は SONiC メインリポジトリには取り込まれていない</strong>。</p>
 <ul>
@@ -37529,7 +37538,7 @@
   area: <code>routing</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
 </li>
 </ul>
-<p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<p><code>sonic-swss/fpmsyncd/routesync.cpp</code> と <code>sonic-swss/fpmsyncd/routesync.h</code> を確認。HLD のコア部分は master に取り込み済み:</p>
 <h3 id="area-switching">switching<a class="headerlink" href="#area-switching" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../../switching/layer-2-forwarding-enhancements/">L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）</a><br />
@@ -37537,28 +37546,29 @@
 </ul>
 <p>実コード裏取りで判明（verified at: 2026-05-09）:</p>
 <ul>
-<li><a href="../../../switching/switch-port-modes-and-vlan-cli-discrepancy/">Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離</a><br />
-  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child。差分の根拠 / 影響 / 回避策は親ページの同セクションを参照のこと。</p>
-<ul>
-<li><a href="../../../switching/switch-port-modes-and-vlan-cli-internals/">Switchport モードと VLAN CLI 拡張 — 内部実装</a><br />
-  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child。差分の根拠 / 影響 / 回避策は親ページの同セクションを参照のこと。</p>
-<ul>
-<li><a href="../../../switching/switch-port-modes-and-vlan-cli-concepts/">Switchport モードと VLAN CLI 拡張 — 概念</a><br />
-  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../switching/switch-port-modes-and-vlan-cli-discrepancy/">Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離</a><br />
+  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../switching/switch-port-modes-and-vlan-cli-internals/">Switchport モードと VLAN CLI 拡張 — 内部実装</a><br />
+  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p><a href="../../../switching/switch-port-modes-and-vlan-cli-concepts/">Switchport モードと VLAN CLI 拡張 — 概念</a><br />
+  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p><code>monitor: partially_implemented</code> — 部分実装。本ページが扱う 概念 / モード定義 / 状態遷移 / 一括 CLI のスコープのうち、<code>access</code> / <code>trunk</code> CLI と複数 VLAN 一括 add/del は master に取り込み済みだが、<code>routed</code> モードへの明示遷移と PORTCHANNEL 一括移行は HLD 提案段階に留まる。差分の根拠 / 影響 / 回避策は派生先 <a href="../../../switching/switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を参照。</p>
 <ul>
-<li><a href="../../../switching/switch-port-modes-and-vlan-cli-operations/">Switchport モードと VLAN CLI 拡張 — 設定と運用</a><br />
-  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child。差分の根拠 / 影響 / 回避策は親ページの同セクションを参照のこと。</p>
-<ul>
-<li><a href="../../../switching/switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a><br />
-  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../switching/switch-port-modes-and-vlan-cli-operations/">Switchport モードと VLAN CLI 拡張 — 設定と運用</a><br />
+  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../switching/switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a><br />
+  area: <code>switching</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <ul>
@@ -37650,7 +37660,7 @@
   area: <code>system</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></p>
 </li>
 </ul>
-<p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<p>per-page queue で既出の通り提案 HLD は未採用。再走査でも:</p>
 <ul>
 <li>
 <p><a href="../../../system/sonic-configuration-setup-service/">config-setup サービス（first-boot config 生成 / 版間 migration）</a><br />
@@ -37685,7 +37695,7 @@
   area: <code>system</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
 </li>
 </ul>
-<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<p>per-page queue で既出の通り、<a href="../../glossary/#term-hld">HLD</a> が定義する専用機構は未取り込み。<code>.cache/sonic-sources/</code> 全体を再走査した結果:</p>
 <h2 id="_2">この一覧の更新方法<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>本一覧は手で編集しない。エントリの追加・修正は次の経路で行う。</p>
 <ol>

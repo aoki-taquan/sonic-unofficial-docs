@@ -36411,7 +36411,7 @@
 <h1 id="config-syslog">config syslog サブコマンド<a class="headerlink" href="#config-syslog" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>config syslog</code> は <a href="../../glossary/#term-sonic">SONiC</a> ホストおよび feature コンテナの syslog 設定 (リモート送信先 / レート制限 / ログレベル) を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書き込む CLI で、<code>config/syslog.py</code> の <code>@click.group()</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>hostcfgd</code> および各 feature コンテナの supervisord ラッパが <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読して <code>rsyslog</code> 設定を再生成する。CLI 自身は rsyslog をリスタートしないため、変更が反映されるまでタイムラグがある。</p>
+<p>反映経路はサブコマンドごとに異なる。<code>add</code> / <code>del</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> 書き込み後に CLI 自身が <code>systemctl reset-failed rsyslog-config rsyslog</code> と <code>systemctl restart rsyslog-config</code> を即時実行し、<code>rsyslog-config.service</code> がテンプレートから設定を再生成する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。一方 <code>rate-limit-host</code> / <code>rate-limit-container</code> / <code>rate-limit-feature</code> / <code>level</code> は CONFIG_DB を更新するだけで、<code>hostcfgd</code> および各 feature コンテナの supervisord ラッパが購読側で <code>rsyslog</code> 設定を再生成する設計のため、反映までにタイムラグが出る場合がある。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36461,9 +36461,9 @@
 <li><code>--vrf &lt;vrf&gt;</code> ... 出力 <a href="../../glossary/#term-vrf">VRF</a>。<code>mgmt</code> (mgmt-vrf) または <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>VRF</code> テーブルに存在する <a href="../../glossary/#term-vrf">VRF</a>。<code>source</code> と組み合わせる場合 <code>source_to_vrf_validator</code> で同 <a href="../../glossary/#term-vrf">VRF</a> 内のインタフェースかをチェックする。</li>
 </ul>
 <p><strong>動作</strong>:
-<code>SYSLOG_SERVER|&lt;server_ip&gt;</code> を新規作成する。同じ key が既存ならエラー終了 (重複はサポートしない)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<code>SYSLOG_SERVER|&lt;server_ip&gt;</code> を新規作成する。同じ key が既存ならエラー終了 (重複はサポートしない)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。エントリ書き込み後に CLI が <code>systemctl reset-failed rsyslog-config rsyslog</code> と <code>systemctl restart rsyslog-config</code> を実行するため、サーバ追加は即時に rsyslog 構成に反映される<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <h3 id="config-syslog-del-server_ip"><code>config syslog del &lt;server_ip&gt;</code><a class="headerlink" href="#config-syslog-del-server_ip" title="Permanent link">&para;</a></h3>
-<p><code>SYSLOG_SERVER|&lt;server_ip&gt;</code> を削除。存在しないアドレスを与えるとエラー終了。</p>
+<p><code>SYSLOG_SERVER|&lt;server_ip&gt;</code> を削除。存在しないアドレスを与えるとエラー終了。削除時も <code>add</code> と同様に <code>rsyslog-config</code> を再起動する<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <h3 id="config-syslog-rate-limit-host-i-interval-b-burst"><code>config syslog rate-limit-host [-i &lt;interval&gt;] [-b &lt;burst&gt;]</code><a class="headerlink" href="#config-syslog-rate-limit-host-i-interval-b-burst" title="Permanent link">&para;</a></h3>
 <p><code>SYSLOG_CONFIG|GLOBAL</code> (または同等のグローバル key) に <code>rate_limit_interval</code> / <code>rate_limit_burst</code> を書く。<code>interval</code> <code>burst</code> の <code>IntRange(0, 2147483647)</code> 制約だけ CLI 側で適用される。</p>
 <h3 id="config-syslog-rate-limit-container-service_name-i-interval-b-burst-n-namespace"><code>config syslog rate-limit-container &lt;service_name&gt; [-i &lt;interval&gt;] [-b &lt;burst&gt;] [-n &lt;namespace&gt;]</code><a class="headerlink" href="#config-syslog-rate-limit-container-service_name-i-interval-b-burst-n-namespace" title="Permanent link">&para;</a></h3>
@@ -36614,7 +36614,10 @@
 <p><code>syslog</code> グループは <code>config/syslog.py</code> L361-L368。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/syslog.py#L361">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/syslog.py#L361</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>add</code> / <code>delete</code> は <code>config/syslog.py</code> L370-L454。重複検査は <code>is_exist_in_db</code>。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>add</code> / <code>delete</code> は <code>config/syslog.py</code> L370-L452。重複検査は <code>server_validator</code>。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>add</code> ハンドラ内の <code>systemctl restart rsyslog-config</code> 呼び出しは <code>config/syslog.py</code> L415-L416、<code>del</code> ハンドラは L447-L448。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/syslog.py#L415">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/syslog.py#L415</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

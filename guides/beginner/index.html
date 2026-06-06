@@ -791,7 +791,29 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        補足情報
+        よくある誤解（読み進める前に潰しておく）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        次に学ぶ順序（行き止まりにならない読み方）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート入口（「効いていない」と感じたら）
       
     </span>
   </a>
@@ -35882,7 +35904,29 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        補足情報
+        よくある誤解（読み進める前に潰しておく）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        次に学ぶ順序（行き止まりにならない読み方）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート入口（「効いていない」と感じたら）
       
     </span>
   </a>
@@ -35932,7 +35976,7 @@
 <p>このページは導線（目次）の役割を担い、各概念の詳細解説は <a href="../../getting-started/">初めての方の必読 10</a> と <a href="../../architecture/">アーキテクチャ</a> に委ねますが、リンク先を辿る前に最低限の輪郭を持っておくと迷子になりにくいので、各 1〜2 文ずつだけ要約します。</p>
 <ul>
 <li><strong>コンテナ</strong>: SONiC のコントロールプレーンは複数の Docker コンテナに分割されており、<code>sonic-buildimage</code> の <code>dockers/</code> 配下に <code>docker-orchagent</code>（<a href="../../reference/glossary/#term-sonic-swss">SwSS</a>）、<code>docker-syncd-*</code>（<a href="../../reference/glossary/#term-sai">SAI</a> ベンダ実装ごと）、<code>docker-database</code>（Redis）、<code>docker-teamd</code>、<code>docker-lldp</code>、<code>docker-snmp</code>、<code>docker-nat</code>、<code>docker-macsec</code>、<code>docker-sflow</code>、<code>docker-router-advertiser</code> 等が定義されています<sup id="fnref:docker-list"><a class="footnote-ref" href="#fn:docker-list">1</a></sup>。<a href="../../reference/glossary/#term-bgp">BGP</a> は別 submodule の <code>dockers/docker-fpm-frr</code>（<a href="../../reference/glossary/#term-frr">FRR</a> を内包）が担います。</li>
-<li><strong>Redis DB</strong>: 全コンテナは <code>docker-database</code> 内の Redis インスタンスを介して非同期に状態交換し、論理 DB として CONFIG_DB（運用者が投入する設定の真の源）、<a href="../../reference/glossary/#term-appl_db">APPL_DB</a>（orchagent が SwSS 側に発行する宣言的状態）、<a href="../../reference/glossary/#term-asic_db">ASIC_DB</a>（<a href="../../reference/glossary/#term-syncd">syncd</a> と SAI が共有するハード抽象状態）、<a href="../../reference/glossary/#term-state_db">STATE_DB</a>（実観測状態）等に分かれます。</li>
+<li><strong>Redis DB</strong>: 全コンテナは <code>docker-database</code> 内の Redis インスタンスを介して非同期に状態交換し、論理 DB として <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a>（運用者が投入する設定の真の源）、<a href="../../reference/glossary/#term-appl_db">APPL_DB</a>（orchagent が SwSS 側に発行する宣言的状態）、<a href="../../reference/glossary/#term-asic_db">ASIC_DB</a>（<a href="../../reference/glossary/#term-syncd">syncd</a> と SAI が共有するハード抽象状態）、<a href="../../reference/glossary/#term-state_db">STATE_DB</a>（実観測状態）等に分かれます。</li>
 <li><strong>SAI</strong>: ベンダ間でハードウェア差を吸収する C API で、<code>sonic-sairedis</code> がその参照実装を提供します。<code>syncd</code> プロセス（<a href="https://github.com/sonic-net/sonic-sairedis/blob/master/syncd/Syncd.cpp"><code>syncd/Syncd.cpp</code></a>）が ASIC_DB の差分を購読し、ベンダ提供の SAI 実装ライブラリ経由で ASIC に反映します<sup id="fnref:syncd"><a class="footnote-ref" href="#fn:syncd">2</a></sup>。</li>
 <li><strong>設定反映フロー</strong>: 概ね <code>config</code> コマンド / <a href="../../reference/glossary/#term-gnmi">gNMI</a> → CONFIG_DB → <a href="../../reference/glossary/#term-orchagent">orchagent</a>（<a href="https://github.com/sonic-net/sonic-swss/tree/master/orchagent"><code>sonic-swss/orchagent</code></a>）が解釈し APPL_DB に書き込み → syncd が ASIC_DB を経由して SAI 経由で ASIC に反映、観測結果は逆向きに STATE_DB / <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> に集約される、という単方向パイプラインで動作します。</li>
 </ul>
@@ -35959,12 +36003,30 @@
 <li><a href="../../architecture/steps-to-bring-up-sonic-vs/">SONiC-VS のビルドと libvirt 起動手順</a> — ソースからビルドして動かす</li>
 </ol>
 <p><strong>その先</strong>: 関心領域に応じて <a href="../../routing/">ルーティング</a> / <a href="../../switching/">スイッチング</a> / <a href="../../system/">システム</a> に進んでください。</p>
-<h2 id="_3">補足情報<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">よくある誤解（読み進める前に潰しておく）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>トラック A の前提を踏み外しているとリファレンスを読んでも判別がつかないので、初学者が引っかかりやすい点を先に明示します。</p>
 <ul>
-<li>全体像と DB の関係（CONFIG_DB / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a>、SwSS、syncd、SAI）については <a href="../../getting-started/">初めての方の必読 10</a> の推奨読破順 1〜4 に沿って読むと把握しやすいです。</li>
-<li>用語は <a href="../../reference/glossary/">用語集 (Glossary)</a> に一覧化されています。SAI、<a href="../../reference/glossary/#term-orchagent">orchagent</a>、<a href="../../reference/glossary/#term-syncd">syncd</a>、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a>、<a href="../../reference/glossary/#term-yang">YANG</a>、<a href="../../reference/glossary/#term-frr">FRR</a>、PMON、multi-<a href="../../reference/glossary/#term-asic">ASIC</a> などを読みながら逐次参照してください。</li>
-<li>各 area の読み進め方は <a href="../../topics/">Topics 章扉</a> にまとまっています。</li>
+<li><strong>「CONFIG_DB が設定の真の源」≠「<code>config_db.json</code> ファイルが真の源」</strong>: 動作中の SONiC では Redis 上の CONFIG_DB が一次データで、<code>/etc/sonic/config_db.json</code> はそのスナップショット兼ブート時のロード元です。<code>config save</code> を打たないと再起動で消えます。詳細は <a href="../../management/sonic-nos-configuration-methods/">SONiC NOS 設定方式</a> を参照してください。</li>
+<li><strong>「orchagent が <a href="../../reference/glossary/#term-asic">ASIC</a> を直接触る」は誤り</strong>: orchagent は APPL_DB から ASIC_DB へ宣言的状態を書き込むだけで、ASIC への実反映は <code>syncd</code> が SAI 経由で行います。両者は別コンテナ（<code>docker-orchagent</code> と <code>docker-syncd-*</code>）に分かれている点が責務分離の根拠です。</li>
+<li><strong>「BGP は SwSS が喋っている」は誤り</strong>: 経路計算は <code>docker-fpm-frr</code> 内の <a href="../../reference/glossary/#term-frr">FRR</a> が行い、<a href="../../reference/glossary/#term-fpm">FPM</a> 経由で SwSS の <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> → APPL_DB に経路を流し込む二段構成です。</li>
+<li><strong>「<a href="../../reference/glossary/#term-state_db">STATE_DB</a> は設定値の確認用」は誤り</strong>: STATE_DB は orchagent / syncd / PMON 等が観測した実状態を書き込む先で、CONFIG_DB の echo ではありません。「設定したつもりが効いていない」の切り分けに使います。</li>
 </ul>
+<h2 id="_4">次に学ぶ順序（行き止まりにならない読み方）<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>上記トラック A〜C を読み終えた後の進路です。関心領域から 1 本だけ選び、ASIC 反映までの一筆書きを完成させることを優先してください。</p>
+<ul>
+<li><strong>L2/L3 機能をひと通り</strong>: <a href="../../switching/">スイッチング章扉</a> → <a href="../../routing/">ルーティング章扉</a> の順。<a href="../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../reference/glossary/#term-lag">LAG</a> といった ASIC_DB に直接マップされる機能を先に押さえると、後段の <a href="../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../reference/glossary/#term-evpn">EVPN</a> の差分が読み取りやすくなります。</li>
+<li><strong>運用・監視を厚く</strong>: <a href="../../system/">システム章扉</a> と <a href="../../management/">運用・管理章扉</a>。とくに <a href="../../system/show-techsupport/">Show Techsupport</a> と <a href="../../system/sonic-logging-system-dumps-arch-spec/">SONiC ロギング・システムダンプ仕様</a> は障害切り分けの起点になります。</li>
+<li><strong>内部実装に潜る</strong>: <a href="../../internals/">internals 章扉</a>。orchagent / syncd の Orch クラスや <a href="../../reference/glossary/#term-consumerstatetable">ConsumerStateTable</a> など、トラック A の輪郭に肉付けする層です。</li>
+</ul>
+<h2 id="_5">トラブルシュート入口（「効いていない」と感じたら）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>「config したのに反映されない」の典型 4 パターンと、最初に見るべき場所を示します。詳細手順はリンク先に委ねます。</p>
+<ul>
+<li><strong>CLI は通ったが ASIC まで届いていない疑い</strong>: CONFIG_DB → APPL_DB → ASIC_DB の順で <code>redis-cli -n &lt;id&gt; KEYS '*'</code> を辿り、どの段で止まっているかを特定します。DB 番号の対応は <a href="../../reference/config-db/">CONFIG_DB リファレンス</a> を参照してください。</li>
+<li><strong>再起動で設定が消える</strong>: <code>config save</code> 漏れの可能性が高いです。CONFIG_DB と <code>/etc/sonic/config_db.json</code> の同期タイミングについては <a href="../../management/sonic-nos-configuration-methods/">SONiC NOS 設定方式</a> を確認してください。</li>
+<li><strong>コンテナがそもそも起動していない</strong>: <code>docker ps</code> で対象コンテナ（<code>swss</code> / <code>syncd</code> / <code>bgp</code> 等）の有無を確認した後、<a href="../../system/show-techsupport/">Show Techsupport</a> でログ・設定・DB ダンプを一括収集します。</li>
+<li><strong>観測値が想定と違う</strong>: 設定値ではなく実状態を見るべきなので <a href="../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> を先に確認します。観測パイプの全体像は <a href="../../architecture/">アーキテクチャ章扉</a> のデータフロー節に整理されています。</li>
+</ul>
+<p>用語に詰まったら <a href="../../reference/glossary/">用語集 (Glossary)</a> を、area 横断の歩き方は <a href="../../topics/">Topics 章扉</a> を参照してください。</p>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35973,7 +36035,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 935537b65c91 -->
+<!-- glossary-links-injected: 54c4a9b16bb2 -->
 
 <div class="footnote">
 <hr />

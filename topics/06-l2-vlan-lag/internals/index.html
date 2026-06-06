@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="内部実装 — L2 / VLAN / LAG / MC-LAG の内部実装は「kernel と orchagent の二重管理」を理解するのが鍵です。">
+        <meta name="description" content="L2 / VLAN / LAG / MC-LAG の内部実装を kernel と orchagent の二重管理という観点で整理し、FdbOrch / PortsOrch / portsyncd / iccpd の責務と SAI 属性、Redis テーブル経路を実装ファイルに突き合わせて記述する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="内部実装 — L2 / VLAN / LAG / MC-LAG の内部実装は「kernel と orchagent の二重管理」を理解するのが鍵です。" />
+<meta property="og:description" content="L2 / VLAN / LAG / MC-LAG の内部実装を kernel と orchagent の二重管理という観点で整理し、FdbOrch / PortsOrch / portsyncd / iccpd の責務と SAI 属性、Redis テーブル経路を実装ファイルに突き合わせて記述する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/06-l2-vlan-lag/internals.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/06-l2-vlan-lag/internals/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="内部実装 — L2 / VLAN / LAG / MC-LAG の内部実装は「kernel と orchagent の二重管理」を理解するのが鍵です。" />
+<meta property="twitter:description" content="L2 / VLAN / LAG / MC-LAG の内部実装を kernel と orchagent の二重管理という観点で整理し、FdbOrch / PortsOrch / portsyncd / iccpd の責務と SAI 属性、Redis テーブル経路を実装ファイルに突き合わせて記述する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/06-l2-vlan-lag/internals.png" />
 </head>
   
@@ -36142,8 +36142,8 @@
 </tr>
 <tr>
 <td><code>FdbOrch</code> (<code>orchagent/fdborch.cpp</code>)</td>
-<td><code>FdbOrch::doTask</code>、<code>addFdbEntry</code>、<code>handleFdbNotification</code></td>
-<td>static FDB と learned FDB の管理、aging notification</td>
+<td><code>FdbOrch::doTask</code>、<code>addFdbEntry</code>、<code>FdbOrch::update(sai_fdb_event_t, ...)</code></td>
+<td>static FDB と learned FDB の管理、aging notification（FDB event の振り分けは <code>update()</code> 内の <code>switch (type)</code>）<sup id="fnref3:fdborch"><a class="footnote-ref" href="#fn:fdborch">1</a></sup></td>
 </tr>
 <tr>
 <td><code>teamd</code> / <code>teamsyncd</code></td>
@@ -36152,8 +36152,8 @@
 </tr>
 <tr>
 <td><code>portsyncd</code> (<code>portsyncd/portsyncd.cpp</code>)</td>
-<td><code>PortSyncd::run</code></td>
-<td>netlink で kernel の link state を APPL_DB に反映</td>
+<td><code>main()</code> ループ + <code>LinkSync</code> (<code>portsyncd/linksync.cpp</code>)</td>
+<td>netlink (<code>RTM_NEWLINK</code> / <code>RTM_DELLINK</code>) で kernel の link state を受け、<code>LinkSync</code> が APPL_DB / STATE_DB に反映<sup id="fnref:portsyncd"><a class="footnote-ref" href="#fn:portsyncd">2</a></sup></td>
 </tr>
 <tr>
 <td><code>fdbsyncd</code> (<code>fdbsyncd/fdbsync.cpp</code>)</td>
@@ -36232,8 +36232,8 @@
 <ul>
 <li>VLAN ID は <a href="../../../reference/glossary/#term-sonic">SONiC</a> では <code>Vlan&lt;id&gt;</code> の文字列キーで扱われ、<code>VLAN_MEMBER|Vlan100|Ethernet0</code> のように <code>|</code> 区切り。<code>vlanmgrd</code> 内で id の桁違いやスペースが入ると silent に skip されることが過去 issue で報告されています。</li>
 <li>MC-LAG（iccpd ベース）と <a href="../../../reference/glossary/#term-evpn-mh">EVPN-MH</a>（EVPN multi-homing、<a href="../../../reference/glossary/#term-frr">FRR</a> ベース）は別実装で、同じスイッチで両立する設計にはなっていません。</li>
-<li>FDB MAC move は ASIC 通知遅延と orchagent 内のリオーダリングで一時的に同じ MAC が複数ポート所属に見えることがあります。<code>FdbOrch::handleFdbNotification</code> が <code>SAI_FDB_EVENT_MOVE</code> を扱いますが、ASIC が MOVE ではなく LEARNED + DELETE を別タイミングで上げる場合に瞬間的に重複が出ます。</li>
-<li>LAG member の dynamic add/remove は SAI 側で <code>EGRESS_DISABLE</code> を切り替えるだけの実装と、<code>LAG_MEMBER</code> を作り直す実装があり、ベンダで挙動が違います。<code>PortsOrch::setLagMemberEgressDisable</code> 経路を取れない ASIC では一瞬パケットロスが入ります。</li>
+<li>FDB MAC move は ASIC 通知遅延と orchagent 内のリオーダリングで一時的に同じ MAC が複数ポート所属に見えることがあります。<code>FdbOrch::update()</code> の <code>case SAI_FDB_EVENT_MOVE</code> が bridge_port 差し替えを処理しますが、ASIC が MOVE ではなく LEARNED + DELETE を別タイミングで上げる場合に瞬間的に重複が出ます。<sup id="fnref2:fdborch"><a class="footnote-ref" href="#fn:fdborch">1</a></sup></li>
+<li>LAG member の dynamic add/remove では、<code>PortsOrch::addLagMember</code> が <code>member_status != "enabled"</code> のときだけ <code>SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE</code> / <code>INGRESS_DISABLE</code> を <code>true</code> で初期付与し、enable 化は <code>setDistributionOnLagMember</code> / <code>setCollectionOnLagMember</code> が <code>sai_lag_api-&gt;set_lag_member_attribute</code> で <code>EGRESS_DISABLE</code> / <code>INGRESS_DISABLE</code> を書き戻すフローです。一方で <code>LAG_MEMBER</code> を delete/create し直すベンダ実装もあり、後者では一瞬パケットロスが入ります。<sup id="fnref:addlagmember"><a class="footnote-ref" href="#fn:addlagmember">3</a></sup><sup id="fnref:setdist"><a class="footnote-ref" href="#fn:setdist">4</a></sup></li>
 <li>STP は SONiC では PVST / RPVST の制御プレーンが limited で、<code>stp</code> モジュール (<a href="https://github.com/sonic-net/sonic-stp">sonic-stp</a>) が有効になっている場合のみ動きます。</li>
 </ul>
 <h2 id="mc-lag-iccpd">MC-LAG (iccpd) の内部状態機械<a class="headerlink" href="#mc-lag-iccpd" title="Permanent link">&para;</a></h2>
@@ -36279,34 +36279,34 @@
 </ul>
 <p>これらは ASIC 通知に対する orchagent の reentrancy 設計上避けにくく、頻発する場合は teamd の <code>runner.tx_hash</code> や <code>lacp_rate</code> を調整します。</p>
 <h2 id="fdb-notification">FDB notification 経路の詳細<a class="headerlink" href="#fdb-notification" title="Permanent link">&para;</a></h2>
-<p>ASIC からの FDB 通知は <code>ASIC_DB</code> の notification channel（Redis pub/sub）に流れ、<code>FdbOrch</code> が以下の event を処理します。</p>
+<p>ASIC からの FDB 通知は <code>ASIC_DB</code> の notification channel（Redis pub/sub）に流れ、<code>FdbOrch::update(sai_fdb_event_t type, const sai_fdb_entry_t *entry, sai_object_id_t bridge_port_id, const sai_fdb_entry_type_t &amp;sai_fdb_type)</code> の <code>switch (type)</code> で以下の event を処理します。専用の <code>handleXxxEvent</code> 関数に分割されているわけではなく、すべて同一関数内の case ブロックです。<sup id="fnref:fdborch"><a class="footnote-ref" href="#fn:fdborch">1</a></sup></p>
 <table>
 <thead>
 <tr>
 <th>SAI event</th>
-<th>FdbOrch handler</th>
+<th>処理位置 (<code>orchagent/fdborch.cpp</code>)</th>
 <th>反映先</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>SAI_FDB_EVENT_LEARNED</code></td>
-<td><code>handleLearnedEvent</code></td>
-<td>APPL_DB.FDB_TABLE 追加、STATE_DB 更新</td>
+<td><code>case SAI_FDB_EVENT_LEARNED:</code></td>
+<td>APPL_DB.FDB_TABLE 追加、<code>m_entries</code> / counter 更新</td>
 </tr>
 <tr>
 <td><code>SAI_FDB_EVENT_AGED</code></td>
-<td><code>handleAgedEvent</code></td>
-<td>APPL_DB.FDB_TABLE 削除</td>
+<td><code>case SAI_FDB_EVENT_AGED:</code></td>
+<td>APPL_DB.FDB_TABLE 削除、<code>m_entries</code> から remove</td>
 </tr>
 <tr>
 <td><code>SAI_FDB_EVENT_MOVE</code></td>
-<td><code>handleMoveEvent</code></td>
+<td><code>case SAI_FDB_EVENT_MOVE:</code></td>
 <td>bridge_port 差し替え</td>
 </tr>
 <tr>
 <td><code>SAI_FDB_EVENT_FLUSHED</code></td>
-<td><code>handleFlushedEvent</code></td>
+<td><code>case SAI_FDB_EVENT_FLUSHED:</code></td>
 <td>該当 LAG/VLAN の FDB 一括削除</td>
 </tr>
 </tbody>
@@ -36320,6 +36320,24 @@
 <li><a href="../../../switching/sonic-ip-lag-incremental-update/">SONiC IP LAG incremental update</a></li>
 </ul>
 <!-- glossary-links-injected: ec18b66e3507 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:fdborch">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/fdborch.cpp</code> L278-L646 (<code>FdbOrch::update(sai_fdb_event_t, ...)</code> の <code>switch (type)</code> で <code>SAI_FDB_EVENT_LEARNED</code> / <code>AGED</code> / <code>MOVE</code> / <code>FLUSHED</code> を処理)、ref: <code>4305596156d70e9797e8a881b3d19b46de0bce0d</code>。&#160;<a class="footnote-backref" href="#fnref:fdborch" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:fdborch" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:fdborch" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:portsyncd">
+<p><code>sonic-net/sonic-swss</code> <code>portsyncd/portsyncd.cpp</code> L48-L93 (<code>main()</code> が <code>NetLink</code> を <code>RTNLGRP_LINK</code> で listen し、<code>LinkSync</code> インスタンスを <code>RTM_NEWLINK</code> / <code>RTM_DELLINK</code> の handler として <code>NetDispatcher</code> に登録)、<code>portsyncd/linksync.cpp</code>、ref: <code>4305596156d70e9797e8a881b3d19b46de0bce0d</code>。専用の <code>PortSyncd::run</code> クラスメソッドは存在しません。&#160;<a class="footnote-backref" href="#fnref:portsyncd" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:addlagmember">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/portsorch.cpp</code> L8138-L8175 (<code>PortsOrch::addLagMember</code>: <code>enableForwarding == false</code> の場合のみ <code>SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE</code> / <code>INGRESS_DISABLE</code> を初期 attribute に積む)、ref: <code>4305596156d70e9797e8a881b3d19b46de0bce0d</code>。&#160;<a class="footnote-backref" href="#fnref:addlagmember" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:setdist">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/portsorch.cpp</code> L8296-L8345 (<code>PortsOrch::setCollectionOnLagMember</code> / <code>setDistributionOnLagMember</code> が <code>sai_lag_api-&gt;set_lag_member_attribute</code> で <code>INGRESS_DISABLE</code> / <code>EGRESS_DISABLE</code> を切り替え)、ref: <code>4305596156d70e9797e8a881b3d19b46de0bce0d</code>。&#160;<a class="footnote-backref" href="#fnref:setdist" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

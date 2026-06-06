@@ -36269,9 +36269,40 @@ SSH 切断でプロセスツリーが SIGHUP を受けて終了する。</p>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># または</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>tmux<span class="w"> </span>new-session<span class="w"> </span>-d<span class="w"> </span>-s<span class="w"> </span>warmboot<span class="w"> </span><span class="s1">&#39;warm-reboot&#39;</span>
 </span></code></pre></div>
-<p><strong>現行 master での状況</strong>: <code>scripts/warm-reboot</code> は今も bash スクリプトで、<code>trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM</code>
-により実行中のシグナルを無視するが、起動時点で受けた SIGHUP には依然脆弱なため、SSH 経由実行時は
-<code>nohup</code> / <code>screen</code> / <code>tmux</code> での detach が推奨される運用は master でも変わらない<sup id="fnref:warmreboot-trap"><a class="footnote-ref" href="#fn:warmreboot-trap">13</a></sup>。</p>
+<p><strong>現行 master での状況</strong>: <code>scripts/warm-reboot</code> は今も bash スクリプトで、warm-reboot / fast-reboot
+の分岐後に <code>trap clear_boot EXIT HUP INT QUIT TERM KILL ABRT ALRM</code> を仕掛けて中断時には
+<code>clear_boot</code> (kexec -u / warm_restart disable / WARM_DIR の redis スナップショット退避) でロール
+バックを試みる。kexec 直前に至った段階で初めて <code>trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM</code>
+へ差し替え、最終クリティカル区間ではシグナルを無視する設計になっている<sup id="fnref:warmreboot-trap"><a class="footnote-ref" href="#fn:warmreboot-trap">13</a></sup>。
+いずれにせよスクリプト全体が前段で SIGHUP を受けると中断 (clear_boot 経由でロールバック) するため、
+SSH 経由実行時は <code>nohup</code> / <code>screen</code> / <code>tmux</code> での detach が推奨される。</p>
+<!-- evidence:
+source: sonic-net/sonic-utilities/scripts/warm-reboot#L947,L962,L1151-L1152 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  trap clear_boot EXIT HUP INT QUIT TERM KILL ABRT ALRM
+  ...
+  # disable trap-handlers which were set before
+  trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM
+reasoning: >
+  前段では clear_boot による中断クリーンアップ trap が掛かっており、kexec 直前で初めて
+  空 trap に差し替えられる二段構造であることを実コードで確認。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/scripts/warm-reboot#L947,L962,L1151-L1152 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/scripts/warm-reboot#L947,L962,L1151-L1152 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>trap clear_boot EXIT HUP INT QUIT TERM KILL ABRT ALRM
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>...
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a># disable trap-handlers which were set before
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>trap &#39;&#39; EXIT HUP INT QUIT TERM KILL ABRT ALRM
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 前段では clear_boot による中断クリーンアップ trap が掛かっており、kexec 直前で初めて 空 trap に差し替えられる二段構造であることを実コードで確認。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <hr />
 <h2 id="4-fast-reboot-7140">4. fast-reboot ダウンタイム超過 (#7140)<sup id="fnref:7140"><a class="footnote-ref" href="#fn:7140">8</a></sup><a class="headerlink" href="#4-fast-reboot-7140" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: fast-reboot のダウンタイムが 30 秒制限を超える。</p>
@@ -36280,9 +36311,9 @@ SSH 切断でプロセスツリーが SIGHUP を受けて終了する。</p>
 2. カーネルの kexec 処理遅延 (#6866)<sup id="fnref:6866"><a class="footnote-ref" href="#fn:6866">9</a></sup>
 3. プラットフォーム固有の SAI 初期化時間</p>
 <p><strong>確認方法</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>show<span class="w"> </span>reboot-cause
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># /var/log/syslog で fast-reboot の各フェーズのタイムスタンプを確認</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;fast-reboot|kexec|orchagent&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>show<span class="w"> </span>reboot-cause
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1"># /var/log/syslog で fast-reboot の各フェーズのタイムスタンプを確認</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;fast-reboot|kexec|orchagent&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
 </span></code></pre></div>
 <p><strong>現行 master での状況</strong>: fast-reboot のダウンタイム上限はプラットフォーム依存で、SONiC 側に汎用的な
 30 秒保証はもともと存在しない（30 秒は当時の目標値）。master でも <code>fast-reboot</code> スクリプトと
@@ -36291,14 +36322,14 @@ SSH 切断でプロセスツリーが SIGHUP を受けて終了する。</p>
 <hr />
 <h2 id="5-7518">5. イメージダウングレード失敗 (#7518)<sup id="fnref:7518"><a class="footnote-ref" href="#fn:7518">10</a></sup><a class="headerlink" href="#5-7518" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: 最新 master から古いイメージへのダウングレードが失敗する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sonic-installer: package migration failed
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sonic-installer: package migration failed
 </span></code></pre></div>
 <p><strong>背景</strong>: SONiC は公式にはダウングレードを保証しない。
 master ブランチでインストールされたパッケージが
 古いイメージのパッケージと非互換になる場合がある。</p>
 <p><strong>回避策</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># パッケージ移行をスキップ</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sonic-installer<span class="w"> </span>install<span class="w"> </span>--skip-package-migration<span class="w"> </span>&lt;image&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># パッケージ移行をスキップ</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sonic-installer<span class="w"> </span>install<span class="w"> </span>--skip-package-migration<span class="w"> </span>&lt;image&gt;
 </span></code></pre></div>
 <p><strong>現行 master での状況</strong>: <code>--skip-package-migration</code> オプションは現行 master の
 <code>sonic_installer/main.py</code> でも有効で<sup id="fnref:skip-pkg-mig"><a class="footnote-ref" href="#fn:skip-pkg-mig">14</a></sup>、対象 bootloader が package migration をサポート
@@ -36306,15 +36337,15 @@ master ブランチでインストールされたパッケージが
 <hr />
 <h2 id="6-reboot-cause-12512">6. reboot-cause の誤表示 (#12512)<sup id="fnref:12512"><a class="footnote-ref" href="#fn:12512">11</a></sup><a class="headerlink" href="#6-reboot-cause-12512" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: ウォームブート後に reboot-cause が正しい理由を表示しない。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>show<span class="w"> </span>reboot-cause
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="c1"># 期待: warm-reboot</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># 実際: Unknown</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>show<span class="w"> </span>reboot-cause
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c1"># 期待: warm-reboot</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c1"># 実際: Unknown</span>
 </span></code></pre></div>
 <p><strong>原因</strong>: <code>/host/reboot-cause/reboot-cause-file</code> の書き込みタイミングが
 カーネル kexec より後になる競合条件。</p>
 <p><strong>確認</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>cat<span class="w"> </span>/host/reboot-cause/previous-reboot-cause
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>cat<span class="w"> </span>/var/log/reboot-cause/REBOOT_CAUSE
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>cat<span class="w"> </span>/host/reboot-cause/previous-reboot-cause
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>cat<span class="w"> </span>/var/log/reboot-cause/REBOOT_CAUSE
 </span></code></pre></div>
 <p><strong>現行 master での状況</strong>: <code>/host/reboot-cause/previous-reboot-cause</code> は現行 master の各プラット
 フォーム <code>sonic_platform/chassis.py</code> でも参照されているパスである。reboot-cause 競合の根本対策は
@@ -36323,10 +36354,10 @@ issue で議論中だが、<code>show reboot-cause history</code> で過去ロ�
 <h2 id="7-202012-fast-reboot-orchagent-9899">7. [202012] fast-reboot orchagent タイムアウト (#9899)<sup id="fnref:9899"><a class="footnote-ref" href="#fn:9899">12</a></sup><a class="headerlink" href="#7-202012-fast-reboot-orchagent-9899" title="Permanent link">&para;</a></h2>
 <p><strong>現象</strong>: fast-reboot 中に orchagent が INIT_VIEW 通知の受信を syncd に
 タイムアウトする。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>orchagent: timeout to notify syncd to begin INIT_VIEW
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>orchagent: timeout to notify syncd to begin INIT_VIEW
 </span></code></pre></div>
 <p><strong>関連する可能性があるログ</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>kernel: igb 0000:0a:00.0 eth0: igb_watchdog_task: Detected Tx Unit Hang
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>kernel: igb 0000:0a:00.0 eth0: igb_watchdog_task: Detected Tx Unit Hang
 </span></code></pre></div>
 <p><strong>対処</strong>: NIC の TX ハング（ management port）が原因の場合がある。
 ドライバのリセットが完了してから再試行。</p>
@@ -36421,7 +36452,7 @@ NIC ドライバ（igb 等）の TX hang 警告の有無を併せて確認する
 <p><a href="https://github.com/sonic-net/sonic-buildimage/issues/9899">sonic-buildimage #9899</a> — [202012] fast-reboot 中の orchagent INIT_VIEW タイムアウト。&#160;<a class="footnote-backref" href="#fnref:9899" title="Jump back to footnote 12 in the text">&#8617;</a></p>
 </li>
 <li id="fn:warmreboot-trap">
-<p><code>scripts/warm-reboot</code>（<code>sonic-net/sonic-utilities</code>）の <code>trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM</code> 行。実行中のシグナルは無視するが、起動時点での SSH 切断耐性は得られない。&#160;<a class="footnote-backref" href="#fnref:warmreboot-trap" title="Jump back to footnote 13 in the text">&#8617;</a></p>
+<p><code>scripts/warm-reboot</code>（<code>sonic-net/sonic-utilities</code> sha <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>）。L947 / L962 で <code>trap clear_boot EXIT HUP INT QUIT TERM KILL ABRT ALRM</code> (fast-reboot / warm-reboot 分岐時)、L1152 で kexec 直前に <code>trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM</code> に差し替え。<code>clear_boot()</code> は L339 に定義され <code>kexec -u</code> / <code>config warm_restart disable</code> / WARM_DIR redis スナップショット退避を行う。&#160;<a class="footnote-backref" href="#fnref:warmreboot-trap" title="Jump back to footnote 13 in the text">&#8617;</a></p>
 </li>
 <li id="fn:skip-pkg-mig">
 <p><code>sonic_installer/main.py</code> の <code>install</code> コマンドにおける <code>--skip-package-migration</code> オプション定義（<code>sonic-net/sonic-utilities</code>）。&#160;<a class="footnote-backref" href="#fnref:skip-pkg-mig" title="Jump back to footnote 14 in the text">&#8617;</a></p>

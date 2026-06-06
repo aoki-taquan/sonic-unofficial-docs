@@ -35868,7 +35868,7 @@
 <li><a href="../../topics/06-l2-vlan-lag/architecture/">L2 のアーキテクチャ</a> — [meta] L2 のアーキテクチャ — L2 設定は、CONFIG_DB のテーブルごとに担当 daemon が決まり、APPL_DB や orchagent を通って…</li>
 <li><a href="../../topics/06-l2-vlan-lag/setup/">L2 設定パターン</a> — [meta] L2 設定パターン — ここでは、個別 CLI の全引数ではなく、L2 を組むときの代表的な順序を示します。詳細なオプション、制約、実装との乖離は各参照ページ…</li>
 <li><a href="../../topics/06-l2-vlan-lag/operations/">L2 運用確認</a> — [meta] L2 運用確認 — L2 障害は「VLAN に入っていない」「LAG が期待通り up していない」「MAC 学習が古い」「MC-LAG peer と状態がず…</li>
-<li><a href="../../topics/06-l2-vlan-lag/internals/">内部実装</a> — [meta] 内部実装 — L2 / VLAN / LAG / MC-LAG の内部実装は「kernel と orchagent の二重管理」を理解するのが鍵です。</li>
+<li><a href="../../topics/06-l2-vlan-lag/internals/">内部実装</a> — [code-verified] L2 / VLAN / LAG / MC-LAG の内部実装を kernel と orchagent の二重管理という観点で整理し、FdbOrch / Por…</li>
 <li><a href="../../topics/06-l2-vlan-lag/advanced/">L2 発展トピック</a> — [meta] L2 発展トピック — このページは、通常の VLAN / PortChannel / MC-LAG 設計から一歩外れる話題の入口です。OpenConfig…</li>
 </ul>
 </li>
@@ -35878,7 +35878,7 @@
 <li><a href="../../topics/07-acl-copp-mirror/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — ACL の中心は AclOrch です。設定は CONFIG_DB から入り、APPL_DB を経由して AclOrch が SAI AC…</li>
 <li><a href="../../topics/07-acl-copp-mirror/setup/">設定</a> — [meta] 設定 — ACL の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。config acl は table の作成・削…</li>
 <li><a href="../../topics/07-acl-copp-mirror/operations/">運用</a> — [meta] 運用 — ACL / CoPP / mirror の調査では、設定が存在するか、ASIC に反映されたか、counter が増えるかを分けて確認します。CON…</li>
-<li><a href="../../topics/07-acl-copp-mirror/internals/">内部実装</a> — [meta] 内部実装 — ACL action はスキーマに書けるだけでは十分ではありません。ASIC がその stage でその action を受理できるか、SAI…</li>
+<li><a href="../../topics/07-acl-copp-mirror/internals/">内部実装</a> — [meta] ACL action はスキーマに書けるだけでは十分ではない。ASIC がその stage でその action を受理できるか、SAI capability…</li>
 <li><a href="../../topics/07-acl-copp-mirror/advanced/">発展トピック</a> — [meta] 発展トピック — このページは、ACL / CoPP / mirror の基本線から少し外れるが、同じ「分類、保護、観測、rate limit」の考え方で読め…</li>
 </ul>
 </li>
@@ -36137,7 +36137,7 @@
 <li><a href="../../routing/srv6-vpn-hld/">SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）</a> — [code-verified] SRv6 VPN（L3VPN over SRv6 と SRv6 Policy） — Alibaba がエッジルータ用ホワイトボックス SONiC で運用してい…</li>
 <li><a href="../../routing/static-configuration-of-srv6-in-sonic-hld/">SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）</a> — [code-verified] SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR） — SRv6 SDN を BGP に頼らず構築する…</li>
 <li><a href="../../routing/mpls-for-sonic-high-level-design-document/">SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP）</a> — [code-verified] SONiC の MPLS 基盤設計を解説する。静的 LSP を前提に per-RIF での MPLS enable/disable、Push / Pop /…</li>
-<li><a href="../../routing/mpls-tc-to-tc-map/">MPLS TC → TC map（MPLS パケットの QoS classification）</a> — [code-verified] MPLS TC → TC map（MPLS パケットの QoS classification） — SONiC の QoS は DSCP / DOT1P /…</li>
+<li><a href="../../routing/mpls-tc-to-tc-map/">MPLS TC → TC map（MPLS パケットの QoS classification）</a> — [code-verified] MPLS パケットの TC（旧 EXP、RFC 5462）から内部 TC への classification map を SONiC の既存 QoS フロー（…</li>
 <li><a href="../../routing/dhcp-relay-for-ipv6-hld/">DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）</a> — [code-verified] DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス） — SONiC の DHCPv4 リレーは dhcp-re…</li>
 <li><a href="../../routing/dhcp-relay-per-interface-counter/">DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）</a> — [code-verified] DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化） — 旧設計の DHCP…</li>
 <li><a href="../../routing/evpn-vxlan-hld/">EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）</a> — [discrepancy-found] EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5） — EVPN は MAC / IP の到達情報を…</li>
@@ -36238,7 +36238,7 @@
 <li><a href="../../acl-qos/configurable-drop-counters-in-sonic/">設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）</a> — [code-verified] 設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter） — SAI debug counter を活用し、…</li>
 <li><a href="../../acl-qos/sonic-test-ingress-discards-hld/">ingress discards テスト計画（21 ケースで drop counter を検証）</a> — [code-verified] ingress discards テスト計画（21 ケースで drop counter を検証） — DUT が 特定の不正パケット を ingress で…</li>
 <li><a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/">DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）</a> — [discrepancy-found] DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース） — 「なぜ CoPP 全体ではダメか」「何を投入すれば効くのか」「いま…</li>
-<li><a href="../../acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture/">VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）</a> — [code-verified] VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis） — VoQ（Virtual Output Que…</li>
+<li><a href="../../acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture/">VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）</a> — [code-verified] VoQ（Virtual Output Queue）シャーシで複数 ASIC を 1 論理ルータとして動かすための骨格設計。FSI/SSI 役割分担、redis…</li>
 <li><a href="../../acl-qos/enhancements-to-add-or-del-ports-dynamically/">ポートの動的 add / del（zero-port 起動と post-init 操作）</a> — [discrepancy-found] ポートの動的 add / del（zero-port 起動と post-init 操作） — SONiC は本来「init 時にすべてのポートを作る」前提で設…</li>
 <li><a href="../../acl-qos/enhancements-to-add-or-del-ports-dynamically-concepts/">動的ポート add/del 概念（zero-port 起動と post-init モデル）</a> — [discrepancy-found] SONiC の動的ポート add/del 機能の概念。3 つの起動形態（全ポート / 一部 / ゼロポート）、初期化フェーズと PortConfigDone…</li>
 <li><a href="../../acl-qos/enhancements-to-add-or-del-ports-dynamically-operations/">動的ポート add/del 設定と運用（zero-port 起動・安全削除手順）</a> — [discrepancy-found] 動的ポート add/del の運用。zero-port 起動から redis-cli でのポート追加例、安全な port 削除の手順、トラブルシューティングを…</li>
@@ -36369,7 +36369,7 @@
 <li><a href="../../management/sonic-application-extension-guide/">SONiC Application Extension 開発・移植ガイド</a> — [discrepancy-found] SONiC Application Extension 開発・移植ガイド — SONiC の docker 化された機能（DHCP relay 等）を App…</li>
 <li><a href="../../management/sonic-user-manual/">SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像</a> — [code-verified] SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像 — SONiC のユーザマニュアルは「日常運用と機能設定を一冊で…</li>
 <li><a href="../../management/config-reload-enhancement/">config reload の event-driven 化（FEATURE.delayed + PortInitDone）</a> — [code-verified] config reload の event-driven 化（FEATURE.delayed + PortInitDone） — 従来の config rel…</li>
-<li><a href="../../management/design-doc/">gRPC client（active-active DualToR / ycabled ↔ SoC 連携）</a> — [code-verified] gRPC client（active-active DualToR / ycabled ↔ SoC 連携） — DualToR の active-active…</li>
+<li><a href="../../management/design-doc/">gRPC client（active-active DualToR / ycabled ↔ SoC 連携）</a> — [code-verified] DualToR active-active 構成において PMON コンテナ内の gRPC client daemon が ycabled / linkmgr…</li>
 <li><a href="../../management/enhancement-of-cmis-module-management/">CMIS モジュール管理拡張（host_tx_signal / host_tx_ready の同期）</a> — [code-verified] CMIS モジュール管理拡張（host_tx_signal / host_tx_ready の同期） — ASIC 側 SerDes は SWSS の Por…</li>
 <li><a href="../../management/sonic-cli-auto-generation-tool/">SONiC CLI 自動生成ツール（YANG → click plugin 自動生成）</a> — [code-verified] SONiC CLI 自動生成ツール — SONiC Application Extension (SAE) として 3rd party 機能を 追加 dock…</li>
 <li><a href="../../management/gnmi-streaming-telemetry-pitfalls/">gNMI ストリーミングテレメトリの落とし穴</a> — [issue-confirmed] dial-in ストリーミングテレメトリで発生する OOM・メモリリーク・RESOURCE_EXHAUSTED エラーの原因と対策。</li>

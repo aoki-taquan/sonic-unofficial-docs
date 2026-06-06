@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="MPLS TC → TC map（MPLS パケットの QoS classification） — SONiC の QoS は DSCP / DOT1P / TC の各値間でマップを定義し、CONFIG_DB の _TO__MAP テーブルとポート毎の PORT_QOS_MAP を介して SAI に降ろす設計を取って…">
+        <meta name="description" content="MPLS パケットの TC（旧 EXP、RFC 5462）から内部 TC への classification map を SONiC の既存 QoS フロー（MPLS_TC_TO_TC_MAP テーブル + PORT_QOS_MAP の mpls_tc_to_tc_map フィールド）に追加し、 SAI_QOS_MAP_MPLS_EXP_TO_TC を介して ASIC に降ろす仕組みを解説する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="MPLS TC → TC map（MPLS パケットの QoS classification） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="MPLS TC → TC map（MPLS パケットの QoS classification） — SONiC の QoS は DSCP / DOT1P / TC の各値間でマップを定義し、CONFIG_DB の _TO__MAP テーブルとポート毎の PORT_QOS_MAP を介して SAI に降ろす設計を取って…" />
+<meta property="og:description" content="MPLS パケットの TC（旧 EXP、RFC 5462）から内部 TC への classification map を SONiC の既存 QoS フロー（MPLS_TC_TO_TC_MAP テーブル + PORT_QOS_MAP の mpls_tc_to_tc_map フィールド）に追加し、 SAI_QOS_MAP_MPLS_EXP_TO_TC を介して ASIC に降ろす仕組みを解説する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/mpls-tc-to-tc-map.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/mpls-tc-to-tc-map/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="MPLS TC → TC map（MPLS パケットの QoS classification） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="MPLS TC → TC map（MPLS パケットの QoS classification） — SONiC の QoS は DSCP / DOT1P / TC の各値間でマップを定義し、CONFIG_DB の _TO__MAP テーブルとポート毎の PORT_QOS_MAP を介して SAI に降ろす設計を取って…" />
+<meta property="twitter:description" content="MPLS パケットの TC（旧 EXP、RFC 5462）から内部 TC への classification map を SONiC の既存 QoS フロー（MPLS_TC_TO_TC_MAP テーブル + PORT_QOS_MAP の mpls_tc_to_tc_map フィールド）に追加し、 SAI_QOS_MAP_MPLS_EXP_TO_TC を介して ASIC に降ろす仕組みを解説する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/mpls-tc-to-tc-map.png" />
 </head>
   

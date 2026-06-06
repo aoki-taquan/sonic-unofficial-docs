@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="gRPC client（active-active DualToR / ycabled ↔ SoC 連携） — DualToR の active-active 構成では、HOST → FPGA → SoC（外部のサブシステム）の経路で forwarding state が動的に切り替わる。">
+        <meta name="description" content="DualToR active-active 構成において PMON コンテナ内の gRPC client daemon が ycabled / linkmgrd と SoC 上の gRPC server を loopback IP / TLS 経由で接続し、forwarding state を双方向にやり取りする HLD の解説。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="gRPC client（active-active DualToR / ycabled ↔ SoC 連携） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="gRPC client（active-active DualToR / ycabled ↔ SoC 連携） — DualToR の active-active 構成では、HOST → FPGA → SoC（外部のサブシステム）の経路で forwarding state が動的に切り替わる。" />
+<meta property="og:description" content="DualToR active-active 構成において PMON コンテナ内の gRPC client daemon が ycabled / linkmgrd と SoC 上の gRPC server を loopback IP / TLS 経由で接続し、forwarding state を双方向にやり取りする HLD の解説。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/design-doc.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/management/design-doc/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="gRPC client（active-active DualToR / ycabled ↔ SoC 連携） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="gRPC client（active-active DualToR / ycabled ↔ SoC 連携） — DualToR の active-active 構成では、HOST → FPGA → SoC（外部のサブシステム）の経路で forwarding state が動的に切り替わる。" />
+<meta property="twitter:description" content="DualToR active-active 構成において PMON コンテナ内の gRPC client daemon が ycabled / linkmgrd と SoC 上の gRPC server を loopback IP / TLS 経由で接続し、forwarding state を双方向にやり取りする HLD の解説。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/design-doc.png" />
 </head>
   
@@ -36403,21 +36403,68 @@ reasoning: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notifica
 </details>
 <!-- evidence-rendered:end -->
 
+<!-- evidence:
+source: sonic-net/SONiC/doc/grpc_client/design_doc.md#L327-L338 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  CONFIG DB
+  GRPC_CLIENT| certs
+  - ca_crt| /etc/sonic/credentials/<root>.pem
+  - client_crt | /etc/sonic/credentials/<>.crt
+  - client_key | /etc/sonic/credentials/<>.key
+  GRPC_CLIENT| config
+  - auth_level| client/server/mutual
+  - log_level| debug/info
+  - type | secure/ insecure
+reasoning: CONFIG_DB GRPC_CLIENT|certs / GRPC_CLIENT|config の 2 キー定義の根拠。related.config_db の primary 項目。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/grpc_client/design_doc.md#L327-L338 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/grpc_client/design_doc.md#L327-L338 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>CONFIG DB
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>GRPC_CLIENT| certs
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>- ca_crt| /etc/sonic/credentials/&lt;root&gt;.pem
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>- client_crt | /etc/sonic/credentials/&lt;&gt;.crt
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>- client_key | /etc/sonic/credentials/&lt;&gt;.key
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>GRPC_CLIENT| config
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>- auth_level| client/server/mutual
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>- log_level| debug/info
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>- type | secure/ insecure
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: CONFIG_DB GRPC_CLIENT|certs / GRPC_CLIENT|config の 2 キー定義の根拠。related.config_db の primary 項目。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当なし（<a href="../../reference/glossary/#term-hld">HLD</a> では明示なし）。証明書パス等は <strong>設定ファイル</strong> で渡す想定。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> §gRPC client initialization/deployment では以下 2 キーが定義されている<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>CONFIG_DB
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>GRPC_CLIENT|certs
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  ca_crt    = /etc/sonic/credentials/&lt;root&gt;.pem
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  client_crt = /etc/sonic/credentials/&lt;&gt;.crt
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  client_key = /etc/sonic/credentials/&lt;&gt;.key
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>GRPC_CLIENT|config
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>  auth_level = client | server | mutual
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>  log_level  = debug | info | ...
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>  type       = secure | insecure
+</span></code></pre></div>
+<p>これらは PMON 起動時に読まれ、<code>ChannelCredentials</code> の構築や plaintext fallback の切替に使われる。MUX_CABLE / MUX_LINKMGR / PEER_SWITCH 等の DualToR コア設定は本 HLD のスコープ外（<a href="../../overlay/active-active-dual-tor/">active-active DualToR の上位 HLD</a> 側に属する）。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD で具体名は明示なし。<code>show mux ...</code> 系の active-active 統合 CLI から間接的に gRPC channel 状態が見える可能性あり。</p>
+<p><code>show muxcable grpc</code> 系で channel 状態が間接的に見える想定だが、HLD では具体的なコマンド体系は明示されていない<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実装上は ycabled が STATE_DB 配下の channel state を埋め、CLI 側はそれを表示する分業になる。</p>
 <h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># gRPC daemon 動作確認</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>pmon<span class="w"> </span>supervisorctl<span class="w"> </span>status
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># STATE_DB の gRPC channel</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;GRPC_CLIENT*&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;GRPC_CLIENT_TABLE|&lt;soc&gt;&quot;</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># 証明書</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>ls<span class="w"> </span>/etc/sonic/credentials/*.crt<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># gRPC daemon 動作確認</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>pmon<span class="w"> </span>supervisorctl<span class="w"> </span>status
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># STATE_DB の gRPC channel</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;GRPC_CLIENT*&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;GRPC_CLIENT_TABLE|&lt;soc&gt;&quot;</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="c1"># 証明書</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>ls<span class="w"> </span>/etc/sonic/credentials/*.crt<span class="w"> </span><span class="m">2</span>&gt;/dev/null
 </span></code></pre></div>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36437,15 +36484,15 @@ reasoning: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notifica
 <li><strong>PMON container</strong>: gRPC daemon の host</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># gRPC channel 状態</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;GRPC_CLIENT*&quot;</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># loopback で SoC まで届いているか</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>ping<span class="w"> </span>-I<span class="w"> </span>lo<span class="w"> </span>&lt;SoC_IP&gt;
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>ss<span class="w"> </span>-tnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>&lt;SoC_IP&gt;
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="c1"># TLS handshake のエラー</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>docker<span class="w"> </span>logs<span class="w"> </span>pmon<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>grpc
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># gRPC channel 状態</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;GRPC_CLIENT*&quot;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># loopback で SoC まで届いているか</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>ping<span class="w"> </span>-I<span class="w"> </span>lo<span class="w"> </span>&lt;SoC_IP&gt;
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>ss<span class="w"> </span>-tnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>&lt;SoC_IP&gt;
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="c1"># TLS handshake のエラー</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>docker<span class="w"> </span>logs<span class="w"> </span>pmon<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>grpc
 </span></code></pre></div>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
@@ -36457,8 +36504,8 @@ reasoning: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notifica
 
 <h2 id="_10">参考リンク<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
+<li><a href="../../overlay/active-active-dual-tor/">DualToR active-active overlay</a></li>
 <li><a href="../../reference/cli/show-muxcable/">CLI: show muxcable</a></li>
-<li><a href="../../reference/cli/config-muxcable/">CLI: config muxcable</a></li>
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA</a></li>
 <li><a href="../../reference/glossary/">Glossary</a></li>
@@ -36470,7 +36517,7 @@ reasoning: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notifica
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/grpc_client/design_doc.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/grpc_client/design_doc.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -36087,11 +36087,12 @@
 </span></code></pre></div>
 <p><code>rc</code> は SWSS_RC_FULL（TABLE_FULL）など SWSS code を文字列で持つ想定。</p>
 <h2 id="2">2. イベント遷移<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<p>下表は HLD §3.3.1（<code>error_handling_design_spec.md</code> L194–L202）で <strong>明示列挙された遷移パターンの全件</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。HLD はこの 5 パターンのみを「framework がエントリを既存状態と突き合わせて特別に扱うケース」として列挙しており、抜粋ではない。</p>
 <table>
 <thead>
 <tr>
-<th>直前</th>
-<th>今回</th>
+<th>直前 (Previous)</th>
+<th>今回 (Current)</th>
 <th>framework 動作</th>
 </tr>
 </thead>
@@ -36123,7 +36124,12 @@
 </tr>
 </tbody>
 </table>
-<p>正常完了系はデフォルトで ERROR_DB に書かない。<code>ERR_NOTIFY_POSITIVE_ACK</code> 指定時のみ通知<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>表に現れない組み合わせ（例: 直前 = Create success → 今回 = Update failure、直前 = Update success → 今回 = Update failure、または ERROR_DB に直前エントリが無い「初回失敗」）は、HLD §3.3 の一般則（L168–L188）に従う:</p>
+<ul>
+<li><strong>失敗イベント受信時</strong> — ERROR_DB にエントリを追加（既存なら failure code を更新）し、登録 listener に通知<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>成功イベント受信時</strong> — ERROR_DB に対応エントリがあれば削除、無ければ何もしない。listener へは <code>ERR_NOTIFY_POSITIVE_ACK</code> 登録者のみ通知<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<p>正常完了系はデフォルトで ERROR_DB に書かない。<code>ERR_NOTIFY_POSITIVE_ACK</code> 指定時のみ通知<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="3-cli">3. CLI<a class="headerlink" href="#3-cli" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36150,8 +36156,8 @@
 </span></code></pre></div>
 <h2 id="4-warm-boot-scalability">4. Warm boot / scalability<a class="headerlink" href="#4-warm-boot-scalability" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ERROR_DB は <strong>warm boot 越しに永続化されない</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>scalability への直接影響は無いと記述</li>
+<li>ERROR_DB は <strong>warm boot 越しに永続化されない</strong>（HLD §6, L378–L379）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>scalability への直接影響は無いと HLD に記述</li>
 </ul>
 <h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36230,7 +36236,7 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/error-handling/error_handling_design_spec.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/error-handling/error_handling_design_spec.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

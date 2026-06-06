@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis） — VoQ（Virtual Output Queue）アーキテクチャでは、複数 ASIC が 内部ファブリック で繋がれた 1 つの論理ルータとして動く。">
+        <meta name="description" content="VoQ（Virtual Output Queue）シャーシで複数 ASIC を 1 論理ルータとして動かすための骨格設計。FSI/SSI 役割分担、redis_chassis 上の CHASSIS_APP_DB、chassisdb.conf による起動制御を整理する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis） — VoQ（Virtual Output Queue）アーキテクチャでは、複数 ASIC が 内部ファブリック で繋がれた 1 つの論理ルータとして動く。" />
+<meta property="og:description" content="VoQ（Virtual Output Queue）シャーシで複数 ASIC を 1 論理ルータとして動かすための骨格設計。FSI/SSI 役割分担、redis_chassis 上の CHASSIS_APP_DB、chassisdb.conf による起動制御を整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis） — VoQ（Virtual Output Queue）アーキテクチャでは、複数 ASIC が 内部ファブリック で繋がれた 1 つの論理ルータとして動く。" />
+<meta property="twitter:description" content="VoQ（Virtual Output Queue）シャーシで複数 ASIC を 1 論理ルータとして動かすための骨格設計。FSI/SSI 役割分担、redis_chassis 上の CHASSIS_APP_DB、chassisdb.conf による起動制御を整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.png" />
 </head>
   
@@ -36322,9 +36322,9 @@
 <p class="admonition-title">裏取りステータス: code-verified（骨格のみ）</p>
 <p><code>sonic-swss-common/common/database_config.json</code> L8-11 で <code>redis_chassis</code> インスタンス（hostname <code>redis_chassis.server</code>、<code>/var/run/redis/redis_chassis.sock</code>）、L80-88 で <code>CHASSIS_APP_DB</code> が <code>redis_chassis</code> インスタンスに紐付くこと、<code>sonic-buildimage/dockers/docker-database/docker-database-init.sh</code> L85-86 で <code>database-chassis</code> 用の docker init 経路を確認（verified at: 2026-05-09）。詳細な FSI/SSI 制御プレーンや LAG / 内部データプレーンは別 HLD 領域。</p>
 </div>
-<div class="admonition note">
-<p class="admonition-title">area の経緯</p>
-<p>backlog 上は <code>acl-qos</code> カテゴリだが、内容は分散転送のアーキテクチャ全体（routing / platform / system にまたがる）。本ページは backlog の指定どおり <code>acl-qos</code> 配下に置く。</p>
+<div class="admonition info">
+<p class="admonition-title">本ページの位置づけ</p>
+<p>分散転送 (VoQ) は queue まわりの設計のため <code>area: acl-qos</code> 配下に置くが、内容は platform / routing / system にまたがる骨格 HLD。queue / scheduler の挙動そのものは <a href="../sonic-qos-scheduler-and-shaping/">SONiC QoS scheduler / shaping</a>、platform 側の派生は <a href="../../platform/single-asic-voq-fixed-system-sonic/">Single-ASIC VoQ</a> / <a href="../../platform/voq-sonic/">VoQ SONiC</a>、内部 iBGP メッシュは <a href="../../routing/bgp-setup-for-voq-chassis/">BGP setup for VoQ Chassis</a> を参照。</p>
 </div>
 <h1 id="voq-fsissi-chassis-db-redis_chassis">VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）<a class="headerlink" href="#voq-fsissi-chassis-db-redis_chassis" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

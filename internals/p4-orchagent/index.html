@@ -36303,7 +36303,9 @@
     P4RT--&gt;&gt;Ctrl: result</code></pre>
 <p>詳細は <code>appl_state_db_response_path_hld.md</code> 参照<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">設定<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> / SAI への変更は <strong>無し</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設定は P4Runtime controller 経由。確認は:</p>
+<p>CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> / SAI への変更は <strong>無し</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。P4Orch は <code>APPL_DB</code> の <code>P4RT_TABLE</code> (<code>APP_P4RT_*_TABLE_NAME</code>) のみを購読する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。設定は P4Runtime controller 経由。確認は:</p>
+<!-- evidence: sonic-swss/orchagent/p4orch/p4orch.cpp:41 (m_publisher("APPL_DB", ...))、:65-72 (m_p4TableToManagerMap[APP_P4RT_*_TABLE_NAME]) — CONFIG_DB のサブスクリプションは存在しない -->
+
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>orchagent
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FIXED_*_TABLE*&#39;</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;*&#39;</span>
@@ -36351,6 +36353,9 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/pins/p4orch_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/p4orch/p4orch.cpp</code> L41, L65-L72（<code>m_publisher("APPL_DB", ...)</code> および <code>APP_P4RT_*_TABLE_NAME</code> への <code>m_p4TableToManagerMap</code> 登録）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

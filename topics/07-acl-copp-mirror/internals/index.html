@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="内部実装 — ACL action はスキーマに書けるだけでは十分ではありません。ASIC がその stage でその action を受理できるか、SAI capability と orchagent の実装が揃っているかを確認する必要があります。">
+        <meta name="description" content="ACL action はスキーマに書けるだけでは十分ではない。ASIC がその stage でその action を受理できるか、SAI capability と orchagent の実装が揃っているかを STATE_DB:SWITCH_CAPABILITY と AclOrch / CoppOrch / MirrorOrch の実装で確認する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="内部実装 — ACL action はスキーマに書けるだけでは十分ではありません。ASIC がその stage でその action を受理できるか、SAI capability と orchagent の実装が揃っているかを確認する必要があります。" />
+<meta property="og:description" content="ACL action はスキーマに書けるだけでは十分ではない。ASIC がその stage でその action を受理できるか、SAI capability と orchagent の実装が揃っているかを STATE_DB:SWITCH_CAPABILITY と AclOrch / CoppOrch / MirrorOrch の実装で確認する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/07-acl-copp-mirror/internals.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/07-acl-copp-mirror/internals/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="内部実装 — ACL action はスキーマに書けるだけでは十分ではありません。ASIC がその stage でその action を受理できるか、SAI capability と orchagent の実装が揃っているかを確認する必要があります。" />
+<meta property="twitter:description" content="ACL action はスキーマに書けるだけでは十分ではない。ASIC がその stage でその action を受理できるか、SAI capability と orchagent の実装が揃っているかを STATE_DB:SWITCH_CAPABILITY と AclOrch / CoppOrch / MirrorOrch の実装で確認する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/07-acl-copp-mirror/internals.png" />
 </head>
   
@@ -36145,10 +36145,10 @@
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p><a href="../../../reference/glossary/#term-acl">ACL</a> action はスキーマに書けるだけでは十分ではありません。<a href="../../../reference/glossary/#term-asic">ASIC</a> がその stage でその action を受理できるか、<a href="../../../reference/glossary/#term-sai">SAI</a> capability と <a href="../../../reference/glossary/#term-orchagent">orchagent</a> の実装が揃っているかを確認する必要があります。egress mirror、outer <a href="../../../reference/glossary/#term-dscp">DSCP</a> 書換、packet trimming はこの性質が強い機能です。</p>
 <h2 id="acl-action-capability">ACL Action Capability<a class="headerlink" href="#acl-action-capability" title="Permanent link">&para;</a></h2>
-<p>SAI は ingress / egress stage ごとに使える ACL action が異なります。<a href="../../../reference/glossary/#term-sonic">SONiC</a> は <code>AclOrch</code> 起動時に SAI へ action capability を問い合わせ、<a href="../../../reference/glossary/#term-state_db">STATE_DB</a> の <code>SWITCH_CAPABILITY</code> に <code>ACL_ACTIONS|&lt;stage&gt;</code> として公開します。<code>acl-loader</code> などの producer は投入前に capability を見て、未対応 action を早く弾けます。</p>
+<p>SAI は ingress / egress stage ごとに使える ACL action が異なります。<a href="../../../reference/glossary/#term-sonic">SONiC</a> は <code>AclOrch</code> 起動時に <code>SAI_SWITCH_ATTR_ACL_STAGE_INGRESS</code> / <code>EGRESS</code> で action capability を問い合わせ、<a href="../../../reference/glossary/#term-state_db">STATE_DB</a> の <code>SWITCH_CAPABILITY</code> に <code>ACL_ACTIONS|&lt;stage&gt;</code> フィールドとして公開します<!-- evidence: sonic-swss orchagent/aclorch.cpp queryAclActionCapability() / putAclActionCapabilityInDB() L3975-L4061 -->。<code>acl-loader</code> などの producer は投入前に capability を見て、未対応 action を早く弾けます。</p>
 <p>この仕組みは「設定は accepted だが hardware には入らない」という問題を減らします。ただし capability が公開されていても、個別 table type や bind point、ASIC resource の都合で失敗する可能性は残るため、STATE_DB の ACL status と counter も併せて見ます。</p>
 <h2 id="egress-mirror">Egress Mirror<a class="headerlink" href="#egress-mirror" title="Permanent link">&para;</a></h2>
-<p>SAI には ingress mirror と egress mirror の action が分かれて存在します。SONiC では従来の <code>MIRROR_ACTION</code> に加えて、<code>MIRROR_INGRESS_ACTION</code> と <code>MIRROR_EGRESS_ACTION</code> を使い分けます。</p>
+<p>SAI には ingress mirror と egress mirror の action が分かれて存在します。SONiC では従来の <code>MIRROR_ACTION</code> に加えて、<code>MIRROR_INGRESS_ACTION</code> と <code>MIRROR_EGRESS_ACTION</code> を使い分け、それぞれ <code>SAI_ACL_ENTRY_ATTR_ACTION_MIRROR_INGRESS</code> / <code>SAI_ACL_ENTRY_ATTR_ACTION_MIRROR_EGRESS</code> にマップされます<!-- evidence: sonic-swss orchagent/aclorch.cpp aclMirrorStageLookup L124-L125 -->。</p>
 <pre class="mermaid"><code>flowchart LR
   RULE[ACL_RULE&lt;br&gt;MIRROR_EGRESS_ACTION=session] --&gt; AO[AclOrch]
   AO --&gt; CAP{egress action&lt;br&gt;supported?}
@@ -36160,7 +36160,7 @@
 <p>encap 後の outer header DSCP を、inner packet の field に基づいて egress で書き換えたい場合、単純な ingress DSCP rewrite では inner DSCP を壊してしまいます。Egress Outer DSCP 書換 ACL は、ingress 側で ACL metadata を付け、egress 側で metadata に match して outer DSCP を設定する設計です。</p>
 <p>ユーザには <code>UNDERLAY_SET_DSCP</code> のような table type に見せ、内部では <code>MARK_META</code> と <code>EGR_SET_DSCP</code> に展開します。この設計は <code>SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA</code> と <code>SAI_ACL_ENTRY_ATTR_FIELD_ACL_USER_META</code> に依存するため、<a href="../../../reference/glossary/#term-hld">HLD</a>-only の仕様として読む必要があります。</p>
 <h2 id="packet-trimming">Packet Trimming<a class="headerlink" href="#packet-trimming" title="Permanent link">&para;</a></h2>
-<p>Packet Trimming は congestion 時に packet 全体を落とさず、ヘッダと先頭 payload だけ残した trimmed packet を届ける機能です。global 設定、buffer profile、<a href="../../../reference/glossary/#term-qos">QoS</a>、ACL action が関係します。ACL 側では <code>DISABLE_TRIMMING</code> action により、特定 match の packet を trim 対象から外す設計です。</p>
+<p>Packet Trimming は congestion 時に packet 全体を落とさず、ヘッダと先頭 payload だけ残した trimmed packet を届ける機能です。global 設定、buffer profile、<a href="../../../reference/glossary/#term-qos">QoS</a>、ACL action が関係します。ACL 側では <code>DISABLE_TRIM</code> action（<code>SAI_ACL_ENTRY_ATTR_ACTION_PACKET_TRIM_DISABLE</code> に対応）により、特定 match の packet を trim 対象から外す設計です<!-- evidence: sonic-swss orchagent/aclorch.cpp aclL3ActionLookup ACTION_DISABLE_TRIM L114, L2047-L2051 -->。</p>
 <p>運用上は packet trimming を ACL の派生 action としてだけ見ると不足します。<code>SWITCH_TRIMMING</code>、<code>BUFFER_PROFILE.packet_trimming</code>、trim 後 DSCP、queue、drop counter の組み合わせで読む必要があります。</p>
 <h2 id="_2">読むときの注意<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>このページで扱う機能は ASIC / SAI の対応差が大きく、既存ページの verification も混在しています。egress mirror capability は code-verified、outer DSCP と packet trimming は HLD-only です。設計判断に使う場合は、該当 platform の STATE_DB capability、syslog、orchagent 実装、SAI 実装を必ず合わせて確認します。</p>
@@ -36188,7 +36188,7 @@
 </tr>
 <tr>
 <td><code>CoppOrch</code> (<code>orchagent/copporch.cpp</code>)</td>
-<td><code>CoppOrch::doTask</code>、<code>addTrap</code>、<code>createGenetlinkHostIf</code></td>
+<td><code>CoppOrch::doTask</code>、<code>processCoppRule</code>、<code>createGenetlinkHostIf</code></td>
 <td>hostif trap group / hostif trap、policer の紐付け</td>
 </tr>
 <tr>
@@ -36302,7 +36302,7 @@
 <li><code>MIRROR_EGRESS</code> action はベンダ依存が大きく、<code>MIRROR_INGRESS</code> のみ実装で <code>MIRROR_EGRESS</code> 未対応の ASIC では egress mirror が黙って ingress mirror に倒れる discrepancy が報告されている。</li>
 <li>CoPP の queue / policer 設定は <code>copp_cfg.json</code> のテンプレートに依存し、<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の動的変更が即時反映されない経路がある（<code>hostcfgd</code> 経由のものは reload が必要）。</li>
 <li>ACL counter は ASIC によって entry per counter か rule per counter かが分かれ、SONiC は両方を抽象化するが、counter clear / reset の挙動が ASIC で違う。</li>
-<li>Mirror session の ERSPAN destination が <a href="../../../reference/glossary/#term-ecmp">ECMP</a> の場合、<code>MirrorOrch</code> は単一 nexthop のみ採用し、ECMP の動的 rehash には追従しない。</li>
+<li>Mirror session の ERSPAN destination が <a href="../../../reference/glossary/#term-ecmp">ECMP</a> の場合、<code>MirrorOrch</code> は単一 nexthop のみ採用し、ECMP の動的 rehash には追従しない<!-- evidence: sonic-swss orchagent/mirrororch.cpp activateSession() / m_routeOrch->attach() L517, L921 -->。</li>
 </ul>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
