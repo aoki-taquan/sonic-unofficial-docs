@@ -4,10 +4,16 @@ description: show lldp サブコマンド — show lldp は LLDP (Link Layer Dis
   lldpd プロセスが収集した隣接情報を、SONiC 同梱の lldpshow スクリプト経由でフォーマットして出力する薄いラッパである。
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-06-06
 sources:
 - repo: sonic-net/sonic-utilities
   path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: utilities_common/cli.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
   ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
@@ -127,7 +133,7 @@ flowchart LR
 
 [^1]: グループ定義は `show/main.py` L1649-L1652。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1649>
 
-[^2]: alias 変換は [SONiC](../../reference/glossary.md#term-sonic) の interface naming mode によって行われる。設定は `MGMT_INTERFACE` などとは別の環境変数経由。
+[^2]: interface naming mode は `utilities_common/cli.py` の `get_interface_naming_mode()` が環境変数 `SONIC_CLI_IFACE_MODE` (未設定なら `"default"`) を読んで決まる。`"alias"` の場合のみ `iface_alias_converter.alias_to_name` で物理名へ変換される。永続化は `config interface_naming_mode {default|alias}` コマンドが当該ユーザの `.bashrc` に `export SONIC_CLI_IFACE_MODE=...` を書き込む形で行う ([utilities_common/cli.py#L201-L205](https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/utilities_common/cli.py#L201-L205) / [config/main.py#L611-L664](https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L611-L664) / [config/main.py#L8802-L8815](https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8802))。`MGMT_INTERFACE` のような [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルとは無関係。
 
 <!-- usage-example -->
 ## 実行例
@@ -195,4 +201,4 @@ docker exec lldp lldpcli show neighbors
 - [reference/CLI: show interfaces](show-interfaces.md)
 - [reference/CLI: show ip](show-ip.md)
 
-<!-- glossary-links-injected: 92c530e50bae -->
+<!-- glossary-links-injected: 896d391185a9 -->
