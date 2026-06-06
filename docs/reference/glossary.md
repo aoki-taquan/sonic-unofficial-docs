@@ -1835,8 +1835,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [IPv6 Link-local モード](config-db/ipv6-link-local.md) (28)
 - [WARM_RESTART テーブル](config-db/warm-restart.md) (28)
 - [NEIGH テーブル](config-db/neigh.md) (11)
+- [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](runbooks/arp-entry-stuck.md) (7)
 - [config warm_restart サブコマンド](cli/config-warm_restart.md) (6)
-- [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](runbooks/arp-entry-stuck.md) (6)
 
 ### [Netlink](#term-netlink)
 

@@ -57,8 +57,11 @@ ip -6 neigh show
 ip neigh show dev Vlan1000 | grep <ip>
 
 # APPL_DB / ASIC_DB
+# NEIGH_TABLE key は "<interface>:<ip>" 形式。IPv6 アドレス内の ':' も区切り扱いではなく
+# 後続トークンを丸ごと IP として扱うため、最初の ':' だけが interface とのセパレータ[^key]
 sonic-db-cli APPL_DB keys "NEIGH_TABLE:*" | head
-sonic-db-cli APPL_DB hgetall "NEIGH_TABLE:Vlan1000:<ip>"
+sonic-db-cli APPL_DB hgetall "NEIGH_TABLE:Vlan1000:192.0.2.10"
+sonic-db-cli APPL_DB hgetall "NEIGH_TABLE:Vlan1000:fe80::1"
 sonic-db-cli ASIC_DB keys "ASIC_STATE:SAI_OBJECT_TYPE_NEIGHBOR_ENTRY:*" | head
 
 # FDB との突き合わせ
@@ -83,6 +86,8 @@ sysctl -a 2>/dev/null | grep -E "gc_thresh|gc_stale|gc_interval"
 `neighsyncd` が [Netlink](../../reference/glossary.md#term-netlink) で Linux neighbor table の変化を監視して [APPL_DB](../../reference/glossary.md#term-appl_db) の `NEIGH_TABLE` を書き換え、`neighorch` がそれを [SAI](../../reference/glossary.md#term-sai) neighbor entry に変換する[^1]。Linux 側で STALE のまま残ると当然 [ASIC](../../reference/glossary.md#term-asic) 側も更新されない。
 
 [^1]: `sonic-net/sonic-swss` `neighsyncd/neighsync.cpp` ([Netlink](../../reference/glossary.md#term-netlink) → [APPL_DB](../../reference/glossary.md#term-appl_db)) と `orchagent/neighorch.cpp` (APPL_DB → [SAI](../../reference/glossary.md#term-sai)) の組合せ。MAC が変わったかどうかは Linux neighbor subsystem 側の判定に依存する。
+
+[^key]: `sonic-net/sonic-swss` `neighsyncd/neighsync.cpp` L82-L112 で `key = <ifname> + ":" + <ipStr>` を組み立てており、IPv4/IPv6 共通フォーマット。IPv6 では IP 部分に `:` が含まれるが、`NEIGH_TABLE:` プレフィックス直後の最初の `:` で interface 名が区切られ、残りはすべて IP として扱われる (`hgetall` には key 全体をそのまま渡せばよい)。
 
 ## 関連 reference / topics
 
