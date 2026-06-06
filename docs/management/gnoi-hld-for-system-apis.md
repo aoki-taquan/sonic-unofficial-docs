@@ -338,7 +338,6 @@ redis-cli -n 4 hgetall 'GNMI|certs'
 
 本 HLD は gnoi.system.System の RPC 群を網羅的に提案するが、現行 master ではサブセットのみが実装されている (`partially_implemented`)。具体的には Reboot / RebootStatus / CancelReboot が実装済で、KillProcess / Ping / SetPackage / SwitchControlProcessor / Time / Traceroute 等は未実装または部分実装。詳細は本文の HLD 提案部分と実装現状を比較すること。
 
-
 機能項目別の実装状況は以下のとおり。
 
 | 機能項目 | HLD 提案 | 実装状況 |
