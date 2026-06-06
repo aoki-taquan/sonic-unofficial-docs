@@ -73,7 +73,13 @@ module: sonic-tc-priority-group-map
 |------|------|----|------|-----------|----------------------|------|
 | `name` | `sonic-tc-priority-group-map/TC_TO_PRIORITY_GROUP_MAP/TC_TO_PRIORITY_GROUP_MAP_LIST/name` | `string` | yes |  | pattern `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})`, length 1..32 | Name of the TC to priority group map. |
 | `tc` | `.../TC_TO_PRIORITY_GROUP_MAP/tc` | `stypes:tc_type` | yes |  |  | Source traffic class. |
-| `pg` | `.../TC_TO_PRIORITY_GROUP_MAP/pg` | `string` |  |  | pattern `[0-7]?` | Target ingress priority group (0-7). |
+| `pg` | `.../TC_TO_PRIORITY_GROUP_MAP/pg` | `string` |  |  | pattern `[0-7]?` | Target ingress priority group (0-7)。[注記](#pg-pattern-note) |
+
+<!-- evidence: sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-tc-priority-group-map.yang L39-L69 @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd -->
+
+### `pg` の pattern と空文字列受理について {#pg-pattern-note}
+
+upstream [YANG](../../reference/glossary.md#term-yang) 定義 ([sonic-tc-priority-group-map.yang L61-L69](https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tc-priority-group-map.yang#L61-L69)) における `pg` leaf の pattern は `[0-7]?` (`?` 量化子付き 1 文字) であり、かつ leaf 自体 mandatory 指定がないため、**空文字列も pattern 適合と判定される** という曖昧さがある。`0` から `7` の単一数字を指定するのが運用上の前提だが、[YANG](../../reference/glossary.md#term-yang) 規約上は空文字列を拒否しない。RFC 7950 では pattern 不一致のみが invalid であり、空文字列の禁止には別途 `length 1..1` 等の補強が必要となる。[^1]
 
 ## leafref / 依存
 
@@ -111,4 +117,4 @@ module: sonic-tc-priority-group-map
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-tc-priority-group-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->
