@@ -1,11 +1,23 @@
 ---
 title: Reboot / warm restart の設定
-description: Reboot / warm restart の設定 — 設定で最初に分けるのは、OS 全体の reboot を実行するのか、service
-  warm restart を許可するのかです。
+description: OS reboot と service warm restart の使い分け、warm restart の有効化・timer 設定・blocking
+  mode の運用手順を、sonic-utilities の CLI 実装と sonic-swss の daemon default に基づいて整理する。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: code-verified
+last_verified: 2026-06-06
+sources:
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/warm_restart.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-swss
+  path: neighsyncd/neighsync.h
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: fpmsyncd/fpmsyncd.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   cli:
   - show warm_restart
@@ -37,10 +49,12 @@ config warm_restart enable swss
 config warm_restart enable bgp
 config warm_restart enable teamd
 
-# 3. timer をデフォルト (60s/120s/30s) より長めに振る (chassis や大規模 FIB ほど長く)
-config warm_restart neighsyncd_timer 120
-config warm_restart bgp_timer        180
-config warm_restart teamsyncd_timer  60
+# 3. timer を実環境に合わせて延ばす (chassis や大規模 FIB ほど長く)
+#    daemon 側の組み込みデフォルトは neighsyncd=5s, fpmsyncd=120s で、
+#    teamsyncd は明示デフォルトを持たない[^timer-defaults]。明示的に設定するのが安全。
+config warm_restart neighsyncd_timer 120   # 1..9999
+config warm_restart bgp_timer        180   # 1..3600
+config warm_restart teamsyncd_timer  60    # 1..3600
 config warm_restart bgp_eoiu enable
 
 # 4. 設定保存 (warm boot script は永続設定を期待する)
@@ -64,12 +78,11 @@ config save -y
 
 ```bash
 $ show warm_restart config
-name              enable    timer_name           timer_duration
-----------------  --------  -------------------  ----------------
+name              enable    timer_name           timer_duration    eoiu_enable
+----------------  --------  -------------------  ----------------  -------------
 system            true
 swss              true      neighsyncd_timer     120
-bgp               true      bgp_timer            180
-bgp               true      bgp_eoiu             true
+bgp               true      bgp_timer            180               true
 teamd             true      teamsyncd_timer      60
 
 $ show warm_restart state
@@ -194,4 +207,60 @@ blocking mode の詳細は [`reboot` コマンドの blocking mode](../../system
 - CONFIG_DB: `WARM_RESTART` table
 - 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md) / [upgrade](upgrade.md)
 
-<!-- glossary-links-injected: c006405759d8 -->
+## 引用元
+
+[^timer-defaults]: `neighsyncd` の warm restart 待機時間のコンパイル時 default は `DEFAULT_NEIGHSYNC_WARMSTART_TIMER = 5` 秒で、CONFIG_DB の `WARM_RESTART|swss/neighsyncd_timer` で上書きされる（[sonic-net/sonic-swss `neighsyncd/neighsync.h` L10](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/neighsyncd/neighsync.h#L10) と [`neighsyncd/neighsync.cpp` L30](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/neighsyncd/neighsync.cpp#L30)）。`fpmsyncd` 側は `DEFAULT_ROUTING_RESTART_INTERVAL = 120` 秒で（[`fpmsyncd/fpmsyncd.cpp` L46, L160-164](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp#L46)）、これが `WARM_RESTART|bgp/bgp_timer` 未設定時の待機時間となる。`teamsyncd` には明示的なコンパイル時 default 値が無く、`config warm_restart teamsyncd_timer` 未設定時は CONFIG_DB に値が無い状態で `AppRestartAssist` が呼ばれる。timer の許容 range は [YANG](../../reference/glossary.md#term-yang) (`sonic-warm-restart`) と `config/main.py` の双方で `neighsyncd_timer: 1..9999` / `bgp_timer: 1..3600` / `teamsyncd_timer: 1..3600` に強制される（[sonic-net/sonic-utilities `config/main.py` L4015-L4078](https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L4015-L4078)）。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/warm_restart.py#L176-L177 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  header = ['name', 'enable', 'timer_name', 'timer_duration', 'eoiu_enable']
+  click.echo(tabulate(tablelize(keys, data, enable_table_keys, prefix), header))
+reasoning: 本ページの `show warm_restart config` 出力例は 5 列 (name / enable / timer_name / timer_duration / eoiu_enable) を反映している。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/warm_restart.py#L176-L177 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/warm_restart.py#L176-L177 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    header = ['name', 'enable', 'timer_name', 'timer_duration', 'eoiu_enable']
+    click.echo(tabulate(tablelize(keys, data, enable_table_keys, prefix), header))
+    ```
+
+    **判断根拠**: 本ページの `show warm_restart config` 出力例は 5 列 (name / enable / timer_name / timer_duration / eoiu_enable) を反映している。
+
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/main.py#L3938-L4096 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @config.group(cls=clicommon.AbbreviationGroup, name='warm_restart')
+  ... warm_restart_enable / disable / neighsyncd_timer / bgp_timer / teamsyncd_timer / bgp_eoiu
+reasoning: 本ページで列挙する `config warm_restart enable|disable|neighsyncd_timer|bgp_timer|teamsyncd_timer|bgp_eoiu` の各サブコマンドは sonic-utilities の click group `warm_restart` 配下に実在し、CONFIG_DB `WARM_RESTART` table に書き込む。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L3938-L4096 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L3938-L4096 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @config.group(cls=clicommon.AbbreviationGroup, name='warm_restart')
+    ... warm_restart_enable / disable / neighsyncd_timer / bgp_timer / teamsyncd_timer / bgp_eoiu
+    ```
+
+    **判断根拠**: 本ページで列挙する `config warm_restart enable|disable|neighsyncd_timer|bgp_timer|teamsyncd_timer|bgp_eoiu` の各サブコマンドは sonic-utilities の click group `warm_restart` 配下に実在し、CONFIG_DB `WARM_RESTART` table に書き込む。
+
+<!-- evidence-rendered:end -->
+
+<!-- glossary-links-injected: d5320e852f7a -->
