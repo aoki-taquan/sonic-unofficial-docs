@@ -226,6 +226,30 @@ excerpt: |
 reasoning: 実装が POWERUP と delay>0 を一律 reject している事実の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-gnmi/gnmi_server/gnoi_system.go#L34-L49 (master)"
+
+    **出典**:
+
+    `sonic-net/sonic-gnmi/gnmi_server/gnoi_system.go#L34-L49 (master)`
+
+    **抜粋**:
+
+    ```text
+    func ValidateRebootRequest(req *syspb.RebootRequest) error {
+        if req.GetMethod() == syspb.RebootMethod_UNKNOWN || req.GetMethod() == syspb.RebootMethod_POWERUP {
+            return fmt.Errorf("Invalid request: reboot method is not supported.")
+        }
+        if req.GetDelay() > 0 {
+            return fmt.Errorf("Invalid request: reboot is not immediate.")
+        }
+        return nil
+    }
+    ```
+
+    **判断根拠**: 実装が POWERUP と delay>0 を一律 reject している事実の根拠。
+
+<!-- evidence-rendered:end -->
 
 ## 制限事項
 

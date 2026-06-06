@@ -20,9 +20,9 @@ sources: []
 
 | verification | 件数 |
 |---|---:|
-| code-verified | 765 |
+| code-verified | 764 |
 | runbook-verified | 28 |
-| discrepancy-found | 114 |
+| discrepancy-found | 115 |
 | issue-confirmed | 5 |
 | hld-only | 2 |
 | meta | 189 |
@@ -35,9 +35,9 @@ sources: []
 
 | バケツ | 件数 |
 |---|---:|
-| 今日 (0d) | 40 |
+| 今日 (0d) | 44 |
 | 7 日以内 (1-7d) | 50 |
-| 30 日以内 (8-30d) | 1011 |
+| 30 日以内 (8-30d) | 1007 |
 | 30 日超 / 古い | 0 |
 | 不明 / パース不可 | 3 |
 
@@ -79,7 +79,7 @@ sources: []
 | 項目 | 値 |
 |---|---:|
 | 用語数 (`### ` アンカー) | 325 |
-| docs 内被リンク数 | 20087 |
+| docs 内被リンク数 | 20101 |
 
 ## 直近 5 round quality-audit
 
@@ -99,7 +99,7 @@ sources: []
 
 | 項目 | 件数 |
 |---|---:|
-| frontmatter-lint (hard) | 0 |
+| frontmatter-lint (hard) | — |
 | frontmatter-lint (warn) | 0 |
 | link-density low (<2.0/1k) | 68 |
 | link-density high (>30.0/1k) | 0 |

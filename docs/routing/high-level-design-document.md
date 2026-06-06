@@ -41,6 +41,26 @@ reasoning: |
   Backward Compatibility 節で言及している「SAI 非対応 ASIC では feature を無効化」の実体。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/switchorch.cpp#L485-L502"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/switchorch.cpp#L485-L502`
+
+    **抜粋**:
+
+    ```text
+    if (values.list[i] == SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP)
+        fvVector.emplace_back(SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE, "true");
+    ...
+    fvVector.emplace_back(SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE, "false");
+    ```
+
+    **判断根拠**: capability query で SAI が DYNAMIC_ORDERED_ECMP をサポートしているか確認し、 サポート有無を APP_DB の SWITCH_CAPABILITY_TABLE に書き出す箇所。 Backward Compatibility 節で言及している「SAI 非対応 ASIC では feature を無効化」の実体。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-net/sonic-swss/orchagent/routeorch.cpp#L1555-L1615
 excerpt: |
@@ -53,6 +73,25 @@ reasoning: |
   DYNAMIC_ORDERED_ECMP" の実体。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/routeorch.cpp#L1555-L1615"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/routeorch.cpp#L1555-L1615`
+
+    **抜粋**:
+
+    ```text
+    nhg_attr.value.s32 = m_switchOrch->checkOrderedEcmpEnable()
+        ? SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP
+        : SAI_NEXT_HOP_GROUP_TYPE_ECMP;
+    ```
+
+    **判断根拠**: RouteOrch が nexthop group 作成時に、SwitchOrch の global flag を見て DYNAMIC_ORDERED_ECMP / ECMP を切り替える。HLD の "ECMP group 作成時 SAI に DYNAMIC_ORDERED_ECMP" の実体。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-net/sonic-swss/orchagent/switchorch.h#L18
 excerpt: |
@@ -61,6 +100,22 @@ reasoning: |
   ORDERED_ECMP_CAPABLE field name の定義箇所。APP_DB.SWITCH_TABLE に書き込まれる。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/switchorch.h#L18"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/switchorch.h#L18`
+
+    **抜粋**:
+
+    ```text
+    #define SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE "ORDERED_ECMP_CAPABLE"
+    ```
+
+    **判断根拠**: ORDERED_ECMP_CAPABLE field name の定義箇所。APP_DB.SWITCH_TABLE に書き込まれる。
+
+<!-- evidence-rendered:end -->
 
 # Ordered ECMP（IP ソート順で nexthop に `sequence_id` を付け同一フローを同 ToR/Appliance に固定）
 

@@ -94,7 +94,7 @@ sequenceDiagram
   GNMI-->>NMS: stream
 ```
 
-ポイントは **Set した path と Subscribe する path がどちらも YANG モデル上の path** で、`/config/...` と `/state/...` で writeable / read-only が分かれている、という OpenConfig の規約。SONiC native YANG にも同じ流儀がある。`/config/...` の書き込み先は CONFIG_DB、`/state/...` の読み出し元は STATE_DB（一部は APPL_DB / COUNTERS_DB）と DB が分かれている点も合わせて押さえておく。
+ポイントは **Set した path と Subscribe する path がどちらも YANG モデル上の path** で、`/config/...` と `/state/...` で writeable / read-only が分かれている、という OpenConfig の規約。SONiC native YANG にも同じ流儀がある。`/config/...` の書き込み先は CONFIG_DB、`/state/...` の読み出し元は [STATE_DB](../../reference/glossary.md#term-state_db)（一部は [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db)）と DB が分かれている点も合わせて押さえておく。
 
 ## 入口の責務を分ける
 
@@ -164,4 +164,4 @@ SONiC の CLI は YANG モデルから自動生成される仕組みを持つ。
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 138378bc758f -->
