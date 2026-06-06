@@ -2102,8 +2102,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [sonic-mgmt](#term-sonic-mgmt)
 
 - [MGMT_PORT テーブル](config-db/mgmt-port.md) (21)
+- [sonic-mgmt_interface YANG](yang/sonic-mgmt_interface.md) (21)
 - [HARDWARE テーブル](config-db/hardware.md) (20)
-- [sonic-mgmt_interface YANG](yang/sonic-mgmt_interface.md) (20)
 - [sonic-mgmt_port YANG](yang/sonic-mgmt_port.md) (19)
 - [DIP=SIP PTF 検証テスト](../architecture/dip-sip-ptf-validation-high-level-design.md) (18)
 
