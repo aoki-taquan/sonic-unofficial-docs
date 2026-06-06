@@ -1,11 +1,22 @@
 ---
 title: 内部実装
-description: 内部実装 — 22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / CONFIG_DB
-  / YANG の三系統がどう実装で結ばれているかをまとめます。各リファレンスページが個別に持っている断片を一望できるようにするのが狙いです。
+description: 22 章リファレンス索引のメタ章。CLI / CONFIG_DB / YANG の三系統が SONiC 実装内でどう結ばれているかと、索引生成パイプラインを一覧する。
 area: topics
 verification: meta
-last_verified: 2026-05-11
-sources: []
+last_verified: 2026-06-06
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: config/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-port.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-mgmt-common
+    path: translib/transformer
+    ref: f71cf829883c36963455cf4d90fe16dae35f0b80
+  - repo: sonic-net/sonic-swss-common
+    path: common/schema.h
+    ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
 related:
   cli:
   - config vlan
@@ -24,6 +35,8 @@ related:
 # 内部実装
 
 22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) の三系統がどう実装で結ばれているかをまとめます。各リファレンスページが個別に持っている断片を一望できるようにするのが狙いです。
+
+<!-- evidence: sonic-utilities config/main.py の click group が CONFIG_DB を ConfigDBConnector で書き込み、cfgmgr/orchagent が下流を消費する流れは sonic-swss-common/common/schema.h の DB 定義と sonic-swss の orchagent コードに対応 (sonic-utilities@39732bc, sonic-swss@4305596, sonic-swss-common@158de8d) -->
 
 ## データフロー（CLI → CONFIG_DB → ASIC）
 
@@ -68,6 +81,8 @@ flowchart LR
 | `*mgrd` group | `cfgmgr/*` | CONFIG_DB → kernel + [APPL_DB](../../reference/glossary.md#term-appl_db) |
 | `*Orch` group | `orchagent/*` | APPL_DB → [SAI](../../reference/glossary.md#term-sai) |
 
+<!-- evidence: sonic-port / sonic-vlan / sonic-portchannel 等の YANG モジュールは sonic-buildimage/src/sonic-yang-models/yang-models/ 配下に格納 (sonic-buildimage@9ea932e) -->
+
 ## YANG とテーブルの対応
 
 `sonic-yang-models` の `.yang` モジュールは CONFIG_DB のテーブル名と一対一対応するのが原則です。例:
@@ -101,16 +116,16 @@ OpenConfig YANG は translib transformer が間に入って [SONiC](../../refere
 
 ## SAI 属性の入り口一覧（章間索引）
 
-| 機能領域 | 主な SAI object | 章 |
+| 機能領域 | 主な SAI object | 章 internals |
 | --- | --- | --- |
-| L2 | `LAG`、`VLAN`、`FDB_ENTRY`、`BRIDGE_PORT` | 06 |
-| L3 | `ROUTE_ENTRY`、`NEXT_HOP_GROUP`、`VIRTUAL_ROUTER` | 04 |
-| VxLAN | `TUNNEL`、`TUNNEL_MAP`、`TUNNEL_TERM_TABLE_ENTRY` | 03 |
-| [ACL](../../reference/glossary.md#term-acl) | `ACL_TABLE`、`ACL_ENTRY`、`ACL_COUNTER`、`POLICER` | 07 |
-| [QoS](../../reference/glossary.md#term-qos) / buffer | `BUFFER_POOL`、`BUFFER_PROFILE`、`QUEUE`、`SCHEDULER` | 08 |
-| Port / [SerDes](../../reference/glossary.md#term-serdes) | `PORT`、`PORT_SERDES`、`MACSEC` | 14 / 15 |
-| [NAT](../../reference/glossary.md#term-nat) | `NAT_ENTRY` | 16 |
-| [SRv6](../../reference/glossary.md#term-srv6) / [MPLS](../../reference/glossary.md#term-mpls) | `MY_SID_ENTRY`、`INSEG_ENTRY` | 17 |
+| L2 | `LAG`、`VLAN`、`FDB_ENTRY`、`BRIDGE_PORT` | [06](../06-l2-vlan-lag/internals.md) |
+| L3 | `ROUTE_ENTRY`、`NEXT_HOP_GROUP`、`VIRTUAL_ROUTER` | [04](../04-vrf-ecmp/internals.md) |
+| VxLAN | `TUNNEL`、`TUNNEL_MAP`、`TUNNEL_TERM_TABLE_ENTRY` | [03](../03-vxlan-evpn/internals.md) |
+| [ACL](../../reference/glossary.md#term-acl) | `ACL_TABLE`、`ACL_ENTRY`、`ACL_COUNTER`、`POLICER` | [07](../07-acl-copp-mirror/internals.md) |
+| [QoS](../../reference/glossary.md#term-qos) / buffer | `BUFFER_POOL`、`BUFFER_PROFILE`、`QUEUE`、`SCHEDULER` | [08](../08-qos-buffer/internals.md) |
+| Port / [SerDes](../../reference/glossary.md#term-serdes) | `PORT`、`PORT_SERDES`、`MACSEC` | [14](../14-platform-port-optics/internals.md) / [15](../15-security-aaa/internals.md) |
+| [NAT](../../reference/glossary.md#term-nat) | `NAT_ENTRY` | [16](../16-nat-dhcp-dns/internals.md) |
+| [SRv6](../../reference/glossary.md#term-srv6) / [MPLS](../../reference/glossary.md#term-mpls) | `MY_SID_ENTRY`、`INSEG_ENTRY` | [17](../17-srv6-mpls/internals.md) |
 
 ## Redis pub/sub / ZMQ の概観
 
@@ -118,9 +133,9 @@ OpenConfig YANG は translib transformer が間に入って [SONiC](../../refere
 | --- | --- | --- |
 | Redis pub/sub (`__keyspace@N__:*`) | CONFIG_DB / APPL_DB / STATE_DB 変更通知 | gNMI on_change、[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) |
 | Redis pub/sub (notification channel) | [ASIC_DB](../../reference/glossary.md#term-asic_db) のイベント通知 | [FDB](../../reference/glossary.md#term-fdb) notification、port state change |
-| ZMQ | [orchagent](../../reference/glossary.md#term-orchagent) への大量 push 経路 | VNET_ROUTE_TUNNEL_TABLE（→ 03 章） |
-| ZMQ | [DASH](../../reference/glossary.md#term-dash) SDN push | DASH controller → SWBUS（→ 13 章） |
-| Unix DBus / socket | host service 呼び出し | [gNOI](../../reference/glossary.md#term-gnoi) Reboot（→ 10 章） |
+| ZMQ | [orchagent](../../reference/glossary.md#term-orchagent) への大量 push 経路 | VNET_ROUTE_TUNNEL_TABLE（→ [03 章 internals](../03-vxlan-evpn/internals.md)） |
+| ZMQ | [DASH](../../reference/glossary.md#term-dash) SDN push | DASH controller → SWBUS（→ [13 章 internals](../13-dash-smartswitch/internals.md)） |
+| Unix DBus / socket | host service 呼び出し | [gNOI](../../reference/glossary.md#term-gnoi) Reboot（→ [10 章 internals](../10-gnmi-openconfig/internals.md)） |
 
 ## 既知の実装上の制約
 
