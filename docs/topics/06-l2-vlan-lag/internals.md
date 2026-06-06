@@ -1,10 +1,22 @@
 ---
 title: 内部実装
-description: 内部実装 — L2 / VLAN / LAG / MC-LAG の内部実装は「kernel と orchagent の二重管理」を理解するのが鍵です。
+description: L2 / VLAN / LAG / MC-LAG の内部実装を kernel と orchagent の二重管理という観点で整理し、FdbOrch / PortsOrch / portsyncd / iccpd の責務と SAI 属性、Redis テーブル経路を実装ファイルに突き合わせて記述する。
 area: topics
-verification: meta
-last_verified: 2026-05-11
-sources: []
+verification: code-verified
+last_verified: 2026-06-06
+sources:
+  - repo: sonic-net/sonic-swss
+    path: orchagent/fdborch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/portsorch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: portsyncd/portsyncd.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: portsyncd/linksync.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   cli:
   - config vlan
@@ -53,9 +65,9 @@ flowchart LR
 | `PortsOrch` (`orchagent/portsorch.cpp`) | `PortsOrch::doTask`、`initializePort`、`addLag`、`addLagMember` | PORT / LAG / VLAN を SAI に投入。最も巨大な Orch |
 | `VlanMgr` (`cfgmgr/vlanmgr.cpp`) | `VlanMgr::doTask` | [CONFIG_DB](../../reference/glossary.md#term-config_db) の `VLAN` / `VLAN_MEMBER` を bridge fdb 設定と [APPL_DB](../../reference/glossary.md#term-appl_db) に反映 |
 | `IntfMgr` (`cfgmgr/intfmgr.cpp`) | `IntfMgr::doTask` | router interface の IP/MTU を kernel に設定し、orchagent 用 APPL_DB key を作る |
-| `FdbOrch` (`orchagent/fdborch.cpp`) | `FdbOrch::doTask`、`addFdbEntry`、`handleFdbNotification` | static FDB と learned FDB の管理、aging notification |
+| `FdbOrch` (`orchagent/fdborch.cpp`) | `FdbOrch::doTask`、`addFdbEntry`、`FdbOrch::update(sai_fdb_event_t, ...)` | static FDB と learned FDB の管理、aging notification（FDB event の振り分けは `update()` 内の `switch (type)`）[^fdborch] |
 | `teamd` / `teamsyncd` | open source teamd + `teamsyncd.cpp` | [LACP](../../reference/glossary.md#term-lacp) の実装は teamd。teamsyncd が kernel bond state を [STATE_DB](../../reference/glossary.md#term-state_db) / APPL_DB へ |
-| `portsyncd` (`portsyncd/portsyncd.cpp`) | `PortSyncd::run` | netlink で kernel の link state を APPL_DB に反映 |
+| `portsyncd` (`portsyncd/portsyncd.cpp`) | `main()` ループ + `LinkSync` (`portsyncd/linksync.cpp`) | netlink (`RTM_NEWLINK` / `RTM_DELLINK`) で kernel の link state を受け、`LinkSync` が APPL_DB / STATE_DB に反映[^portsyncd] |
 | `fdbsyncd` (`fdbsyncd/fdbsync.cpp`) | [EVPN](../../reference/glossary.md#term-evpn) type-2 同期も担う。kernel bridge fdb と APPL_DB の同期 |
 | `iccpd` (`linkmgrd` ではなく `iccpd`) | `iccpd/` 配下 | MC-LAG 制御。ICCP メッセージで peer と sync、active/standby を決め APPL_DB に書く |
 
@@ -102,8 +114,8 @@ ASIC_DB:
 
 - VLAN ID は [SONiC](../../reference/glossary.md#term-sonic) では `Vlan<id>` の文字列キーで扱われ、`VLAN_MEMBER|Vlan100|Ethernet0` のように `|` 区切り。`vlanmgrd` 内で id の桁違いやスペースが入ると silent に skip されることが過去 issue で報告されています。
 - MC-LAG（iccpd ベース）と [EVPN-MH](../../reference/glossary.md#term-evpn-mh)（EVPN multi-homing、[FRR](../../reference/glossary.md#term-frr) ベース）は別実装で、同じスイッチで両立する設計にはなっていません。
-- FDB MAC move は ASIC 通知遅延と orchagent 内のリオーダリングで一時的に同じ MAC が複数ポート所属に見えることがあります。`FdbOrch::handleFdbNotification` が `SAI_FDB_EVENT_MOVE` を扱いますが、ASIC が MOVE ではなく LEARNED + DELETE を別タイミングで上げる場合に瞬間的に重複が出ます。
-- LAG member の dynamic add/remove は SAI 側で `EGRESS_DISABLE` を切り替えるだけの実装と、`LAG_MEMBER` を作り直す実装があり、ベンダで挙動が違います。`PortsOrch::setLagMemberEgressDisable` 経路を取れない ASIC では一瞬パケットロスが入ります。
+- FDB MAC move は ASIC 通知遅延と orchagent 内のリオーダリングで一時的に同じ MAC が複数ポート所属に見えることがあります。`FdbOrch::update()` の `case SAI_FDB_EVENT_MOVE` が bridge_port 差し替えを処理しますが、ASIC が MOVE ではなく LEARNED + DELETE を別タイミングで上げる場合に瞬間的に重複が出ます。[^fdborch]
+- LAG member の dynamic add/remove では、`PortsOrch::addLagMember` が `member_status != "enabled"` のときだけ `SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE` / `INGRESS_DISABLE` を `true` で初期付与し、enable 化は `setDistributionOnLagMember` / `setCollectionOnLagMember` が `sai_lag_api->set_lag_member_attribute` で `EGRESS_DISABLE` / `INGRESS_DISABLE` を書き戻すフローです。一方で `LAG_MEMBER` を delete/create し直すベンダ実装もあり、後者では一瞬パケットロスが入ります。[^addlagmember][^setdist]
 - STP は SONiC では PVST / RPVST の制御プレーンが limited で、`stp` モジュール ([sonic-stp](https://github.com/sonic-net/sonic-stp)) が有効になっている場合のみ動きます。
 
 ## MC-LAG (iccpd) の内部状態機械
@@ -131,14 +143,14 @@ L2 系は kernel 状態と ASIC 状態の二重管理であり、以下の race 
 
 ## FDB notification 経路の詳細
 
-ASIC からの FDB 通知は `ASIC_DB` の notification channel（Redis pub/sub）に流れ、`FdbOrch` が以下の event を処理します。
+ASIC からの FDB 通知は `ASIC_DB` の notification channel（Redis pub/sub）に流れ、`FdbOrch::update(sai_fdb_event_t type, const sai_fdb_entry_t *entry, sai_object_id_t bridge_port_id, const sai_fdb_entry_type_t &sai_fdb_type)` の `switch (type)` で以下の event を処理します。専用の `handleXxxEvent` 関数に分割されているわけではなく、すべて同一関数内の case ブロックです。[^fdborch]
 
-| SAI event | FdbOrch handler | 反映先 |
+| SAI event | 処理位置 (`orchagent/fdborch.cpp`) | 反映先 |
 | --- | --- | --- |
-| `SAI_FDB_EVENT_LEARNED` | `handleLearnedEvent` | APPL_DB.FDB_TABLE 追加、STATE_DB 更新 |
-| `SAI_FDB_EVENT_AGED` | `handleAgedEvent` | APPL_DB.FDB_TABLE 削除 |
-| `SAI_FDB_EVENT_MOVE` | `handleMoveEvent` | bridge_port 差し替え |
-| `SAI_FDB_EVENT_FLUSHED` | `handleFlushedEvent` | 該当 LAG/VLAN の FDB 一括削除 |
+| `SAI_FDB_EVENT_LEARNED` | `case SAI_FDB_EVENT_LEARNED:` | APPL_DB.FDB_TABLE 追加、`m_entries` / counter 更新 |
+| `SAI_FDB_EVENT_AGED` | `case SAI_FDB_EVENT_AGED:` | APPL_DB.FDB_TABLE 削除、`m_entries` から remove |
+| `SAI_FDB_EVENT_MOVE` | `case SAI_FDB_EVENT_MOVE:` | bridge_port 差し替え |
+| `SAI_FDB_EVENT_FLUSHED` | `case SAI_FDB_EVENT_FLUSHED:` | 該当 LAG/VLAN の FDB 一括削除 |
 
 `SAI_BRIDGE_PORT_ATTR_FDB_LEARNING_MODE` を `HW` にすると LEARNED イベントを抑制（CPU 負荷削減）でき、`CPU_TRAP` にすると全 frame が orchagent 経由になります。SONiC 標準は `HW` で、MC-LAG では peer link 側を `DISABLE` に倒します。
 
@@ -148,5 +160,10 @@ ASIC からの FDB 通知は `ASIC_DB` の notification channel（Redis pub/sub�
 - [MC-LAG enhancements](../../switching/mclag-enhancements.md)
 - [LAG on distributed VOQ system](../../switching/lag-on-distributed-voq-system.md)
 - [SONiC IP LAG incremental update](../../switching/sonic-ip-lag-incremental-update.md)
+
+[^fdborch]: `sonic-net/sonic-swss` `orchagent/fdborch.cpp` L278-L646 (`FdbOrch::update(sai_fdb_event_t, ...)` の `switch (type)` で `SAI_FDB_EVENT_LEARNED` / `AGED` / `MOVE` / `FLUSHED` を処理)、ref: `4305596156d70e9797e8a881b3d19b46de0bce0d`。
+[^portsyncd]: `sonic-net/sonic-swss` `portsyncd/portsyncd.cpp` L48-L93 (`main()` が `NetLink` を `RTNLGRP_LINK` で listen し、`LinkSync` インスタンスを `RTM_NEWLINK` / `RTM_DELLINK` の handler として `NetDispatcher` に登録)、`portsyncd/linksync.cpp`、ref: `4305596156d70e9797e8a881b3d19b46de0bce0d`。専用の `PortSyncd::run` クラスメソッドは存在しません。
+[^addlagmember]: `sonic-net/sonic-swss` `orchagent/portsorch.cpp` L8138-L8175 (`PortsOrch::addLagMember`: `enableForwarding == false` の場合のみ `SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE` / `INGRESS_DISABLE` を初期 attribute に積む)、ref: `4305596156d70e9797e8a881b3d19b46de0bce0d`。
+[^setdist]: `sonic-net/sonic-swss` `orchagent/portsorch.cpp` L8296-L8345 (`PortsOrch::setCollectionOnLagMember` / `setDistributionOnLagMember` が `sai_lag_api->set_lag_member_attribute` で `INGRESS_DISABLE` / `EGRESS_DISABLE` を切り替え)、ref: `4305596156d70e9797e8a881b3d19b46de0bce0d`。
 
 <!-- glossary-links-injected: ec18b66e3507 -->
