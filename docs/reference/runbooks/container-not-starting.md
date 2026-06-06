@@ -1,6 +1,6 @@
 ---
 title: コンテナが起動しない (FEATURE)
-description: "Runbook: コンテナが起動しない (FEATURE) — : sonic-net/sonic-host-services @ c5bbbe8 — hostcfgd : sonic-net/sonic-utilities @ 39732bceb — config feature state"
+description: "FEATURE テーブルと hostcfgd / config feature state を起点に SONiC のコンテナが起動しない事象を切り分ける runbook。"
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
