@@ -19,6 +19,14 @@ related:
 [SONiC](./reference/glossary.md#term-sonic) NOS (community `master`) を AI が日本語で再構成した**非公式**ドキュメント。
 公式 [HLD](./reference/glossary.md#term-hld) の分散・古さ・実装乖離を、複数リポジトリ横断の引用付きで補う。
 
+## SONiC を 1 段落で
+
+SONiC は **Debian ベースの Linux 上に、機能ごとに分離された Docker container 群と、単一 [Redis](./reference/glossary.md#term-redis) instance 内に置かれた複数論理 DB と、[SAI](./reference/glossary.md#term-sai) 経由の [ASIC](./reference/glossary.md#term-asic) 抽象** を載せた network OS である。運用者の設定 (CLI / [gNMI](./reference/glossary.md#term-gnmi) / `config_db.json`) は `CONFIG_DB` に入り、機能別の `*mgrd` daemon が `APPL_DB` へ翻訳し、[orchagent](./reference/glossary.md#term-orchagent) が SAI 呼び出しで `ASIC_DB` を更新し、[syncd](./reference/glossary.md#term-syncd) が vendor SAI library を介して [ASIC SDK](./reference/glossary.md#term-asic-sdk) に流す。経路は [FRR](./reference/glossary.md#term-frr) が Linux kernel と [FPM](./reference/glossary.md#term-fpm) 経由で同じ `APPL_DB` に書き込む。1 枚図と用語の最短解説は **[全体俯瞰 (Essentials)](./getting-started.md)** にある。
+
+## サイトの歩き方
+
+3 つの入口から目的別に進む。学ぶ人は **Topics 22 章**、設定する人は **Reference (CLI / CONFIG_DB / YANG)**、現場で直す人は **Runbook 索引** が最短。
+
 <div class="grid cards" markdown>
 
 -   :material-school: **学ぶ**
@@ -68,4 +76,4 @@ related:
 - [GitHub Discussions](https://github.com/aoki-taquan/sonic-unofficial-docs/discussions) — 質問・運用相談
 - <a href="feed_rss_created.xml">RSS で更新を購読</a>（最近作成された 30 ページ）
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: a478e0a27c41 -->
