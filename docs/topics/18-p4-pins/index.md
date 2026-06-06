@@ -81,7 +81,7 @@ PINS の中心は 4 点です。コントローラと話す **[P4RT](../../refer
 | advanced | 103 | ✅ 完成 | meta | 発展トピック |
 | architecture | 49 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
 | concept | 142 | ✅ 完成 | meta | 概念・位置付け |
-| internals | 134 | ✅ 完成 | meta | 内部実装 |
+| internals | 175 | ✅ 完成 | meta | 内部実装 |
 | operations | 180 | ✅ 完成 | meta | 運用・デバッグ |
 | setup | 288 | ✅ 完成 | meta | セットアップ手順 |
 
