@@ -36258,7 +36258,7 @@ reasoning: midplane IP に Redis を公開してから supervisor の queuestat 
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>このページの機能はビルド時のテンプレ変更と CLI 拡張で完結する。エンドユーザ向け設定インターフェースは HLD では定義されていない。</p>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当エントリは HLD 内で定義されていない。</p>
+<p>この HLD は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に新規スキーマを追加しない。midplane IP 経由の Redis アクセス経路と CLI 改修だけで構成されており、distributed VOQ chassis の前提となる <code>CHASSIS_MODULE</code> / <code>VOQ_INBAND_INTERFACE</code> / <code>DPU</code> 等の既存テーブルはこの HLD のスコープ外（前提インフラ側で定義済み）。そのため frontmatter <code>related.config_db</code> も意図的に空とし、<code>_no_related_config_db: true</code> で opt-out している。</p>
 <h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -36317,7 +36317,7 @@ reasoning: midplane IP に Redis を公開してから supervisor の queuestat 
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: 896d391185a9 -->
 
 <div class="footnote">
 <hr />

@@ -14493,7 +14493,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        実装との乖離
       
     </span>
   </a>
@@ -14504,7 +14504,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -14513,6 +14513,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -14524,7 +14535,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -14540,7 +14551,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36152,7 +36163,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        実装との乖離
       
     </span>
   </a>
@@ -36163,7 +36174,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -36172,6 +36183,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -36183,7 +36205,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -36199,7 +36221,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36252,9 +36274,11 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition note">
-<p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-swss/orchagent/crmorch.h</code> で <code>CRM_EXT_TABLE</code> enum (l.37)、<code>incCrmExtTableUsedCounter(...)</code> (l.88)、<code>decCrmExtTableUsedCounter(...)</code> (l.90) を確認。<code>crmorch.cpp</code> (l.51) <code>{ CrmResourceType::CRM_EXT_TABLE, "EXTENSION_TABLE" }</code> の resource name 登録。<code>tests/p4rt/test_viplb.py</code> で <code>EXT_TABLE_STATS:&lt;TBL_NAME&gt;</code> の <code>crm_stats_extension_table_used</code> / <code>crm_stats_extension_table_available</code> を P4Orch test が参照しており命名規則も整合。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: discrepancy-found (evolved_beyond_hld)</p>
+<p>本 HLD は「<strong>新たなユーザ向け設定パラメータは追加しない</strong> / <strong>extension table 専用の追加設定（個別の閾値など）は提供しない</strong>」と明記している。しかし master 実装の <code>sonic-swss/orchagent/crmorch.cpp</code> は <strong><code>extension_table_threshold_type</code> (l.184) / <code>extension_table_low_threshold</code> (l.230) / <code>extension_table_high_threshold</code> (l.276)</strong> を CRM テーブルのフィールド名として登録しており、他リソース同様の個別閾値設定が実装上は可能になっている。本ページは下記「実装との乖離」節で詳細を記述する。</p>
+<p>enum / API 側は HLD と一致:
+<code>sonic-swss/orchagent/crmorch.h</code> で <code>CRM_EXT_TABLE</code> enum (l.37)、<code>incCrmExtTableUsedCounter(...)</code> (l.88)、<code>decCrmExtTableUsedCounter(...)</code> (l.90) を確認。<code>crmorch.cpp</code> (l.51) <code>{ CrmResourceType::CRM_EXT_TABLE, "EXTENSION_TABLE" }</code> の resource name 登録。<code>tests/p4rt/test_viplb.py</code> で <code>EXT_TABLE_STATS:&lt;TBL_NAME&gt;</code> の <code>crm_stats_extension_table_used</code> / <code>crm_stats_extension_table_available</code> を P4Orch test が参照しており命名規則も整合。</p>
 </div>
 <h1 id="generic-sai-extension-crmcrm_ext_table">Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）<a class="headerlink" href="#generic-sai-extension-crmcrm_ext_table" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36373,45 +36397,94 @@ reasoning: available 取得経路と used 反映の責務分担の根拠。
 
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> エントリは無い。CRM 側の既存設定（<code>CRM</code> テーブルの polling interval や watermark threshold）が新 resource type にも効く前提<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>HLD 上は <strong>専用の <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> エントリを追加しない</strong> 方針<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。一方で master 実装の <code>crmorch.cpp</code> には <code>extension_table_threshold_type</code> / <code>extension_table_low_threshold</code> / <code>extension_table_high_threshold</code> という <strong>extension table 専用の閾値フィールドが既に登録されている</strong><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。<code>CRM\|Config</code> テーブルにこれらのフィールドを書けば、他リソースと同じ仕組みで extension table の watermark 閾値を変更できる（下記「実装との乖離」参照）。</p>
+<p>ポーリング間隔など他の既存設定（<code>CRM</code> テーブルの <code>polling_interval</code>）はそのまま継承される<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>既存 CRM CLI（<code>crm config polling interval</code>, <code>crm config thresholds *</code>, <code>crm show resources</code> 等）が再利用される<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD では新規 CLI は追加されない。</p>
+<p><code>crm config polling interval</code>, <code>crm config thresholds *</code>, <code>crm show resources</code> 等の既存 CRM CLI が再利用される<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。HLD では新規 CLI は追加されない方針だが、CONFIG_DB 側に extension table 専用フィールドが存在するため、CLI 側で対応サブコマンドが追加されているか・直接 redis 書き込みでしか触れないかは <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> 側の実装次第。</p>
 <h3 id="_4">確認方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 該当 extension table の CRM 値を redis 直叩きで見る</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;*EXT_TABLE_STATS*&#39;</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>HGETALL<span class="w"> </span>CRM:EXT_TABLE_STATS:EXT_VIPV4_TABLE
 </span></code></pre></div>
 <p><code>crm show resources</code> 系のサブコマンドが extension table を扱えるかどうかは <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> の実装に依存する（裏取り課題）。</p>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">実装との乖離<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>HLD の主張</th>
+<th>master 実装 (<code>sonic-swss</code> SHA は最新 master)</th>
+<th>影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>extension table 専用 CONFIG_DB フィールド</td>
+<td>「<strong>新たなユーザ向け設定パラメータは追加しない</strong>」<sup id="fnref27:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><code>crmorch.cpp</code> l.184 <code>extension_table_threshold_type</code> / l.230 <code>extension_table_low_threshold</code> / l.276 <code>extension_table_high_threshold</code> を <code>CRM\|Config</code> の対応マップに登録<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td>extension table も他リソース同様に **個別の high/low/percentage</td>
+</tr>
+<tr>
+<td>「個別の閾値などは提供しない」<sup id="fnref28:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>HLD 記述</td>
+<td>上記 3 フィールドにより個別閾値が <strong>実装上は構造的に有効</strong></td>
+<td>HLD の言葉と矛盾。実装側が evolved。</td>
+</tr>
+</tbody>
+</table>
+<p>つまり HLD が <code>「used/available の publish のみ・閾値は他リソースで提供されている既定挙動を流用」</code> と書いた当初設計から、master では <strong>CrmResourceType ごとの閾値マップを揃える形</strong> に拡張されており、extension table も他の <code>*_threshold_type</code> / <code>*_low_threshold</code> / <code>*_high_threshold</code> パターンに乗っている。</p>
+<p>挙動としては HLD 設計を破壊しない（個別閾値を明示しなければ他リソースと同じ既定が効く）が、ドキュメント文言は実装と乖離している。<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/crmorch.cpp#L184,L230,L276
+excerpt: |
+  L184: { "extension_table_threshold_type", CrmResourceType::CRM_EXT_TABLE },
+  L230: {"extension_table_low_threshold",  CrmResourceType::CRM_EXT_TABLE },
+  L276: {"extension_table_high_threshold", CrmResourceType::CRM_EXT_TABLE },
+reasoning: HLD が「extension table 専用の追加設定は提供しない」と明記しているが、実装には extension table の threshold type / low / high が登録されており、CONFIG_DB から個別設定可能なため lookup 経路が存在する。
+--></p>
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/orchagent/crmorch.cpp#L184,L230,L276</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/orchagent/crmorch.cpp#L184,L230,L276</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>L184: { &quot;extension_table_threshold_type&quot;, CrmResourceType::CRM_EXT_TABLE },
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>L230: {&quot;extension_table_low_threshold&quot;,  CrmResourceType::CRM_EXT_TABLE },
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>L276: {&quot;extension_table_high_threshold&quot;, CrmResourceType::CRM_EXT_TABLE },
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: HLD が「extension table 専用の追加設定は提供しない」と明記しているが、実装には extension table の threshold type / low / high が登録されており、CONFIG_DB から個別設定可能なため lookup 経路が存在する。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>スコープが <strong>used / available の publish</strong> に限定される。<strong>extension table 専用の追加設定（個別の閾値など）は提供しない</strong><sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>sai_object_type_get_availability</code> を <strong>データプレーン SAI が <code>GENERIC_PROGRAMMABLE</code> + <code>OBJECT_NAME</code> の組で実装している</strong> ことが前提。実装が無いベンダ SAI では available が取れない<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>used カウンタの増減は <strong>P4Orch の extension table manager に依存</strong>。他の経路で extension テーブルを操作する実装が出てきた場合、used が実体とずれる可能性がある<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>スコープが <strong>used / available の publish</strong> に限定される。<strong>HLD は extension table 専用の追加設定（個別の閾値など）は提供しない</strong> と書いている<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup> が、実装は上記の通り個別閾値フィールドを持つ<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>（前節参照）。</li>
+<li><code>sai_object_type_get_availability</code> を <strong>データプレーン SAI が <code>GENERIC_PROGRAMMABLE</code> + <code>OBJECT_NAME</code> の組で実装している</strong> ことが前提。実装が無いベンダ SAI では available が取れない<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>used カウンタの増減は <strong>P4Orch の extension table manager に依存</strong>。他の経路で extension テーブルを操作する実装が出てきた場合、used が実体とずれる可能性がある<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>本 HLD は <strong>CRM スレッド側のロジック</strong>。SAI レイヤから直接通知される訳ではないので、reset / warm boot 等の特殊状態での used 値の整合性は HLD 内では言及されていない。</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>CrmOrch（既存）</strong>: 新 resource type の登録だけが追加の変更。polling / watermark check の枠組みはそのまま使える<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>P4Orch (extension table manager)</strong>: used カウンタの増減を呼ぶ責任を負う。新規 extension table を追加した際にも本機構に追従する必要がある<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>SAI_OBJECT_TYPE_GENERIC_PROGRAMMABLE</code></strong>: SAI 拡張の根幹オブジェクト。available 取得経路として <code>OBJECT_NAME</code> 属性が利用される<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>CrmOrch（既存）</strong>: 新 resource type の登録だけが追加の変更。polling / watermark check の枠組みはそのまま使える<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>P4Orch (extension table manager)</strong>: used カウンタの増減を呼ぶ責任を負う。新規 extension table を追加した際にも本機構に追従する必要がある<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>SAI_OBJECT_TYPE_GENERIC_PROGRAMMABLE</code></strong>: SAI 拡張の根幹オブジェクト。available 取得経路として <code>OBJECT_NAME</code> 属性が利用される<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>テレメトリ / dial-out</strong>: COUNTERS_DB の <code>CRM:EXT_TABLE_STATS:*</code> がそのままテレメトリ系の購読対象になりうる。命名規則 <code>EXT_TABLE_STATS</code> を前提にした <a href="../../reference/glossary/#term-gnmi">gNMI</a> path 等の設計とリンクしうる。</li>
-<li><strong>ACL / FDB 等の既存 CRM</strong>: 同じ enum 機構の延長線上にある。新規追加が他リソースに副作用を与えない構造（<code>m_resourcesMap</code> の独立エントリ）<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>ACL / FDB 等の既存 CRM</strong>: 同じ enum 機構の延長線上にある。新規追加が他リソースに副作用を与えない構造（<code>m_resourcesMap</code> の独立エントリ）<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>CRM:EXT_TABLE_STATS:*</code> キーが redis に出ない: P4Orch 側で extension table エントリが 1 件も登録されていない、または CrmOrch のポーリングがまだ走っていない可能性。<code>crm config polling interval</code> の値を確認<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>available</code> が 0 のまま: SAI 実装が <code>sai_object_type_get_availability(GENERIC_PROGRAMMABLE, OBJECT_NAME)</code> を実装していない可能性<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>syncd</code> のログに該当エラーが出ているか確認。</li>
-<li><code>used</code> の値が実体とずれる: P4Orch の <code>inc/dec</code> 呼び出しが add/del の成功パスから外れている可能性。<a href="../../reference/glossary/#term-orchagent">orchagent</a> ログで該当 entry の操作結果を追う<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>watermark アラートが上がらない: 既存 CRM の閾値設定（<code>crm config thresholds</code>）を本テーブル用にも適用しているか確認。HLD は <strong>既存設定の継承</strong> を前提にしている<sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>CRM:EXT_TABLE_STATS:*</code> キーが redis に出ない: P4Orch 側で extension table エントリが 1 件も登録されていない、または CrmOrch のポーリングがまだ走っていない可能性。<code>crm config polling interval</code> の値を確認<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>available</code> が 0 のまま: SAI 実装が <code>sai_object_type_get_availability(GENERIC_PROGRAMMABLE, OBJECT_NAME)</code> を実装していない可能性<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>syncd</code> のログに該当エラーが出ているか確認。</li>
+<li><code>used</code> の値が実体とずれる: P4Orch の <code>inc/dec</code> 呼び出しが add/del の成功パスから外れている可能性。<a href="../../reference/glossary/#term-orchagent">orchagent</a> ログで該当 entry の操作結果を追う<sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>watermark アラートが上がらない: 既存 CRM の閾値設定（<code>crm config thresholds</code>）を本テーブル用にも適用しているか確認。HLD は <strong>既存設定の継承</strong> を前提にしている<sup id="fnref26:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h3 id="_8">コマンド例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h3 id="_9">コマンド例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <p>SAI 拡張 CRM 属性が取得できるか確認する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>all
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>saictl<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show crm&#39;</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;CRM:STATS&#39;</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>grep<span class="w"> </span>-i<span class="w"> </span>CRM<span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>all
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>saictl<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show crm&#39;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;CRM:STATS&#39;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>grep<span class="w"> </span>-i<span class="w"> </span>CRM<span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
 </span></code></pre></div>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-19):
 - sonic-swss `orchagent/crmorch.h` l.37 `CRM_EXT_TABLE,` enum, l.88 `void incCrmExtTableUsedCounter(CrmResourceType resource, std::string table_name);`, l.90 `decCrmExtTableUsedCounter(...)`
 - sonic-swss `orchagent/crmorch.cpp` l.51 `{ CrmResourceType::CRM_EXT_TABLE, "EXTENSION_TABLE" }` resource name registration
@@ -36425,13 +36498,16 @@ reasoning: available 取得経路と used 反映の責務分担の根拠。
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 896d391185a9 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/crm/Generic_SAI_Extensions_CRM.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref24:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref25:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/crm/Generic_SAI_Extensions_CRM.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref24:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref25:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref26:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref27:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref28:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/crmorch.cpp</code> l.184 / l.230 / l.276 @ <code>4305596156d70e9797e8a881b3d19b46de0bce0d</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

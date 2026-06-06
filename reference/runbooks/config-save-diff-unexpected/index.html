@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Runbook: config save 後に予期しない diff が出る — : sonic-net/sonic-utilities @ 39732bceb — config save : sonic-net/sonic-swss-common @ 158de8d — configdb get/set">
+        <meta name="description" content="config save 直後でも diff が消えない場合の切り分け Runbook。default 値の auto-fill、dynamic buffer の自動 key、multi-asic namespace の不整合、sonic-db-cli による runtime のみの変更といった原因を切り分け、安全に復旧する手順をまとめる。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="config save 後に予期しない diff が出る - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Runbook: config save 後に予期しない diff が出る — : sonic-net/sonic-utilities @ 39732bceb — config save : sonic-net/sonic-swss-common @ 158de8d — configdb get/set" />
+<meta property="og:description" content="config save 直後でも diff が消えない場合の切り分け Runbook。default 値の auto-fill、dynamic buffer の自動 key、multi-asic namespace の不整合、sonic-db-cli による runtime のみの変更といった原因を切り分け、安全に復旧する手順をまとめる。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/config-save-diff-unexpected.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/config-save-diff-unexpected/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="config save 後に予期しない diff が出る - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Runbook: config save 後に予期しない diff が出る — : sonic-net/sonic-utilities @ 39732bceb — config save : sonic-net/sonic-swss-common @ 158de8d — configdb get/set" />
+<meta property="twitter:description" content="config save 直後でも diff が消えない場合の切り分け Runbook。default 値の auto-fill、dynamic buffer の自動 key、multi-asic namespace の不整合、sonic-db-cli による runtime のみの変更といった原因を切り分け、安全に復旧する手順をまとめる。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/runbooks/config-save-diff-unexpected.png" />
 </head>
   
@@ -36125,7 +36125,7 @@
 <h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>一旦 <code>sudo config save -y</code> を再実行して安定化</li>
-<li>multi-asic: <code>sudo config save -y</code> （新しい multi-asic 対応版で各 namespace 同時 save）</li>
+<li>multi-asic: <code>sudo config save -y</code> は <code>config/main.py</code> の <code>save</code> コマンド内で全 namespace を反復し、それぞれ <code>/etc/sonic/config_db&lt;N&gt;.json</code> を出力する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>runtime のみで良い key は <a href="../../glossary/#term-config_db">CONFIG_DB</a> から削除し save し直す: <code>sudo sonic-db-cli CONFIG_DB del "&lt;key&gt;"</code></li>
 </ul>
 <h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -36136,16 +36136,16 @@
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: 1af9c6208afc -->
+<!-- glossary-links-injected: 0f594312e2b7 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — config save&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — <code>config/main.py</code> の <code>save</code> コマンド (L1789-L1849): <code>sonic-cfggen -d --print-data</code> を namespace ごとに走らせ、<code>sort_dict</code> で整形してから <code>/etc/sonic/config_db&lt;N&gt;.json</code> に書き戻す&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/<a href="../../glossary/#term-sonic-swss-common">sonic-swss-common</a> @ 158de8d — configdb get/set&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss-common">sonic-swss-common</a> @ 158de8d — <code>common/configdb.cpp</code> の ConfigDBConnector get/set 実装。<code>config save</code> は <a href="../../glossary/#term-redis">Redis</a> から現値を吸い上げるため、<code>sonic-db-cli SET</code> で直接書いた runtime-only key も snapshot に乗る&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

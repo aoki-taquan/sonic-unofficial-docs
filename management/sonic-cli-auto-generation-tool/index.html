@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC CLI 自動生成ツール — SONiC Application Extension (SAE) として 3rd party 機能を 追加 docker で持ち込む際に、CLI を都度書く工数を減らすため、YANG モデルから show / config click plugin を自動生成 するユーティリ…">
+        <meta name="description" content="SONiC CLI 自動生成ツール — SONiC Application Extension (SAE) として 3rd party 機能を 追加 docker で持ち込む際に、CLI を都度書く工数を減らすため、YANG モデルから show / config click plugin を自動生成 するユーティリティ。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SONiC CLI 自動生成ツール（YANG → click plugin 自動生成） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SONiC CLI 自動生成ツール — SONiC Application Extension (SAE) として 3rd party 機能を 追加 docker で持ち込む際に、CLI を都度書く工数を減らすため、YANG モデルから show / config click plugin を自動生成 するユーティリ…" />
+<meta property="og:description" content="SONiC CLI 自動生成ツール — SONiC Application Extension (SAE) として 3rd party 機能を 追加 docker で持ち込む際に、CLI を都度書く工数を減らすため、YANG モデルから show / config click plugin を自動生成 するユーティリティ。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/sonic-cli-auto-generation-tool.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/management/sonic-cli-auto-generation-tool/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SONiC CLI 自動生成ツール（YANG → click plugin 自動生成） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SONiC CLI 自動生成ツール — SONiC Application Extension (SAE) として 3rd party 機能を 追加 docker で持ち込む際に、CLI を都度書く工数を減らすため、YANG モデルから show / config click plugin を自動生成 するユーティリ…" />
+<meta property="twitter:description" content="SONiC CLI 自動生成ツール — SONiC Application Extension (SAE) として 3rd party 機能を 追加 docker で持ち込む際に、CLI を都度書く工数を減らすため、YANG モデルから show / config click plugin を自動生成 するユーティリティ。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/sonic-cli-auto-generation-tool.png" />
 </head>
   
@@ -36361,13 +36361,8 @@
 <li><code>ls /usr/local/yang-models/</code> — 対象 YANG モジュール一覧</li>
 <li><code>sonic-cli-gen generate config &lt;module&gt;</code> を実行し、生成 plugin の import エラーは <code>python3 -c "import config.plugins.auto.&lt;module&gt;_yang"</code> で確認</li>
 <li><code>sonic-package-manager list</code> — Application Extension の有効化状況</li>
+<li><code>ls /usr/local/lib/python3*/dist-packages/show/plugins/auto/</code> — 自動生成 show plugin の有無</li>
 </ul>
-<p>確認コマンド例:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 自動生成 CLI の出力確認</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sonic-cli
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>running-configuration<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>ls<span class="w"> </span>/usr/local/lib/python*/dist-packages/show/plugins
-</span></code></pre></div>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>

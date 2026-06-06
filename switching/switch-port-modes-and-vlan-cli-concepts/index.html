@@ -36015,7 +36015,7 @@
 <p>本ページは親 <a href="../../reference/glossary/#term-hld">HLD</a> <a href="../switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a> から <strong>概念 / 用語 / モード定義</strong> を切り出した派生ページ。実装詳細は <a href="../switch-port-modes-and-vlan-cli-internals/">internals</a>、設定例は <a href="../switch-port-modes-and-vlan-cli-operations/">operations</a>、HLD と実装の乖離は <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を参照。</p>
 <div class="admonition note">
 <p class="admonition-title">実装状況の境界（partially implemented）</p>
-<p>モード概念のうち <strong><code>access</code> / <code>trunk</code> の CLI（<code>config switchport mode access|trunk</code>）と複数 VLAN 一括 add/del は master に取り込み済</strong> で動作する。一方、HLD が想定していた <strong><code>routed</code> モードへの明示遷移コマンドと PORTCHANNEL 一括移行は未実装</strong> に近く、対応 PR が未取り込みの部分が残る。詳細は <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を参照。</p>
+<p>モード概念のうち <strong><code>access</code> / <code>trunk</code> / <code>routed</code> の 3 モードへの切替 CLI（<code>config switchport mode {access|trunk|routed} &lt;port&gt;</code>）と複数 VLAN 一括 add/del は master に取り込み済</strong> で動作する<sup id="fnref3:cli-switchport"><a class="footnote-ref" href="#fn:cli-switchport">2</a></sup><sup id="fnref3:cli-vlan"><a class="footnote-ref" href="#fn:cli-vlan">3</a></sup>。一方、HLD が示していた <strong>PORTCHANNEL に対する一括モード移行など一部の運用便宜オプション</strong> は master のコマンド体系に取り込まれておらず、HLD と実装の細部に乖離が残る。詳細は <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を参照。</p>
 </div>
 <h2 id="_1">なぜこの機能が必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><a href="../../reference/glossary/#term-sonic">SONiC</a> のレガシー <a href="../../reference/glossary/#term-vlan">VLAN</a> CLI は <code>config vlan add 10</code> / <code>config vlan member add 10 Ethernet0 -u</code> のように <strong>VLAN ID 単発操作</strong> を強いる。多数 VLAN の運用では繰り返し叩くことになり、誤入力やループスクリプトでのレース問題があった。さらにポートの「routed / access / trunk」のような <strong>意味的なモード</strong> は CLI に明示されておらず、運用者の認知コストが高かった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -36058,18 +36058,19 @@
   trunk  --&gt; routed: config switchport mode routed
   access --&gt; trunk:  mode 切替 (access→trunk)
   trunk  --&gt; access: mode 切替 (trunk→access)</code></pre>
-<p>既定値は <code>routed</code>。<code>access</code> / <code>trunk</code> への切替は所属 VLAN を伴う設定が必要（VLAN 未指定だと不完全状態）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>既定値は <code>routed</code>。<code>access</code> / <code>trunk</code> への切替は所属 VLAN を伴う設定が必要（VLAN 未指定だと不完全状態）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>routed</code> への遷移時には <code>tagged</code> / <code>untagged</code> メンバが残っているとエラーで弾かれる実装になっている<sup id="fnref:cli-switchport"><a class="footnote-ref" href="#fn:cli-switchport">2</a></sup>。</p>
 <h2 id="vlan-cli">複数 VLAN 一括 CLI のスコープ<a class="headerlink" href="#vlan-cli" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-  CLI[config vlan add 10-15,20] --&gt; P[multi-VLAN parser]
+  CLI["config vlan add -m '10-15,20'"] --&gt; P[multi-VLAN parser]
   P --&gt; R{範囲・重複・不在チェック}
   R --&gt;|OK| WR[CONFIG_DB に書く]
   R --&gt;|NG| ERR[エラー出力 + truncate]</code></pre>
-<p>要点<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>要点<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:cli-vlan"><a class="footnote-ref" href="#fn:cli-vlan">3</a></sup>:</p>
 <ul>
-<li>VLAN 範囲は <code>2 〜 4094</code></li>
-<li>重複・存在チェックでエラーが出たらそこで <strong>truncate</strong>（後続スキップ）</li>
-<li>メンバ追加 (<code>config vlan member add &lt;VLAN_LIST&gt; &lt;PORT_LIST&gt;</code>) も同様に複数指定可能</li>
+<li>範囲・カンマ区切りを使うときは <strong><code>-m</code> / <code>--multiple</code> フラグが必須</strong> (<code>config vlan add -m 10-20</code>、<code>config vlan add -m 10,15,20</code>)。フラグ無しでは単一 VLAN ID のみ受理する</li>
+<li>VLAN 範囲は <code>2 〜 4094</code> (<code>1</code> はデフォルト VLAN として弾かれる)</li>
+<li>重複・存在チェックでエラーが出たらそこで <strong>truncate</strong>（<code>ctx.fail</code> で打ち切り、後続 VLAN はスキップ）</li>
+<li>メンバ追加 / 削除 (<code>config vlan member add|del -m &lt;VLAN_LIST&gt; &lt;PORT&gt;</code>) も同じ <code>-m</code> フラグで複数指定可能</li>
 </ul>
 <h2 id="phase-by-phase">phase-by-phase 実装境界<a class="headerlink" href="#phase-by-phase" title="Permanent link">&para;</a></h2>
 <table>
@@ -36082,22 +36083,22 @@
 </thead>
 <tbody>
 <tr>
-<td><code>access</code> / <code>trunk</code> CLI (<code>config switchport mode access\|trunk</code>)</td>
-<td>取り込み済み</td>
+<td><code>access</code> / <code>trunk</code> CLI (<code>config switchport mode access\|trunk &lt;port&gt;</code>)</td>
+<td>取り込み済み<sup id="fnref4:cli-switchport"><a class="footnote-ref" href="#fn:cli-switchport">2</a></sup></td>
 <td>—</td>
 </tr>
 <tr>
-<td>複数 VLAN 一括 add/del (range / カンマ区切り)</td>
-<td>取り込み済み</td>
+<td><code>routed</code> モードへの明示遷移コマンド (<code>config switchport mode routed &lt;port&gt;</code>)</td>
+<td>取り込み済み<sup id="fnref5:cli-switchport"><a class="footnote-ref" href="#fn:cli-switchport">2</a></sup></td>
 <td>—</td>
 </tr>
 <tr>
-<td><code>routed</code> モードへの明示遷移コマンド</td>
+<td>複数 VLAN 一括 add/del (range / カンマ区切り、<code>-m</code> フラグ付き)</td>
+<td>取り込み済み<sup id="fnref4:cli-vlan"><a class="footnote-ref" href="#fn:cli-vlan">3</a></sup></td>
 <td>—</td>
-<td>HLD 提案段階</td>
 </tr>
 <tr>
-<td>PORTCHANNEL 一括移行</td>
+<td>PORTCHANNEL に対する一括モード移行などの運用便宜オプション</td>
 <td>—</td>
 <td>HLD 提案段階</td>
 </tr>
@@ -36112,7 +36113,7 @@
 <li>Topics 読み物: <a href="../../topics/06-l2-vlan-lag/">06 章: L2 / VLAN / LAG</a></li>
 </ul>
 <h2 id="_5">実装との乖離<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p><code>monitor: partially_implemented</code> — 部分実装。本ページが扱う 概念 / モード定義 / 状態遷移 / 一括 CLI のスコープのうち、<code>access</code> / <code>trunk</code> CLI と複数 VLAN 一括 add/del は master に取り込み済みだが、<code>routed</code> モードへの明示遷移と PORTCHANNEL 一括移行は HLD 提案段階に留まる。差分の根拠 / 影響 / 回避策は派生先 <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を参照。</p>
+<p><code>monitor: partially_implemented</code> — 部分実装。本ページが扱う 概念 / モード定義 / 状態遷移 / 一括 CLI のスコープのうち、<code>access</code> / <code>trunk</code> / <code>routed</code> の 3 モード CLI（<code>config switchport mode &lt;type&gt; &lt;port&gt;</code>）と複数 VLAN 一括 add/del（<code>-m</code> フラグ）は master に取り込み済み<sup id="fnref2:cli-switchport"><a class="footnote-ref" href="#fn:cli-switchport">2</a></sup><sup id="fnref2:cli-vlan"><a class="footnote-ref" href="#fn:cli-vlan">3</a></sup>。PORTCHANNEL に対する一括モード移行など、HLD が示唆していた一部の運用便宜オプションは取り込まれていない。差分の根拠 / 影響 / 回避策は派生先 <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を参照。</p>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 8ba32e5aa69d -->
 
@@ -36121,6 +36122,12 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:cli-switchport">
+<p><code>sonic-net/sonic-utilities</code> <code>config/switchport.py</code> L16-L135 — <code>@switchport.command("mode")</code> の <code>click.Choice(["access", "trunk", "routed"])</code> で 3 モードを受理し、<code>routed</code> 遷移時に tagged / untagged メンバ残存をエラーにする実装。@ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:cli-switchport" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:cli-switchport" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:cli-switchport" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:cli-switchport" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:cli-switchport" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:cli-vlan">
+<p><code>sonic-net/sonic-utilities</code> <code>config/vlan.py</code> L95-L142, L186-L230, L335-L430 — <code>add_vlan</code> / <code>del_vlan</code> / <code>add_vlan_member</code> / <code>del_vlan_member</code> の <code>-m / --multiple</code> フラグと <code>multiple_vlan_parser</code>、VLAN ID 範囲 2-4094 のチェック、<code>ctx.fail</code> による truncate 動作。@ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:cli-vlan" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:cli-vlan" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:cli-vlan" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:cli-vlan" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

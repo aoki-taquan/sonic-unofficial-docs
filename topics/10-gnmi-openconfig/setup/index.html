@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="設定 — gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC native のどちらで指定するかを最初に決める。">
+        <meta name="description" content="gNMI からの Get / Set / Subscribe を OpenConfig / SONiC native YANG いずれの path で発行するかを決め、telemetry コンテナの起動・mTLS・代表機能 (interface / VLAN / PortChannel / BGP) のマップまでを設定手順としてまとめる。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="設定 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="設定 — gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC native のどちらで指定するかを最初に決める。" />
+<meta property="og:description" content="gNMI からの Get / Set / Subscribe を OpenConfig / SONiC native YANG いずれの path で発行するかを決め、telemetry コンテナの起動・mTLS・代表機能 (interface / VLAN / PortChannel / BGP) のマップまでを設定手順としてまとめる。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/10-gnmi-openconfig/setup.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/10-gnmi-openconfig/setup/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="設定 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="設定 — gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC native のどちらで指定するかを最初に決める。" />
+<meta property="twitter:description" content="gNMI からの Get / Set / Subscribe を OpenConfig / SONiC native YANG いずれの path で発行するかを決め、telemetry コンテナの起動・mTLS・代表機能 (interface / VLAN / PortChannel / BGP) のマップまでを設定手順としてまとめる。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/10-gnmi-openconfig/setup.png" />
 </head>
   
@@ -36315,7 +36315,7 @@
 <h2 id="cli-gnmi">CLI と gNMI の混在<a class="headerlink" href="#cli-gnmi" title="Permanent link">&para;</a></h2>
 <p>CLI と gNMI を併用する運用では、同じノードを CLI で書いて gNMI で読むケースが多い。CLI が YANG から自動生成される機能領域では、両者の表現が一致するため <code>gnmi_get</code> の結果と <code>show</code> 出力を相互参照できる。自動生成範囲外の機能では、CLI が CONFIG_DB を直接更新するケースもあり、その場合 gNMI subscribe で「設定変更があった」と通知される。自動生成の仕組みは <a href="../../../management/sonic-cli-auto-generation-tool/">CLI auto-generation tool</a> を参照する。</p>
 <h2 id="config_db-gnmi-table">CONFIG_DB / GNMI 関連 table<a class="headerlink" href="#config_db-gnmi-table" title="Permanent link">&para;</a></h2>
-<p>gNMI server の起動制御に使う table（旧 <code>TELEMETRY</code> は <code>db_migrator</code> の <code>migrate_gnmi()</code> で <code>GNMI</code> に移行済み）。</p>
+<p>gNMI server の起動制御に使う table。旧 <code>TELEMETRY</code> は <code>db_migrator</code> の <code>migrate_gnmi()</code> で <code>GNMI</code> に移行される (CONFIG_DB に <code>GNMI</code> が無い場合のみ、minigraph / golden config の <code>GNMI</code> セクション、もしくは既存 <code>TELEMETRY</code> の <code>gnmi</code> / <code>certs</code> キーを <code>GNMI</code> 配下にコピーする)<sup id="fnref:migrate-gnmi"><a class="footnote-ref" href="#fn:migrate-gnmi">1</a></sup>。</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">&quot;GNMI&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">&quot;gnmi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="s2">&quot;8080&quot;</span><span class="p">,</span><span class="nt">&quot;client_auth&quot;</span><span class="p">:</span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="nt">&quot;log_level&quot;</span><span class="p">:</span><span class="s2">&quot;2&quot;</span><span class="p">},</span>
@@ -36325,7 +36325,11 @@
 </span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>client_auth=true</code> で mTLS、<code>false</code> で server 認証のみ。<code>log_level</code> は 0–9 で大きいほど詳細。</p>
+<p><code>client_auth=true</code> で mTLS、<code>false</code> で server 認証のみ<sup id="fnref:gnmi-yang"><a class="footnote-ref" href="#fn:gnmi-yang">2</a></sup>。<code>log_level</code> は <code>sonic-gnmi.yang</code> 上は <code>uint8 range 0..100</code> で定義され、値が大きいほど詳細<sup id="fnref2:gnmi-yang"><a class="footnote-ref" href="#fn:gnmi-yang">2</a></sup>。<code>certs</code> 配下の <code>server_crt</code> / <code>server_key</code> / <code>ca_crt</code> は YANG の pattern では <code>.cer</code> / <code>.key</code> 拡張子を要求するため、<code>.crt</code> で揃える場合は telemetry コンテナの起動引数 (<code>--server_crt</code> 等) 経由か、CLI / 直接 redis-cli で YANG バリデーションを通さずに書き込む必要がある<sup id="fnref3:gnmi-yang"><a class="footnote-ref" href="#fn:gnmi-yang">2</a></sup><sup id="fnref:telemetry-args"><a class="footnote-ref" href="#fn:telemetry-args">3</a></sup>。</p>
+<!-- evidence: sonic-net/sonic-utilities@39732bc scripts/db_migrator.py lines 634-657 define migrate_gnmi() which copies TELEMETRY → GNMI when GNMI is absent. -->
+<!-- evidence: sonic-net/sonic-buildimage@9ea932e src/sonic-yang-models/yang-models/sonic-gnmi.yang lines 28-79 define GNMI container with port / client_auth / log_level (uint8 range 0..100) / save_on_set and certs (ca_crt / server_crt / server_key, .cer/.key pattern). -->
+<!-- evidence: sonic-net/sonic-gnmi@eb635b7 doc/grpc_telemetry.md describes telemetry binary flags (-port, -server_crt, -server_key, -allow_no_client_auth). -->
+
 <h2 id="_2">よくある設定エラーと対処<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36385,7 +36389,22 @@
 <li><a href="../../../management/sonic-cli-auto-generation-tool/">SONiC CLI auto-generation tool</a></li>
 <li>同章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> / <a href="../operations/">operations</a> / <a href="../yang-reference/">yang-reference</a></li>
 </ul>
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9aad8bf0c717 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:migrate-gnmi">
+<p>sonic-net/<a href="../../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> <code>scripts/db_migrator.py</code> の <code>migrate_gnmi()</code> (commit <code>39732bc</code>、ファイル中 634〜657 行付近) で実装。<code>init_cfg.json</code> 等で minigraph / golden config に <code>GNMI</code> キーがあればそれを優先し、無ければ既存 <code>TELEMETRY|gnmi</code> / <code>TELEMETRY|certs</code> のエントリを <code>GNMI</code> 配下にコピーする。&#160;<a class="footnote-backref" href="#fnref:migrate-gnmi" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:gnmi-yang">
+<p>sonic-net/<a href="../../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> <code>src/sonic-yang-models/yang-models/sonic-gnmi.yang</code> (commit <code>9ea932e</code>、container <code>GNMI</code> 配下の <code>gnmi</code> / <code>certs</code>)。<code>port</code> は <code>inet:port-number</code>、<code>client_auth</code> は boolean、<code>log_level</code> は <code>uint8 { range 0..100; }</code>、<code>save_on_set</code> は boolean、<code>certs</code> の各 leaf は <code>.cer</code> / <code>.key</code> 拡張子の pattern を要求する。&#160;<a class="footnote-backref" href="#fnref:gnmi-yang" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:gnmi-yang" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:gnmi-yang" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:telemetry-args">
+<p>sonic-net/sonic-gnmi <code>doc/grpc_telemetry.md</code> (commit <code>eb635b7</code>)。telemetry バイナリの起動オプションとして <code>-port</code>、<code>-server_crt</code>、<code>-server_key</code>、<code>-ca_crt</code>、<code>-allow_no_client_auth</code> 等が列挙されている。&#160;<a class="footnote-backref" href="#fnref:telemetry-args" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

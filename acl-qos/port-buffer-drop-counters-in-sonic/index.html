@@ -36162,6 +36162,33 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 </details>
 <!-- evidence-rendered:end -->
 
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/portsorch.cpp#L383-L386 (sha: master)
+excerpt: |
+  const vector<sai_port_stat_t> port_buffer_drop_stat_ids =
+  {
+      SAI_PORT_STAT_IN_DROPPED_PKTS,
+      SAI_PORT_STAT_OUT_DROPPED_PKTS
+  };
+reasoning: PORT_BUFFER_DROP FC group が実際に拾う SAI counter は IN/OUT_DROPPED_PKTS の 2 種であることを示す実装側の根拠。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/orchagent/portsorch.cpp#L383-L386 (sha: master)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/orchagent/portsorch.cpp#L383-L386 (sha: master)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>const vector&lt;sai_port_stat_t&gt; port_buffer_drop_stat_ids =
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>{
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    SAI_PORT_STAT_IN_DROPPED_PKTS,
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    SAI_PORT_STAT_OUT_DROPPED_PKTS
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>};
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: PORT_BUFFER_DROP FC group が実際に拾う SAI counter は IN/OUT_DROPPED_PKTS の 2 種であることを示す実装側の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="config_db-cli">関連する CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36224,14 +36251,25 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 <li>値が桁違いに少ない: interval が長いため瞬間ドロップは積み上がりにくい。観測時の dt を考慮</li>
 </ul>
 <h3 id="port-buffer-drop-counter">コマンド例: Port buffer drop counter 確認<a class="headerlink" href="#port-buffer-drop-counter" title="Permanent link">&para;</a></h3>
-<p>下記コマンドを順に実行することで、関連する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のエントリと、
-CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># buffer-drop counter の polling と現在値</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>counterpoll<span class="w"> </span>show
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>queue<span class="w"> </span>counters
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># COUNTERS_DB の BUFFER_DROP 系キー</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;*BUFFER_DROP*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+<p>下記コマンドで <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の FC グループ設定と <a href="../../reference/glossary/#term-flex_counter_db">FLEX_COUNTER_DB</a> の登録状況、CLI 表示の整合を突き合わせ確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># FC グループの polling 設定一覧 (PORT_BUFFER_DROP 行が出ること)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>counterpoll<span class="w"> </span>show
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># CONFIG_DB (-n 4) 側の FLEX_COUNTER_TABLE エントリ</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FLEX_COUNTER_TABLE|PORT_BUFFER_DROP&#39;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># FLEX_COUNTER_DB (-n 5) 側で flexcounterd が拾った FC グループ</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1">#   (swss 内部のグループ名は &quot;PORT_BUFFER_DROP_STAT&quot;)</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FLEX_COUNTER_GROUP_TABLE:PORT_BUFFER_DROP_STAT&#39;</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="c1"># ポート単位の IN/OUT DROPPED_PKTS は portstat (= show interfaces counters)</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># 経由で COUNTERS_DB (-n 2) から取得される</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters
 </span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">redis キー命名について</p>
+<p>COUNTERS_DB (<code>-n 2</code>) に格納される SAI counter は OID キー (例: <code>COUNTERS:oid:0x1000000000004</code>) でハッシュ化されており、<code>BUFFER_DROP</code> のような文字列でキー検索しても直接ヒットしない。CLI 側の名前 <code>PORT_BUFFER_DROP</code> は CONFIG_DB の <code>FLEX_COUNTER_TABLE</code> キー、内部グループ名 <code>PORT_BUFFER_DROP_STAT</code> は FLEX_COUNTER_DB の <code>FLEX_COUNTER_GROUP_TABLE</code> 側キーとして使われる<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+</div>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../configurable-drop-counters-in-sonic/">Configurable Drop Counters in SONiC</a></li>
@@ -36245,13 +36283,16 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: 9d85d51e09d0 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/portsorch.h</code> L31 で <code>PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP="PORT_BUFFER_DROP_STAT"</code>、<code>orchagent/portsorch.cpp</code> L383-L386 で <code>port_buffer_drop_stat_ids = { SAI_PORT_STAT_IN_DROPPED_PKTS, SAI_PORT_STAT_OUT_DROPPED_PKTS }</code>、<code>sonic-net/sonic-utilities</code> <code>counterpoll/main.py</code> L10, L165, L174, L183 で CONFIG_DB 側のキーは <code>FLEX_COUNTER_TABLE|PORT_BUFFER_DROP</code>。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

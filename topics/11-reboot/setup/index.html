@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Reboot / warm restart の設定 — 設定で最初に分けるのは、OS 全体の reboot を実行するのか、service warm restart を許可するのかです。">
+        <meta name="description" content="OS reboot と service warm restart の使い分け、warm restart の有効化・timer 設定・blocking mode の運用手順を、sonic-utilities の CLI 実装と sonic-swss の daemon default に基づいて整理する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Reboot / warm restart の設定 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Reboot / warm restart の設定 — 設定で最初に分けるのは、OS 全体の reboot を実行するのか、service warm restart を許可するのかです。" />
+<meta property="og:description" content="OS reboot と service warm restart の使い分け、warm restart の有効化・timer 設定・blocking mode の運用手順を、sonic-utilities の CLI 実装と sonic-swss の daemon default に基づいて整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/11-reboot/setup.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/11-reboot/setup/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Reboot / warm restart の設定 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Reboot / warm restart の設定 — 設定で最初に分けるのは、OS 全体の reboot を実行するのか、service warm restart を許可するのかです。" />
+<meta property="twitter:description" content="OS reboot と service warm restart の使い分け、warm restart の有効化・timer 設定・blocking mode の運用手順を、sonic-utilities の CLI 実装と sonic-swss の daemon default に基づいて整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/11-reboot/setup.png" />
 </head>
   
@@ -3892,6 +3892,17 @@
     <span class="md-ellipsis">
       
         関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
       
     </span>
   </a>
@@ -36051,6 +36062,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36088,14 +36110,16 @@
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>config<span class="w"> </span>warm_restart<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>bgp
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>config<span class="w"> </span>warm_restart<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>teamd
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># 3. timer をデフォルト (60s/120s/30s) より長めに振る (chassis や大規模 FIB ほど長く)</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>config<span class="w"> </span>warm_restart<span class="w"> </span>neighsyncd_timer<span class="w"> </span><span class="m">120</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>config<span class="w"> </span>warm_restart<span class="w"> </span>bgp_timer<span class="w">        </span><span class="m">180</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>config<span class="w"> </span>warm_restart<span class="w"> </span>teamsyncd_timer<span class="w">  </span><span class="m">60</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>config<span class="w"> </span>warm_restart<span class="w"> </span>bgp_eoiu<span class="w"> </span><span class="nb">enable</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="c1"># 4. 設定保存 (warm boot script は永続設定を期待する)</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>config<span class="w"> </span>save<span class="w"> </span>-y
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># 3. timer を実環境に合わせて延ばす (chassis や大規模 FIB ほど長く)</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1">#    daemon 側の組み込みデフォルトは neighsyncd=5s, fpmsyncd=120s で、</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1">#    teamsyncd は明示デフォルトを持たない[^timer-defaults]。明示的に設定するのが安全。</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>config<span class="w"> </span>warm_restart<span class="w"> </span>neighsyncd_timer<span class="w"> </span><span class="m">120</span><span class="w">   </span><span class="c1"># 1..9999</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>config<span class="w"> </span>warm_restart<span class="w"> </span>bgp_timer<span class="w">        </span><span class="m">180</span><span class="w">   </span><span class="c1"># 1..3600</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>config<span class="w"> </span>warm_restart<span class="w"> </span>teamsyncd_timer<span class="w">  </span><span class="m">60</span><span class="w">    </span><span class="c1"># 1..3600</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>config<span class="w"> </span>warm_restart<span class="w"> </span>bgp_eoiu<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="c1"># 4. 設定保存 (warm boot script は永続設定を期待する)</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>config<span class="w"> </span>save<span class="w"> </span>-y
 </span></code></pre></div>
 <p><a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a>:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
@@ -36109,21 +36133,20 @@
 </span></code></pre></div>
 <p>確認:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$<span class="w"> </span>show<span class="w"> </span>warm_restart<span class="w"> </span>config
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>name<span class="w">              </span><span class="nb">enable</span><span class="w">    </span>timer_name<span class="w">           </span>timer_duration
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>----------------<span class="w">  </span>--------<span class="w">  </span>-------------------<span class="w">  </span>----------------
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>name<span class="w">              </span><span class="nb">enable</span><span class="w">    </span>timer_name<span class="w">           </span>timer_duration<span class="w">    </span>eoiu_enable
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>----------------<span class="w">  </span>--------<span class="w">  </span>-------------------<span class="w">  </span>----------------<span class="w">  </span>-------------
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>system<span class="w">            </span><span class="nb">true</span>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>swss<span class="w">              </span><span class="nb">true</span><span class="w">      </span>neighsyncd_timer<span class="w">     </span><span class="m">120</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>bgp<span class="w">               </span><span class="nb">true</span><span class="w">      </span>bgp_timer<span class="w">            </span><span class="m">180</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>bgp<span class="w">               </span><span class="nb">true</span><span class="w">      </span>bgp_eoiu<span class="w">             </span><span class="nb">true</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>teamd<span class="w">             </span><span class="nb">true</span><span class="w">      </span>teamsyncd_timer<span class="w">      </span><span class="m">60</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>$<span class="w"> </span>show<span class="w"> </span>warm_restart<span class="w"> </span>state
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>name<span class="w">              </span>restore_count<span class="w">  </span>state
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>----------------<span class="w">  </span>-------------<span class="w">  </span>--------
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>orchagent<span class="w">         </span><span class="m">0</span><span class="w">              </span>reconciled
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>neighsyncd<span class="w">        </span><span class="m">0</span><span class="w">              </span>reconciled
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>bgp<span class="w">               </span><span class="m">0</span><span class="w">              </span>reconciled
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>teamsyncd<span class="w">         </span><span class="m">0</span><span class="w">              </span>reconciled
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>bgp<span class="w">               </span><span class="nb">true</span><span class="w">      </span>bgp_timer<span class="w">            </span><span class="m">180</span><span class="w">               </span><span class="nb">true</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>teamd<span class="w">             </span><span class="nb">true</span><span class="w">      </span>teamsyncd_timer<span class="w">      </span><span class="m">60</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>$<span class="w"> </span>show<span class="w"> </span>warm_restart<span class="w"> </span>state
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>name<span class="w">              </span>restore_count<span class="w">  </span>state
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>----------------<span class="w">  </span>-------------<span class="w">  </span>--------
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>orchagent<span class="w">         </span><span class="m">0</span><span class="w">              </span>reconciled
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>neighsyncd<span class="w">        </span><span class="m">0</span><span class="w">              </span>reconciled
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>bgp<span class="w">               </span><span class="m">0</span><span class="w">              </span>reconciled
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>teamsyncd<span class="w">         </span><span class="m">0</span><span class="w">              </span>reconciled
 </span></code></pre></div>
 <p><code>state</code> が <code>reconciled</code> で揃っていれば次回 <code>warm-reboot</code> は data plane 無停止で抜けられる目安になります。</p>
 <h2 id="2-warm-reboot">シナリオ 2: 実際に warm-reboot を実行する<a class="headerlink" href="#2-warm-reboot" title="Permanent link">&para;</a></h2>
@@ -36277,7 +36300,59 @@
 <li>CONFIG_DB: <code>WARM_RESTART</code> table</li>
 <li>同章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> / <a href="../operations/">operations</a> / <a href="../upgrade/">upgrade</a></li>
 </ul>
-<!-- glossary-links-injected: c006405759d8 -->
+<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/warm_restart.py#L176-L177 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  header = ['name', 'enable', 'timer_name', 'timer_duration', 'eoiu_enable']
+  click.echo(tabulate(tablelize(keys, data, enable_table_keys, prefix), header))
+reasoning: 本ページの `show warm_restart config` 出力例は 5 列 (name / enable / timer_name / timer_duration / eoiu_enable) を反映している。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/show/warm_restart.py#L176-L177 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/show/warm_restart.py#L176-L177 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>header = [&#39;name&#39;, &#39;enable&#39;, &#39;timer_name&#39;, &#39;timer_duration&#39;, &#39;eoiu_enable&#39;]
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>click.echo(tabulate(tablelize(keys, data, enable_table_keys, prefix), header))
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 本ページの <code>show warm_restart config</code> 出力例は 5 列 (name / enable / timer_name / timer_duration / eoiu_enable) を反映している。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/main.py#L3938-L4096 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @config.group(cls=clicommon.AbbreviationGroup, name='warm_restart')
+  ... warm_restart_enable / disable / neighsyncd_timer / bgp_timer / teamsyncd_timer / bgp_eoiu
+reasoning: 本ページで列挙する `config warm_restart enable|disable|neighsyncd_timer|bgp_timer|teamsyncd_timer|bgp_eoiu` の各サブコマンドは sonic-utilities の click group `warm_restart` 配下に実在し、CONFIG_DB `WARM_RESTART` table に書き込む。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L3938-L4096 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/config/main.py#L3938-L4096 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>@config.group(cls=clicommon.AbbreviationGroup, name=&#39;warm_restart&#39;)
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>... warm_restart_enable / disable / neighsyncd_timer / bgp_timer / teamsyncd_timer / bgp_eoiu
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 本ページで列挙する <code>config warm_restart enable|disable|neighsyncd_timer|bgp_timer|teamsyncd_timer|bgp_eoiu</code> の各サブコマンドは sonic-utilities の click group <code>warm_restart</code> 配下に実在し、CONFIG_DB <code>WARM_RESTART</code> table に書き込む。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- glossary-links-injected: d5320e852f7a -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:timer-defaults">
+<p><code>neighsyncd</code> の warm restart 待機時間のコンパイル時 default は <code>DEFAULT_NEIGHSYNC_WARMSTART_TIMER = 5</code> 秒で、CONFIG_DB の <code>WARM_RESTART|swss/neighsyncd_timer</code> で上書きされる（<a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/neighsyncd/neighsync.h#L10">sonic-net/sonic-swss <code>neighsyncd/neighsync.h</code> L10</a> と <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/neighsyncd/neighsync.cpp#L30"><code>neighsyncd/neighsync.cpp</code> L30</a>）。<code>fpmsyncd</code> 側は <code>DEFAULT_ROUTING_RESTART_INTERVAL = 120</code> 秒で（<a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp#L46"><code>fpmsyncd/fpmsyncd.cpp</code> L46, L160-164</a>）、これが <code>WARM_RESTART|bgp/bgp_timer</code> 未設定時の待機時間となる。<code>teamsyncd</code> には明示的なコンパイル時 default 値が無く、<code>config warm_restart teamsyncd_timer</code> 未設定時は CONFIG_DB に値が無い状態で <code>AppRestartAssist</code> が呼ばれる。timer の許容 range は <a href="../../../reference/glossary/#term-yang">YANG</a> (<code>sonic-warm-restart</code>) と <code>config/main.py</code> の双方で <code>neighsyncd_timer: 1..9999</code> / <code>bgp_timer: 1..3600</code> / <code>teamsyncd_timer: 1..3600</code> に強制される（<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L4015-L4078">sonic-net/sonic-utilities <code>config/main.py</code> L4015-L4078</a>）。&#160;<a class="footnote-backref" href="#fnref:timer-defaults" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

@@ -35906,7 +35906,7 @@
 <li><a href="../../topics/10-gnmi-openconfig/">gNMI / gNOI / OpenConfig / YANG</a> — [meta] gNMI / gNOI / OpenConfig / YANG — この章は、SONiC の「モデル駆動管理」を、リクエストが入る入口から ConfigDB…</li>
 <li><a href="../../topics/10-gnmi-openconfig/concept/">概要</a> — [meta] 概要 — SONiC のモデル駆動管理は、CLI、gNMI、REST という 3 つの入口が、Translib / Transformer という共通の中間層…</li>
 <li><a href="../../topics/10-gnmi-openconfig/architecture/">アーキテクチャ</a> — [code-verified] アーキテクチャ — gNMI / REST のリクエストが CONFIG_DB に到達するまでの経路は、入口の transport が違っても中間層 (Tra…</li>
-<li><a href="../../topics/10-gnmi-openconfig/setup/">設定</a> — [meta] 設定 — gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC native…</li>
+<li><a href="../../topics/10-gnmi-openconfig/setup/">設定</a> — [code-verified] gNMI からの Get / Set / Subscribe を OpenConfig / SONiC native YANG いずれの path で発行する…</li>
 <li><a href="../../topics/10-gnmi-openconfig/operations/">運用</a> — [code-verified] 運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collect…</li>
 <li><a href="../../topics/10-gnmi-openconfig/internals/">内部実装</a> — [meta] 内部実装 — gNMI / OpenConfig の内部実装は、telemetry コンテナの中に gNMI server があり、translib / so…</li>
 <li><a href="../../topics/10-gnmi-openconfig/gnoi-gnsi/">gNOI / gNSI</a> — [meta] gNOI / gNSI — gNOI (gRPC Network Operations Interface) は、設定読み書き (gNMI) の隣で rebo…</li>
@@ -35918,7 +35918,7 @@
 <li><a href="../../topics/11-reboot/">Reboot / Upgrade / Lifecycle</a> — [meta] Reboot / Upgrade / Lifecycle — この章は、SONiC の reboot family と upgrade lifecycle を…</li>
 <li><a href="../../topics/11-reboot/concept/">Reboot family の選び方</a> — [meta] Reboot family の選び方 — SONiC の reboot は、単に「速い順」に並べるよりも、どの状態を保持し、どこで整合性を取り直すかで見ると判…</li>
 <li><a href="../../topics/11-reboot/architecture/">Warm path の内部構造</a> — [meta] Warm path の内部構造 — warm reboot / warm restart の中心は、停止前に「復元に必要な状態」を固定し、起動後に「旧状態と新…</li>
-<li><a href="../../topics/11-reboot/setup/">Reboot / warm restart の設定</a> — [meta] Reboot / warm restart の設定 — 設定で最初に分けるのは、OS 全体の reboot を実行するのか、service warm rest…</li>
+<li><a href="../../topics/11-reboot/setup/">Reboot / warm restart の設定</a> — [code-verified] OS reboot と service warm restart の使い分け、warm restart の有効化・timer 設定・blocking mode…</li>
 <li><a href="../../topics/11-reboot/operations/">Reboot 運用と障害調査</a> — [meta] Reboot 運用と障害調査 — 実行前に peer と platform の前提を揃え、実行中は warm shutdown / restore の境界を見…</li>
 <li><a href="../../topics/11-reboot/internals/">内部実装</a> — [meta] 内部実装 — reboot / upgrade / lifecycle の内部実装は「どこまで data plane を生かしたまま control plan…</li>
 <li><a href="../../topics/11-reboot/upgrade/">Upgrade lifecycle</a> — [meta] Upgrade lifecycle — upgrade は reboot と同じではありません。upgrade は「どの image / package /…</li>
@@ -36281,7 +36281,7 @@
 <li><a href="../../system/dataplane-telemetry-test-plan/">Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report）</a> — [code-verified] Dataplane Telemetry (DTel) のテストプラン。INT source / sink / transit、Postcard、Drop re…</li>
 <li><a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/">show techsupport での SFP EEPROM ページダンプ取り込み</a> — [code-verified] show techsupport での SFP EEPROM ページダンプ取り込み — 光モジュール起因の物理層トラブル解析向けに、show techsupp…</li>
 <li><a href="../../system/event-driven-techsupport-invocation-coredump-mgmt/">Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota）</a> — [discrepancy-found] Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota） —…</li>
-<li><a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/">Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）</a> — [code-verified] Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE） — CRM（Critical Resource Monitori…</li>
+<li><a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/">Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）</a> — [discrepancy-found] Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE） — CRM（Critical Resource Monitori…</li>
 <li><a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/">Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）</a> — [code-verified] Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS） — SONiC のテレメトリエージ…</li>
 <li><a href="../../system/show-techsupport/">Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）</a> — [discrepancy-found] Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式） — show techs…</li>
 <li><a href="../../system/sonic-system-health-monitor-high-level-design/">System Health Monitor（critical service / Monit / peripheral）</a> — [code-verified] System Health Monitor（critical service / Monit / peripheral） — SONiC の 「system…</li>
@@ -36360,7 +36360,7 @@
 <li><a href="../../management/pins-hld/">PINS（P4 Integrated Network Stack / SDN 制御 SONiC）</a> — [code-verified] PINS（P4 Integrated Network Stack） — PINS は P4Runtime ベースの SDN 制御 interface を SO…</li>
 <li><a href="../../management/send-to-ingress-hld/">Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）</a> — [code-verified] Send to Ingress（CPU から ingress pipeline へパケット注入する hostif） — PINS の Packet I/O に…</li>
 <li><a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/">DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）</a> — [code-verified] DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary） — VLAN に 複数の…</li>
-<li><a href="../../management/ipv4-port-based-dhcp-server-in-sonic/">ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）</a> — [code-verified] ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携） — SONiC に 組み込み…</li>
+<li><a href="../../management/ipv4-port-based-dhcp-server-in-sonic/">ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）</a> — [discrepancy-found] ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携） — SONiC に 組み込み…</li>
 <li><a href="../../management/portable-console-device-design/">Portable Console Device 設計（USB ベンダー console デバイスの抽象化）</a> — [discrepancy-found] Portable Console Device 設計（USB ベンダー console デバイスの抽象化） — SONiC のホストにプラグインされる USB…</li>
 <li><a href="../../management/serial-console-global-config-hld/">シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）</a> — [code-verified] シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES） — シリアル（tty）経由のローカルログインは、ネットワークが切れた状況下での最…</li>
 <li><a href="../../management/sonic-console-switch/">Console Switch（serial hub の reverse SSH 集約）</a> — [discrepancy-found] Console Switch（serial hub の reverse SSH 集約） — SONiC スイッチを「network 機器を console（s…</li>
@@ -36966,7 +36966,7 @@
 <li><a href="../../reference/runbooks/link-flapping/">T0/T1 リンクが flap し続ける</a> — [runbook-verified] T0/T1 間のリンクが頻繁に up/down する場合の切り分け runbook。flap 頻度の定量化、DOM 値とベンダー別 threshold の確認…</li>
 <li><a href="../../reference/runbooks/config-db-persistence-failure/">CONFIG_DB の永続化が失敗する</a> — [code-verified] Runbook: CONFIG_DB の永続化が失敗する (config save 失敗) — : sonic-net/sonic-utilities @ 3…</li>
 <li><a href="../../reference/runbooks/container-memory-limit-exceeded/">コンテナ memory limit 超過 / OOM kill</a> — [code-verified] Runbook: コンテナ memory limit 超過 / OOM kill — : sonic-net/sonic-buildimage @ 43055…</li>
-<li><a href="../../reference/runbooks/config-save-diff-unexpected/">config save 後に予期しない diff が出る</a> — [code-verified] Runbook: config save 後に予期しない diff が出る — : sonic-net/sonic-utilities @ 39732bceb…</li>
+<li><a href="../../reference/runbooks/config-save-diff-unexpected/">config save 後に予期しない diff が出る</a> — [code-verified] config save 直後でも diff が消えない場合の切り分け Runbook。default 値の auto-fill、dynamic buffer…</li>
 <li><a href="../../reference/runbooks/sai-table-full/">SAI table full (route / nexthop / FDB 上限到達)</a> — [code-verified] Runbook: SAI table full (route / nexthop / FDB 上限到達) の切り分けと対処。CRM threshold 越え…</li>
 <li><a href="../../reference/runbooks/smartswitch-dpu-image-install-failure/">SmartSwitch DPU image インストールが失敗する</a> — [code-verified] Runbook: SmartSwitch DPU image インストールが失敗する — : sonic-net/sonic-platform-daemons…</li>
 <li><a href="../../reference/runbooks/platform-fan-psu-anomaly/">show platform fan / psu で異常値が出る</a> — [code-verified] Runbook: show platform fan / psu で異常値が出る — : sonic-net/sonic-platform-daemons @…</li>

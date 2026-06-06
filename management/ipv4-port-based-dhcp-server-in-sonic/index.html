@@ -16871,6 +16871,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -16890,7 +16901,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -36240,6 +36251,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -36259,7 +36281,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -36340,9 +36362,9 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-buildimage/dockers/docker-dhcp-server/</code> で dhcp_server コンテナ（Dockerfile.j2 / kea-dhcp4.conf.j2 / lease_update.sh / docker_init.sh / supervisord.conf）を確認。<code>sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py</code> で dhcpservd daemon、<code>dhcp_utilities/dhcprelayd/dhcprelayd.py</code> で dhcprelayd を確認。<code>sonic-buildimage/dockers/docker-dhcp-relay/docker-dhcp-relay.supervisord.conf.j2</code> L92-93 で <code>[program:dhcprelayd]</code> の supervisord 起動を確認。<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang</code> で YANG を確認（verified 2026-05-09）。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: discrepancy-found</p>
+<p><code>sonic-buildimage/dockers/docker-dhcp-server/</code> で dhcp_server コンテナ（Dockerfile.j2 / kea-dhcp4.conf.j2 / lease_update.sh / docker_init.sh / supervisord.conf）を確認。<code>sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py</code> で dhcpservd daemon、<code>dhcp_utilities/dhcprelayd/dhcprelayd.py</code> で dhcprelayd を確認。<code>sonic-buildimage/dockers/docker-dhcp-relay/docker-dhcp-relay.supervisord.conf.j2</code> L92-93 で <code>[program:dhcprelayd]</code> の supervisord 起動を確認。<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang</code> で YANG を確認（verified 2026-06-06）。<strong>HLD-master 差分</strong>: (1) HLD の customized option <code>type</code> 候補 <code>binary</code>/<code>boolean</code> は master YANG で削除済み (<code>string</code>/<code>ipv4-address</code>/<code>uint8/16/32</code> のみ)<sup id="fnref2:5"><a class="footnote-ref" href="#fn:5">5</a></sup>、(2) STATE_DB テーブル名は HLD <code>DHCP_SERVER_IPV4_IP</code> ではなく master では <code>DHCP_SERVER_IPV4_SERVER_IP</code><sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup>、(3) client-class の <code>test</code> 式が HLD では完全一致、master では <code>substring(...)==</code> の末尾部分一致<sup id="fnref4:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 </div>
 <h1 id="ipv4-dhcp-serverkea-dhcp-server-dhcrelay-option-82">ポートベース IPv4 DHCP Server（<code>kea-dhcp-server</code> + <code>dhcrelay</code> Option 82 連携）<a class="headerlink" href="#ipv4-dhcp-serverkea-dhcp-server-dhcrelay-option-82" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36355,9 +36377,9 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">機能境界<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>per switch で enable/disable</strong>。<code>FEATURE.dhcp_server.state</code> で制御し、デフォルトは disabled<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>同一スイッチで dhcp_relay と共存しない</strong>。共存させたい (vlan 別 enable) 構想は将来課題<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>現状 <strong>relay された DHCP request への応答は未対応</strong>（option 82 を持って戻ってきたパケット処理は将来）<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>per switch で enable/disable</strong>。<code>FEATURE.dhcp_server.state</code> で制御し、デフォルトは disabled<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>同一スイッチで dhcp_relay と共存しない</strong>。共存させたい (vlan 別 enable) 構想は将来課題<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>現状 <strong>relay された DHCP request への応答は未対応</strong>（option 82 を持って戻ってきたパケット処理は将来）<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h3 id="_4">コンテナ / プロセス構成<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -36379,9 +36401,9 @@
   dhcpservd --&gt; STATE[(STATE_DB&lt;br&gt;DHCP_SERVER_IPV4_LEASE)]
   CFG --&gt; dhcprelayd
   dhcprelayd --&gt;|kill/start/restart| dhcrelay</code></pre>
-<p><code>dhcprelayd</code> は <code>VLAN</code> / <code>VLAN_MEMBER</code> / <code>DHCP_SERVER_IPV4*</code> を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から subscribe し、関連変更や <code>dhcp_relay</code> container 起動時に <code>dhcrelay</code> プロセスを起動・再起動する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>dhcprelayd</code> は <code>FEATURE</code> / <code>VLAN</code> / <code>VLAN_INTF</code> / <code>DHCP_SERVER_IPV4</code> を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から subscribe し、関連変更や <code>dhcp_relay</code> container 起動時に <code>dhcrelay</code> プロセスを起動・再起動する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。<code>FEATURE_CHECKER</code> と <code>DHCP_SERVER_CHECKER</code> は常時有効で、VLAN 系の checker は dhcp_server が有効化された VLAN がある時のみ enable される<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h3 id="kea-dhcp-server-dhcpservd">kea-dhcp-server の設定（dhcpservd が生成）<a class="headerlink" href="#kea-dhcp-server-dhcpservd" title="Permanent link">&para;</a></h3>
-<p><code>dhcrelay</code> の Option 82 に <strong>circuit-id = <code>&lt;hostname&gt;:&lt;port_alias&gt;</code> (例 <code>hostname:etp1</code>)</strong> が乗ることを使い、kea 側で <code>client-classes</code> でクライアントを分類し、対応 pool から払い出す<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>dhcrelay</code> の Option 82 に <strong>circuit-id = <code>&lt;hostname&gt;:&lt;port_alias&gt;</code> (例 <code>hostname:etp1</code>)</strong> が乗ることを使い、kea 側で <code>client-classes</code> でクライアントを分類し、対応 pool から払い出す<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;Dhcp4&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;interfaces-config&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;interfaces&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;eth0&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">},</span>
@@ -36402,20 +36424,28 @@
 </span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>dhcp-server-identifier</code> (Option 54) は <strong>DHCP インタフェース（dhcrelay 下流）IP</strong> に書き換える。client が unicast RELEASE を投げる先を relay に向け、relay から server へ転送させるため<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>dhcp-server-identifier</code> (Option 54) は <strong>DHCP インタフェース（dhcrelay 下流）IP</strong> に書き換える。client が unicast RELEASE を投げる先を relay に向け、relay から server へ転送させるため<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
+<div class="admonition note">
+<p class="admonition-title">実装上の差分</p>
+<p>HLD の例では <code>"test": "relay4[1].hex == 'hostname:etp1'"</code> と完全一致式で書かれているが、実コード (<code>dhcp_cfggen.py</code> L240-243<sup id="fnref5:3"><a class="footnote-ref" href="#fn:3">3</a></sup>) は <code>substring(relay4[1].hex, -&lt;class_len&gt;, &lt;class_len&gt;) == '&lt;hostname&gt;:&lt;port_name&gt;'</code> の <strong>末尾部分一致</strong> で生成する。Option 82 sub-option 1 (circuit-id) のヘッダ先頭バイトを除外するため。</p>
+</div>
 <h3 id="dhcrelay">dhcrelay の起動例<a class="headerlink" href="#dhcrelay" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>./dhcrelay<span class="w"> </span>-d<span class="w"> </span>-m<span class="w"> </span>discard<span class="w"> </span>-a<span class="w"> </span>%h:%p<span class="w"> </span>%P<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>--name-alias-map-file<span class="w"> </span>/tmp/port-name-alias-map.txt<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>-id<span class="w"> </span>Vlan1000<span class="w"> </span>-iu<span class="w"> </span>docker0<span class="w"> </span><span class="m">240</span>.127.1.2
 </span></code></pre></div>
-<p>dhcp_server コンテナ側 IP は <code>240.127.1.2</code>（<code>DHCP_SERVER_IPV4_IP</code> テーブルで管理）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>dhcp_server コンテナ側 IP は <code>240.127.1.2</code>（<code>STATE_DB</code> の <code>DHCP_SERVER_IPV4_SERVER_IP|&lt;dhcp_interface&gt;</code> で公開、<code>dhcpservd</code> が起動時に書き込む）<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</p>
 <h3 id="lease-state_db">lease の STATE_DB 反映<a class="headerlink" href="#lease-state_db" title="Permanent link">&para;</a></h3>
-<p>kea の <code>libdhcp_run_script.so</code> フック経由で <code>/tmp/lease_update.sh</code> が走り、<code>/tmp/kea-lease.csv</code> を読んだ <code>dhcpservd</code> が <code>STATE_DB</code> の <code>DHCP_SERVER_IPV4_LEASE</code> を更新する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>kea の <code>libdhcp_run_script.so</code> フック経由で <code>/etc/kea/lease_update.sh</code> が走り、<code>/var/lib/kea/kea-lease.csv</code> を読んだ <code>dhcpservd</code> が <code>STATE_DB</code> の <code>DHCP_SERVER_IPV4_LEASE</code> を更新する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>address,hwaddr,client_id,valid_lifetime,expire,subnet_id,...
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>192.168.0.2,aa:bb:cc:dd:ee:ff,,3600,1694000905,1,...
 </span></code></pre></div>
 <h3 id="customized-dhcp-option">Customized DHCP option<a class="headerlink" href="#customized-dhcp-option" title="Permanent link">&para;</a></h3>
-<p>option 60 等を per-DHCP-interface で配るテーブル <code>DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS</code> を持つ<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<strong>禁止 option</strong> は <code>1</code>（Subnet Mask）/ <code>3</code>（Router）/ <code>51</code>（Lease Time）/ <code>53</code>（Message Type）/ <code>54</code>（Server ID）。型は <code>binary</code> / <code>boolean</code> / <code>string</code> / <code>ipv4-address</code> / <code>uint8/16/32</code><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>option 60 等を per-DHCP-interface で配るテーブル <code>DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS</code> を持つ<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<strong>禁止 option</strong> は <code>1</code>（Subnet Mask）/ <code>3</code>（Router）/ <code>51</code>（Lease Time）/ <code>53</code>（Message Type）/ <code>54</code>（Server ID）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>id</code> の YANG <code>range</code> は <code>1..254</code><sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</p>
+<div class="admonition warning">
+<p class="admonition-title">型の HLD-master 乖離</p>
+<p>HLD は型として <code>binary</code> / <code>boolean</code> / <code>string</code> / <code>ipv4-address</code> / <code>uint8/16/32</code> を挙げる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup> が、master の <code>sonic-dhcp-server-ipv4.yang</code> (<code>type</code> leaf の enumeration<sup id="fnref3:5"><a class="footnote-ref" href="#fn:5">5</a></sup>) は <code>string</code> / <code>ipv4-address</code> / <code>uint8</code> / <code>uint16</code> / <code>uint32</code> のみで、<strong><code>binary</code> と <code>boolean</code> は YANG 上は受け付けられない</strong>。実体の <code>dhcp_option.csv</code> 上は option 54 (server-id) が <code>defined_supported</code>、option 1/3/12/50/51/53 等は <code>defined_unsupported</code>/<code>unsupported</code><sup id="fnref6:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
+</div>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
@@ -36454,7 +36484,7 @@
 </tr>
 </tbody>
 </table>
-<p><a href="../../reference/glossary/#term-yang">YANG</a> <code>must</code> 制約で <strong><code>ips</code> と <code>ranges</code> を同時指定不可</strong>、<code>ranges</code> 配列は 1〜2 要素<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-yang">YANG</a> <code>must</code> 制約で <strong><code>ips</code> と <code>ranges</code> を同時指定不可</strong>、<code>ranges</code> 配列は 1〜2 要素<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -36522,7 +36552,46 @@
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>dhcp_server<span class="w"> </span>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>kea
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DHCP_SERVER_IPV4|Vlan1000&#39;</span>
 </span></code></pre></div>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>HLD と master の <a href="../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> 実装で以下の差分を確認した:</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>HLD の主張<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></th>
+<th>master 実装</th>
+<th>出典</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>customized_options</code> の <code>type</code> enum</td>
+<td><code>binary</code> / <code>boolean</code> / <code>string</code> / <code>ipv4-address</code> / <code>uint8/16/32</code></td>
+<td><code>string</code> / <code>ipv4-address</code> / <code>uint8</code> / <code>uint16</code> / <code>uint32</code> のみ</td>
+<td><sup id="fnref4:5"><a class="footnote-ref" href="#fn:5">5</a></sup></td>
+</tr>
+<tr>
+<td>dhcp_server コンテナ IP の公開先</td>
+<td><code>DHCP_SERVER_IPV4_IP</code> テーブル</td>
+<td><code>STATE_DB</code> の <code>DHCP_SERVER_IPV4_SERVER_IP|&lt;intf&gt;</code></td>
+<td><sup id="fnref3:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+</tr>
+<tr>
+<td>client-class の <code>test</code> 式</td>
+<td><code>relay4[1].hex == 'hostname:etp1'</code></td>
+<td><code>substring(relay4[1].hex, -&lt;len&gt;, &lt;len&gt;) == 'hostname:etp1'</code></td>
+<td><sup id="fnref7:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+<tr>
+<td>lease ファイル / hook script のパス</td>
+<td><code>/tmp/kea-lease.csv</code> / <code>/tmp/lease_update.sh</code></td>
+<td><code>/var/lib/kea/kea-lease.csv</code> / <code>/etc/kea/lease_update.sh</code></td>
+<td><sup id="fnref8:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p>いずれも振る舞いに直結する差分であり、master の値を正とする。</p>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36531,7 +36600,7 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-entry -->
-<h2 id="_11">運用入口<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">運用入口<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <p>この <a href="../../reference/glossary/#term-hld">HLD</a> に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。</p>
 <h3 id="cli_1">関連 CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36552,13 +36621,25 @@
 </ul>
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 987cec9fd0c5 -->
+<!-- glossary-links-injected: 75921d013977 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dhcp_server/port_based_dhcp_server_high_level_design.md">sonic-net/SONiC doc/dhcp_server/port_based_dhcp_server_high_level_design.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dhcp_server/port_based_dhcp_server_high_level_design.md">sonic-net/SONiC doc/dhcp_server/port_based_dhcp_server_high_level_design.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py">sonic-net/sonic-buildimage src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py @ master L17-29, L82-108</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py">sonic-net/sonic-buildimage src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py @ master L31, L223-249</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py">sonic-net/sonic-buildimage src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py @ master L22, L80</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang">sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang @ master L131-148</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

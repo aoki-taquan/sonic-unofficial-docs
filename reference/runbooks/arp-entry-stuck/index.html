@@ -35988,18 +35988,21 @@
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>ip<span class="w"> </span>neigh<span class="w"> </span>show<span class="w"> </span>dev<span class="w"> </span>Vlan1000<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>&lt;ip&gt;
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># APPL_DB / ASIC_DB</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;NEIGH_TABLE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;NEIGH_TABLE:Vlan1000:&lt;ip&gt;&quot;</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>sonic-db-cli<span class="w"> </span>ASIC_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_NEIGHBOR_ENTRY:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># FDB との突き合わせ</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>show<span class="w"> </span>mac<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>&lt;mac&gt;
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># NEIGH_TABLE key は &quot;&lt;interface&gt;:&lt;ip&gt;&quot; 形式。IPv6 アドレス内の &#39;:&#39; も区切り扱いではなく</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># 後続トークンを丸ごと IP として扱うため、最初の &#39;:&#39; だけが interface とのセパレータ[^key]</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;NEIGH_TABLE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;NEIGH_TABLE:Vlan1000:192.0.2.10&quot;</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;NEIGH_TABLE:Vlan1000:fe80::1&quot;</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>sonic-db-cli<span class="w"> </span>ASIC_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_NEIGHBOR_ENTRY:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="c1"># neighsyncd / orchagent</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;neigh&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="c1"># FDB との突き合わせ</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>show<span class="w"> </span>mac<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>&lt;mac&gt;
 </span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="c1"># Linux neighbor GC パラメータ</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>sysctl<span class="w"> </span>-a<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;gc_thresh|gc_stale|gc_interval&quot;</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="c1"># neighsyncd / orchagent</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;neigh&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="c1"># Linux neighbor GC パラメータ</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>sysctl<span class="w"> </span>-a<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;gc_thresh|gc_stale|gc_interval&quot;</span>
 </span></code></pre></div>
 <h2 id="_4">よくある原因<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ol>
@@ -36024,6 +36027,9 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/sonic-swss</code> <code>neighsyncd/neighsync.cpp</code> (<a href="../../glossary/#term-netlink">Netlink</a> → <a href="../../glossary/#term-appl_db">APPL_DB</a>) と <code>orchagent/neighorch.cpp</code> (APPL_DB → <a href="../../glossary/#term-sai">SAI</a>) の組合せ。MAC が変わったかどうかは Linux neighbor subsystem 側の判定に依存する。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:key">
+<p><code>sonic-net/sonic-swss</code> <code>neighsyncd/neighsync.cpp</code> L82-L112 で <code>key = &lt;ifname&gt; + ":" + &lt;ipStr&gt;</code> を組み立てており、IPv4/IPv6 共通フォーマット。IPv6 では IP 部分に <code>:</code> が含まれるが、<code>NEIGH_TABLE:</code> プレフィックス直後の最初の <code>:</code> で interface 名が区切られ、残りはすべて IP として扱われる (<code>hgetall</code> には key 全体をそのまま渡せばよい)。&#160;<a class="footnote-backref" href="#fnref:key" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

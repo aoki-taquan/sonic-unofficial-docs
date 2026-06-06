@@ -36407,8 +36407,8 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>mclag<span class="w"> </span>del<span class="w"> </span>&lt;domain-id&gt;
 </span></code></pre></div>
 <ul>
-<li><code>domain-id</code>: 1–4095</li>
-<li><code>local-ip</code> / <code>peer-ip</code>: IPv4 のみ</li>
+<li><code>domain-id</code>: 1–4095（範囲外は CLI が拒否<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>）</li>
+<li><code>local-ip</code> / <code>peer-ip</code>: IPv4 のみ。reserved / multicast / loopback / 同一 IP は CLI で拒否される<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
 <li><code>peer-ifname</code>: L2 MCLAG は必須、L3 MCLAG は省略可</li>
 </ul>
 <h3 id="22-mclag-interface">2.2 MCLAG interface 追加<a class="headerlink" href="#22-mclag-interface" title="Permanent link">&para;</a></h3>
@@ -36417,7 +36417,7 @@
 </span></code></pre></div>
 <h3 id="23-keep-alive-session-timeout">2.3 Keep-alive / session timeout<a class="headerlink" href="#23-keep-alive-session-timeout" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config<span class="w"> </span>mclag<span class="w"> </span>keepalive-interval<span class="w"> </span>&lt;domain-id&gt;<span class="w"> </span>&lt;<span class="m">1</span>-60&gt;<span class="w">      </span><span class="c1"># default 1</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>mclag<span class="w"> </span>session-timeout<span class="w">    </span>&lt;domain-id&gt;<span class="w"> </span>&lt;<span class="m">3</span>-3600&gt;<span class="w">    </span><span class="c1"># default 15、keep-alive の 3 倍以上推奨</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>mclag<span class="w"> </span>session-timeout<span class="w">    </span>&lt;domain-id&gt;<span class="w"> </span>&lt;<span class="m">3</span>-3600&gt;<span class="w">    </span><span class="c1"># default 15。CLI 側で session_timeout &gt;= 3 * keepalive かつ keepalive の倍数を強制[^3]</span>
 </span></code></pre></div>
 <h3 id="24-unique-ipl3">2.4 Unique IP（L3 プロトコル対応）<a class="headerlink" href="#24-unique-ipl3" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>mclag<span class="w"> </span>unique-ip<span class="w"> </span>add<span class="w"> </span>&lt;Vlan-interface&gt;<span class="w">   </span><span class="c1"># 例: Vlan100</span>
@@ -36443,7 +36443,7 @@
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>config<span class="w"> </span>portchannel<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span>PortChannel10<span class="w"> </span>Ethernet0
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span>PortChannel10
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>config<span class="w"> </span>portchannel<span class="w"> </span>add<span class="w"> </span>PortChannel999<span class="w">             </span><span class="c1"># peer-link</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span>PortChannel999<span class="w"> </span>-u
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span>PortChannel999<span class="w">         </span><span class="c1"># peer-link は通常 trunk（複数 VLAN tagged）</span>
 </span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
 </span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="c1"># Switch A</span>
 </span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>config<span class="w"> </span>mclag<span class="w"> </span>add<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">192</span>.168.0.1<span class="w"> </span><span class="m">192</span>.168.0.2<span class="w"> </span>PortChannel999
@@ -36468,7 +36468,7 @@
 <h3 id="51-sonic-show">5.1 SONiC show<a class="headerlink" href="#51-sonic-show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>show<span class="w"> </span>mclag<span class="w"> </span>brief
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>show<span class="w"> </span>mclag<span class="w"> </span>interface<span class="w"> </span>&lt;domain-id&gt;<span class="w"> </span>&lt;PortChannel&gt;
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>show<span class="w"> </span>mac<span class="w">        </span><span class="c1"># type=Static / origin が見える環境ではローカル/リモート判別</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>show<span class="w"> </span>mac<span class="w">        </span><span class="c1"># Vlan / MacAddress / Port / Type 列。Type=Static/Dynamic で remote sync された MAC かを Port 列の peer-link 名から判別[^3]</span>
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>show<span class="w"> </span>ip<span class="w"> </span>route
 </span></code></pre></div>
 <p><code>show mclag brief</code> 出力例<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -36584,6 +36584,9 @@
 </li>
 <li id="fn:2">
 <p><a href="https://github.com/sonic-net/SONiC/issues/1253"><code>sonic-net/SONiC#1253</code></a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-utilities</code> <code>config/mclag.py</code> (<code>mclag_domain_id_valid</code> / <code>mclag_ka_session_dep_check</code> / <code>is_ipv4_addr_valid</code>) と <code>scripts/fdbshow</code> (HEADER = <code>['No.', 'Vlan', 'MacAddress', 'Port', 'Type']</code>)&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

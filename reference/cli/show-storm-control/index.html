@@ -36107,12 +36107,16 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>storm-control<span class="w"> </span><span class="o">[</span>-n<span class="p">|</span>--namespace<span class="w"> </span>&lt;namespace&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>-d<span class="p">|</span>--display<span class="w"> </span>&lt;all<span class="p">|</span>frontend&gt;<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>動作</strong>:
-サブコマンド未指定時:</p>
+サブコマンド未指定時 (<code>ctx.invoked_subcommand is None</code>) は <code>namespace</code> 引数の有無で 2 分岐する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
 <ul>
-<li><code>--namespace</code> 省略時: <code>display_storm_all()</code> を実行し、全 PORT_STORM_CONTROL エントリを表示</li>
-<li><code>--namespace</code> 指定時: <code>multi_asic.multi_asic_get_ip_intf_from_ns(namespace)</code> で取得した interface ごとに <code>get_storm_interface(intf, body)</code> を呼び、tabulate で <code>grid</code> 表示する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><code>--namespace</code> 省略時: <code>display_storm_all()</code> を呼び、<code>ConfigDBConnector().connect()</code> でホスト namespace の <a href="../../glossary/#term-config_db">CONFIG_DB</a> に接続して <code>PORT_STORM_CONTROL</code> テーブル全体を <code>natsorted</code> で並べ替え、<code>(&lt;interface&gt;, &lt;storm_type&gt;)</code> キーごとに <code>kbps</code> を読み取って tabulate (<code>grid</code>) で出力する。</li>
+<li><code>--namespace</code> 指定時: <code>multi_asic.multi_asic_get_ip_intf_from_ns(namespace)</code> で当該 namespace に属する interface 一覧を取得し、各 interface について <code>get_storm_interface(intf, body)</code> を呼ぶ。<code>get_storm_interface</code> 内では引数なしの <code>ConfigDBConnector</code> を使うため、データソース自体はホストの CONFIG_DB であり、namespace 指定は「表示対象 interface のフィルタ」としてのみ作用する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</li>
 </ul>
-<p>表示ヘッダ: <code>Interface Name | Storm Type | Rate (kbps)</code></p>
+<p>表示ヘッダ: <code>Interface Name | Storm Type | Rate (kbps)</code>。<code>PORT_STORM_CONTROL</code> エントリが 1 件も無い場合は <code>display_storm_all()</code> が <code>return</code> するため、ヘッダごと出力されない。</p>
+<div class="admonition warning">
+<p class="admonition-title"><code>-d/--display</code> オプションは現状未使用</p>
+<p><code>--display all|frontend</code> は <code>@click.option</code> で受け付けられるが、<code>storm_control(ctx, namespace, display)</code> 関数本体は <code>display</code> 変数を参照しない<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。他の <code>show</code> グループ (例: <code>show interfaces</code>) では <code>display</code> で frontend ポートのみに絞る共通慣習があり、それに揃えるために宣言だけ残されている形。指定しても動作差分は無いため、フィルタ目的での利用は期待できない。</p>
+</div>
 <h3 id="show-storm-control-interface-interface"><code>show storm-control interface &lt;interface&gt;</code><a class="headerlink" href="#show-storm-control-interface-interface" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show<span class="w"> </span>storm-control<span class="w"> </span>interface<span class="w"> </span>&lt;interface&gt;
@@ -36122,10 +36126,19 @@ multi-<a href="../../glossary/#term-asic">ASIC</a> 環境では parent context �
 <!-- evidence:
 source: sonic-net/sonic-utilities/show/main.py#L499-L533 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
 excerpt: |
-  @cli.group('storm-control', invoke_without_command=True)
+  @click.option('--display', '-d', 'display', default=None, show_default=False, type=str, help='all|frontend')
+  @click.pass_context
   def storm_control(ctx, namespace, display):
       header = ['Interface Name', 'Storm Type', 'Rate (kbps)']
-      ...
+      body = []
+      if ctx.invoked_subcommand is None:
+          if namespace is None:
+              display_storm_all()
+          else:
+              interfaces = multi_asic.multi_asic_get_ip_intf_from_ns(namespace)
+              for intf in interfaces:
+                  get_storm_interface(intf, body)
+              click.echo(tabulate(body, header, tablefmt="grid"))
   @storm_control.command('interface')
   def interface(ctx, interface):
       namespace = ctx.parent.params.get('namespace')
@@ -36139,15 +36152,24 @@ excerpt: |
 <p><strong>出典</strong>:</p>
 <p><code>sonic-net/sonic-utilities/show/main.py#L499-L533 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
 <p><strong>抜粋</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>@cli.group(&#39;storm-control&#39;, invoke_without_command=True)
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>def storm_control(ctx, namespace, display):
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    header = [&#39;Interface Name&#39;, &#39;Storm Type&#39;, &#39;Rate (kbps)&#39;]
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    ...
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>@storm_control.command(&#39;interface&#39;)
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>def interface(ctx, interface):
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    namespace = ctx.parent.params.get(&#39;namespace&#39;)
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    if multi_asic.is_multi_asic() and namespace not in multi_asic.get_namespace_list():
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>        ctx.fail(&#39;-n/--namespace option required. ...&#39;)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>@click.option(&#39;--display&#39;, &#39;-d&#39;, &#39;display&#39;, default=None, show_default=False, type=str, help=&#39;all|frontend&#39;)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>@click.pass_context
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>def storm_control(ctx, namespace, display):
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    header = [&#39;Interface Name&#39;, &#39;Storm Type&#39;, &#39;Rate (kbps)&#39;]
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    body = []
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    if ctx.invoked_subcommand is None:
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        if namespace is None:
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>            display_storm_all()
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>        else:
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>            interfaces = multi_asic.multi_asic_get_ip_intf_from_ns(namespace)
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>            for intf in interfaces:
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>                get_storm_interface(intf, body)
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>            click.echo(tabulate(body, header, tablefmt=&quot;grid&quot;))
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>@storm_control.command(&#39;interface&#39;)
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>def interface(ctx, interface):
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>    namespace = ctx.parent.params.get(&#39;namespace&#39;)
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    if multi_asic.is_multi_asic() and namespace not in multi_asic.get_namespace_list():
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>        ctx.fail(&#39;-n/--namespace option required. ...&#39;)
 </span></code></pre></div>
 </details>
 <!-- evidence-rendered:end -->
@@ -36206,7 +36228,7 @@ excerpt: |
 </ul>
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: 896d391185a9 -->
 
 <div class="footnote">
 <hr />
@@ -36215,7 +36237,10 @@ excerpt: |
 <p><code>show storm-control</code> グループ定義は <code>show/main.py</code> L499-L533。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L499">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L499</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>display_storm_all</code> / <code>display_storm_interface</code> は同じ <code>show/main.py</code> 上部のヘルパ関数。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>グループ本体 (<code>storm_control(ctx, namespace, display)</code>) の分岐は <code>show/main.py</code> L510-L521。<code>display</code> 引数は L508 で <code>@click.option('--display', '-d', ...)</code> として宣言されるが、L510-L521 の関数本体では一切参照されない。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L508-L521">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L508-L521</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>display_storm_all</code> (<code>show/main.py</code> L177-L206)、<code>get_storm_interface</code> (同 L211-L229)、<code>display_storm_interface</code> (同 L234-L259) のいずれも <code>ConfigDBConnector()</code> を引数なしで構築するため、接続先はホスト namespace の CONFIG_DB に固定される。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L177-L259">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L177-L259</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

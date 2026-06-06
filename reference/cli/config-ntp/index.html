@@ -36356,7 +36356,8 @@
 <li><code>ADHOC_VALIDATION</code> が真のとき、IP 検証を実施 (<code>association_type != "pool"</code> の場合)</li>
 <li>既存 <code>NTP_SERVER</code> テーブルを取得し、同 IP が既存なら <code>NTP server &lt;ip&gt; is already configured</code> で no-op return</li>
 <li>options を辞書化（version / association_type / iburst）し、<code>db.set_entry('NTP_SERVER', &lt;ip&gt;, opts)</code> で <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書く</li>
-<li><code>systemctl restart chrony</code> を実行。失敗時は <code>ctx.fail</code></li>
+<li><code>NTP server &lt;ip&gt; added to configuration</code> を <code>click.echo</code> で表示</li>
+<li><code>Restarting chrony service...</code> を <code>click.echo</code> で表示してから <code>systemctl restart chrony</code> を <code>display_cmd=False</code> で実行。失敗時は <code>ctx.fail</code></li>
 </ol>
 <!-- evidence:
 source: sonic-net/sonic-utilities/config/main.py#L8982-L9016 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -36398,8 +36399,8 @@ excerpt: |
 <p><strong>動作</strong>:</p>
 <ol>
 <li>既存 <code>NTP_SERVER</code> テーブルを取得、未登録 IP なら <code>NTP server &lt;ip&gt; is not configured.</code> でエラー終了</li>
-<li><code>db.set_entry('NTP_SERVER', &lt;ip&gt;, None)</code> で entry を削除</li>
-<li><code>systemctl restart chrony</code> を実行</li>
+<li><code>db.set_entry('NTP_SERVER', &lt;ip&gt;, None)</code> で entry を削除し、<code>NTP server &lt;ip&gt; removed from configuration</code> を <code>click.echo</code></li>
+<li><code>Restarting chrony service...</code> を <code>click.echo</code> し、<code>systemctl restart chrony</code> を <code>display_cmd=False</code> で実行</li>
 </ol>
 <h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <table>
@@ -36457,12 +36458,23 @@ excerpt: |
 </span></code></pre></div>
 <h3 id="_10">よくある引数の組み合わせ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>ntp<span class="w"> </span>del<span class="w"> </span><span class="m">10</span>.0.0.10
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># Management VRF 経由で NTP を引く</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>ntp<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.0.10<span class="w"> </span>--association-type<span class="w"> </span>pool
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># pool 指定 + iburst + NTP v4 で追加 (FQDN も許容)</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>ntp<span class="w"> </span>add<span class="w"> </span>pool.ntp.org<span class="w"> </span>--association-type<span class="w"> </span>pool<span class="w"> </span>--iburst<span class="w"> </span>--version<span class="w"> </span><span class="m">4</span>
 </span></code></pre></div>
 <h3 id="_11">期待される出力 (抜粋)<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 実装は `systemctl restart chrony` を `display_cmd=False` で実行するため</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># CLI への出力は通常空。chrony サービスが再起動される。</span>
+<p><code>add</code> は <code>click.echo</code> で 2 行 (追加完了 + chrony 再起動) を出力する。<code>systemctl restart chrony</code> 自体は <code>display_cmd=False</code> で実行されるためコマンドラインの再表示は無い<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$ sudo config ntp add 10.0.0.10
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>NTP server 10.0.0.10 added to configuration
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Restarting chrony service...
+</span></code></pre></div>
+<p><code>del</code> も同様に削除完了 + 再起動の 2 行を出力する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>$ sudo config ntp del 10.0.0.10
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>NTP server 10.0.0.10 removed from configuration
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Restarting chrony service...
+</span></code></pre></div>
+<p>既存 IP に再 <code>add</code> した場合は no-op となり、以下 1 行のみ出力して return する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>$ sudo config ntp add 10.0.0.10
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>NTP server 10.0.0.10 is already configured
 </span></code></pre></div>
 <!-- /usage-example -->
 
@@ -36481,9 +36493,9 @@ excerpt: |
 <li><strong>tab 補完が機能しない環境がある</strong> (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/4398">#4398</a>): <code>bash-completion</code> パッケージが <code>sonic-utilities-data</code> の <code>Suggests</code> (非 <code>Depends</code>) のため、deb バージョンピニングなしのビルドでは未インストールになりうる。確認: <code>dpkg -l bash-completion</code> が <code>un</code> の場合は <code>sudo apt-get install bash-completion &amp;&amp; source /etc/bash_completion</code> で手動インストールする。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>show<span class="w"> </span>ntp
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>chronyc<span class="w"> </span>tracking
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>chronyc<span class="w"> </span>sources
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>show<span class="w"> </span>ntp
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>chronyc<span class="w"> </span>tracking
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>chronyc<span class="w"> </span>sources
 </span></code></pre></div>
 <!-- /ops-hint -->
 
@@ -36509,6 +36521,9 @@ excerpt: |
 <ol>
 <li id="fn:1">
 <p><code>config ntp</code> グループ定義は <code>config/main.py</code> L8968-L9037。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8968">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8968</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>add_ntp_server</code> の <code>click.echo("NTP server {} added to configuration".format(...))</code> と <code>click.echo("Restarting chrony service...")</code> は <code>config/main.py</code> L9011-L9013、<code>del_ntp_server</code> の対応出力は同 L9030, L9034 にある。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9011">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9011</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

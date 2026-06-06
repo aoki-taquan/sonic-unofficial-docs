@@ -36640,7 +36640,7 @@
 </tbody>
 </table>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>なし。<code>frrcfgd</code>・<code>bgpcfgd</code>・<a href="../../glossary/#term-orchagent">orchagent</a> のいずれも ROUTE_MAP_SET テーブルを購読しない（<code>frrcfgd.py</code> の <code>table_handler_list</code> および <code>tbl_to_key_map</code> に含まれないことを済み）。</p>
+<p>なし。<code>frrcfgd</code>・<code>bgpcfgd</code>・<a href="../../glossary/#term-orchagent">orchagent</a> のいずれも ROUTE_MAP_SET テーブルを購読しない（<code>frrcfgd.py</code> の <code>table_handler_list</code> および <code>tbl_to_key_map</code> に <code>ROUTE_MAP_SET</code> が含まれないことを確認済み）。</p>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../route-map/"><code>ROUTE_MAP</code></a>（<code>call_route_map</code> leafref）、<code>BGP_NEIGHBOR_AF</code>、<code>BGP_PEER_GROUP_AF</code>、<code>BGP_GLOBALS_AF</code>（route-map 参照 leafref）</li>
