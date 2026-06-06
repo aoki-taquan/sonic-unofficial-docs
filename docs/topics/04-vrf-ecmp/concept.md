@@ -1,11 +1,22 @@
 ---
 title: L3 基盤と VRF
-description: L3 基盤と VRF — SONiC で L3 を読み始めるとき、最初に route テーブルから入ると挫折しやすい構成になっています。route
-  の振る舞いは VRF と interface に強く依存し、next hop の解決もリンク状態と隣接探索に依存するためです。
+description: SONiC の L3 を VRF / L3 interface / 経路 / next-hop の順で読み解くための入口章。vrfmgrd と VRFOrch による Linux VRF master device と SAI Virtual Router の二段構成、STATIC_ROUTE のキー形式、management VRF の iproute2 ベース実装を整理する。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: code-verified
+last_verified: 2026-06-06
+sources:
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/vrfmgr.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/vrfmgrd.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/vrforch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 keywords:
 - VRF
 - L3
@@ -89,7 +100,7 @@ VRF の設計詳細は [VRF サポート](../../routing/sonic-vrf-support-design
 
 ## VRF は Linux と ASIC の両方に現れる
 
-SONiC の VRF は、Linux 上では VRF master device として、ASIC 側では SAI Virtual Router として扱われます。`vrfmgrd` は `CONFIG_DB.VRF` から Linux VRF を作り、`VRFOrch` は `APPL_DB.VRF_TABLE` 側を受けて SAI Virtual Router を作ります。interface は `intfmgrd` / `IntfsOrch` を通って Linux と ASIC の両方に反映されます。
+SONiC の VRF は、Linux 上では VRF master device として、ASIC 側では SAI Virtual Router として扱われます。`vrfmgrd` は `CONFIG_DB.VRF` を購読して `ip link add <vrf> type vrf table <id>` を実行し、APPL_DB の `VRF_TABLE` へ転写します。<!-- evidence: sonic-swss cfgmgr/vrfmgr.cpp L191 `IP_CMD << " link add " << shellquote(vrfName) << " type vrf table " << table;` / vrfmgrd.cpp L30-L37 CFG_VRF_TABLE_NAME を CONFIG_DB から購読 -->`VRFOrch` は `APPL_DB.VRF_TABLE` 側を受けて `sai_virtual_router_api->create_virtual_router()` で SAI Virtual Router object を生成します。<!-- evidence: sonic-swss orchagent/vrforch.cpp L93 create_virtual_router -->interface は `intfmgrd` / `IntfsOrch` を通って Linux と ASIC の両方に反映されます。
 
 重要なのは、VRF は単なる CLI 上の名前ではなく、FRR、kernel、[orchagent](../../reference/glossary.md#term-orchagent)、SAI の共通キーになることです。non-default VRF の経路を調べるときは、常に「その route はどの VRF の route か」「next hop は同じ VRF か、`nexthop-vrf` で別 VRF を参照しているか」を確認します。
 
@@ -126,7 +137,7 @@ flowchart LR
 
 management VRF は front panel port の転送ではなく、`eth0` を使う管理面トラフィックを分離するための VRF です。`config vrf add mgmt` は通常のデータ VRF と違い、`MGMT_VRF_CONFIG` や management interface 側の処理に関係します。
 
-古い management VRF [HLD](../../reference/glossary.md#term-hld) には cgroup を使う起動ラッパー方式が出てきますが、現行ページでは iproute2 の VRF master device 方式へ寄っている点が注記されています。詳細は [Management VRF 設計](../../routing/sonic-management-vrf-design-document-201911-release.md) を確認してください。
+古い management VRF [HLD](../../reference/glossary.md#term-hld) には cgroup を使う起動ラッパー方式が記載されていますが、現行実装は iproute2 の VRF master device 方式へ移行済みです。詳細は [Management VRF 設計](../../routing/sonic-management-vrf-design-document-201911-release.md) を確認してください。
 
 ## IPv6 link-local は next hop のキーに interface を含める
 
@@ -138,7 +149,7 @@ IPv6 link-local-only の設定条件、`fe80::/10` の route-to-CPU、IP2ME の�
 
 `config route` は `STATIC_ROUTE` テーブルを書き、FRR の staticd / zebra 側に反映されます。ASIC へ直接 route を書くわけではありません。FRR が RIB を計算し、FPM 経由で `fpmsyncd` が `APPL_DB.ROUTE_TABLE` へ書き、そこから RouteOrch が SAI route object を作ります。
 
-VRF 付き static route では key が `STATIC_ROUTE|<vrf>|<prefix>` になります。ECMP は nexthop / ifname / distance などのカンマ区切りリストで表現され、同じ index の値が 1 つの next hop を構成します。
+VRF 付き static route では key が `STATIC_ROUTE|<vrf>|<prefix>`、default VRF では `STATIC_ROUTE|<prefix>` になります。<!-- evidence: sonic-buildimage src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py L104-L106 cfg_key = "STATIC_ROUTE|" + vrf + "|" + ip_prefix / default_key = "STATIC_ROUTE|" + ip_prefix -->ECMP は `nexthop` / `ifname` / `distance` / `nexthop-vrf` などのカンマ区切りリストで表現され、同じ index の値が 1 つの next hop を構成します。
 
 ## 似た / 混同しやすい機能との違い
 
@@ -199,7 +210,7 @@ flowchart LR
 
 ## management VRF の特殊性
 
-management VRF（既定 `mgmt`）は **front panel 経路ではなく `eth0` の管理通信を分離する** ための VRF です。現行 SONiC は iproute2 の VRF master device 方式を採り、古い HLD に出てくる cgroup wrapper 方式は使われなくなっています。NTP / DNS / TACACS / [SNMP](../../reference/glossary.md#term-snmp) の source interface 設定や、`config save -y` / `sonic-installer` 系コマンドが management VRF 側を経由する点が、forwarding 系 VRF との運用差分になります。
+management VRF（既定 `mgmt`）は **front panel 経路ではなく `eth0` の管理通信を分離する** ための VRF です。現行 SONiC は `vrfmgr` が `ip link add mgmt type vrf table 6000` を発行する iproute2 ベースの VRF master device 方式を採り、古い HLD に出てくる cgroup wrapper 方式は使われなくなっています。<!-- evidence: sonic-swss cfgmgr/vrfmgr.cpp L15 `#define MGMT_VRF_TABLE_ID 6000` / L180-L181 mgmt VRF の table_id 固定 / L191 ip link add ... type vrf -->NTP / DNS / TACACS / [SNMP](../../reference/glossary.md#term-snmp) の source interface 設定や、`config save -y` / `sonic-installer` 系コマンドが management VRF 側を経由する点が、forwarding 系 VRF との運用差分になります。
 
 ## 関連ページ
 
