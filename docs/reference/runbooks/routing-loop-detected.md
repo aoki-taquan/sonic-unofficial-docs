@@ -13,6 +13,7 @@ sources:
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-utilities
     path: config/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: [STATIC_ROUTE, BGP_NEIGHBOR, ROUTE_MAP]
   cli: [show ip route, mtr, traceroute]
@@ -109,6 +110,6 @@ show interfaces counters | head -20
 
 [^1]: sonic-net/sonic-frr @ 799f47f — [zebra](../../reference/glossary.md#term-zebra)/zebra_rib.c (RIB best-path 選定と FIB install)
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [orchagent](../../reference/glossary.md#term-orchagent)/routeorch.cpp L150-L171 (`m_syncdRoutes` への default route 登録)
-[^3]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) — [config/main.py L7787-L7900](https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py) (`config route add/del` の `prefix [vrf <vrf_name>] <A.B.C.D/M> nexthop ...` 引数定義)
+[^3]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bc — [config/main.py L7812-L7974](https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L7812-L7974) (`config route add/del` の `prefix [vrf <vrf_name>] <A.B.C.D/M> nexthop ...` 引数定義と `del_route` の strict_nh=False 動作)
 
 <!-- glossary-links-injected: 2484d31b0a57 -->
