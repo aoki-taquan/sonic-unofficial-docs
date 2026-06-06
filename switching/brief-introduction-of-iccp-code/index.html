@@ -36605,7 +36605,7 @@ reasoning: MLACP FSM の 4 状態と各状態の責務の根拠。
 
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（<code>MC_LAG_DOMAIN</code>, <code>MC_LAG_INTERFACE</code> 等）から <code>iccpd.j2</code> で生成された <code>/etc/iccpd/iccpd.conf</code> を介する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD ドキュメントには CONFIG_DB スキーマの直接記載は無いため、詳細は MC-LAG HLD 系を参照する必要がある。</p>
+<p>ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（<code>MCLAG_DOMAIN</code>, <code>MCLAG_INTERFACE</code>）から <code>iccpd.j2</code> で生成された <code>/etc/iccpd/iccpd.conf</code> を介する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実テーブル名は <code>sonic-swss-common/common/schema.h</code> の <code>CFG_MCLAG_TABLE_NAME = "MCLAG_DOMAIN"</code> / <code>CFG_MCLAG_INTF_TABLE_NAME = "MCLAG_INTERFACE"</code> で定義される<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。本 HLD ドキュメント自体は CONFIG_DB スキーマを直接記載していないため、フィールド詳細は MC-LAG HLD 系を参照する必要がある。</p>
 <h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -36623,7 +36623,7 @@ reasoning: MLACP FSM の 4 状態と各状態の責務の根拠。
 </table>
 <p><code>config mclag ...</code> 等のユーザ向け CLI は本ドキュメントの守備範囲外（MC-LAG HLD 側）。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>本ドキュメントでは <a href="../../reference/glossary/#term-yang">YANG</a> モジュールに言及していない。</p>
+<p>本 HLD ドキュメント自体は <a href="../../reference/glossary/#term-yang">YANG</a> モジュールに言及していないが、CONFIG_DB の <code>MCLAG_DOMAIN</code> / <code>MCLAG_INTERFACE</code> テーブルは <code>sonic-mclag.yang</code> で同名 container として定義されている<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>本ドキュメントは ICCPd の <strong>コード概略を解説</strong> したもので、CLI / CONFIG_DB / 運用手順を完全に網羅するものではない</li>
@@ -36677,6 +36677,12 @@ reasoning: MLACP FSM の 4 状態と各状態の責務の根拠。
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/mclag/iccpd-code-introduction.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss-common</code> <code>common/schema.h</code> L378-L379（<code>CFG_MCLAG_TABLE_NAME</code> / <code>CFG_MCLAG_INTF_TABLE_NAME</code> の定義）&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-mclag.yang</code> L1, L39, L100（<code>module sonic-mclag</code> / <code>container MCLAG_DOMAIN</code> / <code>container MCLAG_INTERFACE</code>）&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

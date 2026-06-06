@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC Application Extension Infrastructure（sonic-package-manager / SPM） — 3rd-party / 任意の docker コンテナを「SONiC application extension」として inbox 機能と同じ管理面で扱う ためのフレー…">
+        <meta name="description" content="SONiC Application Extension Infrastructure（sonic-package-manager / SPM） — 3rd-party / 任意の docker コンテナを「SONiC application extension」として inbox 機能と同じ管理面で扱うためのフレームワーク。manifest 検証・FEATURE 登録・hostcfgd 連携の流れと制約を整理する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SONiC Application Extension Infrastructure（sonic-package-manager / SPM） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SONiC Application Extension Infrastructure（sonic-package-manager / SPM） — 3rd-party / 任意の docker コンテナを「SONiC application extension」として inbox 機能と同じ管理面で扱う ためのフレー…" />
+<meta property="og:description" content="SONiC Application Extension Infrastructure（sonic-package-manager / SPM） — 3rd-party / 任意の docker コンテナを「SONiC application extension」として inbox 機能と同じ管理面で扱うためのフレームワーク。manifest 検証・FEATURE 登録・hostcfgd 連携の流れと制約を整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/architecture/sonic-application-extension-infrastructure.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-application-extension-infrastructure/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SONiC Application Extension Infrastructure（sonic-package-manager / SPM） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SONiC Application Extension Infrastructure（sonic-package-manager / SPM） — 3rd-party / 任意の docker コンテナを「SONiC application extension」として inbox 機能と同じ管理面で扱う ためのフレー…" />
+<meta property="twitter:description" content="SONiC Application Extension Infrastructure（sonic-package-manager / SPM） — 3rd-party / 任意の docker コンテナを「SONiC application extension」として inbox 機能と同じ管理面で扱うためのフレームワーク。manifest 検証・FEATURE 登録・hostcfgd 連携の流れと制約を整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/architecture/sonic-application-extension-infrastructure.png" />
 </head>
   
@@ -36203,7 +36203,7 @@
 <p>主要コンポーネント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>CLI <code>sonic-package-manager</code>（別名 SPM）</strong>: install / uninstall / upgrade / list / show / repository</li>
-<li><strong>manifest</strong>: コンテナイメージ同梱の JSON。package 名、version、依存（base image / 他 package / SONiC version 範囲）、起動引数、warm-reboot 対応フラグ、CLI 拡張・showtech プラグイン宣言</li>
+<li><strong>manifest</strong>: コンテナイメージ同梱の JSON。package 名、version、<code>base-os</code>（SONiC を含む component 単位の version 制約）、<code>depends</code> / <code>breaks</code>（他 package との制約）、起動引数、warm-reboot 対応フラグ、CLI 拡張・showtech プラグイン宣言<sup id="fnref2:manifest-schema"><a class="footnote-ref" href="#fn:manifest-schema">2</a></sup></li>
 <li><strong><code>hostcfgd</code></strong>: <code>FEATURE</code> 追加に追従して systemd unit を rendering し start/stop を駆動</li>
 <li><strong>CLI plugin</strong>: 各 package が <code>click</code> ベース CLI を <code>sonic-utilities</code> に動的 register（plugin entry-point）</li>
 </ul>
@@ -36216,11 +36216,11 @@
     ENABLE --&gt; RUN[hostcfgd → systemd → docker]
     RUN --&gt; UNINST[uninstall]
     UNINST --&gt; CLEAN["disable → FEATURE 削除&lt;br/&gt;image / plugin 削除"]</code></pre>
-<p>manifest が必須宣言する項目<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>manifest が宣言する主要項目<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:manifest-schema"><a class="footnote-ref" href="#fn:manifest-schema">2</a></sup>:</p>
 <ul>
-<li><code>name</code> / <code>version</code></li>
-<li><code>base-os</code> / <code>min-sonic-version</code> / <code>max-sonic-version</code></li>
-<li><code>depends</code> / <code>breaks</code>（他 package との互換性）</li>
+<li><code>package.name</code> / <code>package.version</code></li>
+<li><code>package.base-os</code>: component → version 制約の dict（<code>ComponentConstraints</code>）。<code>sonic</code> キーを含めれば SONiC 本体の version 範囲を表現できる。<code>min-sonic-version</code> / <code>max-sonic-version</code> といった独立フィールドは存在せず、すべて <code>base-os</code> または <code>depends</code> の version 制約として表す<sup id="fnref3:manifest-schema"><a class="footnote-ref" href="#fn:manifest-schema">2</a></sup><sup id="fnref:constraint-impl"><a class="footnote-ref" href="#fn:constraint-impl">3</a></sup></li>
+<li><code>package.depends</code> / <code>package.breaks</code>: 他 package との互換性（<code>PackageConstraint</code> の配列。各要素は package 名・version 制約・任意の component 制約を含む）</li>
 <li><code>service</code> / <code>container</code> 起動オプション（warm-reboot 対応、privileged、namespaces）</li>
 <li><code>cli</code>（<code>config</code> / <code>show</code> への拡張サブコマンド）</li>
 <li><code>processes</code>（critical process として監視するか）</li>
@@ -36276,7 +36276,7 @@
 </table>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>manifest 検査の限界</strong>: <code>min-sonic-version</code> / <code>depends</code> で表せない暗黙依存（kernel module、<a href="../../reference/glossary/#term-sai">SAI</a> 拡張等）は捕まえられない</li>
+<li><strong>manifest 検査の限界</strong>: <code>base-os</code> / <code>depends</code> の version 制約で表せない暗黙依存（kernel module、<a href="../../reference/glossary/#term-sai">SAI</a> 拡張等）は捕まえられない</li>
 <li><strong>warm reboot 対応</strong>: package 側の対応が必要。非対応 package は warm reboot でリセット</li>
 <li><strong>CLI plugin 衝突</strong>: 同じ <code>config &lt;subcommand&gt;</code> を複数 package が登録すると挙動不定</li>
 <li><strong>資源管理</strong>: cgroup / メモリ / CPU 上限はコンテナ起動オプションでしか制御できない</li>
@@ -36336,6 +36336,12 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/sonic-application-extension/sonic-application-extention-hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:manifest-schema">
+<p>manifest schema 実装: <code>sonic-net/sonic-utilities</code> <code>sonic_package_manager/manifest.py</code> の <code>SCHEMA = ManifestRoot(...)</code> 定義（<code>package.base-os</code> は <code>ParsedMarshaller(ComponentConstraints)</code>、<code>depends</code> / <code>breaks</code> は <code>PackageConstraint</code> 配列。<code>min-sonic-version</code> / <code>max-sonic-version</code> は存在しない）&#160;<a class="footnote-backref" href="#fnref:manifest-schema" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:manifest-schema" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:manifest-schema" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:constraint-impl">
+<p><code>ComponentConstraints</code> / <code>PackageConstraint</code> 定義: <code>sonic-net/sonic-utilities</code> <code>sonic_package_manager/constraint.py</code>（<code>ComponentConstraints.components</code> は component 名 → <code>VersionConstraint</code> の dict）&#160;<a class="footnote-backref" href="#fnref:constraint-impl" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

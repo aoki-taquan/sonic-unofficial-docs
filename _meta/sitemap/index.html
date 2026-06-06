@@ -36032,7 +36032,7 @@
 <li><a href="../../topics/22-reference-index/internals/">内部実装</a> — [meta] 22 章リファレンス索引のメタ章。CLI / CONFIG_DB / YANG の三系統が SONiC 実装内でどう結ばれているかと、索引生成パイプラインを一…</li>
 <li><a href="../../topics/22-reference-index/advanced/">発展トピック</a> — [meta] 発展トピック — リファレンス索引 (CLI / CONFIG_DB / YANG / cross-reference) を回し続けるための index 再生…</li>
 <li><a href="../../topics/22-reference-index/cli-index/">CLI 横断索引</a> — [meta] docs/reference/cli/ 配下の主要 CLI ページを機能章ごとに束ね直した抜粋索引。全 73 ページの辞書一覧ではなく、各機能章の主入口から引…</li>
-<li><a href="../../topics/22-reference-index/config-db-index/">CONFIG_DB 横断索引</a> — [meta] CONFIG_DB 横断索引 — docs/reference/config-db/ 配下の 293 ページを、機能章ごとに table family で並べ…</li>
+<li><a href="../../topics/22-reference-index/config-db-index/">CONFIG_DB 横断索引</a> — [meta] CONFIG_DB 横断索引 — docs/reference/config-db/ 配下の table 群を機能章ごとに並べ直し、章入口 (setup.md…</li>
 <li><a href="../../topics/22-reference-index/yang-index/">YANG 横断索引</a> — [meta] docs/reference/yang/ 配下に辞書化済みの 84 native SONiC YANG モジュールを、本サイトの機能章ごとに並べ直した逆引き索…</li>
 <li><a href="../../topics/22-reference-index/quality-gaps/">品質と gap</a> — [meta] 品質と gap — 本ページは、Phase 6 以降の検証作業で残った 2 種類の「不完全さ」をどこで追跡するかをまとめる。</li>
 </ul>
@@ -36254,7 +36254,7 @@
 <li><a href="../../system/multi-asic-warm-reboot/">Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）</a> — [discrepancy-found] Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot） — multi-ASIC platform で…</li>
 <li><a href="../../system/reboot-cause-information-via-telemetry-agent/">Reboot-cause 履歴の STATE_DB / テレメトリ公開</a> — [code-verified] Reboot-cause 履歴の STATE_DB / テレメトリ公開 — SONiC の起動時に「直前の再起動原因」を判定し、JSON ファイルとして履歴保…</li>
 <li><a href="../../system/reboot-support-blockingmode-in-sonic/">reboot コマンドの blocking mode（reboot.conf / -b / -v）</a> — [code-verified] reboot コマンドの blocking mode（reboot.conf / -b / -v） — SONiC の reboot スクリプトは内部で sy…</li>
-<li><a href="../../system/secure-upgrade/">Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE）</a> — [code-verified] Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE） — Secure Upgrade (SU) は SONiC…</li>
+<li><a href="../../system/secure-upgrade/">Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE）</a> — [code-verified] SONiC image を CMS (Cryptographic Message Syntax) 署名で build から install まで改竄から守る…</li>
 <li><a href="../../system/smart-switch-reboot-high-level-design/">SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）</a> — [code-verified] SmartSwitch の reboot 手順を規定する HLD で、NPU が各 DPU へ gNOI HALT を送り PCIe detach 後に個別…</li>
 <li><a href="../../system/sonic-debian-upgrade-cadence/">SONiC Debian アップグレード方針（base / container / 廃止 cadence）</a> — [code-verified] SONiC Debian アップグレード方針（base / container / 廃止 cadence） — SONiC は Debian-based Li…</li>
 <li><a href="../../system/sonic-express-reboot-hld-spec/">Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）</a> — [code-verified] Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート） — Express Reboot は SONiC の再起動シーケン…</li>
@@ -36989,7 +36989,7 @@
 <li><a href="../../categories/multi-asic/">Multi-ASIC / VOQ chassis 関連</a> — [meta] Multi-ASIC / VOQ chassis 関連 — このカテゴリは Multi-ASIC と VOQ chassis に関わるページを area 横断…</li>
 <li><a href="../../categories/bgp-evpn/">BGP / EVPN 関連</a> — [meta] BGP / EVPN 関連 — SONiC のルーティングは FRRouting (FRR) を中心に構築されており、その大部分が BGP / EVPN-VX…</li>
 <li><a href="../../categories/sai-extensions/">SAI 拡張属性追加系</a> — [meta] SAI 拡張属性追加系 — SAI capability 問い合わせ・失敗ハンドリング・SAI POST・Generic SAI Extension CRM・…</li>
-<li><a href="../../categories/mib-snmp/">MIB / SNMP 関連</a> — [meta] SONiC の SNMP エージェントは Net-SNMP + sonic_ax_impl (AgentX subagent) で構成され、snmpd が標準…</li>
+<li><a href="../../categories/mib-snmp/">MIB / SNMP 関連</a> — [meta] SONiC は Net-SNMP + sonic_ax_impl (AgentX subagent) で SONiC 固有 MIB を実装し、設定は CONF…</li>
 <li><a href="../../categories/gnmi-openconfig/">gNMI / gNOI / OpenConfig 関連</a> — [meta] gNMI / gNOI / OpenConfig 関連カテゴリのインデックス。Management Framework / sonic-gnmi / GCU…</li>
 <li><a href="../../categories/container-build/">Container / Build system 関連</a> — [meta] SONiC の container / build / image / upgrade に関わるページを area 横断でまとめたカテゴリ索引。sonic-b…</li>
 </ul>

@@ -36211,7 +36211,7 @@
 <th>型</th>
 <th>必須</th>
 <th>デフォルト</th>
-<th>enum / 範囲 / leafref</th>
+<th>enum / 範囲 / leafref / 制約</th>
 <th>説明</th>
 </tr>
 </thead>
@@ -36221,8 +36221,8 @@
 <td><code>sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/name</code></td>
 <td><code>string</code></td>
 <td>yes</td>
-<td></td>
-<td></td>
+<td>—</td>
+<td>pattern <code>[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})</code>, length 1..32</td>
 <td><a href="../../glossary/#term-wred">WRED</a> profile name</td>
 </tr>
 <tr>
@@ -36230,8 +36230,8 @@
 <td><code>sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/yellow_min_threshold</code></td>
 <td><code>uint64</code></td>
 <td></td>
-<td></td>
-<td></td>
+<td>—</td>
+<td>units <code>bytes</code></td>
 <td>Queue depth (bytes) at which WRED begins dropping yellow packets</td>
 </tr>
 <tr>
@@ -36239,8 +36239,8 @@
 <td><code>sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/green_min_threshold</code></td>
 <td><code>uint64</code></td>
 <td></td>
-<td></td>
-<td></td>
+<td>—</td>
+<td>units <code>bytes</code></td>
 <td>Queue depth (bytes) at which WRED begins dropping green packets</td>
 </tr>
 <tr>
@@ -36248,8 +36248,8 @@
 <td><code>sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/red_min_threshold</code></td>
 <td><code>uint64</code></td>
 <td></td>
-<td></td>
-<td></td>
+<td>—</td>
+<td>units <code>bytes</code></td>
 <td>Queue depth (bytes) at which WRED begins dropping red packets</td>
 </tr>
 <tr>
@@ -36257,8 +36257,8 @@
 <td><code>sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/yellow_max_threshold</code></td>
 <td><code>uint64</code></td>
 <td></td>
-<td></td>
-<td></td>
+<td>—</td>
+<td>units <code>bytes</code>, must <code>current() &gt;= ../yellow_min_threshold</code></td>
 <td>Queue depth (bytes) at which WRED drops all yellow packets</td>
 </tr>
 <tr>
@@ -36266,8 +36266,8 @@
 <td><code>sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/green_max_threshold</code></td>
 <td><code>uint64</code></td>
 <td></td>
-<td></td>
-<td></td>
+<td>—</td>
+<td>units <code>bytes</code>, must <code>current() &gt;= ../green_min_threshold</code></td>
 <td>Queue depth (bytes) at which WRED drops all green packets</td>
 </tr>
 <tr>
@@ -36275,8 +36275,8 @@
 <td><code>sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/red_max_threshold</code></td>
 <td><code>uint64</code></td>
 <td></td>
-<td></td>
-<td></td>
+<td>—</td>
+<td>units <code>bytes</code>, must <code>current() &gt;= ../red_min_threshold</code></td>
 <td>Queue depth (bytes) at which WRED drops all red packets</td>
 </tr>
 <tr>
@@ -36284,7 +36284,7 @@
 <td><code>sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/ecn</code></td>
 <td><code>enumeration</code></td>
 <td></td>
-<td></td>
+<td><code>ecn_none</code></td>
 <td>ecn_none, ecn_green, ecn_yellow, ecn_red, ecn_green_yellow, ecn_green_red, ecn_yellow_red, ecn_all</td>
 <td><a href="../../glossary/#term-ecn">ECN</a> marking mode</td>
 </tr>
@@ -36293,7 +36293,7 @@
 <td><code>sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/wred_green_enable</code></td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
+<td><code>false</code></td>
 <td></td>
 <td>Enable WRED for green traffic</td>
 </tr>
@@ -36302,7 +36302,7 @@
 <td><code>sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/wred_yellow_enable</code></td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
+<td><code>false</code></td>
 <td></td>
 <td>Enable WRED for yellow traffic</td>
 </tr>
@@ -36311,7 +36311,7 @@
 <td><code>sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/wred_red_enable</code></td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
+<td><code>false</code></td>
 <td></td>
 <td>Enable WRED for red traffic</td>
 </tr>
@@ -36320,8 +36320,8 @@
 <td><code>sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/yellow_drop_probability</code></td>
 <td><code>uint64</code></td>
 <td></td>
-<td></td>
-<td>range 0..100</td>
+<td><code>100</code></td>
+<td>range 0..100, units <code>percent</code></td>
 <td>Max drop probability between min/max thresholds (yellow)</td>
 </tr>
 <tr>
@@ -36329,8 +36329,8 @@
 <td><code>sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/green_drop_probability</code></td>
 <td><code>uint64</code></td>
 <td></td>
-<td></td>
-<td>range 0..100</td>
+<td><code>100</code></td>
+<td>range 0..100, units <code>percent</code></td>
 <td>Max drop probability between min/max thresholds (green)</td>
 </tr>
 <tr>
@@ -36338,12 +36338,20 @@
 <td><code>sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/red_drop_probability</code></td>
 <td><code>uint64</code></td>
 <td></td>
-<td></td>
-<td>range 0..100</td>
+<td><code>100</code></td>
+<td>range 0..100, units <code>percent</code></td>
 <td>Max drop probability between min/max thresholds (red)</td>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">制約 (must / pattern)</p>
+<ul>
+<li><code>name</code> は英数字始まり 1〜32 文字 (<code>[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})</code>)。違反時 <code>wred-profile-name-invalid-length</code> を返す<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>{color}_max_threshold</code> は同色の <code>{color}_min_threshold</code> 以上でなければならない (<code>must</code> 制約、3 色それぞれ独立に評価)<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>{color}_drop_probability</code> の単位は percent。未設定時は <code>100</code> (= 閾値間で常にドロップ) として扱われる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
+</div>
 <h2 id="leafref">leafref / 依存<a class="headerlink" href="#leafref" title="Permanent link">&para;</a></h2>
 <ul>
 <li>なし（<code>WRED_PROFILE</code> の名前は <code>QUEUE</code> テーブル側の <code>wred_profile</code> から leafref で参照される）</li>
@@ -36385,7 +36393,7 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-wred-profile.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-wred-profile.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

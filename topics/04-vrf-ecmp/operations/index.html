@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Route / Interface / Counter の確認 — L3 の障害調査では、最初に route だけを見ても原因を絞れません。VRF、interface、RIB、FIB、RIF counter、flow counter の順に、control-plane と data-plane の差を分けて確認します。">
+        <meta name="description" content="Route / Interface / Counter の確認 — L3 の障害調査では、最初に route だけを見ても原因を絞れません。VRF、interface、RIB、FIB、RIF counter、flow counter の順に、control-plane と data-plane の差を分けて確認する運用ページです。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Route / Interface / Counter の確認 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Route / Interface / Counter の確認 — L3 の障害調査では、最初に route だけを見ても原因を絞れません。VRF、interface、RIB、FIB、RIF counter、flow counter の順に、control-plane と data-plane の差を分けて確認します。" />
+<meta property="og:description" content="Route / Interface / Counter の確認 — L3 の障害調査では、最初に route だけを見ても原因を絞れません。VRF、interface、RIB、FIB、RIF counter、flow counter の順に、control-plane と data-plane の差を分けて確認する運用ページです。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/04-vrf-ecmp/operations.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/04-vrf-ecmp/operations/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Route / Interface / Counter の確認 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Route / Interface / Counter の確認 — L3 の障害調査では、最初に route だけを見ても原因を絞れません。VRF、interface、RIB、FIB、RIF counter、flow counter の順に、control-plane と data-plane の差を分けて確認します。" />
+<meta property="twitter:description" content="Route / Interface / Counter の確認 — L3 の障害調査では、最初に route だけを見ても原因を絞れません。VRF、interface、RIB、FIB、RIF counter、flow counter の順に、control-plane と data-plane の差を分けて確認する運用ページです。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/04-vrf-ecmp/operations.png" />
 </head>
   
@@ -36250,8 +36250,7 @@
 <p>port counter は L2 port の統計で、RIF counter は SAI router interface の統計です。L3 forwarding の RX/TX packet、octet、error を確認したい場合は <a href="../../../routing/router-interface-counters-in-sonic/">ルータインタフェース (RIF) カウンタ</a> を入口にします。</p>
 <p>同一 RIF から出戻る packet を drop する設定を使っている場合、drop は RIF counter の error 側に現れます。この挙動は <a href="../../../architecture/sonic-ip-interface-loopback-action/">IP インタフェース ループバックアクション</a> と合わせて読みます。</p>
 <h2 id="route-flow-counter-route">Route flow counter は対象 route を絞って見る<a class="headerlink" href="#route-flow-counter-route" title="Permanent link">&para;</a></h2>
-<p><a href="../../../routing/sonic-route-flow-counter-design/">Route Flow Counter</a> は、route pattern に一致する route に Generic Counter を bind して hit / byte を見る設計です。全 route の統計を常時見る仕組みではなく、調査したい prefix pattern を指定して観測する機能として読みます。</p>
-<p>このページは <a href="../../../reference/glossary/#term-hld">HLD</a>-only として整理されています。利用可否や CLI の存在は対象ビルドで確認してください。</p>
+<p><a href="../../../routing/sonic-route-flow-counter-design/">Route Flow Counter</a> は、route pattern に一致する route に Generic Counter を bind して hit / byte を見る設計です。全 route の統計を常時見る仕組みではなく、調査したい prefix pattern を指定して観測する機能として読みます。利用可否や CLI の存在は対象ビルドで確認してください。</p>
 <h2 id="loopback-action">Loopback action は誤転送の最後の防波堤<a class="headerlink" href="#loopback-action" title="Permanent link">&para;</a></h2>
 <p>同じ RIF へ出戻る転送は、構成ミスや経路設計の不整合を示すことがあります。<code>loopback_action=drop</code> を設定すると ASIC で drop し、帯域消費やループを抑えられます。ただし、これは route 設計を直す代替ではありません。出戻りが見えたら、default route、VRF、next hop、ECMP member の設計も確認します。</p>
 <h2 id="show-ip-route-interfaces">show ip route / interfaces の出力サンプル<a class="headerlink" href="#show-ip-route-interfaces" title="Permanent link">&para;</a></h2>

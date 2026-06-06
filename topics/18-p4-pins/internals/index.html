@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="内部実装 — PINS の中身を読むときに、まず押さえるのは P4Orch の Manager 群と P4OidMapper、次に entity_cache_ の Write 連動更新、最後に APPL_STATE_DB を介した同期応答 の 3 点です。">
+        <meta name="description" content="内部実装 — PINS の中身を読むときに、まず押さえるのは P4Orch の Manager 群と P4OidMapper、次に entity_cache_ の Write 連動更新、最後に APPL_STATE_DB を介した同期応答の 3 点です。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="内部実装 — PINS の中身を読むときに、まず押さえるのは P4Orch の Manager 群と P4OidMapper、次に entity_cache_ の Write 連動更新、最後に APPL_STATE_DB を介した同期応答 の 3 点です。" />
+<meta property="og:description" content="内部実装 — PINS の中身を読むときに、まず押さえるのは P4Orch の Manager 群と P4OidMapper、次に entity_cache_ の Write 連動更新、最後に APPL_STATE_DB を介した同期応答の 3 点です。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/18-p4-pins/internals.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/18-p4-pins/internals/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="内部実装 — PINS の中身を読むときに、まず押さえるのは P4Orch の Manager 群と P4OidMapper、次に entity_cache_ の Write 連動更新、最後に APPL_STATE_DB を介した同期応答 の 3 点です。" />
+<meta property="twitter:description" content="内部実装 — PINS の中身を読むときに、まず押さえるのは P4Orch の Manager 群と P4OidMapper、次に entity_cache_ の Write 連動更新、最後に APPL_STATE_DB を介した同期応答の 3 点です。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/18-p4-pins/internals.png" />
 </head>
   
@@ -36186,10 +36186,83 @@
 <li><code>l3_multicast_manager</code></li>
 </ul>
 <p>HLD 当初は 7 Manager の構成でしたが、現行 master ではこれらにさらに拡張されています。詳細は <a href="../../../internals/p4-orchagent/">P4Orch HLD</a> を参照してください。</p>
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/p4orch/p4orch.h#L17-L29 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  #include "p4orch/ip_multicast_manager.h"
+  #include "p4orch/l3_multicast_manager.h"
+  #include "p4orch/neighbor_manager.h"
+  #include "p4orch/next_hop_manager.h"
+  #include "p4orch/router_interface_manager.h"
+  #include "p4orch/tables_definition_manager.h"
+  #include "p4orch/wcmp_manager.h"
+reasoning: HLD 7 Manager に対して master では ip_multicast / l3_multicast / tables_definition 等が追加されている根拠。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/orchagent/p4orch/p4orch.h#L17-L29 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/orchagent/p4orch/p4orch.h#L17-L29 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>#include &quot;p4orch/ip_multicast_manager.h&quot;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>#include &quot;p4orch/l3_multicast_manager.h&quot;
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>#include &quot;p4orch/neighbor_manager.h&quot;
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>#include &quot;p4orch/next_hop_manager.h&quot;
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>#include &quot;p4orch/router_interface_manager.h&quot;
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>#include &quot;p4orch/tables_definition_manager.h&quot;
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>#include &quot;p4orch/wcmp_manager.h&quot;
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: HLD 7 Manager に対して master では ip_multicast / l3_multicast / tables_definition 等が追加されている根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="objectmanagerinterface">ObjectManagerInterface の抽象<a class="headerlink" href="#objectmanagerinterface" title="Permanent link">&para;</a></h2>
 <p>各 Manager は <code>object_manager_interface.h</code> の <code>enqueue</code> / <code>drain</code> / <code>drainWithNotExecuted</code> を実装します。<code>enqueue</code> で <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> から取り出した entry を蓄え、<code>drain</code> で SAI 呼び出しを実行し、<code>drainWithNotExecuted</code> でエラーケースのリカバリを記述するという 3 つの責務分離です。</p>
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/p4orch/object_manager_interface.h#L12-L19 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  virtual void enqueue(const std::string &table_name, const swss::KeyOpFieldsValuesTuple &entry) = 0;
+  virtual ReturnCode drain() = 0;
+  virtual void drainWithNotExecuted() = 0;
+reasoning: ObjectManagerInterface の 3 メソッド抽象（enqueue / drain / drainWithNotExecuted）の根拠。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/orchagent/p4orch/object_manager_interface.h#L12-L19 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/orchagent/p4orch/object_manager_interface.h#L12-L19 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>virtual void enqueue(const std::string &amp;table_name, const swss::KeyOpFieldsValuesTuple &amp;entry) = 0;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>virtual ReturnCode drain() = 0;
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>virtual void drainWithNotExecuted() = 0;
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: ObjectManagerInterface の 3 メソッド抽象（enqueue / drain / drainWithNotExecuted）の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="p4oidmapper">P4OidMapper<a class="headerlink" href="#p4oidmapper" title="Permanent link">&para;</a></h2>
 <p><code>p4oidmapper.h</code> の <code>P4OidMapper</code> は <code>(sai_object_type_t, key) → (oid, ref_count)</code> の対応を保持します。<code>getRefCount</code> を public 公開しており、複数 Manager から参照される共有オブジェクト（next_hop が wcmp / route から参照される等）の生存管理に使います。</p>
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/p4orch/p4oidmapper.h#L44 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  bool getRefCount(_In_ sai_object_type_t object_type, _In_ const std::string &key, _Out_ uint32_t *ref_count) const;
+reasoning: P4OidMapper が ref_count を public API として公開している根拠。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/orchagent/p4orch/p4oidmapper.h#L44 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss/orchagent/p4orch/p4oidmapper.h#L44 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>bool getRefCount(_In_ sai_object_type_t object_type, _In_ const std::string &amp;key, _Out_ uint32_t *ref_count) const;
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: P4OidMapper が ref_count を public API として公開している根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="entity_cache_-write">entity_cache_ の Write 連動更新<a class="headerlink" href="#entity_cache_-write" title="Permanent link">&para;</a></h2>
 <p><code>sonic-pins/p4rt_app/p4runtime/p4runtime_impl.cc</code> の <code>UpdateCacheAndUtilizationState</code> が次を担当します:</p>
 <ul>
@@ -36199,6 +36272,27 @@
 <p>型は HLD 記載の <code>table_entry_cache_</code> から <strong><code>entity_cache_</code>（<code>absl::flat_hash_map&lt;pdpi::EntityKey, p4::v1::Entity&gt;</code>）</strong> へ汎化されており、TableEntry に加え PacketReplicationEngineEntry も保持します。Read は <code>p4runtime_read.cc</code> の <code>AppendTableEntryReads</code> が <code>entity_cache_</code> を走査して AppDb をスキップします。詳細は <a href="../../../management/p4rt-read-cache-hld/">Read キャッシュ HLD</a> を参照してください。</p>
 <h2 id="appl_state_db">同期書き込みと APPL_STATE_DB<a class="headerlink" href="#appl_state_db" title="Permanent link">&para;</a></h2>
 <p>通常の <a href="../../../reference/glossary/#term-orchagent">orchagent</a> は SAI を非同期に呼びますが、P4Orch は <strong>SAI 応答を待ち、結果を APPL_STATE_DB に書き戻す</strong> ことで <a href="../../../reference/glossary/#term-p4rt">P4RT</a> App が controller に成否を返せるようにします。<code>APPL_STATE_DB=14</code> は <code>sonic-swss-common/common/schema.h</code> で定義されており、PINS のために追加されたものです（<a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> 向けに <code>DPU_APPL_STATE_DB=16</code> も別途追加）。</p>
+<!-- evidence:
+source: sonic-net/sonic-swss-common/common/schema.h#L27-L29 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)
+excerpt: |
+  #define APPL_STATE_DB       14
+  #define DPU_APPL_STATE_DB   16
+reasoning: APPL_STATE_DB=14 と DPU_APPL_STATE_DB=16 の DB id 定義の根拠。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-swss-common/common/schema.h#L27-L29 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-swss-common/common/schema.h#L27-L29 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>#define APPL_STATE_DB       14
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>#define DPU_APPL_STATE_DB   16
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: APPL_STATE_DB=14 と DPU_APPL_STATE_DB=16 の DB id 定義の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="warm-boot">warm boot とキャッシュの整合<a class="headerlink" href="#warm-boot" title="Permanent link">&para;</a></h2>
 <p><code>warm_boot_state_adapter_</code> が warm boot 時のキャッシュ復元基盤を提供しており、HLD で挙げられていた事前充填案を踏まえた骨組みになっています。整合は <code>P4RuntimeImpl::VerifyState()</code> が <code>VerifyP4rtTableWithCacheEntities</code> で確認します。</p>
 <h2 id="_2">データフロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -36293,19 +36387,19 @@
 </table>
 <p>P4 program は <code>tables_definition_manager</code> を介して動的に accept される。HLD 当初の static binding を超え、controller が table 定義を push する設計。</p>
 <h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">CONFIG_DB</span><span class="p">:</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">なし（P4RT は controller 直結が主）</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nt">APPL_DB</span><span class="p">:</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">P4RT_ROUTER_INTERFACE_TABLE, P4RT_NEIGHBOR_TABLE,</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">P4RT_NEXTHOP_TABLE, P4RT_WCMP_GROUP_TABLE,</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">P4RT_ROUTE_TABLE, P4RT_ACL_TABLE_TABLE / RULE_TABLE,</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">P4RT_MIRROR_SESSION_TABLE, P4RT_L3_ADMIT_TABLE,</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">P4RT_GRE_TUNNEL_TABLE, P4RT_TUNNEL_DECAP_GROUP_TABLE,</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">P4RT_EXT_*_TABLE</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="nt">APPL_STATE_DB (DB id=14)</span><span class="p">:</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">各 P4RT_* テーブルの ack（success / failure + reason）</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nt">ASIC_DB</span><span class="p">:</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">通常の SAI object に展開</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">CONFIG_DB</span><span class="p">:</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">なし（P4RT は controller 直結が主）</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="nt">APPL_DB</span><span class="p">:</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">P4RT_ROUTER_INTERFACE_TABLE, P4RT_NEIGHBOR_TABLE,</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">P4RT_NEXTHOP_TABLE, P4RT_WCMP_GROUP_TABLE,</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">P4RT_ROUTE_TABLE, P4RT_ACL_TABLE_TABLE / RULE_TABLE,</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">P4RT_MIRROR_SESSION_TABLE, P4RT_L3_ADMIT_TABLE,</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">P4RT_GRE_TUNNEL_TABLE, P4RT_TUNNEL_DECAP_GROUP_TABLE,</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">P4RT_EXT_*_TABLE</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="nt">APPL_STATE_DB (DB id=14)</span><span class="p">:</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">各 P4RT_* テーブルの ack（success / failure + reason）</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="nt">ASIC_DB</span><span class="p">:</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">通常の SAI object に展開</span>
 </span></code></pre></div>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>

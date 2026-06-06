@@ -36402,7 +36402,7 @@
 <td><code>sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/aggregate-address-prefix-list</code></td>
 <td><code>string</code></td>
 <td></td>
-<td></td>
+<td><code>""</code></td>
 <td>length <code>0..128</code>; pattern <code>[0-9a-zA-Z_-]*</code></td>
 <td>Prefix list used to filter which prefixes are included in the aggregate advertisement.</td>
 </tr>
@@ -36411,12 +36411,14 @@
 <td><code>sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/contributing-address-prefix-list</code></td>
 <td><code>string</code></td>
 <td></td>
-<td></td>
+<td><code>""</code></td>
 <td>length <code>0..128</code>; pattern <code>[0-9a-zA-Z_-]*</code></td>
 <td>Prefix list used to filter which contributing routes are considered for the aggregate.</td>
 </tr>
 </tbody>
 </table>
+<!-- evidence: prefix-list leafs explicitly declare `default ""` (empty string), distinct from "no default" semantics; see sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang L66 (aggregate-address-prefix-list) and L75 (contributing-address-prefix-list) @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd -->
+
 <h2 id="leafref">leafref / 依存<a class="headerlink" href="#leafref" title="Permanent link">&para;</a></h2>
 <ul>
 <li>なし</li>
