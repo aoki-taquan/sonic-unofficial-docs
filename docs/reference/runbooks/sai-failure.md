@@ -1,7 +1,6 @@
 ---
 title: SAI failure / syncd リスタート多発
-description: 'Runbook: SAI failure / syncd リスタート多発 — : sonic-net/sonic-sairedis @
-  88bc51a — syncd 本体 : sonic-net/sonic-swss @ 4305596 — orchagent'
+description: syncd の異常終了や SAI API 連続失敗を切り分けるための runbook。CRM 枯渇 / SDK 非対応属性 / object 削除順序 / OOM / HW 障害を順に確認する手順をまとめる。
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
