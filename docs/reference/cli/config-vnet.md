@@ -31,9 +31,9 @@ related:
 
 | コマンド | 用途 |
 |---------|------|
-| `config vnet add <vnet_name> <vni> <vxlan_tunnel> [options]` | `VNET|<vnet_name>` を追加/更新 |
+| `config vnet add <vnet_name> <vni> <vxlan_tunnel> [<peer_list> [<guid> [<scope> [<advertise_prefix> [<overlay_dmac> [<src_mac>]]]]]]` | `VNET|<vnet_name>` を追加/更新 |
 | `config vnet del <vnet_name>` | [VNET](../../reference/glossary.md#term-vnet) と関連 interface/route を削除 |
-| `config vnet add-route <vnet_name> <prefix> <endpoint> [options]` | tunnel route を追加/更新 |
+| `config vnet add-route <vnet_name> <prefix> <endpoint> [<vni> [<mac_address> [<endpoint_monitor> [<profile> [<primary> [<monitoring> [<adv_prefix>]]]]]]]` | tunnel route を追加/更新 |
 | `config vnet del-route <vnet_name> [<prefix>]` | route 1件または VNET 配下全 route を削除 |
 
 ## 各コマンドの詳細
@@ -44,27 +44,42 @@ related:
 
 ```bash
 config vnet add <vnet_name> <vni> <vxlan_tunnel>
-    [--peer_list <list>]
-    [--guid <guid>]
-    [--scope default|...]
-    [--advertise_prefix true|false]
-    [--overlay_dmac <mac>]
-    [--src_mac <mac>]
+                [<peer_list>
+                 [<guid>
+                  [<scope>
+                   [<advertise_prefix>
+                    [<overlay_dmac>
+                     [<src_mac>]]]]]]
 ```
 
-`<vnet_name>` は `Vnet` で始まり、最大 15 文字。`VNET|<vnet_name>` に `vni`, `vxlan_tunnel` と指定オプションを書き込む。`peer_list` の各 peer も同じ VNET 名検証を受ける[^2]。
+引数はすべて **位置引数 (positional)** で、`--peer_list=...` のような option 形式では受け付けない[^2]。`<peer_list>` はカンマ区切りで、内部で `split(',')` される[^2]。`<scope>` は実装上 `default` のみ許容 (それ以外を渡すと `ctx.fail` で拒否)[^2]。省略した場合は CONFIG_DB エントリにそのフィールドを書き込まない動作になる。
+
+`<vnet_name>` は `Vnet` で始まり、最大 15 文字 (`vnet_name_is_valid()`)[^3]。`<vni>` は 1〜16777215 の整数、`<vxlan_tunnel>` は既存の VxLAN tunnel 名でなければエラーとなる[^2]。`VNET|<vnet_name>` に `vni`, `vxlan_tunnel` と指定された値を書き込み、`peer_list` の各 peer も同じ VNET 名検証を受ける[^2]。
 
 ### `config vnet del`
 
-`VNET|<vnet_name>` が存在することを確認し、関連 interface の `vnet_name` と `VNET_ROUTE_TUNNEL` / `VNET_ROUTE` を削除してから VNET entry を削除する。
+`VNET|<vnet_name>` が存在することを確認し、関連 interface の `vnet_name` と `VNET_ROUTE_TUNNEL` / `VNET_ROUTE` を削除してから VNET entry を削除する[^4]。
 
 ### `config vnet add-route`
 
-`VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>` に endpoint, vni, mac address, monitoring/profile 系の属性を書き込む。対象 VNET が無い場合はエラー。
+**用法**:
+
+```bash
+config vnet add-route <vnet_name> <prefix> <endpoint>
+                      [<vni>
+                       [<mac_address>
+                        [<endpoint_monitor>
+                         [<profile>
+                          [<primary>
+                           [<monitoring>
+                            [<adv_prefix>]]]]]]]
+```
+
+`add` 同様、すべて位置引数で `--vni=...` のような option 形式は受け付けない[^5]。`VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>` に endpoint, vni, mac_address, endpoint_monitor, profile, primary, monitoring, adv_prefix を書き込む。対象 VNET が無い場合や `prefix` / `endpoint` が IP として不正な場合はエラーで abort する[^5]。
 
 ### `config vnet del-route`
 
-`<prefix>` 指定時は該当 route だけを削除する。省略時は対象 VNET に紐づく route をまとめて削除する。
+`<prefix>` 指定時は該当 route だけを削除する。省略時は対象 VNET に紐づく route をまとめて削除する[^6]。
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
@@ -102,9 +117,17 @@ flowchart LR
 
 ## 引用元
 
-[^1]: `config vnet` グループ定義。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L10057>
+[^1]: `config vnet` グループ定義 (`@config.group(name='vnet')` + `--namespace`)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L10059-L10064>
 
-[^2]: VNET 名検証は `vnet_name_is_valid()`。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L467>
+[^2]: `config vnet add` のシグネチャ (`@click.argument` 9 つ) と VNI/VxLAN tunnel 検証ロジック。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L10067-L10131>
+
+[^3]: `vnet_name_is_valid()` の定義 (`Vnet` 接頭辞 + 最大 15 文字)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L467>
+
+[^4]: `config vnet del` の実装 (関連 interface / route の cleanup)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L10134-L10160>
+
+[^5]: `config vnet add-route` のシグネチャ (`@click.argument` 10 個) と prefix / endpoint 検証。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L10161-L10232>
+
+[^6]: `config vnet del-route` のシグネチャ (`prefix` は `required=False`)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L10234-L10260>
 
 <!-- ops-hint -->
 ## 運用ヒント
