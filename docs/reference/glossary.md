@@ -1420,8 +1420,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [動的ポートブレイクアウト（DPB）既知問題と YANG モデル](../system/dynamic-port-breakout-known-issues.md) (29)
 - [BREAKOUT_CFG テーブル](config-db/breakout-cfg.md) (20)
 - [BREAKOUT_CFG テーブル (DPB)](config-db/dpb.md) (14)
-- [ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）](../architecture/build-system-improvements.md) (8)
 - [サイトマップ](../_meta/sitemap.md) (5)
+- [PORT テーブル](config-db/port.md) (3)
 
 ### [DPDK](#term-dpdk)
 
@@ -2089,9 +2089,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (130)
 - [Fast-reboot Flow Improvements（finalizer / reconciliation）](../system/fast-reboot-flow-improvements-hld.md) (78)
-- [ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）](../architecture/build-system-improvements.md) (63)
 - [FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）](../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md) (49)
 - [YANG モデル既知問題と検証](../system/yang-model-issues-and-validation.md) (39)
+- [動的ポートブレイクアウト（DPB）既知問題と YANG モデル](../system/dynamic-port-breakout-known-issues.md) (35)
 
 ### [sonic-cfggen](#term-sonic-cfggen)
 

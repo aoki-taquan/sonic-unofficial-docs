@@ -200,6 +200,8 @@ make SONIC_USE_DOCKER_BUILDKIT=y target/sonic-mellanox.bin
 
 ## 既知の問題
 
+本ページは「ビルド時間最適化」をテーマとするため、本セクションでは並列ビルドや base docker ビルドなど、ビルド時間最適化に直接関係する既知の問題のみを列挙する。[DPB](../reference/glossary.md#term-dpb) / インストール / ランタイム周りなど、ビルド時間最適化と直交する問題は対応する機能ページ側で扱う。
+
 ### `SONIC_BUILD_JOBS=N` 並列ビルドで最終ターゲット失敗（#1738）
 
 `SONIC_BUILD_JOBS=4` 等の並列ビルド設定で、複数の最終ターゲットが同時にビルドされる際に依存関係が解決されず失敗するケースがある。エラーの典型例:
@@ -208,147 +210,21 @@ make SONIC_USE_DOCKER_BUILDKIT=y target/sonic-mellanox.bin
 couldn't find these debs: ...
 ```
 
-**回避策:** `SONIC_BUILD_JOBS` を 1 に下げるか、省略して再試行する。または並列度を落として複数回実行する。
+**回避策:** `SONIC_BUILD_JOBS` を 1 に下げるか、省略して再試行する。または並列度を落として複数回実行する。`SONIC_BUILD_JOBS` は `Makefile.work` の slave コンテナ起動オプションとして渡される（`Makefile.work` 内で `SONIC_BUILD_JOBS=$(SONIC_BUILD_JOBS)` として伝搬）。
 
 - 参照: [sonic-net/SONiC#1738](https://github.com/sonic-net/SONiC/issues/1738)
 
-### ビルド成果物のダウンロード先変更（#865）
-
-旧 URL (`sonic-jenkins.westus2.cloudapp.azure.com`) は廃止されており、アクセス拒否になる。現在のビルド成果物は以下から取得する:
-
-- **新 URL**: https://sonic-build.azurewebsites.net/ui/sonic/pipelines
-- Platform → Branch → Build → Artifacts のツリーから目的のイメージを選択
-
-README の color badge をクリックして最新ビルドに直接ジャンプする方法もある。
-
-- 参照: [sonic-net/SONiC#865](https://github.com/sonic-net/SONiC/issues/865)
-
-### 低スペックスイッチ（2GB flash/RAM）でのインストール時 OOM（#1065）
-
-古い低スペックのスイッチ（例: SuperMicro SSE-G3648B、Arista 7050QX-32 等の 2GB flash モデル）では master ブランチのイメージサイズが増大しておりインストール時に OOM が発生する。
-
-**回避策:**
-- 古いイメージ (201811 等) を使用する: `https://sonic-build.azurewebsites.net/api/sonic/artifacts?branchName=201811&platform=broadcom&target=target%2Fsonic-broadcom.bin`
-- または SWAP 領域を作成してから再インストール
-- 最低 16GB の flash/DOM への換装を推奨
-
-master ブランチのイメージは機能追加に伴いサイズが増大しており、2GB flash 環境での動作は保証されない。
-
-- 参照: [sonic-net/SONiC#1065](https://github.com/sonic-net/SONiC/issues/1065)
-
-### sonic-slave コンテナ内で debootstrap が proc マウントに失敗する場合（sonic-buildimage#27）
-
-sonic-slave コンテナ内で debootstrap が proc マウントに失敗する場合、`docker run --privileged` フラグが必須。通常の docker run では /proc マウントの権限不足でビルドが中断する
-
-- 参照: [sonic-net/sonic-buildimage#27](https://github.com/sonic-net/sonic-buildimage/issues/27)
-
-### /host/machine.conf の内容が不正な場合、プラットフォーム固有の設定が失敗する（sonic-buildimage#1519）
-
-/host/machine.conf の内容が不正な場合、プラットフォーム固有の設定が失敗する。platform フィールドに正しい hwsku 名を設定すること
-
-- 参照: [sonic-net/sonic-buildimage#1519](https://github.com/sonic-net/sonic-buildimage/issues/1519)
-
-### sonic-slave コンテナに入る方法（sonic-buildimage#2029）
-
-sonic-slave コンテナに入る方法: `docker run -v /var/run/docker.sock:/var/run/docker.sock --privileged -it sonic-slave bash`。`--privileged` フラグなしでは proc マウント等が失敗する
-
-- 参照: [sonic-net/sonic-buildimage#2029](https://github.com/sonic-net/sonic-buildimage/issues/2029)
-
-### 初期化スクリプトで `depmod -a` が実行されていない場合、`libkmod: ERROR` ログが出力される（sonic-buildimage#2030）
-
-初期化スクリプトで `depmod -a` が実行されていない場合、`libkmod: ERROR` ログが出力される。カーネルモジュールの依存関係データベース更新が必要
-
-- 参照: [sonic-net/sonic-buildimage#2030](https://github.com/sonic-net/sonic-buildimage/issues/2030)
-
-### Linux カーネルビルド中に `failed to load plugin io.containerd.snapsho（sonic-buildimage#2614）
-
-Linux カーネルビルド中に `failed to load plugin io.containerd.snapshotter` エラーが発生する問題。containerd のバージョンと Linux カーネルの互換性確認が必要
-
-- 参照: [sonic-net/sonic-buildimage#2614](https://github.com/sonic-net/sonic-buildimage/issues/2614)
-
-### SONiC HEAD 187-dirty ビルドでのバージョン管理問題（sonic-buildimage#4096）
-
-SONiC HEAD 187-dirty ビルドでのバージョン管理問題。`--dirty` サフィックスが付くビルドは本番環境での使用を避けること
-
-- 参照: [sonic-net/sonic-buildimage#4096](https://github.com/sonic-net/sonic-buildimage/issues/4096)
-
 ### ベース docker イメージのビルド時に `apt-get update` が常に失敗する問題（sonic-buildimage#4366）
 
-ベース docker イメージのビルド時に `apt-get update` が常に失敗する問題。Debian リポジトリの APT キーが期限切れの場合に発生。`apt-key update` でキーを更新すること
+ベース docker イメージのビルド時に `apt-get update` が常に失敗する問題。Debian リポジトリの APT キーが期限切れの場合に発生し、本ページで扱う「Dockerfile レイヤ削減 / BuildKit 化」改修中にもキャッシュ無効化の影響でしばしば顕在化する。`apt-key update` でキーを更新すること。
 
 - 参照: [sonic-net/sonic-buildimage#4366](https://github.com/sonic-net/sonic-buildimage/issues/4366)
 
 ### master mainline でのビルドエラー（sonic-buildimage#4404）
 
-master mainline でのビルドエラー。`git submodule update --init --recursive` でサブモジュールを最新化してから再ビルドすること
+master mainline でのビルドエラー。`git submodule update --init --recursive` でサブモジュールを最新化してから再ビルドすること。本最適化（BuildKit / 並列 dh）を入れる際のクリーンビルド前提条件として注意。
 
 - 参照: [sonic-net/sonic-buildimage#4404](https://github.com/sonic-net/sonic-buildimage/issues/4404)
-
-### スイッチ起動時に sonic-cfggen が大量の CPU を消費する問題（sonic-buildimage#4553）
-
-スイッチ起動時に [sonic-cfggen](../reference/glossary.md#term-sonic-cfggen) が大量の CPU を消費する問題。起動時に複数のサービスが同時に sonic-cfggen を呼び出すため。`systemd-analyze blame` でボトルネックを特定すること
-
-- 参照: [sonic-net/sonic-buildimage#4553](https://github.com/sonic-net/sonic-buildimage/issues/4553)
-
-### sonic-cfggen が `/var/run/redis/redis.sock` への接続に失敗する問題（sonic-buildimage#5277）
-
-sonic-cfggen が `/var/run/redis/redis.sock` への接続に失敗する問題。[Redis](../reference/glossary.md#term-redis) ソケットファイルが存在しない状態で実行された場合に発生
-
-- 参照: [sonic-net/sonic-buildimage#5277](https://github.com/sonic-net/sonic-buildimage/issues/5277)
-
-### Dynamic Port Breakout (DPB) 機能が最新 master では動作しない問題（sonic-buildimage#5417）
-
-Dynamic Port Breakout ([DPB](../reference/glossary.md#term-dpb)) 機能が最新 master では動作しない問題。DPB は特定のプラットフォームとカーネルバージョンの組み合わせに依存する
-
-- 参照: [sonic-net/sonic-buildimage#5417](https://github.com/sonic-net/sonic-buildimage/issues/5417)
-
-### 物理スイッチへの SONiC インストールに失敗する問題（sonic-buildimage#5596）
-
-物理スイッチへの SONiC インストールに失敗する問題。ONIE インストーラーのバージョンと SONiC イメージの互換性を確認すること
-
-- 参照: [sonic-net/sonic-buildimage#5596](https://github.com/sonic-net/sonic-buildimage/issues/5596)
-
-### VS (Virtual Switch) イメージで config reload が失敗する問題（sonic-buildimage#5959）
-
-[VS](../reference/glossary.md#term-vs) (Virtual Switch) イメージで config reload が失敗する問題。VS 環境では一部のプラットフォーム固有サービスが利用できないため、VS 用の設定を使用すること
-
-- 参照: [sonic-net/sonic-buildimage#5959](https://github.com/sonic-net/sonic-buildimage/issues/5959)
-
-### 201911 で `SONIC_DEBUGGING_ON=y` を設定するとコンパイルが失敗する問題（sonic-buildimage#5982）
-
-201911 で `SONIC_DEBUGGING_ON=y` を設定するとコンパイルが失敗する問題。デバッグビルドオプションは特定のコンパイラバージョンとの互換性確認が必要
-
-- 参照: [sonic-net/sonic-buildimage#5982](https://github.com/sonic-net/sonic-buildimage/issues/5982)
-
-### DPB 後のインターフェースの alias が誤って設定される問題（sonic-buildimage#6024）
-
-DPB 後のインターフェースの alias が誤って設定される問題。Dynamic Port Breakout 実行後は `show interfaces alias` で alias が正しく更新されているか確認すること
-
-- 参照: [sonic-net/sonic-buildimage#6024](https://github.com/sonic-net/sonic-buildimage/issues/6024)
-
-### Dynamic Port Breakout (DPB) 機能が不安定な問題（sonic-buildimage#6027）
-
-Dynamic Port Breakout (DPB) 機能が不安定な問題。DPB は実行中に複数のサービスを再起動するため、メンテナンスウィンドウでの実行を推奨
-
-- 参照: [sonic-net/sonic-buildimage#6027](https://github.com/sonic-net/sonic-buildimage/issues/6027)
-
-### config_db.json ファイルのインターフェースがソートされていない問題（sonic-buildimage#6328）
-
-[config_db.json](../reference/glossary.md#term-config_db.json) ファイルのインターフェースがソートされていない問題。設定ファイルの可読性のため、sort_keys=True で JSON を整形すること
-
-- 参照: [sonic-net/sonic-buildimage#6328](https://github.com/sonic-net/sonic-buildimage/issues/6328)
-
-### ARM アーキテクチャの VS docker イメージでのパフォーマンステスト（sonic-buildimage#6399）
-
-ARM アーキテクチャの VS docker イメージでのパフォーマンステスト。ARM ホストでの SONiC テストにはネイティブ ARM ビルドが必要
-
-- 参照: [sonic-net/sonic-buildimage#6399](https://github.com/sonic-net/sonic-buildimage/issues/6399)
-
-### make コマンドラインからコードの最適化を無効化できない問題（sonic-buildimage#6413）
-
-make コマンドラインからコードの最適化を無効化できない問題。`SONIC_DEBUGGING_ON=y` オプションでデバッグビルドを有効化できるが、最適化レベルの個別制御はサポートされていない
-
-- 参照: [sonic-net/sonic-buildimage#6413](https://github.com/sonic-net/sonic-buildimage/issues/6413)
 
 ## 制限事項
 
@@ -407,4 +283,4 @@ docker images | grep sonic
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 9fb3fca99a59 -->
+<!-- glossary-links-injected: 2eff420a4cdf -->
