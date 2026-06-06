@@ -270,7 +270,7 @@ CONFIG_DB → APPL_DB → orchagent と同じ構造を **[DPU](../reference/glos
 | `BGP_AGGREGATE_ADDRESS` | `bgpcfgd` | — | (FRR) |
 | `BGP_BBR` | `bgpcfgd` | — | (FRR) |
 | `BGP_GLOBALS` | `bgpcfgd` | — | (FRR) |
-| `BGP_GLOBALS_AF` | `bgpcfgd` | — | (FRR) |
+| `BGP_GLOBALS_AF` | `frrcfgd` | — | (FRR) |
 | `BGP_MONITORS` | `bgpcfgd` | — | (FRR) |
 | `BGP_PEER_RANGE` | `bgpcfgd` | — | (FRR dynamic peer) |
 | `BGP_SENTINELS` | `bgpcfgd` | — | (FRR) |
