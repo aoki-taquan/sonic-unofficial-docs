@@ -1,7 +1,7 @@
 ---
 title: P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）
-description: P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み） — PINS (P4 Integrated Network
-  Stack) は SONiC を P4 / P4Runtime で遠隔制御 する。
+description: P4Orch は PINS (P4 Integrated Network Stack) の中核 orchagent。APPL_DB.P4RT
+  を購読し、SAI を同期書き込みで叩いて P4Runtime controller に完了応答を返す。
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
@@ -181,7 +181,7 @@ sonic-db-cli APPL_STATE_DB keys '*'
 - restart 後に消える → 仕様。Controller が再投入
 - ref_count 異常 → Centralized Mapper の値を debug log で確認、CrmOrch カウンタも対照
 
-## 関連 Topics
+## 関連サブページ
 
 - [18-p4-pins/concept](../topics/18-p4-pins/concept.md): PINS / P4Runtime の全体像
 - [20-swss-sai-redis/internals](../topics/20-swss-sai-redis/internals.md): orchagent 同期モードと APPL_STATE_DB

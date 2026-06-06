@@ -3,12 +3,21 @@ title: MCLAG Enhancements 概念（7 軸拡張・isolation group / unique IP）
 description: MCLAG Enhancements の概念整理。dynamic config / timer 設定 / static MAC / aging disable / MAC sync 最適化 / isolation group / unique IP の 7 軸を要件・ユースケースの観点で解説する。
 area: switching
 verification: code-verified
-last_verified: 2026-05-10
+last_verified: 2026-06-06
 page_kind: split-child
 sources:
 - repo: sonic-net/SONiC
   path: doc/mclag/MCLAG_Enhancements_HLD.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-swss
+  path: orchagent/fdborch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: mclagsyncd/mclaglink.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
   - MCLAG_DOMAIN
@@ -30,7 +39,11 @@ related:
 このページは [MCLAG Enhancements（概要ハブ）](mclag-enhancements.md) の派生で、**7 軸の機能拡張をユースケース観点で整理** する。実装詳細は [mclag-enhancements-internals.md](mclag-enhancements-internals.md)、CLI / 運用は [mclag-enhancements-operations.md](mclag-enhancements-operations.md) を参照。
 
 !!! success "裏取りステータス: code-verified"
-    スキーマ名・SAI 属性・テーブル定義は `sonic-swss-common/common/schema.h`・`sonic-swss/orchagent/fdborch.cpp`・`sonic-swss/mclagsyncd/mclaglink.cpp` で確認済み。
+    主要なスキーマ名・SAI 属性・テーブル定義は以下で確認済み:
+
+    - `MCLAG_DOMAIN` / `MCLAG_INTERFACE` / `MCLAG_FDB_TABLE` / `ISOLATION_GROUP_TABLE`: `sonic-swss-common` `common/schema.h` L118–L119, L378–L379[^2]
+    - `SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE` を使った aging 抑止: `sonic-swss` `orchagent/fdborch.cpp` L507 / L583 / L1444 / L1491[^3]
+    - MclagSyncd ↔ ICCPd メッセージング: `sonic-swss` `mclagsyncd/mclaglink.cpp`[^4]
 
 ## 1. なぜ拡張するのか
 
@@ -155,6 +168,9 @@ flowchart LR
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mclag/MCLAG_Enhancements_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss-common` `common/schema.h` L118–L119, L378–L379 @ `158de8d3463ff4b841653f6d57190bb142b80d9c`
+[^3]: `sonic-net/sonic-swss` `orchagent/fdborch.cpp` L507, L583, L1444, L1491 @ `4305596156d70e9797e8a881b3d19b46de0bce0d`
+[^4]: `sonic-net/sonic-swss` `mclagsyncd/mclaglink.cpp` @ `4305596156d70e9797e8a881b3d19b46de0bce0d`
 
 <!-- topics-back-ref -->
 ## 関連 Topics

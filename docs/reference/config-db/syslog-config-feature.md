@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-`SYSLOG_CONFIG.GLOBAL` の rate-limit を `FEATURE` (docker) ごとに上書きするテーブル[^1]。`containercfgd` (`SyslogHandler`) が読み出し、対象 docker のコンテナ内 rsyslog 設定 (例 `/etc/rsyslog.d/`) を再生成する。`hostcfgd` は本テーブルを購読しない（「通信メカニズム」参照）。
+`SYSLOG_CONFIG.GLOBAL` の rate-limit を `FEATURE` (docker) ごとに上書きするテーブル[^1]。`containercfgd` (`SyslogHandler`) が読み出し、対象 docker のコンテナ内 rsyslog 設定 (`/etc/rsyslog.conf`, `SyslogHandler.SYSLOG_CONF_PATH`) を再生成する。`hostcfgd` は本テーブルを購読しない（「通信メカニズム」参照）。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -31,7 +31,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SYSLOG_CONFIG_FEATURE")]
-  DM["hostcfgd"]
+  DM["containercfgd"]
   CDB --> DM
 ```
 
@@ -416,7 +416,7 @@ CONFIG_DB に書き込む際も `SYSLOG_CONFIG_FEATURE|swss` 形式（asic suffi
 ```bash
 sonic-db-cli CONFIG_DB keys 'SYSLOG_CONFIG_FEATURE|*'
 show syslog rate-limit-container
-docker exec swss cat /etc/rsyslog.d/*.conf
+docker exec swss cat /etc/rsyslog.conf
 ```
 <!-- /ops-hint -->
 
@@ -425,7 +425,7 @@ docker exec swss cat /etc/rsyslog.d/*.conf
 
 ### 自動派生
 
-`containercfgd` が `SYSLOG_CONFIG_FEATURE` の per-feature rate limit 設定を読み、未設定の場合は `SYSLOG_CONFIG` グローバル値を継承させる（フォールバック自動派生）。`rate_limit_interval` / `rate_limit_burst` が設定されている feature のみ個別 rsyslog conf ファイルが生成される。
+`containercfgd` が `SYSLOG_CONFIG_FEATURE` の per-feature rate limit 設定を読み、未設定の場合は `rsyslog-container.conf.j2` の `|default('300')` / `|default('20000')` (Jinja2 フォールバック) を経由して、結果的に `SYSLOG_CONFIG` グローバル値の精神を継承する。書き込み対象は対象コンテナの単一ファイル `/etc/rsyslog.conf` であり、feature 別の個別 conf ファイルは生成されない (`drop-in` 形式ではない)。
 
 ### 条件付き登録 (add_manager 条件)
 
@@ -438,12 +438,12 @@ docker exec swss cat /etc/rsyslog.d/*.conf
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
-| `containercfgd` (`SyslogHandler`) | `rate_limit_interval` フィールドあり | feature 別 rsyslog rate limit 設定を生成 | `containercfgd.py` |
-| `containercfgd` (`SyslogHandler`) | `rate_limit_burst` フィールドあり | feature 別 rsyslog burst 設定を生成 | `containercfgd.py` |
-| `containercfgd` (`SyslogHandler`) | フィールド未設定 | グローバル `SYSLOG_CONFIG` の値にフォールバック | `containercfgd.py` |
-| `containercfgd` (`SyslogHandler`) | エントリ削除 | feature 別 conf ファイルを削除して rsyslog reload | `containercfgd.py` |
+| `containercfgd` (`SyslogHandler`) | `rate_limit_interval` フィールドあり | コンテナ内 `/etc/rsyslog.conf` の rate-limit interval を再生成 | `containercfgd.py:137-161` |
+| `containercfgd` (`SyslogHandler`) | `rate_limit_burst` フィールドあり | コンテナ内 `/etc/rsyslog.conf` の rate-limit burst を再生成 | `containercfgd.py:137-161` |
+| `containercfgd` (`SyslogHandler`) | フィールド未設定 (`data` 欠落) | `new_interval='0'` / `new_burst='0'` を採用 (Jinja2 テンプレート展開時に `SYSLOG_CONFIG\|GLOBAL` 値があれば反映、無ければ `default('300')` / `default('20000')`) | `containercfgd.py:143-144`, `rsyslog-container.conf.j2:27` |
+| `containercfgd` (`SyslogHandler`) | エントリ削除 (CONFIG_DB DEL) | `data={}` で `handle_config` が呼ばれ `'0'/'0'` で `/etc/rsyslog.conf` を再生成し `supervisorctl restart rsyslogd` | `containercfgd.py:120-135,143-144` |
 
-> **裏取り**: `SYSLOG_CONFIG_FEATURE` は per-feature の syslog rate limit 設定。未設定時は `SYSLOG_CONFIG` グローバル値への暗黙的なフォールバックが 派生相当。
+> **裏取り**: `SYSLOG_CONFIG_FEATURE` は per-container の syslog rate limit 設定。未設定時は `update_syslog_config()` 内で `'0'` 採用 (rate-limit off)、テンプレート展開時に `SYSLOG_CONFIG\|GLOBAL` 値があれば Jinja2 デフォルトを介して反映される。
 
 <!-- /handler-branching -->
 
@@ -456,7 +456,7 @@ docker exec swss cat /etc/rsyslog.d/*.conf
 
 ### 段階 2: CFG → APPL 翻訳
 
-- `containercfgd` がコンテナ別 syslog 設定 (ログレベル, フィルタ等) を `/etc/rsyslog.d/` に書き込み rsyslog を再起動。
+- `containercfgd` がコンテナ別 syslog 設定 (rate-limit interval/burst) を `/etc/rsyslog.conf` (`SYSLOG_CONF_PATH`) に書き込み `supervisorctl restart rsyslogd` で再起動。
 - APP_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI

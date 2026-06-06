@@ -118,7 +118,7 @@ vDPU actor が物理 DPU actor に register、DPU actor が状態変化を vDPU 
 
 ## 実装との乖離
 
-`monitor: partially_implemented` — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ [SmartSwitch HA HAMgrD 概念 親ページ](smartswitch-high-availability-manager-daemon-hamgrd-design.md) の同セクション（`## 実装との乖離` または `!!! diff` ブロック）を参照のこと。
+`monitor: partially_implemented` — 差分の根拠 / 影響 / 回避策は本ページ上部の `!!! diff "HLD と実装の差分"` admonition に集約済み。姉妹ページ [smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md](smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md) に制限事項一覧、親ページ [HAMgrD（概要ハブ）](smartswitch-high-availability-manager-daemon-hamgrd-design.md) に他派生ページの索引がある。
 
 ## 引用元
 

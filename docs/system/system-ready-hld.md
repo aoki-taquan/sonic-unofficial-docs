@@ -1,6 +1,6 @@
 ---
 title: System Ready（sysmonitor + per-app closest UP status の event 集約）
-description: "System Ready — SONiC の起動は 非同期。systemd の service が active でも、その内部の SWSS 系 daemon が CONFIG_DB を消化して ASIC に届くまで時間が掛かる。"
+description: "System Ready — SONiC の起動は非同期で、systemd の service が active でも内部の SWSS 系 daemon が CONFIG_DB を消化し ASIC に届くまで時間が掛かるため、sysmonitor が closest UP status を集約して 1 つの ready 状態を公開する。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10
@@ -55,8 +55,12 @@ flowchart TB
 | キー | 意味 |
 |------|------|
 | `CONFIG_DB.FEATURE\|<name>.check_up_status` | `true` で system ready 判定対象（新規 leaf。[YANG](../reference/glossary.md#term-yang) `sonic-feature` 拡張）[^1] |
+| `CONFIG_DB.FEATURE\|<name>.irrel_for_sysready` | `true` で当該 app を sysmonitor が無視（per-app opt-out）[^1] |
+| `CONFIG_DB.DEVICE_METADATA\|localhost.sysready_state` | system ready 機能自体の admin enable/disable[^1] |
 | `STATE_DB.FEATURE\|<name>.up_status` | App が自分の closest UP を申告（true/false + 任意 `fail_reason`）[^1] |
-| `STATE_DB.SYSTEM_READY\|SYSTEM_STATE` | 集約結果（CLI が読む先）|
+| `STATE_DB.SYSTEM_READY\|SYSTEM_STATE` | 集約結果（CLI が読む先。`sysmonitor.py:142` で `set(..., "SYSTEM_READY\|SYSTEM_STATE", "Status", state)`）|
+
+<!-- evidence: sonic-buildimage/src/system-health/health_checker/sysmonitor.py:142,241-276 — STATE_DB 書込キーと check_up_status 参照 -->
 
 `sysmonitor` 内の sub-thread は (1) systemd dbus event、(2) docker container running 監視、(3) app-ready hook を持つ[^1]。
 
@@ -77,9 +81,12 @@ flowchart TB
 show system-health sysready-status
 show system-health sysready-status detail
 
-# CONFIG_DB で feature を ready 判定対象にする
+# 現在の FEATURE テーブル状態を確認（読み取りのみ）
 sonic-cfggen -d -v 'FEATURE'
 ```
+
+!!! note "ready 判定対象の設定方法"
+    `check_up_status` を切り替える config 用 CLI は提供されない。HLD §4.5.1 によれば、組込み feature は `/etc/sonic/init_cfg.json` の `FEATURE.<dockername>.check_up_status` を factory default として注入し、第三者 docker は application extension の `manifest.json` で宣言する[^1]。`sonic-cfggen -d -v 'FEATURE'` は CONFIG_DB の現在値を dump する読み取りコマンドであり、設定変更手段ではない。
 
 ## 制限事項
 
@@ -113,7 +120,9 @@ journalctl -u system-health 2>/dev/null
 
 ## 引用元
 
-[^1]: `sonic-net/SONiC` `doc/system_health_monitoring/system-ready-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^1]: `sonic-net/SONiC` `doc/system_health_monitoring/system-ready-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`（§4.5.1 init_cfg.json / manifest.json、§249-254）
+
+<!-- glossary-links-injected: ec18b66e3507 -->
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -121,5 +130,3 @@ journalctl -u system-health 2>/dev/null
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
-
-<!-- glossary-links-injected: ec18b66e3507 -->

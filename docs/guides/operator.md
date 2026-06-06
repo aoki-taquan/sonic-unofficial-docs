@@ -4,7 +4,7 @@ description: 運用者向けガイド — 既に SONiC を運用している読�
   の意味確認、show techsupport やログ・ヘルスチェックの使い方に加え、症状別の逆引き表をインラインで提供します。
 area: guides
 verification: meta
-last_verified: 2026-06-04
+last_verified: 2026-06-06
 related:
   cli: []
   config_db: []
@@ -22,16 +22,18 @@ related:
 
 現場で頻出する症状から、まず叩く CLI、確認すべき CONFIG_DB テーブル、関連 [HLD](../reference/glossary.md#term-hld) を引くための入口を以下に並べます。各エントリは「最初の 1 コマンド + 一次情報の場所」までを目安にしており、深掘りはリンク先の各リファレンスで行ってください。
 
-| 症状 | まず叩く CLI | 関連 CONFIG_DB | 関連リファレンス / HLD |
-|------|-------------|----------------|----------------------|
-| [BGP](../reference/glossary.md#term-bgp) セッションが上がらない | `show ip bgp summary` / `show ip bgp neighbors <peer>` | [`BGP_NEIGHBOR`](../reference/config-db/bgp-neighbor.md) / [`BGP_PEER_RANGE`](../reference/config-db/bgp-peer-range.md) | [show bgp](../reference/cli/show-bgp.md) / [config bgp](../reference/cli/config-bgp.md) |
-| 物理ポートが down のまま | `show interfaces status` / `show interfaces counters` | [`PORT`](../reference/config-db/port.md) / [`INTERFACE`](../reference/config-db/interface.md) | [show interfaces](../reference/cli/show-interfaces.md) / [config interface](../reference/cli/config-interface.md) |
-| [VLAN](../reference/glossary.md#term-vlan) 内で疎通しない | `show vlan brief` / `show mac` | [`VLAN`](../reference/config-db/vlan.md) / [`VLAN_MEMBER`](../reference/config-db/vlan-member.md) / [`VLAN_INTERFACE`](../reference/config-db/vlan-interface.md) | [config vlan](../reference/cli/config-vlan.md) |
-| ルーティングが期待どおりでない | `show ip route` / `show ip route <prefix>` | [`INTERFACE`](../reference/config-db/interface.md) / [`STATIC_ROUTE`](../reference/config-db/index.md) | [show ip](../reference/cli/show-ip.md) |
+| 症状 | まず叩く CLI | 関連テーブル (CONFIG_DB / [STATE_DB](../reference/glossary.md#term-state_db)) | 関連リファレンス / HLD |
+|------|-------------|-------------------------------------|----------------------|
+| [BGP](../reference/glossary.md#term-bgp) セッションが上がらない | `show ip bgp summary` / `show ip bgp neighbors <peer>` | [`BGP_NEIGHBOR`](../reference/config-db/bgp-neighbor.md) / [`BGP_PEER_RANGE`](../reference/config-db/bgp-peer-range.md) (CONFIG_DB) | [show bgp](../reference/cli/show-bgp.md) / [config bgp](../reference/cli/config-bgp.md) |
+| 物理ポートが down のまま | `show interfaces status` / `show interfaces counters` | [`PORT`](../reference/config-db/port.md) / [`INTERFACE`](../reference/config-db/interface.md) (CONFIG_DB) | [show interfaces](../reference/cli/show-interfaces.md) / [config interface](../reference/cli/config-interface.md) |
+| [VLAN](../reference/glossary.md#term-vlan) 内で疎通しない | `show vlan brief` / `show mac` | [`VLAN`](../reference/config-db/vlan.md) / [`VLAN_MEMBER`](../reference/config-db/vlan-member.md) / [`VLAN_INTERFACE`](../reference/config-db/vlan-interface.md) (CONFIG_DB) | [config vlan](../reference/cli/config-vlan.md) |
+| ルーティングが期待どおりでない | `show ip route` / `show ip route <prefix>` | [`INTERFACE`](../reference/config-db/interface.md) / [`STATIC_ROUTE`](../reference/config-db/static-route.md) (CONFIG_DB) | [show ip](../reference/cli/show-ip.md) |
 | ハードウェア状態を見たい | `show platform summary` / `show platform syseeprom` | （platform 依存） | [show platform](../reference/cli/show-platform.md) |
-| CPU / メモリ / ディスク等の health | `show system-health summary` / `show system-health detail` | [`SYSTEM_HEALTH_INFO`](../reference/config-db/index.md) | [show system-health](../reference/cli/show-system-health.md) / [System Health Monitor 設計](../system/sonic-system-health-monitor-high-level-design.md) |
-| サポート依頼用の dump 取得 | `show techsupport` | [`AUTO_TECHSUPPORT`](../reference/config-db/auto-techsupport.md) / [`AUTO_TECHSUPPORT_FEATURE`](../reference/config-db/auto-techsupport-feature.md) | [show techsupport](../reference/cli/show-techsupport.md) / [show techsupport 設計](../system/show-techsupport.md) |
+| CPU / メモリ / ディスク等の health | `show system-health summary` / `show system-health detail` | `SYSTEM_HEALTH_INFO` (STATE_DB)[^system-health-info] | [show system-health](../reference/cli/show-system-health.md) / [System Health Monitor 設計](../system/sonic-system-health-monitor-high-level-design.md) |
+| サポート依頼用の dump 取得 | `show techsupport` | [`AUTO_TECHSUPPORT`](../reference/config-db/auto-techsupport.md) / [`AUTO_TECHSUPPORT_FEATURE`](../reference/config-db/auto-techsupport-feature.md) (CONFIG_DB) | [show techsupport](../reference/cli/show-techsupport.md) / [show techsupport 設計](../system/show-techsupport.md) |
 | [FRR](../reference/glossary.md#term-frr) / BGP ログを直接読みたい | `show logging` / `docker exec -it bgp vtysh -c 'show bgp summary'` | — | [show bgp](../reference/cli/show-bgp.md) |
+
+[^system-health-info]: `SYSTEM_HEALTH_INFO` は CONFIG_DB ではなく **STATE_DB** に置かれる読み取り専用の集計結果テーブル。`healthd` が定期的に `HealthCheckerManager.check()` の結果を `STATE_DB.SYSTEM_HEALTH_INFO` に書き込む (`sonic-buildimage` `src/system-health/scripts/healthd` L30, L38, L113-L116)。`show system-health` CLI 自体は STATE_DB を読まず、プロセス内で同じ `HealthCheckerManager.check(chassis)` を実行する (`sonic-utilities` 側の挙動、本ガイドの [show system-health](../reference/cli/show-system-health.md) 参照)。
 
 BGP セッション関連の状態は CONFIG_DB の `BGP_NEIGHBOR` テーブルに格納され、`bgpcfgd` (`BGPPeerMgrBase`) が `swsscommon.CFG_BGP_NEIGHBOR_TABLE_NAME` を購読して FRR (`vtysh`) 設定へ反映します<!-- evidence: sonic-net/sonic-buildimage src/sonic-bgpcfgd/bgpcfgd/main.py L87 -->。`show ip bgp summary` の実装本体は `sonic-utilities` の `show/bgp_frr_v4.py` (`summary` サブコマンド) にあり、内部で FRR の summary を全 BGP インスタンスから集約して表示します<!-- evidence: sonic-net/sonic-utilities show/bgp_frr_v4.py L36-L44 -->。CONFIG_DB に neighbor が居るのに `show ip bgp summary` に出てこない場合、`bgpcfgd` が動作していない（`systemctl status bgp`）か、FRR コンテナが落ちている疑いがあります。
 
@@ -104,4 +106,4 @@ SONiC を一度も触ったことが無い読者でも、この 5 ページで�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: eda153721dca -->
+<!-- glossary-links-injected: 6981be1a469d -->

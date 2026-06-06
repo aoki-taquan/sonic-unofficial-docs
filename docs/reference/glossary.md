@@ -1233,7 +1233,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (76)
 - [APPL_DB ACL テーブル群](config-db/appl-acl.md) (73)
 - [APPL_DB LAG_TABLE (portchannel ステータス)](config-db/portchannel-status.md) (66)
-- [サイトマップ](../_meta/sitemap.md) (61)
+- [サイトマップ](../_meta/sitemap.md) (62)
 - [FABRIC_MONITOR テーブル](config-db/fabric-monitor.md) (54)
 
 ### [ARP](#term-arp)
@@ -1494,7 +1494,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VXLAN_EVPN_NVO テーブル](config-db/vxlan-evpn-nvo.md) (66)
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (58)
 - [VXLAN トンネルポート (Port::TUNNEL)](config-db/tunnel-port.md) (56)
-- [サイトマップ](../_meta/sitemap.md) (49)
+- [サイトマップ](../_meta/sitemap.md) (50)
 
 ### [EVPN-MH](#term-evpn-mh)
 
@@ -1925,7 +1925,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [PINS](#term-pins)
 
-- [サイトマップ](../_meta/sitemap.md) (23)
+- [サイトマップ](../_meta/sitemap.md) (22)
 - [設定](../topics/18-p4-pins/setup.md) (17)
 - [発展トピック](../topics/18-p4-pins/advanced.md) (16)
 - [概念](../topics/18-p4-pins/concept.md) (15)
@@ -1989,7 +1989,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [QoS](#term-qos)
 
-- [サイトマップ](../_meta/sitemap.md) (33)
+- [サイトマップ](../_meta/sitemap.md) (32)
 - [PORT_QOS_MAP テーブル](config-db/port-qos-map.md) (17)
 - [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (14)
 - [EXP_TO_FC_MAP テーブル](config-db/exp-to-fc-map.md) (12)
@@ -2135,9 +2135,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [AUTO_TECHSUPPORT_FEATURE テーブル](config-db/auto-techsupport-feature.md) (37)
 - [Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離](../switching/switch-port-modes-and-vlan-cli-discrepancy.md) (15)
+- [Overlay 運用](../topics/03-vxlan-evpn/operations.md) (15)
 - [BREAKOUT_CFG テーブル](config-db/breakout-cfg.md) (14)
 - [[STATE_DB] DEVICE_NEIGHBOR 動作状態（device op state）](config-db/deviceop-state.md) (13)
-- [config bgp サブコマンド](cli/config-bgp.md) (12)
 
 ### [Scheduler](#term-scheduler)
 
@@ -2205,15 +2205,15 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [Syslog](#term-syslog)
 
+- [SYSLOG_CONFIG_FEATURE テーブル](config-db/syslog-config-feature.md) (20)
 - [SYSLOG_CONFIG テーブル](config-db/syslog-config.md) (20)
 - [SYSLOG_SERVER テーブル](config-db/syslog-server.md) (20)
-- [SYSLOG_CONFIG_FEATURE テーブル](config-db/syslog-config-feature.md) (19)
 - [sonic-syslog YANG](yang/sonic-syslog.md) (5)
 - [サイトマップ](../_meta/sitemap.md) (3)
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (353)
+- [サイトマップ](../_meta/sitemap.md) (354)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (33)
 - [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (28)
@@ -2326,7 +2326,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VXLAN_TUNNEL テーブル](config-db/vxlan-tunnel.md) (94)
 - [VxlanTunnelOrch — encap 処理詳細](config-db/tunnel-encap-orch.md) (68)
 - [VXLAN_EVPN_NVO テーブル](config-db/vxlan-evpn-nvo.md) (67)
-- [サイトマップ](../_meta/sitemap.md) (62)
+- [サイトマップ](../_meta/sitemap.md) (63)
 
 ### [vxlanmgrd](#term-vxlanmgrd)
 

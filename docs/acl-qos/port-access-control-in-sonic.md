@@ -29,10 +29,8 @@ related:
   yang:
   - sonic-port
   - sonic-vlan
-  - sonic-port-qos-map
-  - sonic-vlan-sub-interface
-  - sonic-copp
-  - sonic-crm
+  - sonic-system-aaa
+  - sonic-system-radius
 ---
 
 <!-- topics-tip -->
@@ -84,6 +82,10 @@ flowchart TB
 | `hostapdmgrd` | `CONFIG_DB` を hostapd 設定ファイルに変換、再読込制御 |
 | `mabd` | MAB 用に MAC 学習をトリガにして RADIUS リクエストを発行（PAP / CHAP / EAP-MD5）[^1] |
 | Authentication Manager | 802.1x と MAB の結果統合、ポート / クライアントの authorized state 管理 |
+
+### YANG モデルの現状
+
+PAC 専用 (`PAC_PORT_CONFIG_TABLE` / `HOSTAPD_GLOBAL_CONFIG_TABLE`) の [YANG](../reference/glossary.md#term-yang) モデルは現行 community master の `sonic-buildimage/src/sonic-yang-models/yang-models/` には未収録（`sonic-pac.yang` 等は存在しない）。RADIUS / AAA 側は `sonic-system-radius.yang` / `sonic-system-aaa.yang` に取り込み済みで、ポート / VLAN 側は `sonic-port.yang` / `sonic-vlan.yang` を流用する形となる。PAC 固有テーブルの YANG 定義追加は別 PR を要する。
 
 ### CONFIG_DB
 
@@ -244,4 +246,4 @@ sudo grep -Ei 'hostapd|pac' /var/log/syslog | tail -50
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1c626534d7ce -->
+<!-- glossary-links-injected: d5320e852f7a -->

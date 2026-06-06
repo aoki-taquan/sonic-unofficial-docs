@@ -79,7 +79,7 @@ related:
 | concept | 173 | ✅ 完成 | meta | 概念・位置付け |
 | architecture | 79 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
 | setup | 244 | ✅ 完成 | code-verified | セットアップ手順 |
-| operations | 167 | ✅ 完成 | meta | 運用・デバッグ |
+| operations | 346 | ✅ 完成 | code-verified | 運用・デバッグ |
 | internals | 130 | ✅ 完成 | meta | 内部実装 |
 | advanced | 100 | ✅ 完成 | meta | 発展トピック |
 

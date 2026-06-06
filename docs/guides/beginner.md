@@ -28,15 +28,32 @@ related:
 
 ## 推奨 reading path
 
-1. [SONiC 非公式ドキュメント](../index.md)
-2. [アーキテクチャ](../architecture/index.md)
-3. [CONFIG_DB リファレンス](../reference/config-db/index.md)
-4. [CLI リファレンス](../reference/cli/index.md)
-5. [SONiC NOS 設定方式](../management/sonic-nos-configuration-methods.md)
-6. [GNS3 VM 上での SONiC 動作](../architecture/sonic-on-gns3-vm.md)
-7. [SONiC-VS のビルドと libvirt 起動手順](../architecture/steps-to-bring-up-sonic-vs.md)
-8. [Zero Touch Provisioning](../system/zero-touch-provisioning-ztp.md)
-9. 関心に応じて [ルーティング](../routing/index.md)、[スイッチング](../switching/index.md)、[システム](../system/index.md)
+[初めての方の必読 10](../getting-started.md) は「順序付き 10 本」で全領域を浅く通し読みする導線ですが、こちらは**目的別 3 トラック**にグルーピングして「どこから読むと迷子になりにくいか」を示します。トラック間に依存はあるので、原則は A → B → C の順で読み進めるのが安全です。
+
+**トラック A: 全体像を掴む（最初に必ず）**
+
+CONFIG_DB / APPL_DB / ASIC_DB のデータフローと SwSS / syncd / SAI の責務分担を理解しないと、後段のリファレンスを読んでもどの DB の話なのか判別できません。
+
+1. [SONiC 非公式ドキュメント](../index.md) — このドキュメントの目的と範囲
+2. [アーキテクチャ](../architecture/index.md) — コンテナ構成と DB パイプライン全体像
+
+**トラック B: 設定の入口と出口を知る（運用者寄り）**
+
+CONFIG_DB が設定の真の源であり、CLI / gNMI / [config_db.json](../reference/glossary.md#term-config_db.json) はすべて CONFIG_DB への書き込みに収束します。先にデータモデル（CONFIG_DB）を見てから操作面（CLI / 設定方式）に進むほうが、CLI が裏でどの table を触っているか辿りやすくなります。
+
+3. [CONFIG_DB リファレンス](../reference/config-db/index.md) — 設定の真の源となるスキーマ
+4. [CLI リファレンス](../reference/cli/index.md) — CONFIG_DB を操作する `config` / `show` 系コマンド
+5. [SONiC NOS 設定方式](../management/sonic-nos-configuration-methods.md) — CLI / gNMI / config_db.json / minigraph の使い分け
+6. [Zero Touch Provisioning](../system/zero-touch-provisioning-ztp.md) — 初期投入の自動化（CONFIG_DB を生成する側の話）
+
+**トラック C: 実機なしで動かす（学習・検証）**
+
+仮想環境でデータプレーンを再現してから実装に踏み込むほうが、ログと CONFIG_DB の対応を観察しやすく、トラック A/B の理解が定着します。
+
+7. [GNS3 VM 上での SONiC 動作](../architecture/sonic-on-gns3-vm.md) — お手軽に試す
+8. [SONiC-VS のビルドと libvirt 起動手順](../architecture/steps-to-bring-up-sonic-vs.md) — ソースからビルドして動かす
+
+**その先**: 関心領域に応じて [ルーティング](../routing/index.md) / [スイッチング](../switching/index.md) / [システム](../system/index.md) に進んでください。
 
 ## 補足情報
 
@@ -56,4 +73,4 @@ related:
 
 [^syncd]: `syncd` の起点は [`sonic-sairedis/syncd/Syncd.cpp`](https://github.com/sonic-net/sonic-sairedis/blob/master/syncd/Syncd.cpp) で、Redis (ASIC_DB) からの SAI オブジェクト操作通知を受けてベンダ SAI 実装に橋渡しします。
 
-<!-- glossary-links-injected: 158f1c95daa3 -->
+<!-- glossary-links-injected: 935537b65c91 -->
