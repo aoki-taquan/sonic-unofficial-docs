@@ -46,7 +46,7 @@ CI 状態のラベル定義:
 | `check_citation_quality.py` (`--strict`) | 裏取り済み (`code-verified` / `runbook-verified` / `discrepancy-found`) なのに脚注も `<!-- evidence: -->` も無いページの検出。Reference / `_meta` / guides 系はデフォルト除外 | strict |
 | `check_broken_links.py` (`--strict`) | `docs/**/*.md` の intra-doc Markdown リンク (相対パス + `#anchor`) の解決可否を検証 | strict |
 | `check_heading_hierarchy.py` | a11y: 見出しレベルが 2 段以上跳ぶ (`##` → `####` 等) ページの検出 | strict |
-| `check_image_alt.py` | a11y: 空 alt の inline image (`![](url)`) を検出 | strict |
+| `check_image_alt.py` | a11y: 空 alt の inline image (`![ ](url)` 形式) を検出 | strict |
 | `check_monitor_consistency.py` | `verification: discrepancy-found` ページの `monitor` タグと本文キーワードの整合性検証 | informational |
 | `check_verification_self_consistency.py` | `code-verified` / `runbook-verified` を名乗りながら本文に「未確認」「TBD」「未実装」等を残しているページの検出 | informational |
 | `check_evolved_6c.py` | `monitor: evolved_beyond_hld` ページが 6C (Change / Cause / Code / Commit / Compat / Citation) を本文で説明しているかの軽量チェック | informational |
