@@ -169,7 +169,7 @@ last_verified: 2026-05-13
   area: `architecture` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
 
 - [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)  
-  area: `architecture` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
+  area: `architecture` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-06-06`
 
 - [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)  
   area: `architecture` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
@@ -664,7 +664,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   area: `architecture` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
 
 - [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)  
-  area: `architecture` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
+  area: `architecture` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-06-06`
 
 - [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)  
   area: `architecture` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
