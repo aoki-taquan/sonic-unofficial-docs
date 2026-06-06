@@ -2038,7 +2038,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ROUTE_MAP](#term-route_map)
 
 - [sonic-route-map YANG](yang/sonic-route-map.md) (106)
-- [ROUTE_MAP_SET テーブル](config-db/route-map-set.md) (75)
+- [ROUTE_MAP_SET テーブル](config-db/route-map-set.md) (76)
 - [ROUTE_MAP テーブル](config-db/route-map.md) (65)
 - [sonic-bgp-global YANG](yang/sonic-bgp-global.md) (24)
 - [sonic-bgp-neighbor YANG](yang/sonic-bgp-neighbor.md) (24)
