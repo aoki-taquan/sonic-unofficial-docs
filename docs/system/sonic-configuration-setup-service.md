@@ -2,13 +2,16 @@
 title: config-setup サービス（first-boot config 生成 / 版間 migration）
 description: config-setup サービス（first-boot config 生成 / 版間 migration） — SONiC の起動時設定は /etc/sonic/config_db.json に保存され、boot で Config DB に流し込まれる。
 area: system
-verification: discrepancy-found
-last_verified: 2026-05-13
-monitor: partially_implemented
+verification: code-verified
+last_verified: 2026-06-06
 sources:
 - repo: sonic-net/SONiC
   path: doc/ztp/SONiC-config-setup.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-buildimage
+  path: files/image_config/config-setup/config-setup
+- repo: sonic-net/sonic-buildimage
+  path: files/build_templates/config-setup.service.j2
 related:
   config_db:
   - DEVICE_METADATA
@@ -26,8 +29,8 @@ related:
     この HLD は実装詳細を含む。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! warning "裏取りステータス: discrepancy-found (2026-05-13)"
-    `sonic-buildimage/files/build_templates/config-setup.service.j2` で systemd unit が組み込まれ、`files/image_config/config-setup/config-setup` (本体スクリプト) と `config-setup.conf` が image に同梱される。`updategraph*` のソースは見つからず、HLD の方針どおり責務が `config-setup` に集約された結果と整合。`first_boot` / `factory_reset` / `migration` の各ハンドラは config-setup スクリプト本体に実装。
+!!! success "裏取りステータス: code-verified (2026-06-06)"
+    `sonic-buildimage/files/build_templates/config-setup.service.j2` で systemd unit が組み込まれ、boot 時に `ExecStart=/usr/bin/config-setup boot` が実行される[^2]。本体スクリプト `files/image_config/config-setup/config-setup` の `usage()` で公開サブコマンドは `boot | factory | backup` の 3 種であることを確認[^3]（`migrate` というサブコマンドは存在せず、migration は `boot` 内部で `pending_config_migration` フラグを条件に `do_config_migration` が呼ばれる動作[^4]）。`updategraph*` のソースは見つからず、HLD の方針どおり責務が `config-setup` に集約された結果と整合。
 
 # config-setup サービス（first-boot config 生成 / 版間 migration）
 
@@ -53,16 +56,15 @@ related:
 
 ### CLI（`/usr/bin/config-setup`）
 
-主用途[^1]:
+スクリプト本体の `usage()` で公開されているサブコマンドは以下の 3 種[^3]:
 
-| 用途 | コマンド系 |
-|------|------------|
-| First boot で factory default を生成 | `config-setup factory` 等 |
-| 任意 timing で factory default を生成 | （on-demand）|
-| 新版インストール時に旧設定を **backup** | `config-setup backup` 等 |
-| 新版起動時に backup を **restore / migrate** して適用 | `config-setup migrate` 等 |
+| サブコマンド | 用途 |
+|------|------|
+| `boot` | systemd unit から呼ばれるエントリポイント。warm-boot 判定 → migration → initialization の順に分岐する[^4] |
+| `factory` | factory default を生成し `/etc/sonic/config_db.json` に保存。`keep-basic` オプションで基本設定のみ温存可能[^3] |
+| `backup` | `/etc/sonic` を `/host/old_config` 配下にコピーし、`CONFIG_PRE_MIGRATION_HOOKS` を実行[^5] |
 
-> [HLD](../reference/glossary.md#term-hld) は具体的なサブコマンド名を列挙しないので、上の整理は機能カテゴリを示すのみ。実際のコマンド面は実装側で確認のこと。
+ソース上は他に `apply_tacacs` 分岐 (usage 未記載の内部用途) が存在するが、`usage()` には現れない[^3]。[HLD](../reference/glossary.md#term-hld) が「backup / restore / migrate / factory」と機能カテゴリで説明している内容は、実装上はサブコマンド `boot` 1 つの中で migration ロジックがフラグ駆動 (`/etc/sonic/pending_config_migration`) で起動する形に集約されている[^4]。
 
 ### Boot 時のフロー
 
@@ -85,11 +87,13 @@ flowchart TB
 
 ### Config DB 外の設定の扱い
 
-frr.conf のように Config DB に乗らない設定も backup / restore 対象として扱う[^1]。ただし HLD は具体的な **対象ファイル一覧** を固定せず、追加可能な仕組みであることを要件としている。
+frr.conf のように Config DB に乗らない設定も backup / restore 対象として扱う[^1]。実装の `do_config_migration` では migration 対象として明示的に `minigraph.xml snmp.yml acl.json port_config.json frr telemetry golden_config_db.json` が列挙されており、加えて `get_config_db_file_list` で得られる config_db 系ファイルもコピー対象になる[^4]。バックアップは `cp -ar /etc/sonic /host/old_config` で `/etc/sonic` ディレクトリ全体を保全する設計[^5]。
+
+さらに `CONFIG_PRE_MIGRATION_HOOKS` / `CONFIG_POST_MIGRATION_HOOKS` 配下の hook script を `run-parts` 風に順次実行する仕組みになっており、HLD が要件 2 として挙げる「拡張可能性」はこの hook ディレクトリで担保されている[^4][^5]。
 
 ### Warm-boot 影響
 
-warm-boot では既存設定を保ったまま再起動するため、`config-setup` の migration step は **warm-boot 機能に影響を与えない**[^1] こと（つまり migration を発動しない）が要件。
+warm-boot では既存設定を保ったまま再起動するため、`config-setup` の migration step は **warm-boot 機能に影響を与えない**[^1] ことが要件。実装上、`boot_config` は `check_system_warm_boot` で WARM_BOOT を判定し、warm-boot 中は config initialization と ZTP を skip する。さらに `CONFIG_DB_INITIALIZED` を 1 にセットして以後の再 trigger を抑止する[^4]。
 
 ### ZTP との関係
 
@@ -129,7 +133,7 @@ reasoning: config-setup の存在動機と updategraph 廃止計画の根拠。
 
 ### 関連する CLI
 
-`config-setup` 一本（サブコマンドで factory / backup / migrate 等を分岐）。
+`config-setup` 一本（実装上のサブコマンドは `boot` / `factory` / `backup` の 3 種、加えて非公開の `apply_tacacs`）[^3]。
 
 ### 設定例
 
@@ -137,19 +141,24 @@ reasoning: config-setup の存在動機と updategraph 廃止計画の根拠。
 # factory default 設定生成（first boot 想定）
 sudo /usr/bin/config-setup factory
 
-# 既存設定を backup
+# factory default を基本設定だけ温存して生成
+sudo /usr/bin/config-setup factory keep-basic
+
+# 既存設定を /host/old_config に backup
 sudo /usr/bin/config-setup backup
 
-# upgrade 後の migration
-sudo /usr/bin/config-setup migrate
+# boot 経路 (systemd unit が呼ぶエントリポイント)
+# pending_config_migration フラグがあれば migration が走る
+sudo /usr/bin/config-setup boot
 ```
+
+> upgrade 時の migration を手動で発火させたい場合は、`/etc/sonic/pending_config_migration` ファイルを置いた上で `config-setup boot` を呼ぶ。専用の `migrate` サブコマンドは存在しない[^4]。
 
 ## 制限事項
 
-- HLD は **2019-07 / Rev 0.2** で停滞。`updategraph` との実際の責務分担は実装側で要確認
-- HLD は具体的なサブコマンド名 / 対応ファイル一覧を固定していないため、本ページの CLI 列はカテゴリ整理に留まる
-- warm-boot で migration を skip する条件の判定ロジックは HLD で詳述されていない
-- frr 以外でどの非-Config-DB 設定が backup 対象になるかは実装に委ねられている
+- HLD は **2019-07 / Rev 0.2** で停滞しており、HLD 自体は具体的なサブコマンド名 / 対応ファイル一覧を固定していない。本ページの CLI 表は実装スクリプトの `usage()` を基準にした[^3]
+- warm-boot 中の skip 条件は HLD では詳述されていないが、実装上は `check_system_warm_boot` の戻り値で判定される[^4]
+- `apply_tacacs` サブコマンドは `usage()` 出力に含まれない隠し挙動で、将来削除・改名される可能性がある
 
 ## 干渉する機能
 
@@ -179,24 +188,18 @@ systemctl is-enabled updategraph
 - [Topics: Overview](../topics/01-overview/index.md)
 - [Runbook: config-reload-stuck](../reference/runbooks/config-reload-stuck.md)
 
-<!-- demoted-by:q52-az-b-demote -->
-## 実装フェーズ境界
-
-本ページは `monitor: partially_implemented` のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。
-
-| Phase | 実装済 | 未実装 |
-|-------|--------|--------|
-| Phase 1: `config-setup` 起動時ロジック | 実装済（init フロー） | — |
-| Phase 2: 責務分担（[hostcfgd](../reference/glossary.md#term-hostcfgd) / configd 等との境界） | HLD 記載の基本分担は実装済 | HLD 2019-07 以降の責務移譲は未確認・未実装相当 |
-| Phase 3: factory reset / migration フロー | 基本ケースは実装済 | 派生ケース（部分 migration、ロールバック）は未実装 |
-
 ## 実装との乖離 / 補足
 
-- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は 2019-07 Rev 0.2 で停滞。`config-setup` の実際の責務分担は本文で「要確認」と明示している。
-- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+- 2026-06-06: `sonic-buildimage` 実装スクリプト本体の `usage()` / `boot_config` / `do_config_migration` / `do_config_backup` をソース確認し、HLD の概念的記述と実装サブコマンド (`boot` / `factory` / `backup`) を対応付けた上で `code-verified` / `monitor: implemented` に昇格。
+- HLD が「migrate」と概念的に呼んでいる処理は専用サブコマンドではなく、`boot` の中で `pending_config_migration` フラグ駆動で起動する形に統合されている。専用 `config-setup migrate` は存在しない。
+- HLD は 2019-07 Rev 0.2 で停滞しているが、実装側の挙動は HLD の機能要件 1〜7 をいずれも満たす形で残っており、両者の乖離は「呼び出し方の表現」レベルに留まる。
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ztp/SONiC-config-setup.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-buildimage` `files/build_templates/config-setup.service.j2` L14-L17 (`ExecStart=/usr/bin/config-setup boot`)
+[^3]: `sonic-net/sonic-buildimage` `files/image_config/config-setup/config-setup` L46-L70 (`usage()` / `usage_factory()`)、L513-L545 (CMD dispatch: `boot` / `factory` / `backup` / `apply_tacacs`)
+[^4]: `sonic-net/sonic-buildimage` `files/image_config/config-setup/config-setup` L388-L423 (`do_config_migration` 対象ファイル列挙)、L443-L492 (`boot_config` の warm-boot / migration / initialization 分岐)
+[^5]: `sonic-net/sonic-buildimage` `files/image_config/config-setup/config-setup` L425-L435 (`do_config_backup`: `/etc/sonic` → `/host/old_config`)
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 167700005048 -->

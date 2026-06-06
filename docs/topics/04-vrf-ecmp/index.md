@@ -81,7 +81,7 @@ related:
 
 | ページ | 行数 | 状態 | verification | 主目的 |
 |---|---|---|---|---|
-| concept | 180 | ✅ 完成 | meta | 概念・位置付け |
+| concept | 180 | ✅ 完成 | code-verified | 概念・位置付け |
 | architecture | 75 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
 | setup | 264 | ✅ 完成 | meta | セットアップ手順 |
 | operations | 186 | ✅ 完成 | meta | 運用・デバッグ |

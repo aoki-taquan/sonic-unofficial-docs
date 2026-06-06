@@ -23,9 +23,12 @@ related:
 
 ## 1. テストの目的
 
-「DIP（destination IP）と SIP（source IP）が同じ」L3 パケットを [SONiC](../reference/glossary.md#term-sonic) スイッチが正しくルーティングできるかを **PTF (Packet Test Framework) で検証** するテストの設計。一見奇妙な条件だが、ループバック検証や特定の DOS 系トラフィック形状への耐性、ハードウェアパスでの [ACL](../reference/glossary.md#term-acl) / RPF が誤作動しないかを担保する目的で必要となる[^1]。
+「DIP（destination IP）と SIP（source IP）が同じ」L3 パケットを [SONiC](../reference/glossary.md#term-sonic) スイッチが正しくルーティングできるかを **PTF (Packet Test Framework) で検証** するテストの設計[^1]。
 
-このページは機能 [HLD](../reference/glossary.md#term-hld) ではなく **テストインフラの HLD**。SONiC 自体の挙動仕様というより、**`sonic-mgmt` リポジトリにどんな Ansible role / PTF スクリプトを置くか** の設計が記述されている[^1]。
+!!! note "編集側の補足（HLD 原文には記載なし）"
+    HLD 原文の `Overview` 章は「SONiC スイッチが DIP=SIP の L3 パケットのルーティングをサポートすることを検証する」とのみ述べており、具体的なユースケース（ループバック検証 / DOS 系トラフィック耐性 / [ACL](../reference/glossary.md#term-acl) / RPF の誤作動回避など）は明示されていない。これらは「なぜこの一見奇妙な条件をテストするのか」を読者が理解しやすくするための編集側の解釈であり、HLD の仕様ではない点に注意。
+
+このページは機能 [HLD](../reference/glossary.md#term-hld) ではなく **テストインフラの HLD** に相当する。SONiC 自体の挙動仕様というより、**`sonic-mgmt` リポジトリにどんな Ansible role / PTF スクリプトを置くか** の設計が記述されている[^1]。
 
 ## 2. トポロジ
 
@@ -63,7 +66,7 @@ router が複数メンバ（LAG など）を持つ場合は **すべてのメン
 
 ## 引用元
 
-[^1]: `sonic-net/SONiC` `doc/dip-sip/DIP=SIP_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^1]: `sonic-net/SONiC` `doc/dip-sip/DIP=SIP_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`（L3-5 Overview / L7-28 Topology / L67-90 Supported topologies + Workflow）
 
 ## 制限事項
 

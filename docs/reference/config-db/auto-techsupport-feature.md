@@ -246,7 +246,7 @@ ls -lh /var/dump/
 
 ### 段階 1 — Consumer 登録
 
-本テーブルに対する常駐 subscriber は存在しない（`sonic-host-services/scripts/hostcfgd` の grep で `AUTO_TECHSUPPORT_FEATURE` 0 hit）。実装は [hostcfgd](../../reference/glossary.md#term-hostcfgd) と独立した kernel `core_pattern` → `coredump-compress` → `coredump_gen_handler.py` のパイプラインで、必要なフィールドは一発起動スクリプトが同期 HGET で取得する。詳細は を参照。
+本テーブルに対する常駐 subscriber は存在しない（`sonic-host-services/scripts/hostcfgd` の grep で `AUTO_TECHSUPPORT_FEATURE` 0 hit）。実装は [hostcfgd](../../reference/glossary.md#term-hostcfgd) と独立した kernel `core_pattern` → `coredump-compress` → `coredump_gen_handler.py` のパイプラインで、必要なフィールドは一発起動スクリプトが同期 HGET で取得する。詳細は本ページ後段の `<!-- pubsub -->` ブロックを参照。
 
 ### 段階 2 — CFG→APPL 翻訳
 
@@ -451,7 +451,7 @@ coredump_gen_handler.py
 - rate-limit 状態は CONFIG_DB ではなく `STATE_DB` の `AUTO_TECHSUPPORT_DUMP_INFO_TABLE` (前回 dump の timestamp) に保管される。
 
 !!! warning "本文 `<!-- runtime-trace -->` ブロックとの差異"
-    本文の段階 1 に「`auto_techsupport_handler` が `hostcfgd` 内部のサブハンドラとして `AUTO_TECHSUPPORT_FEATURE` を購読する」旨の記述があるが、`sonic-host-services/scripts/hostcfgd:2468-2528` を実コード grep した範囲では AUTO_TECHSUPPORT / AUTO_TECHSUPPORT_FEATURE への `subscribe()` 呼び出しは確認できない。実装は hostcfgd と独立した kernel `core_pattern` → `coredump-compress` → `coredump_gen_handler.py` のパイプライン (本ページの 分析)。次回 verifier 巡回で本文修正候補。
+    本文の段階 1 に「`auto_techsupport_handler` が `hostcfgd` 内部のサブハンドラとして `AUTO_TECHSUPPORT_FEATURE` を購読する」旨の記述があるが、`sonic-host-services/scripts/hostcfgd:2468-2528` を実コード grep した範囲では AUTO_TECHSUPPORT / AUTO_TECHSUPPORT_FEATURE への `subscribe()` 呼び出しは確認できない。実装は hostcfgd と独立した kernel `core_pattern` → `coredump-compress` → `coredump_gen_handler.py` のパイプライン (本ページ `<!-- pubsub -->` ブロックの解析参照)。次回 verifier 巡回で本文修正候補。
 
 <!-- /pubsub -->
 
@@ -523,7 +523,7 @@ kernel `core_pattern` 側 (`sonic-buildimage/files/image_config/sysctl/90-sonic.
 
 ### 7. 重要な特性
 
-- **`coredump_gen_handler.py` 単体は定数を持たない**: `from utilities_common.auto_techsupport_helper import *` で全定数を取り込む。の実体は `auto_techsupport_helper.py`。
+- **`coredump_gen_handler.py` 単体は定数を持たない**: `from utilities_common.auto_techsupport_helper import *` で全定数を取り込む。定数定義の実体は `auto_techsupport_helper.py`。
 - **`techsupport_cleanup.py` は `TS_DIR` / `CFG_MAX_TS` のみ参照**: `AUTO_TECHSUPPORT_FEATURE` テーブルは見ず、GLOBAL の `state` と `max_techsupport_limit` だけで cleanup 判定。
 - **`TS_GLOBAL_TIMEOUT="60"` は CONFIG_DB から上書き不可**: 長時間 techsupport を必要とする運用ではソース改変が要る。
 - **`TIME_BUF=20` 秒**: handler 起動時に `find_new_core_files()` で「直近 20 秒以内」の `*.core.gz` のみを対象にして二重起動を避ける。

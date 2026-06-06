@@ -227,7 +227,7 @@ template3
 
 ### ASIC programming
 
-`portsorch` が `SAI_PORT_ATTR_PATH_TRACING_INTF` および `SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE` を Port に書き込みます[^[portsorch](../../reference/glossary.md#term-portsorch)-pt]。timestamp の `template1`〜`template4` は `SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_*_*` にマッピングされます[^portsorch-pt-map]。
+`portsorch` が `SAI_PORT_ATTR_PATH_TRACING_INTF` および `SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE` を Port に書き込みます[^portsorch-pt]。timestamp の `template1`〜`template4` は `SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_*_*` にマッピングされます[^portsorch-pt-map]。
 
 ```bash
 admin@sonic:~$ redis-cli -n 1 HGETALL "ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x..." | grep -A1 PATH_TRACING

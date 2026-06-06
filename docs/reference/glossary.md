@@ -1345,7 +1345,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [config-setup](#term-config-setup)
 
-- [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (39)
+- [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (44)
 - [reset-factory（keep-basic / keep-all-config / only-config）](../architecture/reset-factory-design.md) (25)
 - [FEATURE テーブル](config-db/feature.md) (11)
 - [BANNER_MESSAGE テーブル](config-db/banner-message.md) (8)
@@ -1420,8 +1420,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [動的ポートブレイクアウト（DPB）既知問題と YANG モデル](../system/dynamic-port-breakout-known-issues.md) (29)
 - [BREAKOUT_CFG テーブル](config-db/breakout-cfg.md) (20)
 - [BREAKOUT_CFG テーブル (DPB)](config-db/dpb.md) (14)
-- [ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）](../architecture/build-system-improvements.md) (8)
 - [サイトマップ](../_meta/sitemap.md) (5)
+- [PORT テーブル](config-db/port.md) (3)
 
 ### [DPDK](#term-dpdk)
 
@@ -1623,7 +1623,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (270)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (266)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
@@ -2089,9 +2089,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (130)
 - [Fast-reboot Flow Improvements（finalizer / reconciliation）](../system/fast-reboot-flow-improvements-hld.md) (78)
-- [ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）](../architecture/build-system-improvements.md) (63)
 - [FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）](../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md) (49)
 - [YANG モデル既知問題と検証](../system/yang-model-issues-and-validation.md) (39)
+- [動的ポートブレイクアウト（DPB）既知問題と YANG モデル](../system/dynamic-port-breakout-known-issues.md) (35)
 
 ### [sonic-cfggen](#term-sonic-cfggen)
 
@@ -2215,7 +2215,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (352)
+- [サイトマップ](../_meta/sitemap.md) (353)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (33)
 - [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）](../architecture/sonic-on-gns3-vm.md) (30)
@@ -2406,8 +2406,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）](../system/zero-touch-provisioning-ztp.md) (23)
 - [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP](../management/sonic-nos-configuration-methods.md) (7)
+- [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (7)
 - [ビルドプロファイル（rules/profiles/*.mk）](../architecture/build-profiles.md) (6)
-- [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (6)
 - [サイトマップ](../_meta/sitemap.md) (5)
 
 <!-- /glossary-xref -->

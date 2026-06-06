@@ -138,7 +138,7 @@ related:
 |---|---|---|---|
 | `COPP_TRAP` | `coppmgrd` → `CoppOrch` (`APP_COPP_TABLE`) | ✓ | `sai_hostif_api` (trap) |
 | `COPP_GROUP` | `coppmgrd` → `CoppOrch` | ✓ | `sai_hostif_api` (group/policer) |
-| `FEATURE` | `coppmgrd` (trap enable filter) | (内部) | — |
+| `FEATURE` | `featured` (systemd unit on/off) + `coppmgrd` (trap enable filter) | (内部) | — |
 | `SFLOW` | `sflowmgrd` → `SflowOrch` (`APP_SFLOW_TABLE`) | ✓ | `sai_samplepacket_api` |
 | `SFLOW_SESSION` | `sflowmgrd` → `SflowOrch` (`APP_SFLOW_SESSION_TABLE`) | ✓ | `sai_samplepacket_api` |
 | `STATIC_NAT` | `natmgrd` → `NatOrch` (`APP_NAT_TABLE`) | ✓ | `sai_nat_api` |

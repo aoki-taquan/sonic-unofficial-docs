@@ -11,7 +11,7 @@ last_verified: 2026-05-13
 
     SONiC コミュニティ master の HLD は **設計提案リポジトリ** であり、現行コードと一致しているとは限りません。本ページは「HLD だけ読んで誤解しがちな機能」を一望できる USP ページです。読み手は、まず後述の **monitor subtype 別セクション** で該当機能の乖離タイプ（未実装 / 部分実装 / 進化置換 / 廃止）を把握し、そこから個別ページへ降りて `last_verified` と「実装との乖離」セクションの裏取り根拠を確認してください。area 横断で探す場合は末尾の **area 別索引** から辿れます。
 
-`verification: discrepancy-found` が付いた全 **117** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
+`verification: discrepancy-found` が付いた全 **116** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
 
 ## サマリ
 
@@ -20,7 +20,7 @@ last_verified: 2026-05-13
 | monitor | 件数 | 意味 |
 |---------|-----:|------|
 | [`not_implemented`](#monitor-not-implemented) | 18 | 未実装 |
-| [`partially_implemented`](#monitor-partially-implemented) | 61 | 部分実装 |
+| [`partially_implemented`](#monitor-partially-implemented) | 60 | 部分実装 |
 | [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 35 | HLD と乖離した形で実装/進化 |
 | [`deprecated`](#monitor-deprecated) | 3 | deprecated（廃止予定 / 撤去済み） |
 
@@ -37,7 +37,7 @@ last_verified: 2026-05-13
 | [`reference`](#area-reference) | 9 |
 | [`routing`](#area-routing) | 12 |
 | [`switching`](#area-switching) | 8 |
-| [`system`](#area-system) | 19 |
+| [`system`](#area-system) | 18 |
 
 ## monitor subtype 別
 
@@ -135,7 +135,7 @@ last_verified: 2026-05-13
   
   per-page queue で既出の通り提案 HLD は未採用。再走査でも:
 
-### `partially_implemented` — 部分実装 (61 件) {#monitor-partially-implemented}
+### `partially_implemented` — 部分実装 (60 件) {#monitor-partially-implemented}
 
 !!! warning "部分実装"
 
@@ -391,11 +391,6 @@ last_verified: 2026-05-13
   area: `system` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
   
   - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。xcvrd の現行構造、TRANSCEIVER_* テーブルの現行スキーマ（CMIS 拡張による多数フィールド追加）、polling interval 60s の妥当性は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
-
-- [config-setup サービス（first-boot config 生成 / 版間 migration）](../../system/sonic-configuration-setup-service.md)  
-  area: `system` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
-  
-  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は 2019-07 Rev 0.2 で停滞。`config-setup` の実際の責務分担は本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 - [kdump（kexec ベース kernel crash dump / makedumpfile）](../../system/kdump.md)  
   area: `system` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
@@ -1127,11 +1122,6 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   area: `system` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   per-page queue で既出の通り提案 HLD は未採用。再走査でも:
-
-- [config-setup サービス（first-boot config 生成 / 版間 migration）](../../system/sonic-configuration-setup-service.md)  
-  area: `system` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
-  
-  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は 2019-07 Rev 0.2 で停滞。`config-setup` の実際の責務分担は本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 - [kdump（kexec ベース kernel crash dump / makedumpfile）](../../system/kdump.md)  
   area: `system` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`

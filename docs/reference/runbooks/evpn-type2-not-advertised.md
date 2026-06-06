@@ -1,9 +1,9 @@
 ---
 title: EVPN Type-2 route が広告されない
-description: "Runbook: EVPN Type-2 (MAC/IP) route が peer に広告されない — : sonic-net/sonic-frr @ master — bgp_evpn.c : sonic-net/sonic-swss @ master — vxlanorch.cpp"
+description: "Runbook: EVPN Type-2 (MAC/IP) route が peer に広告されない原因 (advertise-all-vni 未設定 / VLAN-VNI mapping 欠落 / FDB 未学習 / RT 不整合) を sonic-frr の bgp_evpn.c と sonic-swss の vxlanorch.cpp に照らして切り分けるための runbook。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-13
+last_verified: 2026-06-06
 sources:
   - repo: sonic-net/sonic-frr
     path: bgpd/bgp_evpn.c
@@ -30,8 +30,8 @@ related:
 
 ## 想定原因（優先度順）
 
-1. **`advertise-all-vni` 未設定**: [FRR](../../reference/glossary.md#term-frr) の `address-family l2vpn evpn` で `advertise-all-vni` がない
-2. **[VLAN](../../reference/glossary.md#term-vlan)-VNI mapping 欠落**: `VXLAN_TUNNEL_MAP` が未作成 / VNI 重複
+1. **`advertise-all-vni` 未設定**: [FRR](../../reference/glossary.md#term-frr) の `address-family l2vpn evpn` で `advertise-all-vni` がない。これが無効だと per-VNI の Type-2/3 route が広告されず withdraw 対象となる[^1]
+2. **[VLAN](../../reference/glossary.md#term-vlan)-VNI mapping 欠落**: `VXLAN_TUNNEL_MAP` が未作成 / VNI 重複。`VxlanTunnelMapOrch::addOperation` で VLAN→VNI を [SAI](../../reference/glossary.md#term-sai) に投入する経路が走らない[^2]
 3. **[FDB](../../reference/glossary.md#term-fdb) が学習されていない**: 対象 MAC が `show mac` に出ない
 4. **route-target import/export 不整合**
 5. **`type-2 prefix` の filter / route-map で drop**
@@ -117,9 +117,7 @@ docker logs swss 2>&1 | grep -iE "vxlan|evpn" | tail -100
 
 ## 引用元
 
-本ページの根拠は引用元 [^1][^2] を参照。
+[^1]: sonic-net/sonic-frr @ `799f47f2` — [`bgpd/bgp_evpn.c` L2308–L2320 `delete_routes_for_vni()`](https://github.com/sonic-net/sonic-frr/blob/799f47f215e4266063c4ebde0041a0c7dd2d11d0/bgpd/bgp_evpn.c#L2308-L2320): [EVPN](../../reference/glossary.md#term-evpn) (advertise-all-vni) 無効化または VNI 削除時に per-VNI table の Type-2 (MAC/IP) → Type-3 ルートを withdraw する。
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ `43055961` — [`orchagent/vxlanorch.cpp` L2010–L2050 `VxlanTunnelMapOrch::addOperation()`](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L2010-L2050): `VXLAN_TUNNEL_MAP` から VLAN ID と VNI ID を取り出し、tunnel / VLAN 存在確認後に [SAI](../../reference/glossary.md#term-sai) tunnel map を作成する。
 
-[^1]: sonic-net/sonic-frr @ master — bgp_evpn.c
-[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — vxlanorch.cpp
-
-<!-- glossary-links-injected: 0726817b0ba1 -->
+<!-- glossary-links-injected: 3293e6cc7456 -->
