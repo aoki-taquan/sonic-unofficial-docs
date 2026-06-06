@@ -20,8 +20,8 @@ sources: []
 
 | verification | 件数 |
 |---|---:|
-| code-verified | 763 |
-| runbook-verified | 27 |
+| code-verified | 762 |
+| runbook-verified | 28 |
 | discrepancy-found | 113 |
 | issue-confirmed | 6 |
 | hld-only | 2 |
@@ -35,9 +35,9 @@ sources: []
 
 | バケツ | 件数 |
 |---|---:|
-| 今日 (0d) | 12 |
+| 今日 (0d) | 13 |
 | 7 日以内 (1-7d) | 51 |
-| 30 日以内 (8-30d) | 1038 |
+| 30 日以内 (8-30d) | 1037 |
 | 30 日超 / 古い | 0 |
 | 不明 / パース不可 | 3 |
 
@@ -79,7 +79,7 @@ sources: []
 | 項目 | 値 |
 |---|---:|
 | 用語数 (`### ` アンカー) | 325 |
-| docs 内被リンク数 | 20054 |
+| docs 内被リンク数 | 20053 |
 
 ## 直近 5 round quality-audit
 
