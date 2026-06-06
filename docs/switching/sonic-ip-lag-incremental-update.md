@@ -4,7 +4,7 @@ description: SONiC の port / IP / LAG / MTU を CONFIG_DB から incremental �
   / intfmgrd / teammgrd の責務分担を解説する。
 area: switching
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-06-06
 sources:
 - repo: sonic-net/SONiC
   path: doc/incremental-update-ip-lag/Incremental IP LAG Update.md
@@ -48,7 +48,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
-    `portmgrd` / `intfmgrd` / `teammgrd` の 3 daemon は現行 master の `sonic-swss/cfgmgr/{portmgr,intfmgr,teammgr}.cpp` に存在し、HLD の責務分担と一致。`config portchannel add` は `min_links` / `fallback` を受け付ける（`sonic-utilities/config/main.py:2835-2853`）。Phase 1/2（loopback の portmgrd 移管、teamd docker 再起動の状態復元）の現状は別途裏取り。
+    `portmgrd` / `intfmgrd` / `teammgrd` の 3 daemon は現行 master の `sonic-swss/cfgmgr/{portmgr,intfmgr,teammgr}.cpp` に存在し、HLD の責務分担と一致。`config portchannel add` は `--min-links` / `--fallback` / `--fast-rate` を受け付ける（`sonic-utilities/config/main.py:2832-2867`）。Phase 1/2（loopback の portmgrd 移管、teamd docker 再起動の状態復元）の現状は別途裏取り。
 
 # IP / LAG / MTU の Incremental Update
 
@@ -121,7 +121,7 @@ Phase 2 は IPv6 neighbor 削除や [SAI](../reference/glossary.md#term-sai) 問
 |-------|-----|------------|
 | `PORT` | `<port>` | `admin_status`, `mtu` |
 | `INTERFACE` | `<port>\|<IP>` | （key のみ）|
-| `PORTCHANNEL` | `<pc>` | `admin_status`, `mtu`, `min_links`, `fallback` |
+| `PORTCHANNEL` | `<pc>` | `admin_status`, `mtu`, `min_links`, `fallback`, `lacp_key`, `fast_rate` |
 | `PORTCHANNEL_INTERFACE` | `<pc>\|<IP>` | （key のみ）|
 | `PORTCHANNEL_MEMBER` | `<pc>\|<port>` | （key のみ）|
 | `VLAN_INTERFACE` | `<vlan>\|<IP>` | （key のみ）|
@@ -133,7 +133,7 @@ Phase 2 は IPv6 neighbor 削除や [SAI](../reference/glossary.md#term-sai) 問
 config interface Ethernet0 add ip 10.0.0.0/31
 
 # LAG 作成 + member + IP
-config portchannel add PortChannel0001 --min_links 1 --fallback false
+config portchannel add PortChannel0001 --min-links 1 --fallback false
 config portchannel member add PortChannel0001 Ethernet4
 config interface PortChannel0001 add ip 10.0.0.2/31
 
@@ -223,7 +223,7 @@ show interfaces portchannel
 ## 実装との乖離 / 補足
 
 - `portmgrd` / `intfmgrd` / `teammgrd` は `sonic-swss/cfgmgr/{portmgr,intfmgr,teammgr}.cpp` に存在し HLD と一致
-- CLI: `config portchannel add` は `--min_links` / `--fallback` / `--fast_rate` を受け付ける（`sonic-utilities/config/main.py:2835-2853`）
+- CLI: `config portchannel add` は `--min-links` / `--fallback` / `--fast-rate` を受け付ける（`sonic-utilities/config/main.py:2832-2867`）。デフォルトで `admin_status=up` / `mtu=9100` / `lacp_key=auto` / `fast_rate=false` が CONFIG_DB に書かれ、`--min-links` 非ゼロのとき `min_links`、`--fallback` が `false` 以外のとき `fallback=true` が追加される
 - Phase 2（loopback portmgrd 化、teamd docker 再起動時の state 復元）は本ページの裏取り範囲外
 
 ## 関連 Topics
