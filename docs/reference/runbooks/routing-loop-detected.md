@@ -1,6 +1,6 @@
 ---
 title: Routing loop が発生している
-description: "Runbook: Routing loop が発生している — : sonic-net/sonic-frr @ 799f47f — zebra/zebra_rib.c : sonic-net/sonic-swss @ 4305596 — routeorch.cpp"
+description: "Runbook: traceroute が同一 hop を繰り返し、TTL exceeded と control plane CPU が急上昇する routing loop の切り分けと対処手順。FRR zebra RIB / sonic-swss routeorch を根拠に static / BGP 経路の競合を診断する。"
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
@@ -11,6 +11,8 @@ sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/routeorch.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-utilities
+    path: config/main.py
 related:
   config_db: [STATIC_ROUTE, BGP_NEIGHBOR, ROUTE_MAP]
   cli: [show ip route, mtr, traceroute]
@@ -91,7 +93,7 @@ show interfaces counters | head -20
 
 ## 対処方法
 
-- 怪しい static を一時 disable: `sudo config route del prefix <p>`
+- 怪しい static を削除: `sudo config route del prefix <A.B.C.D/M> nexthop <A.B.C.D>` (`config route del` は `prefix` と `nexthop` の両指定が必要[^3])
 - [BGP](../../reference/glossary.md#term-bgp) の default 広告抑制: `neighbor <peer> default-originate` を外す
 - summary 配下を明示 announce: `aggregate-address <p> as-set` の見直し
 - ループ確定箇所の interface を一時 admin down: `sudo config interface shutdown Ethernet0`
@@ -103,9 +105,10 @@ show interfaces counters | head -20
 
 ## 引用元
 
-本ページの根拠は引用元 [^1][^2] を参照。
+本ページの根拠は引用元 [^1][^2][^3] を参照。
 
-[^1]: sonic-net/sonic-frr @ 799f47f — [zebra](../../reference/glossary.md#term-zebra)/zebra_rib.c
-[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — routeorch.cpp
+[^1]: sonic-net/sonic-frr @ 799f47f — [zebra](../../reference/glossary.md#term-zebra)/zebra_rib.c (RIB best-path 選定と FIB install)
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [orchagent](../../reference/glossary.md#term-orchagent)/routeorch.cpp L150-L171 (`m_syncdRoutes` への default route 登録)
+[^3]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) — [config/main.py L7787-L7900](https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py) (`config route add/del` の `prefix [vrf <vrf_name>] <A.B.C.D/M> nexthop ...` 引数定義)
 
-<!-- glossary-links-injected: 758aafff1fd5 -->
+<!-- glossary-links-injected: 2484d31b0a57 -->
