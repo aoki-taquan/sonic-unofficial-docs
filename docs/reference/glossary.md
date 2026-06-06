@@ -1590,7 +1590,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [gNMI](#term-gnmi)
 
 - [サイトマップ](../_meta/sitemap.md) (75)
-- [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (28)
+- [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (29)
 - [GNMI / GNMI_CLIENT_CERT テーブル](config-db/gnmi.md) (24)
 - [TELEMETRY テーブル](config-db/telemetry.md) (23)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (23)
