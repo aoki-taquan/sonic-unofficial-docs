@@ -66,7 +66,7 @@ post_ber = ΔSAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES
 
 Post BER は「フレーム内全 bit 誤り」最悪ケース + 1e-8 の統計係数で近似[^1]。なお `serdes_rate_total` は lane 当たり serdes 速度 × lane 数 × 経過時間 (ms→s 換算) で得られる総 bit 数のため、ポーリング間隔は FlexCounter 側設定 (一般に 1000 ms) に追従する[^src1]。
 
-#### serdes lookup テーブル[^src1]
+### serdes lookup テーブル[^src1]
 
 | lane speed | serdes (bps) |
 |------------|--------------|
