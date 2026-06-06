@@ -14,6 +14,15 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-port.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-templates/sonic-types.yang.j2
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-portchannel.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-utilities
+    path: scripts/db_migrator.py
+    ref: master
 related:
   config_db:
     - PORT
@@ -32,20 +41,28 @@ related:
 
 ## YANG / CONFIG_DB
 
-`sonic-port` / `sonic-portchannel` に新規 leaf を追加[^1]:
+`sonic-port` / `sonic-portchannel` に新規 leaf `mode` を追加[^1]。master 上の実体（`sonic-types.yang.j2` の typedef、`sonic-port.yang` / `sonic-portchannel.yang` の leaf）は以下のとおり[^2][^3][^4]:
 
 ```yang
-typedef switchport-mode-type {
-  type enumeration {
-    enum routed;
-    enum access;
-    enum trunk;
+// sonic-types.yang.j2
+typedef switchport_mode {
+  type string {
+    pattern "routed|access|trunk";
   }
-  default routed;
+  description "SwitchPort Modes for Port & PortChannel";
 }
 
-leaf mode { type stypes:switchport_mode; }   // typedef 名は switchport_mode、leaf 名は mode
+// sonic-port.yang / sonic-portchannel.yang
+leaf mode {
+  description "SwitchPort Modes possible values are routed|access|trunk. Default value for mode is routed";
+  type stypes:switchport_mode;
+}
 ```
+
+実装上の注意:
+
+- typedef は `enumeration` ではなく `type string` + `pattern` で表現されている（HLD 上の `enumeration` 記述とは表記が異なる）[^2]
+- `default routed` 文は YANG 上には存在せず、既定値は description コメント上の宣言にとどまり、未設定時の振る舞いは consumer 側（CLI / db_migrator 等）の解釈に委ねられる[^2][^3]
 
 CONFIG_DB:
 
@@ -134,5 +151,8 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-templates/sonic-types.yang.j2` L244-L250 @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`（`switchport_mode` typedef は `type string` + `pattern "routed|access|trunk"` 定義、`default` statement なし）
+[^3]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-port.yang` L86-L89 @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`（`PORT` の `leaf mode { type stypes:switchport_mode; }`）
+[^4]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-portchannel.yang` L71 周辺 @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`（`PORTCHANNEL` の `leaf mode { type stypes:switchport_mode; }`）
 
 <!-- glossary-links-injected: 8ba32e5aa69d -->
