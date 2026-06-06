@@ -105,7 +105,7 @@ Top に namespace layer が増えたままでは既存 [YANG](../reference/gloss
 | | 内容 |
 |---|------|
 | Pros | namespace 1 layer 追加だけで実装可、既存 YANG 流用、minigraph 廃止 → Golden Config Override へ素直に移行 |
-| Cons | 全体 YANG を当てられない（分割必要）、namespace 間で重複する table が冗長 |
+| Cons | 全体 YANG を当てられない（分割必要）、host-mirror 系 table（`DEVICE_METADATA` / `FEATURE` など各 namespace 共通に持たせがちな table）は namespace 間で重複記述になりやすい（`PORT` / `PORTCHANNEL` のような ASIC 固有 table は実際には重複しない） |
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/golden_config/Multi-Asic_Single_JSON_Configuration_Design.md#L83-L97 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -136,7 +136,7 @@ reasoning: namespace layer 1 段追加でスキーマ拡張する設計の根拠
 ## 制限事項
 
 - 全体 YANG validate 不可、namespace 単位 validate に留まる
-- 各 ASIC で重複する table は NDM 側でも冗長記述が必要
+- host-mirror 系 table（`DEVICE_METADATA` / `FEATURE` など）は NDM 側でも namespace 毎に冗長記述が必要（`PORT` 系 ASIC 固有 table は重複しない）
 - minigraph 廃止前提のため、minigraph 併用時の挙動はスコープ外
 
 ## 干渉する機能
