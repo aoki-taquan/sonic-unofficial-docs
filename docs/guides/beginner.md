@@ -22,7 +22,7 @@ related:
 このページは導線（目次）の役割を担い、各概念の詳細解説は [初めての方の必読 10](../getting-started.md) と [アーキテクチャ](../architecture/index.md) に委ねますが、リンク先を辿る前に最低限の輪郭を持っておくと迷子になりにくいので、各 1〜2 文ずつだけ要約します。
 
 - **コンテナ**: SONiC のコントロールプレーンは複数の Docker コンテナに分割されており、`sonic-buildimage` の `dockers/` 配下に `docker-orchagent`（[SwSS](../reference/glossary.md#term-sonic-swss)）、`docker-syncd-*`（[SAI](../reference/glossary.md#term-sai) ベンダ実装ごと）、`docker-database`（Redis）、`docker-teamd`、`docker-lldp`、`docker-snmp`、`docker-nat`、`docker-macsec`、`docker-sflow`、`docker-router-advertiser` 等が定義されています[^docker-list]。[BGP](../reference/glossary.md#term-bgp) は別 submodule の `dockers/docker-fpm-frr`（[FRR](../reference/glossary.md#term-frr) を内包）が担います。
-- **Redis DB**: 全コンテナは `docker-database` 内の Redis インスタンスを介して非同期に状態交換し、論理 DB として CONFIG_DB（運用者が投入する設定の真の源）、[APPL_DB](../reference/glossary.md#term-appl_db)（orchagent が SwSS 側に発行する宣言的状態）、[ASIC_DB](../reference/glossary.md#term-asic_db)（[syncd](../reference/glossary.md#term-syncd) と SAI が共有するハード抽象状態）、[STATE_DB](../reference/glossary.md#term-state_db)（実観測状態）等に分かれます。
+- **Redis DB**: 全コンテナは `docker-database` 内の Redis インスタンスを介して非同期に状態交換し、論理 DB として [CONFIG_DB](../reference/glossary.md#term-config_db)（運用者が投入する設定の真の源）、[APPL_DB](../reference/glossary.md#term-appl_db)（orchagent が SwSS 側に発行する宣言的状態）、[ASIC_DB](../reference/glossary.md#term-asic_db)（[syncd](../reference/glossary.md#term-syncd) と SAI が共有するハード抽象状態）、[STATE_DB](../reference/glossary.md#term-state_db)（実観測状態）等に分かれます。
 - **SAI**: ベンダ間でハードウェア差を吸収する C API で、`sonic-sairedis` がその参照実装を提供します。`syncd` プロセス（[`syncd/Syncd.cpp`](https://github.com/sonic-net/sonic-sairedis/blob/master/syncd/Syncd.cpp)）が ASIC_DB の差分を購読し、ベンダ提供の SAI 実装ライブラリ経由で ASIC に反映します[^syncd]。
 - **設定反映フロー**: 概ね `config` コマンド / [gNMI](../reference/glossary.md#term-gnmi) → CONFIG_DB → [orchagent](../reference/glossary.md#term-orchagent)（[`sonic-swss/orchagent`](https://github.com/sonic-net/sonic-swss/tree/master/orchagent)）が解釈し APPL_DB に書き込み → syncd が ASIC_DB を経由して SAI 経由で ASIC に反映、観測結果は逆向きに STATE_DB / [COUNTERS_DB](../reference/glossary.md#term-counters_db) に集約される、という単方向パイプラインで動作します。
 
@@ -55,11 +55,33 @@ CONFIG_DB が設定の真の源であり、CLI / gNMI / [config_db.json](../refe
 
 **その先**: 関心領域に応じて [ルーティング](../routing/index.md) / [スイッチング](../switching/index.md) / [システム](../system/index.md) に進んでください。
 
-## 補足情報
+## よくある誤解（読み進める前に潰しておく）
 
-- 全体像と DB の関係（CONFIG_DB / [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) / [ASIC_DB](../reference/glossary.md#term-asic_db)、SwSS、syncd、SAI）については [初めての方の必読 10](../getting-started.md) の推奨読破順 1〜4 に沿って読むと把握しやすいです。
-- 用語は [用語集 (Glossary)](../reference/glossary.md) に一覧化されています。SAI、[orchagent](../reference/glossary.md#term-orchagent)、[syncd](../reference/glossary.md#term-syncd)、[CONFIG_DB](../reference/glossary.md#term-config_db)、[YANG](../reference/glossary.md#term-yang)、[FRR](../reference/glossary.md#term-frr)、PMON、multi-[ASIC](../reference/glossary.md#term-asic) などを読みながら逐次参照してください。
-- 各 area の読み進め方は [Topics 章扉](../topics/index.md) にまとまっています。
+トラック A の前提を踏み外しているとリファレンスを読んでも判別がつかないので、初学者が引っかかりやすい点を先に明示します。
+
+- **「CONFIG_DB が設定の真の源」≠「`config_db.json` ファイルが真の源」**: 動作中の SONiC では Redis 上の CONFIG_DB が一次データで、`/etc/sonic/config_db.json` はそのスナップショット兼ブート時のロード元です。`config save` を打たないと再起動で消えます。詳細は [SONiC NOS 設定方式](../management/sonic-nos-configuration-methods.md) を参照してください。
+- **「orchagent が [ASIC](../reference/glossary.md#term-asic) を直接触る」は誤り**: orchagent は APPL_DB から ASIC_DB へ宣言的状態を書き込むだけで、ASIC への実反映は `syncd` が SAI 経由で行います。両者は別コンテナ（`docker-orchagent` と `docker-syncd-*`）に分かれている点が責務分離の根拠です。
+- **「BGP は SwSS が喋っている」は誤り**: 経路計算は `docker-fpm-frr` 内の [FRR](../reference/glossary.md#term-frr) が行い、[FPM](../reference/glossary.md#term-fpm) 経由で SwSS の [fpmsyncd](../reference/glossary.md#term-fpmsyncd) → APPL_DB に経路を流し込む二段構成です。
+- **「[STATE_DB](../reference/glossary.md#term-state_db) は設定値の確認用」は誤り**: STATE_DB は orchagent / syncd / PMON 等が観測した実状態を書き込む先で、CONFIG_DB の echo ではありません。「設定したつもりが効いていない」の切り分けに使います。
+
+## 次に学ぶ順序（行き止まりにならない読み方）
+
+上記トラック A〜C を読み終えた後の進路です。関心領域から 1 本だけ選び、ASIC 反映までの一筆書きを完成させることを優先してください。
+
+- **L2/L3 機能をひと通り**: [スイッチング章扉](../switching/index.md) → [ルーティング章扉](../routing/index.md) の順。[VLAN](../reference/glossary.md#term-vlan) / [LAG](../reference/glossary.md#term-lag) といった ASIC_DB に直接マップされる機能を先に押さえると、後段の [VXLAN](../reference/glossary.md#term-vxlan) / [EVPN](../reference/glossary.md#term-evpn) の差分が読み取りやすくなります。
+- **運用・監視を厚く**: [システム章扉](../system/index.md) と [運用・管理章扉](../management/index.md)。とくに [Show Techsupport](../system/show-techsupport.md) と [SONiC ロギング・システムダンプ仕様](../system/sonic-logging-system-dumps-arch-spec.md) は障害切り分けの起点になります。
+- **内部実装に潜る**: [internals 章扉](../internals/index.md)。orchagent / syncd の Orch クラスや [ConsumerStateTable](../reference/glossary.md#term-consumerstatetable) など、トラック A の輪郭に肉付けする層です。
+
+## トラブルシュート入口（「効いていない」と感じたら）
+
+「config したのに反映されない」の典型 4 パターンと、最初に見るべき場所を示します。詳細手順はリンク先に委ねます。
+
+- **CLI は通ったが ASIC まで届いていない疑い**: CONFIG_DB → APPL_DB → ASIC_DB の順で `redis-cli -n <id> KEYS '*'` を辿り、どの段で止まっているかを特定します。DB 番号の対応は [CONFIG_DB リファレンス](../reference/config-db/index.md) を参照してください。
+- **再起動で設定が消える**: `config save` 漏れの可能性が高いです。CONFIG_DB と `/etc/sonic/config_db.json` の同期タイミングについては [SONiC NOS 設定方式](../management/sonic-nos-configuration-methods.md) を確認してください。
+- **コンテナがそもそも起動していない**: `docker ps` で対象コンテナ（`swss` / `syncd` / `bgp` 等）の有無を確認した後、[Show Techsupport](../system/show-techsupport.md) でログ・設定・DB ダンプを一括収集します。
+- **観測値が想定と違う**: 設定値ではなく実状態を見るべきなので [STATE_DB](../reference/glossary.md#term-state_db) / [COUNTERS_DB](../reference/glossary.md#term-counters_db) を先に確認します。観測パイプの全体像は [アーキテクチャ章扉](../architecture/index.md) のデータフロー節に整理されています。
+
+用語に詰まったら [用語集 (Glossary)](../reference/glossary.md) を、area 横断の歩き方は [Topics 章扉](../topics/index.md) を参照してください。
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -73,4 +95,4 @@ CONFIG_DB が設定の真の源であり、CLI / gNMI / [config_db.json](../refe
 
 [^syncd]: `syncd` の起点は [`sonic-sairedis/syncd/Syncd.cpp`](https://github.com/sonic-net/sonic-sairedis/blob/master/syncd/Syncd.cpp) で、Redis (ASIC_DB) からの SAI オブジェクト操作通知を受けてベンダ SAI 実装に橋渡しします。
 
-<!-- glossary-links-injected: 935537b65c91 -->
+<!-- glossary-links-injected: 54c4a9b16bb2 -->
