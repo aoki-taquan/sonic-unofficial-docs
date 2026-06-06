@@ -1,6 +1,6 @@
 ---
 title: CLI 横断索引
-description: docs/reference/cli/ 配下の主要 CLI ページを機能章ごとに束ね直した抜粋索引。全 73 ページの辞書一覧ではなく、各機能章の主入口から引かれる代表 CLI のみを並べる。網羅索引は docs/reference/cli/index.md を参照。
+description: docs/reference/cli/ 配下の主要 CLI ページを機能章ごとに束ね直した抜粋索引。全 72 ページの辞書一覧ではなく、各機能章の主入口から引かれる代表 CLI のみを並べる。網羅索引は docs/reference/cli/index.md を参照。
 area: topics
 verification: meta
 last_verified: 2026-06-04
@@ -188,17 +188,24 @@ related:
 
 ### 収録していない辞書ページ
 
-`docs/reference/cli/` の辞書ページのうち、機能章入口として上記表に並べていない 23 ページは次のとおり。`show-*` のサブカテゴリで複数章から薄く参照されるものを中心に省いている。
+`docs/reference/cli/` の辞書ページ全 72 ページのうち、機能章入口として上記表に並べていないのは次の 12 ページである。`show-*` のサブカテゴリで複数章から薄く参照されるもの、または章入口に直結しない単発設定を中心に省いている。
 
 - `show-arp` / `show-ndp` / `show-mac` — L2 / VRF 章で補助参照。
 - `show-bfd` — BGP / VRF 章で補助参照。
 - `show-lldp` — Platform / L2 章で補助参照。
 - `show-flowcnt` / `show-storm-control` — [QoS](../../reference/glossary.md#term-qos) / [ACL](../../reference/glossary.md#term-acl) 章で補助参照。
-- `show-services` / `show-uptime` / `show-running-config` / `show-version` — 全章共通の運用 CLI。`show-running-config` / `show-version` のみ 19 Build 章で再掲。
-- `clear-counters` / `clear` — 全章共通の運用 CLI。`clear` のみ 09 Telemetry 章で再掲。
+- `show-services` / `show-uptime` — 全章共通の運用 CLI で章固有の主入口を持たない。
+- `clear-counters` — counters リセット系で章固有の主入口を持たない (なお `clear` は 09 Telemetry 章で再掲済み)。
 - `config-banner` / `config-default-route` — 単発設定で章入口に直結しない。
-- `config-clock` / `show-clock` — 16 [NAT](../../reference/glossary.md#term-nat)/DHCP/DNS 章にまとめている (時刻系)。
-- その他 `show-snmpagentaddress` / `show-snmptrap` / `show-system-health` / `show-feature` / `show-techsupport` 等は 09 Telemetry 章に集約済み。
+
+### 上記表で再掲・集約済みの辞書ページ
+
+以下の辞書ページは複数章から参照されるが、本表では単一の主入口章にまとめて再掲している (上記表に含まれているため未収録ではない)。
+
+- `show-running-config` / `show-version` — 19 Build 章に集約。
+- `clear` — 09 Telemetry 章に集約。
+- `config-clock` / `show-clock` — 16 [NAT](../../reference/glossary.md#term-nat)/DHCP/DNS 章に集約 (時刻系)。
+- `show-snmpagentaddress` / `show-snmptrap` / `show-system-health` / `show-feature` / `show-techsupport` — 09 Telemetry 章に集約。
 
 ## 辞書から章への逆引き
 
