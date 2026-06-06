@@ -140,7 +140,7 @@ reasoning: pfc_gen.py の役割と配備 fixture の根拠。
 
 - **CONFIG_DB**: `PORT|<alias>` ハッシュの `pfc_asym` フィールド (`on` / `off`)。`portsorch.cpp` L5407-L5434 で値変化を検知して `setPortPfcAsym()` を呼ぶ[^2]。
 - **CLI**: `show pfc asymmetric [<interface>]` で現在のモードを表示 (`sonic-utilities/show/main.py` L706-L720)[^3]。
-- **YANG**: `sonic-port` の `pfc-asym` leaf。
+- **[YANG](../reference/glossary.md#term-yang)**: `sonic-port` の `pfc-asym` leaf。
 
 ### 設定例（テスト実行）
 
@@ -202,4 +202,4 @@ docker exec swss supervisorctl status | grep orchagent
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: d5320e852f7a -->

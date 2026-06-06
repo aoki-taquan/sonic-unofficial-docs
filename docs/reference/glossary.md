@@ -1269,7 +1269,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ASIC](#term-asic)
 
 - [SUPPRESS_ASIC_SDK_HEALTH_EVENT テーブル](config-db/suppress-asic-sdk-health-event.md) (112)
-- [サイトマップ](../_meta/sitemap.md) (101)
+- [サイトマップ](../_meta/sitemap.md) (100)
 - [CHASSIS_STATE_DB テーブル群](config-db/chassis-state.md) (65)
 - [概念](../topics/12-multi-asic-voq/concept.md) (65)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (54)
@@ -1589,7 +1589,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [gNMI](#term-gnmi)
 
-- [サイトマップ](../_meta/sitemap.md) (75)
+- [サイトマップ](../_meta/sitemap.md) (74)
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (29)
 - [GNMI / GNMI_CLIENT_CERT テーブル](config-db/gnmi.md) (24)
 - [TELEMETRY テーブル](config-db/telemetry.md) (23)
@@ -1599,8 +1599,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）](../management/sonic-config-update-validation-via-yang.md) (19)
 - [Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）](../architecture/sonic-generic-configuration-update-and-rollback.md) (8)
+- [サイトマップ](../_meta/sitemap.md) (6)
 - [設定変更の選び方](../topics/01-overview/configuration.md) (6)
-- [サイトマップ](../_meta/sitemap.md) (5)
 - [概念と読み始め方](../topics/01-overview/concept.md) (5)
 
 ### [gNOI](#term-gnoi)
@@ -2185,7 +2185,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ROUTE_TABLE (STATE_DB / APPL_STATE_DB)](config-db/route-state.md) (101)
 - [FEATURE (STATE_DB)](config-db/feature-state.md) (91)
 - [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (85)
-- [サイトマップ](../_meta/sitemap.md) (81)
+- [サイトマップ](../_meta/sitemap.md) (80)
 
 ### [swssconfig](#term-swssconfig)
 
@@ -2213,7 +2213,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (354)
+- [サイトマップ](../_meta/sitemap.md) (352)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (33)
 - [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (28)
