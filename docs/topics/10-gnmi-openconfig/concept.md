@@ -77,6 +77,7 @@ sequenceDiagram
   participant TR as Translib / Transformer
   participant YANG as sonic-yang-models
   participant CFG as CONFIG_DB
+  participant STA as STATE_DB
   participant ORCH as portsyncd / orchagent
   NMS->>GNMI: SetRequest(path=/interfaces/interface[name=Ethernet0]/config/description)
   GNMI->>TR: convert OpenConfig → internal
@@ -88,12 +89,12 @@ sequenceDiagram
   TR-->>GNMI: SetResponse(ok)
   GNMI-->>NMS: ok
   NMS->>GNMI: Subscribe ON_CHANGE /interfaces/interface/state/oper-status
-  GNMI->>CFG: STATE_DB watch
-  CFG-->>GNMI: oper-status updates
+  GNMI->>STA: subscribe PORT_TABLE:Ethernet0 (keyspace notification)
+  STA-->>GNMI: oper_status updates
   GNMI-->>NMS: stream
 ```
 
-ポイントは **Set した path と Subscribe する path がどちらも YANG モデル上の path** で、`/config/...` と `/state/...` で writeable / read-only が分かれている、という OpenConfig の規約。SONiC native YANG にも同じ流儀がある。
+ポイントは **Set した path と Subscribe する path がどちらも YANG モデル上の path** で、`/config/...` と `/state/...` で writeable / read-only が分かれている、という OpenConfig の規約。SONiC native YANG にも同じ流儀がある。`/config/...` の書き込み先は CONFIG_DB、`/state/...` の読み出し元は STATE_DB（一部は APPL_DB / COUNTERS_DB）と DB が分かれている点も合わせて押さえておく。
 
 ## 入口の責務を分ける
 
