@@ -103,19 +103,19 @@ redis-cli -n 6 keys 'DASH_HA_SCOPE_STATE_TABLE*'
 <!-- phase-boundary -->
 ## 実装フェーズ境界
 
-!!! info "Phase 別の実装済 / 未実装 サマリ"
-    本ページは `monitor: partially_implemented` で、HLD で示された一連の機能
-    が **段階的に取り込まれている** 状態を扱う。フェーズ毎の実装境界を
-    1 枚の表に集約する (詳細は本ページ上部の `diff` admonition および
-    [discrepancy-index](../reference/verification/discrepancy-index.md) を参照)。
+!!! info "HAMgrD スキーマ取り込みの段階"
+    本ページは `monitor: partially_implemented`。HAMgrD 設定経路の各テーブル
+    が community master に **どこまで取り込まれているか** をテーブル単位で
+    分類する（裏取り: `sonic-swss-common/common/schema.h` @ ref
+    `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`）。
 
-    | Phase | 範囲 (機能 / 段階) | 実装済 (master 取り込み済) | 未実装 (HLD 提案のみ) |
+    | フェーズ | 対象テーブル / 識別子 | 現状 | 根拠 |
     |---|---|---|---|
-    | Phase 1 — 基本機能 | HLD §概要 / §設計の中核ユースケース | 取り込み済 — 本ページの「実装の概観」「実装詳細」節および `diff` admonition の現状側を参照 | — (Phase 1 は実装済) |
-    | Phase 2 — 拡張機能 | HLD §拡張 / §追加要件 / §周辺統合 | 一部のみ取り込み済 — 本ページ「実装詳細」の補足参照 | 未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および `diff` admonition の差分側に列挙 |
-    | Phase 3 — 将来拡張 | HLD §Future Work / §将来課題 | — | 未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点) |
+    | Phase A — schema 層先行採用 | `APP_DASH_HA_SET_CONFIG_TABLE` / `APP_DASH_HA_SET_TABLE` / `APP_DASH_HA_SCOPE_CONFIG_TABLE` / `APP_DASH_HA_SCOPE_TABLE` / `CFG_DASH_HA_GLOBAL_CONFIG` / `CFG_DPU_TABLE` / `STATE_DASH_HA_SET_STATE_TABLE` / `STATE_DASH_HA_SCOPE_STATE_TABLE` | **define のみ存在**。書き込み自体は成功するが consumer (hamgrd) が居ないため副作用なし | `schema.h` L179-182 / L390-391 / L453-454 [^1] |
+    | Phase B — schema 未取り込み | `VDPU_TABLE` / `DASH_HA_DPU_STATE` / `DASH_HA_VDPU_STATE` | **schema.h に define なし**。HLD 上の actor (DPU actor / vDPU actor) は紙面のみ | `grep DASH_HA_DPU_STATE schema.h` がヒット 0 |
+    | Phase C — daemon 未取り込み | `hamgrd` バイナリそのもの | community master の build ツリーに **存在しない**。`sonic-swss` / `sonic-dash-ha` のいずれにも entry point なし | `find .cache/sonic-sources -iname "*hamgrd*"` は HLD ドキュメントのみヒット |
 
-    凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。
+    凡例: 設定経路の観点では Phase A の 8 テーブルは redis-cli 等で疎通確認可能だが、Phase B/C が埋まるまで **HA state machine は駆動しない**。運用上は schema 互換性確認用途のみに限定される。
 <!-- /phase-boundary -->
 
 ## 実装との乖離
