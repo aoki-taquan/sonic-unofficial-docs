@@ -1,7 +1,7 @@
 ---
 title: IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）
-description: IP / LAG / MTU の Incremental Update — SONiC の初期実装は port / IP / LAG を
-  /etc/network/interfaces や /etc/teamd/ の 静的ファイル に書き出していた。
+description: SONiC の port / IP / LAG / MTU を CONFIG_DB から incremental に流すモデルと、portmgrd
+  / intfmgrd / teammgrd の責務分担を解説する。
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
@@ -178,46 +178,16 @@ sudo arp -s <peer_IP> <peer_MAC_addr>
 
 - 参照: [sonic-net/SONiC#87](https://github.com/sonic-net/SONiC/issues/87)
 
-### Kernel 4.9 においてポートチャネル作成時に race condition が発生する既知の問題（sonic-buildimage#1981）
+### 関連する外部 issue
 
-Kernel 4.9 においてポートチャネル作成時に race condition が発生する既知の問題。並行してポートチャネルを作成・削除するとカーネルクラッシュが起きる可能性
+upstream に報告されている関連 issue。詳細・最新の status は各 issue を参照。
 
-- 参照: [sonic-net/sonic-buildimage#1981](https://github.com/sonic-net/sonic-buildimage/issues/1981)
-
-
-### PortChannel を削除後もインターフェースが PortChannel メンバーとして表示される問題（sonic-buildimage#5051）
-
-PortChannel を削除後もインターフェースが PortChannel メンバーとして表示される問題。`config portchannel member del` コマンドを実行してから PortChannel を削除する必要がある
-
-- 参照: [sonic-net/sonic-buildimage#5051](https://github.com/sonic-net/sonic-buildimage/issues/5051)
-
-
-### 1000 個の PortChannel を設定すると orchagent がクラッシュする制約（sonic-buildimage#5054）
-
-1000 個の PortChannel を設定すると orchagent がクラッシュする制約。プラットフォームごとの PortChannel 数上限を事前確認すること。一般的には 256 または 512 が上限
-
-- 参照: [sonic-net/sonic-buildimage#5054](https://github.com/sonic-net/sonic-buildimage/issues/5054)
-
-
-### インターフェースを追加・削除した後にインターフェース状態が down のままになる問題（sonic-buildimage#5347）
-
-インターフェースを追加・削除した後にインターフェース状態が down のままになる問題。`config interface startup <ifname>` を実行してインターフェースを明示的に有効化すること
-
-- 参照: [sonic-net/sonic-buildimage#5347](https://github.com/sonic-net/sonic-buildimage/issues/5347)
-
-
-### warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG（sonic-buildimage#5761）
-
-warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG フラップを引き起こす問題。チームドライバとカーネルバージョンの互換性を確認すること
-
-- 参照: [sonic-net/sonic-buildimage#5761](https://github.com/sonic-net/sonic-buildimage/issues/5761)
-
-
-### PortChannel のメンバーとして設定されているインターフェースをブレークアウトしようとするとエラーになる制約（sonic-buildimage#6630）
-
-PortChannel のメンバーとして設定されているインターフェースをブレークアウトしようとするとエラーになる制約。[DPB](../reference/glossary.md#term-dpb) 実行前に PortChannel メンバーを削除すること
-
-- 参照: [sonic-net/sonic-buildimage#6630](https://github.com/sonic-net/sonic-buildimage/issues/6630)
+- [sonic-net/sonic-buildimage#1981](https://github.com/sonic-net/sonic-buildimage/issues/1981): Kernel 4.9 で portchannel を並行に作成・削除するとカーネルが race condition でクラッシュする報告
+- [sonic-net/sonic-buildimage#5051](https://github.com/sonic-net/sonic-buildimage/issues/5051): PortChannel 削除後も `show interfaces portchannel` にメンバーが残る。先に `config portchannel member del` でメンバーを外す手順が回避策
+- [sonic-net/sonic-buildimage#5054](https://github.com/sonic-net/sonic-buildimage/issues/5054): 1000 個の PortChannel 設定で orchagent がクラッシュ。実用上限はプラットフォーム依存（256 / 512 が一般的）
+- [sonic-net/sonic-buildimage#5347](https://github.com/sonic-net/sonic-buildimage/issues/5347): インターフェース追加・削除後に状態が down のまま固定される。`config interface startup <ifname>` で明示起動が必要
+- [sonic-net/sonic-buildimage#5761](https://github.com/sonic-net/sonic-buildimage/issues/5761): warm-reboot 中に teamd が `SIOCADDMULTI` / `SIOCDELMULTI` ioctl を発行して LAG をフラップさせる
+- [sonic-net/sonic-buildimage#6630](https://github.com/sonic-net/sonic-buildimage/issues/6630): PortChannel メンバーのインターフェースを [DPB](../reference/glossary.md#term-dpb) でブレークアウトしようとするとエラー。事前にメンバーを外す
 
 ## 制限事項
 
