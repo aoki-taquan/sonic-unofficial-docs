@@ -3,12 +3,26 @@ title: 設定
 description: 設定 — この章の機能は CLI と CONFIG_DB の二系統から設定でき、それぞれ YANG モデルで形式化されています。各リファレンスページの内容はそちら側を正にし、ここでは「どこを最初に編集するか」と「どの順で組み合わせるか」だけ示します。
 area: topics
 verification: meta
-last_verified: 2026-05-10
-sources: []
+last_verified: 2026-06-06
+sources:
+- repo: sonic-net/sonic-utilities
+  path: config/nat.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-buildimage
+  path: dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-dhcpv6-relay.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   cli:
   - config nat
-  - config interface
   - show nat
   - config vlan
   - config acl
@@ -16,7 +30,8 @@ related:
   - show ip
   config_db:
   - VLAN_INTERFACE
-  - NAT
+  - NAT_GLOBAL
+  - NAT_ZONE
   - VLAN
   - DHCP_RELAY
   - DHCP_SERVER_IPV4
@@ -25,8 +40,8 @@ related:
   yang:
   - sonic-nat
   - sonic-dhcp-server
+  - sonic-dhcpv6-relay
   - sonic-vlan
-  - sonic-vlan-sub-interface
 ---
 
 # 設定
@@ -38,7 +53,7 @@ related:
 [NAT](../../reference/glossary.md#term-nat) は次のレイヤで構成します。
 
 - グローバル: `NAT_GLOBAL` で機能 enable / timeout / TCP/UDP の挙動を決めます。CLI は `config nat feature enable` と `config nat add ...`。
-- ゾーン: `NAT_ZONE` で interface に inside / outside を付けます（`config interface nat add inside|outside`）。
+- ゾーン: 各 interface の `nat_zone` 属性 (0〜3) を `config nat add interface <interface> -nat_zone <zone>` で設定します。値は対応する `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` / `LOOPBACK_INTERFACE` テーブルへ書かれます<!-- evidence: sonic-utilities/config/nat.py L960-L992, click option `-nat_zone` type=IntRange(0, 3) -->。
 - 静的: `STATIC_NAT` / `STATIC_NAPT` で 1:1 アドレス / port マッピング。
 - 動的: `NAT_POOL` + `NAT_BINDINGS` + [ACL](../../reference/glossary.md#term-acl) でプール / バインディング / マッチ条件を組みます。
 
@@ -49,8 +64,9 @@ CLI ツリーは [config nat](../../reference/cli/config-nat.md) / [show nat](..
 DHCPv4 relay は [VLAN](../../reference/glossary.md#term-vlan) ごとに upstream server を指定する形です。
 
 - CLI: `config vlan dhcp_relay add <vlan> <server_ip>` / `config vlan dhcp_relay del ...`。CLI plugin の正確な階層は [config dhcp_relay リファレンス](../../reference/cli/config-dhcp-relay.md) を参照してください。
-- CONFIG_DB: `DHCP_RELAY|<vlan>` の `dhcp_servers` リスト。v6 は同 entry の `dhcpv6_servers` と `dhcpv6_option|rfc6939_support`。詳細は [DHCPV4_RELAY スキーマ](../../reference/config-db/dhcpv4-relay.md) にあります。
-- giaddr 固定: `config interface ip add --secondary` で `VLAN_INTERFACE` に `secondary: "true"` を付けると、primary IPv4 が `-pg` で giaddr に固定されます。
+- CONFIG_DB (IPv4 default): server IP は `VLAN|<vlan>` の `dhcp_servers` leaf-list に追加されます。`DEVICE_METADATA|localhost.has_sonic_dhcpv4_relay` が `True` の場合のみ新しい `DHCPV4_RELAY|<vlan>` テーブル (`dhcpv4_servers`) に書かれます<!-- evidence: sonic-buildimage/dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py L5-L20, L60-L105 -->。
+- CONFIG_DB (IPv6): `DHCP_RELAY|<vlan>` の `dhcpv6_servers` leaf-list と、Option 18/37 系の `rfc6939_support` / `interface_id` leaf<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dhcpv6-relay.yang L38-L57 -->。
+- giaddr 固定: `config interface ip add --secondary` で `VLAN_INTERFACE` に `secondary: "true"` を付けると、primary IPv4 が `dhcrelay -pg` で giaddr に固定されます<!-- evidence: sonic-utilities/config/main.py L5680-L5806; sonic-buildimage/dockers/docker-dhcp-relay/dhcpv4-relay.agents.j2 L28 -->。
 
 per-interface counter / Option 82 は CLI / CONFIG_DB レベルでは特別な操作が要らず、relay 起動時に自動で [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に書かれます。
 
@@ -74,11 +90,11 @@ CLI は `config dhcp_server ipv4 ...` / `show dhcp_server ipv4 ...` で、CONFIG
 # NAT を有効化
 sudo config nat feature enable
 
-# inside / outside zone を割り当て
+# inside / outside zone を割り当て (慣習として inside=1, outside=0)
 sudo config interface ip add Vlan10 10.10.0.1/24
-sudo config interface nat add inside  Vlan10
+sudo config nat add interface Vlan10 -nat_zone 1
 sudo config interface ip add Ethernet48 203.0.113.10/30
-sudo config interface nat add outside Ethernet48
+sudo config nat add interface Ethernet48 -nat_zone 0
 
 # 静的 NAPT
 sudo config nat add static tcp 10.10.0.5 80 203.0.113.10 80
@@ -130,7 +146,6 @@ sudo config nat add binding BIND1 POOL1 NAT_ACL -nat_type snat
 
 ## 設定シナリオ 3: ToR の DHCP relay と giaddr 固定
 
-
 VLAN 10 / 20 を持つ ToR で、外部 DHCP server に中継する最小構成は次の通りです。
 
 ```bash
@@ -138,7 +153,7 @@ config vlan dhcp_relay add 10 10.0.0.1
 config vlan dhcp_relay add 20 10.0.0.1
 ```
 
-書き込まれる CONFIG_DB は `DHCP_RELAY|Vlan10` / `Vlan20` で、`dhcp_servers: ["10.0.0.1"]` です。v6 を併用するなら `dhcpv6_servers` を別途追加します。secondary subnet を運用する場合は VLAN_INTERFACE 側で `secondary: "true"` の付与を忘れずに。
+書き込まれる CONFIG_DB は default では `VLAN|Vlan10` / `Vlan20` の `dhcp_servers: ["10.0.0.1"]` です (`has_sonic_dhcpv4_relay=True` で feature を有効化した環境のみ `DHCPV4_RELAY` テーブル側へ書かれます)<!-- evidence: sonic-buildimage/dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py L60-L105 -->。v6 を併用するなら `DHCP_RELAY|<vlan>` 側に `dhcpv6_servers` を別途追加します。secondary subnet を運用する場合は VLAN_INTERFACE 側で `secondary: "true"` の付与を忘れずに。
 
 確認:
 
@@ -169,7 +184,7 @@ config dhcp_server ipv4 range add pool1 10.10.0.100 10.10.0.200
 config dhcp_server ipv4 ip bind Vlan10 Ethernet4 --range pool1
 ```
 
-`config dhcp_server` サブコマンド群は現時点で専用 CLI リファレンスページが整備されておらず、ソースコード (`sonic-utilities/config/plugins/dhcp_server.py`) と [DHCP_SERVER_IPV4 系 CONFIG_DB ページ](../../reference/config-db/dhcp-server-ipv4.md) を参照してください。relay 側のコマンドは [config dhcp_relay CLI](../../reference/cli/config-dhcp-relay.md) を参照。relay は同 VLAN で kea へ向くよう自動的に dhcprelayd が config を書き換えます。
+`config dhcp_server` サブコマンド群は現時点で専用 CLI リファレンスページが整備されておらず、ソースコード (`sonic-buildimage/dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py`) と [DHCP_SERVER_IPV4 系 CONFIG_DB ページ](../../reference/config-db/dhcp-server-ipv4.md) を参照してください<!-- evidence: sonic-buildimage/dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py L62-L322, click groups `dhcp_server ipv4` / `range` / `ip bind` / `option` -->。relay 側のコマンドは [config dhcp_relay CLI](../../reference/cli/config-dhcp-relay.md) を参照。relay は同 VLAN で kea へ向くよう自動的に dhcprelayd が config を書き換えます。
 
 CONFIG_DB は次のようになります。
 
@@ -207,7 +222,7 @@ Vlan10     52:54:00:aa:bb:cc  10.10.0.100    2026-05-11 09:12:30  2026-05-12 09:
 
 | 症状 | 原因 | 対処 |
 |---|---|---|
-| `show nat translations` が空のまま | inside / outside zone が貼られていない | `show interfaces nat-zone`、各 interface に対して `config interface nat add inside/outside` |
+| `show nat translations` が空のまま | inside / outside zone が貼られていない | `show interfaces nat-zone`、各 interface に対して `config nat add interface <ifname> -nat_zone <0-3>` |
 | 静的 NAT 投入後も `conntrack -L` に出ない | NAT_GLOBAL の `admin_mode` が `disabled` | `config nat feature enable` で `admin_mode: enabled` を確認 |
 | 動的 NAT のプールが枯渇 | プール範囲不足 / aging が長い | `nat_timeout` を短く、または `NAT_POOL` の range を拡張 |
 | relay 経由で DISCOVER が server に届かない | giaddr が `0.0.0.0` のまま / VLAN_INTERFACE が L3 化されていない | `show ip interfaces` で VLAN の IP を確認、`docker logs dhcp_relay` を確認 |
