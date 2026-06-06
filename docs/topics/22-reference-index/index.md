@@ -96,7 +96,7 @@ related:
 | internals | 138 | ✅ 完成 | meta | 内部実装 |
 | advanced | 101 | ✅ 完成 | meta | 発展トピック |
 | cli-index | 182 | ✅ 完成 | meta | CLI リファレンス索引 |
-| config-db-index | 121 | ✅ 完成 | meta | CONFIG_DB リファレンス索引 |
+| config-db-index | 203 | ✅ 完成 | meta | CONFIG_DB リファレンス索引 |
 | yang-index | 170 | ✅ 完成 | meta | YANG リファレンス索引 |
 | quality-gaps | 51 | ⚠️ プレースホルダ | meta | 品質・カバレッジギャップ |
 
