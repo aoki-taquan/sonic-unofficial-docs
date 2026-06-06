@@ -83,7 +83,7 @@ Multi-ASIC は同じ筐体内の複数 ASIC を namespace で分け、各 ASIC �
 | setup | 232 | ✅ 完成 | meta | セットアップ手順 |
 | operations | 217 | ✅ 完成 | meta | 運用・デバッグ |
 | internals | 146 | ✅ 完成 | code-verified | 内部実装 |
-| advanced | 123 | ✅ 完成 | hld-only | 発展トピック |
+| advanced | 118 | ✅ 完成 | hld-only | 発展トピック |
 
 <!-- /chapter-progress -->
 

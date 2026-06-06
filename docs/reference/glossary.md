@@ -1269,7 +1269,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ASIC](#term-asic)
 
 - [SUPPRESS_ASIC_SDK_HEALTH_EVENT テーブル](config-db/suppress-asic-sdk-health-event.md) (112)
-- [サイトマップ](../_meta/sitemap.md) (103)
+- [サイトマップ](../_meta/sitemap.md) (104)
 - [CHASSIS_STATE_DB テーブル群](config-db/chassis-state.md) (65)
 - [概念](../topics/12-multi-asic-voq/concept.md) (65)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (54)
@@ -1453,7 +1453,6 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [DOT1X / PAC テーブル](config-db/dot1x.md) (36)
 - [Port Access Control（PAC: 802.1x / MAB / RADIUS）](../acl-qos/port-access-control-in-sonic.md) (6)
-- [変更履歴](../_meta/changelog.md) (1)
 - [サイトマップ](../_meta/sitemap.md) (1)
 
 ### [ECMP](#term-ecmp)
@@ -1625,7 +1624,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
-- [サイトマップ](../_meta/sitemap.md) (40)
+- [サイトマップ](../_meta/sitemap.md) (39)
 
 ### [Headroom](#term-headroom)
 
@@ -1803,7 +1802,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [Multi-ASIC](#term-multi-asic)
 
-- [サイトマップ](../_meta/sitemap.md) (25)
+- [サイトマップ](../_meta/sitemap.md) (26)
 - [概念](../topics/12-multi-asic-voq/concept.md) (19)
 - [Multi-ASIC / VOQ chassis 関連](../categories/multi-asic.md) (16)
 - [Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md) (11)
@@ -2213,7 +2212,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (354)
+- [サイトマップ](../_meta/sitemap.md) (353)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (33)
 - [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）](../architecture/sonic-on-gns3-vm.md) (30)
@@ -2224,8 +2223,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [TAM テーブル](config-db/tam.md) (177)
 - [Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）](../routing/path-tracing-midpoint.md) (19)
 - [運用](../topics/17-srv6-mpls/operations.md) (11)
-- [変更履歴](../_meta/changelog.md) (6)
 - [内部実装](../topics/17-srv6-mpls/internals.md) (3)
+- [サイトマップ](../_meta/sitemap.md) (2)
 
 ### [TC (Traffic Class)](#term-tc)
 

@@ -58,13 +58,12 @@ BGP の章本文での読み順は [02 BGP](../02-bgp/index.md) を参照し、V
 
 <!-- evidence: bgp_voq_chassis.md scope / VOQ HLD §2.5.1 inband recycle port; .cache/sonic-sources/SONiC/doc/voq/bgp_voq_chassis.md L30-L40 / L89-L93 -->
 
-
 - 関連: [BGP Setup for VOQ Chassis](../../routing/bgp-setup-for-voq-chassis.md)
 - 章: [02 BGP / Routing](../02-bgp/index.md)
 
 ## Distributed VOQ System での LAG
 
-`lag-on-distributed-voq-system` は、Distributed VOQ system における LAG (PortChannel) の動作設計を扱う HLD である。要点:
+`lag-on-distributed-voq-system` は、Distributed VOQ system における LAG ([PortChannel](../../reference/glossary.md#term-portchannel)) の動作設計を扱う HLD である。要点:
 
 - **メンバーポートは 1 つの ASIC 内に閉じる**: 1 つの LAG のメンバーが複数 ASIC に跨ることは現状サポートされない。LAG 設定そのものは非 VOQ system と同じく local port のみで構成する。
 - 一方で、ある ASIC を ingress、別 ASIC の LAG を egress とするトラフィック (片方向のトラフィックがファブリック経由で別 ASIC の LAG に抜けるケース) はサポートされ、egress LAG member の選択は同一 ASIC 上の ingress/egress と同等となる。
@@ -75,7 +74,6 @@ L2 / LAG の章本文は [06 L2 / VLAN / LAG](../06-l2-vlan-lag/index.md) を参
 
 <!-- evidence: .cache/sonic-sources/SONiC/doc/voq/lag_hld.md L53-L54 (LAG members spanning more than one ASIC NOT supported / cross-ASIC forwarding via LAG supported), L67-L80 (SYSTEM_LAG_TABLE / SYSTEM_LAG_MEMBER_TABLE / teamsyncd local-only) -->
 
-
 - 関連: [LAG on Distributed VOQ System](../../switching/lag-on-distributed-voq-system.md)
 - 章: [06 L2 / VLAN / LAG](../06-l2-vlan-lag/index.md)
 
@@ -84,12 +82,11 @@ L2 / LAG の章本文は [06 L2 / VLAN / LAG](../06-l2-vlan-lag/index.md) を参
 `everflow-support-on-voq-chassis` は、Everflow (ERSPAN ベースの mirror) の mirror source / destination が別 line card にいる構成のための HLD である。要点:
 
 - mirror source 側の line card で **ingress 時点で GRE ヘッダーを付与** し、その後通常のトラフィックとして fabric を経由し destination 側 line card へ運ばれる。
-- ACL bind 先や session 識別は ASIC インスタンス単位で持ち、destination resolution は chassis 全体で一意に行う。
+- [ACL](../../reference/glossary.md#term-acl) bind 先や session 識別は ASIC インスタンス単位で持ち、destination resolution は chassis 全体で一意に行う。
 
 mirror / ACL の章本文は [07 ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) を参照し、VOQ 視点では「ingress line card で GRE 化してから fabric を流れる」「per-ASIC session を複数の line card で運用する」点を押さえる。
 
 <!-- evidence: .cache/sonic-sources/SONiC/doc/voq/everflow.md L29-L31 (About this Manual: GRE rewrite at ingress linecard), L45-L47 (mirror source/destination on different linecards) -->
-
 
 - 関連: [Everflow on VOQ Chassis](../../platform/everflow-support-on-voq-chassis.md)
 - 章: [07 ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md)
@@ -99,14 +96,13 @@ mirror / ACL の章本文は [07 ACL / CoPP / Mirror](../07-acl-copp-mirror/inde
 `reliable-tsa` (Traffic Shift Away) は、特定 router を BGP route policy で広告から外して traffic を退避させる仕組みである。VOQ chassis 向けには次の設計が示されている:
 
 - **旧実装**: Supervisor の `TSA`/`TSB` が各 line card へ SSH で順次同じコマンドを発行する形式で、unresponsive な LC で全体が遅延・失敗する問題があった。
-- **Reliable TSA**: Supervisor host CONFIG_DB と LC 上の per-asic CONFIG_DB がそれぞれ独立した `tsa_enabled` 属性を持ち、operational TSA 状態は Supervisor と LC 設定の **OR** で決まる。Supervisor 側の変更は `CHASSIS_APP_DB` を介して全 LC の asic インスタンスへ伝搬される。
+- **Reliable TSA**: Supervisor host [CONFIG_DB](../../reference/glossary.md#term-config_db) と LC 上の per-asic CONFIG_DB がそれぞれ独立した `tsa_enabled` 属性を持ち、operational TSA 状態は Supervisor と LC 設定の **OR** で決まる。Supervisor 側の変更は `CHASSIS_APP_DB` を介して全 LC の asic インスタンスへ伝搬される。
 - LC で `TSA` を実行した場合は当該 LC の asic にのみ適用され、Supervisor で `TSA` を実行した場合は LC 個別設定に関わらず全体が TSA となる。
 - LC reboot 後も `startup_tsa_tsb` サービスが起動時 TSA 状態を CONFIG_DB に書き戻し、Supervisor 側 `tsa_enabled == TRUE` の間は operational 状態が TSA に保たれる。
 
 ルーティング保守の章で扱うべきテーマで、ここでは「chassis 全体での同期が必要な保守操作」として位置付ける。
 
 <!-- evidence: .cache/sonic-sources/SONiC/doc/voq/Reliable_TSA.md L33-L40 (legacy SSH-based behavior and its issues), L45-L59 (tsa_enabled on Supervisor + per-asic CONFIG_DB / OR semantics / CHASSIS_APP_DB propagation / startup_tsa_tsb) -->
-
 
 - 関連: [Reliable TSA](../../routing/reliable-tsa.md)
 - 章: [02 BGP / Routing](../02-bgp/index.md)
@@ -121,7 +117,6 @@ mirror / ACL の章本文は [07 ACL / CoPP / Mirror](../07-acl-copp-mirror/inde
 VOQ chassis に拡張する際は、line card 単独の warm reboot 中に Supervisor / fabric / 他の LC 側状態を維持する考慮が加わるが、その細部は別 HLD / 運用ガイドの領域である。reboot 系の章本文は [11 Reboot](../11-reboot/index.md) を参照する。
 
 <!-- evidence: .cache/sonic-sources/SONiC/doc/warm-reboot/Multi_ASIC_warm_reboot.md L58 (scope), L78-L81 (assumption: same FW/SDK/SAI/syncd/orchagent; warm-reboot process same per single-ASIC view; ASIC-local failures must not block healthy ASICs) -->
-
 
 - 関連: [Multi-ASIC Warm Reboot](../../system/multi-asic-warm-reboot.md)
 - 章: [11 Reboot](../11-reboot/index.md)
@@ -163,4 +158,4 @@ VOQ chassis 固有のテーマは、機能としては既存の章（BGP、LAG�
 - `sonic-swss` の `vrforch` / `routeorch` / `lagorch` で system port / system LAG 周りの race fix が散発的に入る。
 - VOQ chassis のテスト基盤 ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)) で multi-DUT scenario の coverage 拡張 PR が定期的にある。
 
-<!-- glossary-links-injected: 43545be63186 -->
+<!-- glossary-links-injected: 4c28d1c25460 -->
