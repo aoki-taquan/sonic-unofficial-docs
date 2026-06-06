@@ -1,11 +1,24 @@
 ---
 title: 内部実装
-description: 内部実装 — ACL action はスキーマに書けるだけでは十分ではありません。ASIC がその stage でその action を受理できるか、SAI
-  capability と orchagent の実装が揃っているかを確認する必要があります。
+description: ACL action はスキーマに書けるだけでは十分ではない。ASIC がその stage でその action を受理できるか、SAI
+  capability と orchagent の実装が揃っているかを STATE_DB:SWITCH_CAPABILITY と AclOrch / CoppOrch / MirrorOrch
+  の実装で確認する。
 area: topics
 verification: meta
-last_verified: 2026-05-10
-sources: []
+last_verified: 2026-06-06
+sources:
+- repo: sonic-net/sonic-swss
+  path: orchagent/aclorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/mirrororch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/copporch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/policerorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   cli:
   - config qos
@@ -29,13 +42,13 @@ related:
 
 ## ACL Action Capability
 
-SAI は ingress / egress stage ごとに使える ACL action が異なります。[SONiC](../../reference/glossary.md#term-sonic) は `AclOrch` 起動時に SAI へ action capability を問い合わせ、[STATE_DB](../../reference/glossary.md#term-state_db) の `SWITCH_CAPABILITY` に `ACL_ACTIONS|<stage>` として公開します。`acl-loader` などの producer は投入前に capability を見て、未対応 action を早く弾けます。
+SAI は ingress / egress stage ごとに使える ACL action が異なります。[SONiC](../../reference/glossary.md#term-sonic) は `AclOrch` 起動時に `SAI_SWITCH_ATTR_ACL_STAGE_INGRESS` / `EGRESS` で action capability を問い合わせ、[STATE_DB](../../reference/glossary.md#term-state_db) の `SWITCH_CAPABILITY` に `ACL_ACTIONS|<stage>` フィールドとして公開します<!-- evidence: sonic-swss orchagent/aclorch.cpp queryAclActionCapability() / putAclActionCapabilityInDB() L3975-L4061 -->。`acl-loader` などの producer は投入前に capability を見て、未対応 action を早く弾けます。
 
 この仕組みは「設定は accepted だが hardware には入らない」という問題を減らします。ただし capability が公開されていても、個別 table type や bind point、ASIC resource の都合で失敗する可能性は残るため、STATE_DB の ACL status と counter も併せて見ます。
 
 ## Egress Mirror
 
-SAI には ingress mirror と egress mirror の action が分かれて存在します。SONiC では従来の `MIRROR_ACTION` に加えて、`MIRROR_INGRESS_ACTION` と `MIRROR_EGRESS_ACTION` を使い分けます。
+SAI には ingress mirror と egress mirror の action が分かれて存在します。SONiC では従来の `MIRROR_ACTION` に加えて、`MIRROR_INGRESS_ACTION` と `MIRROR_EGRESS_ACTION` を使い分け、それぞれ `SAI_ACL_ENTRY_ATTR_ACTION_MIRROR_INGRESS` / `SAI_ACL_ENTRY_ATTR_ACTION_MIRROR_EGRESS` にマップされます<!-- evidence: sonic-swss orchagent/aclorch.cpp aclMirrorStageLookup L124-L125 -->。
 
 ```mermaid
 flowchart LR
@@ -56,7 +69,7 @@ encap 後の outer header DSCP を、inner packet の field に基づいて egre
 
 ## Packet Trimming
 
-Packet Trimming は congestion 時に packet 全体を落とさず、ヘッダと先頭 payload だけ残した trimmed packet を届ける機能です。global 設定、buffer profile、[QoS](../../reference/glossary.md#term-qos)、ACL action が関係します。ACL 側では `DISABLE_TRIMMING` action により、特定 match の packet を trim 対象から外す設計です。
+Packet Trimming は congestion 時に packet 全体を落とさず、ヘッダと先頭 payload だけ残した trimmed packet を届ける機能です。global 設定、buffer profile、[QoS](../../reference/glossary.md#term-qos)、ACL action が関係します。ACL 側では `DISABLE_TRIM` action（`SAI_ACL_ENTRY_ATTR_ACTION_PACKET_TRIM_DISABLE` に対応）により、特定 match の packet を trim 対象から外す設計です<!-- evidence: sonic-swss orchagent/aclorch.cpp aclL3ActionLookup ACTION_DISABLE_TRIM L114, L2047-L2051 -->。
 
 運用上は packet trimming を ACL の派生 action としてだけ見ると不足します。`SWITCH_TRIMMING`、`BUFFER_PROFILE.packet_trimming`、trim 後 DSCP、queue、drop counter の組み合わせで読む必要があります。
 
@@ -80,7 +93,7 @@ flowchart LR
 | コンポーネント | 主実体 | 責務 |
 | --- | --- | --- |
 | `AclOrch` (`orchagent/aclorch.cpp`) | `AclOrch::doTask`、`AclTable::create`、`AclRule::create` | ACL table / rule、capability 問い合わせ、counter 登録 |
-| `CoppOrch` (`orchagent/copporch.cpp`) | `CoppOrch::doTask`、`addTrap`、`createGenetlinkHostIf` | hostif trap group / hostif trap、policer の紐付け |
+| `CoppOrch` (`orchagent/copporch.cpp`) | `CoppOrch::doTask`、`processCoppRule`、`createGenetlinkHostIf` | hostif trap group / hostif trap、policer の紐付け |
 | `PolicerOrch` (`orchagent/policerorch.cpp`) | `PolicerOrch::doTask` | meter / policer object の作成 |
 | `MirrorOrch` (`orchagent/mirrororch.cpp`) | `MirrorOrch::doTask`、`activateSession` | local / ERSPAN mirror session の作成、nexthop 解決まで pending |
 | `acl-loader` (`sonic-utilities/acl_loader/`) | python CLI | [DASH](../../reference/glossary.md#term-dash) / data-plane ACL の JSON loader |
@@ -141,7 +154,7 @@ ASIC_DB:
 - `MIRROR_EGRESS` action はベンダ依存が大きく、`MIRROR_INGRESS` のみ実装で `MIRROR_EGRESS` 未対応の ASIC では egress mirror が黙って ingress mirror に倒れる discrepancy が報告されている。
 - CoPP の queue / policer 設定は `copp_cfg.json` のテンプレートに依存し、[CONFIG_DB](../../reference/glossary.md#term-config_db) の動的変更が即時反映されない経路がある（`hostcfgd` 経由のものは reload が必要）。
 - ACL counter は ASIC によって entry per counter か rule per counter かが分かれ、SONiC は両方を抽象化するが、counter clear / reset の挙動が ASIC で違う。
-- Mirror session の ERSPAN destination が [ECMP](../../reference/glossary.md#term-ecmp) の場合、`MirrorOrch` は単一 nexthop のみ採用し、ECMP の動的 rehash には追従しない。
+- Mirror session の ERSPAN destination が [ECMP](../../reference/glossary.md#term-ecmp) の場合、`MirrorOrch` は単一 nexthop のみ採用し、ECMP の動的 rehash には追従しない<!-- evidence: sonic-swss orchagent/mirrororch.cpp activateSession() / m_routeOrch->attach() L517, L921 -->。
 
 ## 関連ページ
 

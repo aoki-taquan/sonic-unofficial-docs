@@ -185,9 +185,45 @@ screen -d -m warm-reboot
 tmux new-session -d -s warmboot 'warm-reboot'
 ```
 
-**現行 master での状況**: `scripts/warm-reboot` は今も bash スクリプトで、`trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM`
-により実行中のシグナルを無視するが、起動時点で受けた SIGHUP には依然脆弱なため、SSH 経由実行時は
-`nohup` / `screen` / `tmux` での detach が推奨される運用は master でも変わらない[^warmreboot-trap]。
+**現行 master での状況**: `scripts/warm-reboot` は今も bash スクリプトで、warm-reboot / fast-reboot
+の分岐後に `trap clear_boot EXIT HUP INT QUIT TERM KILL ABRT ALRM` を仕掛けて中断時には
+`clear_boot` (kexec -u / warm_restart disable / WARM_DIR の redis スナップショット退避) でロール
+バックを試みる。kexec 直前に至った段階で初めて `trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM`
+へ差し替え、最終クリティカル区間ではシグナルを無視する設計になっている[^warmreboot-trap]。
+いずれにせよスクリプト全体が前段で SIGHUP を受けると中断 (clear_boot 経由でロールバック) するため、
+SSH 経由実行時は `nohup` / `screen` / `tmux` での detach が推奨される。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/scripts/warm-reboot#L947,L962,L1151-L1152 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  trap clear_boot EXIT HUP INT QUIT TERM KILL ABRT ALRM
+  ...
+  # disable trap-handlers which were set before
+  trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM
+reasoning: >
+  前段では clear_boot による中断クリーンアップ trap が掛かっており、kexec 直前で初めて
+  空 trap に差し替えられる二段構造であることを実コードで確認。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/scripts/warm-reboot#L947,L962,L1151-L1152 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/scripts/warm-reboot#L947,L962,L1151-L1152 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    trap clear_boot EXIT HUP INT QUIT TERM KILL ABRT ALRM
+    ...
+    # disable trap-handlers which were set before
+    trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM
+    ```
+
+    **判断根拠**: 前段では clear_boot による中断クリーンアップ trap が掛かっており、kexec 直前で初めて 空 trap に差し替えられる二段構造であることを実コードで確認。
+
+<!-- evidence-rendered:end -->
 
 ---
 
@@ -326,7 +362,7 @@ NIC ドライバ（igb 等）の TX hang 警告の有無を併せて確認する
 [^7518]: [sonic-buildimage #7518](https://github.com/sonic-net/sonic-buildimage/issues/7518) — 最新 master から旧イメージへのダウングレード失敗。
 [^12512]: [sonic-buildimage #12512](https://github.com/sonic-net/sonic-buildimage/issues/12512) — ウォームブート後の reboot-cause 誤表示。
 [^9899]: [sonic-buildimage #9899](https://github.com/sonic-net/sonic-buildimage/issues/9899) — [202012] fast-reboot 中の orchagent INIT_VIEW タイムアウト。
-[^warmreboot-trap]: `scripts/warm-reboot`（`sonic-net/sonic-utilities`）の `trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM` 行。実行中のシグナルは無視するが、起動時点での SSH 切断耐性は得られない。
+[^warmreboot-trap]: `scripts/warm-reboot`（`sonic-net/sonic-utilities` sha `39732bceb8bdefe706518ab40623bbbba6ff33b9`）。L947 / L962 で `trap clear_boot EXIT HUP INT QUIT TERM KILL ABRT ALRM` (fast-reboot / warm-reboot 分岐時)、L1152 で kexec 直前に `trap '' EXIT HUP INT QUIT TERM KILL ABRT ALRM` に差し替え。`clear_boot()` は L339 に定義され `kexec -u` / `config warm_restart disable` / WARM_DIR redis スナップショット退避を行う。
 [^skip-pkg-mig]: `sonic_installer/main.py` の `install` コマンドにおける `--skip-package-migration` オプション定義（`sonic-net/sonic-utilities`）。
 
 <!-- glossary-links-injected: 9165fb6adb46 -->

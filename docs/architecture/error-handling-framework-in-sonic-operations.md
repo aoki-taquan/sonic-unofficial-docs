@@ -56,13 +56,20 @@ ERROR_NEIGH_TABLE|(INTF_TABLE|VLAN_INTF_TABLE|LAG_INTF_TABLE).name|<prefix>
 
 ## 2. イベント遷移
 
-| 直前 | 今回 | framework 動作 |
+下表は HLD §3.3.1（`error_handling_design_spec.md` L194–L202）で **明示列挙された遷移パターンの全件**[^1]。HLD はこの 5 パターンのみを「framework がエントリを既存状態と突き合わせて特別に扱うケース」として列挙しており、抜粋ではない。
+
+| 直前 (Previous) | 今回 (Current) | framework 動作 |
 |------|------|----------------|
 | Create failure | Update failure | エントリ更新 + 通知 |
 | Create failure | Delete failure | エントリ削除 + 通知 |
 | Create failure | Update success | エントリ削除 + 通知 |
 | Create success | Delete failure | エントリ追加 + 通知 |
 | Delete failure | Create success | エントリ削除 + 通知 |
+
+表に現れない組み合わせ（例: 直前 = Create success → 今回 = Update failure、直前 = Update success → 今回 = Update failure、または ERROR_DB に直前エントリが無い「初回失敗」）は、HLD §3.3 の一般則（L168–L188）に従う:
+
+- **失敗イベント受信時** — ERROR_DB にエントリを追加（既存なら failure code を更新）し、登録 listener に通知[^1]
+- **成功イベント受信時** — ERROR_DB に対応エントリがあれば削除、無ければ何もしない。listener へは `ERR_NOTIFY_POSITIVE_ACK` 登録者のみ通知[^1]
 
 正常完了系はデフォルトで ERROR_DB に書かない。`ERR_NOTIFY_POSITIVE_ACK` 指定時のみ通知[^1]。
 
@@ -82,8 +89,8 @@ Route             Nexthop                Operation  Failure
 
 ## 4. Warm boot / scalability
 
-- ERROR_DB は **warm boot 越しに永続化されない**[^1]
-- scalability への直接影響は無いと記述
+- ERROR_DB は **warm boot 越しに永続化されない**（HLD §6, L378–L379）[^1]
+- scalability への直接影響は無いと HLD に記述
 
 ## 関連ページ
 

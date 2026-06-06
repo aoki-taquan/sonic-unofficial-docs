@@ -1269,7 +1269,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ASIC](#term-asic)
 
 - [SUPPRESS_ASIC_SDK_HEALTH_EVENT テーブル](config-db/suppress-asic-sdk-health-event.md) (112)
-- [サイトマップ](../_meta/sitemap.md) (101)
+- [サイトマップ](../_meta/sitemap.md) (102)
 - [CHASSIS_STATE_DB テーブル群](config-db/chassis-state.md) (65)
 - [概念](../topics/12-multi-asic-voq/concept.md) (65)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (54)
@@ -1523,7 +1523,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [FDB テーブル](config-db/fdb.md) (147)
 - [VXLAN_FDB_TABLE テーブル](config-db/vxlan-fdb.md) (110)
 - [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (54)
-- [内部実装](../topics/06-l2-vlan-lag/internals.md) (38)
+- [内部実装](../topics/06-l2-vlan-lag/internals.md) (44)
 
 ### [fdbsyncd](#term-fdbsyncd)
 
@@ -1621,7 +1621,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (326)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (258)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
@@ -1929,7 +1929,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [設定](../topics/18-p4-pins/setup.md) (17)
 - [発展トピック](../topics/18-p4-pins/advanced.md) (16)
 - [概念](../topics/18-p4-pins/concept.md) (15)
-- [P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md) (9)
+- [P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md) (8)
 
 ### [ProducerStateTable](#term-producerstatetable)
 
@@ -1989,7 +1989,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [QoS](#term-qos)
 
-- [サイトマップ](../_meta/sitemap.md) (32)
+- [サイトマップ](../_meta/sitemap.md) (31)
 - [PORT_QOS_MAP テーブル](config-db/port-qos-map.md) (17)
 - [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (14)
 - [EXP_TO_FC_MAP テーブル](config-db/exp-to-fc-map.md) (12)
@@ -2258,7 +2258,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [ToR](#term-tor)
 
-- [サイトマップ](../_meta/sitemap.md) (77)
+- [サイトマップ](../_meta/sitemap.md) (76)
 - [Dual-ToR の考え方](../topics/05-dual-tor/concept.md) (65)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (59)
 - [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (40)

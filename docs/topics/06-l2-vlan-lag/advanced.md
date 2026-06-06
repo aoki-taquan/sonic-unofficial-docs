@@ -9,28 +9,19 @@ sources: []
 related:
   cli:
   - config portchannel
-  - show interfaces
-  - config bgp
-  - show bgp
-  - show bfd
   - config vlan
-  - show vlan
+  - show interfaces portchannel
+  - show vlan brief
+  - show interfaces status
   config_db:
   - VLAN
   - VLAN_INTERFACE
   - VLAN_MEMBER
   - PORTCHANNEL
   - PORTCHANNEL_MEMBER
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
   yang:
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
+  - sonic-vlan
+  - sonic-portchannel
 ---
 
 # L2 発展トピック

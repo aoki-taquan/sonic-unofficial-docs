@@ -1,7 +1,6 @@
 ---
 title: VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
-description: VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis） — VoQ（Virtual
-  Output Queue）アーキテクチャでは、複数 ASIC が 内部ファブリック で繋がれた 1 つの論理ルータとして動く。
+description: VoQ（Virtual Output Queue）シャーシで複数 ASIC を 1 論理ルータとして動かすための骨格設計。FSI/SSI 役割分担、redis_chassis 上の CHASSIS_APP_DB、chassisdb.conf による起動制御を整理する。
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
@@ -33,8 +32,8 @@ related:
 !!! success "裏取りステータス: code-verified（骨格のみ）"
     `sonic-swss-common/common/database_config.json` L8-11 で `redis_chassis` インスタンス（hostname `redis_chassis.server`、`/var/run/redis/redis_chassis.sock`）、L80-88 で `CHASSIS_APP_DB` が `redis_chassis` インスタンスに紐付くこと、`sonic-buildimage/dockers/docker-database/docker-database-init.sh` L85-86 で `database-chassis` 用の docker init 経路を確認（verified at: 2026-05-09）。詳細な FSI/SSI 制御プレーンや LAG / 内部データプレーンは別 HLD 領域。
 
-!!! note "area の経緯"
-    backlog 上は `acl-qos` カテゴリだが、内容は分散転送のアーキテクチャ全体（routing / platform / system にまたがる）。本ページは backlog の指定どおり `acl-qos` 配下に置く。
+!!! info "本ページの位置づけ"
+    分散転送 (VoQ) は queue まわりの設計のため `area: acl-qos` 配下に置くが、内容は platform / routing / system にまたがる骨格 HLD。queue / scheduler の挙動そのものは [SONiC QoS scheduler / shaping](sonic-qos-scheduler-and-shaping.md)、platform 側の派生は [Single-ASIC VoQ](../platform/single-asic-voq-fixed-system-sonic.md) / [VoQ SONiC](../platform/voq-sonic.md)、内部 iBGP メッシュは [BGP setup for VoQ Chassis](../routing/bgp-setup-for-voq-chassis.md) を参照。
 
 # VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
 

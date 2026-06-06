@@ -4,7 +4,7 @@ description: 概要 — 「SONiC で BGP を読む」ときに最初にぶつか
   が見えづらいことである。
 area: topics
 verification: meta
-last_verified: 2026-05-10
+last_verified: 2026-06-06
 sources: []
 keywords:
 - BGP
@@ -180,8 +180,8 @@ BGP まわりで最初に把握しておくべき CONFIG_DB は次のとおり�
 | `BGP_PEER_RANGE` | unnumbered / dynamic peer の subnet 単位定義。leaf-spine ECMP fabric の主流 |
 | `BGP_GLOBALS` | router-id、ebgp/ibgp multipath、graceful-restart などのグローバル設定 |
 | `BGP_ALLOWED_PREFIXES` / `PREFIX_LIST` | prefix-list と route-map の参照先 |
-| `BGP_AGGREGATE_ADDRESS` | 集約広告。`BGP_BBR` 連動による条件付き advertise が可能 |
-| `BGP_BBR` | Bounce Back Routing の enable/disable。集約広告と密結合 |
+| `BGP_AGGREGATE_ADDRESS` | 集約広告。aggregate-address に紐づく summary-only / as-set などの属性 |
+| `BGP_BBR` | BGP Border Router 機能の enable/disable。`LeafRouter` の peer-group で `allowas-in 1` を有効化し、自 AS を含む経路の受信を許容するためのスイッチ[^bbr] |
 | `DEVICE_METADATA.localhost` | `bgp_router_id` / `frr_mgmt_framework_config` 等のメタ設定 |
 
 `bgpcfgd` 構成では Jinja テンプレートでこれらを FRR `vtysh` 設定に reduce する。`frrcfgd` 構成では Management Framework が差分を vty コマンドに翻訳する。同じ CONFIG_DB を読んでいるように見えても、生成される FRR 設定の経路が違う点に注意する。
@@ -196,7 +196,91 @@ flowchart LR
   Frrcfgd --> FRR
 ```
 
-切替キーは `DEVICE_METADATA.localhost.frr_mgmt_framework_config` である。`true` で frrcfgd 経路、未設定 / `false` で bgpcfgd 経路。両方を同時に動かす設計ではないため、機能 HLD を読むときは「どちらの経路を前提とした記述か」を判定する必要がある。新しい OpenConfig BGP 機能は frrcfgd 側に寄り、レガシー Jinja で扱いづらかった政策系の入力経路が広がっている。
+切替キーは `DEVICE_METADATA.localhost.frr_mgmt_framework_config` である。値は文字列 `"true"` で frrcfgd（Management Framework）経路、未設定 / `"false"` で bgpcfgd 経路に倒れる[^frr-switch]。両方を同時に動かす設計ではないため、機能 HLD を読むときは「どちらの経路を前提とした記述か」を判定する必要がある。新しい OpenConfig BGP 機能は frrcfgd 側に寄り、レガシー Jinja で扱いづらかった政策系の入力経路が広がっている。
+
+[^frr-switch]: 切替判定は `docker_init.sh` および `critical_processes.j2` で `frr_mgmt_framework_config == "true"` の文字列比較として実装されている。詳細は `dockers/docker-fpm-frr/docker_init.sh` と `dockers/docker-fpm-frr/frr/supervisord/critical_processes.j2` を参照。
+
+[^bbr]: BBR の正式名称は YANG モデル `sonic-bgp-bbr.yang` のコンテナ description に「BGP Border Router (BBR) state for aggregate address awareness.」と定義されており、bgpd peer-group テンプレートでは `BGP_BBR['status'] == 'enabled'` のとき `LeafRouter` 側の peer-group に `allowas-in 1` を流し込む実装になっている (`dockers/docker-fpm-frr/frr/bgpd/templates/general/peer-group.conf.j2`)。
+
+<!-- evidence:
+source: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-bbr.yang#L15-L40
+excerpt: |
+  description "BGP Border Router (BBR) state for aggregate address awareness.";
+  ...
+  description "Enable or disable BGP BBR functionality on this device.";
+reasoning: BBR の頭字は "BGP Border Router" であり、過去に「Bounce Back Routing」と説明していたのは誤り。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-bbr.yang#L15-L40"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-bbr.yang#L15-L40`
+
+    **抜粋**:
+
+    ```text
+    description "BGP Border Router (BBR) state for aggregate address awareness.";
+    ...
+    description "Enable or disable BGP BBR functionality on this device.";
+    ```
+
+    **判断根拠**: BBR の頭字は "BGP Border Router" であり、過去に「Bounce Back Routing」と説明していたのは誤り。
+
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/general/peer-group.conf.j2#L5-L30
+excerpt: |
+  {% elif CONFIG_DB__DEVICE_METADATA['localhost']['type'] == 'LeafRouter' %}
+  {%   if CONFIG_DB__BGP_BBR['status'] == 'enabled' %}
+      neighbor PEER_V4 allowas-in 1
+reasoning: BBR enable は LeafRouter peer-group に allowas-in 1 を流し込むスイッチとして実装されている。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/general/peer-group.conf.j2#L5-L30"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/general/peer-group.conf.j2#L5-L30`
+
+    **抜粋**:
+
+    ```text
+    {% elif CONFIG_DB__DEVICE_METADATA['localhost']['type'] == 'LeafRouter' %}
+    {%   if CONFIG_DB__BGP_BBR['status'] == 'enabled' %}
+        neighbor PEER_V4 allowas-in 1
+    ```
+
+    **判断根拠**: BBR enable は LeafRouter peer-group に allowas-in 1 を流し込むスイッチとして実装されている。
+
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/critical_processes.j2#L1-L10
+excerpt: |
+  {% if DEVICE_METADATA.localhost.frr_mgmt_framework_config is defined and DEVICE_METADATA.localhost.frr_mgmt_framework_config == "true" %}
+reasoning: 切替キーは文字列 "true" との比較であり、bool true ではない。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/critical_processes.j2#L1-L10"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/critical_processes.j2#L1-L10`
+
+    **抜粋**:
+
+    ```text
+    {% if DEVICE_METADATA.localhost.frr_mgmt_framework_config is defined and DEVICE_METADATA.localhost.frr_mgmt_framework_config == "true" %}
+    ```
+
+    **判断根拠**: 切替キーは文字列 "true" との比較であり、bool true ではない。
+
+<!-- evidence-rendered:end -->
 
 ## 経路が ASIC に入るまでの段
 

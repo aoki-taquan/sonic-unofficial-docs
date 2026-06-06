@@ -44,6 +44,14 @@ related:
 
 これにより control-path（policy）は Linux に従い、data-path（per-packet rewrite）は ASIC で行われる。
 
+<!-- code-evidence
+- sonic-swss/cfgmgr/natmgr.h L238 `class NatMgr : public Orch`
+- sonic-swss/cfgmgr/natmgr.cpp L899-936 iptables -t mangle / -t nat ルール生成
+- sonic-swss/natsyncd/natsync.cpp L41-58 APP_NAT_TABLE_NAME / APP_NAPT_TABLE_NAME へ publish
+- sonic-swss/orchagent/natorch.h L179 `class NatOrch: public Orch, public Subject, public Observer`
+-->
+
+
 ## 動作仕様
 
 ```mermaid

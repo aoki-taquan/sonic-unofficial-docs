@@ -1,27 +1,27 @@
 ---
 title: gRPC client（active-active DualToR / ycabled ↔ SoC 連携）
-description: gRPC client（active-active DualToR / ycabled ↔ SoC 連携） — DualToR の active-active
-  構成では、HOST → FPGA → SoC（外部のサブシステム）の経路で forwarding state が動的に切り替わる。
+description: DualToR active-active 構成において PMON コンテナ内の gRPC client daemon が ycabled / linkmgrd と SoC
+  上の gRPC server を loopback IP / TLS 経由で接続し、forwarding state を双方向にやり取りする HLD の解説。
 area: management
 verification: code-verified
-last_verified: 2026-05-10
+last_verified: 2026-06-06
 sources:
 - repo: sonic-net/SONiC
   path: doc/grpc_client/design_doc.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-platform-daemons
+  path: sonic-ycabled/setup.py
+  ref: master
+- repo: sonic-net/sonic-platform-daemons
+  path: sonic-ycabled/ycable/ycable.py
+  ref: master
 related:
   config_db:
-  - MUX_CABLE
-  - PEER_SWITCH
-  - MUX_LINKMGR
-  - XCVRD_LOG
+  - GRPC_CLIENT
   cli:
-  - show muxcable
-  - config muxcable
-  yang:
-  - sonic-mux-cable
-  - sonic-mux-linkmgr
-  - sonic-peer-switch
+  - show muxcable grpc
+  yang: []
+  _no_related_yang: true
 ---
 
 !!! success "裏取りステータス: code-verified (2026-05-10)"
@@ -164,15 +164,70 @@ reasoning: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notifica
 
 <!-- evidence-rendered:end -->
 
+<!-- evidence:
+source: sonic-net/SONiC/doc/grpc_client/design_doc.md#L327-L338 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  CONFIG DB
+  GRPC_CLIENT| certs
+  - ca_crt| /etc/sonic/credentials/<root>.pem
+  - client_crt | /etc/sonic/credentials/<>.crt
+  - client_key | /etc/sonic/credentials/<>.key
+  GRPC_CLIENT| config
+  - auth_level| client/server/mutual
+  - log_level| debug/info
+  - type | secure/ insecure
+reasoning: CONFIG_DB GRPC_CLIENT|certs / GRPC_CLIENT|config の 2 キー定義の根拠。related.config_db の primary 項目。
+-->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/grpc_client/design_doc.md#L327-L338 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/grpc_client/design_doc.md#L327-L338 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    CONFIG DB
+    GRPC_CLIENT| certs
+    - ca_crt| /etc/sonic/credentials/<root>.pem
+    - client_crt | /etc/sonic/credentials/<>.crt
+    - client_key | /etc/sonic/credentials/<>.key
+    GRPC_CLIENT| config
+    - auth_level| client/server/mutual
+    - log_level| debug/info
+    - type | secure/ insecure
+    ```
+
+    **判断根拠**: CONFIG_DB GRPC_CLIENT|certs / GRPC_CLIENT|config の 2 キー定義の根拠。related.config_db の primary 項目。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB
 
-該当なし（[HLD](../reference/glossary.md#term-hld) では明示なし）。証明書パス等は **設定ファイル** で渡す想定。
+[HLD](../reference/glossary.md#term-hld) §gRPC client initialization/deployment では以下 2 キーが定義されている[^1]:
+
+```text
+CONFIG_DB
+GRPC_CLIENT|certs
+  ca_crt    = /etc/sonic/credentials/<root>.pem
+  client_crt = /etc/sonic/credentials/<>.crt
+  client_key = /etc/sonic/credentials/<>.key
+
+GRPC_CLIENT|config
+  auth_level = client | server | mutual
+  log_level  = debug | info | ...
+  type       = secure | insecure
+```
+
+これらは PMON 起動時に読まれ、`ChannelCredentials` の構築や plaintext fallback の切替に使われる。MUX_CABLE / MUX_LINKMGR / PEER_SWITCH 等の DualToR コア設定は本 HLD のスコープ外（[active-active DualToR の上位 HLD](../overlay/active-active-dual-tor.md) 側に属する）。
 
 ### 関連する CLI
 
-HLD で具体名は明示なし。`show mux ...` 系の active-active 統合 CLI から間接的に gRPC channel 状態が見える可能性あり。
+`show muxcable grpc` 系で channel 状態が間接的に見える想定だが、HLD では具体的なコマンド体系は明示されていない[^1]。実装上は ycabled が STATE_DB 配下の channel state を埋め、CLI 側はそれを表示する分業になる。
 
 ### 設定例
 
@@ -232,8 +287,8 @@ docker logs pmon 2>&1 | grep -i grpc
 
 ## 参考リンク
 
+- [DualToR active-active overlay](../overlay/active-active-dual-tor.md)
 - [CLI: show muxcable](../reference/cli/show-muxcable.md)
-- [CLI: config muxcable](../reference/cli/config-muxcable.md)
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 - [Topics: Security / AAA](../topics/15-security-aaa/index.md)
 - [Glossary](../reference/glossary.md)
