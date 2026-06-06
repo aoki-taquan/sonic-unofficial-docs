@@ -44,12 +44,15 @@ show storm-control [-n|--namespace <namespace>] [-d|--display <all|frontend>]
 ```
 
 **動作**:
-サブコマンド未指定時:
+サブコマンド未指定時 (`ctx.invoked_subcommand is None`) は `namespace` 引数の有無で 2 分岐する[^2]:
 
-- `--namespace` 省略時: `display_storm_all()` を実行し、全 PORT_STORM_CONTROL エントリを表示
-- `--namespace` 指定時: `multi_asic.multi_asic_get_ip_intf_from_ns(namespace)` で取得した interface ごとに `get_storm_interface(intf, body)` を呼び、tabulate で `grid` 表示する[^2]
+- `--namespace` 省略時: `display_storm_all()` を呼び、`ConfigDBConnector().connect()` でホスト namespace の [CONFIG_DB](../../reference/glossary.md#term-config_db) に接続して `PORT_STORM_CONTROL` テーブル全体を `natsorted` で並べ替え、`(<interface>, <storm_type>)` キーごとに `kbps` を読み取って tabulate (`grid`) で出力する。
+- `--namespace` 指定時: `multi_asic.multi_asic_get_ip_intf_from_ns(namespace)` で当該 namespace に属する interface 一覧を取得し、各 interface について `get_storm_interface(intf, body)` を呼ぶ。`get_storm_interface` 内では引数なしの `ConfigDBConnector` を使うため、データソース自体はホストの CONFIG_DB であり、namespace 指定は「表示対象 interface のフィルタ」としてのみ作用する[^3]。
 
-表示ヘッダ: `Interface Name | Storm Type | Rate (kbps)`
+表示ヘッダ: `Interface Name | Storm Type | Rate (kbps)`。`PORT_STORM_CONTROL` エントリが 1 件も無い場合は `display_storm_all()` が `return` するため、ヘッダごと出力されない。
+
+!!! warning "`-d/--display` オプションは現状未使用"
+    `--display all|frontend` は `@click.option` で受け付けられるが、`storm_control(ctx, namespace, display)` 関数本体は `display` 変数を参照しない[^2]。他の `show` グループ (例: `show interfaces`) では `display` で frontend ポートのみに絞る共通慣習があり、それに揃えるために宣言だけ残されている形。指定しても動作差分は無いため、フィルタ目的での利用は期待できない。
 
 ### `show storm-control interface <interface>`
 
@@ -65,10 +68,19 @@ multi-[ASIC](../../reference/glossary.md#term-asic) 環境では parent context 
 <!-- evidence:
 source: sonic-net/sonic-utilities/show/main.py#L499-L533 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
 excerpt: |
-  @cli.group('storm-control', invoke_without_command=True)
+  @click.option('--display', '-d', 'display', default=None, show_default=False, type=str, help='all|frontend')
+  @click.pass_context
   def storm_control(ctx, namespace, display):
       header = ['Interface Name', 'Storm Type', 'Rate (kbps)']
-      ...
+      body = []
+      if ctx.invoked_subcommand is None:
+          if namespace is None:
+              display_storm_all()
+          else:
+              interfaces = multi_asic.multi_asic_get_ip_intf_from_ns(namespace)
+              for intf in interfaces:
+                  get_storm_interface(intf, body)
+              click.echo(tabulate(body, header, tablefmt="grid"))
   @storm_control.command('interface')
   def interface(ctx, interface):
       namespace = ctx.parent.params.get('namespace')
@@ -86,10 +98,19 @@ excerpt: |
     **抜粋**:
 
     ```text
-    @cli.group('storm-control', invoke_without_command=True)
+    @click.option('--display', '-d', 'display', default=None, show_default=False, type=str, help='all|frontend')
+    @click.pass_context
     def storm_control(ctx, namespace, display):
         header = ['Interface Name', 'Storm Type', 'Rate (kbps)']
-        ...
+        body = []
+        if ctx.invoked_subcommand is None:
+            if namespace is None:
+                display_storm_all()
+            else:
+                interfaces = multi_asic.multi_asic_get_ip_intf_from_ns(namespace)
+                for intf in interfaces:
+                    get_storm_interface(intf, body)
+                click.echo(tabulate(body, header, tablefmt="grid"))
     @storm_control.command('interface')
     def interface(ctx, interface):
         namespace = ctx.parent.params.get('namespace')
@@ -136,7 +157,9 @@ flowchart LR
 
 [^1]: `show storm-control` グループ定義は `show/main.py` L499-L533。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L499>
 
-[^2]: `display_storm_all` / `display_storm_interface` は同じ `show/main.py` 上部のヘルパ関数。
+[^2]: グループ本体 (`storm_control(ctx, namespace, display)`) の分岐は `show/main.py` L510-L521。`display` 引数は L508 で `@click.option('--display', '-d', ...)` として宣言されるが、L510-L521 の関数本体では一切参照されない。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L508-L521>
+
+[^3]: `display_storm_all` (`show/main.py` L177-L206)、`get_storm_interface` (同 L211-L229)、`display_storm_interface` (同 L234-L259) のいずれも `ConfigDBConnector()` を引数なしで構築するため、接続先はホスト namespace の CONFIG_DB に固定される。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L177-L259>
 
 <!-- cli-sibling -->
 ### 関連 CLI コマンド
@@ -149,4 +172,4 @@ flowchart LR
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: 896d391185a9 -->
