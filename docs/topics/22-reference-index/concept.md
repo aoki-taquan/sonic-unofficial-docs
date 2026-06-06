@@ -64,7 +64,7 @@ related:
 
 ## discrepancy と reference gap の位置
 
-Phase 6 で `verification: hld-only` のページを 0 件にし、すべて `code-verified` または `discrepancy-found` に振り分けた。discrepancy が見つかった箇所は `docs/_meta/discrepancies.md` に一覧化し、reference 側で未カバーのまま残っている項目は `meta/reference-gaps.md` に積み上げてある。これらは本章 [品質と gap](quality-gaps.md) で扱う。
+`verification: hld-only` のページを 0 件にし、すべて `code-verified` または `discrepancy-found` に振り分けた。discrepancy が見つかった箇所はサイト内の [Discrepancy index](../../reference/verification/discrepancy-index.md) から area / `monitor` subtype 別に逆引きできる。reference 側で未カバーのまま残っている項目はリポジトリ内部の `meta/reference-gaps.md` (サイト nav 外) に積み上げてあり、サマリは本章 [品質と gap](quality-gaps.md) に集約している。詳細な追跡フローはそちらを参照のこと。
 
 ## このページの位置付け
 
@@ -119,8 +119,8 @@ reference 索引は次の不変条件を満たす前提で運用している。C
 
 - すべての reference ページは少なくとも 1 つの機能章から `related` で参照されている (orphan reference は CI で警告)。
 - 機能章の `related.cli` / `related.config_db` / `related.yang` に並ぶ名前は、対応する reference ページが存在する。
-- `discrepancy-found` のページは `docs/_meta/discrepancies.md` から逆引きできる。
-- reference 側の未カバー項目は `meta/reference-gaps.md` に積まれ、本章 [品質と gap](quality-gaps.md) に集約される。
+- `discrepancy-found` のページはサイト内の [Discrepancy index](../../reference/verification/discrepancy-index.md) から逆引きできる (`meta/scripts/gen_discrepancy_index.py` で自動生成)。
+- reference 側の未カバー項目はリポジトリ内部の `meta/reference-gaps.md` に積まれ、サイト側では本章 [品質と gap](quality-gaps.md) に集約される。
 
 不変条件が崩れたときは「reference を足す」「機能章の related を直す」「discrepancy を昇格させる」のいずれかで埋める。索引層の役割は、この埋め残しを可視化することにある。
 
