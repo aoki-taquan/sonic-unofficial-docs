@@ -83,20 +83,26 @@ module: sonic-srv6
 
 ## leaf 一覧
 
-| leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
-|------|------|----|------|-----------|----------------------|------|
-| `locator_name` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/locator_name` | `string` | yes |  |  | [SRv6](../../reference/glossary.md#term-srv6) locator name. |
-| `prefix` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/prefix` | `inet:ipv6-address` | yes |  |  | IPv6 address prefix for this locator. |
-| `block_len` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/block_len` | `uint8` |  | `32` | range 1..128 | Length in bits of the [SRv6](../../reference/glossary.md#term-srv6) locator block portion. |
-| `node_len` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/node_len` | `uint8` |  | `16` | range 1..128 | Length in bits of the SRv6 locator node portion. |
-| `func_len` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/func_len` | `uint8` |  | `16` | range 0..128 | Length in bits of the SRv6 SID function portion. |
-| `arg_len` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/arg_len` | `uint8` |  | `0` | range 0..128 | Length in bits of the SRv6 SID argument portion. |
-| `vrf` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/vrf` | `union` |  | `default` | leafref([VRF](../../reference/glossary.md#term-vrf)) or `default` | [VRF](../../reference/glossary.md#term-vrf) name. |
-| `ip_prefix` | `sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/ip_prefix` | `inet:ipv6-prefix` | yes |  |  | IPv6 prefix representing this SID. |
-| `locator` | `sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/locator` | `leafref` | yes |  | /srv6:sonic-srv6/srv6:SRV6_MY_LOCATORS/srv6:SRV6_MY_LOCATORS_LIST/srv6:locator_name | Reference to the parent SRv6 locator. |
-| `action` | `sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/action` | `enumeration` |  |  | `uN`, `uDT46` | SRv6 endpoint behavior (uN for prefix SID, uDT46 for decap with [VRF](../../reference/glossary.md#term-vrf) lookup). |
-| `decap_vrf` | `sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/decap_vrf` | `union` |  | `default` | leafref(VRF) or `default` | VRF name used for decapsulation. |
-| `decap_dscp_mode` | `sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/decap_dscp_mode` | `enumeration` |  |  | `uniform`, `pipe` | [DSCP](../../reference/glossary.md#term-dscp) handling mode for decapsulated packets. |
+「キー」列は当該 leaf が list の `key` 文を構成するかを示し、「必須」列は [YANG](../../reference/glossary.md#term-yang) の `mandatory true` 文の有無を示す。list key は実装上必ず指定する必要があるが、[YANG](../../reference/glossary.md#term-yang) 上では `mandatory` 文は付かない（RFC 7950 §7.8.2）[^2]。よって `prefix` のみが純粋な mandatory leaf で、`locator_name` / `ip_prefix` / `locator` は key として暗黙的に必須となる。
+
+| leaf | パス | 型 | キー | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
+|------|------|----|------|------|-----------|----------------------|------|
+| `locator_name` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/locator_name` | `string` | yes |  |  |  | [SRv6](../../reference/glossary.md#term-srv6) locator name. |
+| `prefix` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/prefix` | `inet:ipv6-address` |  | yes |  |  | IPv6 address prefix for this locator. |
+| `block_len` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/block_len` | `uint8` |  |  | `32` | range 1..128 | Length in bits of the [SRv6](../../reference/glossary.md#term-srv6) locator block portion. |
+| `node_len` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/node_len` | `uint8` |  |  | `16` | range 1..128 | Length in bits of the SRv6 locator node portion. |
+| `func_len` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/func_len` | `uint8` |  |  | `16` | range 0..128 | Length in bits of the SRv6 SID function portion. |
+| `arg_len` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/arg_len` | `uint8` |  |  | `0` | range 0..128 | Length in bits of the SRv6 SID argument portion. |
+| `vrf` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/vrf` | `union` |  |  | `default` | leafref([VRF](../../reference/glossary.md#term-vrf)) or `default` | [VRF](../../reference/glossary.md#term-vrf) name. |
+| `ip_prefix` | `sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/ip_prefix` | `inet:ipv6-prefix` | yes |  |  |  | IPv6 prefix representing this SID. |
+| `locator` | `sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/locator` | `leafref` | yes |  |  | /srv6:sonic-srv6/srv6:SRV6_MY_LOCATORS/srv6:SRV6_MY_LOCATORS_LIST/srv6:locator_name | Reference to the parent SRv6 locator. |
+| `action` | `sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/action` | `enumeration` |  |  |  | `uN`, `uDT46` | SRv6 endpoint behavior (uN for prefix SID, uDT46 for decap with [VRF](../../reference/glossary.md#term-vrf) lookup). |
+| `decap_vrf` | `sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/decap_vrf` | `union` |  |  | `default` | leafref(VRF) or `default` | VRF name used for decapsulation. |
+| `decap_dscp_mode` | `sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/decap_dscp_mode` | `enumeration` |  |  |  | `uniform`, `pipe` | [DSCP](../../reference/glossary.md#term-dscp) handling mode for decapsulated packets. |
+
+<!-- evidence: sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-srv6.yang lines 27-29 (key "locator_name"), 35-39 (prefix mandatory true), 98-99 (key "locator ip_prefix") -->
+
+なお `must 'block_len + node_len + func_len + arg_len <= 128'` 制約は `SRV6_MY_LOCATORS_LIST` 直下に置かれており、各長 leaf の合計が IPv6 アドレス長 128 ビットを超えないことを強制する[^1]。
 
 ## must 制約
 
@@ -139,5 +145,6 @@ module: sonic-srv6
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-srv6.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^2]: RFC 7950 §7.8.2 ("The list's "key" Statement") — list key leafs はインスタンスを一意に識別するため事実上必須だが、`mandatory` substatement の指定有無とは独立した扱いとなる。
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

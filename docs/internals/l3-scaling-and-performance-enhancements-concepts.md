@@ -81,19 +81,21 @@ HLD §1.1 の性能要件と §2.2.1.1 のターゲットを以下に集約す�
 <!-- phase-boundary -->
 ## 実装フェーズ境界
 
-!!! info "Phase 別の実装済 / 未実装 サマリ"
-    本ページは `monitor: partially_implemented` で、HLD で示された一連の機能
-    が **段階的に取り込まれている** 状態を扱う。フェーズ毎の実装境界を
-    1 枚の表に集約する (詳細は本ページ上部の `diff` admonition および
-    [discrepancy-index](../reference/verification/discrepancy-index.md) を参照)。
+!!! info "改善 6 系統の master 取り込み状況"
+    本ページは `monitor: partially_implemented` で、§4 で列挙した 6 系統の改善が
+    **個別に取り込まれている / 値が採用されていない** 状態を扱う。各系統の
+    現状は以下のとおり（裏取り根拠は [limitations](l3-scaling-and-performance-enhancements-limitations.md) §2-3）。
 
-    | Phase | 範囲 (機能 / 段階) | 実装済 (master 取り込み済) | 未実装 (HLD 提案のみ) |
-    |---|---|---|---|
-    | Phase 1 — 基本機能 | HLD §概要 / §設計の中核ユースケース | 取り込み済 — 本ページの「実装の概観」「実装詳細」節および `diff` admonition の現状側を参照 | — (Phase 1 は実装済) |
-    | Phase 2 — 拡張機能 | HLD §拡張 / §追加要件 / §周辺統合 | 一部のみ取り込み済 — 本ページ「実装詳細」の補足参照 | 未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および `diff` admonition の差分側に列挙 |
-    | Phase 3 — 将来拡張 | HLD §Future Work / §将来課題 | — | 未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点) |
+    | Phase (系統) | 現状 | 補足 |
+    |---|---|---|
+    | sairedis bulk route (`RouteOrch` + `gRouteBulker`) | 実装済 (取り込み済) | `sonic-swss/orchagent/routeorch.cpp` L41 ほか |
+    | `fpmsyncd` の master device lookup スキップ | 実装済 (取り込み済) | `sonic-swss/fpmsyncd/routesync.cpp` L2077-L2082 |
+    | kernel ARP/ND `gc_thresh` 引き上げ | 未実装 (未採用) | 現行値は v4/v6 とも `1024/2048/4096`（HLD 提案 v4 16k/32k/48k は不採用） |
+    | CoPP ARP/ND 上限 8000 pps 化 | 未実装 (未採用) | `copp_cfg.j2` で `arp` trap は `queue4_group2`（cir 600 のまま） |
+    | sairedis 内 nlohmann/json v3.6 更新 | 未検証 | 取り込み年代が古く本確認のスコープ外 |
+    | `show arp` / `show ndp` 個別 FDB lookup | 未検証 | 本確認のスコープ外 |
 
-    凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。
+    凡例: 「実装済 (取り込み済)」=現行 master でコード確認 / 「未実装 (未採用)」=HLD 値は採用されず保守側で据え置き / 「未検証」=本確認スコープ外。
 <!-- /phase-boundary -->
 
 ## 実装との乖離
@@ -108,9 +110,9 @@ HLD §1.1 の性能要件と §2.2.1.1 のターゲットを以下に集約す�
 ## このページを読んだ後の次アクション
 
 !!! tip "読み手向け"
-    - **本機能を実運用で使う場合**: 取り込み済の部分のみ運用可能。欠落部分の利用は不可なので本文「実装との乖離」を確認した上で適用範囲を限定する
-    - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
-    - **代替手段 / 関連 reference**: 本ページの frontmatter `related` が空のため、[Reference 索引](../reference/index.md) から関連テーブル / CLI / YANG を辿る
+    - **本機能を実運用で使う場合**: bulk route と `fpmsyncd` 最適化は master 取り込み済のため routing path latency 改善は享受可能。一方、kernel `gc_thresh` と CoPP ARP/ND 値は HLD 提案値が不採用なのでスケール試験設計時に注意（詳細は [limitations](l3-scaling-and-performance-enhancements-limitations.md)）
+    - **upstream 動向を追う場合**: VnetOrch の bulker 拡張など継続中の PR は [sonic-swss #4303](https://github.com/sonic-net/sonic-swss/pull/4303) ほか。`RouteOrch` / `fpmsyncd` のクラス名で grep するのが速い
+    - **代替手段 / 関連 reference**: frontmatter `related` の [`COPP_GROUP`](../reference/config-db/copp-group.md) / [`COPP_TRAP`](../reference/config-db/copp-trap.md) / `show arp` / `sonic-copp` から関連テーブル / CLI / YANG を辿る
 
 !!! note "本ドキュメントの追跡"
     - monitor: `partially_implemented` / last_verified: `2026-05-11`

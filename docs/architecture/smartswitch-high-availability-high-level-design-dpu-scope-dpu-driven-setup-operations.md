@@ -10,6 +10,9 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/smart-switch/high-availability/smart-switch-ha-dpu-scope-dpu-driven-setup.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/smart-switch/high-availability/smart-switch-ha-detailed-design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
   - DPU
@@ -62,11 +65,26 @@ HA_SCOPE:scope-A
 
 ## 3. 状態と forwarding の確認
 
-DPU の HA 状態は telemetry（gNMI）でのみ正規に取得できると HLD は述べているが、**具体的な gNMI path や CLI コマンドは HLD に記載がない**[^1]。以下のコマンド例は [SONiC](../reference/glossary.md#term-sonic) 既存 NOS 機能（`show bfd` / `show platform` / `show chassis modules`）と DASH SDN config object 名から推定した運用ガイドであり、HLD に裏取りされた仕様ではない（本ページが `verification: hld-only` である理由）。実環境では platform / SDN controller 側のドキュメントを優先すること。
+DPU-Scope-DPU-Driven setup HLD は telemetry/gNMI の具体的な path を持たず、SmartSwitch HA detailed design に委譲している[^1]。後者は **NPU の `DASH_STATE_DB` 上の `DASH_HA_SCOPE_STATE` テーブルを gNMI 経由で SDN controller に公開** すると定義しており[^2]、運用者が参照する主な状態フィールドは以下のとおり:
+
+| フィールド | 意味 |
+|------------|------|
+| `local_ha_state` | NPU `hamgrd` が見ている HA state machine の状態 |
+| `local_target_asic_ha_state` / `local_acked_asic_ha_state` | hamgrd が DPU [ASIC](../reference/glossary.md#term-asic) に要求中の state / ASIC が ack した state |
+| `local_target_term` / `local_acked_term` | 現在の target term / ASIC ack 済み term |
+| `peer_ha_state` / `peer_term` | 相手 DPU の HA state / term |
+| `local_vdpu_midplane_state` / `local_vdpu_control_plane_state` / `local_vdpu_data_plane_state` | midplane / control / data plane の health（`up` / `down` / `unknown`） |
+| `local_vdpu_up_bfd_sessions_v4` / `_v6` | up になっている BFD セッションの peer NPU IP |
+| `pending_operation_types` / `switchover_state` / `flow_sync_session_state` | 進行中の switchover / flow_reconcile / brainsplit_recover の状態 |
+
+これらは detailed design の §2.2 "External facing state tables" に定義されている[^2]。DPU 側にも別途 `DASH_HA_SET_STATE` / `DASH_HA_SCOPE_STATE`（ASIC ack 済みの `ha_role` = `dead` / `active` / `standby` / `standalone` / `switching_to_active` を保持）がある[^2]が、SDN controller への公開は NPU 側のみ。
+
+以下のコマンド例は上記スキーマに対する参照例で、`gnmic` の path 文字列は platform 実装ごとに decorate 形式が異なる（OC-style か proprietary か）ため、実環境では platform/SDN controller 側のドキュメントを優先すること。CLI 名（`show bfd` / `show chassis modules` / `show platform`）は [SONiC](../reference/glossary.md#term-sonic) 既存 NOS 機能であり、本 HLD に裏取りされた HA 専用 CLI ではない（本ページが `verification: hld-only` である理由）。
 
 ```bash
-# DPU の HA 状態（telemetry / gNMI 経由 — path は SDN controller 実装依存、HLD 未記載）
-gnmic -a <switch> get --path <HA scope state path>
+# DPU の HA 状態（NPU DASH_STATE_DB / DASH_HA_SCOPE_STATE を gNMI で取得）
+# path は SDN controller の YANG/OC モデル依存。テーブル名と field 名は detailed design §2.2 を参照
+gnmic -a <switch> get --path '/.../DASH_HA_SCOPE_STATE/<vdpu_id>/<ha_scope_id>'
 
 # NPU 上の next hop が想定 DPU VIP を向いているか
 ip route show | grep <DPU VIP range>
@@ -90,18 +108,18 @@ show platform inventory
 1. SDN から `HA_SCOPE` の `desired state=dead` を送出
 2. `show bfd sessions` で対象 DPU の BFD が Down に落ちる（応答停止）
 3. `ip route` の next hop が standby 側に切り替わる
-4. telemetry で対象 DPU が `Destroying` → `Dead` に推移
-5. 相手 DPU が `SwitchingToStandalone` → `Standalone` に推移
-6. SDN から `flow reconcile` 承認が出されたことを SDN controller のログで確認
+4. telemetry（`DASH_HA_SCOPE_STATE.local_ha_state`）で対象 DPU が `Destroying` → `Dead` に推移[^2]
+5. 相手 DPU の `local_ha_state` が `SwitchingToStandalone` → `Standalone` に推移[^2]
+6. `DASH_HA_SCOPE_STATE.pending_operation_types` から `flow_reconcile` が落ち、`flow_sync_session_state` が `completed` になることを SDN controller 側で確認[^2]
 
 `Destroying` 中の収束タイマー満了前に DPU が完全停止すると残留 traffic が drop するので、タイマー値は SDN policy の MTBF / 収束時間に合わせて調整する[^1]。
 
 ### 4.2 Unplanned failover
 
-1. `show platform` で対象 DPU が PMON により dead 認識されているか確認
+1. `show platform` で対象 DPU が PMON により dead 認識されているか確認（NPU `CHASSIS_STATE_DB` の `DPU_STATE` 経由[^2]）
 2. `show bfd sessions` で対象 DPU の BFD が Down
-3. telemetry で相手 DPU が `Standalone` に上がっていること
-4. SDN controller 側に `flow reconcile needed` notification が届いていること
+3. telemetry の `DASH_HA_SCOPE_STATE.local_ha_state` で相手 DPU が `Standalone` に上がっていること[^2]
+4. `DASH_HA_SCOPE_STATE.pending_operation_types` に `flow_reconcile` が積まれ、SDN controller 側に承認要求が届いていること[^2]
 
 ## 5. トラブルシュート
 
@@ -114,11 +132,12 @@ show platform inventory
 | HA 再 pair で新 DPU が `Dead` のまま | 旧 HA set object の削除と新 HA set object の作成順。[ENI](../reference/glossary.md#term-eni) 全 program 後に `AdminState=Enabled` |
 
 ```bash
-# 代表トラブルシュート（CLI 名・gNMI path は HLD 未記載の推定ガイド、§3 参照）
+# 代表トラブルシュート（CLI 名は SONiC 既存 NOS 機能、gNMI path は §3 参照）
 show bfd sessions
 ip route show | grep <DPU VIP range>
 show chassis modules status
-gnmic -a <switch> get --path <HA scope state path>
+# DASH_HA_SCOPE_STATE の local_ha_state / pending_operation_types を見る
+gnmic -a <switch> get --path '/.../DASH_HA_SCOPE_STATE/<vdpu_id>/<ha_scope_id>'
 ```
 
 ## 6. 制限事項
@@ -141,5 +160,6 @@ gnmic -a <switch> get --path <HA scope state path>
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/high-availability/smart-switch-ha-dpu-scope-dpu-driven-setup.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/SONiC` `doc/smart-switch/high-availability/smart-switch-ha-detailed-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06` (§2.2 External facing state tables / §3 Telemetry)
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: ec18b66e3507 -->

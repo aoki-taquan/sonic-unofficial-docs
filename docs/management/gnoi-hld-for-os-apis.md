@@ -3,7 +3,7 @@ title: gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
 description: 'gNOI OS API（Install / Activate / Verify と sonic-installer 連携） — gNOI OS は gRPC ストリームで OS イメージを配布・有効化・検証する 3 RPC 構成の API であり、sonic-installer を内部で呼び出してスイッチの OS 管理を実現する。'
 area: management
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-06-06
 sources:
 - repo: sonic-net/SONiC
   path: doc/mgmt/gnmi/gnoi_os_hld.md
@@ -11,6 +11,15 @@ sources:
 - repo: sonic-net/sonic-host-services
   path: host_modules/image_service.py
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-gnmi
+  path: gnoi_client/gnoi_client.go
+  ref: master
+- repo: sonic-net/sonic-gnmi
+  path: gnoi_client/os/os.go
+  ref: master
+- repo: sonic-net/sonic-gnmi
+  path: gnoi_client/config/flag.go
+  ref: master
 related:
   config_db:
   - TELEMETRY
@@ -166,11 +175,14 @@ OS API 専用の [CONFIG_DB](../reference/glossary.md#term-config_db) スキー�
 
 ### 関連する CLI
 
+`gnoi_client` は OS / System 等のサブコマンドではなく `-module` / `-rpc` フラグでディスパッチする（`gnoi_client.go` L37-80）。引数は `-jsonin` に JSON で渡し、Install では別途 `-input_file` で OS イメージを指定する（`config/flag.go` L7-17、`os/os.go` L60-73）[^3]。
+
 | Command | 用途 |
 |---------|------|
-| `gnoi_client os install ...` | Install RPC（JSON / proto 双方サポート予定）[^1] |
-| `gnoi_client os activate ...` | Activate RPC |
-| `gnoi_client os verify` | Verify RPC |
+| `gnoi_client -module OS -rpc Install -jsonin '{...}' -input_file <image>` | Install RPC。`transferRequest` を JSON、bytes を `-input_file` で送る[^3] |
+| `gnoi_client -module OS -rpc Activate -jsonin '{...}'` | Activate RPC。`ActivateRequest` を JSON で渡す[^3] |
+| `gnoi_client -module OS -rpc Verify` | Verify RPC。引数なし[^3] |
+| `gnoi_client -module System -rpc Reboot -jsonin '{...}'` | gNOI System Reboot。OS API には含まれない別 RPC[^3] |
 | `sonic-installer ...` | host 側で実行される。バックエンドの `image_service` 経由で利用[^2] |
 
 ### 関連する YANG
@@ -179,19 +191,26 @@ OS 操作そのものを表現する [YANG](../reference/glossary.md#term-yang) 
 
 ### 設定例
 
+実行例（フラグ名・引数形式は `sonic-gnmi/gnoi_client` master 実装に準拠[^3]）:
+
 ```bash
-# Install: tar.gz バイナリを stream 転送
-gnoi_client os install --version 20240801.45 --image ./sonic.bin
+# Install: TransferRequest を JSON、image bytes を -input_file で渡す stream
+gnoi_client -module OS -rpc Install \
+    -jsonin '{"transferRequest":{"version":"20240801.45"}}' \
+    -input_file ./sonic.bin
 
 # Activate: 次回起動 image としてセット（reboot は別 RPC）
-gnoi_client os activate --version 20240801.45 --no_reboot
+gnoi_client -module OS -rpc Activate \
+    -jsonin '{"version":"20240801.45","no_reboot":true}'
 
-# 反映のため reboot
-gnoi_client system reboot
+# 反映のため reboot（gNOI System Reboot）
+gnoi_client -module System -rpc Reboot -jsonin '{"method":"COLD","message":"post-activate"}'
 
-# 確認
-gnoi_client os verify
+# 確認（引数なし）
+gnoi_client -module OS -rpc Verify
 ```
+
+`-target` / `-target_name` / TLS 関連フラグも実行時に必要だが省略している（`config/flag.go` L7-17）[^3]。
 
 ## 制限事項
 
@@ -229,6 +248,7 @@ redis-cli -n 4 hgetall 'GNMI|certs'
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnoi_os_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 [^2]: `sonic-net/sonic-host-services` `host_modules/image_service.py` @ `master`
+[^3]: `sonic-net/sonic-gnmi` `gnoi_client/gnoi_client.go` L37-80（`-module` / `-rpc` 分岐）/ `gnoi_client/config/flag.go` L7-17（`-jsonin` / `-input_file` 等のフラグ定義）/ `gnoi_client/os/os.go` L20-72（OS Verify / Activate / Install 引数読み取り）@ `master`
 
 <!-- concerns hint:
 - UMF / sonic-gnmi の OS RPC handler 実装存在確認
