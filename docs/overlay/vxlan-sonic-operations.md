@@ -3,7 +3,7 @@ title: VXLAN / VNet 設定と運用（CONFIG_DB / APP_DB / CLI）
 description: VXLAN / VNet の設定経路。CONFIG_DB / APP_DB スキーマ、CLI 一覧、VNet ピアリングの設定例、運用時のトラブルシューティング手順を扱う。
 area: overlay
 verification: code-verified
-last_verified: 2026-06-04
+last_verified: 2026-06-06
 page_kind: split-child
 sources:
 - repo: sonic-net/SONiC
@@ -11,6 +11,9 @@ sources:
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 - repo: sonic-net/sonic-utilities
   path: show/vxlan.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/vxlan.py
   ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
@@ -24,19 +27,10 @@ related:
   cli:
   - config vxlan
   - show vxlan
-  - show mac
-  - config vlan
-  - config vnet
-  - show vlan
-  - config vrf
   yang:
-  - sonic-vlan
   - sonic-vxlan
   - sonic-vnet
-  - sonic-vlan-sub-interface
   - sonic-vrf
-  - sonic-port
-  - sonic-crm
 ---
 
 # VXLAN / VNet 設定と運用
@@ -106,16 +100,20 @@ VNET_TABLE:<vnet>
 
 | Command | 用途 |
 |---------|------|
-| `config vxlan <name> vlan <vid> vni <vni>` | VLAN ↔ VNI |
-| `config vxlan <name> src_if <intf>` | [VTEP](../reference/glossary.md#term-vtep) の source IF |
-| `config vxlan <name> vlan <vid> flood vtep <ip,...>` | HER 用 flood list |
-| `show vxlan name <name>` | 個別 [VXLAN](../reference/glossary.md#term-vxlan) tunnel 情報[^2] |
+| `config vxlan add <vxlan_name> <src_ip>` | [VTEP](../reference/glossary.md#term-vtep) tunnel エントリの追加（`VXLAN_TUNNEL` を書く）[^3] |
+| `config vxlan del <vxlan_name>` | tunnel エントリの削除[^3] |
+| `config vxlan map add <vxlan_name> <vlan_id> <vni>` | VLAN ↔ VNI のマップ追加（`VXLAN_TUNNEL_MAP` を書く）[^3] |
+| `config vxlan map del <vxlan_name> <vlan_id> <vni>` | VLAN ↔ VNI マップ削除[^3] |
+| `config vxlan map_range add <vxlan_name> <vlan_start> <vlan_end> <vni_start>` | VLAN レンジ ↔ VNI レンジの一括マップ[^3] |
+| `config vxlan evpn_nvo add <nvo_name> <vxlan_name>` | EVPN NVO エントリ追加[^3] |
+| `show vxlan name <vxlan_name>` | 個別 [VXLAN](../reference/glossary.md#term-vxlan) tunnel 情報[^2] |
 | `show vxlan tunnel` | 全 VTEP tunnel と src/dst を一覧[^2] |
-| `show vxlan remotevni all` / `show vxlan remotevni <vtep_ip>` | リモート VTEP から学習した VNI 一覧[^2] |
+| `show vxlan interface` | VTEP 情報（src IP・status）[^2] |
+| `show vxlan remotevni all` / `show vxlan remotevni <vtep_ip>` | リモート VTEP から学習した VNI 一覧（`all` は sentinel）[^2] |
 | `show vxlan remotevtep` | リモート VTEP 一覧（[FDB](../reference/glossary.md#term-fdb) / VNI 経由で発見）[^2] |
 | `show vxlan vlanvnimap` / `show vxlan vrfvnimap` | VLAN ↔ VNI / VRF ↔ VNI マッピング[^2] |
-| `show vxlan remotemac all` | リモート VTEP 経由の MAC 一覧[^2] |
-| `show vxlan counters` | tunnel カウンタ[^2] |
+| `show vxlan remotemac all` / `show vxlan remotemac <vtep_ip>` | リモート VTEP 経由の MAC 一覧[^2] |
+| `show vxlan counters [tunnel]` | tunnel カウンタ[^2] |
 
 VNet ピアリングの CLI は無く、[CONFIG_DB](../reference/glossary.md#term-config_db) を直接編集する想定[^1]。
 
@@ -179,5 +177,6 @@ docker exec bgp vtysh -c 'show bgp l2vpn evpn summary'
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Vxlan_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 [^2]: `sonic-net/sonic-utilities` `show/vxlan.py` (`vxlan` click group) L12-L392 @ `39732bceb8bdefe706518ab40623bbbba6ff33b9`
+[^3]: `sonic-net/sonic-utilities` `config/vxlan.py` (`vxlan` click group, `add/del/map/map_range/evpn_nvo` subcommands) L14-L325 @ `39732bceb8bdefe706518ab40623bbbba6ff33b9`
 
 <!-- glossary-links-injected: 302f3d074477 -->
