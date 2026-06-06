@@ -78,7 +78,7 @@ SRv6 は IPv6 をベースに SID list を運ぶ network programming framework�
 | ページ | 行数 | 状態 | verification | 主目的 |
 |---|---|---|---|---|
 | advanced | 120 | ✅ 完成 | meta | 発展トピック |
-| architecture | 70 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
+| architecture | 80 | ⚠️ プレースホルダ | code-verified | アーキテクチャ・データフロー |
 | concept | 227 | ✅ 完成 | code-verified | 概念・位置付け |
 | internals | 129 | ✅ 完成 | meta | 内部実装 |
 | operations | 254 | ✅ 完成 | code-verified | 運用・デバッグ |
