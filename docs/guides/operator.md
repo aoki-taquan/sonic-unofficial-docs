@@ -92,7 +92,7 @@ SONiC を一度も触ったことが無い読者でも、この 5 ページで�
 
 - 変更前: `show runningconfiguration all` で現状の running を控える
 - 適用: `config <subcommand>` で適用（即時反映、CONFIG_DB に書かれる）
-- 確認: 対応する `show` コマンドと、必要なら `redis-cli -n 4 hgetall '<TABLE>|<key>'` で CONFIG_DB を直接覗く
+- 確認: 対応する `show` コマンドと、必要なら `redis-cli -n 4 hgetall '<TABLE>|<key>'` で CONFIG_DB を直接覗く（`-n 4` は CONFIG_DB の Redis DB index。`schema.h` で `#define CONFIG_DB 4`、`database_config.json` の `CONFIG_DB.id` も 4 と定義されています<!-- evidence: sonic-net/sonic-swss-common common/schema.h L16 --><!-- evidence: sonic-net/sonic-swss-common common/database_config.json L35-L37 -->）
 - 保存: `config save -y`（`/etc/sonic/config_db.json` に永続化、再起動後も保持）
 - rollback: 直前の `config_db.json` バックアップに対して `config reload -y <file>`
 
