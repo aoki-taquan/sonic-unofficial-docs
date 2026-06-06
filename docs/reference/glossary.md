@@ -1607,8 +1607,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [サイトマップ](../_meta/sitemap.md) (27)
 - [Wake-on-LAN（wol CLI と SonicWolService gNOI）](../switching/wake-on-lan-in-sonic.md) (21)
+- [gNOI / gNSI](../topics/10-gnmi-openconfig/gnoi-gnsi.md) (19)
 - [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../system/smart-switch-reboot-high-level-design.md) (18)
-- [gNOI / gNSI](../topics/10-gnmi-openconfig/gnoi-gnsi.md) (17)
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (16)
 
 ### [Graceful Restart](#term-graceful-restart)
