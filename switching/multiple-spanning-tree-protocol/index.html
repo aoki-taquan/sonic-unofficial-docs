@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Multiple Spanning Tree Protocol (MSTP) on SONiC — IEEE 802.1Q-2014 準拠の Spanning Tree。RSTP / PVST に対し 「VLAN 群を 1 つの MSTI（インスタンス）にまとめてインスタンス単位でトポロジを計算する」 のが特徴。">
+        <meta name="description" content="SONiC の MSTP (IEEE 802.1Q-2014) サポート。stpmgrd / stpd と STP_MST* テーブル、CIST / MSTI、MST Region の決まり方、SAI マッピング、モード切替時のトポロジ揺れまでを 実装裏取り付きで整理する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Multiple Spanning Tree Protocol (MSTP) on SONiC - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Multiple Spanning Tree Protocol (MSTP) on SONiC — IEEE 802.1Q-2014 準拠の Spanning Tree。RSTP / PVST に対し 「VLAN 群を 1 つの MSTI（インスタンス）にまとめてインスタンス単位でトポロジを計算する」 のが特徴。" />
+<meta property="og:description" content="SONiC の MSTP (IEEE 802.1Q-2014) サポート。stpmgrd / stpd と STP_MST* テーブル、CIST / MSTI、MST Region の決まり方、SAI マッピング、モード切替時のトポロジ揺れまでを 実装裏取り付きで整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/switching/multiple-spanning-tree-protocol.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/switching/multiple-spanning-tree-protocol/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Multiple Spanning Tree Protocol (MSTP) on SONiC - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Multiple Spanning Tree Protocol (MSTP) on SONiC — IEEE 802.1Q-2014 準拠の Spanning Tree。RSTP / PVST に対し 「VLAN 群を 1 つの MSTI（インスタンス）にまとめてインスタンス単位でトポロジを計算する」 のが特徴。" />
+<meta property="twitter:description" content="SONiC の MSTP (IEEE 802.1Q-2014) サポート。stpmgrd / stpd と STP_MST* テーブル、CIST / MSTI、MST Region の決まり方、SAI マッピング、モード切替時のトポロジ揺れまでを 実装裏取り付きで整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/switching/multiple-spanning-tree-protocol.png" />
 </head>
   
@@ -36266,8 +36266,18 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified（基本構成のみ）</p>
-<p>現行 master の <code>sonic-swss/cfgmgr/stpmgrd.cpp:47-49</code> で <code>STP_MST</code> / <code>STP_MST_INST</code> / <code>STP_MST_PORT</code> テーブルを TableConnector に登録、<code>stpmgr</code> クラスが存在することを確認。<code>sonic-yang-models</code> の <code>sonic-spanning-tree.yang</code> も存在。CLI / IS-IS のような MSTP 専用 CLI 詳細は元 HLD 参照（verified at: 2026-05-09）。</p>
+<p>現行 master の <code>sonic-swss/cfgmgr/stpmgrd.cpp:47-49</code> で <code>STP_MST</code> / <code>STP_MST_INST</code> / <code>STP_MST_PORT</code> テーブルを <code>TableConnector</code> に登録し<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>、<code>stpmgr</code> クラスへ subscribe させていることを確認。<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-spanning-tree.yang</code> に <code>STP_MST</code> / <code>STP_MST_INST</code> / <code>STP_MST_PORT</code> の各コンテナとリスト定義が存在することも確認した<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。MSTP 専用 CLI サブコマンドの細部は元 HLD 参照（verified at: 2026-06-06）。</p>
 </div>
+<!-- evidence
+source: sonic-swss/cfgmgr/stpmgrd.cpp#L47-L65
+note: STP_MST / STP_MST_INST / STP_MST_PORT を CONFIG_DB の TableConnector として宣言し、StpMgr の subscribe テーブル群に組み込んでいる。
+-->
+
+<!-- evidence
+source: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-spanning-tree.yang#L336-L490
+note: container STP_MST / STP_MST_INST / STP_MST_PORT がそれぞれ STP_MST_TABLE / STP_MST_INST_TABLE / STP_MST_PORT_TABLE にマップされ、region_name / revision / instance / vlan_list / bridge_priority / priority / path_cost を定義する。
+-->
+
 <h1 id="multiple-spanning-tree-protocol-mstp-on-sonic">Multiple Spanning Tree Protocol (MSTP) on SONiC<a class="headerlink" href="#multiple-spanning-tree-protocol-mstp-on-sonic" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ol>
@@ -36444,6 +36454,12 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/MSTP/MSTP.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>cfgmgr/stpmgrd.cpp</code> L47-L65 @ <code>4305596156d70e9797e8a881b3d19b46de0bce0d</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-spanning-tree.yang</code> L336-L490 @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

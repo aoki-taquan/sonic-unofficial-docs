@@ -8669,7 +8669,7 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシュート
+        実装との乖離
       
     </span>
   </a>
@@ -8680,17 +8680,6 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装との乖離
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -8699,7 +8688,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -8721,7 +8710,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         自動収集された参考リンク
@@ -36499,7 +36488,7 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシュート
+        実装との乖離
       
     </span>
   </a>
@@ -36510,17 +36499,6 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装との乖離
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -36529,7 +36507,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36551,7 +36529,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         自動収集された参考リンク
@@ -36592,7 +36570,7 @@
 <ul>
 <li>HLD は <code>sonic-utilities/scripts/ssdhealth</code> という独立スクリプトを示すが、master では Python パッケージ <code>sonic-utilities/ssdutil/</code> (<code>__init__.py</code> / <code>main.py</code>) が唯一の実体で、<code>ssdhealth</code> という名前のスクリプトは存在しない。<code>show platform ssdhealth</code> (sonic-utilities/show/platform.py) は内部で <code>sudo ssdutil -d &lt;device&gt;</code> を呼ぶラッパーになっている。</li>
 <li>HLD の抽象クラス配置 <code>sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py</code> は <strong>存在しない</strong>。master では <code>sonic-platform-common/sonic_platform_base/sonic_storage/</code> 配下に <code>storage_base.py</code> / <code>ssd.py</code> / <code>emmc.py</code> / <code>usb.py</code> / <code>storage_devices.py</code> として再構成されている。</li>
-<li>HLD オプションの pmon <code>ssdmond</code> デーモンは <code>sonic-platform-daemons</code> に <strong>存在しない</strong>（取り込まれていない）。</li>
+<li>HLD オプションの pmon <code>ssdmond</code> デーモンは <code>sonic-platform-daemons</code> に <strong>存在しない</strong>（取り込まれていない）。代わりに後発の <code>sonic-stormond</code> が STATE_DB の <code>STORAGE_INFO</code> テーブルに FSIO 統計を周期同期する（デフォルト 1h、SSD health の閾値割り込み通知ではない）<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
 </ul>
 <p>本ページの記述は HLD 文書としての履歴的価値はあるが、現行コード・パスを参照する場合は ssdutil (<code>ssdutil/main.py</code>) と <code>sonic_storage/</code> 構成を確認すること。</p>
 </div>
@@ -36867,8 +36845,8 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 <tr>
 <td><code>ssdmond</code> 常時監視デーモン</td>
 <td>Open Question</td>
-<td>現行 <code>sonic-platform-daemons/</code> 配下に <code>ssdmond</code> 名のデーモン無し</td>
-<td>⚠️ 未取り込み</td>
+<td><code>ssdmond</code> 名のデーモンは無し。代替として <code>sonic-stormond</code> が <code>STORAGE_INFO</code> を 1h 周期で sync するが、health 閾値アラートではなく FSIO 統計の同期が主目的<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td>⚠️ 別実装に置換</td>
 </tr>
 <tr>
 <td>SNMP MIB への露出</td>
@@ -36932,28 +36910,23 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 <li><a href="../../reference/cli/show-platform/">CLI: show platform</a></li>
 </ul>
 <h2 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># ssdhealth が書き込む STATE_DB</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;SSD_INFO|*&#39;</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;SSD_INFO|/dev/sda&#39;</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># プロセス稼働確認</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>pmon<span class="w"> </span>supervisorctl<span class="w"> </span>status<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>ssd
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>pmon<span class="w"> </span>ps<span class="w"> </span>-ef<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ssdmon
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="c1"># 直接 SMART を読む</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>sudo<span class="w"> </span>smartctl<span class="w"> </span>-A<span class="w"> </span>/dev/sda
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># stormond (関連デーモン) が書き込む STATE_DB の STORAGE_INFO テーブル[^2]</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># 注: HLD の `ssdmond` ではなく、後発の `sonic-stormond` が STORAGE_INFO を扱う。</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1">#     SSD ヘルス値ではなく FSIO 統計 (procfs reads/writes) が主目的。</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;STORAGE_INFO|*&#39;</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;STORAGE_INFO|sda&#39;</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># プロセス稼働確認 (stormond は pmon docker に同梱)</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>pmon<span class="w"> </span>supervisorctl<span class="w"> </span>status<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>stormond
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1"># 直接 SMART を読む</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>sudo<span class="w"> </span>smartctl<span class="w"> </span>-A<span class="w"> </span>/dev/sda
 </span></code></pre></div>
-<h2 id="_12">トラブルシュート<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>SSD_INFO</code> テーブルが空の場合は pmon コンテナ内の <code>ssdutil</code> プラグインが platform-specific に実装されているか確認 (<code>/usr/share/sonic/device/&lt;platform&gt;/plugins/</code>)。</li>
-<li>health が <code>Bad</code> 報告される場合、<code>smartctl -a</code> の <code>Media_Wearout_Indicator</code> / <code>Available_Spare</code> を確認し、ベンダー RMA 基準と突き合わせる。</li>
-<li>pmon コンテナ再起動後も値が古い場合、ssdmon の polling 間隔 (デフォルト 1h) を待つか <code>docker restart pmon</code> で再取得。</li>
-</ul>
-<h2 id="_13">実装との乖離<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_12">実装との乖離<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <p><code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
-<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_15">このページを読んだ後の次アクション<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h2 id="_14">このページを読んだ後の次アクション<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>
@@ -36978,7 +36951,7 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 </ul>
 <!-- /topics-back-ref -->
 
-<h2 id="_16">自動収集された参考リンク<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<h2 id="_15">自動収集された参考リンク<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <p>本ページに関連する参照ドキュメント:</p>
 <ul>
 <li><a href="../../reference/cli/show-platform/"><code>show platform ssdhealth</code> CLI リファレンス</a></li>
@@ -36993,6 +36966,9 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/ssdhealth/ssdhealth_design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-platform-daemons</code> <code>sonic-stormond/scripts/stormond</code> L28 (<code>STORAGE_DEVICE_TABLE = "STORAGE_INFO"</code>) / L34 (<code>STORMOND_PERIODIC_STATEDB_SYNC_SECS = 3600</code>)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

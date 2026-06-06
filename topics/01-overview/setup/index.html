@@ -36163,7 +36163,7 @@
 <p>ZTP や初回起動では、<code>minigraph.xml</code> や YAML プロファイルから <code>sonic-cfggen</code> が <code>config_db.json</code> を生成する。流れは次の通り。</p>
 <ol>
 <li>ONIE installer が image を展開し、<code>/etc/sonic/</code> に <code>minigraph.xml</code> (DC 系) または <code>config_db.json</code> (ベア start) を置く。</li>
-<li><code>swss.service</code> 起動前に <code>sonic-cfggen -H -m -y /etc/sonic/init_cfg.json --write-to-db</code> が走り、CONFIG_DB を埋める。</li>
+<li><code>database</code> コンテナ起動時に <code>docker_image_ctl.j2</code> が <code>sonic-cfggen</code> を呼び、<code>/etc/sonic/config_db.json</code> (および存在すれば <code>init_cfg.json</code>) を CONFIG_DB に書き込む。実体は <code>$SONIC_CFGGEN -j /etc/sonic/init_cfg.json -j /etc/sonic/config_db$DEV.json --write-to-db</code> で、<code>-j</code> を 2 回渡して init_cfg を base に config_db で overlay する形式である<sup id="fnref:cfggen-load"><a class="footnote-ref" href="#fn:cfggen-load">1</a></sup>。<code>minigraph.xml</code> を起点にする場合は別途 <code>config load_minigraph</code> (内部で <code>sonic-cfggen -H -m ...</code>) を経由する。</li>
 <li>各 <code>*mgrd</code> が CONFIG_DB を購読し APPL_DB に展開する。</li>
 <li>ZTP は <code>ztp</code> daemon が DHCP option 経由で URL を取得し、上記 snapshot を上書きする。</li>
 </ol>
@@ -36243,6 +36243,15 @@
 <li>個別機能の設定 → 各章 (<code>02-bgp/setup.md</code> ほか)。</li>
 </ul>
 <!-- glossary-links-injected: 8ba32e5aa69d -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:cfggen-load">
+<p>出典: <code>sonic-buildimage/files/build_templates/docker_image_ctl.j2</code> L292-304 (database コンテナ起動時の CONFIG_DB load 分岐)、<code>sonic-buildimage/files/scripts/configdb-load.sh</code> L10-14 (同等の load ロジック)。<code>-H -m</code> は <code>minigraph.xml</code> を読む系列のオプションで、初回起動の <code>--write-to-db</code> 経路では使われない。&#160;<a class="footnote-backref" href="#fnref:cfggen-load" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

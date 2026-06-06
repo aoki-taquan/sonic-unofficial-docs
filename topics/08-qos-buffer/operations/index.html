@@ -36148,16 +36148,16 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ show queue counters Ethernet0
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>       Port    TxQ    Counter/pkts    Counter/bytes    Drop/pkts    Drop/bytes
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>-----------  -----  --------------  ---------------  -----------  ------------
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  Ethernet0   UC0          1.2M           1.5G              0             0
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  Ethernet0   UC1            42K           63M              0             0
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  Ethernet0   UC3           890K          1.3G          12.3K          18M
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  Ethernet0   UC4              0             0              0             0
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  Ethernet0    UC0            1.2M             1.5G            0             0
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  Ethernet0    UC1             42K              63M            0             0
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  Ethernet0    UC3            890K             1.3G        12.3K           18M
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  Ethernet0    UC4               0                0            0             0
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>admin@sonic:~$ show pfc counters Ethernet0
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>       Port    PFC0    PFC1    PFC2    PFC3    PFC4    PFC5    PFC6    PFC7
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>-----------  ------  ------  ------  ------  ------  ------  ------  ------
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>Ethernet0 Rx     0       0       0     12K     0       0       0       0
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>Ethernet0 Tx     0       0       0       0     0       0       0       0
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>          Port    PFC0    PFC1    PFC2    PFC3    PFC4    PFC5    PFC6    PFC7
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>--------------  ------  ------  ------  ------  ------  ------  ------  ------
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a> Ethernet0 Rx        0       0       0     12K       0       0       0       0
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a> Ethernet0 Tx        0       0       0       0       0       0       0       0
 </span></code></pre></div>
 <p><code>UC3</code> で drop が伸び、同じ port の <code>PFC3 Rx</code> が増えていれば、上流が PFC で止めているのに自分側の egress も同じ TC で詰まっている、というよくある絵です。</p>
 <h2 id="_1">「ドロップしている」と言われたとき<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36224,15 +36224,16 @@
 <li>履歴で振り返りたい場合は <a href="../../../acl-qos/pfc-historical-statistics/">PFC historical statistics</a> を使う。</li>
 </ol>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ show pfcwd stats
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>                     QUEUE    STATUS    STORM DETECTED    TX OK    TX DROP    RX OK    RX DROP
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>-------------------------    ------    --------------    -----    -------    -----    -------
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Ethernet24:3                operational             3        0       12.3K        0      8.5K
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Ethernet48:3                operational             0        0           0        0         0
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>         QUEUE         STATUS    STORM DETECTED    TX OK    TX DROP    RX OK    RX DROP
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>--------------  -------------  ----------------  -------  ---------  -------  ---------
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  Ethernet24:3    operational                 3        0      12.3K        0       8.5K
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  Ethernet48:3    operational                 0        0          0        0          0
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>admin@sonic:~$ show pfcwd config
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>       PORT    ACTION    DETECTION TIME    RESTORATION TIME
 </span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>-----------  --------  ----------------  ------------------
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>Ethernet24      drop               200                 200
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a> Ethernet24      drop               200                 200
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a> Ethernet48      drop               200                 200
 </span></code></pre></div>
 <p><code>STORM DETECTED</code> の累計が秒〜分のオーダーで増え続けるなら、PFC を出している側を直さない限り収束しません。応急で PFCWD <code>action: forward</code> にすると drop を止められますが、ingress 側の buffer 圧迫が他 PG に飛び火するので恒久対応にはしません。</p>
 <h2 id="buffer-pool">Buffer pool の枯渇を見つける<a class="headerlink" href="#buffer-pool" title="Permanent link">&para;</a></h2>

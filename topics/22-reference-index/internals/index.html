@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="内部実装 — 22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / CONFIG_DB / YANG の三系統がどう実装で結ばれているかをまとめます。各リファレンスページが個別に持っている断片を一望できるようにするのが狙いです。">
+        <meta name="description" content="22 章リファレンス索引のメタ章。CLI / CONFIG_DB / YANG の三系統が SONiC 実装内でどう結ばれているかと、索引生成パイプラインを一覧する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="内部実装 — 22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / CONFIG_DB / YANG の三系統がどう実装で結ばれているかをまとめます。各リファレンスページが個別に持っている断片を一望できるようにするのが狙いです。" />
+<meta property="og:description" content="22 章リファレンス索引のメタ章。CLI / CONFIG_DB / YANG の三系統が SONiC 実装内でどう結ばれているかと、索引生成パイプラインを一覧する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/22-reference-index/internals.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/22-reference-index/internals/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="内部実装 — 22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / CONFIG_DB / YANG の三系統がどう実装で結ばれているかをまとめます。各リファレンスページが個別に持っている断片を一望できるようにするのが狙いです。" />
+<meta property="twitter:description" content="22 章リファレンス索引のメタ章。CLI / CONFIG_DB / YANG の三系統が SONiC 実装内でどう結ばれているかと、索引生成パイプラインを一覧する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/22-reference-index/internals.png" />
 </head>
   
@@ -36100,6 +36100,8 @@
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../../reference/glossary/#term-yang">YANG</a> の三系統がどう実装で結ばれているかをまとめます。各リファレンスページが個別に持っている断片を一望できるようにするのが狙いです。</p>
+<!-- evidence: sonic-utilities config/main.py の click group が CONFIG_DB を ConfigDBConnector で書き込み、cfgmgr/orchagent が下流を消費する流れは sonic-swss-common/common/schema.h の DB 定義と sonic-swss の orchagent コードに対応 (sonic-utilities@39732bc, sonic-swss@4305596, sonic-swss-common@158de8d) -->
+
 <h2 id="cli-config_db-asic">データフロー（CLI → CONFIG_DB → ASIC）<a class="headerlink" href="#cli-config_db-asic" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   USER["&lt;b&gt;oper / script&lt;/b&gt;"]:::user
@@ -36174,6 +36176,8 @@
 </tr>
 </tbody>
 </table>
+<!-- evidence: sonic-port / sonic-vlan / sonic-portchannel 等の YANG モジュールは sonic-buildimage/src/sonic-yang-models/yang-models/ 配下に格納 (sonic-buildimage@9ea932e) -->
+
 <h2 id="yang">YANG とテーブルの対応<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h2>
 <p><code>sonic-yang-models</code> の <code>.yang</code> モジュールは CONFIG_DB のテーブル名と一対一対応するのが原則です。例:</p>
 <table>
@@ -36282,49 +36286,49 @@
 <tr>
 <th>機能領域</th>
 <th>主な SAI object</th>
-<th>章</th>
+<th>章 internals</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>L2</td>
 <td><code>LAG</code>、<code>VLAN</code>、<code>FDB_ENTRY</code>、<code>BRIDGE_PORT</code></td>
-<td>06</td>
+<td><a href="../../06-l2-vlan-lag/internals/">06</a></td>
 </tr>
 <tr>
 <td>L3</td>
 <td><code>ROUTE_ENTRY</code>、<code>NEXT_HOP_GROUP</code>、<code>VIRTUAL_ROUTER</code></td>
-<td>04</td>
+<td><a href="../../04-vrf-ecmp/internals/">04</a></td>
 </tr>
 <tr>
 <td>VxLAN</td>
 <td><code>TUNNEL</code>、<code>TUNNEL_MAP</code>、<code>TUNNEL_TERM_TABLE_ENTRY</code></td>
-<td>03</td>
+<td><a href="../../03-vxlan-evpn/internals/">03</a></td>
 </tr>
 <tr>
 <td><a href="../../../reference/glossary/#term-acl">ACL</a></td>
 <td><code>ACL_TABLE</code>、<code>ACL_ENTRY</code>、<code>ACL_COUNTER</code>、<code>POLICER</code></td>
-<td>07</td>
+<td><a href="../../07-acl-copp-mirror/internals/">07</a></td>
 </tr>
 <tr>
 <td><a href="../../../reference/glossary/#term-qos">QoS</a> / buffer</td>
 <td><code>BUFFER_POOL</code>、<code>BUFFER_PROFILE</code>、<code>QUEUE</code>、<code>SCHEDULER</code></td>
-<td>08</td>
+<td><a href="../../08-qos-buffer/internals/">08</a></td>
 </tr>
 <tr>
 <td>Port / <a href="../../../reference/glossary/#term-serdes">SerDes</a></td>
 <td><code>PORT</code>、<code>PORT_SERDES</code>、<code>MACSEC</code></td>
-<td>14 / 15</td>
+<td><a href="../../14-platform-port-optics/internals/">14</a> / <a href="../../15-security-aaa/internals/">15</a></td>
 </tr>
 <tr>
 <td><a href="../../../reference/glossary/#term-nat">NAT</a></td>
 <td><code>NAT_ENTRY</code></td>
-<td>16</td>
+<td><a href="../../16-nat-dhcp-dns/internals/">16</a></td>
 </tr>
 <tr>
 <td><a href="../../../reference/glossary/#term-srv6">SRv6</a> / <a href="../../../reference/glossary/#term-mpls">MPLS</a></td>
 <td><code>MY_SID_ENTRY</code>、<code>INSEG_ENTRY</code></td>
-<td>17</td>
+<td><a href="../../17-srv6-mpls/internals/">17</a></td>
 </tr>
 </tbody>
 </table>
@@ -36351,17 +36355,17 @@
 <tr>
 <td>ZMQ</td>
 <td><a href="../../../reference/glossary/#term-orchagent">orchagent</a> への大量 push 経路</td>
-<td>VNET_ROUTE_TUNNEL_TABLE（→ 03 章）</td>
+<td>VNET_ROUTE_TUNNEL_TABLE（→ <a href="../../03-vxlan-evpn/internals/">03 章 internals</a>）</td>
 </tr>
 <tr>
 <td>ZMQ</td>
 <td><a href="../../../reference/glossary/#term-dash">DASH</a> SDN push</td>
-<td>DASH controller → SWBUS（→ 13 章）</td>
+<td>DASH controller → SWBUS（→ <a href="../../13-dash-smartswitch/internals/">13 章 internals</a>）</td>
 </tr>
 <tr>
 <td>Unix DBus / socket</td>
 <td>host service 呼び出し</td>
-<td><a href="../../../reference/glossary/#term-gnoi">gNOI</a> Reboot（→ 10 章）</td>
+<td><a href="../../../reference/glossary/#term-gnoi">gNOI</a> Reboot（→ <a href="../../10-gnmi-openconfig/internals/">10 章 internals</a>）</td>
 </tr>
 </tbody>
 </table>

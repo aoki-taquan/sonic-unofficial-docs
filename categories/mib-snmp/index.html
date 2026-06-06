@@ -36098,15 +36098,16 @@
 <li><a href="../../topics/14-platform-port-optics/">Topics 14: Platform / Port / Optics</a> — Sensor MIB / Transceiver の前提</li>
 </ul>
 <h2 id="verification">verification ステータス注意点<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
+<p>このカテゴリの 9 ページ中 8 ページ（約 89%）が <code>code-verified</code> で、CONFIG_DB スキーマ (<code>sonic-buildimage</code> の <code>dockers/docker-snmp/</code>) と sonic_ax_impl のソース (<code>src/sonic-snmpagent/</code>) を直接参照済みです。残る 1 ページのみ <a href="../../reference/glossary/#term-hld">HLD</a> 段階の提案で master 実装と乖離する可能性があります。</p>
 <ul>
-<li><strong>hld-only</strong>: <code>port-illegal-packets-drop-design.md</code></li>
+<li><strong>hld-only</strong>: <code>port-illegal-packets-drop-design.md</code>（ポート不正パケットドロップ用 Interface MIB / L3 カウンタ拡張提案。master の <code>sonic-snmpagent</code> 側 OID 追加は未確認のため、運用前に該当 OID の実装有無を要確認）</li>
 </ul>
 <h2 id="_4">関連カテゴリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../multi-asic/">Multi-ASIC / VOQ chassis 関連</a></li>
 <li><a href="../gnmi-openconfig/">gNMI / gNOI / OpenConfig 関連</a></li>
 </ul>
-<!-- glossary-links-injected: b6ab8efb7c2d -->
+<!-- glossary-links-injected: 167700005048 -->
 
 
 

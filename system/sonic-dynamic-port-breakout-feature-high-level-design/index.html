@@ -15035,10 +15035,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#-force" class="md-nav__link">
+  <a href="#-f-force-remove-dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       
-        --force
+        -f / --force-remove-dependencies
       
     </span>
   </a>
@@ -35978,10 +35978,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#-force" class="md-nav__link">
+  <a href="#-f-force-remove-dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       
-        --force
+        -f / --force-remove-dependencies
       
     </span>
   </a>
@@ -36110,7 +36110,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-utilities/config/main.py</code> の <code>breakout_cfg_file</code> / <code>_validate_interface_mode</code>、<code>sonic-buildimage/.../sonic-breakout_cfg.yang</code> の <code>BREAKOUT_CFG</code> スキーマで動的 breakout 実装を確認（Verifier 2026-05-10）。</p>
+<p><code>sonic-utilities/config/main.py</code> の <code>breakout</code> コマンド (L5454-) / <code>_validate_interface_mode</code> (L199-) と <code>config/config_mgmt.py</code> の <code>breakOutPort</code> / <code>_deletePorts</code> (L414-L531)、<code>sonic-buildimage/.../sonic-breakout_cfg.yang</code> の <code>BREAKOUT_CFG</code> スキーマで動的 breakout 実装と <code>-f</code> フラグの正確な挙動を確認。</p>
 </div>
 <h1 id="dynamic-port-breakoutlanes-interface">動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成）<a class="headerlink" href="#dynamic-port-breakoutlanes-interface" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36147,8 +36147,24 @@
 <li><strong><code>BREAKOUT_CFG</code> テーブル</strong>: 現状の breakout 構成</li>
 <li><strong>依存解決</strong>: 削除対象 port を参照する設定は CLI 側 / <code>db_migrator</code> が事前削除</li>
 </ul>
-<h3 id="-force"><code>--force</code><a class="headerlink" href="#-force" title="Permanent link">&para;</a></h3>
-<p>依存設定が残っている時に <code>--force</code> で依存削除と breakout 変更を一気に行う。整合性確認後の運用変更で利用。</p>
+<h3 id="-f-force-remove-dependencies"><code>-f</code> / <code>--force-remove-dependencies</code><a class="headerlink" href="#-f-force-remove-dependencies" title="Permanent link">&para;</a></h3>
+<p><code>config interface breakout</code> の <code>-f</code> フラグ（正式名は <code>--force-remove-dependencies</code>）は、削除対象 port を参照している周辺設定（VLAN_MEMBER / PORT_CHANNEL_MEMBER / ACL / IP / neighbor 等）を <strong><a href="../../reference/glossary/#term-yang">YANG</a> dependency tree から自動削除した上で</strong> port 削除・追加を続行するためのもの<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p>挙動の境界:</p>
+<ul>
+<li><strong>bypass しないもの</strong>:<ul>
+<li><code>_validate_interface_mode</code>（target mode が <code>platform.json</code> の <code>breakout_modes</code> に存在するかの照合）は <code>-f</code> の有無に依らず常に実行される<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
+<li>削除対象 port 名の <code>interface_name_is_valid</code> 検査</li>
+<li>依存削除と port 削除後の <code>validateConfigData()</code>（YANG schema による最終整合性検証）</li>
+</ul>
+</li>
+<li><strong><code>-f</code> で変わる挙動 (<code>ConfigMgmt._deletePorts</code>)</strong>:<ul>
+<li><code>-f</code> なし + deps あり → <code>Dependencies Exist. No further action will be taken</code> を出力して dep を列挙し <code>sys.exit(1)</code></li>
+<li><code>-f</code> あり + deps あり → 各 dep に対して <code>sy.deleteNode(xpath)</code> を順次実行し、その後 port 本体を削除して新 PORT を投入</li>
+</ul>
+</li>
+<li><strong>依存検出ロジック</strong>: <code>sonic_yang.find_data_dependencies(xpathPortLeaf)</code> が YANG leafref を辿って参照中ノードを列挙する。topological sort はせず単純な順次削除<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+</ul>
+<p>つまり <code>-f</code> は「YANG 依存ノードを自動 prune するスイッチ」であって、mode 妥当性や YANG schema validation を skip するものではない。整合性確認後の運用変更で利用する。</p>
 <h2 id="3-config_db-cli">3. CONFIG_DB / CLI<a class="headerlink" href="#3-config_db-cli" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36182,11 +36198,15 @@
 </tr>
 <tr>
 <td><code>config interface breakout &lt;port&gt; &lt;mode&gt;</code></td>
-<td>breakout 変更</td>
+<td>breakout 変更（deps があれば中断）</td>
 </tr>
 <tr>
 <td><code>config interface breakout &lt;port&gt; &lt;mode&gt; -f</code></td>
-<td>force</td>
+<td>YANG 依存ノードを auto-prune して続行</td>
+</tr>
+<tr>
+<td><code>config interface breakout &lt;port&gt; &lt;mode&gt; -l</code></td>
+<td><code>load_predefined_config</code>: alias/lanes/speed 等を <code>hwsku.json</code> から再投入</td>
 </tr>
 </tbody>
 </table>
@@ -36228,13 +36248,19 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: d5320e852f7a -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/dynamic-port-breakout/sonic-dynamic-port-breakout-HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-utilities</code> <code>config/config_mgmt.py</code> の <code>breakOutPort</code> / <code>_deletePorts</code>（L414-L531）— <code>force</code> が False の場合は <code>find_data_dependencies</code> で deps を列挙して <code>(deps, False)</code> を返し、True の場合のみ <code>sy.deleteNode(xpath)</code> で順次削除して継続。最終 <code>validateConfigData()</code> は force 有無に関わらず走る&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-utilities</code> <code>config/main.py</code> の <code>breakout</code> コマンド（L5454-L5546）と <code>_validate_interface_mode</code>（L199-L208）— <code>-f</code>/<code>--force-remove-dependencies</code> フラグは <code>breakout_Ports(..., force=force_remove_dependencies, ...)</code> にのみ伝播し、mode validation や port 名検査の手前に置かれている&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
