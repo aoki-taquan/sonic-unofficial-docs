@@ -1,7 +1,7 @@
 ---
 title: Route / Interface / Counter の確認
 description: Route / Interface / Counter の確認 — L3 の障害調査では、最初に route だけを見ても原因を絞れません。VRF、interface、RIB、FIB、RIF
-  counter、flow counter の順に、control-plane と data-plane の差を分けて確認します。
+  counter、flow counter の順に、control-plane と data-plane の差を分けて確認する運用ページです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
@@ -27,10 +27,6 @@ related:
   - sonic-route-common
   - sonic-route-map
   - sonic-interface
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
 ---
 
 # Route / Interface / Counter の確認
@@ -71,9 +67,7 @@ port counter は L2 port の統計で、RIF counter は SAI router interface の
 
 ## Route flow counter は対象 route を絞って見る
 
-[Route Flow Counter](../../routing/sonic-route-flow-counter-design.md) は、route pattern に一致する route に Generic Counter を bind して hit / byte を見る設計です。全 route の統計を常時見る仕組みではなく、調査したい prefix pattern を指定して観測する機能として読みます。
-
-このページは [HLD](../../reference/glossary.md#term-hld)-only として整理されています。利用可否や CLI の存在は対象ビルドで確認してください。
+[Route Flow Counter](../../routing/sonic-route-flow-counter-design.md) は、route pattern に一致する route に Generic Counter を bind して hit / byte を見る設計です。全 route の統計を常時見る仕組みではなく、調査したい prefix pattern を指定して観測する機能として読みます。利用可否や CLI の存在は対象ビルドで確認してください。
 
 ## Loopback action は誤転送の最後の防波堤
 
