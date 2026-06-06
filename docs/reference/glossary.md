@@ -1345,7 +1345,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [config-setup](#term-config-setup)
 
-- [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (39)
+- [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (44)
 - [reset-factory（keep-basic / keep-all-config / only-config）](../architecture/reset-factory-design.md) (25)
 - [FEATURE テーブル](config-db/feature.md) (11)
 - [BANNER_MESSAGE テーブル](config-db/banner-message.md) (8)
@@ -2406,8 +2406,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）](../system/zero-touch-provisioning-ztp.md) (23)
 - [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP](../management/sonic-nos-configuration-methods.md) (7)
+- [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (7)
 - [ビルドプロファイル（rules/profiles/*.mk）](../architecture/build-profiles.md) (6)
-- [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (6)
 - [サイトマップ](../_meta/sitemap.md) (5)
 
 <!-- /glossary-xref -->
