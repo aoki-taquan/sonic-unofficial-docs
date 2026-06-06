@@ -185,15 +185,6 @@ file target/sonic-marvell-armhf/...        # 出力 binary の arch 確認
 - [Reference index](../reference/index.md)
 - [HLD: build-profiles](build-profiles.md)
 
-## 既知の問題
-
-### Broadcom SAI を 3.7.3.2 にアップグレード後、Tomahawk3 (TH3) の SDK init （sonic-buildimage#3944）
-
-Broadcom [SAI](../reference/glossary.md#term-sai) を 3.7.3.2 にアップグレード後、Tomahawk3 (TH3) の SDK init が失敗する既知の問題。TH3 対応の SAI バージョンとの互換性を確認すること
-
-- 参照: [sonic-net/sonic-buildimage#3944](https://github.com/sonic-net/sonic-buildimage/issues/3944)
-
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-multi-architecture/sonic_arm_support.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
