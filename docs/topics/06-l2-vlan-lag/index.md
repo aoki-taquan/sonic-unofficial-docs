@@ -104,12 +104,12 @@ related:
 **関連する HLD 7 件**
 
 - [MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）](../../switching/mclag-enhancements.md)
-- [ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）](../../switching/brief-introduction-of-iccp-code.md)
 - [PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）](../../switching/openconfig-support-for-portchannel-aggregate-interface.md)
 - [SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）](../../switching/sonic-basic-l2-mode-test-plan.md)
 - [VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）](../../switching/add-support-for-vlan-interface-using-openconfig-yang.md)
 - [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](../../switching/layer-2-forwarding-enhancements.md)
 - [MCLAG Enhancements 運用（CLI / 設定手順 / 確認 / トラブルシュート）](../../switching/mclag-enhancements-operations.md)
+- [IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）](../../switching/sonic-ip-lag-incremental-update.md)
 
 **関連トラブルシュート 5 件**
 

@@ -107,7 +107,7 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 - [Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）](../../system/smart-switch-ip-address-assignment.md)
 - [SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）](../../system/sonic-network-time-protocol-ntp-client-configuration.md)
 - [VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）](../../switching/add-support-for-vlan-interface-using-openconfig-yang.md)
-- [ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）](../../switching/brief-introduction-of-iccp-code.md)
+- [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](../../switching/layer-2-forwarding-enhancements.md)
 
 **関連トラブルシュート 5 件**
 

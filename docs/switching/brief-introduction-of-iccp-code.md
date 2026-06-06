@@ -9,26 +9,27 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/mclag/iccpd-code-introduction.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-mclag.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db:
+  - MCLAG_DOMAIN
+  - MCLAG_INTERFACE
+  - DEVICE_METADATA
   - VLAN
-  - VLAN_INTERFACE
-  - VLAN_MEMBER
-  - VLAN_SUB_INTERFACE
   - VXLAN_TUNNEL
-  - VXLAN_TUNNEL_MAP
-  - VXLAN_EVPN_NVO
   cli:
   - mclagdctl
   - config mclag
-  - config vlan
+  - show mclag
   - show arp
-  - show vlan
-  - config vxlan
   yang:
+  - sonic-mclag
   - sonic-vlan
-  - sonic-vlan-sub-interface
-  - sonic-vxlan
   - sonic-port
 ---
 
@@ -240,7 +241,7 @@ reasoning: MLACP FSM の 4 状態と各状態の責務の根拠。
 
 ### 関連する CONFIG_DB
 
-ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（`MC_LAG_DOMAIN`, `MC_LAG_INTERFACE` 等）から `iccpd.j2` で生成された `/etc/iccpd/iccpd.conf` を介する[^1]。本 HLD ドキュメントには CONFIG_DB スキーマの直接記載は無いため、詳細は MC-LAG HLD 系を参照する必要がある。
+ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（`MCLAG_DOMAIN`, `MCLAG_INTERFACE`）から `iccpd.j2` で生成された `/etc/iccpd/iccpd.conf` を介する[^1]。実テーブル名は `sonic-swss-common/common/schema.h` の `CFG_MCLAG_TABLE_NAME = "MCLAG_DOMAIN"` / `CFG_MCLAG_INTF_TABLE_NAME = "MCLAG_INTERFACE"` で定義される[^2]。本 HLD ドキュメント自体は CONFIG_DB スキーマを直接記載していないため、フィールド詳細は MC-LAG HLD 系を参照する必要がある。
 
 ### 関連する CLI
 
@@ -252,7 +253,7 @@ ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（`MC_LAG_DOMAIN`, `MC_LAG_I
 
 ### 関連する YANG
 
-本ドキュメントでは [YANG](../reference/glossary.md#term-yang) モジュールに言及していない。
+本 HLD ドキュメント自体は [YANG](../reference/glossary.md#term-yang) モジュールに言及していないが、CONFIG_DB の `MCLAG_DOMAIN` / `MCLAG_INTERFACE` テーブルは `sonic-mclag.yang` で同名 container として定義されている[^3]。
 
 ## 制限事項
 
@@ -284,6 +285,8 @@ docker logs iccpd 2>&1 | tail
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mclag/iccpd-code-introduction.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss-common` `common/schema.h` L378-L379（`CFG_MCLAG_TABLE_NAME` / `CFG_MCLAG_INTF_TABLE_NAME` の定義）
+[^3]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mclag.yang` L1, L39, L100（`module sonic-mclag` / `container MCLAG_DOMAIN` / `container MCLAG_INTERFACE`）
 
 <!-- concerns hint:
 - 各ファイル名・関数名が現行 master の sonic-buildimage/src/iccpd 配下と一致するか

@@ -79,7 +79,7 @@ related:
 | setup | 208 | ✅ 完成 | meta | セットアップ手順 |
 | operations | 256 | ✅ 完成 | code-verified | 運用・デバッグ |
 | internals | 126 | ✅ 完成 | meta | 内部実装 |
-| gnoi-gnsi | 64 | ⚠️ プレースホルダ | meta | gNOI / gNSI API |
+| gnoi-gnsi | 80 | ⚠️ プレースホルダ | meta | gNOI / gNSI API |
 | yang-reference | 46 | ⚠️ プレースホルダ | meta | YANG リファレンス |
 | advanced | 74 | ⚠️ プレースホルダ | meta | 発展トピック |
 

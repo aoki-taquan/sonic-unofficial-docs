@@ -95,8 +95,10 @@ module: sonic-bgp-aggregate-address
 | `bbr-required` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/bbr-required` | `boolean` |  | false |  | Require a Border Gateway Protocol Best Route (BBR) entry before generating the aggregate. |
 | `summary-only` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/summary-only` | `boolean` |  | false |  | Suppress more-specific routes and only advertise the aggregate summary. |
 | `as-set` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/as-set` | `boolean` |  | false |  | Include AS_SET path information in the aggregate to preserve origin AS data. |
-| `aggregate-address-prefix-list` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/aggregate-address-prefix-list` | `string` |  |  | length `0..128`; pattern `[0-9a-zA-Z_-]*` | Prefix list used to filter which prefixes are included in the aggregate advertisement. |
-| `contributing-address-prefix-list` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/contributing-address-prefix-list` | `string` |  |  | length `0..128`; pattern `[0-9a-zA-Z_-]*` | Prefix list used to filter which contributing routes are considered for the aggregate. |
+| `aggregate-address-prefix-list` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/aggregate-address-prefix-list` | `string` |  | `""` | length `0..128`; pattern `[0-9a-zA-Z_-]*` | Prefix list used to filter which prefixes are included in the aggregate advertisement. |
+| `contributing-address-prefix-list` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/contributing-address-prefix-list` | `string` |  | `""` | length `0..128`; pattern `[0-9a-zA-Z_-]*` | Prefix list used to filter which contributing routes are considered for the aggregate. |
+
+<!-- evidence: prefix-list leafs explicitly declare `default ""` (empty string), distinct from "no default" semantics; see sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang L66 (aggregate-address-prefix-list) and L75 (contributing-address-prefix-list) @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd -->
 
 ## leafref / 依存
 
