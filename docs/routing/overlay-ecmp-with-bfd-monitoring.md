@@ -41,7 +41,11 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
-    `sonic-swss/orchagent/vnetorch.cpp` で `STATE_ADVERTISE_NETWORK_TABLE_NAME` 管理、`sonic-swss-common/common/schema.h` で `APP_BGP_PROFILE_TABLE_NAME`、`sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py` `RouteMapMgr` を確認（verified at: 2026-05-09）。
+    `sonic-swss/orchagent/vnetorch.cpp` の `VNetRouteOrch::addRouteAdvertisement()` (L2633-2646) / `removeRouteAdvertisement()` (L2648-2652) が `state_vnet_rt_adv_table_` (L746 で `STATE_ADVERTISE_NETWORK_TABLE_NAME` に bind) に書き込み[^evidence-vnet]、`sonic-swss-common/common/schema.h` L131 `APP_BGP_PROFILE_TABLE_NAME` / L496 `STATE_ADVERTISE_NETWORK_TABLE_NAME` を定義[^evidence-schema]、`sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py` L8 `RouteMapMgr` が `BGP_PROFILE_TABLE` 更新時に route-map と community 設定 (L93 `set community`) を生成[^evidence-rm]（verified at: 2026-05-09）。
+
+<!-- evidence: sonic-swss/orchagent/vnetorch.cpp L746,L2633-2652 (state_vnet_rt_adv_table_, addRouteAdvertisement, removeRouteAdvertisement) -->
+<!-- evidence: sonic-swss-common/common/schema.h L131 (APP_BGP_PROFILE_TABLE_NAME), L496 (STATE_ADVERTISE_NETWORK_TABLE_NAME) -->
+<!-- evidence: sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py L8-L96 (RouteMapMgr, set community) -->
 
 # Overlay ECMP with BFD monitoring
 
@@ -144,6 +148,9 @@ redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER:*' | wc -l
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Overlay ECMP with BFD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^evidence-vnet]: `sonic-net/sonic-swss` `orchagent/vnetorch.cpp` L746, L2633-2652 (`VNetRouteOrch::addRouteAdvertisement` / `removeRouteAdvertisement` が `state_vnet_rt_adv_table_` 経由で `STATE_ADVERTISE_NETWORK_TABLE_NAME` を更新)
+[^evidence-schema]: `sonic-net/sonic-swss-common` `common/schema.h` L131 `APP_BGP_PROFILE_TABLE_NAME`、L496 `STATE_ADVERTISE_NETWORK_TABLE_NAME`
+[^evidence-rm]: `sonic-net/sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_rm.py` L8 `RouteMapMgr` クラス、L93 で `set community <community_id>` を route-map に追加
 
 <!-- topics-back-ref -->
 ## 関連 Topics (自動リンク)
