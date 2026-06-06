@@ -4,8 +4,20 @@ description: RIB-FIB と Route Object 生成 — SONiC の L3 pipeline は、FRR
   / syncd / ASIC が持つ FIB を分けて読むと理解しやすくなります。
 area: topics
 verification: meta
-last_verified: 2026-05-10
-sources: []
+last_verified: 2026-06-06
+sources:
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  lines: 55-55
+  sha: master
+- repo: sonic-net/sonic-swss
+  path: orchagent/orchdaemon.cpp
+  lines: 338-339
+  sha: master
+- repo: sonic-net/sonic-swss
+  path: fpmsyncd/routesync.cpp
+  lines: 155-160
+  sha: master
 related:
   cli:
   - show arp
@@ -63,17 +75,17 @@ flowchart LR
 - `RouteOrch` は route を [SAI](../../reference/glossary.md#term-sai) route object にし、VRF OID、[RIF](../../reference/glossary.md#term-rif)、next hop、NHG の準備ができるまで pending します。
 - `syncd` が SAI API を通じて ASIC に反映します。
 
-## ROUTE_TABLE と NEXT_HOP_GROUP_TABLE
+## ROUTE_TABLE と NEXTHOP_GROUP_TABLE
 
 従来の `ROUTE_TABLE` は route ごとに `nexthop` と `ifname` を直接持ちます。大量 prefix が同じ next-hop set を共有する環境では、この形は [Redis](../../reference/glossary.md#term-redis) payload と orchagent の処理量が増えます。
 
-[NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離](../../routing/routing-and-next-hop-table-enhancement.md) は、next-hop set を `NEXT_HOP_GROUP_TABLE` に切り出し、route 側は `nexthop_group` で参照する形を説明しています。RouteOrch は `nexthop_group` を見つけると NhgOrch に SAI OID を問い合わせ、準備できていなければ route を pending に残します。
+[NEXTHOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離](../../routing/routing-and-next-hop-table-enhancement.md) は、next-hop set を `NEXTHOP_GROUP_TABLE` に切り出し、route 側は `nexthop_group` で参照する形を説明しています。RouteOrch は `nexthop_group` を見つけると NhgOrch に SAI OID を問い合わせ、準備できていなければ route を pending に残します。`APP_NEXTHOP_GROUP_TABLE_NAME` は `sonic-swss-common` の `common/schema.h` で `"NEXTHOP_GROUP_TABLE"` として定義され、`orchagent` と `fpmsyncd` が同名で参照します。<!-- evidence: sonic-net/sonic-swss-common common/schema.h L55; sonic-net/sonic-swss orchagent/orchdaemon.cpp L338 -->
 
 ## FRR から NHG を直接運ぶ拡張
 
 [fpmsyncd NextHop Group 拡張](../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) は、FRR [zebra](../../reference/glossary.md#term-zebra) の nexthop group netlink 情報を `fpmsyncd` が受け、`NEXTHOP_GROUP_TABLE` と `ROUTE_TABLE.nexthop_group` に分けて書く設計です。BGP PIC や recursive route のように、多数 prefix が同じ next-hop group を共有する構成で効きます。
 
-ただし、このページは [HLD](../../reference/glossary.md#term-hld)-only として整理されています。現行実装で有効かどうかを判断する場合は、該当ページの裏取りステータスと実装メモを確認してください。
+この拡張ページは現行 `fpmsyncd` 実装との乖離 (`discrepancy-found`) として整理されています。有効化条件と挙動の細部は、リンク先ページの discrepancy ノートを確認してください。
 
 ## FRR-SONiC 通信チャネル
 
@@ -101,7 +113,7 @@ route が `APPL_DB` に見えているのに FIB に入らない場合、route �
 
 ## 関連ページ
 
-- [NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離](../../routing/routing-and-next-hop-table-enhancement.md)
+- [NEXTHOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離](../../routing/routing-and-next-hop-table-enhancement.md)
 - [fpmsyncd NextHop Group 拡張](../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md)
 - [新 FRR-SONiC 通信チャネル](../../routing/new-frr-sonic-communication-channel.md)
 - [L3 Scaling と Performance 強化](../../internals/l3-scaling-and-performance-enhancements.md)
