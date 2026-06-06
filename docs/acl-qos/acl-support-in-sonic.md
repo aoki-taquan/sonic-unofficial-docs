@@ -3,11 +3,17 @@ title: ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
 description: ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ） — SONiC の data plane ACL の 初期設計 を定義する文書。
 area: acl-qos
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-06-06
 sources:
 - repo: sonic-net/SONiC
   path: doc/acl/acl.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss
+  path: orchagent/aclorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  ref: master
 related:
   config_db:
   - ACL_TABLE
@@ -29,7 +35,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified（基本構成のみ）"
-    現行 master の `sonic-swss/orchagent/aclorch.cpp` で **byte counter** (`SAI_ACL_COUNTER_ATTR_ENABLE_BYTE_COUNT` 周辺、aclorch.cpp:517)、**IPv6 ルックアップ拡張** (`SAI_ACL_IP_TYPE_IPV6ANY` / `..._NON_IPV6` / `MATCH_INNER_ETHER_TYPE` 等、aclorch.cpp:84,508-509)、**LAG bind** (`SAI_ACL_BIND_POINT_TYPE_LAG`、aclorch.cpp:106,3733)、**MCLAG/portchannel リダイレクト** が実装されていることを確認済み。本ページは初期 HLD ベースで、後続の追加機能（DASH-ACL / flex counter / show acl 拡張等）は別ページ参照（verified at: 2026-05-09）。
+    現行 master の `sonic-swss/orchagent/aclorch.cpp` で **byte counter** (`SAI_ACL_COUNTER_ATTR_ENABLE_BYTE_COUNT` 周辺、aclorch.cpp:517)、**IPv6 ルックアップ拡張** (`SAI_ACL_IP_TYPE_IPV6ANY` / `MATCH_INNER_ETHER_TYPE` 等、aclorch.cpp:84,508)、**LAG bind** (`SAI_ACL_BIND_POINT_TYPE_LAG`、aclorch.cpp:106,3733)、**MCLAG/portchannel リダイレクト** が実装されていることを確認済み。本ページは初期 HLD ベースで、後続の追加機能（DASH-ACL / flex counter / show acl 拡張等）は別ページ参照。
 
 # ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
 
@@ -210,7 +216,7 @@ reasoning: 設定フローと full / partial モードの根拠。
 | `ACL_TABLE` | `<name>` | `policy_desc`, `type`, `ports`, `mirror_session_name` |
 | `ACL_RULE` | `<table_name>:<seq>` | `action`, `l2_prot_type`, `l3_prot_type`, `ipv4_src`, `ipv4_dst`, `l4_src_port`, `l4_dst_port` |
 
-注: HLD では実際のキー名として `ACL_RULE_TABLE` も登場する[^1]が、ここは APP_DB 側の表記揺れ（`ACL_TABLE` / `ACL_RULE_TABLE`）として整理されているため、最終実装では `aclorch` のソースを参照する必要がある（裏取り課題）。
+注: HLD の `ACL_RULE_TABLE` 表記は **APP_DB 側のキー名**であり、[CONFIG_DB](../reference/glossary.md#term-config_db) 側は `ACL_RULE` となる。実装上 `sonic-swss-common/common/schema.h` で `APP_ACL_RULE_TABLE_NAME "ACL_RULE_TABLE"` と `CFG_ACL_RULE_TABLE_NAME "ACL_RULE"` が分離定義されており[^2]、`aclorch` も両者を別チャネルとして購読する[^3]。
 
 ### 関連する CLI
 
@@ -278,6 +284,8 @@ show acl rule
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/acl/acl.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss-common` `common/schema.h` L96, L515 (master)
+[^3]: `sonic-net/sonic-swss` `orchagent/aclorch.cpp` L4221-L4287 @ `4305596156d70e9797e8a881b3d19b46de0bce0d`
 
 ## 関連ページ
 - [CLI: config acl](../reference/cli/config-acl.md)
@@ -292,4 +300,4 @@ show acl rule
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 896d391185a9 -->
