@@ -123,9 +123,12 @@ module: sonic-nat
 | `container` | `sonic-nat/NAT_GLOBAL` |  | Global [NAT](../../reference/glossary.md#term-nat) settings including admin mode and timeouts |
 | `container` | `sonic-nat/NAT_GLOBAL/Values` |  | Global NAT parameter values |
 | `container` | `sonic-nat/NAT_POOL` |  | NAT address pools defining IP and port ranges for dynamic NAT |
-| `list` | `sonic-nat/NAT_POOL/NAT_POOL_LIST` | `name` |  |
+| `list` | `sonic-nat/NAT_POOL/NAT_POOL_LIST` | `name` | `max-elements 16`[^2] |
 | `container` | `sonic-nat/NAT_BINDINGS` |  | NAT bindings associating ACLs with NAT pools for dynamic translation |
-| `list` | `sonic-nat/NAT_BINDINGS/NAT_BINDINGS_LIST` | `name` |  |
+| `list` | `sonic-nat/NAT_BINDINGS/NAT_BINDINGS_LIST` | `name` | `max-elements 16`[^3] |
+
+!!! warning "スケール上限"
+    `NAT_POOL_LIST` / `NAT_BINDINGS_LIST` はいずれも `max-elements 16` 制約があり、CONFIG_DB に 17 個以上のプール / バインディングを投入すると YANG 検証で reject される[^2][^3]。動的 NAT のスケール計画ではこの上限を前提にすること。
 
 ## leaf 一覧
 
@@ -136,11 +139,11 @@ module: sonic-nat
 | `global_l4_port` | `sonic-nat/STATIC_NAPT/STATIC_NAPT_LIST/global_l4_port` | `inet:port-number` | yes |  |  | Global L4 port for the Static NAPT entry. |
 | `local_ip` | `sonic-nat/STATIC_NAPT/STATIC_NAPT_LIST/local_ip` | `inet:ipv4-address` | yes |  |  | Local ip for the Static NAPT entry. |
 | `local_port` | `sonic-nat/STATIC_NAPT/STATIC_NAPT_LIST/local_port` | `inet:port-number` | yes |  |  | Local port for the Static NAPT entry. |
-| `nat_type` | `sonic-nat/STATIC_NAPT/STATIC_NAPT_LIST/nat_type` | `nat-type` |  | dnat |  | Nat type for the static napt entry - snat or dnat |
+| `nat_type` | `sonic-nat/STATIC_NAPT/STATIC_NAPT_LIST/nat_type` | `nat-type` |  | dnat | enum `snat` / `dnat`[^4] | Nat type for the static napt entry - snat or dnat |
 | `twice_nat_id` | `sonic-nat/STATIC_NAPT/STATIC_NAPT_LIST/twice_nat_id` | `uint16` |  |  | range `1..9999` | Twice nat id for the static napt to achieve the twice napt |
 | `global_ip` | `sonic-nat/STATIC_NAT/STATIC_NAT_LIST/global_ip` | `inet:ipv4-address` | yes |  |  | Global ip for the Static NAT entry. |
 | `local_ip` | `sonic-nat/STATIC_NAT/STATIC_NAT_LIST/local_ip` | `inet:ipv4-address` | yes |  |  | Local ip for the Static NAT entry. |
-| `nat_type` | `sonic-nat/STATIC_NAT/STATIC_NAT_LIST/nat_type` | `nat-type` |  | dnat |  | Nat type for the static nat entry - snat or dnat |
+| `nat_type` | `sonic-nat/STATIC_NAT/STATIC_NAT_LIST/nat_type` | `nat-type` |  | dnat | enum `snat` / `dnat`[^4] | Nat type for the static nat entry - snat or dnat |
 | `twice_nat_id` | `sonic-nat/STATIC_NAT/STATIC_NAT_LIST/twice_nat_id` | `uint16` |  |  | range `1..9999` | Twice nat id for the static nat to achieve the twice nat |
 | `admin_mode` | `sonic-nat/NAT_GLOBAL/Values/admin_mode` | `stypes:admin_mode` |  | disabled |  | Admin mode of the NAT feature. |
 | `nat_timeout` | `sonic-nat/NAT_GLOBAL/Values/nat_timeout` | `uint32` |  | 600 | range `300..432000` | Timeout for the nat entries within the range of 300 sec to 432000 secs. |
@@ -151,8 +154,15 @@ module: sonic-nat
 | `nat_port` | `sonic-nat/NAT_POOL/NAT_POOL_LIST/nat_port` | `string` |  |  | pattern `(([0-9]{1,4}\|[1-5][0-9]{4}\|6[0-4][0-9]{3}\|65[0-4][0-9]{2}\|655[0-2][0-9]\|6553[0-4])(-)([0-9]{1,4}\|[1-5][0-9]{4}\|6[0-4][0-9]{3}\|65[0-4][0-9]{2}\|655[0-2][0-9]\|65... | Range of port values for a NAT pool. |
 | `name` | `sonic-nat/NAT_BINDINGS/NAT_BINDINGS_LIST/name` | `string` | yes |  | length `1..32`; pattern `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})` | Key - Name of the NAT Binding |
 | `nat_pool` | `sonic-nat/NAT_BINDINGS/NAT_BINDINGS_LIST/nat_pool` | `leafref` | yes |  | ../../../NAT_POOL/NAT_POOL_LIST/name | NAT Pool name mapping for the binding |
-| `nat_type` | `sonic-nat/NAT_BINDINGS/NAT_BINDINGS_LIST/nat_type` | `nat-type` |  | snat |  | Nat type for the binding - snat or dnat |
+| `nat_type` | `sonic-nat/NAT_BINDINGS/NAT_BINDINGS_LIST/nat_type` | `nat-type` |  | snat | enum `snat` / `dnat`[^4] | Nat type for the binding - snat or dnat |
 | `twice_nat_id` | `sonic-nat/NAT_BINDINGS/NAT_BINDINGS_LIST/twice_nat_id` | `uint16` |  |  | range `1..9999` | Twice nat id for the binding to achieve the Dynamic twice nat |
+
+## typedef
+
+| typedef | 種別 | 値 / パターン | 説明 |
+|---------|------|--------------|------|
+| `nat-type` | `enumeration` | `snat` (Source NAT) / `dnat` (Destination NAT)[^4] | NAT エントリの方向。`STATIC_NAT` / `STATIC_NAPT` は既定値 `dnat`、`NAT_BINDINGS` は既定値 `snat`。 |
+| `ip-address-range` | `union` (`inet:ipv4-address` または `A.B.C.D[-A.B.C.D]` 形式の文字列) | `NAT_POOL` の `nat_ip` で使用 | 単一 IPv4 アドレスまたは範囲を表す。 |
 
 ## leafref / 依存
 
@@ -214,6 +224,9 @@ show nat translations
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-nat.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^2]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-nat.yang` L211-L213 (`NAT_POOL_LIST` の `max-elements 16` 制約) @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^3]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-nat.yang` L249-L251 (`NAT_BINDINGS_LIST` の `max-elements 16` 制約) @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+[^4]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-nat.yang` L33-L42 (`nat-type` typedef、`snat`=Source NAT / `dnat`=Destination NAT) @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
 <!-- topics-back-ref -->
 ## 関連 Topics
