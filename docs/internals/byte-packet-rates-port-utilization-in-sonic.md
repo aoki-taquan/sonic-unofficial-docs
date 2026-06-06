@@ -13,10 +13,6 @@ related:
   - RATES
   - FLEX_COUNTER_TABLE
   - PORT
-  - PORT_STORM_CONTROL
-  - PORT_QOS_MAP
-  - PORT_TABLE
-  - ACL_RULE
   cli:
   - counterpoll
   - config rate smoothing_interval
@@ -25,8 +21,6 @@ related:
   - clear counters
   yang:
   - sonic-port
-  - sonic-port-qos-map
-  - sonic-crm
 ---
 
 <!-- topics-tip -->
@@ -291,8 +285,6 @@ config rate smoothing_interval port 5    # EMA N=5
 - [`clear counters` CLI リファレンス](../reference/cli/clear-counters.md)
 - [`FLEX_COUNTER_TABLE` CONFIG_DB スキーマ](../reference/config-db/flex-counter-table.md)
 - [`PORT` CONFIG_DB スキーマ](../reference/config-db/port.md)
-- [`PORT_STORM_CONTROL` CONFIG_DB スキーマ](../reference/config-db/port-storm-control.md)
-- [`PORT_QOS_MAP` CONFIG_DB スキーマ](../reference/config-db/port-qos-map.md)
 
 <!-- augmented-links: v1 -->
 
