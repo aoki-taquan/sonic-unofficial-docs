@@ -35898,7 +35898,7 @@
 <li><a href="../../topics/09-telemetry-snmp/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — 観測経路は ASIC 側で値を作り、syncd / orchagent / 各 daemon が Redis に書き、上から SNMP /…</li>
 <li><a href="../../topics/09-telemetry-snmp/setup/">設定</a> — [code-verified] 監視機能 (SNMP / sFlow / syslog / gNMI telemetry / auto-techsupport) の設定をシナリオ別最小手順、…</li>
 <li><a href="../../topics/09-telemetry-snmp/operations/">運用</a> — [meta] 運用 — 障害調査では「どこまで生きているか」「いつから壊れたか」「保全は取れたか」の順で見ます。SONiC は調べる対象によって CLI が分かれているので…</li>
-<li><a href="../../topics/09-telemetry-snmp/internals/">内部実装</a> — [meta] 内部実装 — このページは、observability のうち SONiC 内部で「いつ何のスレッドが値を書いているか」を整理します。設定や運用の入口は前後の…</li>
+<li><a href="../../topics/09-telemetry-snmp/internals/">内部実装</a> — [meta] SONiC の telemetry / SNMP / counter 系の内部実装ノート。syncd FlexCounter の polling thread…</li>
 <li><a href="../../topics/09-telemetry-snmp/advanced/">発展トピック</a> — [meta] 発展トピック — このページは、基本の observability 経路（CLI / counter / SNMP / gNMI / techsupport）…</li>
 </ul>
 </li>
@@ -35959,7 +35959,7 @@
 <li><a href="../../topics/15-security-aaa/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — ここでは login が成立するまでの経路と、CONFIG_DB から /etc/ 配下のサービス設定ファイルへ反映が走る経路を、SONi…</li>
 <li><a href="../../topics/15-security-aaa/concept/">概念</a> — [meta] 概念 — SONiC のセキュリティ機能は、ひとつの巨大なサブシステムではなく、Linux の標準スタック（PAM、NSS、OpenSSL、systemd）と…</li>
 <li><a href="../../topics/15-security-aaa/">Security / AAA / FIPS / Hardening</a> — [meta] Security / AAA / FIPS / Hardening — この章は、SONiC で「誰がログインできるか」「どの経路で管理できるか」「データプレ…</li>
-<li><a href="../../topics/15-security-aaa/internals/">内部実装</a> — [meta] 内部実装 — ここではデータプレーン側のセキュリティ、特に MACsec / MKA とその ASIC・Gearbox 側の境界、起動時の SAI POST…</li>
+<li><a href="../../topics/15-security-aaa/internals/">内部実装</a> — [code-verified] MACsec / MKA のデータプレーン実装と、AAA / TACACS+ / RADIUS の host 設定生成（hostcfgd）を、macsecmg…</li>
 <li><a href="../../topics/15-security-aaa/operations/">運用</a> — [meta] 運用 — AAA と管理面ポリシーは「動いている間は気付かれない」種類の機能のため、運用上は事故の予防と回復の手順が中心になります。ここでは password…</li>
 <li><a href="../../topics/15-security-aaa/setup/">設定</a> — [meta] 設定 — ここでは AAA バックエンドと管理面ポリシーの最小構成を、どの reference を引いて投入すればよいかという観点でまとめます。詳細な CLI…</li>
 </ul>
@@ -36160,7 +36160,7 @@
 <li><a href="../../routing/routing-and-next-hop-table-enhancement/">NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離</a> — [code-verified] NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離 — 従来の SONiC は APP_DB.ROUTE_TABLE…</li>
 <li><strong>スイッチング</strong> (<code>switching/</code>)</li>
 <li><a href="../../switching/">スイッチング</a> — [meta] スイッチング — VLAN、LAG、MCLAG、STP、MACsec、L2 forwarding など L2 制御面を扱う章。</li>
-<li><a href="../../switching/add-support-for-vlan-interface-using-openconfig-yang/">VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）</a> — [code-verified] VLAN インタフェースの OpenConfig YANG 対応 — SONiC は従来 VLAN を SONiC 独自 YANG 経由でしか REST /…</li>
+<li><a href="../../switching/add-support-for-vlan-interface-using-openconfig-yang/">VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）</a> — [code-verified] SONiC は従来 VLAN を独自 YANG 経由でしか REST / gNMI 公開していなかった。本機能で openconfig-interfaces…</li>
 <li><a href="../../switching/sonic-basic-l2-mode-test-plan/">SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）</a> — [code-verified] SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証） — SONiC を basic L2 switch と…</li>
 <li><a href="../../switching/switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a> — [discrepancy-found] Switchport モード（access / trunk / routed）と VLAN CLI 拡張 — SONiC のレガシー VLAN CLI は c…</li>
 <li><a href="../../switching/switch-port-modes-and-vlan-cli-concepts/">Switchport モードと VLAN CLI 拡張 — 概念</a> — [discrepancy-found] Switchport モード（access / trunk / routed）の意味と状態遷移、複数 VLAN 一括 CLI のスコープを整理する読み物ページ。</li>
@@ -36404,7 +36404,7 @@
 <li><a href="../../platform/sonic-psu-daemon-design/">psud（PSU 監視デーモン / power threshold ヒステリシス）</a> — [code-verified] psud（PSU 監視デーモン / power threshold ヒステリシス） — psud は PSU の物理状態と電力指標を周期収集し STATE_D…</li>
 <li><a href="../../platform/sonic-thermal-control-design/">Thermal Control（thermalctld + ポリシー駆動 fan / cooling 制御）</a> — [code-verified] Thermal Control（thermalctld + ポリシー駆動 fan / cooling 制御） — switch を適温に保つために therm…</li>
 <li><a href="../../platform/subnet-decapsulation-with-sonic/">VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル）</a> — [code-verified] VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル） — Azure Netscan は IPinIP プローブ（o…</li>
-<li><a href="../../platform/thermal-control-test-plan/">Thermal Control テストプラン</a> — [code-verified] Thermal Control テストプラン — Thermal Control 機能（FAN status / thermal status / therm…</li>
+<li><a href="../../platform/thermal-control-test-plan/">Thermal Control テストプラン</a> — [code-verified] pmon の thermalctld に対する SONiC-mgmt 機能テストプラン。FAN status monitor / thermal status…</li>
 <li><a href="../../platform/automatic-module-provisioning-for-chassis/">Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）</a> — [code-verified] Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module） — SONiC モジュラー…</li>
 <li><a href="../../platform/single-asic-voq-fixed-system-sonic/">単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）</a> — [code-verified] 単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐） — これまでマルチ ASIC シャーシ専用だ…</li>
 <li><a href="../../platform/voq-sonic/">VoQ SONiC（distributed VoQ chassis / system-port / fabric）</a> — [code-verified] 複数の NPU（ラインカード）を fabric card で接続し、外部から 1 台のスイッチに見える分散 VoQ chassis を SONiC で実現する…</li>
@@ -36481,7 +36481,7 @@
 <li><a href="../../reference/cli/show-platform/">show platform サブコマンド</a> — [code-verified] show platform サブコマンド — show platform はハードウェアプラットフォーム関連の状態（HwSKU・PSU・FAN・温度・電圧・S…</li>
 <li><a href="../../reference/cli/show-route-map/">show route-map コマンド</a> — [code-verified] show route-map コマンド — show route-map は FRR の route-map 設定（policy / match / set…</li>
 <li><a href="../../reference/cli/show-running-config/">show runningconfiguration / startupconfiguration サブコマンド</a> — [code-verified] show runningconfiguration / startupconfiguration サブコマンド — SONiC で現在の running co…</li>
-<li><a href="../../reference/cli/show-system-health/">show system-health サブコマンド</a> — [code-verified] show system-health サブコマンド — show system-health は system-health デーモン（HealthCheck…</li>
+<li><a href="../../reference/cli/show-system-health/">show system-health サブコマンド</a> — [code-verified] show system-health は system-health デーモン (HealthCheckerManager) が保持するシステム状態 (サービ…</li>
 <li><a href="../../reference/cli/show-techsupport/">show techsupport コマンド</a> — [code-verified] show techsupport コマンド — show techsupport は障害解析用の techsupport ダンプ を生成する。実態は sudo…</li>
 <li><a href="../../reference/cli/show-vlan/">show vlan サブコマンド</a> — [code-verified] show vlan サブコマンド — show vlan は VLAN とそのメンバーポート、L3 SVI 状態（IP アドレス・proxy_arp）を 2…</li>
 <li><a href="../../reference/cli/clear/">clear (sonic-clear) コマンド</a> — [code-verified] clear (sonic-clear) コマンド — 実行ファイル名は sonic-clear だが click のエントリ名は cli（/usr/local…</li>

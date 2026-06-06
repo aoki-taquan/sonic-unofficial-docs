@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="VLAN インタフェースの OpenConfig YANG 対応 — SONiC は従来 VLAN を SONiC 独自 YANG 経由でしか REST / gNMI 公開していなかった。">
+        <meta name="description" content="SONiC は従来 VLAN を独自 YANG 経由でしか REST / gNMI 公開していなかった。本機能で openconfig-interfaces / openconfig-vlan / openconfig-if-ip を追加し相互運用性を上げる。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="VLAN インタフェースの OpenConfig YANG 対応 — SONiC は従来 VLAN を SONiC 独自 YANG 経由でしか REST / gNMI 公開していなかった。" />
+<meta property="og:description" content="SONiC は従来 VLAN を独自 YANG 経由でしか REST / gNMI 公開していなかった。本機能で openconfig-interfaces / openconfig-vlan / openconfig-if-ip を追加し相互運用性を上げる。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/switching/add-support-for-vlan-interface-using-openconfig-yang.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/switching/add-support-for-vlan-interface-using-openconfig-yang/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="VLAN インタフェースの OpenConfig YANG 対応 — SONiC は従来 VLAN を SONiC 独自 YANG 経由でしか REST / gNMI 公開していなかった。" />
+<meta property="twitter:description" content="SONiC は従来 VLAN を独自 YANG 経由でしか REST / gNMI 公開していなかった。本機能で openconfig-interfaces / openconfig-vlan / openconfig-if-ip を追加し相互運用性を上げる。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/switching/add-support-for-vlan-interface-using-openconfig-yang.png" />
 </head>
   
@@ -36135,7 +36135,25 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>curl<span class="w"> </span>-k<span class="w"> </span><span class="s2">&quot;https://&lt;dut&gt;/restconf/data/openconfig-interfaces:interfaces/interface=Vlan10&quot;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;accept: application/yang-data+json&quot;</span>
 </span></code></pre></div>
-<p>gNMI は <code>Set</code> (REPLACE / UPDATE / DELETE) / <code>Get</code> / <code>Subscribe</code> (ON_CHANGE / SAMPLE) をサポート<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。詳細ペイロード例とエラーカタログは原文 <a href="../../reference/glossary/#term-hld">HLD</a> §3〜§6 参照。</p>
+<p>gNMI は <code>Set</code> (REPLACE / UPDATE / DELETE) / <code>Get</code> / <code>Subscribe</code> (ON_CHANGE / SAMPLE) をサポート<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>gNMI で VLAN メンバの access-vlan を取得（<code>-xpath_target OC-YANG</code> で OpenConfig 経路を選択）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gnmi_get<span class="w"> </span>-insecure<span class="w"> </span>-logtostderr<span class="w"> </span>-username<span class="w"> </span>USER<span class="w"> </span>-password<span class="w"> </span>PASSWORD<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>-target_addr<span class="w"> </span>localhost:8080<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-xpath<span class="w"> </span>/openconfig-interfaces:interfaces/interface<span class="o">[</span><span class="nv">name</span><span class="o">=</span>Ethernet0<span class="o">]</span>/openconfig-if-ethernet:ethernet/openconfig-vlan:switched-vlan/config/access-vlan
+</span></code></pre></div>
+<p>gNMI で VLAN メンバ設定を書き込み（JSON ペイロードを <code>-update</code> に <code>:@&lt;file&gt;</code> で渡す）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>gnmi_set<span class="w"> </span>-insecure<span class="w"> </span>-logtostderr<span class="w"> </span>-username<span class="w"> </span>USER<span class="w"> </span>-password<span class="w"> </span>PASSWORD<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>-target_addr<span class="w"> </span>localhost:8080<span class="w"> </span>-xpath_target<span class="w"> </span>OC-YANG<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>-update<span class="w"> </span>/openconfig-interfaces:interfaces/interface<span class="o">[</span><span class="nv">name</span><span class="o">=</span>Ethernet0<span class="o">]</span>/openconfig-if-ethernet:ethernet/openconfig-vlan:switched-vlan/config:@/tmp/vlanParams.json
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># vlanParams.json:</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># { &quot;openconfig-vlan:config&quot;: { &quot;interface-mode&quot;: &quot;TRUNK&quot;, &quot;access-vlan&quot;: 10, &quot;trunk-vlans&quot;: [20,30] } }</span>
+</span></code></pre></div>
+<p>gNMI で VLAN メンバを削除<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>gnmi_set<span class="w"> </span>-insecure<span class="w"> </span>-logtostderr<span class="w"> </span>-username<span class="w"> </span>USER<span class="w"> </span>-password<span class="w"> </span>PASSWORD<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>-target_addr<span class="w"> </span>localhost:8080<span class="w"> </span>-xpath_target<span class="w"> </span>OC-YANG<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span>-delete<span class="w"> </span>/openconfig-interfaces:interfaces/interface<span class="o">[</span><span class="nv">name</span><span class="o">=</span>Ethernet0<span class="o">]</span>/openconfig-if-ethernet:ethernet/openconfig-vlan:switched-vlan/config
+</span></code></pre></div>
+<p>その他のペイロード例とエラーカタログは原文 <a href="../../reference/glossary/#term-hld">HLD</a> §3〜§6 参照。</p>
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>subinterface 非対応</strong>（本 HLD スコープ外）</li>
@@ -36149,9 +36167,9 @@
 <li><strong>trunk/access 切替</strong>: <code>VLAN_MEMBER</code> キーの追加・削除と <code>tagging_mode</code> 書き換えで表現</li>
 </ul>
 <h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;VLAN_INTERFACE|Vlan10|133.3.3.4/24&#39;</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;VLAN_MEMBER|Vlan10|*&#39;</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>docker<span class="w"> </span>logs<span class="w"> </span>mgmt-framework<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w">        </span><span class="c1"># transformer エラー</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;VLAN_INTERFACE|Vlan10|133.3.3.4/24&#39;</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;VLAN_MEMBER|Vlan10|*&#39;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>docker<span class="w"> </span>logs<span class="w"> </span>mgmt-framework<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w">        </span><span class="c1"># transformer エラー</span>
 </span></code></pre></div>
 <p>PATCH が 4xx → パス表記 (<code>Vlan&lt;id&gt;</code>)、モード組合せ、leaf 名を確認。</p>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
@@ -36170,7 +36188,7 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/mgmt/OpenConfig_VLAN_Interface.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/mgmt/OpenConfig_VLAN_Interface.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

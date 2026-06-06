@@ -36135,7 +36135,7 @@
 
 <div class="admonition info">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-buildimage/files/build_templates/docker_image_ctl.j2</code> で <code>--tmpfs /tmp</code> / <code>--tmpfs /var/tmp</code> を確認、<code>sonic_debian_extension.j2</code> に <code>/dev/shm/monit/</code> 用 <code>tmpfiles.d/tmpfs-monit.conf</code> 生成も確認。<code>/tmp</code> tmpfs 化と monit 状態の tmpfs 化は master 取り込み済み。</p>
+<p><code>sonic-buildimage/files/build_templates/docker_image_ctl.j2</code> で <code>--tmpfs /tmp</code> / <code>--tmpfs /var/tmp</code> を確認、<code>sonic_debian_extension.j2</code> に <code>/dev/shm/monit/</code> 用 <code>tmpfiles.d/tmpfs-monit.conf</code> 生成も確認。<code>/tmp</code> tmpfs 化と monit 状態の tmpfs 化、および <code>bgpmon.py</code> L80 の <code>vtysh -H /dev/null</code> 化はいずれも master 取り込み済み<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 </div>
 <h1 id="sonic-disk-io-writer-tmpfs">SONiC Disk I/O 削減（writer 分析と tmpfs 化）<a class="headerlink" href="#sonic-disk-io-writer-tmpfs" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36200,7 +36200,7 @@
 </tr>
 <tr>
 <td><code>vtysh</code></td>
-<td><code>bgpmon.py</code> 行 80 で <code>vtysh -c "show bgp summary json"</code> を高頻度で呼び、その都度 <code>~/.history_frr</code> に追記される</td>
+<td><code>bgpmon.py</code> の L80 で <code>vtysh -c 'show bgp summary json'</code> を高頻度で呼び、その都度 <code>~/.history_frr</code> に追記される（履歴抑止前の挙動）<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 </tr>
 <tr>
 <td><code>kworker/u8:x</code></td>
@@ -36245,14 +36245,15 @@
 </table>
 <p>ユーザ空間修正の具体策:</p>
 <ul>
-<li><code>bgpmon.py</code> の cmd を <strong><code>vtysh -H /dev/null -c '...'</code></strong> に変更し history 書込を抑止</li>
+<li><code>bgpmon.py</code> の cmd を <strong><code>vtysh -H /dev/null -c '...'</code></strong> に変更し history 書込を抑止（<strong>現行 master では適用済み</strong><sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>）</li>
 <li><code>supervisor-proc-exit-listener</code> の log を <code>/dev/shm/supervisor/</code> に移動</li>
 <li><code>monit</code> の state を <code>/dev/shm/monit</code> に移動</li>
 <li><code>logrotate</code> の status を <code>/dev/shm/logrotate</code> に移動</li>
 </ul>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># bgpmon/bgpmon.py L80 想定の置換</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;vtysh -H /dev/null -c &#39;show bgp summary json&#39;&quot;</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># src/sonic-bgpcfgd/bgpmon/bgpmon.py L80 (現行 master)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;vtysh&quot;</span><span class="p">,</span> <span class="s2">&quot;-H&quot;</span><span class="p">,</span> <span class="s2">&quot;/dev/null&quot;</span><span class="p">,</span>  <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s1">&#39;show bgp summary json&#39;</span><span class="p">]</span>
 </span></code></pre></div>
+<p><code>-H /dev/null</code> で history file を <code>/dev/null</code> に向けて <code>~/.history_frr</code> 追記を抑止する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h3 id="mibday">結果（MiB/day, 集約値）<a class="headerlink" href="#mibday" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -36370,7 +36371,6 @@ reasoning: 主要 writer の比率と vtysh history 書込みの根因の根拠�
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- bgpmon.py の vtysh -H /dev/null 化の sonic-buildimage / sonic-bgpcfgd 取り込み確認
 - /tmp の tmpfs 化が image 構成に反映されているか確認 (fstab / cloud-init / build_templates)
 - supervisor-proc-exit-listener の log 出力先 /dev/shm/supervisor/ への変更の sonic-buildimage 取り込み確認
 - monit / logrotate の state path 変更の取り込み確認
@@ -36385,6 +36385,9 @@ reasoning: 主要 writer の比率と vtysh history 書込みの根因の根拠�
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-bgpcfgd/bgpmon/bgpmon.py</code> L80 @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

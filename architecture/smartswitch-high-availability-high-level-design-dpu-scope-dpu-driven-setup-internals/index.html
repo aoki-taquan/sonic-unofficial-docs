@@ -36209,7 +36209,7 @@
   SwitchingToStandalone --&gt; Standalone: ペア完全停止後
   Destroying --&gt; Dead</code></pre>
 <blockquote>
-<p>一部 DPU 実装は standby でも既存 flow を forward することがあるが、flow 決定（新規 flow の policy 適用）は <strong>active のみ</strong> に固定される。これは HLD 要件ではなく実装詳細<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>一部 DPU 実装は standby でも既存 flow を forward することがあるが、flow 決定（新規 flow の policy 適用）は <strong>active のみ</strong> に固定される。これは HLD 要件ではなく実装詳細<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 </blockquote>
 <h2 id="3-role-activation">3. role activation プロトコル<a class="headerlink" href="#3-role-activation" title="Permanent link">&para;</a></h2>
 <p>bulk sync 後の dormant 状態から <code>Active</code> / <code>Standby</code> / <code>Standalone</code> に抜けるには role activation の承認が必要<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -36308,13 +36308,13 @@
 <li>SDN controller が AdminState=Enabled → <a href="#4-ha-set-creation">HA set creation</a> フローへ</li>
 </ol>
 <h2 id="8-split-brain">8. Split-brain 解消<a class="headerlink" href="#8-split-brain" title="Permanent link">&para;</a></h2>
-<p>DPU-DPU 通信が両方向で切れ両 DPU が <code>Standalone</code> 化したときは、DPU 自律では再 pair しない<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SDN controller が次のいずれかで強制リセットする:</p>
+<p>DPU-DPU 通信が両方向で切れ両 DPU が <code>Standalone</code> 化したときは、DPU 自律では再 pair しない<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。HLD は救出策を 1 つだけ規定しており、SDN controller が次の手段で強制リセットする:</p>
 <ul>
-<li>片方の HA scope を <code>disabled=true</code> → <code>false</code> で再起動（<code>Destroying</code> を経ずに即停止し再走）</li>
+<li>片方の DPU の HA scope を <code>disabled=true</code> → <code>false</code> でトグルし、HA state machine を破棄して走り直させる</li>
 </ul>
-<p><code>AdminState</code>（desired HA state）は graceful path を走らせるが、<code>disabled</code> は <strong>強制 shutdown</strong> であり stuck した状態機械を救出するための非常手段である。</p>
+<p><code>AdminState</code>（desired HA state）の書き換えは graceful path（<code>Destroying</code> → 収束タイマー → <code>Dead</code>）を走らせるため、状態機械が stuck していると遷移が完了せず救出にならない。一方 <code>disabled=true</code> は graceful path を経由しない <strong>強制 shutdown</strong> で、stuck した状態機械をそのまま破棄できる。両者は目的が異なり、split-brain では後者のみが規定の手段である<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="9-flow-tracking-replication">9. Flow tracking と replication<a class="headerlink" href="#9-flow-tracking-replication" title="Permanent link">&para;</a></h2>
-<p><code>DPU-Scope-DPU-Driven</code> は flow lifetime 管理と inline flow replication のロジック自体には手を入れない（SAI API の下で DPU が完結させる）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。違いは <strong>bulk sync が HA control plane sync channel を経由せず DPU 間で直接行われる</strong> 点のみ。</p>
+<p><code>DPU-Scope-DPU-Driven</code> は flow lifetime 管理と inline flow replication のロジック自体には手を入れない（SAI API の下で DPU が完結させる）<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。違いは <strong>bulk sync が HA control plane sync channel を経由せず DPU 間で直接行われる</strong> 点のみ。</p>
 <h2 id="_1">引用元<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: ed1ebca45d14 -->
 
@@ -36322,7 +36322,7 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/smart-switch/high-availability/smart-switch-ha-dpu-scope-dpu-driven-setup.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/smart-switch/high-availability/smart-switch-ha-dpu-scope-dpu-driven-setup.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

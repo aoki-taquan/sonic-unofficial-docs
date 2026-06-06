@@ -36051,11 +36051,12 @@
 </span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
 </span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>VLAN_INTERFACE|&lt;vlan_intf&gt;|&lt;prefix&gt;
 </span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>    {}
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>NEIGH_TABLE|&lt;intf&gt;|&lt;ip&gt;
-</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>    family : IPv4 | IPv6
 </span></code></pre></div>
-<p><code>VXLAN_TUNNEL</code> に <code>src_ip</code> 必須、<code>dst_ip</code> は P2P 用にオプション。<code>VXLAN_TUNNEL_MAP</code> で <a href="../../reference/glossary/#term-vlan">VLAN</a> ↔ VNI を関連付ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>VXLAN_TUNNEL</code> に <code>src_ip</code> 必須、<code>dst_ip</code> は P2P 用にオプション。<code>VXLAN_TUNNEL_MAP</code> で <a href="../../reference/glossary/#term-vlan">VLAN</a> ↔ VNI を関連付ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>VNET.peer_list</code> は空文字列 <code>""</code> で「ピアなし」を表す（HLD <code>2.1.3 ConfigDB Schemas</code> の <code>PEER_LIST</code> 注記が明示）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="admonition note">
+<p class="admonition-title">HLD と master の乖離: <code>NEIGH_TABLE</code></p>
+<p>元の HLD <code>2.1.2 VNET/Interface Table</code> は <code>NEIGH_TABLE|&lt;intf&gt;|&lt;ip&gt;</code> を CONFIG_DB のテーブルとして列挙している<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>が、master の実装では <code>NEIGH_TABLE</code> は APP_DB のテーブル名であり、CONFIG_DB 用の <code>CFG_NEIGH_TABLE_NAME</code> マクロは定義されていない（<code>APP_NEIGH_TABLE_NAME = "NEIGH_TABLE"</code> のみ存在）<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。<code>intfmgrd</code> / <code>neighsyncd</code> 等の producer はいずれも APP_DB に対して書き込む<sup id="fnref2:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。本ページでは混乱を避けるため、<code>NEIGH_TABLE</code> を CONFIG_DB スキーマから除外した。</p>
+</div>
 <h2 id="2-app_db">2. APP_DB スキーマ<a class="headerlink" href="#2-app_db" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="l l-Scalar l-Scalar-Plain">VNET_ROUTE_TABLE:&lt;vnet&gt;:&lt;prefix&gt;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">nexthop</span><span class="w"> </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ip&gt;      (OPTIONAL)</span>
@@ -36074,8 +36075,11 @@
 </span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">vni</span><span class="w">          </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;int&gt;</span>
 </span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">scope</span><span class="w">        </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span>
 </span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">    </span><span class="nt">peer_list    </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;vnet,...&gt;</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="l l-Scalar l-Scalar-Plain">NEIGH_TABLE:&lt;intf&gt;:&lt;ip&gt;</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">family</span><span class="w"> </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IPv4 | IPv6</span>
 </span></code></pre></div>
-<p><code>VNET_ROUTE_TABLE</code> は <strong>同 VNet 内の直接到達</strong>、<code>VNET_ROUTE_TUNNEL_TABLE</code> は <strong>tunnel nexthop 経由のリモート経路</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>VNET_ROUTE_TABLE</code> は <strong>同 VNet 内の直接到達</strong>、<code>VNET_ROUTE_TUNNEL_TABLE</code> は <strong>tunnel nexthop 経由のリモート経路</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>NEIGH_TABLE</code> は APP_DB 側のテーブルで、kernel neighbor を <code>neighsyncd</code> が同期し、<code>intfmgrd</code> も VNet neighbor を APP_DB に書く<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup><sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</p>
 <h2 id="3-cli">3. CLI<a class="headerlink" href="#3-cli" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36151,7 +36155,7 @@
 </tr>
 </tbody>
 </table>
-<p>VNet ピアリングの CLI は無く、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> を直接編集する想定<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>VNet ピアリングの CLI は無く、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> を直接編集する想定<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="4-vnet">4. 設定例（VNet ピアリング）<a class="headerlink" href="#4-vnet" title="Permanent link">&para;</a></h2>
 <p><code>Vnet_2000</code>（VNI 2000、ベアメタル <code>Ethernet1</code>）と <code>Vnet_3000</code>（VNI 3000、<code>Vlan2000</code>、<code>Vnet_2000</code> をピア）:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
@@ -36170,7 +36174,7 @@
 </span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>APP_DB に <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> を投入してベアメタル subnet 経路と VM tunnel nexthop 経路を作る<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>APP_DB に <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> を投入してベアメタル subnet 経路と VM tunnel nexthop 経路を作る<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="5">5. トラブルシューティング<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36224,13 +36228,19 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/vxlan/Vxlan_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/vxlan/Vxlan_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p><code>sonic-net/sonic-utilities</code> <code>show/vxlan.py</code> (<code>vxlan</code> click group) L12-L392 @ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
 <p><code>sonic-net/sonic-utilities</code> <code>config/vxlan.py</code> (<code>vxlan</code> click group, <code>add/del/map/map_range/evpn_nvo</code> subcommands) L14-L325 @ <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>sonic-net/sonic-swss-common</code> <code>common/schema.h</code> L46 (<code>APP_NEIGH_TABLE_NAME = "NEIGH_TABLE"</code>、CONFIG_DB 用 <code>CFG_NEIGH_TABLE_NAME</code> は未定義) @ master&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p><code>sonic-net/sonic-swss</code> <code>neighsyncd/neighsync.cpp</code> L23, L33, L179 / <code>cfgmgr/intfmgr.cpp</code> L43 (いずれも <code>APP_NEIGH_TABLE_NAME</code> を APP_DB に対して open) @ master&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

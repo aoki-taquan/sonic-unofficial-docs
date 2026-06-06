@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="内部実装 — このページは、observability のうち SONiC 内部で「いつ何のスレッドが値を書いているか」を整理します。設定や運用の入口は前後のページで十分なので、ここは挙動の理由を読みたい人向けです。">
+        <meta name="description" content="SONiC の telemetry / SNMP / counter 系の内部実装ノート。syncd FlexCounter の polling thread 構成、sonic_ax_impl の AgentX subagent、auto-techsupport (coredump_gen_handler) の発火条件など、挙動の理由を読みたい人向けに整理する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="内部実装 — このページは、observability のうち SONiC 内部で「いつ何のスレッドが値を書いているか」を整理します。設定や運用の入口は前後のページで十分なので、ここは挙動の理由を読みたい人向けです。" />
+<meta property="og:description" content="SONiC の telemetry / SNMP / counter 系の内部実装ノート。syncd FlexCounter の polling thread 構成、sonic_ax_impl の AgentX subagent、auto-techsupport (coredump_gen_handler) の発火条件など、挙動の理由を読みたい人向けに整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/09-telemetry-snmp/internals.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/09-telemetry-snmp/internals/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="内部実装 — このページは、observability のうち SONiC 内部で「いつ何のスレッドが値を書いているか」を整理します。設定や運用の入口は前後のページで十分なので、ここは挙動の理由を読みたい人向けです。" />
+<meta property="twitter:description" content="SONiC の telemetry / SNMP / counter 系の内部実装ノート。syncd FlexCounter の polling thread 構成、sonic_ax_impl の AgentX subagent、auto-techsupport (coredump_gen_handler) の発火条件など、挙動の理由を読みたい人向けに整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/09-telemetry-snmp/internals.png" />
 </head>
   
@@ -3411,6 +3411,17 @@
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        脚注
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -36132,6 +36143,17 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        脚注
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -36183,10 +36205,10 @@
 <p>「使用率の表示が止まる」原因は、累積値ではなく rate 計算側の polling、または <code>portstat</code> の cache <code>/tmp/portstat-*</code> の rotate です。累積 counter が動いているのに rate が出ないときは、まず group <code>RATES</code> の state を見ます。</p>
 <h2 id="logging-pipeline">Logging Pipeline<a class="headerlink" href="#logging-pipeline" title="Permanent link">&para;</a></h2>
 <p>syslog は container ごとの rsyslogd と host の rsyslogd が二段でつながります。Container の rsyslogd は <code>omfwd</code> で host の <code>/dev/log</code> 相当に転送し、host 側がさらに <code>SYSLOG_SERVER</code> で設定された外部宛先に送ります。<code>SYSLOG_CONFIG_FEATURE</code> は container 単位の severity 切替を許し、不要な debug を本番で抑えられます。</p>
-<p>Auto-techsupport は、<code>coredump_gen_handler</code> が core 生成イベントを受け、<code>SystemReady</code> 達成後かつ rate limit 内であれば <code>show techsupport</code> を非同期で実行します。ディスク使用量とメモリ使用量の threshold を満たさないと skip し、syslog に reason を残します。</p>
+<p>Auto-techsupport は、<code>coredump_gen_handler</code> が core 生成イベントを受け、当該 container の <code>AUTO_TECHSUPPORT|&lt;container&gt;.state == enabled</code> かつ global / per-container の <code>rate_limit_interval</code> を超えていれば <code>show techsupport</code> を rate-limited で起動します<sup id="fnref:coredump"><a class="footnote-ref" href="#fn:coredump">1</a></sup>。古い core / techsupport dump は <code>core_usage_limit</code> で指定された <strong><code>/var/core</code> 等のディスク使用率パーセント</strong> を超えた段階で古いものから順に削除されるため、生成直後の dump がすぐ消える可能性があります<sup id="fnref:cleanup"><a class="footnote-ref" href="#fn:cleanup">2</a></sup>。</p>
 <h2 id="snmp-subagent">SNMP Subagent の構造<a class="headerlink" href="#snmp-subagent" title="Permanent link">&para;</a></h2>
 <p>SONiC <a href="../../../reference/glossary/#term-snmp">SNMP</a> は <code>snmp</code> container 内で snmpd と Python 実装の AgentX subagent (<code>sonic_ax_impl</code>) が動きます。subagent は <a href="../../../reference/glossary/#term-redis">Redis</a> を購読し、IF-MIB / IF-X-TABLE / Entity MIB / RFC1213 / SONIC-<a href="../../../reference/glossary/#term-lldp">LLDP</a> 系などの OID 群を Redis の値から組み立てます。</p>
-<p>OID から Redis path への mapping は subagent 内のクラスに分散しており、新しい MIB を増やすには subagent 側に MIB-specific クラスを書く必要があります。MIB を新設しない範囲では、Redis 側の table 構造を変えると subagent が古い key を見ようとして空値を返す挙動になる点に注意します。</p>
+<p>OID から Redis path への mapping は subagent 内のクラスに分散しており（<code>sonic_ax_impl/mibs/ietf/{rfc1213,rfc2737,rfc2863,rfc4292,rfc4363}.py</code> および <code>ieee802_1ab.py</code> など）、新しい MIB を増やすには subagent 側に MIB-specific クラスを書く必要があります。MIB を新設しない範囲でも、Redis 側の table 構造を変えると subagent が古い key を見ようとして空値を返す挙動になる点に注意します。</p>
 <h2 id="telemetry-agent-subscribe-path">Telemetry Agent の subscribe path<a class="headerlink" href="#telemetry-agent-subscribe-path" title="Permanent link">&para;</a></h2>
 <p><code>telemetry</code> / <code>gnmi</code> container は SONiC native <a href="../../../reference/glossary/#term-yang">YANG</a> / OpenConfig を Redis path にマップし、<a href="../../../reference/glossary/#term-gnmi">gNMI</a> Subscribe を CDB / SDB / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> の event listener に変換します。<code>ON_CHANGE</code> は Redis keyspace notifications に依存し、<code>SAMPLE</code> は内部の polling timer で current value を返します。</p>
 <p>加えて telemetry-agent には、process / docker 統計、memory 統計、reboot cause のように「Redis に元々無い情報」を取り込んで gNMI で publish する拡張があり、これらは subscribe path として現れます（発展トピックで扱います）。</p>
@@ -36245,9 +36267,9 @@
 <td>gNMI server（→ 10 章）</td>
 </tr>
 <tr>
-<td><code>coredump_gen_handler</code></td>
+<td><code>coredump_gen_handler</code> (<code>sonic-utilities/scripts/coredump_gen_handler.py</code>)</td>
 <td>python</td>
-<td>core 発生 → techsupport 非同期実行</td>
+<td>core 発生 → <code>invoke_ts_command_rate_limited</code> で techsupport 起動</td>
 </tr>
 </tbody>
 </table>
@@ -36287,7 +36309,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>sai_query_stats_capability</code> で「使える stat id」を起動時に問い合わせ、サポート外の id は group から除外する設計（→ 20 章）。</p>
+<p><code>queryStatsCapability</code> 経由で「使える stat id」を group 初期化時に問い合わせ、サポート外の id は group から除外する設計です<sup id="fnref:cap"><a class="footnote-ref" href="#fn:cap">3</a></sup>（→ 20 章）。実際の周期取得は <code>bulkGetStats</code> を batch で呼び出します<sup id="fnref:bulk"><a class="footnote-ref" href="#fn:bulk">4</a></sup>。</p>
 <h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">CONFIG_DB</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">FLEX_COUNTER_TABLE|&lt;group&gt;  (POLL_INTERVAL / FLEX_COUNTER_STATUS)</span>
@@ -36312,10 +36334,11 @@
 <li>counter の polling interval は group 単位で、CONFIG_DB に書いてから ASIC_DB に反映されるまで一拍ある。高頻度（&lt; 1s）の interval は ASIC 側 SDK の負荷が無視できない。</li>
 <li><code>RATES:</code> table は <code>portstat</code> 等の user-space ツールが計算するもので、Redis 上には rate のスナップショット保存しかなく、過去 N 秒の rate を gNMI から sample しても粒度は polling interval に律速される。</li>
 <li>SNMP subagent は OID から Redis path への mapping を<strong>ハードコード</strong>しており、新 MIB の追加には subagent コード変更が必要。</li>
-<li>auto-techsupport は dump サイズが /var/dump 上限を超えると古いものから削除し、保存し損ねるケースがある。</li>
+<li>auto-techsupport は core / techsupport dump の合計サイズが <code>core_usage_limit</code> (ディスク使用率パーセント) を超えると古いものから削除し、保存し損ねるケースがある（メモリ使用率は条件に含まれない）。</li>
 <li>syslog の container 二段ホップは container 内 rsyslog が停止すると host 側に何も流れない silent 失敗が起きる。</li>
 </ul>
-<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">脚注<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../internals/sonic-flexcounter-refactor/">FlexCounter refactor</a></li>
 <li><a href="../../../internals/sonic-counter-initialization-optimization/">Counter initialization optimization</a></li>
@@ -36323,6 +36346,24 @@
 <li><a href="../../../system/sonic-logging-system-dumps-arch-spec/">Logging と system dump 仕様</a></li>
 </ul>
 <!-- glossary-links-injected: ec18b66e3507 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:coredump">
+<p><code>sonic-utilities/scripts/coredump_gen_handler.py</code> L41-60 で feature 有効性チェックの後 <code>invoke_ts_command_rate_limited(...)</code> を呼ぶ。rate limit の実装は <code>sonic-utilities/utilities_common/auto_techsupport_helper.py</code> の <code>verify_rate_limit_intervals</code> (L282-310) と <code>invoke_ts_command_rate_limited</code> (L313-340)。&#160;<a class="footnote-backref" href="#fnref:coredump" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:cleanup">
+<p><code>sonic-utilities/utilities_common/auto_techsupport_helper.py</code> <code>cleanup_process</code> L170-196。<code>limit</code> (= <code>core_usage_limit</code> パーセント) と <code>shutil.disk_usage(dir).total</code> から <code>max_limit_bytes</code> を計算し、超過分だけ古いファイルから削除する。本文の旧記述「メモリ使用量の threshold」は実装上は disk 使用率のみで、メモリ閾値は存在しない。&#160;<a class="footnote-backref" href="#fnref:cleanup" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:cap">
+<p><code>sonic-sairedis/syncd/FlexCounter.cpp</code> L1582 / L1592 / L2921 / L2930 付近で <code>m_vendorSai-&gt;queryStatsCapability(...)</code> を呼んでサポート stat id を絞り込む。&#160;<a class="footnote-backref" href="#fnref:cap" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:bulk">
+<p><code>sonic-sairedis/syncd/FlexCounter.cpp</code> L1016 / L1329 / L1529 / L2819 / L2882 付近で <code>m_vendorSai-&gt;bulkGetStats(...)</code> を polling thread から呼ぶ。&#160;<a class="footnote-backref" href="#fnref:bulk" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

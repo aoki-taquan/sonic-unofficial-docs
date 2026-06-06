@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="内部実装 — ここではデータプレーン側のセキュリティ、特に MACsec / MKA とその ASIC・Gearbox 側の境界、起動時の SAI POST を扱います。control plane の AAA 系は アーキテクチャ で完結しており、本ページではリンクの暗号と完全性に話を限定します。">
+        <meta name="description" content="MACsec / MKA のデータプレーン実装と、AAA / TACACS+ / RADIUS の host 設定生成（hostcfgd）を、macsecmgr / macsecorch / hostcfgd の実コードを根拠に整理する内部実装ノート。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="内部実装 — ここではデータプレーン側のセキュリティ、特に MACsec / MKA とその ASIC・Gearbox 側の境界、起動時の SAI POST を扱います。control plane の AAA 系は アーキテクチャ で完結しており、本ページではリンクの暗号と完全性に話を限定します。" />
+<meta property="og:description" content="MACsec / MKA のデータプレーン実装と、AAA / TACACS+ / RADIUS の host 設定生成（hostcfgd）を、macsecmgr / macsecorch / hostcfgd の実コードを根拠に整理する内部実装ノート。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/15-security-aaa/internals.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/15-security-aaa/internals/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="内部実装 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="内部実装 — ここではデータプレーン側のセキュリティ、特に MACsec / MKA とその ASIC・Gearbox 側の境界、起動時の SAI POST を扱います。control plane の AAA 系は アーキテクチャ で完結しており、本ページではリンクの暗号と完全性に話を限定します。" />
+<meta property="twitter:description" content="MACsec / MKA のデータプレーン実装と、AAA / TACACS+ / RADIUS の host 設定生成（hostcfgd）を、macsecmgr / macsecorch / hostcfgd の実コードを根拠に整理する内部実装ノート。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/15-security-aaa/internals.png" />
 </head>
   
@@ -36121,12 +36121,12 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>ここではデータプレーン側のセキュリティ、特に <a href="../../../reference/glossary/#term-macsec">MACsec</a> / MKA とその <a href="../../../reference/glossary/#term-asic">ASIC</a>・Gearbox 側の境界、起動時の <a href="../../../reference/glossary/#term-sai">SAI</a> POST を扱います。control plane の <a href="../../../reference/glossary/#term-aaa">AAA</a> 系は <a href="../architecture/">アーキテクチャ</a> で完結しており、本ページではリンクの暗号と完全性に話を限定します。</p>
+<p>ここではデータプレーン側のセキュリティ、特に <a href="../../../reference/glossary/#term-macsec">MACsec</a> / MKA とその <a href="../../../reference/glossary/#term-asic">ASIC</a>・Gearbox 側の境界、起動時の <a href="../../../reference/glossary/#term-sai">SAI</a> POST を扱います。control plane の <a href="../../../reference/glossary/#term-aaa">AAA</a> 系は <a href="../architecture/">アーキテクチャ</a> で完結しており、本ページではリンクの暗号と完全性、および host 設定生成の流れに話を限定します。</p>
 <h2 id="macsec-control-data-plane">MACsec の control / data plane 境界<a class="headerlink" href="#macsec-control-data-plane" title="Permanent link">&para;</a></h2>
 <p>MACsec はリンク単位の L2 暗号化規格で、<a href="../../../reference/glossary/#term-sonic">SONiC</a> では大きく二つの世界に分けて実装されています。</p>
 <ul>
-<li>Control plane: MKA（MACsec Key Agreement）と SAK 配布。ホスト側の <code>wpa_supplicant</code> ベースのプロセスが担当し、<code>macsecmgr</code> が <code>CONFIG_DB</code> と仲介します。</li>
-<li>Data plane: SAI MACsec object（SC、SA、フィルタ）と、ASIC または Gearbox PHY 上の暗号エンジン。</li>
+<li>Control plane: MKA（MACsec Key Agreement）と SAK 配布。ホスト側の <code>wpa_supplicant</code> ベースのプロセスが担当し、<code>macsecmgr</code> が <code>CONFIG_DB</code> と仲介します<!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp L27-29, L289-300 -->。</li>
+<li>Data plane: SAI MACsec object（MACsec / MACsecPort / MACsecFlow / MACsecSC / MACsecSA）と、ASIC または Gearbox PHY 上の暗号エンジン<!-- evidence: sonic-swss/orchagent/macsecorch.cpp L1238-1342, L1552-1632, L2065-2080, L2461-2487 -->。</li>
 </ul>
 <p>全体設計と既存ページの呼び出し方は <a href="../../../switching/macsec-sonic-high-level-design-document/">MACsec HLD</a> に集約されています。<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> から SAI までのデータフロー、cipher suite、replay protection の取り扱いはこの <a href="../../../reference/glossary/#term-hld">HLD</a> を起点に読み進めます。</p>
 <pre class="mermaid"><code>flowchart LR
@@ -36139,7 +36139,7 @@
 <h2 id="gearbox-port-backend">Gearbox port での backend 選択<a class="headerlink" href="#gearbox-port-backend" title="Permanent link">&para;</a></h2>
 <p><a href="../../../reference/glossary/#term-npu">NPU</a> 側と Gearbox PHY 側のどちらに MACsec engine を寄せるかは、プラットフォームごとに異なります。SONiC は両方を抽象化するため、決定的に backend を選ぶ仕組みが <a href="../../../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/">deterministic MACsec backend selection for gearbox ports HLD</a> で導入されています。設定の意図が「NPU で暗号する」「PHY で暗号する」のどちらなのかが、運用時の counter 配置や trouble shooting の起点を決めます。</p>
 <h2 id="sai-post">SAI POST<a class="headerlink" href="#sai-post" title="Permanent link">&para;</a></h2>
-<p>起動時に MACsec engine が正しく動作するかを確認する Power-On Self Test は、<a href="../../../switching/sonic-sai-post-support-for-macsec/">SAI POST support for MACsec</a> で扱われます。MACsec を有効化したリンクで「鍵は配布されたのに通信が落ちる」という症状を切り分ける際、SAI POST の結果は最初に当たる材料です。本機能はプラットフォーム実装依存が大きいため、ベンダーの SAI ドライバ側のサポート状況を必ず確認します。</p>
+<p>起動時に MACsec engine が正しく動作するかを確認する Power-On Self Test は、<a href="../../../switching/sonic-sai-post-support-for-macsec/">SAI POST support for MACsec</a> で扱われます。MACsec を有効化したリンクで「鍵は配布されたのに通信が落ちる」という症状を切り分ける際、SAI POST の結果は最初に当たる材料です。macsecorch 側では MACsec object 生成時に <code>SAI_MACSEC_ATTR_ENABLE_POST</code> を渡す経路があり、ベンダー SAI が POST をサポートしている場合に有効化されます<!-- evidence: sonic-swss/orchagent/macsecorch.cpp L1248, L1280 -->。本機能はプラットフォーム実装依存が大きいため、ベンダーの SAI ドライバ側のサポート状況を必ず確認します。</p>
 <h2 id="control-plane">control plane との接続点<a class="headerlink" href="#control-plane" title="Permanent link">&para;</a></h2>
 <p>MACsec の有効化は AAA や SSH のような login 系ポリシーとは独立に運用しますが、鍵のローテーションや障害時の bypass ポリシーは管理面 <a href="../../../reference/glossary/#term-acl">ACL</a> や <a href="../../../reference/glossary/#term-copp">CoPP</a> の設計と組み合わせて考えるべきです。CoPP の枠組みは <a href="../../07-acl-copp-mirror/">ACL / CoPP / Mirror</a> を参照してください。</p>
 <p>platform 側の信頼チェーン（OpenSSL FIPS、secure boot、secure upgrade）は <a href="../advanced/">発展トピック</a> で扱います。</p>
@@ -36154,7 +36154,7 @@
   USER[login] --&gt; PAM
   PAM --&gt; NSS
   NSS --&gt; SERVER["TACACS+ / RADIUS server"]</code></pre>
-<p><code>hostcfgd</code> (<code>src/sonic-host-services/scripts/hostcfgd</code>) が CONFIG_DB の <code>TACPLUS</code>、<code>RADIUS</code>、<code>AAA</code>、<code>MGMT_USER</code> を読み、PAM / NSS / sshd_config を render する Jinja template を持ちます。</p>
+<p><code>hostcfgd</code> (<code>sonic-host-services/scripts/hostcfgd</code>) が CONFIG_DB の <code>TACPLUS</code>、<code>RADIUS</code>、<code>AAA</code>、<code>MGMT_USER</code> を読み、PAM / NSS / sshd_config を render する Jinja template (<code>tacplus_nss.conf.j2</code> / <code>radius_nss.conf.j2</code> / <code>pam_radius_auth.conf.j2</code> 等) を持ちます<!-- evidence: sonic-host-services/scripts/hostcfgd L34-98, L354+ AaaCfg -->。</p>
 <h2 id="daemon">主要 daemon / コンポーネントの責務<a class="headerlink" href="#daemon" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36168,7 +36168,7 @@
 <tr>
 <td><code>macsecmgr</code> (<code>cfgmgr/macsecmgr.cpp</code>)</td>
 <td><code>MACsecMgr::doTask</code></td>
-<td>CONFIG_DB の MACSEC_PROFILE / MACSEC_INTERFACE を読み、wpa_supplicant config を生成</td>
+<td>CONFIG_DB の MACSEC_PROFILE / MACSEC_INTERFACE を読み、wpa_supplicant config と起動を管理</td>
 </tr>
 <tr>
 <td><code>MACsecOrch</code> (<code>orchagent/macsecorch.cpp</code>)</td>
@@ -36193,6 +36193,7 @@
 </tbody>
 </table>
 <h2 id="sai-macsec">SAI 属性使用一覧（MACsec）<a class="headerlink" href="#sai-macsec" title="Permanent link">&para;</a></h2>
+<p>macsecorch.cpp で実際に set される属性のみを列挙します。SAI ヘッダにはこれ以外の属性も定義されていますが、SONiC 側で参照されていないものはここに含めていません。</p>
 <table>
 <thead>
 <tr>
@@ -36203,11 +36204,11 @@
 <tbody>
 <tr>
 <td><code>SAI_OBJECT_TYPE_MACSEC</code></td>
-<td><code>SAI_MACSEC_ATTR_DIRECTION = INGRESS/EGRESS</code></td>
+<td><code>SAI_MACSEC_ATTR_DIRECTION</code>、<code>SAI_MACSEC_ATTR_PHYSICAL_BYPASS_ENABLE</code>、<code>SAI_MACSEC_ATTR_ENABLE_POST</code>、<code>SAI_MACSEC_ATTR_SCI_IN_INGRESS_MACSEC_ACL</code>、<code>SAI_MACSEC_ATTR_MAX_SECURE_ASSOCIATIONS_PER_SC</code></td>
 </tr>
 <tr>
 <td><code>SAI_OBJECT_TYPE_MACSEC_PORT</code></td>
-<td><code>SAI_MACSEC_PORT_ATTR_PORT_ID</code>、<code>SWITCH_SWITCHING_MODE</code></td>
+<td><code>SAI_MACSEC_PORT_ATTR_MACSEC_DIRECTION</code>、<code>SAI_MACSEC_PORT_ATTR_PORT_ID</code></td>
 </tr>
 <tr>
 <td><code>SAI_OBJECT_TYPE_MACSEC_FLOW</code></td>
@@ -36215,11 +36216,11 @@
 </tr>
 <tr>
 <td><code>SAI_OBJECT_TYPE_MACSEC_SC</code></td>
-<td><code>SAI_MACSEC_SC_ATTR_MACSEC_SCI</code>、<code>AN</code>、<code>CIPHER_SUITE</code>、<code>ENCRYPTION_ENABLE</code>、<code>REPLAY_PROTECTION_ENABLE</code>、<code>REPLAY_PROTECTION_WINDOW</code></td>
+<td><code>SAI_MACSEC_SC_ATTR_MACSEC_DIRECTION</code>、<code>FLOW_ID</code>、<code>MACSEC_SCI</code>、<code>ENCRYPTION_ENABLE</code>、<code>MACSEC_EXPLICIT_SCI_ENABLE</code>、<code>MACSEC_CIPHER_SUITE</code></td>
 </tr>
 <tr>
 <td><code>SAI_OBJECT_TYPE_MACSEC_SA</code></td>
-<td><code>SAI_MACSEC_SA_ATTR_SAK</code>、<code>SALT</code>、<code>AUTH_KEY</code>、<code>MACSEC_SSCI</code>、<code>CONFIGURED_EGRESS_XPN</code>、<code>MINIMUM_INGRESS_XPN</code></td>
+<td><code>SAI_MACSEC_SA_ATTR_MACSEC_DIRECTION</code>、<code>SC_ID</code>、<code>AN</code>、<code>SAK</code>、<code>SALT</code>、<code>AUTH_KEY</code>、<code>MACSEC_SSCI</code>、<code>CONFIGURED_EGRESS_XPN</code>、<code>MINIMUM_INGRESS_XPN</code></td>
 </tr>
 <tr>
 <td><code>SAI_OBJECT_TYPE_PORT_SERDES</code></td>
@@ -36227,7 +36228,12 @@
 </tr>
 </tbody>
 </table>
-<p><code>SAI_MACSEC_SA_ATTR_SAK</code> の wrap は SAK distribution の最終段で SAI に渡される。鍵生成は wpa_supplicant 側。</p>
+<!-- evidence: sonic-swss/orchagent/macsecorch.cpp L1238-1342 (MACSEC), L1552-1556 (MACSEC_PORT), L2065-2080 (MACSEC_SC), L2461-2487 (MACSEC_SA), L1124, L1188 (XPN) -->
+
+<p><code>SAI_MACSEC_SA_ATTR_SAK</code> の wrap は SAK distribution の最終段で SAI に渡されます。鍵生成は wpa_supplicant 側です。Cipher suite は <code>MACsecOrch::createMACsecSC</code> 時にデフォルト <code>GCM_AES_128</code> で初期化され、profile 設定に応じて <code>GCM_AES_256</code> / <code>GCM_AES_XPN_128</code> / <code>GCM_AES_XPN_256</code> に切り替わります<!-- evidence: sonic-swss/orchagent/macsecorch.cpp L42, L1608-1632 -->。</p>
+<blockquote>
+<p>NOTE: replay protection の有効化や window 値は SAI MACsec attribute 群には HLD で定義がありますが、現在の macsecorch 実装では明示的な set は行われていません（SAI 側のデフォルトに委ねている）。実機検証時には <code>sai_get_attribute</code> で実際の値を確認してください。</p>
+</blockquote>
 <h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">CONFIG_DB</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">MACSEC_PROFILE, MACSEC_INTERFACE,</span>
@@ -36247,16 +36253,16 @@
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ZMQ は使わない。</li>
-<li><code>wpa_supplicant</code> と <code>macsecmgr</code> は Unix socket（wpa_ctrl）で通信。<a href="../../../reference/glossary/#term-redis">Redis</a> 経由ではない。</li>
-<li>AAA 認証（PAM → TACACS+/RADIUS）は同期 RPC で、Redis を経由しない。</li>
+<li><code>wpa_supplicant</code> と <code>macsecmgr</code> は <code>wpa_cli</code> の Unix socket（<code>-g &lt;sock&gt;</code>）で通信します<!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp L206-260, L635-659 -->。<a href="../../../reference/glossary/#term-redis">Redis</a> 経由ではありません。</li>
+<li>AAA 認証（PAM → TACACS+/RADIUS）は同期 RPC で、Redis を経由しません。</li>
 </ul>
 <h2 id="_2">既知の実装上の制約<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li>MACsec SAK の rekey 頻度（key lifetime）は wpa_supplicant の設定で、頻度を上げすぎると ASIC 側で <code>SA install</code> が間に合わず短時間 drop が発生する。</li>
-<li><code>MACSEC_SA_ATTR_SAK</code> の wrap キーは平文で SAI まで渡る設計のため、<a href="../../../reference/glossary/#term-syncd">syncd</a> / SAI のメモリ保護が信頼境界。コア dump に鍵が出るリスクは HLD 範囲。</li>
-<li>Gearbox backend 選択は装置依存で、deterministic 選択 HLD があっても全ベンダ実装が揃っているとは限らない。</li>
-<li>SAI POST は MACsec engine の起動確認のみで、運用中の rekey 失敗や cipher suite mismatch は捕捉しない。</li>
-<li>TACACS+ の <code>command</code> authorization は host CLI 経由のみで、<code>gnmi</code> / REST API 経路では別途 RBAC 設定が必要。</li>
+<li>MACsec SAK の rekey 頻度（key lifetime）は wpa_supplicant の設定で、頻度を上げすぎると ASIC 側で <code>SA install</code> が間に合わず短時間 drop が発生します。</li>
+<li><code>MACSEC_SA_ATTR_SAK</code> の wrap キーは平文で SAI まで渡る設計のため、<a href="../../../reference/glossary/#term-syncd">syncd</a> / SAI のメモリ保護が信頼境界です。コア dump に鍵が出るリスクは HLD 範囲です。</li>
+<li>Gearbox backend 選択は装置依存で、deterministic 選択 HLD があっても全ベンダ実装が揃っているとは限りません。</li>
+<li>SAI POST は MACsec engine の起動確認のみで、運用中の rekey 失敗や cipher suite mismatch は捕捉しません。</li>
+<li>TACACS+ の <code>command</code> authorization は host CLI 経由のみで、<code>gnmi</code> / REST API 経路では別途 RBAC 設定が必要です。</li>
 <li>FIPS モードは OpenSSL の library 切替に依存し、libssl のバージョン整合と FIPS module の有無で「FIPS にしたつもりが効いていない」事故が起きやすい。</li>
 </ul>
 <h2 id="aaa">AAA の認証フロー詳細<a class="headerlink" href="#aaa" title="Permanent link">&para;</a></h2>
