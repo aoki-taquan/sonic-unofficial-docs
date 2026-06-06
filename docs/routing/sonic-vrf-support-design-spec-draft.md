@@ -43,7 +43,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
-    `sonic-swss/orchagent/vrforch.cpp` / `cfgmgr/vrfmgrd.cpp` 実装、`sonic-yang-models/yang-models/sonic-vrf.yang:24/27` (`container VRF` / `list VRF_LIST`)、`sonic-utilities/config/main.py` の `config vrf` CLI を確認。SAI Virtual Router + Linux VRF master device 連携は現行 master でも維持（verified at: 2026-05-09）。
+    `sonic-swss/orchagent/vrforch.cpp` の `create_virtual_router` 呼び出し、`cfgmgr/vrfmgr.cpp` の `VrfMgr` 本体（`CFG_VRF_TABLE` 消費 → Linux VRF master 設定 + `APP_VRF_TABLE` / `STATE_VRF_TABLE` 同期、`cfgmgr/vrfmgrd.cpp` は select() ループの daemon entrypoint）、`sonic-yang-models/yang-models/sonic-vrf.yang` の `container VRF` / `list VRF_LIST`、`sonic-utilities/config/main.py` の `config vrf` CLI を確認。SAI Virtual Router + Linux VRF master device 連携は現行 master でも維持（verified at: 2026-05-09）。
 
 # VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）
 
