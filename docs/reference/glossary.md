@@ -1247,10 +1247,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ASIC_DB](#term-asic_db)
 
 - [DSCP_TO_PG_MAP テーブル（非実在）](config-db/dscp-to-pg-map.md) (15)
+- [アーキテクチャ](../topics/20-swss-sai-redis/architecture.md) (14)
 - [APPL_DB BFD_SESSION_TABLE (bfdorch)](config-db/bfd-orch.md) (13)
 - [BFD_SESSION_TABLE (STATE_DB)](config-db/bfd-state.md) (13)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (13)
-- [VRRP テーブル](config-db/vrrp.md) (13)
 
 ### [ASIC SDK](#term-asic-sdk)
 

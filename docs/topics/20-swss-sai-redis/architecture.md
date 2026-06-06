@@ -1,11 +1,32 @@
 ---
 title: アーキテクチャ
 description: アーキテクチャ — SONiC の内部実装を 1 枚で押さえるなら、左から CLI / gNMI / 制御プレーン daemon、中央に
-  Redis DB 群、右に syncd と SAI/ASIC を置く絵になる。
+  Redis DB 群、右に syncd と SAI/ASIC を置く絵になる。各 sub-Orch は SAI 戻り値を handleSai*Status helper で
+  分類する。
 area: topics
 verification: meta
-last_verified: 2026-05-10
-sources: []
+last_verified: 2026-06-06
+sources:
+  - repo: sonic-net/sonic-swss
+    path: orchagent/saihelper.cpp
+    lines: 581-720
+  - repo: sonic-net/sonic-swss
+    path: orchagent/saihelper.h
+    lines: 19-21
+  - repo: sonic-net/sonic-swss
+    path: orchagent/dtelorch.cpp
+    lines: 41-70
+  - repo: sonic-net/sonic-swss
+    path: orchagent/intfsorch.cpp
+    lines: 1301-1517
+  - repo: sonic-net/sonic-swss-common
+    path: common/producerstatetable.h
+    lines: 1-71
+  - repo: sonic-net/sonic-swss-common
+    path: common/consumerstatetable.cpp
+    lines: 1-96
+  - repo: sonic-net/sonic-sairedis
+    path: syncd/NotificationProcessor.cpp
 related:
   cli:
   - show techsupport
@@ -80,13 +101,13 @@ flowchart LR
 
 ## ProducerStateTable と非同期化
 
-[APPL_DB](../../reference/glossary.md#term-appl_db) と [ASIC_DB](../../reference/glossary.md#term-asic_db) は、書き手と読み手が別プロセスに分かれる。Redis に直に SET するのではなく、[ProducerStateTable](../../reference/glossary.md#term-producerstatetable) / [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) を介して「key の変更通知」を queue として渡す。これにより読み手側は変更分だけを取り出して処理できる。ZMQ ベースに置き換える設計は [ZMQ ProducerStateTable / ConsumerStateTable 設計](../../internals/zmq-producer-consumer-state-table-design.md) を読む。
+[APPL_DB](../../reference/glossary.md#term-appl_db) と [ASIC_DB](../../reference/glossary.md#term-asic_db) は、書き手と読み手が別プロセスに分かれる。Redis に直に SET するのではなく、[ProducerStateTable](../../reference/glossary.md#term-producerstatetable) / [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) を介して「key の変更通知」を queue として渡す。これにより読み手側は変更分だけを取り出して処理できる。<!-- evidence: sonic-swss-common common/producerstatetable.h:1-71 (set/del/flush API + Lua script で TABLE と _KEY_SET の両方を更新), common/consumerstatetable.cpp:1-96 (pops で _KEY_SET から差分のみ取得) -->ZMQ ベースに置き換える設計は [ZMQ ProducerStateTable / ConsumerStateTable 設計](../../internals/zmq-producer-consumer-state-table-design.md) を読む。
 
 ASIC_DB 側は sairedis が非同期に消費し、SAI 呼び出しに変換する。SAI 呼び出しの結果は完了通知や ERROR_DB を介して orchagent に戻る。これが「orchagent が ASIC_DB に書いたら、すぐ ASIC に入っているとは限らない」根拠である。
 
 ## syncd と SAI の境界
 
-syncd は ASIC_DB を消費し、SAI API を呼ぶ唯一の場所である。ベンダごとの SAI 実装は libsai に隠れ、syncd と orchagent はベンダ非依存に保たれる。SAI 失敗は syncd で観測されると、ASIC_DB の notification channel 経由で orchagent に通知され、orchagent 側の `Orch` クラスの virtual メソッド `handleSaiSetStatus` / `handleSaiCreateStatus` 系で分類される（`handleSai*Status` は syncd ではなく orchagent 側に定義されている）。fatal なものは crash、recoverable なものは ERROR_DB / [STATE_DB](../../reference/glossary.md#term-state_db) 経由で上位に通知する設計だが、`ERROR_DB` 自体は [HLD](../../reference/glossary.md#term-hld) 提案であり実装は未完である ([error-handling-framework-in-sonic-limitations](../../architecture/error-handling-framework-in-sonic-limitations.md))。詳細は [SAI 失敗ハンドリング](../../platform/hld-for-handling-sai-failures.md) と [Error Handling Framework](../../architecture/error-handling-framework-in-sonic.md) を読む。
+syncd は ASIC_DB を消費し、SAI API を呼ぶ唯一の場所である。ベンダごとの SAI 実装は libsai に隠れ、syncd と orchagent はベンダ非依存に保たれる。SAI 戻り値 (`sai_status_t`) は、各 sub-Orch が `orchagent/saihelper.h` で宣言された free function `handleSaiCreateStatus` / `handleSaiSetStatus` / `handleSaiRemoveStatus` を呼んで分類する（`Orch` クラスの virtual メソッドではなく、`orchagent/saihelper.cpp` の自由関数として実装されている）。`SAI_STATUS_SUCCESS` と一部の良性ステータスは `task_success`、`INSUFFICIENT_RESOURCES` / `TABLE_FULL` / `NO_MEMORY` / `NV_STORAGE_FULL` は `task_need_retry`、それ以外は `handleSaiFailure` 経由で例外を投げる粗い実装になっており、saihelper 自身のコメントでも fine-grain failure handling は TODO と明記されている。<!-- evidence: sonic-swss orchagent/saihelper.cpp:581-720 (handleSaiCreateStatus / handleSaiSetStatus / handleSaiRemoveStatus), orchagent/saihelper.h:19-21 (宣言), orchagent/intfsorch.cpp:1301,1353,1401 (呼び出し), orchagent/dtelorch.cpp:41-70 (呼び出し) -->ASIC_DB 側の SAI failure 通知自体は sairedis の `syncd/NotificationProcessor.cpp` から ASIC_DB notification channel に流れる。`ERROR_DB` 経由で APP に伝えるパスは [HLD](../../reference/glossary.md#term-hld) 提案であり実装は未完である ([error-handling-framework-in-sonic-limitations](../../architecture/error-handling-framework-in-sonic-limitations.md))。詳細は [SAI 失敗ハンドリング](../../platform/hld-for-handling-sai-failures.md) と [Error Handling Framework](../../architecture/error-handling-framework-in-sonic.md) を読む。
 
 ## 機能章はこの絵のどこを使うか
 
