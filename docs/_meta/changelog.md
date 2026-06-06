@@ -23,6 +23,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-06 #5347 fix(quality): iter7 integration (15 rewrites)
 - 2026-06-06 #5331 fix(quality): iter6 integration (15 rewrites)
 - 2026-06-06 #5315 fix(quality): iter5 integration (15 rewrites)
 - 2026-06-06 #5284 fix(quality): iter3 integration (15 rewrites)
@@ -525,5 +526,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3955 docs(config-db): fix Phase E constants tag in gnmi page
 - 2026-05-19 #3953 docs(config-db): add Phase F side-effects block to tc-to-dscp-map
 - 2026-05-19 #3952 docs(config-db): add Phase E hardcoded-constants block to mux-cable-state
-- 2026-05-19 #3951 docs(config-db): add Phase H platform block to pbh-state
 
