@@ -5,13 +5,22 @@ description: Error Handling Framework HLD の制限事項。SWSS_RC enum だけ�
   ベースの代替運用設計を詳述する。
 area: architecture
 verification: discrepancy-found
-last_verified: 2026-05-11
+last_verified: 2026-06-06
 page_kind: split-child
 monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/error-handling/error_handling_design_spec.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss-common
+  path: common/status_code_util.h
+  ref: 158de8d3463f
+- repo: sonic-net/sonic-swss
+  path: orchagent/
+  ref: 4305596156d7
+- repo: sonic-net/sonic-utilities
+  path: scripts/
+  ref: 39732bceb8bd
 _no_related_cdb: true
 related:
   _no_related_yang: true
@@ -34,7 +43,7 @@ related:
 
 ### 取り込み済み
 
-- `sonic-swss-common/common/status_code_util.h:11-` で `SWSS_RC_SUCCESS / INVALID_PARAM / DEADLINE_EXCEEDED / UNAVAIL / NOT_FOUND / NO_MEMORY / EXISTS / PERMISSION_DENIED` 等の enum 群が定義されている。[HLD](../reference/glossary.md#term-hld) の `SWSS_RC_*` 体系の最低限は libswsscommon 側に入った。
+- `sonic-swss-common/common/status_code_util.h:9-25` で `enum class StatusCode` (scoped enum) として `SWSS_RC_SUCCESS / INVALID_PARAM / DEADLINE_EXCEEDED / UNAVAIL / NOT_FOUND / NO_MEMORY / EXISTS / PERMISSION_DENIED` 等の enumerator 群が定義されている。[HLD](../reference/glossary.md#term-hld) の `SWSS_RC_*` 体系の最低限は libswsscommon 側に入った（HLD では unscoped `enum` を想定していたが、master 実装は `enum class` に厳格化されている点に注意）。
 
 ### 未取り込み
 
@@ -44,10 +53,11 @@ related:
 
 ## 3. 行番号付きエビデンス
 
-`sonic-swss-common/common/status_code_util.h` L11-L25:
+`sonic-swss-common/common/status_code_util.h` L9-L26:
 
 ```cpp
-enum StatusCode {
+enum class StatusCode
+{
     SWSS_RC_SUCCESS,
     SWSS_RC_INVALID_PARAM,
     SWSS_RC_DEADLINE_EXCEEDED,
@@ -131,7 +141,7 @@ redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*' | wc -l   # RIB �
 
     | Phase | 範囲 (機能 / 段階) | 実装済 (master 取り込み済) | 未実装 (HLD 提案のみ) |
     |---|---|---|---|
-    | Phase 1 — 基本機能 | HLD §概要 / §設計の中核ユースケース | 部分取り込み済 — `SWSS_RC_*` enum (`status_code_util.h:11-25`) のみ取り込み済み | ERROR_DB / ErrorListener / ErrorReporter / CLI — 未実装（本ページ「実装との乖離」節参照） |
+    | Phase 1 — 基本機能 | HLD §概要 / §設計の中核ユースケース | 部分取り込み済 — `SWSS_RC_*` enumerator (`status_code_util.h:9-25`、`enum class StatusCode`) のみ取り込み済み | ERROR_DB / ErrorListener / ErrorReporter / CLI — 未実装（本ページ「実装との乖離」節参照） |
     | Phase 2 — 拡張機能 | HLD §拡張 / §追加要件 / §周辺統合 | — | 未実装 / 未マージ — HLD §未対応箇所は本ページ「HLD レベルの制限事項」節を参照 |
     | Phase 3 — 将来拡張 | HLD §Future Work / §将来課題 | — | 未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点) |
 
@@ -153,7 +163,7 @@ redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*' | wc -l   # RIB �
     - **代替手段 / 関連 reference**: frontmatter `related` に列挙された関連テーブル / CLI / YANG、および [Reference 索引](../reference/index.md) を参照
 
 !!! note "本ドキュメントの追跡"
-    - monitor: `partially_implemented` / last_verified: `2026-05-11`
+    - monitor: `partially_implemented` / last_verified: `2026-06-06`
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->

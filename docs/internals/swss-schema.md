@@ -9,6 +9,9 @@ sources:
 - repo: sonic-net/sonic-swss
   path: doc/swss-schema.md
   ref: 4305596145e57e15e4c6a1a3902c0bc6c44a09c5
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
 related:
   config_db:
   - VLAN
@@ -132,7 +135,7 @@ redis-cli -n 6 keys 'BFD_SESSION_TABLE|*'
 ## 制限事項
 
 - **生きたドキュメント**であるため、master が更新されるたびにフィールドが追加・変更される。本ページに列挙した内容は執筆時点（commit `4305596145e57e15e4c6a1a3902c0bc6c44a09c5`）のスナップショット。
-- ABNF 表記はあくまで **人間とパーサ向けの参考形式** で、orchagent 等の実装はこのファイルを直接読まない。実装側の `swss-common/schema.h` が定数定義の正規ソース。
+- ABNF 表記はあくまで **人間とパーサ向けの参考形式** で、orchagent 等の実装はこのファイルを直接読まない。実装側の `sonic-swss-common/common/schema.h` が定数定義（テーブル名・フィールド名）の正規ソースで、約 450 個の `#define APP_*_TABLE_NAME` / `STATE_*_TABLE_NAME` が並ぶ[^2]。
 - 全テーブルを網羅的にここで再掲はしない（54KB のうちの中心テーブルのみピックアップ）。**完全な定義は [HLD](../reference/glossary.md#term-hld) `sonic-net/sonic-swss/doc/swss-schema.md` を参照。**
 - **`ConsumerStateTable` の KEY_SET メソッドで DEL メッセージが欠落する問題** ([sonic-swss#1812](https://github.com/sonic-net/sonic-swss/issues/1812)): `ProducerStateTable` / `ConsumerStateTable` を使って swss / orchagent にメッセージを届ける際、KEY_SET メソッドを経由した場合 DEL メッセージが `ConsumerStateTable::pops` で取得できないことがある。インターフェースの高速 DEL/SET（削除後即再作成）を行う場合に発生しやすい。この問題は `ProducerTable` ではなく `ProducerStateTable` を使用している場合のみ該当する。
 - **APPLY_VIEW 前の buffer profile 属性照会** ([sonic-swss#2231](https://github.com/sonic-net/sonic-swss/issues/2231)): zero-buffer pool 構成で起動時 INIT_VIEW → APPLY_VIEW 切替前に buffer profile 属性を SAI に照会すると、プロファイルが存在しない状態での照会となり問題が発生する可能性がある。buffer 関連の設定は APPLY_VIEW 完了後に orchagent が実施することが前提であり、初期化シーケンスの実装には注意が必要。
@@ -141,18 +144,19 @@ redis-cli -n 6 keys 'BFD_SESSION_TABLE|*'
 ## 干渉する機能
 
 - **CONFIG_DB / sonic-yang-models**: 設定面のスキーマは別途 YANG が正規。本ドキュメントは状態・運用面 (APPL_DB / STATE_DB) を扱う。
-- **`sonic-swss-common/common/schema.h`**: 実装側の定数定義（テーブル名・フィールド名）の正規ソース。本 .md と乖離した場合は `.h` 側を信用する。
+- **`sonic-net/sonic-swss-common` の `common/schema.h`**: 実装側の定数定義（テーブル名・フィールド名）の正規ソース。本 .md と乖離した場合は `.h` 側を信用する[^2]。
 - **CONFIG_DB 由来の APPL_DB 投影**: `*Mgr` プロセスが CONFIG_DB → APPL_DB 投影を行うため、テーブル名や field 名が概念的に対応していても、層を跨ぐと微妙に変わる場合がある（例: CONFIG_DB `PORT|...` → APPL_DB `PORT_TABLE:...`）。
 
 ## トラブルシューティング
 
 - 期待する APPL_DB エントリが無い → CONFIG_DB → APPL_DB の投影を担う `*mgrd`（[intfmgrd](../reference/glossary.md#term-intfmgrd) / [vlanmgrd](../reference/glossary.md#term-vlanmgrd) / [portmgrd](../reference/glossary.md#term-portmgrd) 等）の状態を確認。
-- フィールド名が違って見える → `swss-schema.md` と `swss-common/schema.h` の **両方** を見て、どちらが最新かを確認する。
+- フィールド名が違って見える → `sonic-swss/doc/swss-schema.md` と `sonic-swss-common/common/schema.h` の **両方** を見て、どちらが最新かを確認する。
 - 自分のページが参照する APPL_DB スキーマが本書と食い違う → 直近の [sonic-swss](../reference/glossary.md#term-sonic-swss) master コミットの `doc/swss-schema.md` で再確認するのが望ましい。
 
 ## 引用元
 
 [^1]: `sonic-net/sonic-swss` `doc/swss-schema.md` @ `4305596145e57e15e4c6a1a3902c0bc6c44a09c5`
+[^2]: `sonic-net/sonic-swss-common` `common/schema.h` (565 行、約 450 個の `#define APP_*_TABLE_NAME` / `STATE_*_TABLE_NAME` / `CFG_*_TABLE_NAME` 定義) @ `158de8d3463ff4b841653f6d57190bb142b80d9c`
 
 ## 裏取りメモ (batch 30, 2026-05-11)
 
