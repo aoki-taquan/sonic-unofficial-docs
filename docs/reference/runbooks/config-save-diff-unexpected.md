@@ -1,6 +1,6 @@
 ---
 title: config save 後に予期しない diff が出る
-description: 'Runbook: config save 後に予期しない diff が出る — : sonic-net/sonic-utilities @ 39732bceb — config save : sonic-net/sonic-swss-common @ 158de8d — configdb get/set'
+description: config save 直後でも diff が消えない場合の切り分け Runbook。default 値の auto-fill、dynamic buffer の自動 key、multi-asic namespace の不整合、sonic-db-cli による runtime のみの変更といった原因を切り分け、安全に復旧する手順をまとめる。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
@@ -8,6 +8,7 @@ sources:
 - repo: sonic-net/sonic-utilities
   path: config/main.py
   ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  lines: 1789-1849
 - repo: sonic-net/sonic-swss-common
   path: common/configdb.cpp
   ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
@@ -87,7 +88,7 @@ sudo journalctl -u hostcfgd | grep -i "default" | tail
 ## 対処方法
 
 - 一旦 `sudo config save -y` を再実行して安定化
-- multi-asic: `sudo config save -y` （新しい multi-asic 対応版で各 namespace 同時 save）
+- multi-asic: `sudo config save -y` は `config/main.py` の `save` コマンド内で全 namespace を反復し、それぞれ `/etc/sonic/config_db<N>.json` を出力する[^1]
 - runtime のみで良い key は [CONFIG_DB](../../reference/glossary.md#term-config_db) から削除し save し直す: `sudo sonic-db-cli CONFIG_DB del "<key>"`
 
 ## 関連ページ
@@ -100,7 +101,7 @@ sudo journalctl -u hostcfgd | grep -i "default" | tail
 
 本ページの根拠は引用元 [^1][^2] を参照。
 
-[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config save
-[^2]: sonic-net/[sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common) @ 158de8d — configdb get/set
+[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `config/main.py` の `save` コマンド (L1789-L1849): `sonic-cfggen -d --print-data` を namespace ごとに走らせ、`sort_dict` で整形してから `/etc/sonic/config_db<N>.json` に書き戻す
+[^2]: sonic-net/[sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common) @ 158de8d — `common/configdb.cpp` の ConfigDBConnector get/set 実装。`config save` は [Redis](../../reference/glossary.md#term-redis) から現値を吸い上げるため、`sonic-db-cli SET` で直接書いた runtime-only key も snapshot に乗る
 
-<!-- glossary-links-injected: 1af9c6208afc -->
+<!-- glossary-links-injected: 0f594312e2b7 -->
