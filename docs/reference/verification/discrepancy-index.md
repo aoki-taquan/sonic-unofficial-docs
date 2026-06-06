@@ -31,7 +31,7 @@ last_verified: 2026-05-13
 | [`acl-qos`](#area-acl-qos) | 6 |
 | [`architecture`](#area-architecture) | 25 |
 | [`internals`](#area-internals) | 5 |
-| [`management`](#area-management) | 18 |
+| [`management`](#area-management) | 19 |
 | [`overlay`](#area-overlay) | 1 |
 | [`platform`](#area-platform) | 13 |
 | [`reference`](#area-reference) | 9 |
@@ -487,6 +487,11 @@ last_verified: 2026-05-13
   
   実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b76`）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという **一部のみの部分実装** 状態:
 
+- [ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）](../../management/ipv4-port-based-dhcp-server-in-sonic.md)  
+  area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-06-06`
+  
+  HLD と master の [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) 実装で以下の差分を確認した:
+
 - [既定パスワードの初回ログイン強制変更（California SB-327 準拠）](../../management/default-credential-management-for-california-sb-327-conformance.md)  
   area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-06-04`
   
@@ -835,6 +840,11 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b76`）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという **一部のみの部分実装** 状態:
+
+- [ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）](../../management/ipv4-port-based-dhcp-server-in-sonic.md)  
+  area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-06-06`
+  
+  HLD と master の [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) 実装で以下の差分を確認した:
 
 - [既定パスワードの初回ログイン強制変更（California SB-327 準拠）](../../management/default-credential-management-for-california-sb-327-conformance.md)  
   area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-06-04`
