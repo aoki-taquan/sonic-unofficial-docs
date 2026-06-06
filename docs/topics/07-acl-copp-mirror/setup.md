@@ -268,7 +268,6 @@ show copp config
 
 [^coppmgr-trap]: `sonic-swss/cfgmgr/coppmgr.cpp` の `CoppMgr::addTrapIdsToTrapGroup` / `removeTrapIdsFromTrapGroup` (L454-L477) で `trap_ids` を `tokenize` し、APPL_DB の `COPP_TABLE` の `trap_ids` フィールドへ反映する。<!-- evidence: sonic-swss@4305596156d70e9797e8a881b3d19b46de0bce0d:cfgmgr/coppmgr.cpp#L454-L477 -->
 
-
 ## sonic-cfggen で投入する場合
 
 ```bash

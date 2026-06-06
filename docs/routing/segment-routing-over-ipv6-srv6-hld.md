@@ -78,7 +78,7 @@ SRV6_MY_SIDS|<locator_name>|<ip_prefix>:
   decap_dscp_mode = uniform | pipe
 ```
 
-action の enum は YANG 上 `uN` / `uDT46` の 2 値のみだが、`srv6orch.cpp` の `end_behavior_map` は `end` / `end.x` / `end.t` / `end.dx{6,4}` / `end.dt{6,4,46}` / `end.b6.encaps[.red]` / `end.b6.insert[.red]` / `udx{6,4}` / `udt{6,4,46}` / `un` / `ua` まで認識する[^2]。`SRV6_POLICY` / `SRV6_STEER` は本 HLD ドラフトの提案だが master の schema.h・sonic-yang-models いずれにも未取り込み。
+action の enum は [YANG](../reference/glossary.md#term-yang) 上 `uN` / `uDT46` の 2 値のみだが、`srv6orch.cpp` の `end_behavior_map` は `end` / `end.x` / `end.t` / `end.dx{6,4}` / `end.dt{6,4,46}` / `end.b6.encaps[.red]` / `end.b6.insert[.red]` / `udx{6,4}` / `udt{6,4,46}` / `un` / `ua` まで認識する[^2]。`SRV6_POLICY` / `SRV6_STEER` は本 HLD ドラフトの提案だが master の schema.h・sonic-yang-models いずれにも未取り込み。
 
 ### APPL_DB
 
@@ -91,7 +91,7 @@ SRV6_MY_SID_TABLE:<block_len>:<node_len>:<func_len>:<arg_len>:<ipv6>: {
 }
 ```
 
-`srv6orch.cpp` の `doTaskMySidTable` (L2208 付近) は APPL_DB の key を **`block_len:node_len:func_len:arg_len:sid-ip` の 5 タプル**として parse する[^2]。field は `action` / `vrf` / `adj` のみで、policy / source は doTaskMySidTable には存在しない。`adj` は `,` 区切りで複数記述可能だが、L1515-L1518 で ECMP adjacency は明示的に reject される。
+`srv6orch.cpp` の `doTaskMySidTable` (L2208 付近) は APPL_DB の key を **`block_len:node_len:func_len:arg_len:sid-ip` の 5 タプル**として parse する[^2]。field は `action` / `vrf` / `adj` のみで、policy / source は doTaskMySidTable には存在しない。`adj` は `,` 区切りで複数記述可能だが、L1515-L1518 で [ECMP](../reference/glossary.md#term-ecmp) adjacency は明示的に reject される。
 
 ### Orchagent（Srv6Orch）
 
@@ -191,4 +191,4 @@ reasoning: Phase 1 のサポート機能の根拠。
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: a3729a90b98f -->

@@ -79,7 +79,7 @@ ACL は data plane の分類器、CoPP は control plane へ punt されるパ�
 |---|---|---|---|---|
 | concept | 196 | ✅ 完成 | meta | 概念・位置付け |
 | architecture | 64 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
-| setup | 282 | ✅ 完成 | meta | セットアップ手順 |
+| setup | 290 | ✅ 完成 | code-verified | セットアップ手順 |
 | operations | 186 | ✅ 完成 | meta | 運用・デバッグ |
 | internals | 128 | ✅ 完成 | meta | 内部実装 |
 | advanced | 110 | ✅ 完成 | meta | 発展トピック |
