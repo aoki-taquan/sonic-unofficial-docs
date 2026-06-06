@@ -3,12 +3,18 @@ title: MCLAG Enhancements 運用（CLI / 設定手順 / 確認 / トラブルシ
 description: MCLAG Enhancements の運用手順。click / KLISH の両 CLI、典型的な設定例、show / redis / mclagdctl での確認、よくある不具合と切り分け手順を扱う。
 area: switching
 verification: code-verified
-last_verified: 2026-05-10
+last_verified: 2026-06-06
 page_kind: split-child
 sources:
 - repo: sonic-net/SONiC
   path: doc/mclag/MCLAG_Enhancements_HLD.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-utilities
+  path: config/mclag.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: scripts/fdbshow
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
   - MCLAG_DOMAIN
@@ -51,8 +57,8 @@ config mclag add <domain-id> <local-ip> <peer-ip> [<peer-ifname>]
 config mclag del <domain-id>
 ```
 
-- `domain-id`: 1–4095
-- `local-ip` / `peer-ip`: IPv4 のみ
+- `domain-id`: 1–4095（範囲外は CLI が拒否[^3]）
+- `local-ip` / `peer-ip`: IPv4 のみ。reserved / multicast / loopback / 同一 IP は CLI で拒否される[^3]
 - `peer-ifname`: L2 MCLAG は必須、L3 MCLAG は省略可
 
 ### 2.2 MCLAG interface 追加
@@ -66,7 +72,7 @@ config mclag member del <domain-id> <PortChannel-list>
 
 ```bash
 config mclag keepalive-interval <domain-id> <1-60>      # default 1
-config mclag session-timeout    <domain-id> <3-3600>    # default 15、keep-alive の 3 倍以上推奨
+config mclag session-timeout    <domain-id> <3-3600>    # default 15。CLI 側で session_timeout >= 3 * keepalive かつ keepalive の倍数を強制[^3]
 ```
 
 ### 2.4 Unique IP（L3 プロトコル対応）
@@ -103,7 +109,7 @@ config portchannel add PortChannel10
 config portchannel member add PortChannel10 Ethernet0
 config vlan member add 100 PortChannel10
 config portchannel add PortChannel999             # peer-link
-config vlan member add 100 PortChannel999 -u
+config vlan member add 100 PortChannel999         # peer-link は通常 trunk（複数 VLAN tagged）
 
 # Switch A
 config mclag add 1 192.168.0.1 192.168.0.2 PortChannel999
@@ -136,7 +142,7 @@ config mclag unique-ip add Vlan100
 ```bash
 show mclag brief
 show mclag interface <domain-id> <PortChannel>
-show mac        # type=Static / origin が見える環境ではローカル/リモート判別
+show mac        # Vlan / MacAddress / Port / Type 列。Type=Static/Dynamic で remote sync された MAC かを Port 列の peer-link 名から判別[^3]
 show ip route
 ```
 
@@ -247,6 +253,7 @@ sudo ebtables -A FORWARD -p 802_1Q --vlan-encap IPv6 -j DROP
 
 [^1]: `sonic-net/SONiC` `doc/mclag/MCLAG_Enhancements_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 [^2]: [`sonic-net/SONiC#1253`](https://github.com/sonic-net/SONiC/issues/1253)
+[^3]: `sonic-net/sonic-utilities` `config/mclag.py` (`mclag_domain_id_valid` / `mclag_ka_session_dep_check` / `is_ipv4_addr_valid`) と `scripts/fdbshow` (HEADER = `['No.', 'Vlan', 'MacAddress', 'Port', 'Type']`)
 
 <!-- topics-back-ref -->
 ## 関連 Topics
