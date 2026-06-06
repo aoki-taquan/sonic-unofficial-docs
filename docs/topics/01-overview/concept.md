@@ -3,8 +3,16 @@ title: 概念と読み始め方
 description: 概念と読み始め方 — この章は「SONiC をこれから読む人が、最初の数時間でつまずきやすい所」を整理しておく入口です。
 area: topics
 verification: meta
-last_verified: 2026-05-10
-sources: []
+last_verified: 2026-06-06
+sources:
+- repo: sonic-buildimage
+  path: files/build_templates/init_cfg.json.j2
+  lines: "67-98"
+  note: 標準ビルドの FEATURE (container) 一覧
+- repo: sonic-swss-common
+  path: common/database_config.json
+  lines: "14-114"
+  note: 論理 Redis DB id 割り当て
 keywords:
 - SONiC
 - 概念
@@ -73,6 +81,62 @@ SONiC を構成軸で 3 つに分けると次のようになります。本章�
 | Management Framework | YANG → REST/gNMI → CONFIG_DB のパス。`sonic-cli` がこの上にいる |
 
 「`config` CLI」と「`sonic-cli`」は別系統です。前者は Click ベースで `sonic-utilities` に入っており、後者は Management Framework / YANG を経由します。両方が CONFIG_DB に向かうため、最終的な状態は同じですが、validation や RBAC、対応コマンド範囲が異なります。
+
+## Component と DB の対応 (具体像)
+
+「DB は 7 個ぐらいある、container は十数個ある」を抽象表現で終わらせると掴みづらいので、標準ビルドで何が起動して、それぞれがどの Redis 論理 DB を触るのかを 1 枚にしておきます。container 一覧は `sonic-buildimage/files/build_templates/init_cfg.json.j2:67-98` の FEATURE 定義、Redis DB id は `sonic-swss-common/common/database_config.json:14-114` から取った値です。
+
+```mermaid
+flowchart LR
+  subgraph CTRS[標準ビルドの主要 container]
+    direction TB
+    DBC[database<br/>= 単一 Redis instance を提供]
+    SW[swss<br/>orchagent + 各 *mgrd / *syncd]
+    SY[syncd<br/>+ vendor SAI .so]
+    BGP[bgp<br/>FRR + bgpcfgd + fpmsyncd]
+    TM[teamd]
+    PMON[pmon<br/>xcvrd / psud / ledd]
+    LL[lldp]
+    SN[snmp]
+    DR[dhcp_relay]
+    RA[radv]
+    MF[mgmt-framework]
+    GN[gnmi]
+    TEL[telemetry]
+  end
+  subgraph DBS[論理 Redis DB - 単一 instance 内]
+    direction TB
+    CFG[(CONFIG_DB<br/>id=4 意図)]
+    APPL[(APPL_DB<br/>id=0 依頼)]
+    ASDB[(ASIC_DB<br/>id=1 ASIC 投影)]
+    ST[(STATE_DB<br/>id=6 観測)]
+    COU[(COUNTERS_DB<br/>id=2 統計)]
+    FLEX[(FLEX_COUNTER_DB<br/>id=5 統計 plugin)]
+    LOG[(LOGLEVEL_DB<br/>id=3 log 制御)]
+  end
+
+  MF --> CFG
+  GN --> CFG
+  CFG --> SW
+  CFG --> BGP
+  CFG --> TM
+  SW --> APPL
+  BGP --> APPL
+  TM --> APPL
+  APPL --> SW
+  SW --> ASDB
+  ASDB --> SY
+  SY --> ST
+  SY --> COU
+  SY --> FLEX
+  PMON --> ST
+  TEL -.read.-> COU
+  TEL -.read.-> ST
+  SN -.read.-> COU
+  SN -.read.-> ST
+```
+
+主要 container と論理 DB id の組合せは概ね固定です (CONFIG_DB=4 / APPL_DB=0 / ASIC_DB=1 / STATE_DB=6 / [COUNTERS_DB](../../reference/glossary.md#term-counters_db)=2 / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)=5 / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db)=3、加えて `SNMP_OVERLAY_DB=7`、`RESTAPI_DB=8`、Gearbox 用 `GB_*=9-11`、Chassis 用 `CHASSIS_APP_DB=12` / `CHASSIS_STATE_DB=13` (別 instance `redis_chassis`)、`APPL_STATE_DB=14`、[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 用 `DPU_*=15-18`)。Multi-ASIC や VoQ chassis では namespace ごとに Redis instance が増えますが、論理 DB id の意味は同じです。
 
 ## まずどこから読むか
 
@@ -181,4 +245,4 @@ flowchart LR
 
 この章は SONiC ドキュメント全体の入口に位置するため、特段の前提章はない。`docs/topics/index.md` の読み進め方マップを参照すること。
 
-<!-- glossary-links-injected: 5c9b3765d470 -->
+<!-- glossary-links-injected: b4d2ea9fc71a -->
