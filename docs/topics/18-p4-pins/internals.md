@@ -67,6 +67,28 @@ excerpt: |
 reasoning: HLD 7 Manager に対して master では ip_multicast / l3_multicast / tables_definition 等が追加されている根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/p4orch/p4orch.h#L17-L29 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/p4orch/p4orch.h#L17-L29 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    #include "p4orch/ip_multicast_manager.h"
+    #include "p4orch/l3_multicast_manager.h"
+    #include "p4orch/neighbor_manager.h"
+    #include "p4orch/next_hop_manager.h"
+    #include "p4orch/router_interface_manager.h"
+    #include "p4orch/tables_definition_manager.h"
+    #include "p4orch/wcmp_manager.h"
+    ```
+
+    **判断根拠**: HLD 7 Manager に対して master では ip_multicast / l3_multicast / tables_definition 等が追加されている根拠。
+
+<!-- evidence-rendered:end -->
 
 ## ObjectManagerInterface の抽象
 
@@ -81,6 +103,24 @@ excerpt: |
 reasoning: ObjectManagerInterface の 3 メソッド抽象（enqueue / drain / drainWithNotExecuted）の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/p4orch/object_manager_interface.h#L12-L19 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/p4orch/object_manager_interface.h#L12-L19 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    virtual void enqueue(const std::string &table_name, const swss::KeyOpFieldsValuesTuple &entry) = 0;
+    virtual ReturnCode drain() = 0;
+    virtual void drainWithNotExecuted() = 0;
+    ```
+
+    **判断根拠**: ObjectManagerInterface の 3 メソッド抽象（enqueue / drain / drainWithNotExecuted）の根拠。
+
+<!-- evidence-rendered:end -->
 
 ## P4OidMapper
 
@@ -93,6 +133,22 @@ excerpt: |
 reasoning: P4OidMapper が ref_count を public API として公開している根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/p4orch/p4oidmapper.h#L44 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/p4orch/p4oidmapper.h#L44 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    bool getRefCount(_In_ sai_object_type_t object_type, _In_ const std::string &key, _Out_ uint32_t *ref_count) const;
+    ```
+
+    **判断根拠**: P4OidMapper が ref_count を public API として公開している根拠。
+
+<!-- evidence-rendered:end -->
 
 ## entity_cache_ の Write 連動更新
 
@@ -115,6 +171,23 @@ excerpt: |
 reasoning: APPL_STATE_DB=14 と DPU_APPL_STATE_DB=16 の DB id 定義の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss-common/common/schema.h#L27-L29 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss-common/common/schema.h#L27-L29 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)`
+
+    **抜粋**:
+
+    ```text
+    #define APPL_STATE_DB       14
+    #define DPU_APPL_STATE_DB   16
+    ```
+
+    **判断根拠**: APPL_STATE_DB=14 と DPU_APPL_STATE_DB=16 の DB id 定義の根拠。
+
+<!-- evidence-rendered:end -->
 
 ## warm boot とキャッシュの整合
 
