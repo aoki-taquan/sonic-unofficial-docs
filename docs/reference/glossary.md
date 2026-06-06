@@ -64,7 +64,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: ASIC_DB
 - **日本語訳**: ASIC DB
 - **説明**: Redis DB ID 1。`syncd` が SAI オブジェクトの状態を反映する DB。SAI オブジェクト ID をキーに、属性のシリアライズ済み表現を保持する。
-- **関連**: [SAI](#sai)、[syncd](#syncd)
+- **関連**: [SAI](#term-sai)、[syncd](#term-syncd)
 
 ### ASIC SDK {#term-asic-sdk}
 
@@ -100,7 +100,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: BGP (Border Gateway Protocol)
 - **日本語訳**: BGP
 - **説明**: ルーティングプロトコル (RFC 4271)。SONiC では FRR の `bgpd` を使用し、`fpmsyncd` 経由でカーネル経由 APPL_DB へ反映する。
-- **関連**: [BGP トピック](../topics/02-bgp/index.md)、[FRR](#frr)、[fpmsyncd](#fpmsyncd)
+- **関連**: [BGP トピック](../topics/02-bgp/index.md)、[FRR](#term-frr)、[fpmsyncd](#term-fpmsyncd)
 
 ### bgpcfgd {#term-bgpcfgd}
 
@@ -225,7 +225,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: DPU (Data Processing Unit)
 - **日本語訳**: データ処理ユニット
 - **説明**: SmartSwitch の各ライン上に搭載される SoC。SONiC は NPU 側と DPU 側でそれぞれインスタンスを動かす。
-- **関連**: [SmartSwitch](#smartswitch)
+- **関連**: [SmartSwitch](#term-smartswitch)
 
 ### DPB {#term-dpb}
 
@@ -302,7 +302,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: ENI (Elastic Network Interface)
 - **日本語訳**: ENI
 - **説明**: DASH における仮想 NIC 概念。テナント単位のポリシーバインド単位。
-- **関連**: [DASH](#dash)
+- **関連**: [DASH](#term-dash)
 
 ### ETS {#term-ets}
 
@@ -384,7 +384,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: fpmsyncd
 - **日本語訳**: FPM 同期デーモン
 - **説明**: FRR `zebra` からの FPM メッセージを受信し、APPL_DB の `ROUTE_TABLE` / `LABEL_ROUTE_TABLE` に書き込む SwSS コンポーネント。
-- **関連**: [FRR](#frr)、[BGP トピック](../topics/02-bgp/index.md)
+- **関連**: [FRR](#term-frr)、[BGP トピック](../topics/02-bgp/index.md)
 
 ### FRR {#term-frr}
 
@@ -1065,8 +1065,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - **略称**: VOQ (Virtual Output Queue)
 - **日本語訳**: 仮想出力キュー
-- **説明**: 各入力ポートが出力ポートごとに独立キューを持つスイッチング方式。Head-of-Line ブロッキングを回避する。SONiC では分散シャーシ (VoQ Chassis) で `CHASSIS_APP_DB` / global system port 管理と組で扱われる。
-- **関連**: [BGP](#term-bgp)
+- **説明**: 各入力ポートが出力ポートごとに独立キューを持つスイッチング方式。Head-of-Line ブロッキングを回避する。SONiC では分散シャーシ (VoQ Chassis) で `CHASSIS_APP_DB` / global system port 管理と組で扱われる<sup>[^voq-hld]</sup>。
+- **関連**: [Multi-ASIC](#term-multi-asic)
+
+[^voq-hld]: `sonic-net/SONiC` `doc/voq/voq_hld.md` L24-L29, L89, L168-L190 — `CHASSIS_APP_DB` は supervisor card 上の chassis redis に置かれ、各 ASIC instance の OrchAgent が `SYSTEM_PORT` / `SYSTEM_INTERFACE` / `SYSTEM_NEIGH` / `SYSTEM_PORTCHANNEL` を書き込み・購読する。system port は `system_port_id` / `switch_id` / `core_index` / `core_port_index` / `speed` の組で全シャーシ範囲で一意に識別される。
 
 ### VS {#term-vs}
 
