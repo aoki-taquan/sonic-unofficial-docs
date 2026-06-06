@@ -1,7 +1,6 @@
 ---
 title: 内部実装
-description: 内部実装 — 仮想 lab とテストフレームワークの内部構造で、章本文を読むときに前提として知っておくと便利な点を集めます。SAI VS
-  や PTF の中身を全部書き下すのではなく、HLD ページへの導線を整理する位置付けです。
+description: 内部実装 — 仮想 lab とテストフレームワークの内部構造で、章本文を読むときに前提として知っておくと便利な点を集めます。SAI VS や PTF の中身を全部書き下すのではなく、HLD ページへの導線を整理する位置付けです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
@@ -73,7 +72,8 @@ flowchart LR
 
 | コンポーネント | 主実体 | 責務 |
 | --- | --- | --- |
-| `SAI VS` | `meta/sai_vs_*.cpp`（libsai-vs） | SAI API を Linux netdev / bridge / route で代替 |
+<!-- evidence: sonic-net/sonic-sairedis vslib/Makefile.am#L12 (lib_LTLIBRARIES = libsaivs.la), vslib/Makefile.am#L107 (libsaivs_la_SOURCES = sai_vs.cpp), vslib/SwitchStateBase.cpp が L2/L3/FDB の Linux 反映ロジック本体 -->
+| `SAI VS` | `vslib/*.cpp`（entry: `vslib/sai_vs.cpp`、build 成果物 `libsaivs.la`） | SAI API を Linux netdev / bridge / route で代替 |
 | `syncd` (VS mode) | syncd binary を `--asicType vs` で起動 | SAI VS を load |
 | `sonic-vs.img` build | `sonic-buildimage` の `PLATFORM=vs` target | KVM 用 image |
 | PTF | `ptf` python framework | port-level packet I/O テスト |
