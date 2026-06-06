@@ -23,7 +23,7 @@ related:
 
 `show system-health` は `system-health` デーモン（`HealthCheckerManager`）が保持するシステム状態（サービス・ハードウェア・ファイルシステムなど）と、[SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成での [DPU](../../reference/glossary.md#term-dpu) 状態、システムが boot 完了したかの「sysready」状態を表示する。実装は `show/system_health.py`、`show/main.py` 末尾で `cli.add_command(system_health.system_health)` の形で登録される[^1]。
 
-`HealthCheckerManager` の本体は `health_checker/` パッケージで、`/usr/share/sonic/device/<platform>/system_health_monitoring_config.json` をベースに監視対象を決める。`show system-health` は **root 権限必須**（`os.geteuid()` チェック）。
+`HealthCheckerManager` の本体は `health_checker/` パッケージで、`/usr/share/sonic/device/<platform>/system_health_monitoring_config.json` をベースに監視対象を決める。`summary` / `detail` / `monitor-list` の 3 サブコマンドは共通ヘルパ `get_system_health_status()` を呼び、そのヘルパ冒頭の `os.geteuid()` チェックが **root 権限必須** の実体となる（`UTILITIES_UNIT_TESTING=1` の場合はモック経路に切り替わり root チェックをスキップ）[^3]。`sysready-status` / `dpu` はこのヘルパを通らないため root 権限を要求しない。
 
 ## コマンド一覧
 
@@ -135,9 +135,9 @@ excerpt: |
 
 ## 注意
 
-- root 権限が無いと `summary` / `detail` / `monitor-list` は exit 1。
-- chassis モジュール (`sonic_platform.chassis.Chassis`) が存在しないプラットフォームでは ImportError になる可能性がある。
-- ユニットテスト用の `UTILITIES_UNIT_TESTING=1` で `MockerManager` / `MockerChassis` に切り替わるパスがある。
+- root 権限が無いと `summary` / `detail` / `monitor-list` は `get_system_health_status()` 冒頭の `os.geteuid()` チェック (`show/system_health.py` L26-L28) で「Root privileges are required for this operation」を出力して exit 1。`sysready-status` / `dpu` は同ヘルパを通らないため root を要求しない。
+- chassis モジュール (`sonic_platform.chassis.Chassis`) が存在しないプラットフォームでは ImportError になる可能性がある（root チェック通過後に import される）。
+- ユニットテスト用の `UTILITIES_UNIT_TESTING=1` で `MockerManager` / `MockerChassis` に切り替わるパスがあり、この経路では root チェックを行わない。
 
 <!-- ref-triangle:start -->
 
@@ -154,6 +154,8 @@ excerpt: |
 [^1]: `cli.add_command(system_health.system_health)` は `show/main.py` L329。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L329>
 
 [^2]: 整形は `display_system_health_summary` (`show/system_health.py` L44-L74)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/system_health.py#L44>
+
+[^3]: `get_system_health_status()` 内の root チェック (`show/system_health.py` L17-L36)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/system_health.py#L17-L36>
 
 <!-- cli-mermaid -->
 ### データフロー (手動作成)
