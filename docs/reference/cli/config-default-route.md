@@ -86,12 +86,15 @@ MGMT_INTERFACE|eth0|10.0.0.0/24
 
 ## パターン 3: BGP 経由
 
-業務トラフィック向けのデフォルトルートは大抵 [BGP](../../reference/glossary.md#term-bgp) で受ける。[SONiC](../../reference/glossary.md#term-sonic) の標準 image は [FRR](../../reference/glossary.md#term-frr) を BGP daemon として同梱しており、デフォルトルートの出力（advertise）方法は **2 系統** ある:
+業務トラフィック向けのデフォルトルートは大抵 [BGP](../../reference/glossary.md#term-bgp) で受ける。[SONiC](../../reference/glossary.md#term-sonic) の標準 image は [FRR](../../reference/glossary.md#term-frr) を BGP daemon として同梱しており、自分側から default route を広告する場合の方法は次のとおり:
 
 | 方法 | スコープ | 用途 |
 |---|---|---|
 | `neighbor X default-originate` | neighbor 単位 | 特定 neighbor にのみ `0.0.0.0/0` を生成 |
-| `default-information originate` | address-family 全体 | 再配布（redistribute）した default route を全 neighbor に広告 |
+| `neighbor X default-originate route-map RM` | neighbor 単位 + 条件 | route-map で生成可否や属性を制御 |
+| [EVPN](../../reference/glossary.md#term-evpn) `default-originate ipv4` / `ipv6` | EVPN address-family | EVPN type-5 で default を広告 |
+
+FRR の BGP には OSPF/RIP のような `default-information originate` 構文は存在せず、[SONiC](../../reference/glossary.md#term-sonic) の `BGP_GLOBALS_AF` も同名フラグを持たない（同じ構文は OSPF (`OSPFV2_ROUTER_DISTRIBUTE_ROUTE`) 側にのみ存在する[^4]）。
 
 ### vtysh での即時設定
 
@@ -111,17 +114,18 @@ sudo vtysh -c "configure terminal" \
   -c "neighbor 10.0.0.1 default-originate route-map RM_DEFAULT" \
   -c "end"
 
-# OSPF / static からの default を BGP に注入
+# 全 IPv4 neighbor に default を広告する場合は、各 neighbor に
+# default-originate を入れるか、peer-group 経由で一括設定する
 sudo vtysh -c "configure terminal" \
   -c "router bgp 65000" \
   -c "address-family ipv4 unicast" \
-  -c "default-information originate" \
+  -c "neighbor PG_DEFAULT default-originate" \
   -c "end"
 ```
 
 ### CONFIG_DB 経由（frr-mgmt-framework）
 
-`frr-mgmt-framework` （[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common [YANG](../../reference/glossary.md#term-yang) → frrcfgd → [vtysh](../../reference/glossary.md#term-vtysh)）を使う構成では、CONFIG_DB の `BGP_NEIGHBOR_AF` テーブルに `send_default_route` / `default_rmap` を入れると `neighbor X default-originate ...` に展開され[^2]、`BGP_GLOBALS_AF` 側のフラグからは `default-information originate` が展開される[^3]。[EVPN](../../reference/glossary.md#term-evpn) address-family では `default-originate-ipv4` / `default-originate-ipv6` フラグが `default-originate ipv4` / `default-originate ipv6` に対応する[^4]。
+`frr-mgmt-framework` （[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common [YANG](../../reference/glossary.md#term-yang) → frrcfgd → [vtysh](../../reference/glossary.md#term-vtysh)）を使う構成では、CONFIG_DB の `BGP_NEIGHBOR_AF` テーブルに `send_default_route` / `default_rmap` を入れると `neighbor X default-originate ...` に展開される[^2]。[EVPN](../../reference/glossary.md#term-evpn) address-family では `BGP_GLOBALS_AF` の `default-originate-ipv4` / `default-originate-ipv6` フラグが `default-originate ipv4` / `default-originate ipv6` に対応する[^3]。OSPF redistribute からの default route 注入（`default-information originate`）は `OSPFV2_ROUTER_DISTRIBUTE_ROUTE` テーブル経由で別パスとして処理される[^4]。
 
 `config bgp` 配下の click サブコマンドの詳細は [config bgp サブコマンド](config-bgp.md) を参照。受信側（自分が default を learn する側）には特別な設定は不要で、デフォルトでは BGP best path として選ばれ Linux カーネルの routing table と [SAI](../../reference/glossary.md#term-sai) route object に書き込まれる。
 
@@ -165,9 +169,9 @@ flowchart LR
 ## 引用元
 
 [^1]: `config route add` の実装は `config/main.py` L7812-L7888。`blackhole` の自動付与は L7858-L7870。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L7812>
-[^2]: `send_default_route` / `default_rmap` → `neighbor {} default-originate ...` のマッピングは `frrcfgd.py` L1899-L1900。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L1899>
-[^3]: `default-information originate` の組み立ては `frrcfgd.py` L3621-L3645（always / route-map / metric / metric-type サフィックス対応）。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L3621>
-[^4]: [EVPN](../../reference/glossary.md#term-evpn) address-family の `default-originate-ipv4` / `default-originate-ipv6` フラグは `frrcfgd.py` L1851-L1852。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L1851>
+[^2]: `send_default_route` / `default_rmap` → `neighbor {} default-originate ...` のマッピングは `frrcfgd.py` L1899-L1900（`BGP_NEIGHBOR_AF` 側 key_map）。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L1899>
+[^3]: [EVPN](../../reference/glossary.md#term-evpn) address-family の `default-originate-ipv4` / `default-originate-ipv6` フラグ → `default-originate ipv4` / `default-originate ipv6` は `frrcfgd.py` L1851-L1852（`BGP_GLOBALS_AF` 側 key_map）。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L1851>
+[^4]: OSPF `OSPFV2_ROUTER_DISTRIBUTE_ROUTE` 配下で `protocol == DEFAULT_ROUTE` のとき `default-information originate` を `router ospf vrf {}` に投入するハンドラは `frrcfgd.py` L3618-L3645（`always` / route-map / metric / metric-type サフィックス対応）。BGP コンテキストではない。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py#L3618>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -201,4 +205,4 @@ vtysh -c 'show ip route 0.0.0.0/0'
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 7f527ec781a5 -->
+<!-- glossary-links-injected: 7d306c0405b1 -->
