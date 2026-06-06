@@ -111,7 +111,7 @@ redis-cli -n 6 keys 'DASH_HA_SCOPE_STATE_TABLE*'
 
     | フェーズ | 対象テーブル / 識別子 | 現状 | 根拠 |
     |---|---|---|---|
-    | Phase A — schema 層先行採用 | `APP_DASH_HA_SET_CONFIG_TABLE` / `APP_DASH_HA_SET_TABLE` / `APP_DASH_HA_SCOPE_CONFIG_TABLE` / `APP_DASH_HA_SCOPE_TABLE` / `CFG_DASH_HA_GLOBAL_CONFIG` / `CFG_DPU_TABLE` / `STATE_DASH_HA_SET_STATE_TABLE` / `STATE_DASH_HA_SCOPE_STATE_TABLE` | **define のみ存在**。書き込み自体は成功するが consumer (hamgrd) が居ないため副作用なし | `schema.h` L179-182 / L390-391 / L453-454 [^1] |
+    | Phase A — schema 層先行採用 | `APP_DASH_HA_SET_CONFIG_TABLE` / `APP_DASH_HA_SET_TABLE` / `APP_DASH_HA_SCOPE_CONFIG_TABLE` / `APP_DASH_HA_SCOPE_TABLE` / `CFG_DASH_HA_GLOBAL_CONFIG` / `CFG_DPU_TABLE` / `STATE_DASH_HA_SET_STATE_TABLE` / `STATE_DASH_HA_SCOPE_STATE_TABLE` | schema 取り込み済 (**define のみ存在**)。書き込み自体は成功するが consumer (hamgrd) が居ないため副作用なし | `schema.h` L179-182 / L390-391 / L453-454 [^1] |
     | Phase B — schema 未取り込み | `VDPU_TABLE` / `DASH_HA_DPU_STATE` / `DASH_HA_VDPU_STATE` | **schema.h に define なし**。HLD 上の actor (DPU actor / vDPU actor) は紙面のみ | `grep DASH_HA_DPU_STATE schema.h` がヒット 0 |
     | Phase C — daemon 未取り込み | `hamgrd` バイナリそのもの | community master の build ツリーに **存在しない**。`sonic-swss` / `sonic-dash-ha` のいずれにも entry point なし | `find .cache/sonic-sources -iname "*hamgrd*"` は HLD ドキュメントのみヒット |
 
