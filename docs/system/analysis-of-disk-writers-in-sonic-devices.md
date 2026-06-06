@@ -9,6 +9,9 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-bgpcfgd/bgpmon/bgpmon.py
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db: []
   cli: []
@@ -16,7 +19,7 @@ related:
 ---
 
 !!! info "裏取りステータス: code-verified"
-    `sonic-buildimage/files/build_templates/docker_image_ctl.j2` で `--tmpfs /tmp` / `--tmpfs /var/tmp` を確認、`sonic_debian_extension.j2` に `/dev/shm/monit/` 用 `tmpfiles.d/tmpfs-monit.conf` 生成も確認。`/tmp` tmpfs 化と monit 状態の tmpfs 化は master 取り込み済み。
+    `sonic-buildimage/files/build_templates/docker_image_ctl.j2` で `--tmpfs /tmp` / `--tmpfs /var/tmp` を確認、`sonic_debian_extension.j2` に `/dev/shm/monit/` 用 `tmpfiles.d/tmpfs-monit.conf` 生成も確認。`/tmp` tmpfs 化と monit 状態の tmpfs 化、および `bgpmon.py` L80 の `vtysh -H /dev/null` 化はいずれも master 取り込み済み[^2]。
 
 # SONiC Disk I/O 削減（writer 分析と tmpfs 化）
 
@@ -48,7 +51,7 @@ related:
 | Writer | なぜ書きが大きいか |
 |--------|-------------------|
 | `jbd2` | EXT4 metadata journal。data + metadata を 2 回書く |
-| `vtysh` | `bgpmon.py` 行 80 で `vtysh -c "show bgp summary json"` を高頻度で呼び、その都度 `~/.history_frr` に追記される |
+| `vtysh` | `bgpmon.py` の L80 で `vtysh -c 'show bgp summary json'` を高頻度で呼び、その都度 `~/.history_frr` に追記される（履歴抑止前の挙動）[^2] |
 | `kworker/u8:x` | (1) swss container の `supervisor-proc-exit-listener` が `/var/log/supervisor/` に大量 log、(2) OverlayFS が inode の extended attr を継続更新 |
 | `monit` | state file の周期書き |
 | `logrotate` | rotation status 周期書き |
@@ -64,15 +67,17 @@ related:
 
 ユーザ空間修正の具体策:
 
-- `bgpmon.py` の cmd を **`vtysh -H /dev/null -c '...'`** に変更し history 書込を抑止
+- `bgpmon.py` の cmd を **`vtysh -H /dev/null -c '...'`** に変更し history 書込を抑止（**現行 master では適用済み**[^2]）
 - `supervisor-proc-exit-listener` の log を `/dev/shm/supervisor/` に移動
 - `monit` の state を `/dev/shm/monit` に移動
 - `logrotate` の status を `/dev/shm/logrotate` に移動
 
 ```python
-# bgpmon/bgpmon.py L80 想定の置換
-cmd = "vtysh -H /dev/null -c 'show bgp summary json'"
+# src/sonic-bgpcfgd/bgpmon/bgpmon.py L80 (現行 master)
+cmd = ["vtysh", "-H", "/dev/null",  "-c", 'show bgp summary json']
 ```
+
+`-H /dev/null` で history file を `/dev/null` に向けて `~/.history_frr` 追記を抑止する[^2]。
 
 ### 結果（MiB/day, 集約値）
 
@@ -164,9 +169,9 @@ reasoning: 主要 writer の比率と vtysh history 書込みの根因の根拠�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-buildimage` `src/sonic-bgpcfgd/bgpmon/bgpmon.py` L80 @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
 <!-- concerns hint:
-- bgpmon.py の vtysh -H /dev/null 化の sonic-buildimage / sonic-bgpcfgd 取り込み確認
 - /tmp の tmpfs 化が image 構成に反映されているか確認 (fstab / cloud-init / build_templates)
 - supervisor-proc-exit-listener の log 出力先 /dev/shm/supervisor/ への変更の sonic-buildimage 取り込み確認
 - monit / logrotate の state path 変更の取り込み確認
