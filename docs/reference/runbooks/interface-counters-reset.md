@@ -1,7 +1,7 @@
 ---
 title: show interfaces counters が突然リセットされる
-description: 'Runbook: show interfaces counters が突然リセットされる — : sonic-net/sonic-utilities
-  @ 39732bceb — scripts/portstat : sonic-net/sonic-swss @ 4305596 — orchagent/flexcoun…'
+description: 'Runbook: show interfaces counters が突然リセットされる際の切り分け手順。portstat
+  の差分 cache (/tmp/cache/portstat/) 喪失・sonic-clear counters の誤実行・syncd 再起動を順に確認する。'
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
@@ -48,12 +48,11 @@ related:
 ## 想定原因（優先度順）
 
 1. **`sonic-clear counters` の意図しない実行**: cron / Ansible / 監視スクリプト
-2. **portstat の clear ファイル (`/tmp/portstat-*.cnt`) が削除された**: `/tmp` cleanup
+2. **portstat の cache ファイル (`/tmp/cache/portstat/<uid>[-<tag>]/portstat`) が削除された**: `/tmp` cleanup により差分計算 base が失われ「見かけ上のリセット」になる [^1]
 3. **[syncd](../../reference/glossary.md#term-syncd) 再起動で [ASIC](../../reference/glossary.md#term-asic) counter 自体リセット**
 4. **container 再起動で [COUNTERS_DB](../../reference/glossary.md#term-counters_db) が初期化**: redis ephemeral
 
 ## 切り分け手順
-
 
 ```mermaid
 flowchart TD
@@ -72,8 +71,13 @@ flowchart TD
 
 ```bash
 sudo grep -E "sonic-clear|portstat" /var/log/syslog | tail
-sudo ls -la /tmp/portstat-* /tmp/.portstat-* 2>/dev/null
+# portstat の差分計算 cache (UserCache.CACHE_DIR = "/tmp/cache/" 配下) [^1]
+sudo ls -la /tmp/cache/portstat/ 2>/dev/null
+# SONIC_CLI_CACHE_DIR が設定されている場合はそちらを参照
+echo "SONIC_CLI_CACHE_DIR=${SONIC_CLI_CACHE_DIR:-/tmp/cache/}"
 ```
+
+`utilities_common.cli.UserCache` は `/tmp/cache/<app_name>/<uid>[-<tag>]/` に cache を作り、`portstat` はその下に `portstat` ファイルとして snapshot を保存する。clear ファイルが見当たらない場合は差分 base が失われており、次回 `show interfaces counters` 実行時に「見かけ上 0」が表示される。<!-- evidence: sonic-utilities@39732bceb scripts/portstat L107-L117, utilities_common/cli.py L922-L947 -->
 
 ### 2. COUNTERS_DB の生値
 
@@ -99,7 +103,7 @@ sudo grep -r "sonic-clear\|portstat -c" /etc/cron* 2>/dev/null
 
 - 監視は `COUNTERS_DB` の raw 値を直接 poll（portstat 差分 cache に依存しない）
 - [gNMI](../../reference/glossary.md#term-gnmi) / telemetry で counters subscribe する方式に切り替え
-- portstat 用 cache を別ディレクトリへ: 環境変数 `SONIC_CLI_CACHE_DIR` を設定（`utilities_common.cli.UserCache` がこの変数を参照）
+- portstat 用 cache を `/tmp` cleanup の影響を受けないディレクトリへ: 環境変数 `SONIC_CLI_CACHE_DIR` を設定（`utilities_common.cli.UserCache.__init__` がこの変数を参照、デフォルトは `/tmp/cache/`）[^1]
 
 ## 確認
 
@@ -122,7 +126,7 @@ sudo grep -r "sonic-clear\|portstat -c" /etc/cron* 2>/dev/null
 
 本ページの根拠は引用元 [^1][^2] を参照。
 
-[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — scripts/portstat
+[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — scripts/portstat L107-L117 / utilities_common/cli.py L922-L947 (`UserCache.CACHE_DIR = "/tmp/cache/"`, `SONIC_CLI_CACHE_DIR` env で上書き)
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [orchagent](../../reference/glossary.md#term-orchagent)/flexcounterorch.cpp
 
 <!-- glossary-links-injected: e82be350a384 -->

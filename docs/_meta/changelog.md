@@ -23,6 +23,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-06 #5446 fix(quality): iter13 integration (15 rewrites)
 - 2026-06-06 #5430 fix(quality): iter12 integration (13 rewrites)
 - 2026-06-06 #5429 fix(quality): iter11 integration (14 rewrites)
 - 2026-06-06 #5428 fix(quality): iter12 integration (15 rewrites)
@@ -518,7 +519,6 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3977 docs(config-db): add Phase F side-effects block to pki-trusted-certs
 - 2026-05-19 #3973 docs(config-db): add Phase D failure-behavior block to ssh-sftp
 - 2026-05-19 #3972 docs(config-db): add Phase G pubsub block to vnet-route
-- 2026-05-19 #3960 docs(config-db): add Phase G pubsub block to PBH_RULE page
 - 2026-05-19 #3971 docs(config-db): add Phase G pubsub block to lossless-traffic-pattern page
 - 2026-05-19 #3969 docs(config-db): fix Phase H platform marker in tc-to-priority-group-map
 - 2026-05-19 #3966 docs(config-db): add Phase F side-effects block to ip-mcast-route
