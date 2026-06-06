@@ -1,8 +1,8 @@
 ---
 title: Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE）
-description: Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE） — Secure Upgrade (SU)
-  は SONiC image が build から install まで改竄されていないこと を CMS (Cryptographic Message Syntax)
-  署名で保証…
+description: SONiC image を CMS (Cryptographic Message Syntax) 署名で build から install
+  まで改竄から守る Secure Upgrade (SU) の仕組み。SECURE_UPGRADE_MODE による dev / prod / no_sign 切替、sonic-installer
+  と ONIE 経路での検証フロー、Secure Boot との連携を扱う。
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -148,25 +148,22 @@ reasoning: build 時 dev/prod/no_sign の 3 モード切替の根拠。
 
 ## 確認コマンド
 
-- `sonic-installer list` — installed/next image を確認し、署名済みイメージか把握
-- `sonic-installer install <image>` — 失敗時はログに `verify` ステップの diff（sha1/size mismatch）が出る
-- `dmesg | grep -i secure` / `mokutil --sb-state` — Secure Boot 有効/無効の確認
-- build フラグは `cat /etc/sonic/sonic_version.yml` で `build_metadata` から間接確認
+Secure Upgrade 自体には独立した「検証専用」CLI は無い。署名検証は `sonic-installer install` 実行時に bootloader plugin の `verify_secureboot_image` / `verify_image_sign` メソッドが内部呼び出しする[^2]。状態確認は以下の周辺コマンドで間接的に行う。
 
-### コマンド例
+- `sudo sonic-installer list` — installed / next image の一覧（`show boot` も内部でこのコマンドを呼ぶ[^3]）
+- `show boot` — current / next image を確認する thin wrapper[^3]
+- `sudo sonic-installer install <url>` — 検証失敗時は abort し、bootloader 側のスクリプト (`verify_image_sign.sh` 等) のエラーがログに出る[^2]
+- `mokutil --sb-state` — UEFI Secure Boot 有効/無効の確認（Secure Boot 併用時）
+- `cat /etc/sonic/sonic_version.yml` — `build_metadata` から build 時の `SECURE_UPGRADE_MODE` を間接確認
 
-Secure upgrade 署名検証の状態を確認する。
-
-```bash
-show boot
-sudo sonic-installer verify-image /tmp/sonic.bin
-grep -iE 'secure[_-]boot|signature' /var/log/syslog | tail
-mokutil --sb-state
-```
+!!! warning "存在しない CLI に注意"
+    `sonic-installer verify-image` という独立 subcommand は master の `sonic-utilities/sonic_installer/main.py` には存在しない（`install` / `list` / `set-default` / `set-next-boot` / `set-fips` / `get-fips` / `remove` / `binary-version` / `cleanup` / `rollback` 系のみ）[^2]。検証単体を行いたい場合は `bootloader.verify_secureboot_image()` を呼ぶカスタムスクリプトを書く必要がある。
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/secure_upgrade/secure_upgrade.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-utilities` `sonic_installer/main.py` の `@sonic_installer.command(...)` 群（L527 以降）と `sonic_installer/bootloader/bootloader.py` の `verify_secureboot_image` / `verify_image_sign`、`sonic_installer/bootloader/grub.py` の `verify_image_sign`（`verify_image_sign.sh` 呼出し）@ master
+[^3]: `sonic-net/sonic-utilities` `show/main.py` L2430-L2437（`show boot` は `sudo sonic-installer list` を呼ぶ wrapper）@ master
 
 <!-- concerns hint:
 - build_image.sh の SECURE_UPGRADE_MODE 分岐実装の sonic-buildimage 取り込み確認
