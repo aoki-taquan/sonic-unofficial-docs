@@ -82,7 +82,7 @@ SRv6 は IPv6 をベースに SID list を運ぶ network programming framework�
 | concept | 227 | ✅ 完成 | code-verified | 概念・位置付け |
 | internals | 129 | ✅ 完成 | meta | 内部実装 |
 | operations | 254 | ✅ 完成 | code-verified | 運用・デバッグ |
-| setup | 241 | ✅ 完成 | meta | セットアップ手順 |
+| setup | 246 | ✅ 完成 | meta | セットアップ手順 |
 
 <!-- /chapter-progress -->
 

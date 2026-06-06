@@ -1,7 +1,7 @@
 ---
 title: SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）
-description: SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id） — SmartSwitch
-  アーキテクチャでは外部コントローラ（VNET / SDN コントローラ）が NPU 上の gNMI サーバ を介して各 DPU を設定する。
+description: SmartSwitch gNMI フィードバック HLD の解説。NPU 上の gNMI サーバ経由で各
+  DPU を設定した結果を DPU APPL_STATE_DB と version_id でコントローラへ返すフィードバック機構を扱う。本 HLD は現行 master と乖離あり。
 area: management
 verification: discrepancy-found
 monitor: not_implemented
@@ -13,15 +13,13 @@ sources:
 related:
   config_db:
   - VNET
-  - SWITCH_TRIMMING
-  - SWITCH_HASH
-  - VNET_ROUTE_TUNNEL
-  - VNET_ROUTE
-  cli:
-  - show version
-  - config vnet
+  - DASH_VNET
+  - GNMI
+  cli: []
   yang:
   - sonic-vnet
+  related_opt_out_reason: HLD は gNMI サーバ内部の制御フロー仕様であり、ユーザ向け CLI
+    表面を持たない。VNET / DASH_VNET / GNMI は本 HLD の影響対象として参照する。
 ---
 
 <!-- topics-tip -->
@@ -239,8 +237,8 @@ redis-cli -n 4 hgetall 'GNMI|certs'
 
     - `version_id` フィールドを必須にする gNMI スキーマ拡張: `sonic-gnmi` 配下に `version_id` の参照なし
     - batch gNMI 操作: `BatchGetRequest` / `BatchSetRequest` 系 API が `gnmi_server/` に存在しない
-    - DPU `APPL_STATE_DB` スキーマ: `database_config_dpu.json` には `APPL_DB` / `ASIC_DB` / `COUNTERS_DB` 等は定義されているが、HLD が要求する `APPL_STATE_DB` 専用 instance はテストデータレベルでは確認できず
-    - ZMQ 経由の swss 連携: `gnmi_server/` 配下に SmartSwitch 専用 ZMQ handler は未検出
+    - DPU `APPL_STATE_DB` スキーマ: `sonic-gnmi/testdata/database_config_dpu.json` には `DPU_APPL_STATE_DB` (id=16) が定義されているが、これはテストデータ専用であり、runtime SmartSwitch 側で `result` / `version_id` を書き戻すロジック自体は確認できず
+    - ZMQ 経由の swss 連携: `sonic-gnmi/gnmi_server/` 配下に SmartSwitch 専用 ZMQ handler は未検出
 
     HLD は Rev 0.1（日付未記載）で、現行 master の SmartSwitch 統合は別経路（HA manager / hamgrd）が進行中。本ページの主張は提案段階のため `discrepancy-found` に変更。
 
@@ -259,13 +257,13 @@ redis-cli -n 4 hgetall 'GNMI|certs'
         1. NPU 側で適用結果を Redis から直接観測する: `sonic-db-cli APPL_DB keys 'DASH_*' | head` および `sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_DASH_*' | head` で、DASH オブジェクトが NPU の ASIC_DB に降りているかを確認する
         2. DPU 側コンテナへ入って APPL_STATE_DB を読む: `docker exec -it swss redis-cli -n 6 KEYS '*'` （`APPL_STATE_DB` は instance 6）で DPU 内 swss が公開する state を直接読み、orchagent ログから version_id 不在による失敗を読み解く
         3. NPU の gNMI server で代替 telemetry を購読: `gnmic -a <npu>:8080 subscribe --path "/sonic-db:STATE_DB/DASH_*"` で STATE_DB を polling subscribe し、HLD が想定する `version_id` フィードバックを **NPU 側の STATE_DB 反映時刻**で代替する
-        4. APP_STATE_DB.HASH_TABLE pattern が無いので、設定 ack は CONFIG_DB write → APPL_DB key 出現の差で確認する: `sonic-db-cli CONFIG_DB hgetall 'DASH_VNET|Vnet1'` と `sonic-db-cli APPL_DB hgetall 'DASH_VNET_TABLE:Vnet1'` を比較して伝搬遅延の有無を観測する
+        4. `APPL_STATE_DB` への version_id 反映が無いので、設定 ack は CONFIG_DB write → APPL_DB key 出現の差で確認する: `sonic-db-cli CONFIG_DB hgetall 'DASH_VNET|Vnet1'` と `sonic-db-cli APPL_DB hgetall 'DASH_VNET_TABLE:Vnet1'` を比較して伝搬遅延の有無を観測する
         5. 永続化された "適用済み version" を残したい場合は CLI / Ansible 側で世代管理する: 設定投入時のタイムスタンプを `show version` 出力と一緒にファイルに保存し、`sonic-db-cli APPL_DB hget 'DASH_VNET_TABLE:Vnet1' SAI_OBJECT_ID` の存在で適用済みと判定する
     - **関連 reference**:
         - [CONFIG_DB: VNET](../reference/config-db/vnet.md)
-        - [CONFIG_DB: SWITCH_TRIMMING](../reference/config-db/switch-trimming.md)
-        - [CONFIG_DB: SWITCH_HASH](../reference/config-db/switch-hash.md)
-        - [CLI: `show version`](../reference/cli/show-version.md)
+        - [CONFIG_DB: DASH_VNET](../reference/config-db/dash-vnet.md)
+        - [CONFIG_DB: GNMI](../reference/config-db/gnmi.md)
+        - [CONFIG_DB: GNMI server](../reference/config-db/gnmi-server.md)
 
 !!! note "本ドキュメントの追跡"
     - monitor: `not_implemented` / last_verified: `2026-05-11`

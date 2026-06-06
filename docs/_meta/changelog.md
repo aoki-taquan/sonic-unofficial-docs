@@ -23,6 +23,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-06 #5397 fix(quality): iter10 integration (15 rewrites)
 - 2026-06-06 #5381 fix(quality): iter9 integration (13 rewrites)
 - 2026-06-06 #5380 fix(quality): iter4 recover integration (15 rewrites)
 - 2026-06-06 #5379 fix(quality): iter9 integration (15 rewrites)
@@ -517,7 +518,6 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3960 docs(config-db): add Phase G pubsub block to PBH_RULE page
 - 2026-05-19 #3971 docs(config-db): add Phase G pubsub block to lossless-traffic-pattern page
 - 2026-05-19 #3969 docs(config-db): fix Phase H platform marker in tc-to-priority-group-map
-- 2026-05-19 #3956 docs(config-db): add Phase D failure-behavior block to TAM tables
 - 2026-05-19 #3966 docs(config-db): add Phase F side-effects block to ip-mcast-route
 - 2026-05-19 #3965 docs(config-db): add Phase H platform block to fabric-port
 - 2026-05-19 #3963 docs(config-db): add Phase E hardcoded-constants block to NVGRE_TUNNEL

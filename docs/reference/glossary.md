@@ -1247,10 +1247,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ASIC_DB](#term-asic_db)
 
 - [DSCP_TO_PG_MAP テーブル（非実在）](config-db/dscp-to-pg-map.md) (15)
+- [アーキテクチャ](../topics/20-swss-sai-redis/architecture.md) (14)
 - [APPL_DB BFD_SESSION_TABLE (bfdorch)](config-db/bfd-orch.md) (13)
 - [BFD_SESSION_TABLE (STATE_DB)](config-db/bfd-state.md) (13)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (13)
-- [VRRP テーブル](config-db/vrrp.md) (13)
 
 ### [ASIC SDK](#term-asic-sdk)
 
@@ -1269,7 +1269,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ASIC](#term-asic)
 
 - [SUPPRESS_ASIC_SDK_HEALTH_EVENT テーブル](config-db/suppress-asic-sdk-health-event.md) (112)
-- [サイトマップ](../_meta/sitemap.md) (103)
+- [サイトマップ](../_meta/sitemap.md) (104)
 - [CHASSIS_STATE_DB テーブル群](config-db/chassis-state.md) (65)
 - [概念](../topics/12-multi-asic-voq/concept.md) (65)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (54)
@@ -1338,8 +1338,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [CONFIG_DB の永続化が失敗する](runbooks/config-db-persistence-failure.md) (12)
 - [gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）](../management/gnoi-hld-for-file-and-factory-reset-apis.md) (11)
 - [multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）](../platform/db-design-for-multi-asic-scenarios.md) (11)
+- [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (9)
 - [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP](../management/sonic-nos-configuration-methods.md) (8)
-- [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (8)
 
 ### [config-setup](#term-config-setup)
 
@@ -1411,7 +1411,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SmartSwitch DPU テーブル群](config-db/smart-switch-dpu.md) (186)
 - [DPU テーブル](config-db/dpu.md) (174)
 - [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (123)
-- [サイトマップ](../_meta/sitemap.md) (98)
+- [サイトマップ](../_meta/sitemap.md) (99)
 
 ### [DPB](#term-dpb)
 
@@ -1589,7 +1589,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [gNMI](#term-gnmi)
 
-- [サイトマップ](../_meta/sitemap.md) (76)
+- [サイトマップ](../_meta/sitemap.md) (77)
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (29)
 - [GNMI / GNMI_CLIENT_CERT テーブル](config-db/gnmi.md) (24)
 - [TELEMETRY テーブル](config-db/telemetry.md) (23)
@@ -1656,8 +1656,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [TAM テーブル](config-db/tam.md) (64)
 - [サイトマップ](../_meta/sitemap.md) (2)
 - [config vrf サブコマンド](cli/config-vrf.md) (2)
+- [show lldp サブコマンド](cli/show-lldp.md) (2)
 - [IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）](../architecture/sonic-ip-interface-loopback-action.md) (1)
-- [FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）](../platform/fec-flr-support-in-sonic-operations.md) (1)
 
 ### [INT](#term-int)
 
@@ -1764,8 +1764,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [minigraph.xml](#term-minigraph.xml)
 
 - [DEVICE_NEIGHBOR テーブル](config-db/device-neighbor.md) (10)
+- [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (9)
 - [CONFIG_DB save / load が反映されない](runbooks/config-save-load.md) (7)
-- [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (7)
 - [DEVICE_NEIGHBOR_METADATA テーブル](config-db/device-neighbor-metadata.md) (5)
 - [SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約](../switching/control-sonic-behaviors-with-system-defaults-table.md) (5)
 
@@ -1803,7 +1803,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [Multi-ASIC](#term-multi-asic)
 
-- [サイトマップ](../_meta/sitemap.md) (25)
+- [サイトマップ](../_meta/sitemap.md) (26)
 - [概念](../topics/12-multi-asic-voq/concept.md) (19)
 - [Multi-ASIC / VOQ chassis 関連](../categories/multi-asic.md) (16)
 - [Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md) (11)
@@ -1866,8 +1866,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../system/smart-switch-reboot-high-level-design.md) (45)
 - [DASH と SmartSwitch の考え方](../topics/13-dash-smartswitch/concept.md) (38)
+- [サイトマップ](../_meta/sitemap.md) (29)
 - [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (29)
-- [サイトマップ](../_meta/sitemap.md) (28)
 - [ACL_TABLE (CTRLPLANE) テーブル](config-db/control-plane-acl.md) (27)
 
 ### [orchagent](#term-orchagent)
@@ -2170,7 +2170,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [SmartSwitch](#term-smartswitch)
 
 - [CHASSIS_MODULE テーブル](config-db/chassis-module.md) (78)
-- [サイトマップ](../_meta/sitemap.md) (59)
+- [サイトマップ](../_meta/sitemap.md) (58)
 - [SmartSwitch 関連テーブル (MID_PLANE_BRIDGE / DHCP_SERVER_IPV4_PORT)](config-db/smart-switch.md) (51)
 - [NTP テーブル群](config-db/ntp.md) (35)
 - [CHASSIS_STATE_DB テーブル群](config-db/chassis-state.md) (32)
@@ -2185,7 +2185,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ROUTE_TABLE (STATE_DB / APPL_STATE_DB)](config-db/route-state.md) (101)
 - [FEATURE (STATE_DB)](config-db/feature-state.md) (91)
 - [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (85)
-- [サイトマップ](../_meta/sitemap.md) (80)
+- [サイトマップ](../_meta/sitemap.md) (79)
 
 ### [swssconfig](#term-swssconfig)
 
@@ -2213,7 +2213,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SONiC](#term-sonic)
 
-- [サイトマップ](../_meta/sitemap.md) (354)
+- [サイトマップ](../_meta/sitemap.md) (353)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (33)
 - [概念](../topics/17-srv6-mpls/concept.md) (31)
 - [GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）](../architecture/sonic-on-gns3-vm.md) (30)
@@ -2224,7 +2224,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [TAM テーブル](config-db/tam.md) (177)
 - [Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）](../routing/path-tracing-midpoint.md) (19)
 - [運用](../topics/17-srv6-mpls/operations.md) (11)
-- [変更履歴](../_meta/changelog.md) (6)
+- [変更履歴](../_meta/changelog.md) (5)
 - [内部実装](../topics/17-srv6-mpls/internals.md) (3)
 
 ### [TC (Traffic Class)](#term-tc)

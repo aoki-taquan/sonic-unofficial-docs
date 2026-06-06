@@ -1,7 +1,6 @@
 ---
 title: 複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）
-description: 複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散） — 従来の SONiC は 単一の
-  Redis インスタンス に APPL_DB / ASIC_DB / CONFIG_DB / STATE_DB 等をすべて載せていた。
+description: database_config.json で Redis インスタンス数と DB 割当をユーザ定義し、ホットスポット化した単一 Redis を複数インスタンスに分散する SONiC の起動経路と JSON フォーマット仕様。
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
@@ -43,7 +42,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
-    `sonic-buildimage/dockers/docker-database/docker-database-init.sh` L55-61/L80-81 で `/etc/sonic/database_config$NAMESPACE_ID.json` を `/var/run/redis/sonic-db/database_config.json` にコピーし、不在時は `database_config.json.j2` または `multi_database_config.json.j2` を `jinjanate` で展開する起動順を確認。`sonic-buildimage/dockers/docker-database/` 配下に `database_config.json.j2` / `multi_database_config.json.j2` / `supervisord.conf.j2` を確認。`sonic-swss-common/common/dbconnector.h` L90 `DEFAULT_SONIC_DB_CONFIG_FILE = "/var/run/redis/sonic-db/database_config.json"`、`sonic-swss-common/common/database_config.json` で INSTANCES + DATABASES セクション仕様を、`tests/redis_multi_db_ut_config/database_config[0-5].json` で複数インスタンス UT 設定を確認（verified at: 2026-05-09）。詳細な C++ / Python API シグネチャは原文 HLD §New Design of {C++,Python} Interface を参照。
+    `sonic-buildimage/dockers/docker-database/docker-database-init.sh` L55-63 で `/etc/sonic/database_config$NAMESPACE_ID.json` を最優先で `/var/run/redis$NAMESPACE_ID/sonic-db/database_config.json` にコピーし、不在時は **`/etc/sonic/enable_multidb` フラグの有無** で `multi_database_config.json.j2` (フラグあり) か `database_config.json.j2` (フラグなし) を `jinjanate` で展開する 3 分岐を確認。L84-101 で `DATABASE_TYPE=chassisdb` (VoQ chassis) 時は `update_chassisdb_config` で chassis_db エントリを操作し、L120-128 で通常 line-card / standalone は `update_chassisdb_config -d` で chassis_db を一旦除去した一時ファイルから `sonic-cfggen` で `supervisord.conf` を生成する点も確認。`sonic-buildimage/dockers/docker-database/` 配下に `database_config.json.j2` / `multi_database_config.json.j2` / `supervisord.conf.j2` / `database_global.json.j2` を確認。`sonic-swss-common/common/dbconnector.h` L90 `DEFAULT_SONIC_DB_CONFIG_FILE = "/var/run/redis/sonic-db/database_config.json"`、`sonic-swss-common/common/database_config.json` で INSTANCES + DATABASES セクション仕様を、`tests/redis_multi_db_ut_config/database_config[0-5].json` で複数インスタンス UT 設定を確認（verified at: 2026-06-06）。詳細な C++ / Python API シグネチャは原文 HLD §New Design of {C++,Python} Interface を参照。
 
 # 複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）
 
@@ -55,7 +54,7 @@ related:
 
 1. **ユーザが `database_config.json` で Redis インスタンス数と DB の割当を任意定義できる** ようにする
 2. 起動経路を `docker-database-init.sh` に切り替え、`supervisord.conf` を **j2 テンプレ生成** に変更
-3. 既定設定（1 インスタンス）は `/etc/default/sonic-db/database_config.json`、ユーザ設定は `/etc/sonic/database_config.json` に置き、起動時に `/var/run/redis/sonic-db/` にコピーされる
+3. ユーザ設定は `/etc/sonic/database_config$NAMESPACE_ID.json` に置き、起動時に `/var/run/redis$NAMESPACE_ID/sonic-db/database_config.json` にコピーされる。ユーザ設定が無い場合は **`/etc/sonic/enable_multidb` フラグ** の有無で `multi_database_config.json.j2` か `database_config.json.j2` のどちらかを `jinjanate` でランタイム展開する[^2]
 
 > このページは [Multi-namespace Redis HLD](support-redis-databases-in-multiple-namespaces.md) の **基礎となる先行 HLD**。[Multi-ASIC](../reference/glossary.md#term-multi-asic) 拡張は別ページを参照。
 
@@ -113,22 +112,30 @@ sequenceDiagram
   participant SUP as supervisord
   Image->>DBSvc: docker run
   DBSvc->>DI: ENTRYPOINT
-  alt /etc/sonic/database_config.json あり
-    DI->>DI: ユーザ設定を /var/run/redis/sonic-db/ にコピー
-  else 無し
-    DI->>DI: /etc/default/sonic-db/database_config.json をコピー
+  alt /etc/sonic/database_config$NAMESPACE_ID.json あり
+    DI->>DI: ユーザ設定を /var/run/redis$NS/sonic-db/database_config.json にコピー
+  else /etc/sonic/enable_multidb あり
+    DI->>DI: multi_database_config.json.j2 を jinjanate で展開
+  else
+    DI->>DI: database_config.json.j2 を jinjanate で展開（既定 1 インスタンス）
   end
-  DI->>DI: supervisord.conf.j2 → supervisord.conf 生成
-  DI->>SUP: /usr/bin/supervisord 起動
+  opt DATABASE_TYPE=chassisdb (VoQ)
+    DI->>DI: update_chassisdb_config -k -p $port で chassis_db 用に書き換え
+  end
+  DI->>DI: update_chassisdb_config -d で一時ファイルから chassis_db を除去
+  DI->>DI: sonic-cfggen で supervisord.conf.j2 / critical_processes.j2 を展開
+  DI->>SUP: /usr/local/bin/supervisord 起動
   SUP->>SUP: redis 等を database_config.json 通りに起動
   SUP->>SUP: ping_pong_db_insts で起動確認
 ```
 
-要点[^1]:
+要点:
 
-- ユーザ設定があれば最優先、無ければ既定設定にフォールバック
-- `supervisord.conf` を **j2 テンプレからランタイム生成**することで「インスタンス数だけ redis を起動」が動的に決まる
-- 各 redis の起動健全性は **`ping_pong_db_insts`** スクリプトで確認
+- 優先順位は **(1) `/etc/sonic/database_config$NAMESPACE_ID.json` (ユーザ配置)** → **(2) `/etc/sonic/enable_multidb` フラグあり → `multi_database_config.json.j2`** → **(3) フラグなし → `database_config.json.j2`**[^2]
+- `supervisord.conf` は **`sonic-cfggen`** が `supervisord.conf.j2` と一時用 `database_config.json` (`update_chassisdb_config -d` で chassis_db を抜いたもの) から生成する[^2]
+- VoQ chassis (`DATABASE_TYPE=chassisdb`) は別経路で、`update_chassisdb_config -k -p $chassis_db_port` を通った設定で `redis_chassis` インスタンスのみを起動し、CHASSIS_APP_DB の公開可否は `chassisdb.conf` の `start_chassis_db` で決まる[^2]
+- マルチ [ASIC](../reference/glossary.md#term-asic) / [SmartSwitch](../reference/glossary.md#term-smartswitch) ホスト namespace では追加で `database_global.json` (`/etc/sonic/database_global.json` があればコピー、無ければ `database_global.json.j2`) も配置される[^2]
+- 各 redis の起動健全性は **`ping_pong_db_insts`** スクリプトで確認[^1]
 
 ### Python / C++ API
 
@@ -195,7 +202,8 @@ sudo systemctl restart database
 
 ## 干渉する機能
 
-- **[Multi-namespace Redis](support-redis-databases-in-multiple-namespaces.md)**: 本 HLD の上位拡張。[NPU](../reference/glossary.md#term-npu) 別 namespace で本 JSON フォーマットを **複数枚** 持つ構造になる。
+- **[Multi-namespace Redis](support-redis-databases-in-multiple-namespaces.md)**: 本 HLD の上位拡張。[NPU](../reference/glossary.md#term-npu) 別 namespace で本 JSON フォーマットを **複数枚** 持つ構造になる。マルチ ASIC / SmartSwitch のホスト namespace では `database_global.json` で各 namespace の `database_config.json` を束ねる[^2]。
+- **VoQ chassis (`DATABASE_TYPE=chassisdb`)**: chassis_db 用に `update_chassisdb_config` が `database_config.json` から chassis_db エントリを抜き差しし、`redis_chassis` インスタンスのみ起動する別経路。`chassisdb.conf` の `start_chassis_db` で発火[^2]。
 - **`ping_pong_db_insts`**: 起動シーケンスで全 redis の生存確認に使う健全性チェッカ。
 - **`/etc/sonic/old_config`** バックアップ経路: イメージ更新時の `/etc/sonic/` バックアップ・リストアを通る。`database_config.json` もユーザ配置なら同じ経路で保全[^1]。
 
@@ -208,5 +216,6 @@ sudo systemctl restart database
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/database/multi_database_instances.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-buildimage` `dockers/docker-database/docker-database-init.sh` L55-128 @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 6c10aba0a4c8 -->
+<!-- glossary-links-injected: ea4ed4580191 -->
