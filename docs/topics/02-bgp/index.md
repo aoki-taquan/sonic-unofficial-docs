@@ -76,7 +76,7 @@ related:
 | concept | 282 | ✅ 完成 | meta | 概念・位置付け |
 | architecture | 184 | ✅ 完成 | code-verified | アーキテクチャ・データフロー |
 | setup | 231 | ✅ 完成 | meta | セットアップ手順 |
-| operations | 241 | ✅ 完成 | meta | 運用・デバッグ |
+| operations | 355 | ✅ 完成 | meta | 運用・デバッグ |
 | internals | 148 | ✅ 完成 | meta | 内部実装 |
 | advanced | 101 | ✅ 完成 | meta | 発展トピック |
 
