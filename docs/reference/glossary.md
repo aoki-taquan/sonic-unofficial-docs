@@ -1656,8 +1656,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [TAM テーブル](config-db/tam.md) (64)
 - [サイトマップ](../_meta/sitemap.md) (2)
 - [config vrf サブコマンド](cli/config-vrf.md) (2)
+- [show lldp サブコマンド](cli/show-lldp.md) (2)
 - [IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）](../architecture/sonic-ip-interface-loopback-action.md) (1)
-- [FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）](../platform/fec-flr-support-in-sonic-operations.md) (1)
 
 ### [INT](#term-int)
 
