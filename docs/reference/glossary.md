@@ -1629,7 +1629,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [Headroom](#term-headroom)
 
-- [DEFAULT_LOSSLESS_BUFFER_PARAMETER テーブル](config-db/default-lossless-buffer-parameter.md) (29)
+- [DEFAULT_LOSSLESS_BUFFER_PARAMETER テーブル](config-db/default-lossless-buffer-parameter.md) (30)
 - [LOSSLESS_TRAFFIC_PATTERN テーブル](config-db/lossless-traffic-pattern.md) (11)
 - [CABLE_LENGTH テーブル](config-db/cable-length.md) (6)
 - [BUFFER_POOL テーブル](config-db/buffer-pool.md) (5)
