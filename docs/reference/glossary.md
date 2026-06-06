@@ -1929,7 +1929,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [設定](../topics/18-p4-pins/setup.md) (17)
 - [発展トピック](../topics/18-p4-pins/advanced.md) (16)
 - [概念](../topics/18-p4-pins/concept.md) (15)
-- [P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md) (9)
+- [P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md) (8)
 
 ### [ProducerStateTable](#term-producerstatetable)
 
