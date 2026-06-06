@@ -1798,8 +1798,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [PORT (macsec フィールド)](config-db/macsec-port.md) (126)
 - [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (85)
 - [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](../switching/sonic-sai-post-support-for-macsec.md) (35)
+- [MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）](../switching/macsec-sonic-high-level-design-document.md) (30)
 - [Gearbox PHY ごとの MACsec backend 決定（macsec_supported）](../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md) (27)
-- [MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）](../switching/macsec-sonic-high-level-design-document.md) (26)
 
 ### [Multi-ASIC](#term-multi-asic)
 
