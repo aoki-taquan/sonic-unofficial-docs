@@ -126,7 +126,7 @@ FALLBACK_MAP: dict[str, dict[str, Optional[str]]] = {
     "PREFIX_SET": {"daemon": "frrcfgd", "app_db_table": None, "sai": None},
     "STATIC_ROUTE": {"daemon": "bgpcfgd", "app_db_table": "APP_ROUTE_TABLE", "sai": "sai_route_api"},
     "SUBNET_DECAP": {"daemon": "tunnelmgrd", "app_db_table": "APP_TUNNEL_DECAP_TABLE", "sai": "sai_tunnel_api"},
-    "SYSLOG_CONFIG_FEATURE": {"daemon": "hostcfgd", "app_db_table": None, "sai": None},
+    "SYSLOG_CONFIG_FEATURE": {"daemon": "containercfgd", "app_db_table": None, "sai": None},
     "TELEMETRY": {"daemon": "telemetry", "app_db_table": None, "sai": None},
     "TELEMETRY_CLIENT": {"daemon": "telemetry", "app_db_table": None, "sai": None},
     "TUNNEL_DECAP_TABLE": {"daemon": "tunneldecaporch", "app_db_table": "APP_TUNNEL_DECAP_TABLE", "sai": "sai_tunnel_api"},

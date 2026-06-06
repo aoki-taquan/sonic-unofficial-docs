@@ -2205,9 +2205,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [Syslog](#term-syslog)
 
+- [SYSLOG_CONFIG_FEATURE テーブル](config-db/syslog-config-feature.md) (20)
 - [SYSLOG_CONFIG テーブル](config-db/syslog-config.md) (20)
 - [SYSLOG_SERVER テーブル](config-db/syslog-server.md) (20)
-- [SYSLOG_CONFIG_FEATURE テーブル](config-db/syslog-config-feature.md) (19)
 - [sonic-syslog YANG](yang/sonic-syslog.md) (5)
 - [サイトマップ](../_meta/sitemap.md) (3)
 
