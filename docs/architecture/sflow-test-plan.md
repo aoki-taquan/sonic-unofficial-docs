@@ -56,7 +56,7 @@ T0 上で [SONiC](../reference/glossary.md#term-sonic) sFlow 機能を機能検�
 | 3 | agent-id 変更（Loopback / eth0） |
 | 4 | `SFLOW_SESSION` 単位の interface enable/disable |
 | 5 | per-interface sampling rate 変更（512 / 256 / 1024） |
-| 6 | config save + reboot / fast-reboot 横断保持 |
+| 6 | `config save` + `reboot` / `fast-reboot` 横断保持（`warm-reboot` は対象外）[^1] |
 
 ### TC1 の詳細
 
@@ -116,7 +116,7 @@ show sflow interface
 
 - **`hsflowd` ホストデーモン**: `SFLOW*` テーブルを実装する中核
 - **[CONFIG_DB](../reference/glossary.md#term-config_db) / [sonic-utilities](../reference/glossary.md#term-sonic-utilities)**: テスト対象 CLI が依存
-- **fast/warm-reboot**: 永続化テストが対象
+- **`reboot` / `fast-reboot`**: TC6 永続化テストの対象（`warm-reboot` は本テストプランの対象外[^1]）
 
 ## 引用元
 
