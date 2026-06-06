@@ -46,9 +46,9 @@ EEPROM 上のフィールド名としては `ModuleMediaInterface850nm` / `Modul
 
 ## 原因
 
-`get_application_advertisement()` はアプリケーション番号 1〜15 を走査し、各エントリの host / media interface ID をディクショナリに詰める実装になっている。media interface ID 値が `None` / `'Unknown'` の場合は `continue` でそのエントリをスキップする防御コードが入っているが（`cmis.py:2305-2308`[^1]）、その後段の `is_lpo()` や他の利用箇所では返却された `appl_dict` に対し `appl_dict.get('module_media_interface_id')` でアクセスしている（`cmis.py:637`[^1]）。
+Issue #489 で報告されたクラッシュは PR #457 適用前の実装に由来する。当時の `get_application_advertisement()` および呼び出し側（`is_lpo()` 等）は、アプリケーション広告辞書に対して `appl_dict['module_media_interface_id']` の形でキー直接参照を行っており、特定モジュールが CMIS アプリケーション広告に media interface ID 相当のエントリを欠いている場合に `KeyError: 'module_media_interface_id'` が発生していた[^3]。
 
-Issue #489 で報告されたクラッシュは、特定モジュールのアプリケーション広告が CMIS 仕様で必須とされる media interface ID 相当のエントリを欠いており、上記の防御コードを経ずに辞書直接参照系のコードパスへ到達した場合に `KeyError` を引き起こすというもの[^3]。
+現行 master (`64beade`) では PR #457 の方針が反映済みで、`get_application_advertisement()` は media interface ID 値が `None` / `'Unknown'` のエントリを走査時に `continue` でスキップし（`cmis.py:2305-2308`[^1]）、`is_lpo()` 等の利用箇所も `appl_dict.get('module_media_interface_id')` による安全アクセスに統一されている（`cmis.py:637`[^1]）。したがって本ページの記述は、(a) PR #457 適用以前の master を運用しているフォーク・古い branch、(b) 同等の直接参照パターンが残存している sonic-platform-common 派生コードに対する歴史的説明として参照されたい。
 
 ## 症状
 
