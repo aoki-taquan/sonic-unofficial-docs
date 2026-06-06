@@ -36151,7 +36151,7 @@
 <h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>minigraph 修正後 <code>sudo config load_minigraph -y</code> 再実行</li>
-<li>hwsku 差し替え: <code>sudo sonic-cfggen -H -m -k &lt;hwsku&gt; --write-to-db</code></li>
+<li>hwsku 差し替え: <a href="../../glossary/#term-minigraph.xml">minigraph.xml</a> 内の <code>&lt;HwSku&gt;</code> を編集し <code>sudo config load_minigraph -y</code> で再ロードするのが基本。<code>config_db.json</code> を直接再生成したい場合は <code>sudo sonic-cfggen -H -k &lt;hwsku&gt; --write-to-db</code> を使う（<code>-H</code> は <code>device_info</code> から platform を読み、<code>-k</code> で hwsku を指定する。minigraph を読み込む場合は <code>-m [&lt;path&gt;]</code> を併用するが、<code>load_minigraph</code> が同等の処理を内部で行うので通常は不要）<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
 <li>最悪時の復旧: <code>sudo cp config_db.json.bak.&lt;ts&gt; /etc/sonic/config_db.json &amp;&amp; sudo config reload -y -f</code></li>
 </ul>
 <h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -36162,7 +36162,7 @@
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: 8772b091b635 -->
+<!-- glossary-links-injected: f6deafdbb4e5 -->
 
 <div class="footnote">
 <hr />
@@ -36172,6 +36172,9 @@
 </li>
 <li id="fn:2">
 <p>sonic-net/<a href="../../glossary/#term-sonic-buildimage">sonic-buildimage</a> @ 4305596 — sonic-config-engine/minigraph.py&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — config/main.py L1648 (<code>sonic-cfggen -H -k &lt;hwsku&gt; --write-to-db</code>) および sonic-net/<a href="../../glossary/#term-sonic-buildimage">sonic-buildimage</a> @ 4305596 — src/sonic-config-engine/<a href="../../glossary/#term-sonic-cfggen">sonic-cfggen</a> L335-L358（<code>-H</code>/<code>-k</code>/<code>-m</code>/<code>--write-to-db</code> の引数定義）&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

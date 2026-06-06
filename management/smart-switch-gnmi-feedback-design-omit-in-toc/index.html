@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id） — SmartSwitch アーキテクチャでは外部コントローラ（VNET / SDN コントローラ）が NPU 上の gNMI サーバ を介して各 DPU を設定する。">
+        <meta name="description" content="SmartSwitch gNMI フィードバック HLD の解説。NPU 上の gNMI サーバ経由で各 DPU を設定した結果を DPU APPL_STATE_DB と version_id でコントローラへ返すフィードバック機構を扱う。本 HLD は現行 master と乖離あり。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id） — SmartSwitch アーキテクチャでは外部コントローラ（VNET / SDN コントローラ）が NPU 上の gNMI サーバ を介して各 DPU を設定する。" />
+<meta property="og:description" content="SmartSwitch gNMI フィードバック HLD の解説。NPU 上の gNMI サーバ経由で各 DPU を設定した結果を DPU APPL_STATE_DB と version_id でコントローラへ返すフィードバック機構を扱う。本 HLD は現行 master と乖離あり。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/smart-switch-gnmi-feedback-design-omit-in-toc.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/management/smart-switch-gnmi-feedback-design-omit-in-toc/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id） — SmartSwitch アーキテクチャでは外部コントローラ（VNET / SDN コントローラ）が NPU 上の gNMI サーバ を介して各 DPU を設定する。" />
+<meta property="twitter:description" content="SmartSwitch gNMI フィードバック HLD の解説。NPU 上の gNMI サーバ経由で各 DPU を設定した結果を DPU APPL_STATE_DB と version_id でコントローラへ返すフィードバック機構を扱う。本 HLD は現行 master と乖離あり。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/smart-switch-gnmi-feedback-design-omit-in-toc.png" />
 </head>
   
@@ -36507,8 +36507,8 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 <ul>
 <li><code>version_id</code> フィールドを必須にする gNMI スキーマ拡張: <code>sonic-gnmi</code> 配下に <code>version_id</code> の参照なし</li>
 <li>batch gNMI 操作: <code>BatchGetRequest</code> / <code>BatchSetRequest</code> 系 API が <code>gnmi_server/</code> に存在しない</li>
-<li>DPU <code>APPL_STATE_DB</code> スキーマ: <code>database_config_dpu.json</code> には <code>APPL_DB</code> / <code>ASIC_DB</code> / <code>COUNTERS_DB</code> 等は定義されているが、HLD が要求する <code>APPL_STATE_DB</code> 専用 instance はテストデータレベルでは確認できず</li>
-<li>ZMQ 経由の swss 連携: <code>gnmi_server/</code> 配下に SmartSwitch 専用 ZMQ handler は未検出</li>
+<li>DPU <code>APPL_STATE_DB</code> スキーマ: <code>sonic-gnmi/testdata/database_config_dpu.json</code> には <code>DPU_APPL_STATE_DB</code> (id=16) が定義されているが、これはテストデータ専用であり、runtime SmartSwitch 側で <code>result</code> / <code>version_id</code> を書き戻すロジック自体は確認できず</li>
+<li>ZMQ 経由の swss 連携: <code>sonic-gnmi/gnmi_server/</code> 配下に SmartSwitch 専用 ZMQ handler は未検出</li>
 </ul>
 <p>HLD は Rev 0.1（日付未記載）で、現行 master の SmartSwitch 統合は別経路（HA manager / hamgrd）が進行中。本ページの主張は提案段階のため <code>discrepancy-found</code> に変更。</p>
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
@@ -36529,15 +36529,15 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 <li>NPU 側で適用結果を Redis から直接観測する: <code>sonic-db-cli APPL_DB keys 'DASH_*' | head</code> および <code>sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_DASH_*' | head</code> で、DASH オブジェクトが NPU の ASIC_DB に降りているかを確認する</li>
 <li>DPU 側コンテナへ入って APPL_STATE_DB を読む: <code>docker exec -it swss redis-cli -n 6 KEYS '*'</code> （<code>APPL_STATE_DB</code> は instance 6）で DPU 内 swss が公開する state を直接読み、orchagent ログから version_id 不在による失敗を読み解く</li>
 <li>NPU の gNMI server で代替 telemetry を購読: <code>gnmic -a &lt;npu&gt;:8080 subscribe --path "/sonic-db:STATE_DB/DASH_*"</code> で STATE_DB を polling subscribe し、HLD が想定する <code>version_id</code> フィードバックを <strong>NPU 側の STATE_DB 反映時刻</strong>で代替する</li>
-<li>APP_STATE_DB.HASH_TABLE pattern が無いので、設定 ack は CONFIG_DB write → APPL_DB key 出現の差で確認する: <code>sonic-db-cli CONFIG_DB hgetall 'DASH_VNET|Vnet1'</code> と <code>sonic-db-cli APPL_DB hgetall 'DASH_VNET_TABLE:Vnet1'</code> を比較して伝搬遅延の有無を観測する</li>
+<li><code>APPL_STATE_DB</code> への version_id 反映が無いので、設定 ack は CONFIG_DB write → APPL_DB key 出現の差で確認する: <code>sonic-db-cli CONFIG_DB hgetall 'DASH_VNET|Vnet1'</code> と <code>sonic-db-cli APPL_DB hgetall 'DASH_VNET_TABLE:Vnet1'</code> を比較して伝搬遅延の有無を観測する</li>
 <li>永続化された "適用済み version" を残したい場合は CLI / Ansible 側で世代管理する: 設定投入時のタイムスタンプを <code>show version</code> 出力と一緒にファイルに保存し、<code>sonic-db-cli APPL_DB hget 'DASH_VNET_TABLE:Vnet1' SAI_OBJECT_ID</code> の存在で適用済みと判定する</li>
 </ol>
 </li>
 <li><strong>関連 reference</strong>:<ul>
 <li><a href="../../reference/config-db/vnet/">CONFIG_DB: VNET</a></li>
-<li><a href="../../reference/config-db/switch-trimming/">CONFIG_DB: SWITCH_TRIMMING</a></li>
-<li><a href="../../reference/config-db/switch-hash/">CONFIG_DB: SWITCH_HASH</a></li>
-<li><a href="../../reference/cli/show-version/">CLI: <code>show version</code></a></li>
+<li><a href="../../reference/config-db/dash-vnet/">CONFIG_DB: DASH_VNET</a></li>
+<li><a href="../../reference/config-db/gnmi/">CONFIG_DB: GNMI</a></li>
+<li><a href="../../reference/config-db/gnmi-server/">CONFIG_DB: GNMI server</a></li>
 </ul>
 </li>
 </ul>

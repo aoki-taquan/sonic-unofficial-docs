@@ -36086,8 +36086,12 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-swss/orchagent/vnetorch.cpp</code> で <code>STATE_ADVERTISE_NETWORK_TABLE_NAME</code> 管理、<code>sonic-swss-common/common/schema.h</code> で <code>APP_BGP_PROFILE_TABLE_NAME</code>、<code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py</code> <code>RouteMapMgr</code> を確認（verified at: 2026-05-09）。</p>
+<p><code>sonic-swss/orchagent/vnetorch.cpp</code> の <code>VNetRouteOrch::addRouteAdvertisement()</code> (L2633-2646) / <code>removeRouteAdvertisement()</code> (L2648-2652) が <code>state_vnet_rt_adv_table_</code> (L746 で <code>STATE_ADVERTISE_NETWORK_TABLE_NAME</code> に bind) に書き込み<sup id="fnref:evidence-vnet"><a class="footnote-ref" href="#fn:evidence-vnet">2</a></sup>、<code>sonic-swss-common/common/schema.h</code> L131 <code>APP_BGP_PROFILE_TABLE_NAME</code> / L496 <code>STATE_ADVERTISE_NETWORK_TABLE_NAME</code> を定義<sup id="fnref:evidence-schema"><a class="footnote-ref" href="#fn:evidence-schema">3</a></sup>、<code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py</code> L8 <code>RouteMapMgr</code> が <code>BGP_PROFILE_TABLE</code> 更新時に route-map と community 設定 (L93 <code>set community</code>) を生成<sup id="fnref:evidence-rm"><a class="footnote-ref" href="#fn:evidence-rm">4</a></sup>（verified at: 2026-05-09）。</p>
 </div>
+<!-- evidence: sonic-swss/orchagent/vnetorch.cpp L746,L2633-2652 (state_vnet_rt_adv_table_, addRouteAdvertisement, removeRouteAdvertisement) -->
+<!-- evidence: sonic-swss-common/common/schema.h L131 (APP_BGP_PROFILE_TABLE_NAME), L496 (STATE_ADVERTISE_NETWORK_TABLE_NAME) -->
+<!-- evidence: sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py L8-L96 (RouteMapMgr, set community) -->
+
 <h1 id="overlay-ecmp-with-bfd-monitoring">Overlay ECMP with BFD monitoring<a class="headerlink" href="#overlay-ecmp-with-bfd-monitoring" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>VxLAN VNet 経路 (<code>VNET_ROUTE_TUNNEL_TABLE</code>) に <strong>複数 endpoint を <a href="../../reference/glossary/#term-ecmp">ECMP</a> で並べ、各 endpoint の生存性を <a href="../../reference/glossary/#term-bfd">BFD</a> で確認</strong> し、Down メンバを NHG から外したい。SDN コントローラから REST / <a href="../../reference/glossary/#term-gnmi">gNMI</a> で投入された経路を VnetOrch が処理する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -36197,6 +36201,15 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/vxlan/Overlay ECMP with BFD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:evidence-vnet">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/vnetorch.cpp</code> L746, L2633-2652 (<code>VNetRouteOrch::addRouteAdvertisement</code> / <code>removeRouteAdvertisement</code> が <code>state_vnet_rt_adv_table_</code> 経由で <code>STATE_ADVERTISE_NETWORK_TABLE_NAME</code> を更新)&#160;<a class="footnote-backref" href="#fnref:evidence-vnet" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:evidence-schema">
+<p><code>sonic-net/sonic-swss-common</code> <code>common/schema.h</code> L131 <code>APP_BGP_PROFILE_TABLE_NAME</code>、L496 <code>STATE_ADVERTISE_NETWORK_TABLE_NAME</code>&#160;<a class="footnote-backref" href="#fnref:evidence-schema" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:evidence-rm">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-bgpcfgd/bgpcfgd/managers_rm.py</code> L8 <code>RouteMapMgr</code> クラス、L93 で <code>set community &lt;community_id&gt;</code> を route-map に追加&#160;<a class="footnote-backref" href="#fnref:evidence-rm" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

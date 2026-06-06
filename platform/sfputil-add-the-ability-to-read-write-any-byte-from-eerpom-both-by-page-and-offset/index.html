@@ -36076,6 +36076,7 @@
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sfputil write-eeprom -p Ethernet0 -n 0 -o 100 -d 4a44 --verify
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>Error: Write data failed! Write: 4a44, read: 0000.
 </span></code></pre></div>
+<!-- evidence: sonic-net/SONiC doc/sfputil/read_write_eeprom_by_page.md @49bab5b L48-L102 (CMIS / sff8436 / sff8636 / sff8472 各規格の passive/active 範囲定義) -->
 <h3 id="page-offset">page / offset 範囲チェック<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#page-offset" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -36089,7 +36090,7 @@
 <tr>
 <td><strong>CMIS</strong></td>
 <td>page 0 / offset 0-255</td>
-<td>page 0-255、page 0 (0-255)、他 (128-255)</td>
+<td>page 0-255 / offset: page 0 は 0-255、page&gt;0 は 128-255</td>
 </tr>
 <tr>
 <td><strong>sff8436 / sff8636</strong></td>

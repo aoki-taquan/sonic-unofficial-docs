@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="dump state utility — SONiC の機能は 複数 DB（CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB / 設定 JSON）に状態が分散する。">
+        <meta name="description" content="dump state utility — SONiC の機能は複数 DB（CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB / 設定 JSON）に状態が分散するため、モジュール単位で関連 key を DB 横断に集約する debug CLI。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="dump state utility — SONiC の機能は 複数 DB（CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB / 設定 JSON）に状態が分散する。" />
+<meta property="og:description" content="dump state utility — SONiC の機能は複数 DB（CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB / 設定 JSON）に状態が分散するため、モジュール単位で関連 key を DB 横断に集約する debug CLI。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/dump-utility-for-easy-debugging.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/dump-utility-for-easy-debugging/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="dump state utility — SONiC の機能は 複数 DB（CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB / 設定 JSON）に状態が分散する。" />
+<meta property="twitter:description" content="dump state utility — SONiC の機能は複数 DB（CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB / 設定 JSON）に状態が分散するため、モジュール単位で関連 key を DB 横断に集約する debug CLI。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/dump-utility-for-easy-debugging.png" />
 </head>
   
@@ -19163,10 +19163,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#topics" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 Topics
+        関連ページ
       
     </span>
   </a>
@@ -19174,7 +19174,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -19185,7 +19185,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#topics_1" class="md-nav__link">
+  <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連 Topics
@@ -36017,10 +36017,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#topics" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 Topics
+        関連ページ
       
     </span>
   </a>
@@ -36028,7 +36028,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36039,7 +36039,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#topics_1" class="md-nav__link">
+  <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連 Topics
@@ -36195,15 +36195,15 @@
 <li><strong>techsupport</strong>: 全モジュールの dump が含まれるため、モジュール追加で techsupport が肥大化</li>
 <li><strong>multi-asic</strong>: <code>--namespace</code> で対象 asic 切替</li>
 </ul>
-<h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/09-telemetry-snmp/operations/">09-telemetry-snmp/operations</a>: techsupport / debug ツール</li>
 <li><a href="../../topics/20-swss-sai-redis/internals/">20-swss-sai-redis/internals</a>: DB 構造（dump state が辿る対象）</li>
 <li><a href="../../topics/12-multi-asic-voq/operations/">12-multi-asic-voq/operations</a>: namespace 切替</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
-<h2 id="topics_1">関連 Topics<a class="headerlink" href="#topics_1" title="Permanent link">&para;</a></h2>
+<h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>

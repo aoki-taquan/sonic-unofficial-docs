@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散） — 従来の SONiC は 単一の Redis インスタンス に APPL_DB / ASIC_DB / CONFIG_DB / STATE_DB 等をすべて載せていた。">
+        <meta name="description" content="database_config.json で Redis インスタンス数と DB 割当をユーザ定義し、ホットスポット化した単一 Redis を複数インスタンスに分散する SONiC の起動経路と JSON フォーマット仕様。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散） — 従来の SONiC は 単一の Redis インスタンス に APPL_DB / ASIC_DB / CONFIG_DB / STATE_DB 等をすべて載せていた。" />
+<meta property="og:description" content="database_config.json で Redis インスタンス数と DB 割当をユーザ定義し、ホットスポット化した単一 Redis を複数インスタンスに分散する SONiC の起動経路と JSON フォーマット仕様。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/support-multiple-user-defined-redis-database-instances.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/support-multiple-user-defined-redis-database-instances/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散） — 従来の SONiC は 単一の Redis インスタンス に APPL_DB / ASIC_DB / CONFIG_DB / STATE_DB 等をすべて載せていた。" />
+<meta property="twitter:description" content="database_config.json で Redis インスタンス数と DB 割当をユーザ定義し、ホットスポット化した単一 Redis を複数インスタンスに分散する SONiC の起動経路と JSON フォーマット仕様。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/support-multiple-user-defined-redis-database-instances.png" />
 </head>
   
@@ -36151,7 +36151,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-buildimage/dockers/docker-database/docker-database-init.sh</code> L55-61/L80-81 で <code>/etc/sonic/database_config$NAMESPACE_ID.json</code> を <code>/var/run/redis/sonic-db/database_config.json</code> にコピーし、不在時は <code>database_config.json.j2</code> または <code>multi_database_config.json.j2</code> を <code>jinjanate</code> で展開する起動順を確認。<code>sonic-buildimage/dockers/docker-database/</code> 配下に <code>database_config.json.j2</code> / <code>multi_database_config.json.j2</code> / <code>supervisord.conf.j2</code> を確認。<code>sonic-swss-common/common/dbconnector.h</code> L90 <code>DEFAULT_SONIC_DB_CONFIG_FILE = "/var/run/redis/sonic-db/database_config.json"</code>、<code>sonic-swss-common/common/database_config.json</code> で INSTANCES + DATABASES セクション仕様を、<code>tests/redis_multi_db_ut_config/database_config[0-5].json</code> で複数インスタンス UT 設定を確認（verified at: 2026-05-09）。詳細な C++ / Python API シグネチャは原文 HLD §New Design of {C++,Python} Interface を参照。</p>
+<p><code>sonic-buildimage/dockers/docker-database/docker-database-init.sh</code> L55-63 で <code>/etc/sonic/database_config$NAMESPACE_ID.json</code> を最優先で <code>/var/run/redis$NAMESPACE_ID/sonic-db/database_config.json</code> にコピーし、不在時は <strong><code>/etc/sonic/enable_multidb</code> フラグの有無</strong> で <code>multi_database_config.json.j2</code> (フラグあり) か <code>database_config.json.j2</code> (フラグなし) を <code>jinjanate</code> で展開する 3 分岐を確認。L84-101 で <code>DATABASE_TYPE=chassisdb</code> (VoQ chassis) 時は <code>update_chassisdb_config</code> で chassis_db エントリを操作し、L120-128 で通常 line-card / standalone は <code>update_chassisdb_config -d</code> で chassis_db を一旦除去した一時ファイルから <code>sonic-cfggen</code> で <code>supervisord.conf</code> を生成する点も確認。<code>sonic-buildimage/dockers/docker-database/</code> 配下に <code>database_config.json.j2</code> / <code>multi_database_config.json.j2</code> / <code>supervisord.conf.j2</code> / <code>database_global.json.j2</code> を確認。<code>sonic-swss-common/common/dbconnector.h</code> L90 <code>DEFAULT_SONIC_DB_CONFIG_FILE = "/var/run/redis/sonic-db/database_config.json"</code>、<code>sonic-swss-common/common/database_config.json</code> で INSTANCES + DATABASES セクション仕様を、<code>tests/redis_multi_db_ut_config/database_config[0-5].json</code> で複数インスタンス UT 設定を確認（verified at: 2026-06-06）。詳細な C++ / Python API シグネチャは原文 HLD §New Design of {C++,Python} Interface を参照。</p>
 </div>
 <h1 id="redis-database_configjson-db">複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）<a class="headerlink" href="#redis-database_configjson-db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36160,7 +36160,7 @@
 <ol>
 <li><strong>ユーザが <code>database_config.json</code> で Redis インスタンス数と DB の割当を任意定義できる</strong> ようにする</li>
 <li>起動経路を <code>docker-database-init.sh</code> に切り替え、<code>supervisord.conf</code> を <strong>j2 テンプレ生成</strong> に変更</li>
-<li>既定設定（1 インスタンス）は <code>/etc/default/sonic-db/database_config.json</code>、ユーザ設定は <code>/etc/sonic/database_config.json</code> に置き、起動時に <code>/var/run/redis/sonic-db/</code> にコピーされる</li>
+<li>ユーザ設定は <code>/etc/sonic/database_config$NAMESPACE_ID.json</code> に置き、起動時に <code>/var/run/redis$NAMESPACE_ID/sonic-db/database_config.json</code> にコピーされる。ユーザ設定が無い場合は <strong><code>/etc/sonic/enable_multidb</code> フラグ</strong> の有無で <code>multi_database_config.json.j2</code> か <code>database_config.json.j2</code> のどちらかを <code>jinjanate</code> でランタイム展開する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ol>
 <blockquote>
 <p>このページは <a href="../support-redis-databases-in-multiple-namespaces/">Multi-namespace Redis HLD</a> の <strong>基礎となる先行 HLD</strong>。<a href="../../reference/glossary/#term-multi-asic">Multi-ASIC</a> 拡張は別ページを参照。</p>
@@ -36208,23 +36208,31 @@
   participant SUP as supervisord
   Image-&gt;&gt;DBSvc: docker run
   DBSvc-&gt;&gt;DI: ENTRYPOINT
-  alt /etc/sonic/database_config.json あり
-    DI-&gt;&gt;DI: ユーザ設定を /var/run/redis/sonic-db/ にコピー
-  else 無し
-    DI-&gt;&gt;DI: /etc/default/sonic-db/database_config.json をコピー
+  alt /etc/sonic/database_config$NAMESPACE_ID.json あり
+    DI-&gt;&gt;DI: ユーザ設定を /var/run/redis$NS/sonic-db/database_config.json にコピー
+  else /etc/sonic/enable_multidb あり
+    DI-&gt;&gt;DI: multi_database_config.json.j2 を jinjanate で展開
+  else
+    DI-&gt;&gt;DI: database_config.json.j2 を jinjanate で展開（既定 1 インスタンス）
   end
-  DI-&gt;&gt;DI: supervisord.conf.j2 → supervisord.conf 生成
-  DI-&gt;&gt;SUP: /usr/bin/supervisord 起動
+  opt DATABASE_TYPE=chassisdb (VoQ)
+    DI-&gt;&gt;DI: update_chassisdb_config -k -p $port で chassis_db 用に書き換え
+  end
+  DI-&gt;&gt;DI: update_chassisdb_config -d で一時ファイルから chassis_db を除去
+  DI-&gt;&gt;DI: sonic-cfggen で supervisord.conf.j2 / critical_processes.j2 を展開
+  DI-&gt;&gt;SUP: /usr/local/bin/supervisord 起動
   SUP-&gt;&gt;SUP: redis 等を database_config.json 通りに起動
   SUP-&gt;&gt;SUP: ping_pong_db_insts で起動確認</code></pre>
-<p>要点<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>要点:</p>
 <ul>
-<li>ユーザ設定があれば最優先、無ければ既定設定にフォールバック</li>
-<li><code>supervisord.conf</code> を <strong>j2 テンプレからランタイム生成</strong>することで「インスタンス数だけ redis を起動」が動的に決まる</li>
-<li>各 redis の起動健全性は <strong><code>ping_pong_db_insts</code></strong> スクリプトで確認</li>
+<li>優先順位は <strong>(1) <code>/etc/sonic/database_config$NAMESPACE_ID.json</code> (ユーザ配置)</strong> → <strong>(2) <code>/etc/sonic/enable_multidb</code> フラグあり → <code>multi_database_config.json.j2</code></strong> → <strong>(3) フラグなし → <code>database_config.json.j2</code></strong><sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><code>supervisord.conf</code> は <strong><code>sonic-cfggen</code></strong> が <code>supervisord.conf.j2</code> と一時用 <code>database_config.json</code> (<code>update_chassisdb_config -d</code> で chassis_db を抜いたもの) から生成する<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li>VoQ chassis (<code>DATABASE_TYPE=chassisdb</code>) は別経路で、<code>update_chassisdb_config -k -p $chassis_db_port</code> を通った設定で <code>redis_chassis</code> インスタンスのみを起動し、CHASSIS_APP_DB の公開可否は <code>chassisdb.conf</code> の <code>start_chassis_db</code> で決まる<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li>マルチ <a href="../../reference/glossary/#term-asic">ASIC</a> / <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> ホスト namespace では追加で <code>database_global.json</code> (<code>/etc/sonic/database_global.json</code> があればコピー、無ければ <code>database_global.json.j2</code>) も配置される<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li>各 redis の起動健全性は <strong><code>ping_pong_db_insts</code></strong> スクリプトで確認<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h3 id="python-c-api">Python / C++ API<a class="headerlink" href="#python-c-api" title="Permanent link">&para;</a></h3>
-<p><code>SonicV2Connector</code> / <code>ConfigDBConnector</code> (Python)、<code>DBConnector</code> (C++) は <code>database_config.json</code> を読み、DB 名から該当インスタンス（hostname / port / unix_socket_path）を引いて接続する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。具体的なクラス定義・新引数は原文 HLD の §New Design of {Python,C++} Interface を参照。</p>
+<p><code>SonicV2Connector</code> / <code>ConfigDBConnector</code> (Python)、<code>DBConnector</code> (C++) は <code>database_config.json</code> を読み、DB 名から該当インスタンス（hostname / port / unix_socket_path）を引いて接続する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。具体的なクラス定義・新引数は原文 HLD の §New Design of {Python,C++} Interface を参照。</p>
 <p>主要 API 動作:</p>
 <ul>
 <li><code>connect(&lt;DB_NAME&gt;)</code> で <code>database_config.json</code> の <code>instance</code> を辿って Unix socket / TCP を選ぶ</li>
@@ -36264,7 +36272,7 @@ reasoning: 2 インスタンス分割の実測効果の根拠。
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>cp<span class="w"> </span>my-database_config.json<span class="w"> </span>/etc/sonic/database_config.json
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>database
 </span></code></pre></div>
-<p>中身は前述の 2 インスタンス例を参考。書き換えたら database service の再起動が必要<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>中身は前述の 2 インスタンス例を参考。書き換えたら database service の再起動が必要<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>DB id の競合に注意</strong>: 上記既定例で <code>PFC_WD_DB</code> と <code>FLEX_COUNTER_DB</code> が同じ id=5 を共有しているように、Redis の同一インスタンス内 db index を共用する書き方が許される。インスタンスを分けるなら id 衝突は問題ないが、命名・運用上は注意<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
@@ -36274,7 +36282,8 @@ reasoning: 2 インスタンス分割の実測効果の根拠。
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><a href="../support-redis-databases-in-multiple-namespaces/">Multi-namespace Redis</a></strong>: 本 HLD の上位拡張。<a href="../../reference/glossary/#term-npu">NPU</a> 別 namespace で本 JSON フォーマットを <strong>複数枚</strong> 持つ構造になる。</li>
+<li><strong><a href="../support-redis-databases-in-multiple-namespaces/">Multi-namespace Redis</a></strong>: 本 HLD の上位拡張。<a href="../../reference/glossary/#term-npu">NPU</a> 別 namespace で本 JSON フォーマットを <strong>複数枚</strong> 持つ構造になる。マルチ ASIC / SmartSwitch のホスト namespace では <code>database_global.json</code> で各 namespace の <code>database_config.json</code> を束ねる<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
+<li><strong>VoQ chassis (<code>DATABASE_TYPE=chassisdb</code>)</strong>: chassis_db 用に <code>update_chassisdb_config</code> が <code>database_config.json</code> から chassis_db エントリを抜き差しし、<code>redis_chassis</code> インスタンスのみ起動する別経路。<code>chassisdb.conf</code> の <code>start_chassis_db</code> で発火<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
 <li><strong><code>ping_pong_db_insts</code></strong>: 起動シーケンスで全 redis の生存確認に使う健全性チェッカ。</li>
 <li><strong><code>/etc/sonic/old_config</code></strong> バックアップ経路: イメージ更新時の <code>/etc/sonic/</code> バックアップ・リストアを通る。<code>database_config.json</code> もユーザ配置なら同じ経路で保全<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
@@ -36285,13 +36294,16 @@ reasoning: 2 インスタンス分割の実測効果の根拠。
 <li><code>ping_pong_db_insts</code> が fail: redis の <code>unix_socket_path</code> パーミッション、port 重複を確認。</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 6c10aba0a4c8 -->
+<!-- glossary-links-injected: ea4ed4580191 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/database/multi_database_instances.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-buildimage</code> <code>dockers/docker-database/docker-database-init.sh</code> L55-128 @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

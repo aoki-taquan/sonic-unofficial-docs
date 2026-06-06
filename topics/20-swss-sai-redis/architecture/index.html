@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="アーキテクチャ — SONiC の内部実装を 1 枚で押さえるなら、左から CLI / gNMI / 制御プレーン daemon、中央に Redis DB 群、右に syncd と SAI/ASIC を置く絵になる。">
+        <meta name="description" content="アーキテクチャ — SONiC の内部実装を 1 枚で押さえるなら、左から CLI / gNMI / 制御プレーン daemon、中央に Redis DB 群、右に syncd と SAI/ASIC を置く絵になる。各 sub-Orch は SAI 戻り値を handleSai*Status helper で 分類する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="アーキテクチャ - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="アーキテクチャ — SONiC の内部実装を 1 枚で押さえるなら、左から CLI / gNMI / 制御プレーン daemon、中央に Redis DB 群、右に syncd と SAI/ASIC を置く絵になる。" />
+<meta property="og:description" content="アーキテクチャ — SONiC の内部実装を 1 枚で押さえるなら、左から CLI / gNMI / 制御プレーン daemon、中央に Redis DB 群、右に syncd と SAI/ASIC を置く絵になる。各 sub-Orch は SAI 戻り値を handleSai*Status helper で 分類する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/20-swss-sai-redis/architecture.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/20-swss-sai-redis/architecture/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="アーキテクチャ - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="アーキテクチャ — SONiC の内部実装を 1 枚で押さえるなら、左から CLI / gNMI / 制御プレーン daemon、中央に Redis DB 群、右に syncd と SAI/ASIC を置く絵になる。" />
+<meta property="twitter:description" content="アーキテクチャ — SONiC の内部実装を 1 枚で押さえるなら、左から CLI / gNMI / 制御プレーン daemon、中央に Redis DB 群、右に syncd と SAI/ASIC を置く絵になる。各 sub-Orch は SAI 戻り値を handleSai*Status helper で 分類する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/20-swss-sai-redis/architecture.png" />
 </head>
   
@@ -36040,10 +36040,10 @@
 <p><code>CONFIG_DB</code> は永続化された設定の唯一の source of truth である。<code>APPL_DB</code> は制御プレーンが「ASIC にこうしたい」と書く intent の場で、各機能の <code>*_TABLE</code> がここに置かれる。<code>STATE_DB</code> は実際の状態と監視ヒントで、syncd や各 daemon が書き込む。<code>COUNTERS_DB</code> は ASIC から取得した counter の集計先で、flexcounter 群が更新する。<code>ASIC_DB</code> は SAI object を Redis 表現に落としたもので、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> が書き、syncd が読む。<code>ERROR_DB</code> は SAI 失敗を APP 側に伝えるためのチャネルである。</p>
 <p>スキーマの一次ソースは <a href="../../../internals/swss-schema/">swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）</a> を読む。</p>
 <h2 id="producerstatetable">ProducerStateTable と非同期化<a class="headerlink" href="#producerstatetable" title="Permanent link">&para;</a></h2>
-<p><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> と <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> は、書き手と読み手が別プロセスに分かれる。Redis に直に SET するのではなく、<a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> / <a href="../../../reference/glossary/#term-consumerstatetable">ConsumerStateTable</a> を介して「key の変更通知」を queue として渡す。これにより読み手側は変更分だけを取り出して処理できる。ZMQ ベースに置き換える設計は <a href="../../../internals/zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a> を読む。</p>
+<p><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> と <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> は、書き手と読み手が別プロセスに分かれる。Redis に直に SET するのではなく、<a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> / <a href="../../../reference/glossary/#term-consumerstatetable">ConsumerStateTable</a> を介して「key の変更通知」を queue として渡す。これにより読み手側は変更分だけを取り出して処理できる。<!-- evidence: sonic-swss-common common/producerstatetable.h:1-71 (set/del/flush API + Lua script で TABLE と _KEY_SET の両方を更新), common/consumerstatetable.cpp:1-96 (pops で _KEY_SET から差分のみ取得) -->ZMQ ベースに置き換える設計は <a href="../../../internals/zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a> を読む。</p>
 <p>ASIC_DB 側は sairedis が非同期に消費し、SAI 呼び出しに変換する。SAI 呼び出しの結果は完了通知や ERROR_DB を介して orchagent に戻る。これが「orchagent が ASIC_DB に書いたら、すぐ ASIC に入っているとは限らない」根拠である。</p>
 <h2 id="syncd-sai">syncd と SAI の境界<a class="headerlink" href="#syncd-sai" title="Permanent link">&para;</a></h2>
-<p>syncd は ASIC_DB を消費し、SAI API を呼ぶ唯一の場所である。ベンダごとの SAI 実装は libsai に隠れ、syncd と orchagent はベンダ非依存に保たれる。SAI 失敗は syncd で観測されると、ASIC_DB の notification channel 経由で orchagent に通知され、orchagent 側の <code>Orch</code> クラスの virtual メソッド <code>handleSaiSetStatus</code> / <code>handleSaiCreateStatus</code> 系で分類される（<code>handleSai*Status</code> は syncd ではなく orchagent 側に定義されている）。fatal なものは crash、recoverable なものは ERROR_DB / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> 経由で上位に通知する設計だが、<code>ERROR_DB</code> 自体は <a href="../../../reference/glossary/#term-hld">HLD</a> 提案であり実装は未完である (<a href="../../../architecture/error-handling-framework-in-sonic-limitations/">error-handling-framework-in-sonic-limitations</a>)。詳細は <a href="../../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング</a> と <a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework</a> を読む。</p>
+<p>syncd は ASIC_DB を消費し、SAI API を呼ぶ唯一の場所である。ベンダごとの SAI 実装は libsai に隠れ、syncd と orchagent はベンダ非依存に保たれる。SAI 戻り値 (<code>sai_status_t</code>) は、各 sub-Orch が <code>orchagent/saihelper.h</code> で宣言された free function <code>handleSaiCreateStatus</code> / <code>handleSaiSetStatus</code> / <code>handleSaiRemoveStatus</code> を呼んで分類する（<code>Orch</code> クラスの virtual メソッドではなく、<code>orchagent/saihelper.cpp</code> の自由関数として実装されている）。<code>SAI_STATUS_SUCCESS</code> と一部の良性ステータスは <code>task_success</code>、<code>INSUFFICIENT_RESOURCES</code> / <code>TABLE_FULL</code> / <code>NO_MEMORY</code> / <code>NV_STORAGE_FULL</code> は <code>task_need_retry</code>、それ以外は <code>handleSaiFailure</code> 経由で例外を投げる粗い実装になっており、saihelper 自身のコメントでも fine-grain failure handling は TODO と明記されている。<!-- evidence: sonic-swss orchagent/saihelper.cpp:581-720 (handleSaiCreateStatus / handleSaiSetStatus / handleSaiRemoveStatus), orchagent/saihelper.h:19-21 (宣言), orchagent/intfsorch.cpp:1301,1353,1401 (呼び出し), orchagent/dtelorch.cpp:41-70 (呼び出し) -->ASIC_DB 側の SAI failure 通知自体は sairedis の <code>syncd/NotificationProcessor.cpp</code> から ASIC_DB notification channel に流れる。<code>ERROR_DB</code> 経由で APP に伝えるパスは <a href="../../../reference/glossary/#term-hld">HLD</a> 提案であり実装は未完である (<a href="../../../architecture/error-handling-framework-in-sonic-limitations/">error-handling-framework-in-sonic-limitations</a>)。詳細は <a href="../../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング</a> と <a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework</a> を読む。</p>
 <h2 id="_2">機能章はこの絵のどこを使うか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

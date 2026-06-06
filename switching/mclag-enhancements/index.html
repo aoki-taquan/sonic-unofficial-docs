@@ -36172,7 +36172,7 @@
     CFG0[CONFIG_DB MCLAG_*]
     ICC0[iccpd]
     MS0[MclagSyncd]
-    APP0[APPL_DB APP_MCLAG_FDB_TABLE]
+    APP0[APPL_DB MCLAG_FDB_TABLE]
     OR0[FdbOrch / PortsOrch / IsolGroupOrch]
     SAI0[ASIC]
   end
@@ -36192,7 +36192,7 @@
 <ul>
 <li><strong><code>iccpd</code></strong> が ICCP メッセージで peer と同期</li>
 <li><strong><code>MclagSyncd</code></strong> が ICCP 由来の MAC / interface state を <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> に橋渡し</li>
-<li>旧 MclagSyncd 内部 <a href="../../reference/glossary/#term-fdb">FDB</a> はリファクタで撤廃され、APPL_DB の <code>APP_MCLAG_FDB_TABLE</code> に集約<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>旧 MclagSyncd 内部 <a href="../../reference/glossary/#term-fdb">FDB</a> はリファクタで撤廃され、APPL_DB の <code>MCLAG_FDB_TABLE</code>（schema 定数 <code>APP_MCLAG_FDB_TABLE_NAME</code> の値）に集約<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
 <h2 id="_4">各拡張ポイント<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <table>
@@ -36205,23 +36205,23 @@
 <tbody>
 <tr>
 <td><strong>Static MAC sync</strong></td>
-<td>FdbOrch が CONFIG_DB 由来 static MAC を ICCP で peer に reflect<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>FdbOrch が CONFIG_DB 由来 static MAC を ICCP で peer に reflect<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
 <td><strong>Unique IP</strong></td>
-<td>MCLAG VLAN intf に <strong>個別 IP</strong> を持たせ、OSPF 等 L3 隣接を成立させる。<code>MCLAG_UNIQUE_IP\|Vlan100 unique_ip=enable</code><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>MCLAG VLAN intf に <strong>個別 IP</strong> を持たせ、OSPF 等 L3 隣接を成立させる。<code>MCLAG_UNIQUE_IP\|Vlan100 unique_ip=enable</code><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
 <td><strong>Isolation Group</strong></td>
-<td>peer-link 経由の重複転送/ループを防ぐため MCLAG メンバ port group から peer-link を isolate。<a href="../../reference/glossary/#term-sai">SAI</a> は <code>SAI_OBJECT_TYPE_ISOLATION_GROUP</code><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>peer-link 経由の重複転送/ループを防ぐため MCLAG メンバ port group から peer-link を isolate。<a href="../../reference/glossary/#term-sai">SAI</a> は <code>SAI_OBJECT_TYPE_ISOLATION_GROUP</code><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
 <td><strong>Aging disable</strong></td>
-<td>remote 学習 MAC は local aging で消さない<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>remote 学習 MAC は local aging で消さない<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
 <td><strong>MAC sync 最適化</strong></td>
-<td>bulk / 差分転送で多 VLAN 構成の収束時間短縮<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>bulk / 差分転送で多 VLAN 構成の収束時間短縮<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 </tbody>
 </table>
@@ -36235,8 +36235,8 @@
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">unique_ip = &quot;enable&quot;</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nt">APPL_DB</span><span class="p">:</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">ISOLATION_GROUP_TABLE:&lt;group_id&gt;      members = &quot;...&quot;, exclude = &quot;&lt;peer-link&gt;&quot;</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">APP_MCLAG_FDB_TABLE:&lt;vlan&gt;:&lt;mac&gt;      port, type=static|dynamic, mclag=remote|local</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">ISOLATION_GROUP_TABLE:&lt;group_name&gt;    TYPE=port|bridge-port, PORTS=&quot;&lt;bound-ports&gt;&quot;, MEMBERS=&quot;&lt;isolated-ports&gt;&quot;, DESCRIPTION=&quot;...&quot;[^3]</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">MCLAG_FDB_TABLE:&lt;vlan&gt;:&lt;mac&gt;          port, type=static|dynamic, mclag=remote|local[^2]</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="nt">STATE_DB</span><span class="p">:</span>
 </span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">STATE_MCLAG_TABLE|&lt;domain&gt;            oper_status, role, system_mac</span>
@@ -36276,8 +36276,8 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>mclag<span class="w"> </span>brief
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;STATE_MCLAG_TABLE|1&quot;</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;STATE_MCLAG_REMOTE_FDB_TABLE|*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;APP_MCLAG_FDB_TABLE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;ISOLATION_GROUP_TABLE:1&quot;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;MCLAG_FDB_TABLE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;ISOLATION_GROUP_TABLE:&lt;group_name&gt;&quot;</span>
 </span></code></pre></div>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
@@ -36293,7 +36293,13 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/mclag/MCLAG_Enhancements_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/mclag/MCLAG_Enhancements_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss-common</code> <code>common/schema.h:118</code> で <code>#define APP_MCLAG_FDB_TABLE_NAME "MCLAG_FDB_TABLE"</code>、<code>sonic-net/sonic-swss</code> <code>mclagsyncd/mclaglink.cpp:1812</code> の <code>ProducerStateTable(p_appl_db, APP_MCLAG_FDB_TABLE_NAME)</code> で APPL_DB に publish される実テーブル名は <code>MCLAG_FDB_TABLE</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/isolationgrouporch.h:25-30</code> でフィールド名定数 <code>DESCRIPTION</code> / <code>TYPE</code> / <code>PORTS</code> / <code>MEMBERS</code> を定義、<code>type</code> 値は <code>port</code> / <code>bridge-port</code>。HLD で言及される <code>exclude</code> フィールドは現行 isolationgrouporch.cpp:103-134 のパーサに存在しない&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

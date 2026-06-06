@@ -36441,7 +36441,7 @@ excerpt: |
 <li><a href="../show-interfaces/">reference/CLI: show interfaces</a></li>
 <li><a href="../show-ip/">reference/CLI: show ip</a></li>
 </ul>
-<!-- glossary-links-injected: 92c530e50bae -->
+<!-- glossary-links-injected: 896d391185a9 -->
 
 <div class="footnote">
 <hr />
@@ -36450,7 +36450,7 @@ excerpt: |
 <p>グループ定義は <code>show/main.py</code> L1649-L1652。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1649">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1649</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>alias 変換は <a href="../../glossary/#term-sonic">SONiC</a> の interface naming mode によって行われる。設定は <code>MGMT_INTERFACE</code> などとは別の環境変数経由。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>interface naming mode は <code>utilities_common/cli.py</code> の <code>get_interface_naming_mode()</code> が環境変数 <code>SONIC_CLI_IFACE_MODE</code> (未設定なら <code>"default"</code>) を読んで決まる。<code>"alias"</code> の場合のみ <code>iface_alias_converter.alias_to_name</code> で物理名へ変換される。永続化は <code>config interface_naming_mode {default|alias}</code> コマンドが当該ユーザの <code>.bashrc</code> に <code>export SONIC_CLI_IFACE_MODE=...</code> を書き込む形で行う (<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/utilities_common/cli.py#L201-L205">utilities_common/cli.py#L201-L205</a> / <a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L611-L664">config/main.py#L611-L664</a> / <a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8802">config/main.py#L8802-L8815</a>)。<code>MGMT_INTERFACE</code> のような <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブルとは無関係。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

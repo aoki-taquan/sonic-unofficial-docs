@@ -36162,10 +36162,11 @@
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CLI: <a href="../show-version/">show version</a> / <a href="../show-system-health/">show system-health</a> / <a href="../reboot-fast-warm/">reboot-fast-warm</a></li>
-<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-device_metadata/">sonic-device_metadata</a></li>
-<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/device-metadata/">DEVICE_METADATA</a></li>
 <li>Topic: <a href="../../../topics/11-reboot/">リブート / アップグレード</a></li>
 </ul>
+<blockquote>
+<p><code>show uptime</code> は kernel の <code>/proc/uptime</code> を読む <code>uptime(1)</code> のラッパで、<a href="../../glossary/#term-config_db">CONFIG_DB</a> / <a href="../../glossary/#term-yang">YANG</a> とは関連しない（後述の「実装」節を参照）。</p>
+</blockquote>
 <!-- ref-triangle:end -->
 
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -36189,7 +36190,7 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>uptime</code> コマンドの実装は <code>show/main.py</code> L2211-L2216。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2211">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2211</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>uptime</code> コマンドの実装は <code>show/main.py</code> L2208-L2216。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2208-L2216">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2208-L2216</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

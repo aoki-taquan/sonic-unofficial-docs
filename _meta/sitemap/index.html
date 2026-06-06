@@ -35932,7 +35932,7 @@
 <li><a href="../../topics/12-multi-asic-voq/setup/">設定</a> — [meta] 設定 — Multi-ASIC / VOQ chassis の設定の核心は「ASIC ごとに別 JSON を持つのではなく、1 枚の Golden Confi…</li>
 <li><a href="../../topics/12-multi-asic-voq/operations/">運用</a> — [meta] 運用 — Multi-ASIC / VOQ chassis の運用調査は、pizza-box と比べて「どこから見るか」が増えます。supervisor から…</li>
 <li><a href="../../topics/12-multi-asic-voq/internals/">内部実装</a> — [code-verified] Multi-ASIC / VOQ chassis の内部実装。namespace 分割した per-ASIC Redis / orchagent / sync…</li>
-<li><a href="../../topics/12-multi-asic-voq/advanced/">発展トピック</a> — [meta] 発展トピック — VOQ chassis 固有の機能は、BGP・LAG・Everflow・TSA・warm reboot のような既存機能領域ごとに別 HLD…</li>
+<li><a href="../../topics/12-multi-asic-voq/advanced/">発展トピック</a> — [hld-only] VOQ chassis 固有のテーマ (BGP / LAG / Everflow / Reliable TSA / Multi-ASIC warm reboo…</li>
 </ul>
 </li>
 <li><strong>DASH と SmartSwitch</strong> (<code>topics/13-dash-smartswitch/</code>)<ul>
@@ -36031,7 +36031,7 @@
 <li><a href="../../topics/22-reference-index/operations/">運用</a> — [meta] 運用 — リファレンス索引章での「運用」は、reference ページ / 機能章 / categories の整合を維持し、欠落と discrepancy…</li>
 <li><a href="../../topics/22-reference-index/internals/">内部実装</a> — [meta] 22 章リファレンス索引のメタ章。CLI / CONFIG_DB / YANG の三系統が SONiC 実装内でどう結ばれているかと、索引生成パイプラインを一…</li>
 <li><a href="../../topics/22-reference-index/advanced/">発展トピック</a> — [meta] 発展トピック — リファレンス索引 (CLI / CONFIG_DB / YANG / cross-reference) を回し続けるための index 再生…</li>
-<li><a href="../../topics/22-reference-index/cli-index/">CLI 横断索引</a> — [meta] docs/reference/cli/ 配下の主要 CLI ページを機能章ごとに束ね直した抜粋索引。全 73 ページの辞書一覧ではなく、各機能章の主入口から引…</li>
+<li><a href="../../topics/22-reference-index/cli-index/">CLI 横断索引</a> — [meta] docs/reference/cli/ 配下の主要 CLI ページを機能章ごとに束ね直した抜粋索引。全 72 ページの辞書一覧ではなく、各機能章の主入口から引…</li>
 <li><a href="../../topics/22-reference-index/config-db-index/">CONFIG_DB 横断索引</a> — [meta] CONFIG_DB 横断索引 — docs/reference/config-db/ 配下の table 群を機能章ごとに並べ直し、章入口 (setup.md…</li>
 <li><a href="../../topics/22-reference-index/yang-index/">YANG 横断索引</a> — [meta] docs/reference/yang/ 配下に辞書化済みの 84 native SONiC YANG モジュールを、本サイトの機能章ごとに並べ直した逆引き索…</li>
 <li><a href="../../topics/22-reference-index/quality-gaps/">品質と gap</a> — [meta] 品質と gap — 本ページは、Phase 6 以降の検証作業で残った 2 種類の「不完全さ」をどこで追跡するかをまとめる。</li>
@@ -36344,7 +36344,7 @@
 <li><a href="../../management/gnsi-hld-internals/">gNSI 内部実装（Certz / Authz / Pathz / Credentialz handler と host service）</a> — [discrepancy-found] gNSI 各サービスの内部実装。Certz の Profile / CSR、Authz / Pathz のポリシー適用経路、Credentialz の gns…</li>
 <li><a href="../../management/gnsi-hld-limitations/">gNSI 制限事項と HLD との乖離（Credentialz 未配線・フラグ名差異）</a> — [discrepancy-found] gNSI HLD と sonic-gnmi 実装の乖離。Credentialz サーバ handler 未配線、gNMI server フラグ名の差異、STA…</li>
 <li><a href="../../management/openconfig-support-for-ethernet-interfaces/">OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）</a> — [code-verified] OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transfo…</li>
-<li><a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/">SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）</a> — [discrepancy-found] SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id） — SmartSwitch アーキテクチャで…</li>
+<li><a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/">SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）</a> — [discrepancy-found] SmartSwitch gNMI フィードバック HLD の解説。NPU 上の gNMI サーバ経由で各 DPU を設定した結果を DPU APPL_STAT…</li>
 <li><a href="../../management/sonic-gnmi-server-interface-design/">SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）</a> — [code-verified] SONiC gNMI Server インタフェース設計 — sonic-restapi は case-by-case な API で汎用性が無く、sonic-…</li>
 <li><a href="../../management/aaa-improvements/">AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）</a> — [discrepancy-found] AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール） — SONiC の AAA を Linux PAM / NS…</li>
 <li><a href="../../management/default-credential-management-for-california-sb-327-conformance/">既定パスワードの初回ログイン強制変更（California SB-327 準拠）</a> — [discrepancy-found] California SB-327 準拠のため、ビルド時オプションで既定ユーザのパスワードを期限切れ化し、初回 SSH ログイン時に強制変更させる機能。HLD…</li>
@@ -36430,7 +36430,7 @@
 <li><a href="../../platform/xcvrd-cmis-mediainterface-crash/">xcvrd クラッシュ（CMIS module_media_interface_id 未定義）</a> — [issue-confirmed] CMIS アプリケーション広告に media interface ID が含まれない場合に xcvrd が KeyError でクラッシュする問題と回避策。</li>
 <li><strong>内部実装</strong> (<code>internals/</code>)</li>
 <li><a href="../../internals/">内部実装</a> — [meta] 内部実装 — Redis、SwSS、orchagent、counter、P4Orch など実装内部の構造を扱う章。</li>
-<li><a href="../../internals/support-multiple-user-defined-redis-database-instances/">複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）</a> — [code-verified] 複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散） — 従来の SONiC は 単一の Redis イン…</li>
+<li><a href="../../internals/support-multiple-user-defined-redis-database-instances/">複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）</a> — [code-verified] database_config.json で Redis インスタンス数と DB 割当をユーザ定義し、ホットスポット化した単一 Redis を複数インスタンス…</li>
 <li><a href="../../internals/support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）</a> — [code-verified] Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig） — Multi-ASIC SONiC…</li>
 <li><a href="../../internals/p4-orchagent/">P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）</a> — [code-verified] P4Orch は PINS (P4 Integrated Network Stack) の中核 orchagent。APPL_DB.P4RT を購読し、SAI…</li>
 <li><a href="../../internals/swss-schema/">swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）</a> — [code-verified] swss-schema（APPL_DB / STATE_DB の中心スキーマ参照） — SONiC の APPL_DB / STATE_DB に存在する主要テ…</li>
@@ -36439,7 +36439,7 @@
 <li><a href="../../internals/byte-packet-rates-port-utilization-in-sonic/">バイト/パケットレートとポート使用率（RATES テーブル + EMA）</a> — [code-verified] バイト/パケットレートとポート使用率（RATES テーブル + EMA） — portstat / intfstat が表示する RX_BPS / RX_PP…</li>
 <li><a href="../../internals/sonic-counter-initialization-optimization/">flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）</a> — [code-verified] flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats） — SONiC の counter…</li>
 <li><a href="../../internals/sonic-flexcounter-refactor/">FlexCounter リファクタ（CounterContext テンプレート化）</a> — [code-verified] FlexCounter リファクタ（CounterContext テンプレート化） — syncd の FlexCounter は port / queue…</li>
-<li><a href="../../internals/dump-utility-for-easy-debugging/">dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）</a> — [code-verified] dump state utility — SONiC の機能は 複数 DB（CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB…</li>
+<li><a href="../../internals/dump-utility-for-easy-debugging/">dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）</a> — [code-verified] dump state utility — SONiC の機能は複数 DB（CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB /…</li>
 <li><a href="../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）</a> — [discrepancy-found] L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp…</li>
 <li><a href="../../internals/l3-scaling-and-performance-enhancements-concepts/">L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 6 系統の改善）</a> — [discrepancy-found] L3 Scaling と Performance 強化 HLD の概念整理。ARP/ND エントリ数と route/ECMP のスケール目標、route pr…</li>
 <li><a href="../../internals/l3-scaling-and-performance-enhancements-operations/">L3 Scaling と Performance 強化 設定・運用（sysctl / COPP_TABLE / show arp）</a> — [discrepancy-found] L3 Scaling と Performance 強化 HLD の設定・確認手順。kernel ARP/ND gc_thresh の sysctl 適用方法、…</li>
