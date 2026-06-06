@@ -7,28 +7,13 @@ verification: meta
 last_verified: 2026-05-10
 sources: []
 related:
-  cli:
-  - config vnet
-  - config bgp
-  - show bgp
-  - show acl
-  - config acl
+  _no_related_cli: true
+  _no_related_yang: true
   config_db:
-  - VNET
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
-  - BGP_PEER_GROUP
-  - BGP_NEIGHBOR_AF
-  yang:
-  - sonic-vnet
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
+  - DASH_ENI_TABLE
+  - DASH_VNET
+  - DASH_ACL_GROUP
+  - DASH_ROUTE_TABLE
 ---
 
 # gNOI 連携と他章との境界
