@@ -36356,7 +36356,7 @@
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>NVGRE_TUNNEL</code>, <code>NVGRE_TUNNEL_MAP</code></li>
-<li>CLI: なし（<a href="../../glossary/#term-config_db">CONFIG_DB</a> 直接設定）</li>
+<li>CLI: <code>config nvgre-tunnel {add,delete}</code> / <code>config nvgre-tunnel-map {add,delete}</code> / <code>show nvgre-tunnel</code> / <code>show nvgre-tunnel-map</code> (<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> <code>config/plugins/nvgre_tunnel.py</code> および <code>show/plugins/nvgre_tunnel.py</code> で click plugin として実装)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
 <!-- yang-sibling -->
 <h3 id="yang">関連 YANG モジュール<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
@@ -36391,17 +36391,21 @@
 <h3 id="config-show">関連する config / show コマンド<a class="headerlink" href="#config-show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NVGRE_TUNNEL*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>nvgre-tunnel
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>nvgre-tunnel-map
 </span></code></pre></div>
 <!-- /ops-hint -->
 
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 26ca9e81c971 -->
+<!-- glossary-links-injected: f960e6599a3c -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-nvgre-tunnel.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-utilities</code> <code>config/plugins/nvgre_tunnel.py</code> L207-L349 (<code>nvgre-tunnel</code> / <code>nvgre-tunnel-map</code> click groups, <code>add</code> / <code>delete</code> subcommands) と <code>show/plugins/nvgre_tunnel.py</code> L46-L149 (<code>show nvgre-tunnel</code> / <code>show nvgre-tunnel-map</code>) で click plugin として登録。<code>doc/Command-Reference.md</code> の "NVGRE" 章に CLI 仕様あり。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

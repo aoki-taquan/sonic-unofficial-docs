@@ -35876,7 +35876,7 @@
 <li><a href="../../topics/07-acl-copp-mirror/">ACL / CoPP / Mirror / Packet Action</a> — [meta] ACL / CoPP / Mirror / Packet Action — この章は、SONiC で「パケットを分類して、通す、落とす、CPU に送る、複製す…</li>
 <li><a href="../../topics/07-acl-copp-mirror/concept/">概念</a> — [meta] 概念 — ACL（Access Control List）と CoPP（Control Plane Policing）と Mirror（パケットコピー）は、S…</li>
 <li><a href="../../topics/07-acl-copp-mirror/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — ACL の中心は AclOrch です。設定は CONFIG_DB から入り、APPL_DB を経由して AclOrch が SAI AC…</li>
-<li><a href="../../topics/07-acl-copp-mirror/setup/">設定</a> — [meta] 設定 — ACL の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。config acl は table の作成・削…</li>
+<li><a href="../../topics/07-acl-copp-mirror/setup/">設定</a> — [code-verified] ACL の最小設定は table を作り rule JSON を流し show で確認する流れ。config acl は table の作成・削除と JSON…</li>
 <li><a href="../../topics/07-acl-copp-mirror/operations/">運用</a> — [meta] 運用 — ACL / CoPP / mirror の調査では、設定が存在するか、ASIC に反映されたか、counter が増えるかを分けて確認します。CON…</li>
 <li><a href="../../topics/07-acl-copp-mirror/internals/">内部実装</a> — [meta] ACL action はスキーマに書けるだけでは十分ではない。ASIC がその stage でその action を受理できるか、SAI capability…</li>
 <li><a href="../../topics/07-acl-copp-mirror/advanced/">発展トピック</a> — [meta] 発展トピック — このページは、ACL / CoPP / mirror の基本線から少し外れるが、同じ「分類、保護、観測、rate limit」の考え方で読め…</li>
@@ -35919,7 +35919,7 @@
 <li><a href="../../topics/11-reboot/concept/">Reboot family の選び方</a> — [meta] Reboot family の選び方 — SONiC の reboot は、単に「速い順」に並べるよりも、どの状態を保持し、どこで整合性を取り直すかで見ると判…</li>
 <li><a href="../../topics/11-reboot/architecture/">Warm path の内部構造</a> — [meta] Warm path の内部構造 — warm reboot / warm restart の中心は、停止前に「復元に必要な状態」を固定し、起動後に「旧状態と新…</li>
 <li><a href="../../topics/11-reboot/setup/">Reboot / warm restart の設定</a> — [code-verified] OS reboot と service warm restart の使い分け、warm restart の有効化・timer 設定・blocking mode…</li>
-<li><a href="../../topics/11-reboot/operations/">Reboot 運用と障害調査</a> — [meta] Reboot 運用と障害調査 — 実行前に peer と platform の前提を揃え、実行中は warm shutdown / restore の境界を見…</li>
+<li><a href="../../topics/11-reboot/operations/">Reboot 運用と障害調査</a> — [code-verified] Reboot 運用と障害調査 — 実行前に peer と platform の前提を揃え、実行中は warm shutdown / restore の境界を見…</li>
 <li><a href="../../topics/11-reboot/internals/">内部実装</a> — [meta] 内部実装 — reboot / upgrade / lifecycle の内部実装は「どこまで data plane を生かしたまま control plan…</li>
 <li><a href="../../topics/11-reboot/upgrade/">Upgrade lifecycle</a> — [meta] Upgrade lifecycle — upgrade は reboot と同じではありません。upgrade は「どの image / package /…</li>
 <li><a href="../../topics/11-reboot/advanced/">Reboot / Upgrade の発展トピック</a> — [meta] Reboot / Upgrade の発展トピック — warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める expr…</li>
@@ -35948,7 +35948,7 @@
 <li><a href="../../topics/14-platform-port-optics/">Platform / Port / Optics / PHY</a> — [meta] Platform / Port / Optics / PHY — この章は、SONiC の「物理層に近い面」を 1 つの読み口に束ねる入口です。</li>
 <li><a href="../../topics/14-platform-port-optics/concept/">概要</a> — [meta] 概要 — SONiC の物理層は、大きく「port そのもの」「optics / PHY」「装置側 health」の 3 系統に分けると整理しやすくなります。</li>
 <li><a href="../../topics/14-platform-port-optics/architecture/">アーキテクチャ</a> — [code-verified] ポート 1 本がリンクアップに至るまでに通る SONiC 内部コンポーネント (PortMgr / portsyncd / PortsOrch / SAI)…</li>
-<li><a href="../../topics/14-platform-port-optics/setup/">設定</a> — [meta] 設定 — ここでは、port 設定と platform 関連設定を、CLI / CONFIG_DB / YANG のどれから入るかという観点で整理します。全オ…</li>
+<li><a href="../../topics/14-platform-port-optics/setup/">設定</a> — [code-verified] 設定 — ここでは、port 設定と platform 関連設定を、CLI / CONFIG_DB / YANG のどれから入るかという観点で整理します。全オ…</li>
 <li><a href="../../topics/14-platform-port-optics/operations/">運用</a> — [meta] 運用 — ここでは、装置 health と optics に関連する確認順序を、運用シナリオ別に整理します。各 daemon の詳細は元 HLD を参照してく…</li>
 <li><a href="../../topics/14-platform-port-optics/internals/">内部実装</a> — [meta] 内部実装 — ここでは、port / optics / PHY を「ベンダー実装の境界」から見直します。SONiC core と platform drive…</li>
 <li><a href="../../topics/14-platform-port-optics/advanced/">発展トピック</a> — [meta] 発展トピック — ここでは、port / platform 章の中でも比較的新しい、または運用上の影響が大きい設計を 3 つ取り上げます。詳細は元 HLD に…</li>

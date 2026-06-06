@@ -43843,7 +43843,7 @@
 <li><strong>略称</strong>: ASIC_DB</li>
 <li><strong>日本語訳</strong>: ASIC DB</li>
 <li><strong>説明</strong>: Redis DB ID 1。<code>syncd</code> が SAI オブジェクトの状態を反映する DB。SAI オブジェクト ID をキーに、属性のシリアライズ済み表現を保持する。</li>
-<li><strong>関連</strong>: <a href="#sai">SAI</a>、<a href="#syncd">syncd</a></li>
+<li><strong>関連</strong>: <a href="#term-sai">SAI</a>、<a href="#term-syncd">syncd</a></li>
 </ul>
 <h3 id="term-asic-sdk">ASIC SDK<a class="headerlink" href="#term-asic-sdk" title="Permanent link">&para;</a></h3>
 <ul>
@@ -43877,7 +43877,7 @@
 <li><strong>略称</strong>: BGP (Border Gateway Protocol)</li>
 <li><strong>日本語訳</strong>: BGP</li>
 <li><strong>説明</strong>: ルーティングプロトコル (RFC 4271)。SONiC では FRR の <code>bgpd</code> を使用し、<code>fpmsyncd</code> 経由でカーネル経由 APPL_DB へ反映する。</li>
-<li><strong>関連</strong>: <a href="../../topics/02-bgp/">BGP トピック</a>、<a href="#frr">FRR</a>、<a href="#fpmsyncd">fpmsyncd</a></li>
+<li><strong>関連</strong>: <a href="../../topics/02-bgp/">BGP トピック</a>、<a href="#term-frr">FRR</a>、<a href="#term-fpmsyncd">fpmsyncd</a></li>
 </ul>
 <h3 id="term-bgpcfgd">bgpcfgd<a class="headerlink" href="#term-bgpcfgd" title="Permanent link">&para;</a></h3>
 <ul>
@@ -43999,7 +43999,7 @@
 <li><strong>略称</strong>: DPU (Data Processing Unit)</li>
 <li><strong>日本語訳</strong>: データ処理ユニット</li>
 <li><strong>説明</strong>: SmartSwitch の各ライン上に搭載される SoC。SONiC は NPU 側と DPU 側でそれぞれインスタンスを動かす。</li>
-<li><strong>関連</strong>: <a href="#smartswitch">SmartSwitch</a></li>
+<li><strong>関連</strong>: <a href="#term-smartswitch">SmartSwitch</a></li>
 </ul>
 <h3 id="term-dpb">DPB<a class="headerlink" href="#term-dpb" title="Permanent link">&para;</a></h3>
 <ul>
@@ -44074,7 +44074,7 @@
 <li><strong>略称</strong>: ENI (Elastic Network Interface)</li>
 <li><strong>日本語訳</strong>: ENI</li>
 <li><strong>説明</strong>: DASH における仮想 NIC 概念。テナント単位のポリシーバインド単位。</li>
-<li><strong>関連</strong>: <a href="#dash">DASH</a></li>
+<li><strong>関連</strong>: <a href="#term-dash">DASH</a></li>
 </ul>
 <h3 id="term-ets">ETS<a class="headerlink" href="#term-ets" title="Permanent link">&para;</a></h3>
 <ul>
@@ -44154,7 +44154,7 @@
 <li><strong>略称</strong>: fpmsyncd</li>
 <li><strong>日本語訳</strong>: FPM 同期デーモン</li>
 <li><strong>説明</strong>: FRR <code>zebra</code> からの FPM メッセージを受信し、APPL_DB の <code>ROUTE_TABLE</code> / <code>LABEL_ROUTE_TABLE</code> に書き込む SwSS コンポーネント。</li>
-<li><strong>関連</strong>: <a href="#frr">FRR</a>、<a href="../../topics/02-bgp/">BGP トピック</a></li>
+<li><strong>関連</strong>: <a href="#term-frr">FRR</a>、<a href="../../topics/02-bgp/">BGP トピック</a></li>
 </ul>
 <h3 id="term-frr">FRR<a class="headerlink" href="#term-frr" title="Permanent link">&para;</a></h3>
 <ul>
@@ -44814,8 +44814,8 @@
 <ul>
 <li><strong>略称</strong>: VOQ (Virtual Output Queue)</li>
 <li><strong>日本語訳</strong>: 仮想出力キュー</li>
-<li><strong>説明</strong>: 各入力ポートが出力ポートごとに独立キューを持つスイッチング方式。Head-of-Line ブロッキングを回避する。SONiC では分散シャーシ (VoQ Chassis) で <code>CHASSIS_APP_DB</code> / global system port 管理と組で扱われる。</li>
-<li><strong>関連</strong>: <a href="#term-bgp">BGP</a></li>
+<li><strong>説明</strong>: 各入力ポートが出力ポートごとに独立キューを持つスイッチング方式。Head-of-Line ブロッキングを回避する。SONiC では分散シャーシ (VoQ Chassis) で <code>CHASSIS_APP_DB</code> / global system port 管理と組で扱われる<sup><sup id="fnref:voq-hld"><a class="footnote-ref" href="#fn:voq-hld">1</a></sup></sup>。</li>
+<li><strong>関連</strong>: <a href="#term-multi-asic">Multi-ASIC</a></li>
 </ul>
 <h3 id="term-vs">VS<a class="headerlink" href="#term-vs" title="Permanent link">&para;</a></h3>
 <ul>
@@ -45879,7 +45879,7 @@
 <li><a href="../../switching/switch-port-modes-and-vlan-cli-discrepancy/">Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離</a> (15)</li>
 <li><a href="../../topics/03-vxlan-evpn/operations/">Overlay 運用</a> (15)</li>
 <li><a href="../config-db/breakout-cfg/">BREAKOUT_CFG テーブル</a> (14)</li>
-<li><a href="../config-db/deviceop-state/">[STATE_DB] DEVICE_NEIGHBOR 動作状態（device op state）</a> (13)</li>
+<li><a href="../../topics/14-platform-port-optics/setup/">設定</a> (14)</li>
 </ul>
 <h3 id="scheduler"><a href="#term-scheduler">Scheduler</a><a class="headerlink" href="#scheduler" title="Permanent link">&para;</a></h3>
 <ul>
@@ -46151,6 +46151,15 @@
 <li><a href="../../_meta/sitemap/">サイトマップ</a> (5)</li>
 </ul>
 <!-- /glossary-xref -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:voq-hld">
+<p><code>sonic-net/SONiC</code> <code>doc/voq/voq_hld.md</code> L24-L29, L89, L168-L190 — <code>CHASSIS_APP_DB</code> は supervisor card 上の chassis redis に置かれ、各 ASIC instance の OrchAgent が <code>SYSTEM_PORT</code> / <code>SYSTEM_INTERFACE</code> / <code>SYSTEM_NEIGH</code> / <code>SYSTEM_PORTCHANNEL</code> を書き込み・購読する。system port は <code>system_port_id</code> / <code>switch_id</code> / <code>core_index</code> / <code>core_port_index</code> / <code>speed</code> の組で全シャーシ範囲で一意に識別される。&#160;<a class="footnote-backref" href="#fnref:voq-hld" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

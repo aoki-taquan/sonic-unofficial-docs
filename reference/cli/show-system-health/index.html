@@ -36279,7 +36279,7 @@
 <h1 id="show-system-health">show system-health サブコマンド<a class="headerlink" href="#show-system-health" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>show system-health</code> は <code>system-health</code> デーモン（<code>HealthCheckerManager</code>）が保持するシステム状態（サービス・ハードウェア・ファイルシステムなど）と、<a href="../../glossary/#term-smartswitch">SmartSwitch</a> 構成での <a href="../../glossary/#term-dpu">DPU</a> 状態、システムが boot 完了したかの「sysready」状態を表示する。実装は <code>show/system_health.py</code>、<code>show/main.py</code> 末尾で <code>cli.add_command(system_health.system_health)</code> の形で登録される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>HealthCheckerManager</code> の本体は <code>health_checker/</code> パッケージで、<code>/usr/share/sonic/device/&lt;platform&gt;/system_health_monitoring_config.json</code> をベースに監視対象を決める。<code>show system-health</code> は <strong>root 権限必須</strong>（<code>os.geteuid()</code> チェック）。</p>
+<p><code>HealthCheckerManager</code> の本体は <code>health_checker/</code> パッケージで、<code>/usr/share/sonic/device/&lt;platform&gt;/system_health_monitoring_config.json</code> をベースに監視対象を決める。<code>summary</code> / <code>detail</code> / <code>monitor-list</code> の 3 サブコマンドは共通ヘルパ <code>get_system_health_status()</code> を呼び、そのヘルパ冒頭の <code>os.geteuid()</code> チェックが <strong>root 権限必須</strong> の実体となる（<code>UTILITIES_UNIT_TESTING=1</code> の場合はモック経路に切り替わり root チェックをスキップ）<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。<code>sysready-status</code> / <code>dpu</code> はこのヘルパを通らないため root 権限を要求しない。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36435,9 +36435,9 @@ excerpt: |
 </table>
 <h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>root 権限が無いと <code>summary</code> / <code>detail</code> / <code>monitor-list</code> は exit 1。</li>
-<li>chassis モジュール (<code>sonic_platform.chassis.Chassis</code>) が存在しないプラットフォームでは ImportError になる可能性がある。</li>
-<li>ユニットテスト用の <code>UTILITIES_UNIT_TESTING=1</code> で <code>MockerManager</code> / <code>MockerChassis</code> に切り替わるパスがある。</li>
+<li>root 権限が無いと <code>summary</code> / <code>detail</code> / <code>monitor-list</code> は <code>get_system_health_status()</code> 冒頭の <code>os.geteuid()</code> チェック (<code>show/system_health.py</code> L26-L28) で「Root privileges are required for this operation」を出力して exit 1。<code>sysready-status</code> / <code>dpu</code> は同ヘルパを通らないため root を要求しない。</li>
+<li>chassis モジュール (<code>sonic_platform.chassis.Chassis</code>) が存在しないプラットフォームでは ImportError になる可能性がある（root チェック通過後に import される）。</li>
+<li>ユニットテスト用の <code>UTILITIES_UNIT_TESTING=1</code> で <code>MockerManager</code> / <code>MockerChassis</code> に切り替わるパスがあり、この経路では root チェックを行わない。</li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -36517,6 +36517,9 @@ excerpt: |
 </li>
 <li id="fn:2">
 <p>整形は <code>display_system_health_summary</code> (<code>show/system_health.py</code> L44-L74)。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/system_health.py#L44">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/system_health.py#L44</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>get_system_health_status()</code> 内の root チェック (<code>show/system_health.py</code> L17-L36)。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/system_health.py#L17-L36">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/system_health.py#L17-L36</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

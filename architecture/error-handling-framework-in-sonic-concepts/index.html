@@ -8225,7 +8225,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#phase-boundary" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装フェーズ境界
@@ -8236,7 +8236,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離
@@ -8247,7 +8247,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -8258,7 +8258,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -35984,7 +35984,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#phase-boundary" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装フェーズ境界
@@ -35995,7 +35995,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離
@@ -36006,7 +36006,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36017,7 +36017,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36064,6 +36064,16 @@
 </ol>
 <p>これにより、BGP は <code>ROUTE_TABLE</code> 失敗を受け取って announce 済み route を withdraw するなど、リカバリを app 側で実施できる。</p>
 <h2 id="3">3. データフロー全体像<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">以下 §3〜§6 は HLD 設計記述（master 未実装）</p>
+<p>§3 データフロー / §4 対象 table / §5 error code 表 / §6 positive ack は
+いずれも HLD <code>error_handling_design_spec.md</code> の設計案であり、master では
+<strong><code>SWSS_RC_*</code> enum (<code>sonic-swss-common/common/status_code_util.h</code>) のみ
+取り込み済</strong>。ERROR_DB / ErrorListener / ErrorReporter / <code>show error-database</code>
+CLI は未実装である。実装状況の一覧はページ末尾の
+<a href="#phase-boundary">phase-boundary 表</a> を、未実装内容と回避策は
+<a href="../error-handling-framework-in-sonic-limitations/">制限事項</a> を参照。</p>
+</div>
 <pre class="mermaid"><code>flowchart LR
     APP[App&lt;br/&gt;例: bgpcfgd / fpmsyncd] -- register ErrorListener --&gt; EL[Error Listener]
     SYNCD[syncd] -- ASIC_DB notif channel --&gt; OA[OrchAgent&lt;br/&gt;Error Reporter]
@@ -36078,7 +36088,7 @@
 <h2 id="4-table">4. 対象 table<a class="headerlink" href="#4-table" title="Permanent link">&para;</a></h2>
 <p>初版で対応するのは <code>ROUTE_TABLE</code> と <code>NEIGH_TABLE</code>（BGP ユースケース駆動）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。他 table は後付け拡張可能な設計。</p>
 <h2 id="5-error-code">5. Error code の抽象化<a class="headerlink" href="#5-error-code" title="Permanent link">&para;</a></h2>
-<p>app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで <strong>SWSS error code を定義し SAI error code にマップ</strong> する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。下表は <a href="../../reference/glossary/#term-hld">HLD</a> で定義された基本セット 8 種だが、実装の <code>sonic-swss-common/common/status_code_util.h L11-L25</code> enum には追加 7 種（<code>SWSS_RC_DEADLINE_EXCEEDED</code> / <code>SWSS_RC_PERMISSION_DENIED</code> / <code>SWSS_RC_INTERNAL</code> / <code>SWSS_RC_UNIMPLEMENTED</code> / <code>SWSS_RC_NOT_EXECUTED</code> / <code>SWSS_RC_FAILED_PRECONDITION</code> / <code>SWSS_RC_UNKNOWN</code>）も追加されており、合計 15 種が定義されている。詳細は limitations ページの「3. 行番号付きエビデンス」を参照。</p>
+<p>app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで <strong>SWSS error code を定義し SAI error code にマップ</strong> する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。下表は <a href="../../reference/glossary/#term-hld">HLD</a> で定義された基本セット 8 種だが、実装の <code>sonic-swss-common/common/status_code_util.h</code> L9-L26 enum には追加 7 種（<code>SWSS_RC_DEADLINE_EXCEEDED</code> / <code>SWSS_RC_PERMISSION_DENIED</code> / <code>SWSS_RC_INTERNAL</code> / <code>SWSS_RC_UNIMPLEMENTED</code> / <code>SWSS_RC_NOT_EXECUTED</code> / <code>SWSS_RC_FAILED_PRECONDITION</code> / <code>SWSS_RC_UNKNOWN</code>）も追加されており、合計 15 種が定義されている。詳細は limitations ページの「3. 行番号付きエビデンス」を参照。</p>
 <table>
 <thead>
 <tr>
@@ -36132,7 +36142,7 @@
 <li><a href="../error-handling-framework-in-sonic-limitations/">error-handling-framework-in-sonic-limitations.md</a></li>
 </ul>
 <!-- phase-boundary -->
-<h2 id="_2">実装フェーズ境界<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="phase-boundary">実装フェーズ境界<a class="headerlink" href="#phase-boundary" title="Permanent link">&para;</a></h2>
 <div class="admonition info">
 <p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>
 <p>本ページは <code>monitor: partially_implemented</code> で、HLD で示された一連の機能
@@ -36173,11 +36183,11 @@
 </div>
 <!-- /phase-boundary -->
 
-<h2 id="_3">実装との乖離<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_2">実装との乖離<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../error-handling-framework-in-sonic/">Error Handling Framework 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
-<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_5">このページを読んだ後の次アクション<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">このページを読んだ後の次アクション<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

@@ -36267,14 +36267,26 @@
   SAI --&gt; P</code></pre>
 <p>QosOrch は <code>CFG_SCHEDULER_TABLE</code> / <code>CFG_QUEUE_TABLE</code> / <code>CFG_PORT_QOS_MAP_TABLE</code> を subscribe する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="config_db">CONFIG_DB スキーマ抜粋<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p><code>SCHEDULER</code> テーブル<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>key       = &quot;SCHEDULER&quot;:&lt;name&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>type      = &quot;DWRR&quot; | &quot;WRR&quot; | &quot;STRICT&quot;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>weight    = 1..100              ; 既定 1
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>priority  = 1*DIGIT
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>meter_type = &quot;packets&quot; | &quot;bytes&quot; ; 既定 bytes
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>cir / cbs / pir / pbs = 1..11 DIGIT
+<p><code>SCHEDULER</code> テーブル（HLD の ABNF 表記<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>、<code>*</code> は反復、<code>1*11 DIGIT</code> は 1〜11 桁の数字）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>key        = &quot;SCHEDULER&quot;:&lt;name&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>type       = &quot;DWRR&quot; / &quot;WRR&quot; / &quot;STRICT&quot;
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>weight     = 2*DIGIT             ; HLD 表記。最大 2 桁の数字
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>priority   = 1*DIGIT             ; HLD 表記。1 桁の数字
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>meter_type = &quot;packets&quot; / &quot;bytes&quot; ; 既定 bytes
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>cir        = 1*11 DIGIT          ; Bps または pps
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>cbs        = 1*11 DIGIT          ; bytes または packets
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>pir        = 1*11 DIGIT          ; Bps または pps
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>pbs        = 1*11 DIGIT          ; bytes または packets
 </span></code></pre></div>
+<p><a href="../../reference/glossary/#term-yang">YANG</a> (<code>sonic-scheduler.yang</code>) では数値範囲を以下のように制約する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
+<ul>
+<li><code>weight</code>: <code>uint8</code> で <code>range "1..100"</code>、default 1</li>
+<li><code>priority</code>: <code>uint8</code> で <code>range "0..9"</code>（HLD の <code>1*DIGIT</code> よりさらに狭い）</li>
+<li><code>meter_type</code>: enum <code>packets</code> / <code>bytes</code>、default <code>bytes</code></li>
+<li><code>cir</code> / <code>pir</code>: <code>uint64</code>。<code>pir</code> には <code>pir &gt;= cir</code> の must 制約</li>
+<li><code>cbs</code> / <code>pbs</code>: <code>uint32</code>。<code>pbs</code> には <code>pbs &gt;= cbs</code> の must 制約</li>
+</ul>
+<p>QosOrch では <code>weight</code> は <code>uint8_t</code> にキャストして <code>SAI_SCHEDULER_ATTR_SCHEDULING_WEIGHT</code> に渡されるのみで、独自の上限チェックは持たない<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。すなわち実装上の上限は YANG レイヤで管理される。</p>
 <p><code>QUEUE</code> テーブルおよび <code>PORT_QOS_MAP</code> テーブルから <code>scheduler</code> フィールドで <code>[SCHEDULER|name]</code> を参照する。</p>
 <h3 id="sai">主要 SAI 属性<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
 <table>
@@ -36390,13 +36402,19 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: cf7467e40bec -->
+<!-- glossary-links-injected: a65ee09b131d -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md">sonic-net/SONiC doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md">sonic-net/SONiC doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md @ 49bab5b</a>（§3.2.1 CFG_SCHEDULER_TABLE, L195-L211 で ABNF スキーマを定義）&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-scheduler.yang">sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-scheduler.yang @ master</a> <code>leaf weight</code> (L56-L62) で <code>uint8 range "1..100" default 1</code>、<code>leaf priority</code> (L64-L69) で <code>uint8 range "0..9"</code>、<code>leaf pir</code> (L94-L108) で <code>pir &gt;= cir</code> の must 制約、<code>leaf pbs</code> (L124-L139) で <code>pbs &gt;= cbs</code> の must 制約を定義。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp">sonic-net/sonic-swss orchagent/qosorch.cpp @ master</a> L1399-L1403 で <code>scheduler_weight_field_name</code> を <code>(uint8_t)stoi(fvValue(*i))</code> にキャストして <code>SAI_SCHEDULER_ATTR_SCHEDULING_WEIGHT</code> に渡しており、<a href="../../reference/glossary/#term-orchagent">orchagent</a> 側で独立した上限チェックは存在しない。&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

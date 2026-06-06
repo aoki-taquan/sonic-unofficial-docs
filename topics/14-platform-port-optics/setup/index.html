@@ -4703,6 +4703,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36117,6 +36128,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36247,27 +36269,105 @@
 </span></code></pre></div>
 <p>期待されるエラーカウンタは基本ゼロ近傍です。FEC を変えた直後は <code>RX_ERR</code> や <code>SYMBOL_ERR</code> が一時的に増えることがあるため、<code>watch -n 1 show interfaces counters Ethernet8</code> で 10〜30 秒の収束を待ちます。</p>
 <h2 id="3-platform-firmware">設定シナリオ 3: platform firmware のステージング更新<a class="headerlink" href="#3-platform-firmware" title="Permanent link">&para;</a></h2>
-<p><code>fw-util</code> は装置上で BIOS / CPLD / <a href="../../../reference/glossary/#term-fpga">FPGA</a> / SSD / optics を統一して扱います。本番投入前に「DUT 上に新 firmware を仕込み、次回 cold reboot で適用する」というステージング運用が典型です。</p>
+<p><code>fwutil</code> は装置上で BIOS / CPLD / <a href="../../../reference/glossary/#term-fpga">FPGA</a> / SSD / optics を統一して扱います。<code>config platform firmware install</code> / <code>config platform firmware update</code> は内部で <code>fwutil install</code> / <code>fwutil update</code> をそのまま呼ぶ薄いラッパーで、引数はそのまま透過されます<sup id="fnref:cfg-platform-fw"><a class="footnote-ref" href="#fn:cfg-platform-fw">1</a></sup>。本番投入前に「ローカルファイルから直接 flash する」運用と、「次回起動する <a href="../../../reference/glossary/#term-sonic">SONiC</a> イメージに同梱された firmware を使う」運用の 2 系統があります。</p>
+<p>ローカル firmware ファイルを直接インストールする例（<code>install</code> 経路、<code>fw_install</code> のシグネチャは <code>fw &lt;fw_path&gt; -y</code><sup id="fnref:fwutil-install"><a class="footnote-ref" href="#fn:fwutil-install">2</a></sup>）:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 現状</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>platform<span class="w"> </span>firmware<span class="w"> </span>status
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># 取得</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>platform<span class="w"> </span>firmware<span class="w"> </span>install<span class="w"> </span>chassis<span class="w"> </span>component<span class="w"> </span>BIOS<span class="w"> </span>fw<span class="w"> </span>/tmp/bios-2.0.bin<span class="w"> </span>--yes
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># 次回 cold reboot で適用するように予約</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>sudo<span class="w"> </span>config<span class="w"> </span>platform<span class="w"> </span>firmware<span class="w"> </span>update<span class="w"> </span>chassis<span class="w"> </span>component<span class="w"> </span>BIOS<span class="w"> </span>fw<span class="w"> </span>policy<span class="w"> </span>next
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1"># 適用は cold reboot 後</span>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>sudo<span class="w"> </span>reboot
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># ローカルパスから flash（-y で確認プロンプトを抑止）</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>platform<span class="w"> </span>firmware<span class="w"> </span>install<span class="w"> </span>chassis<span class="w"> </span>component<span class="w"> </span>BIOS<span class="w"> </span>fw<span class="w"> </span>/tmp/bios-2.0.bin<span class="w"> </span>-y
 </span></code></pre></div>
+<p>次回起動予定の SONiC イメージに同梱されている firmware を使って更新する場合は <code>update</code> 経路を使い、<code>-i next</code> で「next image に同梱された fw_package」を参照させます<sup id="fnref:fwutil-update"><a class="footnote-ref" href="#fn:fwutil-update">3</a></sup>。「現在のイメージ側を更新する」のが default (<code>-i current</code>)、<code>-f</code> でバージョンチェックを無視して強制更新できます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># 次回 boot 用 image に同梱の firmware で更新</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>platform<span class="w"> </span>firmware<span class="w"> </span>update<span class="w"> </span>chassis<span class="w"> </span>component<span class="w"> </span>BIOS<span class="w"> </span>fw<span class="w"> </span>-i<span class="w"> </span>next<span class="w"> </span>-y
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># 適用に再起動が必要な component なら cold reboot</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>sudo<span class="w"> </span>reboot
+</span></code></pre></div>
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/main.py#L8740-L8775 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @firmware.command(...)
+  @click.argument('args', nargs=-1, type=click.UNPROCESSED)
+  def install(args):
+      """Install platform firmware"""
+      cmd = ["fwutil", "install"] + list(args)
+  ...
+  def update(args):
+      """Update platform firmware"""
+      cmd = ["fwutil", "update"] + list(args)
+reasoning: config platform firmware install/update は fwutil install/update への passthrough。引数は無加工で渡る。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L8740-L8775 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/config/main.py#L8740-L8775 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>@firmware.command(...)
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>@click.argument(&#39;args&#39;, nargs=-1, type=click.UNPROCESSED)
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>def install(args):
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    &quot;&quot;&quot;Install platform firmware&quot;&quot;&quot;
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    cmd = [&quot;fwutil&quot;, &quot;install&quot;] + list(args)
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>...
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>def update(args):
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    &quot;&quot;&quot;Update platform firmware&quot;&quot;&quot;
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>    cmd = [&quot;fwutil&quot;, &quot;update&quot;] + list(args)
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: config platform firmware install/update は fwutil install/update への passthrough。引数は無加工で渡る。</p>
+</details>
+<!-- evidence-rendered:end -->
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/fwutil/main.py#L271-L356 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @component_install.command(name='fw')
+  @click.option('-y', '--yes', ...)
+  @click.argument('fw_path', metavar='<fw_path>', callback=validate_fw)
+  def fw_install(ctx, yes, fw_path):
+      """Install firmware from local path or URL"""
+  ...
+  @component_update.command(name='fw')
+  @click.option('-y', '--yes', ...)
+  @click.option('-f', '--force', ...)
+  @click.option('-i', '--image', type=click.Choice(["current", "next"]), default="current", ...)
+  def fw_update(ctx, yes, force, image):
+      """Update firmware from SONiC image"""
+reasoning: fwutil の真のサブコマンドツリーは chassis|module|component の component の下に install fw / update fw があり、policy next のような構文は存在しない。next image 参照は `-i next` オプションで行う。
+-->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/fwutil/main.py#L271-L356 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/fwutil/main.py#L271-L356 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>@component_install.command(name=&#39;fw&#39;)
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>@click.option(&#39;-y&#39;, &#39;--yes&#39;, ...)
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>@click.argument(&#39;fw_path&#39;, metavar=&#39;&lt;fw_path&gt;&#39;, callback=validate_fw)
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>def fw_install(ctx, yes, fw_path):
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    &quot;&quot;&quot;Install firmware from local path or URL&quot;&quot;&quot;
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>...
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>@component_update.command(name=&#39;fw&#39;)
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>@click.option(&#39;-y&#39;, &#39;--yes&#39;, ...)
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>@click.option(&#39;-f&#39;, &#39;--force&#39;, ...)
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>@click.option(&#39;-i&#39;, &#39;--image&#39;, type=click.Choice([&quot;current&quot;, &quot;next&quot;]), default=&quot;current&quot;, ...)
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>def fw_update(ctx, yes, force, image):
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>    &quot;&quot;&quot;Update firmware from SONiC image&quot;&quot;&quot;
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: fwutil の真のサブコマンドツリーは chassis|module|component の component の下に install fw / update fw があり、policy next のような構文は存在しない。next image 参照は <code>-i next</code> オプションで行う。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <p><code>show platform firmware status</code> の典型出力:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Chassis    Module    Component    Version       Description
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>---------  --------  -----------  ------------  --------------------
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Chassis1   N/A       BIOS         1.5.0         BIOS firmware
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>Chassis1   N/A       CPLD1        12            CPLD firmware
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>Chassis1   N/A       SSD          2024.1        Internal SSD
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Chassis    Module    Component    Version       Description
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>---------  --------  -----------  ------------  --------------------
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>Chassis1   N/A       BIOS         1.5.0         BIOS firmware
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>Chassis1   N/A       CPLD1        12            CPLD firmware
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>Chassis1   N/A       SSD          2024.1        Internal SSD
 </span></code></pre></div>
-<p>更新後の expected version とコンポーネントの一覧は platform 実装の <code>platform_components.json</code> に列挙され、<code>fw-util</code> はこの JSON に書かれた component しか触らないため、想定外のデバイスを誤って flash することはありません。</p>
+<p>更新後の expected version とコンポーネントの一覧は platform 実装の <code>platform_components.json</code> に列挙され、<code>fwutil</code> はこの JSON に書かれた component しか触らないため、想定外のデバイスを誤って flash することはありません。</p>
 <h2 id="_4">設定エラーと対処<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36299,7 +36399,7 @@
 <td><code>docker logs pmon</code>、<code>xcvrd</code> のステータスを確認</td>
 </tr>
 <tr>
-<td><code>fw-util</code> が <code>policy next</code> 後も適用されない</td>
+<td><code>fwutil update ... -i next</code> で更新したのに反映されない</td>
 <td>warm reboot を使った / power cycle が必要な component</td>
 <td>component の reboot 要件を <code>platform_components.json</code> で確認、<code>cold reboot</code> で再試行</td>
 </tr>
@@ -36313,30 +36413,31 @@
 </ul>
 <p>CLI から呼ばれる <code>fw-util</code> は、<code>platform.json</code> と platform 実装が公開する component に依存して動きます。</p>
 <h2 id="4-dom">設定シナリオ 4: 光モジュール DOM の常時モニタリング<a class="headerlink" href="#4-dom" title="Permanent link">&para;</a></h2>
-<p><code>xcvrd</code> は SFP / QSFP の Digital Optical Monitoring (DOM) 値を <code>STATE_DB:TRANSCEIVER_DOM_SENSOR|&lt;port&gt;</code> に書き続けます。アラート閾値を CLI で設定する場合:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>transceiver<span class="w"> </span>dom<span class="w"> </span>Ethernet0<span class="w"> </span><span class="nb">enable</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>transceiver<span class="w"> </span>dom<span class="w"> </span>Ethernet0
+<p><code>xcvrd</code> は SFP / QSFP の Digital Optical Monitoring (DOM) 値を STATE_DB の <code>TRANSCEIVER_DOM_SENSOR</code> テーブルに書き続けます<sup id="fnref:xcvrd-tables"><a class="footnote-ref" href="#fn:xcvrd-tables">4</a></sup>。port ごとの DOM polling は <code>PORT</code> テーブルの <code>dom_polling</code> カラムで制御され、CLI からは以下で切り替えます<sup id="fnref:cfg-dom"><a class="footnote-ref" href="#fn:cfg-dom">5</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>transceiver<span class="w"> </span>dom<span class="w"> </span>Ethernet0<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>transceiver<span class="w"> </span>dom<span class="w"> </span>Ethernet0
 </span></code></pre></div>
+<p>なお <code>config interface transceiver dom</code> は <strong>非 breakout port、または breakout 時の第 1 サブポート</strong> (<code>subport=0|1</code>) でのみ受理されます<sup id="fnref2:cfg-dom"><a class="footnote-ref" href="#fn:cfg-dom">5</a></sup>。</p>
 <p><code>show interfaces transceiver dom</code> 出力例:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">Ethernet0</span><span class="p">:</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">        </span><span class="nt">temperature</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">43.5C</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">        </span><span class="nt">voltage</span><span class="p">:</span><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">3.31V</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">        </span><span class="nt">rx1power</span><span class="p">:</span><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">-2.1 dBm</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">        </span><span class="nt">tx1power</span><span class="p">:</span><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">0.5 dBm</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">        </span><span class="nt">tx1bias</span><span class="p">:</span><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">7.5 mA</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">Ethernet0</span><span class="p">:</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">        </span><span class="nt">temperature</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">43.5C</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">        </span><span class="nt">voltage</span><span class="p">:</span><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">3.31V</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">        </span><span class="nt">rx1power</span><span class="p">:</span><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">-2.1 dBm</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">        </span><span class="nt">tx1power</span><span class="p">:</span><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">0.5 dBm</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">        </span><span class="nt">tx1bias</span><span class="p">:</span><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">7.5 mA</span>
 </span></code></pre></div>
-<p>各値の Warning / Alarm 閾値は EEPROM の A0/A2 page から <code>xcvrd</code> が読み、<code>STATE_DB:TRANSCEIVER_STATUS_FLAG_*</code> に立てます。<code>COUNTERS_DB</code> に直接落ちないことに注意。<a href="../../../reference/glossary/#term-snmp">SNMP</a> / telemetry で監視する場合は <code>xcvrd</code> の <code>TRANSCEIVER_DOM_FLAG_TABLE</code> を subscribe します。</p>
+<p>DOM 値や status の閾値超過は <code>xcvrd</code> が STATE_DB の <code>TRANSCEIVER_DOM_FLAG</code> / <code>TRANSCEIVER_STATUS_FLAG</code> 系テーブル群に立てます<sup id="fnref2:xcvrd-tables"><a class="footnote-ref" href="#fn:xcvrd-tables">4</a></sup>。<code>COUNTERS_DB</code> に直接落ちないことに注意。<a href="../../../reference/glossary/#term-snmp">SNMP</a> / telemetry で監視する場合は <code>TRANSCEIVER_DOM_FLAG</code> を subscribe します。</p>
 <h2 id="5-media_settingsjson-per-port-preemphasis">設定シナリオ 5: media_settings.json による per-port preemphasis<a class="headerlink" href="#5-media_settingsjson-per-port-preemphasis" title="Permanent link">&para;</a></h2>
-<p>ASIC の SerDes preemphasis / 振幅は default では <code>port_config.ini</code> の lane に紐づくテンプレートが適用されますが、特定の光モジュール vendor / part-number の組合せだけ調整したいときは <code>/usr/share/sonic/device/&lt;platform&gt;/&lt;hwsku&gt;/media_settings.json</code> を編集します。</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">&quot;GLOBAL_MEDIA_SETTINGS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">&quot;0-31&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">      </span><span class="nt">&quot;QSFP28-100GBASE-CR4-1M&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">        </span><span class="nt">&quot;preemphasis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;lane0&quot;</span><span class="p">:</span><span class="s2">&quot;0x12345678&quot;</span><span class="p">,</span><span class="nt">&quot;lane1&quot;</span><span class="p">:</span><span class="s2">&quot;0x12345678&quot;</span><span class="p">,</span><span class="nt">&quot;lane2&quot;</span><span class="p">:</span><span class="s2">&quot;0x12345678&quot;</span><span class="p">,</span><span class="nt">&quot;lane3&quot;</span><span class="p">:</span><span class="s2">&quot;0x12345678&quot;</span><span class="p">}</span>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">      </span><span class="p">}</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="p">}</span>
+<p>ASIC の SerDes preemphasis / 振幅は default では <code>port_config.ini</code> の lane に紐づくテンプレートが適用されますが、特定の光モジュール vendor / part-number の組合せだけ調整したいときは <code>/usr/share/sonic/device/&lt;platform&gt;/&lt;hwsku&gt;/media_settings.json</code> を編集します。トップレベルキーは <code>GLOBAL_MEDIA_SETTINGS</code>（全ポートに適用）と <code>PORT_MEDIA_SETTINGS</code>（ポート番号レンジごとに適用）の 2 種があり、<code>xcvrd</code> の <code>optics_si_parser.py</code> が両方を解釈します<sup id="fnref:optics-si"><a class="footnote-ref" href="#fn:optics-si">6</a></sup>。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="p">{</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span><span class="nt">&quot;GLOBAL_MEDIA_SETTINGS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="nt">&quot;0-31&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">      </span><span class="nt">&quot;QSFP28-100GBASE-CR4-1M&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">        </span><span class="nt">&quot;preemphasis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;lane0&quot;</span><span class="p">:</span><span class="s2">&quot;0x12345678&quot;</span><span class="p">,</span><span class="nt">&quot;lane1&quot;</span><span class="p">:</span><span class="s2">&quot;0x12345678&quot;</span><span class="p">,</span><span class="nt">&quot;lane2&quot;</span><span class="p">:</span><span class="s2">&quot;0x12345678&quot;</span><span class="p">,</span><span class="nt">&quot;lane3&quot;</span><span class="p">:</span><span class="s2">&quot;0x12345678&quot;</span><span class="p">}</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>編集後 <code>docker exec pmon supervisorctl restart xcvrd</code> で再ロードされ、次回 link up 時から反映されます。<code>docker exec pmon tail -n 50 /var/log/syslog | grep xcvrd</code> で <code>media_settings applied</code> のログを確認します。</p>
 <h2 id="platform-capability">Platform capability ファイル<a class="headerlink" href="#platform-capability" title="Permanent link">&para;</a></h2>
@@ -36358,7 +36459,32 @@
 <li><a href="../../../platform/sonic-fw-utility/">SONiC fw-utility</a></li>
 <li><a href="../../../platform/platform-capability-file-enhancement/">platform capability file enhancement</a></li>
 </ul>
-<!-- glossary-links-injected: c006405759d8 -->
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 8ba32e5aa69d -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:cfg-platform-fw">
+<p><code>config platform firmware install</code> / <code>update</code> は <code>fwutil install</code> / <code>update</code> への薄いラッパー。<code>sonic-net/sonic-utilities/config/main.py</code> L8740-L8775 (<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8740-L8775">sha 39732bceb8</a>)。&#160;<a class="footnote-backref" href="#fnref:cfg-platform-fw" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:fwutil-install">
+<p><code>fwutil</code> の component スコープ <code>install fw &lt;fw_path&gt;</code> は <code>-y</code> のみオプションを持ち、ローカルパスまたは URL からの flash を行う。<code>sonic-net/sonic-utilities/fwutil/main.py</code> L271-L297 (<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/fwutil/main.py#L271-L297">sha 39732bceb8</a>)。&#160;<a class="footnote-backref" href="#fnref:fwutil-install" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:fwutil-update">
+<p><code>fwutil</code> の component スコープ <code>update fw</code> は <code>-y</code> (確認スキップ) / <code>-f</code> (バージョンチェック無視) / <code>-i {current,next}</code> (どの SONiC イメージに同梱の fw_package を見るか) の 3 オプション。<code>policy next</code> のような構文は存在しない。<code>sonic-net/sonic-utilities/fwutil/main.py</code> L301-L356 (<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/fwutil/main.py#L301-L356">sha 39732bceb8</a>)。&#160;<a class="footnote-backref" href="#fnref:fwutil-update" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:xcvrd-tables">
+<p><code>xcvrd</code> の STATE_DB テーブル定数は <code>TRANSCEIVER_DOM_SENSOR</code> / <code>TRANSCEIVER_DOM_FLAG</code> / <code>TRANSCEIVER_STATUS_FLAG</code> 等。<code>sonic-net/sonic-platform-daemons/sonic-xcvrd/xcvrd/xcvrd_utilities/xcvr_table_helper.py</code> L13-L24 (<a href="https://github.com/sonic-net/sonic-platform-daemons/blob/4ba9612cb7756651062d37f977e3df17d57f740d/sonic-xcvrd/xcvrd/xcvrd_utilities/xcvr_table_helper.py#L13-L24">sha 4ba9612cb7</a>)。&#160;<a class="footnote-backref" href="#fnref:xcvrd-tables" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:xcvrd-tables" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:cfg-dom">
+<p><code>config interface transceiver dom &lt;if&gt; (enable|disable)</code> は <code>PORT</code> テーブルの <code>dom_polling</code> を書き換える。受理されるのは <code>subport=0|1</code> のポートのみ。<code>sonic-net/sonic-utilities/config/main.py</code> L6472-L6506 (<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L6472-L6506">sha 39732bceb8</a>)。&#160;<a class="footnote-backref" href="#fnref:cfg-dom" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:cfg-dom" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:optics-si">
+<p><code>media_settings.json</code> のトップレベルキー <code>GLOBAL_MEDIA_SETTINGS</code> / <code>PORT_MEDIA_SETTINGS</code> 両方を <code>xcvrd</code> が解釈する。<code>sonic-net/sonic-platform-daemons/sonic-xcvrd/xcvrd/xcvrd_utilities/optics_si_parser.py</code> L54-L113 (<a href="https://github.com/sonic-net/sonic-platform-daemons/blob/4ba9612cb7756651062d37f977e3df17d57f740d/sonic-xcvrd/xcvrd/xcvrd_utilities/optics_si_parser.py#L54-L113">sha 4ba9612cb7</a>)。&#160;<a class="footnote-backref" href="#fnref:optics-si" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

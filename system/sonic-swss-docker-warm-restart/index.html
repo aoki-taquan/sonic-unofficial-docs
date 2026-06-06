@@ -36176,7 +36176,7 @@
     Note over ORCH: Post-restore
     CONS--&gt;&gt;ORCH: m_toSync 空であることを再確認
     ORCH-&gt;&gt;DB: sync up（ARP/port/FDB/LAG/route）</code></pre>
-<p><code>m_toSync</code> に未処理が残っている状態では warm restart に入れない（依存解消待ち）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>ProducerStateTable</code> / <code>ConsumerStateTable</code> は consumer 側だけが実テーブルを書くように改修される。</p>
+<p><code>m_toSync</code> に未処理が残っている状態では warm restart に入れない（依存解消待ち）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。<code>ProducerStateTable</code> / <code>ConsumerStateTable</code> は consumer 側だけが実テーブルを書くように改修される<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <h3 id="sync-up">Sync up<a class="headerlink" href="#sync-up" title="Permanent link">&para;</a></h3>
 <p>restart window 中に動的データ（ARP / port state / FDB / LAG / route）が変動するため、orchagent は復元後に最新ネットワーク状態と整合させる。各サブシステムごとに sync up ロジックを持つ<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="swss-syncd-docker">swss / syncd の docker 分離<a class="headerlink" href="#swss-syncd-docker" title="Permanent link">&para;</a></h3>
@@ -36184,7 +36184,7 @@
 <h3 id="fallback">失敗時 fallback<a class="headerlink" href="#fallback" title="Permanent link">&para;</a></h3>
 <p>warm start が失敗したら <strong>automatic fallback to system cold restart</strong>（手動切替コマンドも提供）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p><code>config warm_restart enable swss</code> 系を CLI で叩いて <code>WARM_RESTART</code> テーブルを enable。</p>
+<p><code>config warm_restart enable swss</code> 系を CLI で叩いて <code>WARM_RESTART</code> テーブル<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>を enable。</p>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>CONFIG_DB は restart window 中に変えない</strong>前提（<a href="../../reference/glossary/#term-hld">HLD</a> 明記）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -36226,6 +36226,15 @@
 <ol>
 <li id="fn:1">
 <p><code>sonic-net/SONiC</code> <code>doc/warm-reboot/swss_warm_restart.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/orch.cpp:606</code> <code>if (!m_toSync.empty())</code> @ <code>4305596156d70e9797e8a881b3d19b46de0bce0d</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-swss-common</code> <code>common/producerstatetable.h:10</code> / <code>common/consumerstatetable.h:10</code> @ <code>158de8d3463ff4b841653f6d57190bb142b80d9c</code>、および <code>common/warm_restart.h:13</code> <code>class WarmStart</code>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-warm-restart.yang:46</code> <code>container WARM_RESTART</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

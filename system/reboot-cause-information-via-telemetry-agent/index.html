@@ -36393,12 +36393,13 @@
 <li>直前の reboot 原因が <code>unknown</code> のまま → <code>determine-reboot-cause</code> が HW/SW 双方の情報を取れているかをログで確認。</li>
 </ul>
 <h3 id="_9">コマンド例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<p>reboot-cause を <a href="../../reference/glossary/#term-gnmi">gNMI</a> 経由で取得できるか確認する。</p>
+<p>CLI とファイル経由で reboot-cause を確認する手順は以下のとおり。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>reboot-cause
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>reboot-cause<span class="w"> </span><span class="nb">history</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>gnmi_get<span class="w"> </span>-target_addr<span class="w"> </span>localhost:8080<span class="w"> </span>-xpath<span class="w"> </span><span class="s1">&#39;/reboot-cause&#39;</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>cat<span class="w"> </span>/host/reboot-cause/previous-reboot-cause.json
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>cat<span class="w"> </span>/host/reboot-cause/previous-reboot-cause.json
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;REBOOT_CAUSE|&lt;timestamp&gt;&quot;</span>
 </span></code></pre></div>
+<p><a href="../../reference/glossary/#term-gnmi">gNMI</a> 経由での取得は、本機能の HLD で専用 xpath/proto が定義されていないため、現行 master では汎用 STATE_DB 公開経路 (<code>/sonic-db/STATE_DB/REBOOT_CAUSE/...</code> 相当) を経由することになる。実機での xpath 形式は telemetry agent の設定 (<code>TELEMETRY_CLIENT</code> / <code>TELEMETRY</code>) と subscribe スキーマに依存するため、ここでは具体的なコマンド例を示さない。</p>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

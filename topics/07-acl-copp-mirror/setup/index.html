@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="設定 — ACL の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。config acl は table の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません。">
+        <meta name="description" content="ACL の最小設定は table を作り rule JSON を流し show で確認する流れ。config acl は table の作成・削除と JSON の一括投入を提供するが、個別 rule を CLI 引数で追加するインタフェースは持たない。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="設定 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="設定 — ACL の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。config acl は table の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません。" />
+<meta property="og:description" content="ACL の最小設定は table を作り rule JSON を流し show で確認する流れ。config acl は table の作成・削除と JSON の一括投入を提供するが、個別 rule を CLI 引数で追加するインタフェースは持たない。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/07-acl-copp-mirror/setup.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/07-acl-copp-mirror/setup/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="設定 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="設定 — ACL の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。config acl は table の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません。" />
+<meta property="twitter:description" content="ACL の最小設定は table を作り rule JSON を流し show で確認する流れ。config acl は table の作成・削除と JSON の一括投入を提供するが、個別 rule を CLI 引数で追加するインタフェースは持たない。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/07-acl-copp-mirror/setup.png" />
 </head>
   
@@ -36177,7 +36177,7 @@
 
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p><a href="../../../reference/glossary/#term-acl">ACL</a> の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。<code>config acl</code> は table の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません。rule は JSON に書いて <code>config acl update full</code> または <code>incremental</code> で投入します。</p>
+<p><a href="../../../reference/glossary/#term-acl">ACL</a> の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。<code>config acl</code> は table の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません<sup id="fnref:config-acl"><a class="footnote-ref" href="#fn:config-acl">1</a></sup>。rule は JSON に書いて <code>config acl update full</code> または <code>incremental</code> で投入します。<code>config acl update</code> は内部で <code>acl-loader update</code> を呼び出す薄いラッパです<sup id="fnref:config-acl-update"><a class="footnote-ref" href="#fn:config-acl-update">2</a></sup>。</p>
 <h2 id="acl">最小 ACL<a class="headerlink" href="#acl" title="Permanent link">&para;</a></h2>
 <p>例として <code>Ethernet0</code> に入ってくる特定送信元を drop する L3 ACL を考えます。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>acl<span class="w"> </span>add<span class="w"> </span>table<span class="w"> </span>DATAACL<span class="w"> </span>L3<span class="w"> </span>-p<span class="w"> </span>Ethernet0<span class="w"> </span>-s<span class="w"> </span>ingress<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;drop selected sources&quot;</span>
@@ -36341,14 +36341,14 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>show<span class="w"> </span>copp<span class="w"> </span>-t<span class="w"> </span>bgp
 </span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>show<span class="w"> </span>copp<span class="w"> </span>config
 </span></code></pre></div>
-<p><code>COPP_TRAP.trap_ids</code> の値は <code>coppmgr</code> が認識する hostif trap 名のリストです (<code>arp,bgp,bgpv6,dhcp,...</code>)。誤った trap 名は無視されるため、<code>docker logs swss</code> で <code>Unknown trap id</code> を確認できます。</p>
+<p><code>COPP_TRAP.trap_ids</code> の値は <code>coppmgr</code> がトークン分割して trap group に紐付ける hostif trap 名のリストです (<code>arp,bgp,bgpv6,dhcp,...</code>)<sup id="fnref:coppmgr-trap"><a class="footnote-ref" href="#fn:coppmgr-trap">3</a></sup>。trap 名の妥当性は <code>orchagent</code> 側の hostif trap mapping で解釈されるため、設定が想定どおり反映されない場合は <code>swss</code> syslog で <code>CoppOrch</code> 関連のエラー (<code>SAI_STATUS_*</code>) を確認します。</p>
 <h2 id="sonic-cfggen">sonic-cfggen で投入する場合<a class="headerlink" href="#sonic-cfggen" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>cat<span class="w"> </span>copp_patch.json<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span>--write-to-db
 </span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>config<span class="w"> </span>save<span class="w"> </span>-y
 </span></code></pre></div>
 <p><code>acl-loader</code> 経由でない <code>config_db.json</code> 直接書き換えは reboot しないと swss が認識しません。runtime 反映には <code>acl-loader update incremental</code> を使う方が安全です。</p>
 <h2 id="_3">よくある設定エラーと対処<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p><code>sonic-utilities/acl_loader/main.py</code> の <code>AclLoaderException</code> から抜粋:</p>
+<p><code>sonic-utilities/acl_loader/main.py</code> (L67 で定義) の <code>AclLoaderException</code> から抜粋<sup id="fnref:acl-exc"><a class="footnote-ref" href="#fn:acl-exc">4</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -36419,7 +36419,7 @@
 <td>0〜255 に修正</td>
 </tr>
 <tr>
-<td><code>l2:ethertype must be provided for rule in table type L3V4V6</code></td>
+<td><code>l2:ethertype must be provided for rule #&lt;n&gt; in table:&lt;t&gt; of type L3V4V6</code></td>
 <td>dual family table で ethertype 必須</td>
 <td><code>ETHER_TYPE</code> を追加</td>
 </tr>
@@ -36446,6 +36446,24 @@
 <li><a href="../../../reference/yang/sonic-mirror-session/">sonic-mirror-session YANG</a></li>
 </ul>
 <!-- glossary-links-injected: c006405759d8 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:config-acl">
+<p><code>sonic-utilities/config/main.py</code> の <code>config acl</code> グループは <code>add table</code> / <code>remove</code> / <code>update full</code> / <code>update incremental</code> のみを公開する (L7985-L8160)。<code>add rule</code> サブコマンドは存在せず、rule は JSON でしか流し込めない。<!-- evidence: sonic-utilities@39732bceb8bdefe706518ab40623bbbba6ff33b9:config/main.py#L7985-L8160 -->&#160;<a class="footnote-backref" href="#fnref:config-acl" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:config-acl-update">
+<p><code>config acl update full &lt;file&gt;</code> / <code>config acl update incremental &lt;file&gt;</code> はいずれも <code>clicommon.run_command(['acl-loader', 'update', ...])</code> で <code>acl-loader</code> プロセスを起動する (<code>config/main.py</code> L8144 / L8158)。<!-- evidence: sonic-utilities@39732bceb8bdefe706518ab40623bbbba6ff33b9:config/main.py#L8127-L8160 -->&#160;<a class="footnote-backref" href="#fnref:config-acl-update" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:coppmgr-trap">
+<p><code>sonic-swss/cfgmgr/coppmgr.cpp</code> の <code>CoppMgr::addTrapIdsToTrapGroup</code> / <code>removeTrapIdsFromTrapGroup</code> (L454-L477) で <code>trap_ids</code> を <code>tokenize</code> し、APPL_DB の <code>COPP_TABLE</code> の <code>trap_ids</code> フィールドへ反映する。<!-- evidence: sonic-swss@4305596156d70e9797e8a881b3d19b46de0bce0d:cfgmgr/coppmgr.cpp#L454-L477 -->&#160;<a class="footnote-backref" href="#fnref:coppmgr-trap" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:acl-exc">
+<p>各エラーメッセージは <code>acl_loader/main.py</code> L380〜L784 で <code>raise AclLoaderException(...)</code> される。<!-- evidence: sonic-utilities@39732bceb8bdefe706518ab40623bbbba6ff33b9:acl_loader/main.py#L67-L784 -->&#160;<a class="footnote-backref" href="#fnref:acl-exc" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

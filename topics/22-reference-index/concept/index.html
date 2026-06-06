@@ -36151,7 +36151,7 @@
 </ul>
 <p>カテゴリは「実装階層の縦軸 (SAI / SWSS / <a href="../../../reference/glossary/#term-syncd">syncd</a>) に沿って HLD を束ねたい」「ある主題 (counter、test plan) を横断したい」など、機能章とは別の軸でページを集める用途で残す。機能章で読み終えた読者が、さらに「同じ階層で関連する HLD を一覧したい」ときに辿る位置付けである。</p>
 <h2 id="discrepancy-reference-gap">discrepancy と reference gap の位置<a class="headerlink" href="#discrepancy-reference-gap" title="Permanent link">&para;</a></h2>
-<p>Phase 6 で <code>verification: hld-only</code> のページを 0 件にし、すべて <code>code-verified</code> または <code>discrepancy-found</code> に振り分けた。discrepancy が見つかった箇所は <code>docs/_meta/discrepancies.md</code> に一覧化し、reference 側で未カバーのまま残っている項目は <code>meta/reference-gaps.md</code> に積み上げてある。これらは本章 <a href="../quality-gaps/">品質と gap</a> で扱う。</p>
+<p><code>verification: hld-only</code> のページを 0 件にし、すべて <code>code-verified</code> または <code>discrepancy-found</code> に振り分けた。discrepancy が見つかった箇所はサイト内の <a href="../../../reference/verification/discrepancy-index/">Discrepancy index</a> から area / <code>monitor</code> subtype 別に逆引きできる。reference 側で未カバーのまま残っている項目はリポジトリ内部の <code>meta/reference-gaps.md</code> (サイト nav 外) に積み上げてあり、サマリは本章 <a href="../quality-gaps/">品質と gap</a> に集約している。詳細な追跡フローはそちらを参照のこと。</p>
 <h2 id="_4">このページの位置付け<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>このページは「reference を読まずに機能章だけ読む」と「reference だけを辞書として使う」のどちらでも完結しないことを前提に、章と辞書を往復する読者を救う索引層の入口を定義する。具体的な対応表は次の 3 ページで提供する。</p>
 <ul>
@@ -36223,8 +36223,8 @@
 <ul>
 <li>すべての reference ページは少なくとも 1 つの機能章から <code>related</code> で参照されている (orphan reference は CI で警告)。</li>
 <li>機能章の <code>related.cli</code> / <code>related.config_db</code> / <code>related.yang</code> に並ぶ名前は、対応する reference ページが存在する。</li>
-<li><code>discrepancy-found</code> のページは <code>docs/_meta/discrepancies.md</code> から逆引きできる。</li>
-<li>reference 側の未カバー項目は <code>meta/reference-gaps.md</code> に積まれ、本章 <a href="../quality-gaps/">品質と gap</a> に集約される。</li>
+<li><code>discrepancy-found</code> のページはサイト内の <a href="../../../reference/verification/discrepancy-index/">Discrepancy index</a> から逆引きできる (<code>meta/scripts/gen_discrepancy_index.py</code> で自動生成)。</li>
+<li>reference 側の未カバー項目はリポジトリ内部の <code>meta/reference-gaps.md</code> に積まれ、サイト側では本章 <a href="../quality-gaps/">品質と gap</a> に集約される。</li>
 </ul>
 <p>不変条件が崩れたときは「reference を足す」「機能章の related を直す」「discrepancy を昇格させる」のいずれかで埋める。索引層の役割は、この埋め残しを可視化することにある。</p>
 <!-- xref-prereq -->

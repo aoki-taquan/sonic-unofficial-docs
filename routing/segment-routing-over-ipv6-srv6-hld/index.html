@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） — IETF RFC 8754 / 8986 で定義される Segment Routing over IPv6 を SONiC に実装する HLD。">
+        <meta name="description" content="SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） — IETF RFC 8754 / 8986 で定義される Segment Routing over IPv6 を SONiC に実装する HLD。CONFIG_DB は SRV6_MY_LOCATORS + SRV6_MY_SIDS、APPL_DB は SRV6_SID_LIST_TABLE / SRV6_MY_SID_TABLE で Srv6Orch が SAI MySID entry に program。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） — IETF RFC 8754 / 8986 で定義される Segment Routing over IPv6 を SONiC に実装する HLD。" />
+<meta property="og:description" content="SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） — IETF RFC 8754 / 8986 で定義される Segment Routing over IPv6 を SONiC に実装する HLD。CONFIG_DB は SRV6_MY_LOCATORS + SRV6_MY_SIDS、APPL_DB は SRV6_SID_LIST_TABLE / SRV6_MY_SID_TABLE で Srv6Orch が SAI MySID entry に program。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/segment-routing-over-ipv6-srv6-hld.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/segment-routing-over-ipv6-srv6-hld/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） — IETF RFC 8754 / 8986 で定義される Segment Routing over IPv6 を SONiC に実装する HLD。" />
+<meta property="twitter:description" content="SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） — IETF RFC 8754 / 8986 で定義される Segment Routing over IPv6 を SONiC に実装する HLD。CONFIG_DB は SRV6_MY_LOCATORS + SRV6_MY_SIDS、APPL_DB は SRV6_SID_LIST_TABLE / SRV6_MY_SID_TABLE で Srv6Orch が SAI MySID entry に program。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/segment-routing-over-ipv6-srv6-hld.png" />
 </head>
   
@@ -9789,10 +9789,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_dbmaster" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB
+        CONFIG_DB（master 実装）
       
     </span>
   </a>
@@ -35983,10 +35983,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_dbmaster" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB
+        CONFIG_DB（master 実装）
       
     </span>
   </a>
@@ -36120,7 +36120,7 @@
 
 <div class="admonition info">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-swss/orchagent/srv6orch.cpp</code> / <code>srv6orch.h</code> を master で確認。<code>SRV6_MY_SID_TABLE</code> / <code>SRV6_SID_LIST</code> 等のスキーマ定数は <code>sonic-swss-common/common/schema.h</code> に取り込み済み。</p>
+<p><code>sonic-swss/orchagent/srv6orch.cpp</code> の <code>end_behavior_map</code> (L42-L62) と <code>doTaskMySidTable</code> (L2208 付近) を master で確認<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。CONFIG_DB 側のテーブル名は <code>sonic-swss-common/common/schema.h</code> で <code>CFG_SRV6_MY_SID_TABLE_NAME = "SRV6_MY_SIDS"</code> / <code>CFG_SRV6_MY_LOCATOR_TABLE_NAME = "SRV6_MY_LOCATORS"</code> (L398-L399)、APPL_DB 側は <code>APP_SRV6_MY_SID_TABLE_NAME = "SRV6_MY_SID_TABLE"</code> / <code>APP_SRV6_SID_LIST_TABLE_NAME = "SRV6_SID_LIST_TABLE"</code> (L168-L169) として定義済み<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。<code>sonic-yang-models/yang-models/sonic-srv6.yang</code> でも <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> の 2 コンテナとして取り込まれている<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。なお HLD 本文の <code>SRV6_POLICY</code> / <code>SRV6_STEER</code> は master の schema.h / sonic-yang-models いずれにも存在しない (Phase 2+ 提案段階)。</p>
 </div>
 <h1 id="srv6segment-routing-over-ipv6-enddt46-hencapsred">SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）<a class="headerlink" href="#srv6segment-routing-over-ipv6-enddt46-hencapsred" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36159,37 +36159,30 @@
 </tbody>
 </table>
 <p>Later phase: <code>H.Encaps</code>, <code>END.B6.Encaps[.Red]</code>（Binding SID）, <code>END.X</code>（Adj SID）, uSID/G-SID, HMAC, sBFD, anycast SID, MySID counter<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>SRV6_SID_LIST|&lt;segment_name&gt;:
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  path = [&lt;sid&gt;, &lt;sid&gt;, ...]
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>SRV6_MY_SID_TABLE|&lt;ipv6_addr&gt;:
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  block_len = 40            ; default
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  node_len  = 24
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  func_len  = 16
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  arg_len   = &lt;alen&gt;
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  action    = end | end.dt46 | end.x | end.b6.encap | ...
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  vrf       = &lt;VRF&gt;         ; END.DT46 用
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  adj       = [&lt;addr&gt;, ...] ; END.X 用 (optional)
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>  policy    = &lt;policy&gt;      ; END.B6.ENCAP 用
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>  source    = &lt;addr&gt;        ; END.B6.ENCAP 用 src
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>SRV6_POLICY|&lt;policy_name&gt;:
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>  segment = [&lt;seg_name&gt;, ...]
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>SRV6_STEER|&lt;vrf&gt;:&lt;prefix&gt;:
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>  policy = &lt;policy_name&gt;
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>  source = &lt;ip&gt;
+<h3 id="config_dbmaster">CONFIG_DB（master 実装）<a class="headerlink" href="#config_dbmaster" title="Permanent link">&para;</a></h3>
+<p>実装上の CONFIG_DB スキーマは <code>sonic-srv6.yang</code> で <strong><code>SRV6_MY_LOCATORS</code> + <code>SRV6_MY_SIDS</code> の 2 階層</strong>に分かれる<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。HLD ドラフトでは単一テーブルで block/node/func/arg を直書きする旧提案だったが、master では locator を別テーブル化して MySID は locator 参照 + ip_prefix で表現する形に統合済み。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>SRV6_MY_LOCATORS|&lt;locator_name&gt;:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  prefix     = &lt;IPv6 prefix&gt;      ; locator block+node
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  block_len  = &lt;bits&gt;             ; locator block 部のビット長
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  node_len   = &lt;bits&gt;             ; locator node 部のビット長
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  func_len   = &lt;bits&gt;
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  arg_len    = &lt;bits&gt;
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>SRV6_MY_SIDS|&lt;locator_name&gt;|&lt;ip_prefix&gt;:
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  action          = uN | uDT46    ; YANG enum
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  decap_vrf       = &lt;VRF&gt;         ; uDT46 用、default 可
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  decap_dscp_mode = uniform | pipe
 </span></code></pre></div>
-<p><code>block/node/func/arg_len</code> は <strong>MySID address のビット分割</strong>を decode するための長さ指定（規定値 40/24/16）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>action の enum は <a href="../../reference/glossary/#term-yang">YANG</a> 上 <code>uN</code> / <code>uDT46</code> の 2 値のみだが、<code>srv6orch.cpp</code> の <code>end_behavior_map</code> は <code>end</code> / <code>end.x</code> / <code>end.t</code> / <code>end.dx{6,4}</code> / <code>end.dt{6,4,46}</code> / <code>end.b6.encaps[.red]</code> / <code>end.b6.insert[.red]</code> / <code>udx{6,4}</code> / <code>udt{6,4,46}</code> / <code>un</code> / <code>ua</code> まで認識する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。<code>SRV6_POLICY</code> / <code>SRV6_STEER</code> は本 HLD ドラフトの提案だが master の schema.h・sonic-yang-models いずれにも未取り込み。</p>
 <h3 id="appl_db">APPL_DB<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>SRV6_SID_LIST_TABLE:&lt;segment_name&gt;: { path = [...] }
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>SRV6_MY_SID_TABLE:&lt;block&gt;:&lt;node&gt;:&lt;func&gt;:&lt;arg&gt;:&lt;ipv6&gt;: {
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  action, vrf, adj, segment, source
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>}
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>ROUTE_TABLE:&lt;vrf&gt;:&lt;prefix&gt;: {  ... + segment list  }
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>SRV6_MY_SID_TABLE:&lt;block_len&gt;:&lt;node_len&gt;:&lt;func_len&gt;:&lt;arg_len&gt;:&lt;ipv6&gt;: {
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  action   = end | end.dt46 | end.x | end.b6.encaps | ...
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  vrf      = &lt;VRF&gt;           ; end.dt* 用
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  adj      = &lt;ipv6&gt;          ; end.x 用 (single nexthop only; ECMP 未サポート)
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>}
 </span></code></pre></div>
-<p>既存 <code>ROUTE_TABLE</code> も SID list を保持できるよう拡張<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>srv6orch.cpp</code> の <code>doTaskMySidTable</code> (L2208 付近) は APPL_DB の key を <strong><code>block_len:node_len:func_len:arg_len:sid-ip</code> の 5 タプル</strong>として parse する<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。field は <code>action</code> / <code>vrf</code> / <code>adj</code> のみで、policy / source は doTaskMySidTable には存在しない。<code>adj</code> は <code>,</code> 区切りで複数記述可能だが、L1515-L1518 で <a href="../../reference/glossary/#term-ecmp">ECMP</a> adjacency は明示的に reject される。</p>
 <h3 id="orchagentsrv6orch">Orchagent（Srv6Orch）<a class="headerlink" href="#orchagentsrv6orch" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CFG[CONFIG_DB SRV6_*] --&gt; CFGD["swss script / Translib&lt;br/&gt;※ master に独立した srv6cfgd 等のプロセスは未実装"]
@@ -36198,9 +36191,9 @@
   APP --&gt; ORCH[Srv6Orch]
   ORCH --&gt; ASIC[(ASIC_DB)]
   ASIC --&gt; SAI[SAI SRv6 attributes]</code></pre>
-<p>Phase 1 では <strong>controller / swss スクリプトが Translib 経由で <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> 直接更新</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FRR が SRv6 を full サポートしたら <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 経由に切替。</p>
+<p>Phase 1 では <strong>controller / swss スクリプトが Translib 経由で <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> 直接更新</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FRR が SRv6 を full サポートしたら <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 経由に切替。</p>
 <h3 id="counterv05">Counter（v0.5 で追加）<a class="headerlink" href="#counterv05" title="Permanent link">&para;</a></h3>
-<p>各 MySID 単位の <strong>packet/byte counter</strong> を <a href="../../reference/glossary/#term-sai">SAI</a> に問い合わせる機能を追加<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CLI で:</p>
+<p>各 MySID 単位の <strong>packet/byte counter</strong> を <a href="../../reference/glossary/#term-sai">SAI</a> に問い合わせる機能を追加<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CLI で:</p>
 <ul>
 <li><code>config srv6 counter &lt;enable|disable&gt;</code></li>
 <li><code>config srv6 counter polling-interval &lt;sec&gt;</code></li>
@@ -36208,7 +36201,7 @@
 <li><code>clear srv6 counter</code></li>
 </ul>
 <h3 id="warm-boot">Warm boot<a class="headerlink" href="#warm-boot" title="Permanent link">&para;</a></h3>
-<p>planned 系 / swss / <a href="../../reference/glossary/#term-bgp">BGP</a> warm reboot で対応想定<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。MySID と SID list は CONFIG_DB から再復元、<code>Srv6Orch</code> が再 program。</p>
+<p>planned 系 / swss / <a href="../../reference/glossary/#term-bgp">BGP</a> warm reboot で対応想定<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。MySID と SID list は CONFIG_DB から再復元、<code>Srv6Orch</code> が再 program。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/srv6/srv6_hld.md#L78-L99 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -36255,12 +36248,11 @@ reasoning: Phase 1 のサポート機能の根拠。
 </ul>
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- Srv6Orch / srv6cfgd 相当の取り込み確認（master に独立した srv6cfgd プロセスは未実装、Srv6Orch のみ実在）
-- SRV6_SID_LIST / SRV6_MY_SID_TABLE / SRV6_POLICY / SRV6_STEER の sonic-yang-models 取り込み確認
-- SAI SRv6 attribute (SAI_MY_SID_ENTRY 等) の sonic-sairedis 取り込み確認
-- ROUTE_TABLE への SID list 拡張の swss-common 反映確認
-- v0.5 で追加された MySID counter (counter polling / config srv6 counter CLI) の現行実装確認
-- FRR SRv6 fpmsyncd 連携の取り込み状況
+- Srv6Orch のみ master に実在（独立した srv6cfgd 相当プロセスは未実装、CONFIG_DB→APPL_DB sync は cfgmgr / Translib 経由）
+- SRV6_MY_LOCATORS / SRV6_MY_SIDS は sonic-yang-models 取り込み済み、SRV6_POLICY / SRV6_STEER は HLD ドラフトのみで master 未取り込み
+- SAI SRv6 attribute (SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*) は srv6orch.cpp の end_behavior_map 経由で utilize 確認済み
+- v0.5 で追加された MySID counter (CFG SRV6_COUNTER_ID_LIST / COUNTERS_SRV6_NAME_MAP) は schema.h L257, L313 に反映済み、CLI 側は要追跡
+- FRR SRv6 fpmsyncd 連携の現状（Phase 1 ではコントローラ直接書き込み運用）
 -->
 
 <!-- topics-back-ref -->
@@ -36270,13 +36262,22 @@ reasoning: Phase 1 のサポート機能の根拠。
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: a3729a90b98f -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/srv6/srv6_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/srv6/srv6_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/srv6orch.cpp</code> (master) — <code>end_behavior_map</code> (L42-L62) / <code>doTaskMySidTable</code> (L2208 付近) / <code>createUpdateMysidEntry</code> (L1431) / ECMP adjacency reject (L1515-L1518)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/sonic-swss-common</code> <code>common/schema.h</code> (master) — L168-L169 (APPL_DB) / L398-L399 (CONFIG_DB) / L257, L313 (counter map)&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-srv6.yang</code> (master) — <code>SRV6_MY_LOCATORS</code> (L24-) / <code>SRV6_MY_SIDS</code> (L95-L143) / action enum <code>uN</code>/<code>uDT46</code> (L113-L119)&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

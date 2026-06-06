@@ -36278,7 +36278,7 @@ reasoning: show reboot-cause は前回 cause を /host/reboot-cause/previous-reb
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>May 10 11:01:09 sw01 INFO swss#orchagent: EOIU received from all components
 </span></code></pre></div>
 <!-- evidence:
-source: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: master)
+source: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
 excerpt: |
   // Wait 3 seconds after detecting EOIU reached state
   const uint32_t DEFAULT_EOIU_HOLD_INTERVAL = 3;
@@ -36289,9 +36289,9 @@ reasoning: fpmsyncd は STATE_DB の BGP_STATE_TABLE|<family>|eoiu を hget し�
 
 <!-- evidence-rendered:start -->
 <details class="note">
-<summary>📋 検証エビデンス: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: master)</summary>
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</summary>
 <p><strong>出典</strong>:</p>
-<p><code>sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: master)</code></p>
+<p><code>sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp#L49-L61 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</code></p>
 <p><strong>抜粋</strong>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>// Wait 3 seconds after detecting EOIU reached state
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>const uint32_t DEFAULT_EOIU_HOLD_INTERVAL = 3;
@@ -36303,7 +36303,7 @@ reasoning: fpmsyncd は STATE_DB の BGP_STATE_TABLE|<family>|eoiu を hget し�
 <!-- evidence-rendered:end -->
 
 <!-- evidence:
-source: sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: master)
+source: sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
 excerpt: |
   key             = BGP_STATE_TABLE|family|eoiu             ; family = "IPv4" / "IPv6"  ; address family.
   state           = "unknown" / "reached" / "consumed"         ; unknown: eoiu state not fetched yet.
@@ -36313,9 +36313,9 @@ reasoning: EOIU 状態は STATE_DB の BGP_STATE_TABLE で公開され、reconci
 
 <!-- evidence-rendered:start -->
 <details class="note">
-<summary>📋 検証エビデンス: sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: master)</summary>
+<summary>📋 検証エビデンス: sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</summary>
 <p><strong>出典</strong>:</p>
-<p><code>sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: master)</code></p>
+<p><code>sonic-net/sonic-swss/doc/swss-schema.md#L1159-L1162 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)</code></p>
 <p><strong>抜粋</strong>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>key             = BGP_STATE_TABLE|family|eoiu             ; family = &quot;IPv4&quot; / &quot;IPv6&quot;  ; address family.
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>state           = &quot;unknown&quot; / &quot;reached&quot; / &quot;consumed&quot;         ; unknown: eoiu state not fetched yet.

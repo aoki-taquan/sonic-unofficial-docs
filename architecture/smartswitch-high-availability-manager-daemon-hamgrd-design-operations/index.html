@@ -36153,42 +36153,42 @@
 <!-- phase-boundary -->
 <h2 id="_2">実装フェーズ境界<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <div class="admonition info">
-<p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>
-<p>本ページは <code>monitor: partially_implemented</code> で、HLD で示された一連の機能
-が <strong>段階的に取り込まれている</strong> 状態を扱う。フェーズ毎の実装境界を
-1 枚の表に集約する (詳細は本ページ上部の <code>diff</code> admonition および
-<a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照)。</p>
+<p class="admonition-title">HAMgrD スキーマ取り込みの段階</p>
+<p>本ページは <code>monitor: partially_implemented</code>。HAMgrD 設定経路の各テーブル
+が community master に <strong>どこまで取り込まれているか</strong> をテーブル単位で
+分類する（裏取り: <code>sonic-swss-common/common/schema.h</code> @ ref
+<code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>）。</p>
 <table>
 <thead>
 <tr>
-<th>Phase</th>
-<th>範囲 (機能 / 段階)</th>
-<th>実装済 (master 取り込み済)</th>
-<th>未実装 (HLD 提案のみ)</th>
+<th>フェーズ</th>
+<th>対象テーブル / 識別子</th>
+<th>現状</th>
+<th>根拠</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Phase 1 — 基本機能</td>
-<td>HLD §概要 / §設計の中核ユースケース</td>
-<td>取り込み済 — 本ページの「実装の概観」「実装詳細」節および <code>diff</code> admonition の現状側を参照</td>
-<td>— (Phase 1 は実装済)</td>
+<td>Phase A — schema 層先行採用</td>
+<td><code>APP_DASH_HA_SET_CONFIG_TABLE</code> / <code>APP_DASH_HA_SET_TABLE</code> / <code>APP_DASH_HA_SCOPE_CONFIG_TABLE</code> / <code>APP_DASH_HA_SCOPE_TABLE</code> / <code>CFG_DASH_HA_GLOBAL_CONFIG</code> / <code>CFG_DPU_TABLE</code> / <code>STATE_DASH_HA_SET_STATE_TABLE</code> / <code>STATE_DASH_HA_SCOPE_STATE_TABLE</code></td>
+<td>schema 取り込み済 (<strong>define のみ存在</strong>)。書き込み自体は成功するが consumer (hamgrd) が居ないため副作用なし</td>
+<td><code>schema.h</code> L179-182 / L390-391 / L453-454 <sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
-<td>Phase 2 — 拡張機能</td>
-<td>HLD §拡張 / §追加要件 / §周辺統合</td>
-<td>一部のみ取り込み済 — 本ページ「実装詳細」の補足参照</td>
-<td>未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および <code>diff</code> admonition の差分側に列挙</td>
+<td>Phase B — schema 未取り込み</td>
+<td><code>VDPU_TABLE</code> / <code>DASH_HA_DPU_STATE</code> / <code>DASH_HA_VDPU_STATE</code></td>
+<td><strong>schema.h に define なし</strong>。HLD 上の actor (DPU actor / vDPU actor) は紙面のみ</td>
+<td><code>grep DASH_HA_DPU_STATE schema.h</code> がヒット 0</td>
 </tr>
 <tr>
-<td>Phase 3 — 将来拡張</td>
-<td>HLD §Future Work / §将来課題</td>
-<td>—</td>
-<td>未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点)</td>
+<td>Phase C — daemon 未取り込み</td>
+<td><code>hamgrd</code> バイナリそのもの</td>
+<td>community master の build ツリーに <strong>存在しない</strong>。<code>sonic-swss</code> / <code>sonic-dash-ha</code> のいずれにも entry point なし</td>
+<td><code>find .cache/sonic-sources -iname "*hamgrd*"</code> は HLD ドキュメントのみヒット</td>
 </tr>
 </tbody>
 </table>
-<p>凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。</p>
+<p>凡例: 設定経路の観点では Phase A の 8 テーブルは redis-cli 等で疎通確認可能だが、Phase B/C が埋まるまで <strong>HA state machine は駆動しない</strong>。運用上は schema 互換性確認用途のみに限定される。</p>
 </div>
 <!-- /phase-boundary -->
 
@@ -36221,7 +36221,7 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
