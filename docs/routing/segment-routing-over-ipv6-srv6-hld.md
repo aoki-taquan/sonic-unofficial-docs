@@ -1,20 +1,20 @@
 ---
 title: SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）
-description: SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） — IETF RFC
-  8754 / 8986 で定義される Segment Routing over IPv6 を SONiC に実装する HLD。
+description: SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） — IETF RFC 8754 /
+  8986 で定義される Segment Routing over IPv6 を SONiC に実装する HLD。CONFIG_DB は SRV6_MY_LOCATORS
+  + SRV6_MY_SIDS、APPL_DB は SRV6_SID_LIST_TABLE / SRV6_MY_SID_TABLE で Srv6Orch が SAI MySID
+  entry に program。
 area: routing
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-06-06
 sources:
 - repo: sonic-net/SONiC
   path: doc/srv6/srv6_hld.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-  - SRV6_SID_LIST
-  - SRV6_MY_SID_TABLE
-  - SRV6_POLICY
-  - SRV6_STEER
+  - SRV6_MY_SIDS
+  - SRV6_MY_LOCATORS
   - VRF
   - BGP_NEIGHBOR
   - BGP_GLOBALS
@@ -39,7 +39,7 @@ related:
 <!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
-    `sonic-swss/orchagent/srv6orch.cpp` / `srv6orch.h` を master で確認。`SRV6_MY_SID_TABLE` / `SRV6_SID_LIST` 等のスキーマ定数は `sonic-swss-common/common/schema.h` に取り込み済み。
+    `sonic-swss/orchagent/srv6orch.cpp` の `end_behavior_map` (L42-L62) と `doTaskMySidTable` (L2208 付近) を master で確認[^2]。CONFIG_DB 側のテーブル名は `sonic-swss-common/common/schema.h` で `CFG_SRV6_MY_SID_TABLE_NAME = "SRV6_MY_SIDS"` / `CFG_SRV6_MY_LOCATOR_TABLE_NAME = "SRV6_MY_LOCATORS"` (L398-L399)、APPL_DB 側は `APP_SRV6_MY_SID_TABLE_NAME = "SRV6_MY_SID_TABLE"` / `APP_SRV6_SID_LIST_TABLE_NAME = "SRV6_SID_LIST_TABLE"` (L168-L169) として定義済み[^3]。`sonic-yang-models/yang-models/sonic-srv6.yang` でも `SRV6_MY_LOCATORS` / `SRV6_MY_SIDS` の 2 コンテナとして取り込まれている[^4]。なお HLD 本文の `SRV6_POLICY` / `SRV6_STEER` は master の schema.h / sonic-yang-models いずれにも存在しない (Phase 2+ 提案段階)。
 
 # SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）
 
@@ -60,44 +60,38 @@ IETF RFC 8754 / 8986 で定義される **Segment Routing over IPv6** を [SONiC
 
 Later phase: `H.Encaps`, `END.B6.Encaps[.Red]`（Binding SID）, `END.X`（Adj SID）, uSID/G-SID, HMAC, sBFD, anycast SID, MySID counter[^1]。
 
-### CONFIG_DB
+### CONFIG_DB（master 実装）
+
+実装上の CONFIG_DB スキーマは `sonic-srv6.yang` で **`SRV6_MY_LOCATORS` + `SRV6_MY_SIDS` の 2 階層**に分かれる[^4]。HLD ドラフトでは単一テーブルで block/node/func/arg を直書きする旧提案だったが、master では locator を別テーブル化して MySID は locator 参照 + ip_prefix で表現する形に統合済み。
 
 ```text
-SRV6_SID_LIST|<segment_name>:
-  path = [<sid>, <sid>, ...]
+SRV6_MY_LOCATORS|<locator_name>:
+  prefix     = <IPv6 prefix>      ; locator block+node
+  block_len  = <bits>             ; locator block 部のビット長
+  node_len   = <bits>             ; locator node 部のビット長
+  func_len   = <bits>
+  arg_len    = <bits>
 
-SRV6_MY_SID_TABLE|<ipv6_addr>:
-  block_len = 40            ; default
-  node_len  = 24
-  func_len  = 16
-  arg_len   = <alen>
-  action    = end | end.dt46 | end.x | end.b6.encap | ...
-  vrf       = <VRF>         ; END.DT46 用
-  adj       = [<addr>, ...] ; END.X 用 (optional)
-  policy    = <policy>      ; END.B6.ENCAP 用
-  source    = <addr>        ; END.B6.ENCAP 用 src
-
-SRV6_POLICY|<policy_name>:
-  segment = [<seg_name>, ...]
-
-SRV6_STEER|<vrf>:<prefix>:
-  policy = <policy_name>
-  source = <ip>
+SRV6_MY_SIDS|<locator_name>|<ip_prefix>:
+  action          = uN | uDT46    ; YANG enum
+  decap_vrf       = <VRF>         ; uDT46 用、default 可
+  decap_dscp_mode = uniform | pipe
 ```
 
-`block/node/func/arg_len` は **MySID address のビット分割**を decode するための長さ指定（規定値 40/24/16）[^1]。
+action の enum は [YANG](../reference/glossary.md#term-yang) 上 `uN` / `uDT46` の 2 値のみだが、`srv6orch.cpp` の `end_behavior_map` は `end` / `end.x` / `end.t` / `end.dx{6,4}` / `end.dt{6,4,46}` / `end.b6.encaps[.red]` / `end.b6.insert[.red]` / `udx{6,4}` / `udt{6,4,46}` / `un` / `ua` まで認識する[^2]。`SRV6_POLICY` / `SRV6_STEER` は本 HLD ドラフトの提案だが master の schema.h・sonic-yang-models いずれにも未取り込み。
 
 ### APPL_DB
 
 ```text
 SRV6_SID_LIST_TABLE:<segment_name>: { path = [...] }
-SRV6_MY_SID_TABLE:<block>:<node>:<func>:<arg>:<ipv6>: {
-  action, vrf, adj, segment, source
+SRV6_MY_SID_TABLE:<block_len>:<node_len>:<func_len>:<arg_len>:<ipv6>: {
+  action   = end | end.dt46 | end.x | end.b6.encaps | ...
+  vrf      = <VRF>           ; end.dt* 用
+  adj      = <ipv6>          ; end.x 用 (single nexthop only; ECMP 未サポート)
 }
-ROUTE_TABLE:<vrf>:<prefix>: {  ... + segment list  }
 ```
 
-既存 `ROUTE_TABLE` も SID list を保持できるよう拡張[^1]。
+`srv6orch.cpp` の `doTaskMySidTable` (L2208 付近) は APPL_DB の key を **`block_len:node_len:func_len:arg_len:sid-ip` の 5 タプル**として parse する[^2]。field は `action` / `vrf` / `adj` のみで、policy / source は doTaskMySidTable には存在しない。`adj` は `,` 区切りで複数記述可能だが、L1515-L1518 で [ECMP](../reference/glossary.md#term-ecmp) adjacency は明示的に reject される。
 
 ### Orchagent（Srv6Orch）
 
@@ -178,14 +172,16 @@ reasoning: Phase 1 のサポート機能の根拠。
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/srv6/srv6_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+[^2]: `sonic-net/sonic-swss` `orchagent/srv6orch.cpp` (master) — `end_behavior_map` (L42-L62) / `doTaskMySidTable` (L2208 付近) / `createUpdateMysidEntry` (L1431) / ECMP adjacency reject (L1515-L1518)
+[^3]: `sonic-net/sonic-swss-common` `common/schema.h` (master) — L168-L169 (APPL_DB) / L398-L399 (CONFIG_DB) / L257, L313 (counter map)
+[^4]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-srv6.yang` (master) — `SRV6_MY_LOCATORS` (L24-) / `SRV6_MY_SIDS` (L95-L143) / action enum `uN`/`uDT46` (L113-L119)
 
 <!-- concerns hint:
-- Srv6Orch / srv6cfgd 相当の取り込み確認（master に独立した srv6cfgd プロセスは未実装、Srv6Orch のみ実在）
-- SRV6_SID_LIST / SRV6_MY_SID_TABLE / SRV6_POLICY / SRV6_STEER の sonic-yang-models 取り込み確認
-- SAI SRv6 attribute (SAI_MY_SID_ENTRY 等) の sonic-sairedis 取り込み確認
-- ROUTE_TABLE への SID list 拡張の swss-common 反映確認
-- v0.5 で追加された MySID counter (counter polling / config srv6 counter CLI) の現行実装確認
-- FRR SRv6 fpmsyncd 連携の取り込み状況
+- Srv6Orch のみ master に実在（独立した srv6cfgd 相当プロセスは未実装、CONFIG_DB→APPL_DB sync は cfgmgr / Translib 経由）
+- SRV6_MY_LOCATORS / SRV6_MY_SIDS は sonic-yang-models 取り込み済み、SRV6_POLICY / SRV6_STEER は HLD ドラフトのみで master 未取り込み
+- SAI SRv6 attribute (SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*) は srv6orch.cpp の end_behavior_map 経由で utilize 確認済み
+- v0.5 で追加された MySID counter (CFG SRV6_COUNTER_ID_LIST / COUNTERS_SRV6_NAME_MAP) は schema.h L257, L313 に反映済み、CLI 側は要追跡
+- FRR SRv6 fpmsyncd 連携の現状（Phase 1 ではコントローラ直接書き込み運用）
 -->
 
 <!-- topics-back-ref -->
@@ -195,4 +191,4 @@ reasoning: Phase 1 のサポート機能の根拠。
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: a3729a90b98f -->

@@ -1,11 +1,19 @@
 ---
 title: 設定
-description: 設定 — ACL の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。config acl は table
-  の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません。
+description: ACL の最小設定は table を作り rule JSON を流し show で確認する流れ。config acl は table の作成・削除と JSON の一括投入を提供するが、個別 rule を CLI 引数で追加するインタフェースは持たない。
 area: topics
-verification: meta
-last_verified: 2026-05-10
-sources: []
+verification: code-verified
+last_verified: 2026-06-06
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: acl_loader/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-utilities
+    path: config/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/coppmgr.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   cli:
   - show acl
@@ -23,7 +31,10 @@ related:
 
 # 設定
 
-[ACL](../../reference/glossary.md#term-acl) の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。`config acl` は table の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません。rule は JSON に書いて `config acl update full` または `incremental` で投入します。
+[ACL](../../reference/glossary.md#term-acl) の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。`config acl` は table の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません[^config-acl]。rule は JSON に書いて `config acl update full` または `incremental` で投入します。`config acl update` は内部で `acl-loader update` を呼び出す薄いラッパです[^config-acl-update]。
+
+[^config-acl]: `sonic-utilities/config/main.py` の `config acl` グループは `add table` / `remove` / `update full` / `update incremental` のみを公開する (L7985-L8160)。`add rule` サブコマンドは存在せず、rule は JSON でしか流し込めない。<!-- evidence: sonic-utilities@39732bceb8bdefe706518ab40623bbbba6ff33b9:config/main.py#L7985-L8160 -->
+[^config-acl-update]: `config acl update full <file>` / `config acl update incremental <file>` はいずれも `clicommon.run_command(['acl-loader', 'update', ...])` で `acl-loader` プロセスを起動する (`config/main.py` L8144 / L8158)。<!-- evidence: sonic-utilities@39732bceb8bdefe706518ab40623bbbba6ff33b9:config/main.py#L8127-L8160 -->
 
 ## 最小 ACL
 
@@ -253,7 +264,9 @@ show copp -t bgp
 show copp config
 ```
 
-`COPP_TRAP.trap_ids` の値は `coppmgr` が認識する hostif trap 名のリストです (`arp,bgp,bgpv6,dhcp,...`)。誤った trap 名は無視されるため、`docker logs swss` で `Unknown trap id` を確認できます。
+`COPP_TRAP.trap_ids` の値は `coppmgr` がトークン分割して trap group に紐付ける hostif trap 名のリストです (`arp,bgp,bgpv6,dhcp,...`)[^coppmgr-trap]。trap 名の妥当性は `orchagent` 側の hostif trap mapping で解釈されるため、設定が想定どおり反映されない場合は `swss` syslog で `CoppOrch` 関連のエラー (`SAI_STATUS_*`) を確認します。
+
+[^coppmgr-trap]: `sonic-swss/cfgmgr/coppmgr.cpp` の `CoppMgr::addTrapIdsToTrapGroup` / `removeTrapIdsFromTrapGroup` (L454-L477) で `trap_ids` を `tokenize` し、APPL_DB の `COPP_TABLE` の `trap_ids` フィールドへ反映する。<!-- evidence: sonic-swss@4305596156d70e9797e8a881b3d19b46de0bce0d:cfgmgr/coppmgr.cpp#L454-L477 -->
 
 ## sonic-cfggen で投入する場合
 
@@ -266,7 +279,9 @@ config save -y
 
 ## よくある設定エラーと対処
 
-`sonic-utilities/acl_loader/main.py` の `AclLoaderException` から抜粋:
+`sonic-utilities/acl_loader/main.py` (L67 で定義) の `AclLoaderException` から抜粋[^acl-exc]:
+
+[^acl-exc]: 各エラーメッセージは `acl_loader/main.py` L380〜L784 で `raise AclLoaderException(...)` される。<!-- evidence: sonic-utilities@39732bceb8bdefe706518ab40623bbbba6ff33b9:acl_loader/main.py#L67-L784 -->
 
 | エラーメッセージ | 原因 | 対処 |
 |---|---|---|
@@ -282,7 +297,7 @@ config save -y
 | `IP_PROTOCOL=<n> is not ICMPV6, but ICMPV6 fields were provided` | protocol 不一致 | `IP_PROTOCOL=58` か ICMPV6 field 削除 |
 | `VLAN ID <n> is out of bounds (0, 4096)` | match の VLAN_ID 範囲外 | 1〜4094 に修正 |
 | `ICMP type/code <n> is out of bounds [0, 255]` | match の ICMP 値範囲外 | 0〜255 に修正 |
-| `l2:ethertype must be provided for rule in table type L3V4V6` | dual family table で ethertype 必須 | `ETHER_TYPE` を追加 |
+| `l2:ethertype must be provided for rule #<n> in table:<t> of type L3V4V6` | dual family table で ethertype 必須 | `ETHER_TYPE` を追加 |
 | `ethertype=<n> is neither ETHERTYPE_IPV4 nor ETHERTYPE_IPV6 for IP rule` | ethertype 値が IPv4/IPv6 外 | `0x0800` または `0x86dd` を指定 |
 
 action / match 制約は ASIC capability に依存する部分があるため、SAI レイヤで弾かれた場合は `swss` syslog に `SAI_STATUS_NOT_SUPPORTED` が出ます。

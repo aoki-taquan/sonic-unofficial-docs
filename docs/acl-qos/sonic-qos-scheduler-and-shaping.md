@@ -8,6 +8,12 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-scheduler.yang
+  ref: master
+- repo: sonic-net/sonic-swss
+  path: orchagent/qosorch.cpp
+  ref: master
 related:
   config_db:
   - SCHEDULER
@@ -82,16 +88,29 @@ QosOrch は `CFG_SCHEDULER_TABLE` / `CFG_QUEUE_TABLE` / `CFG_PORT_QOS_MAP_TABLE`
 
 ### CONFIG_DB スキーマ抜粋
 
-`SCHEDULER` テーブル[^1]:
+`SCHEDULER` テーブル（HLD の ABNF 表記[^1]、`*` は反復、`1*11 DIGIT` は 1〜11 桁の数字）:
 
 ```text
-key       = "SCHEDULER":<name>
-type      = "DWRR" | "WRR" | "STRICT"
-weight    = 1..100              ; 既定 1
-priority  = 1*DIGIT
-meter_type = "packets" | "bytes" ; 既定 bytes
-cir / cbs / pir / pbs = 1..11 DIGIT
+key        = "SCHEDULER":<name>
+type       = "DWRR" / "WRR" / "STRICT"
+weight     = 2*DIGIT             ; HLD 表記。最大 2 桁の数字
+priority   = 1*DIGIT             ; HLD 表記。1 桁の数字
+meter_type = "packets" / "bytes" ; 既定 bytes
+cir        = 1*11 DIGIT          ; Bps または pps
+cbs        = 1*11 DIGIT          ; bytes または packets
+pir        = 1*11 DIGIT          ; Bps または pps
+pbs        = 1*11 DIGIT          ; bytes または packets
 ```
+
+[YANG](../reference/glossary.md#term-yang) (`sonic-scheduler.yang`) では数値範囲を以下のように制約する[^2]:
+
+- `weight`: `uint8` で `range "1..100"`、default 1
+- `priority`: `uint8` で `range "0..9"`（HLD の `1*DIGIT` よりさらに狭い）
+- `meter_type`: enum `packets` / `bytes`、default `bytes`
+- `cir` / `pir`: `uint64`。`pir` には `pir >= cir` の must 制約
+- `cbs` / `pbs`: `uint32`。`pbs` には `pbs >= cbs` の must 制約
+
+QosOrch では `weight` は `uint8_t` にキャストして `SAI_SCHEDULER_ATTR_SCHEDULING_WEIGHT` に渡されるのみで、独自の上限チェックは持たない[^3]。すなわち実装上の上限は YANG レイヤで管理される。
 
 `QUEUE` テーブルおよび `PORT_QOS_MAP` テーブルから `scheduler` フィールドで `[SCHEDULER|name]` を参照する。
 
@@ -176,7 +195,9 @@ show interfaces counters rates
 
 ## 引用元
 
-[^1]: [sonic-net/SONiC doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md)
+[^1]: [sonic-net/SONiC doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md)（§3.2.1 CFG_SCHEDULER_TABLE, L195-L211 で ABNF スキーマを定義）
+[^2]: [sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-scheduler.yang @ master](https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-scheduler.yang) `leaf weight` (L56-L62) で `uint8 range "1..100" default 1`、`leaf priority` (L64-L69) で `uint8 range "0..9"`、`leaf pir` (L94-L108) で `pir >= cir` の must 制約、`leaf pbs` (L124-L139) で `pbs >= cbs` の must 制約を定義。
+[^3]: [sonic-net/sonic-swss orchagent/qosorch.cpp @ master](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp) L1399-L1403 で `scheduler_weight_field_name` を `(uint8_t)stoi(fvValue(*i))` にキャストして `SAI_SCHEDULER_ATTR_SCHEDULING_WEIGHT` に渡しており、[orchagent](../reference/glossary.md#term-orchagent) 側で独立した上限チェックは存在しない。
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -185,4 +206,4 @@ show interfaces counters rates
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: cf7467e40bec -->
+<!-- glossary-links-injected: a65ee09b131d -->

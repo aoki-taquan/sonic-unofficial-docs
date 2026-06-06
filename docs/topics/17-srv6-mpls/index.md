@@ -104,9 +104,9 @@ SRv6 は IPv6 をベースに SID list を運ぶ network programming framework�
 - [VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）](../../routing/bgp-setup-for-voq-chassis.md)
 - [Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）](../../routing/reliable-tsa.md)
 - [NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離](../../routing/routing-and-next-hop-table-enhancement.md)
-- [SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）](../../routing/segment-routing-over-ipv6-srv6-hld.md)
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../../routing/bfd-hw-offload-for-bgp-session.md)
 - [BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）](../../routing/bgp-loading-optimization-for-sonic.md)
+- [BGP PIC（Prefix Independent Convergence / NHG 階層）](../../routing/bgp-prefix-independent-convergence-architecture-document.md)
 
 **関連トラブルシュート 5 件**
 

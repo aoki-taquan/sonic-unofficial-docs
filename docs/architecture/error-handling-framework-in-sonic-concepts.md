@@ -36,6 +36,15 @@ related:
 
 ## 3. データフロー全体像
 
+!!! warning "以下 §3〜§6 は HLD 設計記述（master 未実装）"
+    §3 データフロー / §4 対象 table / §5 error code 表 / §6 positive ack は
+    いずれも HLD `error_handling_design_spec.md` の設計案であり、master では
+    **`SWSS_RC_*` enum (`sonic-swss-common/common/status_code_util.h`) のみ
+    取り込み済**。ERROR_DB / ErrorListener / ErrorReporter / `show error-database`
+    CLI は未実装である。実装状況の一覧はページ末尾の
+    [phase-boundary 表](#phase-boundary) を、未実装内容と回避策は
+    [制限事項](error-handling-framework-in-sonic-limitations.md) を参照。
+
 ```mermaid
 flowchart LR
     APP[App<br/>例: bgpcfgd / fpmsyncd] -- register ErrorListener --> EL[Error Listener]
@@ -55,7 +64,7 @@ flowchart LR
 
 ## 5. Error code の抽象化
 
-app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで **SWSS error code を定義し SAI error code にマップ** する[^1]。下表は [HLD](../reference/glossary.md#term-hld) で定義された基本セット 8 種だが、実装の `sonic-swss-common/common/status_code_util.h L11-L25` enum には追加 7 種（`SWSS_RC_DEADLINE_EXCEEDED` / `SWSS_RC_PERMISSION_DENIED` / `SWSS_RC_INTERNAL` / `SWSS_RC_UNIMPLEMENTED` / `SWSS_RC_NOT_EXECUTED` / `SWSS_RC_FAILED_PRECONDITION` / `SWSS_RC_UNKNOWN`）も追加されており、合計 15 種が定義されている。詳細は limitations ページの「3. 行番号付きエビデンス」を参照。
+app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで **SWSS error code を定義し SAI error code にマップ** する[^1]。下表は [HLD](../reference/glossary.md#term-hld) で定義された基本セット 8 種だが、実装の `sonic-swss-common/common/status_code_util.h` L9-L26 enum には追加 7 種（`SWSS_RC_DEADLINE_EXCEEDED` / `SWSS_RC_PERMISSION_DENIED` / `SWSS_RC_INTERNAL` / `SWSS_RC_UNIMPLEMENTED` / `SWSS_RC_NOT_EXECUTED` / `SWSS_RC_FAILED_PRECONDITION` / `SWSS_RC_UNKNOWN`）も追加されており、合計 15 種が定義されている。詳細は limitations ページの「3. 行番号付きエビデンス」を参照。
 
 | SWSS code | SAI status |
 |-----------|-----------|
@@ -82,7 +91,7 @@ app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで **
 - [error-handling-framework-in-sonic-limitations.md](error-handling-framework-in-sonic-limitations.md)
 
 <!-- phase-boundary -->
-## 実装フェーズ境界
+## 実装フェーズ境界 {#phase-boundary}
 
 !!! info "Phase 別の実装済 / 未実装 サマリ"
     本ページは `monitor: partially_implemented` で、HLD で示された一連の機能
