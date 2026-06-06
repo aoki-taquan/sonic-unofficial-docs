@@ -1,11 +1,26 @@
 ---
 title: gNMI / OpenConfig の発展トピック
-description: gNMI / OpenConfig の発展トピック — gNMI / gNOI / Translib / Transformer の基本パスを押さえた後は、telemetry
-  の規模拡張、認証境界 (gNSI)、新しい RPC への対応が次の論点になる。
+description: gNMI / OpenConfig の発展トピック — gNMI / gNOI / Translib / Transformer
+  の基本パスを押さえた後は、telemetry の規模拡張、認証境界 (gNSI)、新しい RPC への対応が次の論点になる。
 area: topics
 verification: meta
-last_verified: 2026-05-11
-sources: []
+last_verified: 2026-06-06
+sources:
+- repo: sonic-net/sonic-gnmi
+  path: dialout/dialout_client/dialout_client.go
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-gnmi
+  path: gnmi_server/gnsi_certz.go
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-gnmi
+  path: gnmi_server/gnsi_authz.go
+  ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+- repo: sonic-net/sonic-mgmt-common
+  path: translib/transformer/xlate.go
+  ref: f71cf829883c36963455cf4d90fe16dae35f0b80
+- repo: sonic-net/sonic-mgmt-common
+  path: translib/transformer/xfmr_interface.go
+  ref: f71cf829883c36963455cf4d90fe16dae35f0b80
 related:
   cli: []
   config_db:
@@ -13,6 +28,8 @@ related:
   - TELEMETRY
   - TELEMETRY_CLIENT
   yang: []
+  _no_related_cli: true
+  _no_related_yang: true
 ---
 
 # gNMI / OpenConfig の発展トピック
@@ -36,7 +53,7 @@ related:
 
 ## dial-out と scale 設計の詳細
 
-gNMI dial-out (publish to collector) は server-driven Subscribe の補完で、target 側が active TCP connection を保ち、自分から push する。collector 側で session 数を減らせるため、数千台の fabric では運用負荷が下がる。SONiC の `telemetry` docker は dial-out 用の goroutine を spawn し、`TELEMETRY_CLIENT` テーブルから dest list を読む。再接続 backoff、QoS [DSCP](../../reference/glossary.md#term-dscp) marking、TCP keepalive はチューニング対象になる。collector 側 (`gnmic`, `gnxi`) の prometheus exporter と組み合わせると metrics pipeline が完成する。
+gNMI dial-out (publish to collector) は server-driven Subscribe の補完で、target 側が active TCP connection を保ち、自分から push する。collector 側で session 数を減らせるため、数千台の fabric では運用負荷が下がる。SONiC では `sonic-gnmi` リポジトリの `dialout/dialout_client` パッケージ (`package telemetry_dialout`) が CONFIG_DB (`db 4`) の `TELEMETRY_CLIENT` テーブルから `Global` / `DestinationGroup_<name>` / `Subscription_<name>` の 3 種キーを読み取り、destination ごとに goroutine を立てる。`Global` キーには `src_ip` / `retry_interval` / `encoding` (`JSON_IETF` / `ASCII` / `BYTES` / `PROTO`) / `unidirectional` が、`Subscription_<name>` には `path_target` (`COUNTERS_DB` 等) と `paths` (`COUNTERS/Ethernet*` 等) が入る<!-- evidence: sonic-net/sonic-gnmi dialout/dialout_client/dialout_client.go L410-L434 (TELEMETRY_CLIENT スキーマコメント) -->。collector 側 (`gnmic`, `gnxi`) の prometheus exporter と組み合わせると metrics pipeline が完成する。
 
 OpenConfig wildcard subscribe は `/interfaces/interface[name=*]/state/counters` のような path で per-port stream を一括取得するが、sample interval を 1s で全 port 投入すると server CPU が 100% に達する例がある。対策は (1) `STREAM` モードを `SAMPLE` に絞る、(2) heartbeat interval を 30s 以上に広げる、(3) collector を分割して target を pin する、の 3 通り。
 
@@ -44,11 +61,11 @@ OpenConfig wildcard subscribe は `/interfaces/interface[name=*]/state/counters`
 
 gNOI OS の `Install` / `Activate` / `Verify` は SONiC の `sonic-installer` を内側で呼ぶ。`Install` は image を `/host/image-<ver>/` に展開、`Activate` は `next-boot` を切り替える。warm/fast reboot と組み合わせるなら、`Activate` 直後に gNOI System.Reboot を `WARM` mode で呼ぶ。失敗した場合の rollback は `Activate` で前 image を指定するだけで再起動を要するため、運用 runbook 側で plan B を持つ。
 
-gNSI `certz` は TLS 証明書を hot-swap する RPC で、`gnmi-server` が listen socket を rebuild せずに新 cert を採用する。controller 側で短命証明書 (24h) を回転させる構成が想定されている。`authz` は RBAC ポリシー (gRPC method × role × user) を JSON で push し、`mgmt-framework` の [AAA](../../reference/glossary.md#term-aaa) 層に反映する。`pathz` は path 単位のアクセス制御で、SONiC では実装途中。
+gNSI `certz` は TLS 証明書を hot-swap する RPC で、`gnmi-server` が listen socket を rebuild せずに新 cert を採用する。controller 側で短命証明書を回転させる構成が想定されている<!-- evidence: sonic-net/sonic-gnmi gnmi_server/gnsi_certz.go (gNSI certz サーバ実装) -->。`authz` は RBAC ポリシー (gRPC method × role × user) を JSON で push する RPC で、`gnmi_server/gnsi_authz.go` がメタデータ (`testdata/gnsi/authz_meta.json` 等) と組み合わせて検証する<!-- evidence: sonic-net/sonic-gnmi gnmi_server/gnsi_authz.go + testdata/gnsi/authz_meta.json -->。`pathz` は path 単位のアクセス制御で、SONiC では `pathz_authorizer/` package として個別 directory が存在するが本稿執筆時点では限定的な実装。
 
 ## Transformer 拡張と native YANG
 
-OpenConfig path の SONiC 未対応領域に対しては、`sonic-mgmt-common` (Translib / Transformer) に Go callback (xfmr) を追加することで CONFIG_DB マッピングを足せる。`transformer/xfmr/*.go` の `init()` で `XlateFuncBind` に register する流れで、key xfmr / field xfmr / subtree xfmr の 3 種類がある。vendor augmented YANG は `sonic-mgmt-common/models/yang/extensions/` に置かれ、OpenConfig deviation よりも自由度が高い。
+OpenConfig path の SONiC 未対応領域に対しては、`sonic-mgmt-common` (Translib / Transformer) に Go callback (xfmr) を追加することで CONFIG_DB マッピングを足せる。`translib/transformer/` 配下の各 `xfmr_*.go` が `init()` で `XlateFuncBind(name, fn)` に callback を register する流れで<!-- evidence: sonic-net/sonic-mgmt-common translib/transformer/xlate.go L43 (func XlateFuncBind) + xfmr_showtech.go L30 / xfmr_testxfmr_callbacks.go (利用例) -->、`PreXfmrFunc` / `PostXfmrFunc` / `TableXfmrFunc` / `ValueXfmrFunc` などの型に応じて key / field / table / subtree / pre / post の callback を埋める<!-- evidence: sonic-net/sonic-mgmt-common translib/transformer/xfmr_interface.go L199-L262 (Xfmr 関数型定義) -->。vendor augmented YANG は `sonic-mgmt-common/models/yang/` 配下に置かれ、OpenConfig deviation よりも自由度が高い。
 
 ## 既知の制約と回避方法
 
