@@ -27,7 +27,7 @@ related:
 
 `config syslog` は [SONiC](../../reference/glossary.md#term-sonic) ホストおよび feature コンテナの syslog 設定 (リモート送信先 / レート制限 / ログレベル) を [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込む CLI で、`config/syslog.py` の `@click.group()` がエントリポイントとなる[^1]。
 
-`hostcfgd` および各 feature コンテナの supervisord ラッパが [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読して `rsyslog` 設定を再生成する。CLI 自身は rsyslog をリスタートしないため、変更が反映されるまでタイムラグがある。
+反映経路はサブコマンドごとに異なる。`add` / `del` は [CONFIG_DB](../../reference/glossary.md#term-config_db) 書き込み後に CLI 自身が `systemctl reset-failed rsyslog-config rsyslog` と `systemctl restart rsyslog-config` を即時実行し、`rsyslog-config.service` がテンプレートから設定を再生成する[^3]。一方 `rate-limit-host` / `rate-limit-container` / `rate-limit-feature` / `level` は CONFIG_DB を更新するだけで、`hostcfgd` および各 feature コンテナの supervisord ラッパが購読側で `rsyslog` 設定を再生成する設計のため、反映までにタイムラグが出る場合がある。
 
 ## コマンド一覧
 
@@ -53,11 +53,11 @@ related:
 - `--vrf <vrf>` ... 出力 [VRF](../../reference/glossary.md#term-vrf)。`mgmt` (mgmt-vrf) または [CONFIG_DB](../../reference/glossary.md#term-config_db) の `VRF` テーブルに存在する [VRF](../../reference/glossary.md#term-vrf)。`source` と組み合わせる場合 `source_to_vrf_validator` で同 [VRF](../../reference/glossary.md#term-vrf) 内のインタフェースかをチェックする。
 
 **動作**:
-`SYSLOG_SERVER|<server_ip>` を新規作成する。同じ key が既存ならエラー終了 (重複はサポートしない)[^2]。
+`SYSLOG_SERVER|<server_ip>` を新規作成する。同じ key が既存ならエラー終了 (重複はサポートしない)[^2]。エントリ書き込み後に CLI が `systemctl reset-failed rsyslog-config rsyslog` と `systemctl restart rsyslog-config` を実行するため、サーバ追加は即時に rsyslog 構成に反映される[^3]。
 
 ### `config syslog del <server_ip>`
 
-`SYSLOG_SERVER|<server_ip>` を削除。存在しないアドレスを与えるとエラー終了。
+`SYSLOG_SERVER|<server_ip>` を削除。存在しないアドレスを与えるとエラー終了。削除時も `add` と同様に `rsyslog-config` を再起動する[^3]。
 
 ### `config syslog rate-limit-host [-i <interval>] [-b <burst>]`
 
@@ -102,7 +102,9 @@ related:
 
 [^1]: `syslog` グループは `config/syslog.py` L361-L368。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/syslog.py#L361>
 
-[^2]: `add` / `delete` は `config/syslog.py` L370-L454。重複検査は `is_exist_in_db`。
+[^2]: `add` / `delete` は `config/syslog.py` L370-L452。重複検査は `server_validator`。
+
+[^3]: `add` ハンドラ内の `systemctl restart rsyslog-config` 呼び出しは `config/syslog.py` L415-L416、`del` ハンドラは L447-L448。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/syslog.py#L415>
 
 <!-- ops-hint -->
 ## 運用ヒント
