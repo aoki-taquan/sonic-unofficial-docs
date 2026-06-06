@@ -77,11 +77,17 @@ gNOI / gNSI の proto には多数の RPC が定義されているが、SONiC �
 | OS | Install, Activate, Verify | (なし) | `sonic-installer` で image インストール | [gNOI OS](../../management/gnoi-hld-for-os-apis.md) |
 | File | Stat, Put, Remove, TransferToRemote | Get | local file system、tech-support、log (DBus 経由でホスト側に到達) | [gNOI File / Factory Reset](../../management/gnoi-hld-for-file-and-factory-reset-apis.md) |
 | FactoryReset | Start | (なし) | `reset-factory` 系の処理 | [gNOI File / Factory Reset](../../management/gnoi-hld-for-file-and-factory-reset-apis.md) |
-| Healthz | Get, List, Acknowledge, Artifact, Check | (なし) | container / service の health 状態 | [gNOI Healthz](../../management/gnoi-hld-for-healthz-api.md) |
-| gNSI | CertZ, Authz, Pathz | (上記 3 service 以外の gNSI service は未対応) | 証明書、認証ポリシー、attestation | [gNSI HLD](../../management/gnsi-hld.md) |
+| Healthz | Artifact, Acknowledge (Get は debug-data path のみ) | List, Check, Get (debug-data 以外) | container / service の health 状態、core dump など artifact 取り出し | [gNOI Healthz](../../management/gnoi-hld-for-healthz-api.md) |
+| gNSI.Certz | Rotate, CanGenerateCSR | AddProfile, DeleteProfile, GetProfileList | server cert / CA / CRL bundle の rotate、profile 単位の証明書束 | [gNSI HLD](../../management/gnsi-hld.md) |
+| gNSI.Authz | Rotate | Probe, Get | gRPC method 単位の認可 policy 配布、checkpoint / revert 経由の安全な切替 | [gNSI HLD](../../management/gnsi-hld.md) |
+| gNSI.Pathz | Rotate | Probe, Get | gNMI path 単位の認可 policy 配布、ConfigDB metadata への永続化 | [gNSI HLD](../../management/gnsi-hld.md) |
 
 <!-- evidence: sonic-gnmi/gnmi_server/gnoi_system.go L193-L344 で Reboot/RebootStatus/CancelReboot/SetPackage/SwitchControlProcessor/Time/KillProcess を実装、Ping (L295) と Traceroute (L306) は codes.Unimplemented を返す stub -->
 <!-- evidence: sonic-gnmi/gnmi_server/gnoi_file.go L20-L138 で Stat/TransferToRemote/Put/Remove を実装、Get (L92) は codes.Unimplemented を返す stub -->
+<!-- evidence: sonic-gnmi/gnmi_server/gnoi_healthz.go L190-L326: Artifact (L210) / Acknowledge (L299) は実装、Get (L190) は debug-data path 以外で codes.Unimplemented (L207)、List (L321-322) と Check (L325-326) は codes.Unimplemented を返す stub -->
+<!-- evidence: sonic-gnmi/gnmi_server/gnsi_certz.go L162-L171: AddProfile / DeleteProfile / GetProfileList は codes.Unimplemented を返す stub、CanGenerateCSR (L171) と Rotate (L225) は実装 -->
+<!-- evidence: sonic-gnmi/gnmi_server/gnsi_authz.go L43-L66: Probe (L43) / Get (L46) は codes.Unimplemented を返す stub、Rotate (L66) は実装 (checkpoint / commit / revert を含む) -->
+<!-- evidence: sonic-gnmi/gnmi_server/gnsi_pathz.go L60-L181: Probe (L60) / Get (L64) は codes.Unimplemented を返す stub、Rotate (L181) は実装 -->
 <!-- evidence: SONiC/doc/mgmt/gnmi/gnoi_system_hld.md L26 "Removed non-Reboot gNOI APIs" / L34 "The System RPCs covered in this doc include: Reboot, RebootStatus, CancelReboot" — HLD 範囲は Reboot 3 種、その他は後続実装 -->
 <!-- evidence: SONiC/doc/mgmt/gnmi/gnoi_file_factory_reset_hld.md L33 "The File RPCs covered in this doc include: Remove" — HLD 範囲は Remove のみ -->
 
@@ -109,11 +115,21 @@ Factory reset の SONiC 実装 (`reset-factory` design) は章 11 や reset-fact
 
 ## Healthz
 
-[gNOI Healthz API](../../management/gnoi-hld-for-healthz-api.md) は、container や service の health 状態を gRPC で問い合わせる。SONiC で container health を集約する仕組みと組み合わせて、特定の component の status / artifact (たとえば core dump、log) を取れるように設計されている。NMS から「障害発生時のスナップショット取得」を自動化したいときの入口になる。
+[gNOI Healthz API](../../management/gnoi-hld-for-healthz-api.md) は、container や service の health 状態を gRPC で問い合わせる。SONiC の実装は「core dump / debug artifact を取り出す入口」に振り切っており、proto 定義の RPC のうち SONiC で実際に動くのは `Artifact` (stream で artifact を返す) と `Acknowledge` (event を確認済みとしてマークする) の 2 つに限られる。
+
+`Get` は debug-data path を含む特定 path (`isDebugData`) のみ実装で、それ以外の component path を渡すと `codes.Unimplemented` を返す。`List` と `Check` は proto には残っているが SONiC では未実装で、`codes.Unimplemented` を返す stub になっている。つまり「障害発生時のスナップショット (core dump 等の artifact) を引き取る」用途は動くが、「健康な component の状態を一覧する」用途は現状の SONiC では gNOI Healthz では実現できない。
+
+<!-- evidence: sonic-gnmi/gnmi_server/gnoi_healthz.go L39 isDebugData / L91 getDebugData により Get は debug-data path のみ処理し、それ以外は L207 で codes.Unimplemented を返す -->
 
 ## gNSI: 証明書とポリシー
 
-[gNSI HLD](../../management/gnsi-hld.md) は、SONiC の証明書配布、認証ポリシー、attestation を gRPC API として扱う。CertZ で server cert / CA を配布し、Authz で gRPC 認可ポリシーを配布し、Pathz で path 単位のアクセス制御を配布する。CLI / 手動オペレーションを置き換えて、複数 device の security posture を一括管理できるようにするための層である。
+[gNSI HLD](../../management/gnsi-hld.md) は、SONiC の証明書配布と認可ポリシー配布を gRPC API として扱う。sonic-gnmi で動くのは Certz / Authz / Pathz の 3 service で、いずれも `Rotate` (双方向 stream で配布 → checkpoint → 検証 → commit / revert) に実装が集中している。proto 上は Authz / Pathz に `Probe` (現行 policy を試験評価する) や `Get` (現行 policy を取り出す) があるが、SONiC ではどちらも `codes.Unimplemented` を返す stub のままで、配布した policy は ConfigDB metadata と file 経由でしか取り戻せない。
+
+- **Certz** (`gnsi_certz.go`): server cert / CA chain / CRL bundle を profile 単位で rotate する。`Rotate` stream の中で `GenerateCSR` / `UploadRequest` / `FinalizeRequest` のフェーズを順に流す。`AddProfile` / `DeleteProfile` / `GetProfileList` は proto 上の RPC で SONiC では未実装。`CanGenerateCSR` は実装されており CSR 生成可否の事前確認に使える。
+- **Authz** (`gnsi_authz.go`): gRPC method 単位の認可 policy (JSON) を `Rotate` で配布し、`/etc/sonic/gnsi/authz_policy.json` 相当のファイルに保存して checkpoint → commit する。revert 時は checkpoint から policy ファイルを書き戻し、freshness metadata を ConfigDB に記録する。
+- **Pathz** (`gnsi_pathz.go`): gNMI path 単位の認可 policy を `Rotate` で配布し、policy ファイルへの保存・metadata の ConfigDB 反映・revert を Authz と同じ pattern で実装している。
+
+Attestation (gNSI Attestz など) と Acctz (audit log) は proto には存在するが sonic-gnmi の master には server 実装が無いため、運用ツール側で「Certz / Authz / Pathz の 3 つだけが現状の gNSI 表面である」前提を持つ必要がある。
 
 ## 関連ページ
 
