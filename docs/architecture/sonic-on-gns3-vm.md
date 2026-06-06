@@ -82,7 +82,7 @@ GNS3 は Qemu/KVM を介して SONiC [VS](../reference/glossary.md#term-vs) イ�
    - **Auto Start Console**: ON
 4. ディスク image として展開済みの `sonic-vs.img` を指定
 
-これらの値は HLD で「推奨」として明示されている[^1]。
+これらの値は HLD で「推奨」として明示されている[^1]。なお方法 B の `sonic-gns3a.sh` が生成する `.gns3a` のデフォルト RAM は 2048 MB であり、HLD 推奨値（8192 MB）とは一致しない（後述「設定例」参照）[^2]。
 
 #### 方法 B: `sonic-gns3a.sh` で `.gns3a` を生成
 
@@ -146,9 +146,44 @@ GNS3 公式の Windows インストールガイドの推奨条件（VT-x / EPT �
 
 該当なし。本ページは **動作環境のセットアップ手順** であり、SONiC 内部の設定スキーマは扱わない。
 
-### 設定例（GNS3 への登録の最小コマンド相当）
+### 設定例: `sonic-gns3a.sh` が生成する `.gns3a` の主要キー
 
-GNS3 GUI 操作の代替として CLI で扱う場合、`gns3server` の REST API でテンプレートを作る方法もあるが、HLD では明示されていない[^1]。
+方法 B で `./sonic-gns3a.sh -r 1.1 -b sonic-vs.img` を実行すると、`SONiC-1.1.gns3a` という名前の JSON が出力される。GNS3 GUI の `File → Import appliance` で取り込むのに必要な核となるキーは以下である[^2]:
+
+```json
+{
+    "name": "SONiC",
+    "category": "router",
+    "registry_version": 3,
+    "first_port_name": "eth0",
+    "qemu": {
+        "adapter_type": "e1000",
+        "adapters": 10,
+        "ram": 2048,
+        "hda_disk_interface": "virtio",
+        "arch": "x86_64",
+        "console_type": "telnet",
+        "boot_priority": "d",
+        "kvm": "require"
+    },
+    "images": [
+        {
+            "filename": "sonic-vs.img",
+            "version": "1.1",
+            "md5sum": "<md5sum of sonic-vs.img>",
+            "filesize": "<bytes>"
+        }
+    ]
+}
+```
+
+注意点:
+
+- **`adapters: 10`**: 1 ノードあたり 10 個の e1000 NIC が割り当てられる。トポロジで使わない NIC は GNS3 GUI 側で未接続のまま残しておけば良い。
+- **`ram: 2048`**: スクリプトのデフォルト RAM は 2048 MB であり、方法 A の HLD 推奨値 8192 MB とは一致しない。多機能トポロジ（[BGP](../reference/glossary.md#term-bgp) / [EVPN](../reference/glossary.md#term-evpn) / 全 SONiC コンテナ起動）では 2 GB だと OOM になりやすいため、インポート後に GNS3 GUI から RAM を 8192 MB に引き上げるか、`.gns3a` の `ram` フィールドを編集してから取り込むのが安全である[^1][^2]。
+- **`kvm: "require"`**: ホストで KVM が有効でないとインポート後の起動に失敗する。GNS3 VM そのものをネスト仮想化下で動かす場合は ホスト hypervisor 側で nested virtualization を有効化しておく必要がある。
+
+GNS3 GUI 操作の代替として `gns3server` の REST API (`POST /v2/templates`) でテンプレートを作る方法もあるが、SONiC 公式 HLD では言及されていないため、本ガイドでも標準手順としては扱わない[^1]。
 
 ## 制限事項
 
@@ -190,6 +225,7 @@ ip -br link | head
 <!-- evidence (verifier-batch-20):
 - sonic-buildimage/platform/vs/README.gns3.md (HOWTO Create a GNS3 Appliance File)
 - sonic-buildimage/platform/vs/sonic-gns3a.sh (HLD と同じ手順スクリプト)
+- sonic-buildimage/platform/vs/sonic-gns3a.sh:53-62 (qemu キー: adapter_type=e1000, adapters=10, ram=2048, kvm=require)
 - sonic-buildimage/rules/config:81 DEFAULT_PASSWORD = YourPaSsWoRd
 - sonic-buildimage/check_install.py:13 default password='YourPaSsWoRd'
 -->
@@ -201,4 +237,4 @@ ip -br link | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9fb3fca99a59 -->
+<!-- glossary-links-injected: 6d8bb7aa6d25 -->
