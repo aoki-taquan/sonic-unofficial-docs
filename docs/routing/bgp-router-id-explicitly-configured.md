@@ -12,23 +12,11 @@ sources:
 related:
   config_db:
   - DEVICE_METADATA
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
   cli:
-  - show bgp
-  - config bgp
+  - show bgp summary
+  - sonic-cfggen
   yang:
   - sonic-device_metadata
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-bgp-peergroup
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
-  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->
