@@ -1,29 +1,31 @@
 ---
 title: 内部実装
 description: 内部実装 — PINS の中身を読むときに、まず押さえるのは P4Orch の Manager 群と P4OidMapper、次に entity_cache_
-  の Write 連動更新、最後に APPL_STATE_DB を介した同期応答 の 3 点です。
+  の Write 連動更新、最後に APPL_STATE_DB を介した同期応答の 3 点です。
 area: topics
 verification: meta
-last_verified: 2026-05-10
-sources: []
+last_verified: 2026-06-06
+sources:
+- repo: sonic-net/sonic-swss
+  path: orchagent/p4orch/p4orch.h
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/p4orch/object_manager_interface.h
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/p4orch/p4oidmapper.h
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
 related:
   cli:
-  - config interface
-  - show techsupport
-  - show platform
-  - show version
   - show acl
   - config acl
   config_db:
-  - DPU
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - DPUS
-  - CRM
   - P4RT_TABLE
-  - DEVICE_METADATA
-  yang:
-  - sonic-crm
+  yang: []
+  _no_related_yang: true
 ---
 
 # 内部実装
@@ -52,13 +54,45 @@ P4Orch は `sonic-swss/orchagent/p4orch/` に置かれ、`p4orch.cpp` / `p4orch.
 
 HLD 当初は 7 Manager の構成でしたが、現行 master ではこれらにさらに拡張されています。詳細は [P4Orch HLD](../../internals/p4-orchagent.md) を参照してください。
 
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/p4orch/p4orch.h#L17-L29 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  #include "p4orch/ip_multicast_manager.h"
+  #include "p4orch/l3_multicast_manager.h"
+  #include "p4orch/neighbor_manager.h"
+  #include "p4orch/next_hop_manager.h"
+  #include "p4orch/router_interface_manager.h"
+  #include "p4orch/tables_definition_manager.h"
+  #include "p4orch/wcmp_manager.h"
+reasoning: HLD 7 Manager に対して master では ip_multicast / l3_multicast / tables_definition 等が追加されている根拠。
+-->
+
+
 ## ObjectManagerInterface の抽象
 
 各 Manager は `object_manager_interface.h` の `enqueue` / `drain` / `drainWithNotExecuted` を実装します。`enqueue` で [APPL_DB](../../reference/glossary.md#term-appl_db) から取り出した entry を蓄え、`drain` で SAI 呼び出しを実行し、`drainWithNotExecuted` でエラーケースのリカバリを記述するという 3 つの責務分離です。
 
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/p4orch/object_manager_interface.h#L12-L19 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  virtual void enqueue(const std::string &table_name, const swss::KeyOpFieldsValuesTuple &entry) = 0;
+  virtual ReturnCode drain() = 0;
+  virtual void drainWithNotExecuted() = 0;
+reasoning: ObjectManagerInterface の 3 メソッド抽象（enqueue / drain / drainWithNotExecuted）の根拠。
+-->
+
+
 ## P4OidMapper
 
 `p4oidmapper.h` の `P4OidMapper` は `(sai_object_type_t, key) → (oid, ref_count)` の対応を保持します。`getRefCount` を public 公開しており、複数 Manager から参照される共有オブジェクト（next_hop が wcmp / route から参照される等）の生存管理に使います。
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/p4orch/p4oidmapper.h#L44 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  bool getRefCount(_In_ sai_object_type_t object_type, _In_ const std::string &key, _Out_ uint32_t *ref_count) const;
+reasoning: P4OidMapper が ref_count を public API として公開している根拠。
+-->
+
 
 ## entity_cache_ の Write 連動更新
 
@@ -72,6 +106,15 @@ HLD 当初は 7 Manager の構成でしたが、現行 master ではこれらに
 ## 同期書き込みと APPL_STATE_DB
 
 通常の [orchagent](../../reference/glossary.md#term-orchagent) は SAI を非同期に呼びますが、P4Orch は **SAI 応答を待ち、結果を APPL_STATE_DB に書き戻す** ことで [P4RT](../../reference/glossary.md#term-p4rt) App が controller に成否を返せるようにします。`APPL_STATE_DB=14` は `sonic-swss-common/common/schema.h` で定義されており、PINS のために追加されたものです（[SmartSwitch](../../reference/glossary.md#term-smartswitch) 向けに `DPU_APPL_STATE_DB=16` も別途追加）。
+
+<!-- evidence:
+source: sonic-net/sonic-swss-common/common/schema.h#L27-L29 (sha: 158de8d3463ff4b841653f6d57190bb142b80d9c)
+excerpt: |
+  #define APPL_STATE_DB       14
+  #define DPU_APPL_STATE_DB   16
+reasoning: APPL_STATE_DB=14 と DPU_APPL_STATE_DB=16 の DB id 定義の根拠。
+-->
+
 
 ## warm boot とキャッシュの整合
 
