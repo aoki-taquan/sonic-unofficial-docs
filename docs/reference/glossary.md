@@ -1411,7 +1411,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SmartSwitch DPU テーブル群](config-db/smart-switch-dpu.md) (186)
 - [DPU テーブル](config-db/dpu.md) (174)
 - [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (123)
-- [サイトマップ](../_meta/sitemap.md) (98)
+- [サイトマップ](../_meta/sitemap.md) (99)
 
 ### [DPB](#term-dpb)
 
@@ -1589,7 +1589,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [gNMI](#term-gnmi)
 
-- [サイトマップ](../_meta/sitemap.md) (76)
+- [サイトマップ](../_meta/sitemap.md) (77)
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (29)
 - [GNMI / GNMI_CLIENT_CERT テーブル](config-db/gnmi.md) (24)
 - [TELEMETRY テーブル](config-db/telemetry.md) (23)
@@ -1625,7 +1625,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
-- [サイトマップ](../_meta/sitemap.md) (39)
+- [サイトマップ](../_meta/sitemap.md) (40)
 
 ### [Headroom](#term-headroom)
 
@@ -1866,8 +1866,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../system/smart-switch-reboot-high-level-design.md) (45)
 - [DASH と SmartSwitch の考え方](../topics/13-dash-smartswitch/concept.md) (38)
+- [サイトマップ](../_meta/sitemap.md) (29)
 - [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (29)
-- [サイトマップ](../_meta/sitemap.md) (28)
 - [ACL_TABLE (CTRLPLANE) テーブル](config-db/control-plane-acl.md) (27)
 
 ### [orchagent](#term-orchagent)
@@ -2170,7 +2170,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [SmartSwitch](#term-smartswitch)
 
 - [CHASSIS_MODULE テーブル](config-db/chassis-module.md) (78)
-- [サイトマップ](../_meta/sitemap.md) (59)
+- [サイトマップ](../_meta/sitemap.md) (58)
 - [SmartSwitch 関連テーブル (MID_PLANE_BRIDGE / DHCP_SERVER_IPV4_PORT)](config-db/smart-switch.md) (51)
 - [NTP テーブル群](config-db/ntp.md) (35)
 - [CHASSIS_STATE_DB テーブル群](config-db/chassis-state.md) (32)
@@ -2185,7 +2185,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ROUTE_TABLE (STATE_DB / APPL_STATE_DB)](config-db/route-state.md) (101)
 - [FEATURE (STATE_DB)](config-db/feature-state.md) (91)
 - [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (85)
-- [サイトマップ](../_meta/sitemap.md) (80)
+- [サイトマップ](../_meta/sitemap.md) (79)
 
 ### [swssconfig](#term-swssconfig)
 
