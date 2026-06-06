@@ -1,7 +1,8 @@
 ---
 title: dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）
-description: dump state utility — SONiC の機能は 複数 DB（CONFIG_DB / APPL_DB / ASIC_DB /
-  STATE_DB / COUNTERS_DB / 設定 JSON）に状態が分散する。
+description: dump state utility — SONiC の機能は複数 DB（CONFIG_DB / APPL_DB / ASIC_DB /
+  STATE_DB / COUNTERS_DB / 設定 JSON）に状態が分散するため、モジュール単位で関連 key
+  を DB 横断に集約する debug CLI。
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
@@ -138,7 +139,7 @@ dump state copp all                            # CONFIG_FILE も含む
 - **techsupport**: 全モジュールの dump が含まれるため、モジュール追加で techsupport が肥大化
 - **multi-asic**: `--namespace` で対象 asic 切替
 
-## 関連 Topics
+## 関連ページ
 
 - [09-telemetry-snmp/operations](../topics/09-telemetry-snmp/operations.md): techsupport / debug ツール
 - [20-swss-sai-redis/internals](../topics/20-swss-sai-redis/internals.md): DB 構造（dump state が辿る対象）
