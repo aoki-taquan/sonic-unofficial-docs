@@ -17,7 +17,7 @@ related:
 # SONiC 非公式ドキュメント (日本語)
 
 [SONiC](./reference/glossary.md#term-sonic) NOS (community `master`) を AI が日本語で再構成した**非公式**ドキュメント。
-公式 [HLD](./reference/glossary.md#term-hld) の分散・古さ・実装乖離を、複数リポジトリ横断の引用付きで補う。
+公式 [HLD](./reference/glossary.md#term-hld) の分散・古さ・実装乖離を、複数リポジトリ横断の引用付きで補います。
 
 ## SONiC を 1 段落で
 
