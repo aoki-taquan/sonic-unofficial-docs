@@ -21,7 +21,7 @@ related:
 
 ## SONiC を 1 段落で
 
-SONiC は **Debian ベースの Linux 上に、機能ごとに分離された Docker container 群と、単一 [Redis](./reference/glossary.md#term-redis) instance 内に置かれた複数論理 DB と、[SAI](./reference/glossary.md#term-sai) 経由の [ASIC](./reference/glossary.md#term-asic) 抽象** を載せた network OS である。運用者の設定 (CLI / [gNMI](./reference/glossary.md#term-gnmi) / `config_db.json`) は `CONFIG_DB` に入り、機能別の `*mgrd` daemon が `APPL_DB` へ翻訳し、[orchagent](./reference/glossary.md#term-orchagent) が SAI 呼び出しで `ASIC_DB` を更新し、[syncd](./reference/glossary.md#term-syncd) が vendor SAI library を介して [ASIC SDK](./reference/glossary.md#term-asic-sdk) に流す。経路は [FRR](./reference/glossary.md#term-frr) が Linux kernel と [FPM](./reference/glossary.md#term-fpm) 経由で同じ `APPL_DB` に書き込む。1 枚図と用語の最短解説は **[全体俯瞰 (Essentials)](./getting-started.md)** にある。
+SONiC は **Debian ベースの Linux 上に、機能ごとに分離された Docker container 群と、単一 [Redis](./reference/glossary.md#term-redis) instance 内に置かれた複数論理 DB と、[SAI](./reference/glossary.md#term-sai) 経由の [ASIC](./reference/glossary.md#term-asic) 抽象** を載せた network OS です。運用者の設定 (CLI / [gNMI](./reference/glossary.md#term-gnmi) / `config_db.json`) は `CONFIG_DB` に入り、機能別の `*mgrd` daemon が `APPL_DB` へ翻訳し、[orchagent](./reference/glossary.md#term-orchagent) が SAI 呼び出しで `ASIC_DB` を更新し、[syncd](./reference/glossary.md#term-syncd) が vendor SAI library を介して [ASIC SDK](./reference/glossary.md#term-asic-sdk) に流します。経路は [FRR](./reference/glossary.md#term-frr) が Linux kernel と [FPM](./reference/glossary.md#term-fpm) 経由で同じ `APPL_DB` に書き込みます。1 枚図と用語の最短解説は **[全体俯瞰 (Essentials)](./getting-started.md)** にあります。
 
 ## サイトの歩き方
 
@@ -33,7 +33,7 @@ SONiC は **Debian ベースの Linux 上に、機能ごとに分離された Do
 
     ---
 
-    22 章の Topics 扉から、概念 / 設定 / 運用 / 内部実装 / 障害切り分けへ進む。
+    22 章の Topics 扉から、概念 / 設定 / 運用 / 内部実装 / 障害切り分けへ進みます。
 
     [はじめての方はこちら :material-arrow-right:](topics/01-overview/index.md){ .md-button .md-button--primary }
     [Topics 目次](topics/index.md)
@@ -42,7 +42,7 @@ SONiC は **Debian ベースの Linux 上に、機能ごとに分離された Do
 
     ---
 
-    CLI / [CONFIG_DB](./reference/glossary.md#term-config_db) / [YANG](./reference/glossary.md#term-yang) の 3 系統リファレンス。Mermaid 図 100% 添付、相互リンク完備。
+    CLI / [CONFIG_DB](./reference/glossary.md#term-config_db) / [YANG](./reference/glossary.md#term-yang) の 3 系統リファレンス。Mermaid 図 100% を添付し、相互リンクも完備しています。
 
     [Reference 目次](reference/index.md){ .md-button }
     [カテゴリで探す](categories/index.md)
@@ -51,7 +51,7 @@ SONiC は **Debian ベースの Linux 上に、機能ごとに分離された Do
 
     ---
 
-    現場で「動かない」を解く Runbook と、実装と HLD の乖離の一覧。
+    現場で「動かない」を解く Runbook と、実装と HLD の乖離の一覧を提供します。
 
     [Runbook 一覧](reference/runbooks/index.md){ .md-button }
 
