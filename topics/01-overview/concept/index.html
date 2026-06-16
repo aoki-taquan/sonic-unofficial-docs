@@ -561,7 +561,7 @@
   <span class="md-ellipsis">
     
   
-    初めての方の必読 10 (Essentials)
+    全体俯瞰と必読 10 (Essentials)
   
 
     
@@ -1100,6 +1100,17 @@
     <span class="md-ellipsis">
       
         最初に押さえる用語
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#component-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Component と DB の対応 (具体像)
       
     </span>
   </a>
@@ -36036,6 +36047,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#component-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Component と DB の対応 (具体像)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36264,6 +36286,56 @@
 </tbody>
 </table>
 <p>「<code>config</code> CLI」と「<code>sonic-cli</code>」は別系統です。前者は Click ベースで <code>sonic-utilities</code> に入っており、後者は Management Framework / YANG を経由します。両方が CONFIG_DB に向かうため、最終的な状態は同じですが、validation や RBAC、対応コマンド範囲が異なります。</p>
+<h2 id="component-db">Component と DB の対応 (具体像)<a class="headerlink" href="#component-db" title="Permanent link">&para;</a></h2>
+<p>「DB は 7 個ぐらいある、container は十数個ある」を抽象表現で終わらせると掴みづらいので、標準ビルドで何が起動して、それぞれがどの Redis 論理 DB を触るのかを 1 枚にしておきます。container 一覧は <code>sonic-buildimage/files/build_templates/init_cfg.json.j2:67-98</code> の FEATURE 定義、Redis DB id は <code>sonic-swss-common/common/database_config.json:14-114</code> から取った値です。</p>
+<pre class="mermaid"><code>flowchart LR
+  subgraph CTRS[標準ビルドの主要 container]
+    direction TB
+    DBC[database&lt;br/&gt;= 単一 Redis instance を提供]
+    SW[swss&lt;br/&gt;orchagent + 各 *mgrd / *syncd]
+    SY[syncd&lt;br/&gt;+ vendor SAI .so]
+    BGP[bgp&lt;br/&gt;FRR + bgpcfgd + fpmsyncd]
+    TM[teamd]
+    PMON[pmon&lt;br/&gt;xcvrd / psud / ledd]
+    LL[lldp]
+    SN[snmp]
+    DR[dhcp_relay]
+    RA[radv]
+    MF[mgmt-framework]
+    GN[gnmi]
+    TEL[telemetry]
+  end
+  subgraph DBS[論理 Redis DB - 単一 instance 内]
+    direction TB
+    CFG[(CONFIG_DB&lt;br/&gt;id=4 意図)]
+    APPL[(APPL_DB&lt;br/&gt;id=0 依頼)]
+    ASDB[(ASIC_DB&lt;br/&gt;id=1 ASIC 投影)]
+    ST[(STATE_DB&lt;br/&gt;id=6 観測)]
+    COU[(COUNTERS_DB&lt;br/&gt;id=2 統計)]
+    FLEX[(FLEX_COUNTER_DB&lt;br/&gt;id=5 統計 plugin)]
+    LOG[(LOGLEVEL_DB&lt;br/&gt;id=3 log 制御)]
+  end
+
+  MF --&gt; CFG
+  GN --&gt; CFG
+  CFG --&gt; SW
+  CFG --&gt; BGP
+  CFG --&gt; TM
+  SW --&gt; APPL
+  BGP --&gt; APPL
+  TM --&gt; APPL
+  APPL --&gt; SW
+  SW --&gt; ASDB
+  ASDB --&gt; SY
+  SY --&gt; ST
+  SY --&gt; COU
+  SY --&gt; FLEX
+  PMON --&gt; ST
+  TEL -.read.-&gt; COU
+  TEL -.read.-&gt; ST
+  SN -.read.-&gt; COU
+  SN -.read.-&gt; ST</code></pre>
+<p>主要 container と論理 DB id の組合せは概ね固定です (CONFIG_DB=4 / APPL_DB=0 / ASIC_DB=1 / STATE_DB=6 / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a>=2 / <a href="../../../reference/glossary/#term-flex_counter_db">FLEX_COUNTER_DB</a>=5 / <a href="../../../reference/glossary/#term-loglevel_db">LOGLEVEL_DB</a>=3、加えて <code>SNMP_OVERLAY_DB=7</code>、<code>RESTAPI_DB=8</code>、Gearbox 用 <code>GB_*=9-11</code>、Chassis 用 <code>CHASSIS_APP_DB=12</code> / <code>CHASSIS_STATE_DB=13</code> (別 instance <code>redis_chassis</code>)、<code>APPL_STATE_DB=14</code>、<a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> <a href="../../../reference/glossary/#term-dpu">DPU</a> 用 <code>DPU_*=15-18</code>)。Multi-ASIC や VoQ chassis では namespace ごとに Redis instance が増えますが、論理 DB id の意味は同じです。</p>
 <h2 id="_3">まずどこから読むか<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>読者の目的別に「最初に開くべきページ」をまとめます。</p>
 <table>
@@ -36438,7 +36510,7 @@
 <!-- xref-prereq -->
 <h2 id="_9">この章の前提知識<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <p>この章は SONiC ドキュメント全体の入口に位置するため、特段の前提章はない。<code>docs/topics/index.md</code> の読み進め方マップを参照すること。</p>
-<!-- glossary-links-injected: 5c9b3765d470 -->
+<!-- glossary-links-injected: b4d2ea9fc71a -->
 
 
 

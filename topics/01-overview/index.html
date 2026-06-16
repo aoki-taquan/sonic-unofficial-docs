@@ -561,7 +561,7 @@
   <span class="md-ellipsis">
     
   
-    初めての方の必読 10 (Essentials)
+    全体俯瞰と必読 10 (Essentials)
   
 
     
@@ -35818,6 +35818,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sonic-component" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC の component 俯瞰
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35918,6 +35929,56 @@
 <li><code>config reload</code>、<code>config replace</code>、<code>config apply-patch</code>、rollback、<a href="../../reference/glossary/#term-ztp">ZTP</a>、factory reset はどう使い分けるか。</li>
 <li>既存の <code>guides/</code>、<code>categories/</code>、<code>reference/</code>、area 別 HLD ページは読み物章からどう辿るか。</li>
 </ul>
+<h2 id="sonic-component">SONiC の component 俯瞰<a class="headerlink" href="#sonic-component" title="Permanent link">&para;</a></h2>
+<p>この章の議論はすべて、下図の「Linux host + Docker container 群 + Redis 論理 DB + SAI library を載せた <a href="../../reference/glossary/#term-syncd">syncd</a>」というアーキテクチャを前提とする。各 container と DB の対応関係は <code>sonic-buildimage/files/build_templates/init_cfg.json.j2:67-98</code> の FEATURE 一覧と <code>sonic-swss-common/common/database_config.json:14-114</code> の DB id 定義を裏取りに使っている。</p>
+<pre class="mermaid"><code>flowchart TB
+  subgraph HOST[Linux host - Debian based]
+    direction TB
+    KERN[Linux kernel&lt;br/&gt;netlink / FIB / bridge]
+    subgraph CTRS[Docker container 群]
+      direction LR
+      DBC[database&lt;br/&gt;= 単一 Redis instance]
+      SW[swss&lt;br/&gt;orchagent + *mgrd / *syncd]
+      SY[syncd&lt;br/&gt;+ vendor SAI .so]
+      BGP[bgp&lt;br/&gt;FRR + fpmsyncd]
+      TM[teamd]
+      LL[lldp]
+      SN[snmp]
+      DR[dhcp_relay]
+      RA[radv]
+      PMON[pmon&lt;br/&gt;xcvrd / psud / ledd]
+      MF[mgmt-framework]
+      GN[gnmi]
+      TEL[telemetry]
+    end
+    subgraph DBS[論理 DB - 単一 Redis instance 内]
+      direction LR
+      CFG[(CONFIG_DB id=4)]
+      APPL[(APPL_DB id=0)]
+      ASDB[(ASIC_DB id=1)]
+      ST[(STATE_DB id=6)]
+      COU[(COUNTERS_DB id=2)]
+    end
+  end
+  PORT[front panel ports]
+  MGMT[management port - eth0]
+  ASIC[ASIC vendor SDK + ASIC]
+
+  CFG -.-&gt; SW
+  CFG -.-&gt; BGP
+  SW --&gt; APPL
+  SW --&gt; ASDB
+  ASDB --&gt; SY
+  SY &lt;--&gt; ASIC
+  ASIC &lt;--&gt; PORT
+  BGP &lt;--&gt; KERN
+  KERN -. FPM .-&gt; BGP
+  MGMT --&gt; KERN
+  MF --&gt; CFG
+  GN --&gt; CFG
+  TEL -.read.-&gt; COU
+  SY -.observed.-&gt; ST</code></pre>
+<p>この章のサブページでは、上図のうち <strong>CONFIG_DB → swss container 内 manager 群 → <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> → orchagent → <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a></strong> の経路を中心に扱う。同様の俯瞰図と Essentials 10 は <a href="../../getting-started/">全体俯瞰と必読 10</a> に置いてあるので、最初の 10 分はそちらから入ると良い。</p>
 <h2 id="_2">サブページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="concept/">概念と読み始め方</a>: 読者別の最短導線、CLI / ConfigDB / YANG / GCU の役割、既存 guides / categories の使い方。</li>
@@ -35952,7 +36013,7 @@
 <tbody>
 <tr>
 <td>concept</td>
-<td>153</td>
+<td>209</td>
 <td>✅ 完成</td>
 <td>meta</td>
 <td>概念・位置付け</td>
@@ -36048,7 +36109,7 @@
 <li><a href="../11-reboot/">Reboot / Upgrade / Lifecycle</a></li>
 <li><a href="../21-lab-vs-developer/">Lab / Virtual SONiC / Developer Entry</a></li>
 </ul>
-<!-- glossary-links-injected: 3abb11a5818e -->
+<!-- glossary-links-injected: 7014a8c73f96 -->
 
 
 
