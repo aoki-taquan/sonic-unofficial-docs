@@ -2,7 +2,7 @@
 title: 変更履歴
 description: "変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。"
 verification: meta
-last_verified: 2026-06-06
+last_verified: 2026-06-16
 tags:
   - changelog
   - meta
@@ -23,6 +23,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-06 #5478 fix(quality): iter15 integration (15 rewrites)
 - 2026-06-06 #5462 fix(quality): iter14 integration (15 rewrites)
 - 2026-06-06 #5446 fix(quality): iter13 integration (15 rewrites)
 - 2026-06-06 #5430 fix(quality): iter12 integration (13 rewrites)
@@ -525,5 +526,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3966 docs(config-db): add Phase F side-effects block to ip-mcast-route
 - 2026-05-19 #3965 docs(config-db): add Phase H platform block to fabric-port
 - 2026-05-19 #3963 docs(config-db): add Phase E hardcoded-constants block to NVGRE_TUNNEL
-- 2026-05-19 #3962 docs(config-db): add Phase H platform block to subnet-decap
 
