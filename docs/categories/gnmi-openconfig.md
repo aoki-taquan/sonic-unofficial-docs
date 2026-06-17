@@ -26,7 +26,7 @@ related:
 
 ## コンポーネント関係図
 
-gNMI / gNOI クライアント（コントローラ / NMS）から SONiC NPU 内部の各種 DB に至る経路と、別系統で動く gNOI RPC の宛先（ホストサービス）を 1 枚にまとめる。telemetry コンテナ内の sonic-gnmi server が gNMI（Get / Set / Subscribe）と gNOI を受け、Translib（sonic-mgmt-common）経由で OpenConfig YANG を SONiC YANG にマップして CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB に到達する。gNOI 系（OS install / system reboot / factory reset 等）は YANG / DB ではなく DBUS でホスト側サービスに渡る別経路である。
+gNMI / gNOI クライアント（コントローラ / NMS）から SONiC [NPU](../reference/glossary.md#term-npu) 内部の各種 DB に至る経路と、別系統で動く gNOI RPC の宛先（ホストサービス）を 1 枚にまとめる。telemetry コンテナ内の sonic-gnmi server が gNMI（Get / Set / Subscribe）と gNOI を受け、Translib（[sonic-mgmt](../reference/glossary.md#term-sonic-mgmt)-common）経由で OpenConfig YANG を SONiC YANG にマップして CONFIG_DB / [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) / [COUNTERS_DB](../reference/glossary.md#term-counters_db) に到達する。gNOI 系（OS install / system reboot / factory reset 等）は YANG / DB ではなく DBUS でホスト側サービスに渡る別経路である。
 
 ```mermaid
 flowchart LR
@@ -167,4 +167,4 @@ YANG リファレンスは全件 `code-verified`。詳細は [reference/yang イ
 - [MIB / SNMP 関連](mib-snmp.md)
 - [Container / Build system 関連](container-build.md)
 
-<!-- glossary-links-injected: 7ac8e66e1af3 -->
+<!-- glossary-links-injected: 29fab7ae151c -->
