@@ -11,6 +11,9 @@ site_dir: site
 theme:
   name: material
   language: ja
+  # <head> への要素追加（Google Search Console 認証メタタグ等）のためのオーバーライド。
+  # overrides/main.html が base.html の extra_head ブロックを拡張する。
+  custom_dir: overrides
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
