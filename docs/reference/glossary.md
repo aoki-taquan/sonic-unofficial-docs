@@ -1592,7 +1592,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [gNMI](#term-gnmi)
 
 - [サイトマップ](../_meta/sitemap.md) (78)
-- [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (29)
+- [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (32)
 - [GNMI / GNMI_CLIENT_CERT テーブル](config-db/gnmi.md) (24)
 - [TELEMETRY テーブル](config-db/telemetry.md) (23)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (23)
@@ -1603,15 +1603,15 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）](../architecture/sonic-generic-configuration-update-and-rollback.md) (8)
 - [サイトマップ](../_meta/sitemap.md) (6)
 - [設定変更の選び方](../topics/01-overview/configuration.md) (6)
-- [概念と読み始め方](../topics/01-overview/concept.md) (5)
+- [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (5)
 
 ### [gNOI](#term-gnoi)
 
 - [サイトマップ](../_meta/sitemap.md) (27)
+- [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (21)
 - [Wake-on-LAN（wol CLI と SonicWolService gNOI）](../switching/wake-on-lan-in-sonic.md) (21)
 - [gNOI / gNSI](../topics/10-gnmi-openconfig/gnoi-gnsi.md) (20)
 - [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../system/smart-switch-reboot-high-level-design.md) (18)
-- [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (16)
 
 ### [Graceful Restart](#term-graceful-restart)
 
@@ -2389,7 +2389,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [YANG](#term-yang)
 
 - [サイトマップ](../_meta/sitemap.md) (243)
-- [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (52)
+- [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (57)
 - [SmartSwitch 関連テーブル (MID_PLANE_BRIDGE / DHCP_SERVER_IPV4_PORT)](config-db/smart-switch.md) (40)
 - [NTP_SERVER テーブル](config-db/ntp-server.md) (39)
 - [MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル](config-db/mclag-domain.md) (35)
