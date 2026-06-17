@@ -2164,7 +2164,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [SmartNIC](#term-smartnic)
 
 - [DASH と SmartSwitch の考え方](../topics/13-dash-smartswitch/concept.md) (4)
-- [DASH 関連](../categories/dash.md) (1)
+- [DASH 関連](../categories/dash.md) (2)
 - [横断カテゴリ](../categories/index.md) (1)
 - [SmartSwitch 関連](../categories/smartswitch.md) (1)
 - [Overlay 設定](../topics/03-vxlan-evpn/setup.md) (1)
