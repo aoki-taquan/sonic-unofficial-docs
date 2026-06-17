@@ -1806,8 +1806,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [Multi-ASIC](#term-multi-asic)
 
 - [サイトマップ](../_meta/sitemap.md) (26)
+- [Multi-ASIC / VOQ chassis 関連](../categories/multi-asic.md) (20)
 - [概念](../topics/12-multi-asic-voq/concept.md) (19)
-- [Multi-ASIC / VOQ chassis 関連](../categories/multi-asic.md) (16)
 - [Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md) (11)
 - [設定](../topics/20-swss-sai-redis/setup.md) (10)
 
