@@ -26,6 +26,51 @@ VOQ シャシでは **CHASSIS_APP_DB** が新しい広域 DB として登場し�
 
 主要キーワード: `Multi-ASIC`, `VOQ`, `chassis`, `namespace`, `fabric`, `line card`, `supervisor`, `CHASSIS_APP_DB`, `system-port`
 
+## 構成概念図（Multi-ASIC namespace と VOQ chassis）
+
+単一筐体の Multi-ASIC（host + asic0/asic1 namespace）と、VOQ chassis（supervisor + 複数 line card、midplane 経由で chassisdb を共有）の対応関係を 1 枚にまとめた図です。各 ASIC namespace は専用の `database` / `swss` / `syncd` コンテナを持ち、chassis 全体では supervisor 上の **chassisdb**（`redis_chassis` インスタンスに載る `CHASSIS_APP_DB`）が `SYSTEM_PORT_TABLE` / `SYSTEM_NEIGH` / `SYSTEM_LAG_TABLE` を保持して system-port / system-LAG を広域同期します。
+
+```mermaid
+flowchart TB
+    subgraph SUP["Supervisor (VOQ chassis 制御カード)"]
+        SUPHOST["host namespace<br/>(hostcfgd / pmon-supervisor)"]
+        CDB[("chassisdb<br/>redis_chassis<br/>CHASSIS_APP_DB:<br/>SYSTEM_PORT / NEIGH / LAG_TABLE")]
+        SUPHOST --- CDB
+    end
+
+    subgraph LC1["Line Card 1 (Multi-ASIC NPU)"]
+        LC1HOST["host namespace<br/>(database/swss/bgp など global)"]
+        subgraph LC1A0["asic0 namespace"]
+            A0DB[("database@asic0<br/>APPL/ASIC/COUNTERS_DB")]
+            A0SWSS["swss@asic0<br/>(orchagent)"]
+            A0SYNCD["syncd@asic0<br/>(SAI → NPU0)"]
+        end
+        subgraph LC1A1["asic1 namespace"]
+            A1DB[("database@asic1")]
+            A1SWSS["swss@asic1"]
+            A1SYNCD["syncd@asic1"]
+        end
+        LC1HOST --- A0DB
+        LC1HOST --- A1DB
+    end
+
+    subgraph LCN["Line Card N ..."]
+        LCNHOST["host + asic0..asicM namespace"]
+    end
+
+    SUP <-->|midplane interconnect<br/>internal mgmt network| LC1
+    SUP <-->|midplane| LCN
+    CDB <-.SYSTEM_PORT 同期.-> LC1HOST
+    CDB <-.SYSTEM_PORT 同期.-> LCNHOST
+
+    classDef ns fill:#eef6ff,stroke:#3a78c2
+    classDef db fill:#fff1d6,stroke:#c28a3a
+    class LC1A0,LC1A1,SUPHOST,LC1HOST,LCNHOST ns
+    class CDB,A0DB,A1DB db
+```
+
+凡例: 実線 = ローカル namespace 間の制御接続、midplane 矢印 = chassis 内部 management network 経由の接続、点線 = `chassisdb` から各 line card への CHASSIS_APP_DB レプリ／参照経路。詳細は [VoQ SONiC](../platform/voq-sonic.md) / [Multi-ASIC platforms](../platform/1-sonic-on-multi-asic-platforms.md) / [namespace 別 Redis](../internals/support-redis-databases-in-multiple-namespaces.md) を参照。
+
 ## 関連ページ
 
 ### platform（HW / VOQ / fabric / line card）
