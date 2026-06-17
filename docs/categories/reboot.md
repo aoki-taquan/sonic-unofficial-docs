@@ -24,6 +24,43 @@ related:
 
 主要キーワード: `warm reboot`, `fast reboot`, `warm restart`, `kexec`, `SWSS`, `docker`, `libsairedis idempotence`
 
+## カテゴリ内 component 関係図
+
+warm-reboot / fast-reboot の主要 component と順序を 1 枚にまとめたものです。各ノードはおおむね `sonic-utilities/scripts/{warm-reboot,fast-reboot,reboot}` および swss/syncd の warm restart hook、`STATE_DB:WARM_RESTART_TABLE` を参照しています。
+
+```mermaid
+flowchart TD
+    OP[Operator: warm-reboot / fast-reboot CLI]
+    SCRIPT[scripts/warm-reboot or fast-reboot<br/>config WARM_RESTART_ENABLE_TABLE]
+    BGP[bgp container<br/>FRR graceful restart + zebra]
+    TEAMD[teamd container<br/>LACP retry count 拡張]
+    SWSS[swss/orchagent<br/>warm-shutdown 通知]
+    SYNCD[syncd<br/>SAI dump + saiwarmboot.bin]
+    WRT[(STATE_DB<br/>WARM_RESTART_TABLE)]
+    KEXEC[kexec: 新 kernel へジャンプ]
+    BOOT[新 kernel 起動<br/>SAI sai_api_initialize<br/>SAI_INIT_DATA_TYPE_WARM_BOOT]
+    RESTORE[各 daemon: WARM_RESTART_TABLE を読んで状態復元<br/>orchagent reconciliation / FRR EOR / teamd resync]
+    FINAL[finalizer: warm-restart 状態解除 → 通常運用]
+
+    OP --> SCRIPT
+    SCRIPT -->|warm-shutdown request| BGP
+    SCRIPT -->|warm-shutdown request| TEAMD
+    SCRIPT -->|warm-shutdown request| SWSS
+    SWSS -->|stop| SYNCD
+    SYNCD -->|dump ASIC state| WRT
+    SWSS --> WRT
+    BGP --> WRT
+    TEAMD --> WRT
+    SCRIPT --> KEXEC
+    KEXEC --> BOOT
+    BOOT --> SYNCD
+    SYNCD --> RESTORE
+    WRT --> RESTORE
+    RESTORE --> FINAL
+```
+
+参考実装: `sonic-utilities/scripts/warm-reboot` / `fast-reboot` / `reboot`、`sonic-swss/orchagent/warmRestartHelper.*`、`sonic-sairedis/syncd/SaiSwitch.cpp`（`SAI_INIT_DATA_TYPE_WARM_BOOT`）、`fast-reboot-dump.py`（fast-reboot 用 [FDB](../reference/glossary.md#term-fdb)/[ARP](../reference/glossary.md#term-arp) dump）。
+
 ## 関連ページ
 
 ### system（HLD / 全体順序）
@@ -74,11 +111,11 @@ related:
 - [SmartSwitch 関連](smartswitch.md)
 - [SAI 拡張属性追加系](sai-extensions.md)
 
-<!-- glossary-links-injected: 5c9b3765d470 -->
-
 <!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e4b2e36fdb1e -->
