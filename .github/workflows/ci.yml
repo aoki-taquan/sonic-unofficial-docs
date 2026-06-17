@@ -151,7 +151,10 @@ jobs:
         run: python3 meta/scripts/check_link_density.py --strict-split-child
 
       # --- generator drift checks (strict, run_all_checks.sh に集約) ----
+      # gen_changelog.py が `gh pr list --state merged` を使うため GH_TOKEN を渡す
       - name: All generator drift checks (strict)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash meta/scripts/run_all_checks.sh
 
       # snapshot / chapter-progress / next-reads は run_all_checks.sh に
