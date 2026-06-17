@@ -4,7 +4,7 @@ description: gNMI / gNOI / OpenConfig 関連カテゴリのインデックス。
   / GCU / YANG / Telemetry / gNOI を扱うページを area 横断でまとめる。
 area: categories
 verification: meta
-last_verified: 2026-06-06
+last_verified: 2026-06-17
 related:
   cli: []
   config_db: []
@@ -23,6 +23,44 @@ related:
 このカテゴリは gNMI / gNOI / OpenConfig / YANG・Management Framework に関わるページを area 横断でまとめる。本カテゴリは関連ページが最も多く、YANG リファレンスが大半を占めるのは設計通りである。
 
 主要キーワード: `gNMI`, `gNOI`, `OpenConfig`, `YANG`, `REST`, `Management Framework`, `telemetry`, `GCU`, `Translib`
+
+## コンポーネント関係図
+
+gNMI / gNOI クライアント（コントローラ / NMS）から SONiC NPU 内部の各種 DB に至る経路と、別系統で動く gNOI RPC の宛先（ホストサービス）を 1 枚にまとめる。telemetry コンテナ内の sonic-gnmi server が gNMI（Get / Set / Subscribe）と gNOI を受け、Translib（sonic-mgmt-common）経由で OpenConfig YANG を SONiC YANG にマップして CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB に到達する。gNOI 系（OS install / system reboot / factory reset 等）は YANG / DB ではなく DBUS でホスト側サービスに渡る別経路である。
+
+```mermaid
+flowchart LR
+  client["gNMI / gNOI クライアント<br/>(controller / NMS)"]
+
+  subgraph telemetry["telemetry コンテナ"]
+    server["sonic-gnmi server<br/>(/usr/sbin/telemetry)"]
+    translib["Translib / Transformer<br/>(sonic-mgmt-common)"]
+    yang["SONiC YANG / OpenConfig YANG"]
+  end
+
+  subgraph redis["Redis (NPU)"]
+    configdb[(CONFIG_DB)]
+    appldb[(APPL_DB)]
+    statedb[(STATE_DB)]
+    countersdb[(COUNTERS_DB)]
+  end
+
+  host["ホスト DBUS サービス<br/>(sonic-installer / reboot / factory-reset)"]
+
+  client -- "Subscribe (ON_CHANGE / SAMPLE / TARGET_DEFINED)" --> server
+  client -- "Get / Set (gNMI)" --> server
+  client -- "gNOI RPC (OS / System / FactoryReset)" --> server
+
+  server --> translib --> yang
+  yang -- "config path" --> configdb
+  yang -- "state path" --> appldb
+  yang -- "state path" --> statedb
+  yang -- "counters path" --> countersdb
+
+  server -. "DBUS" .-> host
+```
+
+実装では `gnmi_native_write` ビルドタグで SONiC YANG を直接書く経路と、`gnmi_translib_write` で OpenConfig 経路を通す 2 系統が共存する点に注意（本図では概念上 1 本にまとめている）。詳細な分岐とサービス分割は [sonic-gnmi-server-interface-design.md](../management/sonic-gnmi-server-interface-design.md) を参照。
 
 ## 関連ページ
 
