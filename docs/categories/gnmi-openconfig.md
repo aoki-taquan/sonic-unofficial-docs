@@ -24,6 +24,49 @@ related:
 
 主要キーワード: `gNMI`, `gNOI`, `OpenConfig`, `YANG`, `REST`, `Management Framework`, `telemetry`, `GCU`, `Translib`
 
+## カテゴリ全体像（gNMI / gNOI / OpenConfig dataflow）
+
+クライアント（NMS / コントローラ）から見た gNMI Subscribe / Get / Set と gNOI RPC が、`telemetry` コンテナ内の sonic-gnmi server を起点に、SONiC YANG（native path）と OpenConfig YANG（translib path）の二系統に分岐し、最終的に [Redis](../reference/glossary.md#term-redis) 上の各 DB / DBUS 経由のホストサービスに到達する構造を示す。
+
+```mermaid
+flowchart LR
+  client["gNMI / gNOI クライアント<br/>(NMS / controller / gnmi_cli)"]
+
+  subgraph telemetry["telemetry container"]
+    gnmiServer["sonic-gnmi server<br/>(gnmi_server / telemetry)"]
+    gnoiServer["gNOI server<br/>(pkg/gnoi: system / os / file / factory_reset / healthz)"]
+  end
+
+  subgraph paths["データパス"]
+    nativeClient["sonic_data_client<br/>(native: gnmi_native_write)"]
+    translib["transl_utils → sonic-mgmt-common/translib<br/>(OpenConfig: gnmi_translib_write)"]
+    yang["YANG (SONiC YANG / OpenConfig YANG)<br/>CVL 検証 + GCU JSON Patch"]
+  end
+
+  subgraph redis["Redis (各 DB)"]
+    configDb["CONFIG_DB"]
+    applDb["APPL_DB"]
+    stateDb["STATE_DB"]
+    countersDb["COUNTERS_DB"]
+  end
+
+  hostSvc["DBUS host services<br/>(sonic_service_client → sonic-host-services)"]
+
+  client -- "Subscribe / Get / Set" --> gnmiServer
+  client -- "gNOI RPC<br/>(Reboot / OS.Install / FactoryReset / Healthz)" --> gnoiServer
+  gnmiServer --> nativeClient
+  gnmiServer --> translib
+  translib --> yang
+  nativeClient --> yang
+  yang --> configDb
+  nativeClient -. "telemetry subscribe" .-> applDb
+  nativeClient -. "telemetry subscribe" .-> stateDb
+  nativeClient -. "telemetry subscribe" .-> countersDb
+  gnoiServer --> hostSvc
+```
+
+主な参照: sonic-gnmi (`telemetry/`, `gnmi_server/`, `sonic_data_client/`, `pkg/gnoi/`, `sonic_service_client/`), [sonic-mgmt](../reference/glossary.md#term-sonic-mgmt)-common (`translib/`), sonic-host-services。詳細な責務分担と build tag 切替は [SONiC Management Framework](../management/sonic-management-framework.md) と [sonic-gnmi Server インタフェース設計](../management/sonic-gnmi-server-interface-design.md) を参照。
+
 ## 関連ページ
 
 ### management（HLD 本体・最重要）
@@ -129,4 +172,4 @@ YANG リファレンスは全件 `code-verified`。詳細は [reference/yang イ
 - [MIB / SNMP 関連](mib-snmp.md)
 - [Container / Build system 関連](container-build.md)
 
-<!-- glossary-links-injected: 7ac8e66e1af3 -->
+<!-- glossary-links-injected: aec857b28bfc -->
