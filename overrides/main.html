@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{#
+  mkdocs-material のテーマを上書きして <head> に要素を追加するためのオーバーライド。
+  mkdocs-material の base.html の `extrahead` ブロックに差し込まれる。
+#}
+{% block extrahead %}
+  {# Google Search Console のサイト所有権確認用メタタグ #}
+  <meta name="google-site-verification" content="F3cPeDNtDZ0WkWwSRo-4zXq0sLR9M9v2z1nZU2fxA68" />
+{% endblock %}
