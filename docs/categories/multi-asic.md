@@ -26,6 +26,65 @@ VOQ シャシでは **CHASSIS_APP_DB** が新しい広域 DB として登場し�
 
 主要キーワード: `Multi-ASIC`, `VOQ`, `chassis`, `namespace`, `fabric`, `line card`, `supervisor`, `CHASSIS_APP_DB`, `system-port`
 
+## カテゴリ構成図
+
+下図は Multi-ASIC プラットフォームと VOQ chassis の主要コンポーネント配置を示します。host namespace と各 ASIC namespace (`asic0` / `asic1` / ...) は同一物理スイッチ内に同居し、`database` / `swss` / `syncd` container がそれぞれ namespace ごとに動作します。VOQ chassis では複数の Line Card (LC) と Supervisor (SUP) が midplane で相互接続され、SUP 上の chassisdb が CHASSIS_APP_DB として system-port / system-LAG / SYSTEM_NEIGH を全 LC で共有します。
+
+```mermaid
+flowchart TB
+    subgraph SUP["Supervisor (VOQ chassis)"]
+        direction TB
+        chassisdb[("chassisdb<br/>(CHASSIS_APP_DB)<br/>system-port / system-LAG / SYSTEM_NEIGH")]
+        fabric_asic["fabric ASIC<br/>(spectator / link monitoring)"]
+    end
+
+    subgraph LC1["Line Card 1 (Multi-ASIC)"]
+        direction TB
+        subgraph host1["host namespace"]
+            db_global1[("database_global.json<br/>SonicDBConfig")]
+            pmon1["pmon container"]
+            bgp_host1["host BGP / TSA"]
+        end
+        subgraph ns_a0["asic0 namespace"]
+            db_a0[("database (Redis)")]
+            swss_a0["swss<br/>(orchagent)"]
+            syncd_a0["syncd<br/>(SAI to ASIC0)"]
+        end
+        subgraph ns_a1["asic1 namespace"]
+            db_a1[("database (Redis)")]
+            swss_a1["swss<br/>(orchagent)"]
+            syncd_a1["syncd<br/>(SAI to ASIC1)"]
+        end
+        db_global1 -. "参照" .-> db_a0
+        db_global1 -. "参照" .-> db_a1
+        swss_a0 --> syncd_a0
+        swss_a1 --> syncd_a1
+    end
+
+    subgraph LC2["Line Card 2"]
+        direction TB
+        host2["host namespace<br/>(pmon / BGP)"]
+        ns_lc2["asic0..N namespace<br/>(database / swss / syncd)"]
+    end
+
+    chassisdb <==>|"midplane<br/>(redis_chassis)"| host1
+    chassisdb <==>|"midplane"| host2
+    fabric_asic <-->|"fabric link"| syncd_a0
+    fabric_asic <-->|"fabric link"| syncd_a1
+    fabric_asic <-->|"fabric link"| ns_lc2
+
+    syncd_a0 <-. "distributed VoQ forwarding<br/>(system-port 経由)" .-> ns_lc2
+    syncd_a1 <-. "distributed VoQ forwarding" .-> ns_lc2
+```
+
+凡例:
+
+- **host namespace**: `database_global.json` で各 ASIC namespace の Redis を束ね、PMON / 集約 CLI / host BGP / Reliable TSA を担当します
+- **asicN namespace**: per-ASIC の `database` / `swss` / `syncd` container が動作します。orchagent は SAI 経由で対応する ASIC を直接プログラムします
+- **chassisdb**: Supervisor 上の Redis で、全 LC が `redis_chassis` 経由で参照する CHASSIS_APP_DB を提供します
+- **fabric ASIC**: Supervisor 側で line card ASIC 間の fabric link を監視します (spectator role)
+- **distributed VoQ forwarding**: ingress LC が system-port ID で egress を識別し、fabric 経由で転送します
+
 ## 関連ページ
 
 ### platform（HW / VOQ / fabric / line card）
