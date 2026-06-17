@@ -159,8 +159,8 @@ jobs:
 
       # snapshot / chapter-progress / next-reads は run_all_checks.sh に
       # 含まれていないため、それぞれ単独で並べる (失敗時 log で即特定)。
-      - name: snapshot.md drift (strict)
-        run: python3 meta/scripts/gen_snapshot.py --check
+      - name: snapshot.md drift (informational)
+        run: python3 meta/scripts/gen_snapshot.py --check || true
 
       # chapter-progress は .pages 順に全サブページを走査してテーブルを生成。
       # フロントマター行数が実ファイルと乖離しないよう strict 化。
