@@ -24,6 +24,54 @@ EVPN-VXLAN は [FRR](../reference/glossary.md#term-frr) の `bgpd` + `zebra` + E
 
 主要キーワード: `BGP`, `EVPN`, `VXLAN`, `VNET`, `route-map`, `prefix-list`, `prefix-set`, `BMP`, `BFD`, `PIC`, `FRR`, `bgpcfgd`
 
+## カテゴリ構成図
+
+下記は本カテゴリのページ群が SONiC の BGP / EVPN データパス上でどの位置に該当するかを俯瞰したものです。CONFIG_DB から FRR への翻訳層、FRR から ASIC への route program 経路、EVPN-VXLAN 周辺の orch を主軸に整理しています。
+
+```mermaid
+flowchart TB
+  subgraph CFG["CONFIG layer (CONFIG_DB)"]
+    CDB["BGP_GLOBALS / BGP_NEIGHBOR / BGP_PEER_GROUP<br/>PREFIX_LIST / PREFIX_SET / ROUTE_MAP<br/>VXLAN_TUNNEL / VXLAN_TUNNEL_MAP / VNET"]
+  end
+
+  subgraph TR["Translation (docker-fpm-frr)"]
+    BGPCFGD["bgpcfgd / frrcfgd<br/>(jinja2 → frr.conf / vtysh)"]
+  end
+
+  subgraph FRR["FRR (docker-fpm-frr)"]
+    BGPD["bgpd<br/>(BGP / EVPN AFI-SAFI / Type-2,5)"]
+    ZEBRA["zebra"]
+    FPM["FPM (dplane_fpm_nl)"]
+  end
+
+  subgraph SWSS["swss (sonic-swss)"]
+    FPMSYNCD["fpmsyncd<br/>(Netlink → APPL_DB)"]
+    APPL["APPL_DB<br/>ROUTE_TABLE / NEXTHOP_GROUP_TABLE / VNET_ROUTE_TUNNEL_TABLE"]
+    ORCH["orchagent<br/>RouteOrch / NhgOrch / VnetOrch<br/>VxlanOrch / EvpnNvoOrch"]
+    BMPCFG["bmpcfgd / BMP_STATE_DB"]
+  end
+
+  subgraph ASIC["ASIC layer"]
+    ASICDB["ASIC_DB"]
+    SYNCD["syncd → SAI → ASIC"]
+  end
+
+  CDB --> BGPCFGD --> BGPD
+  BGPD <--> ZEBRA --> FPM --> FPMSYNCD --> APPL --> ORCH --> ASICDB --> SYNCD
+  BGPD -. "BMP export" .-> BMPCFG
+```
+
+ページ群の位置づけ:
+
+- **CONFIG_DB / YANG** (`bgp-globals` / `bgp-neighbor` / `route-map` / `vxlan-tunnel` / `sonic-bgp-global` 等): 図中 `CDB` ノード
+- **frrcfgd / [bgpcfgd](../reference/glossary.md#term-bgpcfgd)-dynamic-peer-modification / bgp-router-id**: 図中 `BGPCFGD` ノード
+- **evpn-vxlan-hld / evpn-vxlan-multihoming / bgp-route-aggregation / VoQ 向け BGP**: 図中 `BGPD` ノード
+- **bgp-loading-optimization / bgp-suppress-fib-pending / bgp-pic / bgp-route-install-error-handling**: 図中 `FPMSYNCD` ⇔ `APPL` ⇔ `ORCH` の経路
+- **vxlan-sonic / vnet-local-endpoint-forwarding / overlay-ecmp-with-bfd / weighted-ecmp / PBH**: 図中 `ORCH` ノード
+- **bmp-for-monitoring-sonic-bgp-info**: 図中 `BMPCFG` ノード
+
+実装の所在: 翻訳層は [sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) `dockers/docker-fpm-frr/` 配下、orch 群は [sonic-swss](../reference/glossary.md#term-sonic-swss) `orchagent/`（`routeorch.cpp` / `nhgorch.cpp` / `vnetorch.cpp` / `vxlanorch.cpp` 等）、`*cfgd` 系は `sonic-swss/cfgmgr/`。
+
 ## 関連ページ
 
 ### routing（BGP / EVPN HLD 本体）
@@ -115,4 +163,4 @@ EVPN-VXLAN は [FRR](../reference/glossary.md#term-frr) の `bgpd` + `zebra` + E
 - [Multi-ASIC / VOQ chassis 関連](multi-asic.md)
 - [gNMI / gNOI / OpenConfig 関連](gnmi-openconfig.md)
 
-<!-- glossary-links-injected: 6fc493a71451 -->
+<!-- glossary-links-injected: 7d57ed947e8f -->
