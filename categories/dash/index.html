@@ -35508,6 +35508,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#dash_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DASH コンポーネント関係図
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35915,6 +35926,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#dash_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DASH コンポーネント関係図
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36046,6 +36068,35 @@
 </ul>
 <p>SmartSwitch（NPU と DPU の組み合わせ）や VNET（オーバーレイのデータプレーン）、<a href="../../reference/glossary/#term-sai">SAI</a> 拡張（capability 問い合わせ）と合わせて参照してください。</p>
 <p>主要キーワード: <code>DASH</code>, <code>DPU</code>, <code>ACL</code>, <code>SONiC-DASH</code>, <code>BMv2</code>, <code>DPU_APPL_DB</code>, <code>libdashapi</code></p>
+<h2 id="dash_1">DASH コンポーネント関係図<a class="headerlink" href="#dash_1" title="Permanent link">&para;</a></h2>
+<p>DASH 関連の主要コンポーネントと、設定（management plane）がどう DPU データプレーンへ届くかを示します。実線は設定 / 制御の流れ、点線は HA 制御プレーンを表します。</p>
+<pre class="mermaid"><code>flowchart LR
+  subgraph MGMT["管理プレーン"]
+    GNMI["sonic-gnmi&lt;br/&gt;(DASH gNMI スキーマ)"]
+    DASHAPI["sonic-dash-api&lt;br/&gt;(libdashapi / protobuf)"]
+  end
+
+  subgraph NPU["NPU 側 (SONiC)"]
+    CFGDB[("CONFIG_DB / APPL_DB&lt;br/&gt;DASH_*_TABLE")]
+    ORCH["sonic-swss orchagent/dash/&lt;br/&gt;dashorch / dashaclorch /&lt;br/&gt;dashvnetorch / dashrouteorch /&lt;br/&gt;dashhaorch / dashenifwdorch ..."]
+    SAI["SAI DASH API&lt;br/&gt;(dash-sai ヘッダ)"]
+    HACTL["sonic-dash-ha&lt;br/&gt;(HA 制御プレーン)"]
+  end
+
+  subgraph DPU_SIDE["DPU / SmartNIC 側"]
+    DPUDB[("DPU_APPL_DB")]
+    PIPE["DASH P4 パイプライン&lt;br/&gt;(BMv2 参照実装 / ベンダー DPU)"]
+  end
+
+  GNMI --&gt; CFGDB
+  DASHAPI --&gt; CFGDB
+  CFGDB --&gt; ORCH
+  ORCH --&gt; SAI
+  SAI --&gt; DPUDB
+  DPUDB --&gt; PIPE
+  HACTL -.-&gt; ORCH
+  HACTL -.-&gt; DPU_SIDE</code></pre>
+<p>出典: <code>sonic-swss/orchagent/dash/</code> の orch 群、<code>sonic-buildimage/src/{sonic-dash-api,dash-sai,sonic-dash-ha}</code> submodule、<code>sonic-net/DASH</code> リポの <code>dash-pipeline/</code> BMv2 P4 リファレンス実装。</p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="overlay">overlay / アーキテクチャ<a class="headerlink" href="#overlay" title="Permanent link">&para;</a></h3>
 <ul>

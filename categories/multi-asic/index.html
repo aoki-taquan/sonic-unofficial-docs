@@ -35620,6 +35620,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#multi-asic-namespace-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        構成概念図（Multi-ASIC namespace と VOQ chassis）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35937,6 +35948,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#multi-asic-namespace-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        構成概念図（Multi-ASIC namespace と VOQ chassis）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36084,6 +36106,45 @@
 <p>このカテゴリは Multi-ASIC と VOQ chassis に関わるページを area 横断でまとめます。<strong>platform</strong>（VOQ / fabric / recirculation port サポート、provisiond、Golden Config）・<strong>internals</strong>（namespace ごとの Redis、VOQ counter aggregation）・<strong>system</strong>（Multi-ASIC warm-reboot、PMON、Entity MIB）・<strong>routing</strong>（VoQ 向け BGP、reliable TSA）・<strong>switching</strong>（system-LAG）・<strong>acl-qos</strong>（VOQ 分散転送）に分散しています。</p>
 <p>VOQ シャシでは <strong>CHASSIS_APP_DB</strong> が新しい広域 DB として登場し、<code>SYSTEM_NEIGH</code> / <code>SYSTEM_LAG_TABLE</code> / <code>SYSTEM_PORT_TABLE</code> が含まれます。Multi-ASIC のもう一つの軸である <strong>fabric ASIC</strong> は fabric link monitoring / spectator role を持ち、ライン カード ASIC と区別されます。</p>
 <p>主要キーワード: <code>Multi-ASIC</code>, <code>VOQ</code>, <code>chassis</code>, <code>namespace</code>, <code>fabric</code>, <code>line card</code>, <code>supervisor</code>, <code>CHASSIS_APP_DB</code>, <code>system-port</code></p>
+<h2 id="multi-asic-namespace-voq-chassis">構成概念図（Multi-ASIC namespace と VOQ chassis）<a class="headerlink" href="#multi-asic-namespace-voq-chassis" title="Permanent link">&para;</a></h2>
+<p>単一筐体の Multi-ASIC（host + asic0/asic1 namespace）と、VOQ chassis（supervisor + 複数 line card、midplane 経由で chassisdb を共有）の対応関係を 1 枚にまとめた図です。各 ASIC namespace は専用の <code>database</code> / <code>swss</code> / <code>syncd</code> コンテナを持ち、chassis 全体では supervisor 上の <strong>chassisdb</strong>（<code>redis_chassis</code> インスタンスに載る <code>CHASSIS_APP_DB</code>）が <code>SYSTEM_PORT_TABLE</code> / <code>SYSTEM_NEIGH</code> / <code>SYSTEM_LAG_TABLE</code> を保持して system-port / system-LAG を広域同期します。</p>
+<pre class="mermaid"><code>flowchart TB
+    subgraph SUP["Supervisor (VOQ chassis 制御カード)"]
+        SUPHOST["host namespace&lt;br/&gt;(hostcfgd / pmon-supervisor)"]
+        CDB[("chassisdb&lt;br/&gt;redis_chassis&lt;br/&gt;CHASSIS_APP_DB:&lt;br/&gt;SYSTEM_PORT / NEIGH / LAG_TABLE")]
+        SUPHOST --- CDB
+    end
+
+    subgraph LC1["Line Card 1 (Multi-ASIC NPU)"]
+        LC1HOST["host namespace&lt;br/&gt;(database/swss/bgp など global)"]
+        subgraph LC1A0["asic0 namespace"]
+            A0DB[("database@asic0&lt;br/&gt;APPL/ASIC/COUNTERS_DB")]
+            A0SWSS["swss@asic0&lt;br/&gt;(orchagent)"]
+            A0SYNCD["syncd@asic0&lt;br/&gt;(SAI → NPU0)"]
+        end
+        subgraph LC1A1["asic1 namespace"]
+            A1DB[("database@asic1")]
+            A1SWSS["swss@asic1"]
+            A1SYNCD["syncd@asic1"]
+        end
+        LC1HOST --- A0DB
+        LC1HOST --- A1DB
+    end
+
+    subgraph LCN["Line Card N ..."]
+        LCNHOST["host + asic0..asicM namespace"]
+    end
+
+    SUP &lt;--&gt;|midplane interconnect&lt;br/&gt;internal mgmt network| LC1
+    SUP &lt;--&gt;|midplane| LCN
+    CDB &lt;-.SYSTEM_PORT 同期.-&gt; LC1HOST
+    CDB &lt;-.SYSTEM_PORT 同期.-&gt; LCNHOST
+
+    classDef ns fill:#eef6ff,stroke:#3a78c2
+    classDef db fill:#fff1d6,stroke:#c28a3a
+    class LC1A0,LC1A1,SUPHOST,LC1HOST,LCNHOST ns
+    class CDB,A0DB,A1DB db</code></pre>
+<p>凡例: 実線 = ローカル namespace 間の制御接続、midplane 矢印 = chassis 内部 management network 経由の接続、点線 = <code>chassisdb</code> から各 line card への CHASSIS_APP_DB レプリ／参照経路。詳細は <a href="../../platform/voq-sonic/">VoQ SONiC</a> / <a href="../../platform/1-sonic-on-multi-asic-platforms/">Multi-ASIC platforms</a> / <a href="../../internals/support-redis-databases-in-multiple-namespaces/">namespace 別 Redis</a> を参照。</p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="platformhw-voq-fabric-line-card">platform（HW / VOQ / fabric / line card）<a class="headerlink" href="#platformhw-voq-fabric-line-card" title="Permanent link">&para;</a></h3>
 <ul>

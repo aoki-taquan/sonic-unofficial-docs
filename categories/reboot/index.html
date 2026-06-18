@@ -35592,6 +35592,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#component" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        カテゴリ内 component 関係図
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35926,6 +35937,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#component" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        カテゴリ内 component 関係図
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36061,6 +36083,37 @@
 <p>このカテゴリは、warm/fast reboot に関わるページを area 横断でまとめます。<strong>system</strong>（warm-reboot 全体順序・SWSS docker warm restart・libsairedis idempotence・<a href="../../reference/glossary/#term-multi-asic">Multi-ASIC</a> warm-reboot）・<strong>switching</strong>（LACP retry 拡張・<a href="../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> view switching）・<strong>routing</strong>（BGP テストプラン）・<strong>reference</strong>（<code>reboot</code> / <code>fast-reboot</code> / <code>warm-reboot</code> CLI）に分散しています。</p>
 <p>歴史的に warm-reboot は「syncd view comparison 方式」と「libsairedis idempotence 方式」の 2 系統で発展しており、現行マスターは後者ベースです。設計の経緯は <a href="../../system/what-are-the-development-phases-and-scope-for-warm-reboot/"><code>what-are-the-development-phases-and-scope-for-warm-reboot.md</code></a> を参照すると理解しやすいです。</p>
 <p>主要キーワード: <code>warm reboot</code>, <code>fast reboot</code>, <code>warm restart</code>, <code>kexec</code>, <code>SWSS</code>, <code>docker</code>, <code>libsairedis idempotence</code></p>
+<h2 id="component">カテゴリ内 component 関係図<a class="headerlink" href="#component" title="Permanent link">&para;</a></h2>
+<p>warm-reboot / fast-reboot の主要 component と順序を 1 枚にまとめたものです。各ノードはおおむね <code>sonic-utilities/scripts/{warm-reboot,fast-reboot,reboot}</code> および swss/syncd の warm restart hook、<code>STATE_DB:WARM_RESTART_TABLE</code> を参照しています。</p>
+<pre class="mermaid"><code>flowchart TD
+    OP[Operator: warm-reboot / fast-reboot CLI]
+    SCRIPT[scripts/warm-reboot or fast-reboot&lt;br/&gt;config WARM_RESTART_ENABLE_TABLE]
+    BGP[bgp container&lt;br/&gt;FRR graceful restart + zebra]
+    TEAMD[teamd container&lt;br/&gt;LACP retry count 拡張]
+    SWSS[swss/orchagent&lt;br/&gt;warm-shutdown 通知]
+    SYNCD[syncd&lt;br/&gt;SAI dump + saiwarmboot.bin]
+    WRT[(STATE_DB&lt;br/&gt;WARM_RESTART_TABLE)]
+    KEXEC[kexec: 新 kernel へジャンプ]
+    BOOT[新 kernel 起動&lt;br/&gt;SAI sai_api_initialize&lt;br/&gt;SAI_INIT_DATA_TYPE_WARM_BOOT]
+    RESTORE[各 daemon: WARM_RESTART_TABLE を読んで状態復元&lt;br/&gt;orchagent reconciliation / FRR EOR / teamd resync]
+    FINAL[finalizer: warm-restart 状態解除 → 通常運用]
+
+    OP --&gt; SCRIPT
+    SCRIPT --&gt;|warm-shutdown request| BGP
+    SCRIPT --&gt;|warm-shutdown request| TEAMD
+    SCRIPT --&gt;|warm-shutdown request| SWSS
+    SWSS --&gt;|stop| SYNCD
+    SYNCD --&gt;|dump ASIC state| WRT
+    SWSS --&gt; WRT
+    BGP --&gt; WRT
+    TEAMD --&gt; WRT
+    SCRIPT --&gt; KEXEC
+    KEXEC --&gt; BOOT
+    BOOT --&gt; SYNCD
+    SYNCD --&gt; RESTORE
+    WRT --&gt; RESTORE
+    RESTORE --&gt; FINAL</code></pre>
+<p>参考実装: <code>sonic-utilities/scripts/warm-reboot</code> / <code>fast-reboot</code> / <code>reboot</code>、<code>sonic-swss/orchagent/warmRestartHelper.*</code>、<code>sonic-sairedis/syncd/SaiSwitch.cpp</code>（<code>SAI_INIT_DATA_TYPE_WARM_BOOT</code>）、<code>fast-reboot-dump.py</code>（fast-reboot 用 <a href="../../reference/glossary/#term-fdb">FDB</a>/<a href="../../reference/glossary/#term-arp">ARP</a> dump）。</p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="systemhld">system（HLD / 全体順序）<a class="headerlink" href="#systemhld" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36110,14 +36163,14 @@
 <li><a href="../smartswitch/">SmartSwitch 関連</a></li>
 <li><a href="../sai-extensions/">SAI 拡張属性追加系</a></li>
 </ul>
-<!-- glossary-links-injected: 5c9b3765d470 -->
-
 <!-- topics-back-ref -->
 <h2 id="topics_1">関連 Topics<a class="headerlink" href="#topics_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/11-reboot/">Topics: Reboot / Upgrade / Lifecycle</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e4b2e36fdb1e -->
 
 
 
