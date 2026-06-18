@@ -1846,7 +1846,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [NEXTHOP_GROUP_TABLE / CLASS_BASED_NEXT_HOP_GROUP_TABLE](config-db/nhg-table.md) (5)
 - [新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）](../routing/new-frr-sonic-communication-channel.md) (5)
 - [STATIC_ROUTE テーブル](config-db/static-route.md) (3)
-- [EVPN DIP トンネル (動的生成)](config-db/vxlan-evpn-tunnel.md) (2)
+- [BGP / EVPN 関連](../categories/bgp-evpn.md) (2)
 
 ### [Next Hop Group](#term-next-hop-group)
 
