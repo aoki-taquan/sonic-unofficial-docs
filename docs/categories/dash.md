@@ -30,6 +30,41 @@ SmartSwitch（NPU と DPU の組み合わせ）や VNET（オーバーレイの�
 
 主要キーワード: `DASH`, `DPU`, `ACL`, `SONiC-DASH`, `BMv2`, `DPU_APPL_DB`, `libdashapi`
 
+## DASH コンポーネント関係図
+
+DASH 関連の主要コンポーネントと、設定（management plane）がどう DPU データプレーンへ届くかを示します。実線は設定 / 制御の流れ、点線は HA 制御プレーンを表します。
+
+```mermaid
+flowchart LR
+  subgraph MGMT["管理プレーン"]
+    GNMI["sonic-gnmi<br/>(DASH gNMI スキーマ)"]
+    DASHAPI["sonic-dash-api<br/>(libdashapi / protobuf)"]
+  end
+
+  subgraph NPU["NPU 側 (SONiC)"]
+    CFGDB[("CONFIG_DB / APPL_DB<br/>DASH_*_TABLE")]
+    ORCH["sonic-swss orchagent/dash/<br/>dashorch / dashaclorch /<br/>dashvnetorch / dashrouteorch /<br/>dashhaorch / dashenifwdorch ..."]
+    SAI["SAI DASH API<br/>(dash-sai ヘッダ)"]
+    HACTL["sonic-dash-ha<br/>(HA 制御プレーン)"]
+  end
+
+  subgraph DPU_SIDE["DPU / SmartNIC 側"]
+    DPUDB[("DPU_APPL_DB")]
+    PIPE["DASH P4 パイプライン<br/>(BMv2 参照実装 / ベンダー DPU)"]
+  end
+
+  GNMI --> CFGDB
+  DASHAPI --> CFGDB
+  CFGDB --> ORCH
+  ORCH --> SAI
+  SAI --> DPUDB
+  DPUDB --> PIPE
+  HACTL -.-> ORCH
+  HACTL -.-> DPU_SIDE
+```
+
+出典: `sonic-swss/orchagent/dash/` の orch 群、`sonic-buildimage/src/{sonic-dash-api,dash-sai,sonic-dash-ha}` submodule、`sonic-net/DASH` リポの `dash-pipeline/` BMv2 P4 リファレンス実装。
+
 ## 関連ページ
 
 ### overlay / アーキテクチャ
