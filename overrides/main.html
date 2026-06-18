@@ -24,21 +24,23 @@
   {{ super() }}
   {% if page and page.meta and page.meta.sources %}
     <section class="md-source-refs" markdown="0">
-      <h2 id="出典">出典</h2>
-      <p>このページは以下の上流 SONiC リポジトリのソースを裏取り元としています（commit にピン留め）。</p>
+      <h2 id="source-refs">出典</h2>
+      <p>このページの裏取り元となった上流 SONiC リポジトリのソースです。</p>
       <ul>
         {% for s in page.meta.sources %}
           {% if s.repo and s.path %}
             {% set repo = s.repo if '/' in s.repo else 'sonic-net/' ~ s.repo %}
             {# YAML が全数字の SHA や行番号を int として読むことがあるため文字列化する #}
             {% set ref = s.ref | string if s.ref is not none else '' %}
-            {# lines: "67-98" / "5" を GitHub の行アンカー #L67-L98 / #L5 に変換 #}
-            {% set lines = s.lines | string if s.lines is not none else '' %}
-            {% set parts = lines.split('-') if lines else [] %}
+            {# lines: "67-98" / "5" / "40-70,2204-2228" を GitHub 行アンカーに変換。
+               複数範囲は単一アンカーで表現できないため先頭範囲のみを採用する。 #}
+            {% set first_range = (s.lines | string).split(',')[0] if s.lines is not none else '' %}
+            {% set parts = first_range.split('-') if first_range else [] %}
             {% set anchor = ('#L' ~ parts[0] ~ ('-L' ~ parts[1] if parts | length > 1 else '')) if parts else '' %}
             <li>
-              <a href="https://github.com/{{ repo }}/blob/{{ ref if ref else 'HEAD' }}/{{ s.path | urlencode }}{{ anchor }}" rel="noopener" target="_blank"><code>{{ repo }}</code> — <code>{{ s.path }}{{ ('#L' ~ lines) if lines else '' }}</code></a>
-              {% if ref %}<span class="md-source-refs__ref">@ {{ ref[:7] }}</span>{% endif %}
+              <a href="https://github.com/{{ repo }}/blob/{{ ref if ref else 'HEAD' }}/{{ s.path | urlencode }}{{ anchor }}" rel="noopener" target="_blank"><code>{{ repo }}</code> — <code>{{ s.path }}{{ anchor }}</code></a>
+              {# ref が短縮/完全 SHA（7桁以上）のときだけ commit ピン留め表示。HEAD/master 等の branch では出さない #}
+              {% if ref | length >= 7 %}<span class="md-source-refs__ref">@ {{ ref[:7] }}</span>{% endif %}
               {% if s.note %}<div class="md-source-refs__note">{{ s.note }}</div>{% endif %}
             </li>
           {% endif %}
