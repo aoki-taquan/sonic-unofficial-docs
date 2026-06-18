@@ -35732,6 +35732,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#gnmi-gnoi-openconfig-dataflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        カテゴリ全体像（gNMI / gNOI / OpenConfig dataflow）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35937,6 +35948,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#gnmi-gnoi-openconfig-dataflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        カテゴリ全体像（gNMI / gNOI / OpenConfig dataflow）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36083,6 +36105,43 @@
 <p><a href="../../reference/glossary/#term-gnoi">gNOI</a> は gRPC ベースの <strong>運用 API</strong>（OS install / System reboot / File / FactoryReset / Healthz / Wake-on-LAN など）で、DBUS 経由でホスト側サービスを叩く構造になっている。SONiC 内では <code>system / OS / file / factory_reset / healthz / wol</code> などのサービス実装が <code>sonic-gnmi</code> 配下にあり、<a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> では <a href="../../reference/glossary/#term-dpu">DPU</a> 単位の gNOI を持つ。</p>
 <p>このカテゴリは gNMI / gNOI / OpenConfig / YANG・Management Framework に関わるページを area 横断でまとめる。本カテゴリは関連ページが最も多く、YANG リファレンスが大半を占めるのは設計通りである。</p>
 <p>主要キーワード: <code>gNMI</code>, <code>gNOI</code>, <code>OpenConfig</code>, <code>YANG</code>, <code>REST</code>, <code>Management Framework</code>, <code>telemetry</code>, <code>GCU</code>, <code>Translib</code></p>
+<h2 id="gnmi-gnoi-openconfig-dataflow">カテゴリ全体像（gNMI / gNOI / OpenConfig dataflow）<a class="headerlink" href="#gnmi-gnoi-openconfig-dataflow" title="Permanent link">&para;</a></h2>
+<p>クライアント（NMS / コントローラ）から見た gNMI Subscribe / Get / Set と gNOI RPC が、<code>telemetry</code> コンテナ内の sonic-gnmi server を起点に、SONiC YANG（native path）と OpenConfig YANG（translib path）の二系統に分岐し、最終的に <a href="../../reference/glossary/#term-redis">Redis</a> 上の各 DB / DBUS 経由のホストサービスに到達する構造を示す。</p>
+<pre class="mermaid"><code>flowchart LR
+  client["gNMI / gNOI クライアント&lt;br/&gt;(NMS / controller / gnmi_cli)"]
+
+  subgraph telemetry["telemetry container"]
+    gnmiServer["sonic-gnmi server&lt;br/&gt;(gnmi_server / telemetry)"]
+    gnoiServer["gNOI server&lt;br/&gt;(pkg/gnoi: system / os / file / factory_reset / healthz)"]
+  end
+
+  subgraph paths["データパス"]
+    nativeClient["sonic_data_client&lt;br/&gt;(native: gnmi_native_write)"]
+    translib["transl_utils → sonic-mgmt-common/translib&lt;br/&gt;(OpenConfig: gnmi_translib_write)"]
+    yang["YANG (SONiC YANG / OpenConfig YANG)&lt;br/&gt;CVL 検証 + GCU JSON Patch"]
+  end
+
+  subgraph redis["Redis (各 DB)"]
+    configDb["CONFIG_DB"]
+    applDb["APPL_DB"]
+    stateDb["STATE_DB"]
+    countersDb["COUNTERS_DB"]
+  end
+
+  hostSvc["DBUS host services&lt;br/&gt;(sonic_service_client → sonic-host-services)"]
+
+  client -- "Subscribe / Get / Set" --&gt; gnmiServer
+  client -- "gNOI RPC&lt;br/&gt;(Reboot / OS.Install / FactoryReset / Healthz)" --&gt; gnoiServer
+  gnmiServer --&gt; nativeClient
+  gnmiServer --&gt; translib
+  translib --&gt; yang
+  nativeClient --&gt; yang
+  yang --&gt; configDb
+  nativeClient -. "telemetry subscribe" .-&gt; applDb
+  nativeClient -. "telemetry subscribe" .-&gt; stateDb
+  nativeClient -. "telemetry subscribe" .-&gt; countersDb
+  gnoiServer --&gt; hostSvc</code></pre>
+<p>主な参照: sonic-gnmi (<code>telemetry/</code>, <code>gnmi_server/</code>, <code>sonic_data_client/</code>, <code>pkg/gnoi/</code>, <code>sonic_service_client/</code>), <a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a>-common (<code>translib/</code>), sonic-host-services。詳細な責務分担と build tag 切替は <a href="../../management/sonic-management-framework/">SONiC Management Framework</a> と <a href="../../management/sonic-gnmi-server-interface-design/">sonic-gnmi Server インタフェース設計</a> を参照。</p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="managementhld">management（HLD 本体・最重要）<a class="headerlink" href="#managementhld" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36186,7 +36245,7 @@
 <li><a href="../mib-snmp/">MIB / SNMP 関連</a></li>
 <li><a href="../container-build/">Container / Build system 関連</a></li>
 </ul>
-<!-- glossary-links-injected: 7ac8e66e1af3 -->
+<!-- glossary-links-injected: aec857b28bfc -->
 
 
 
