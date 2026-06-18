@@ -35567,6 +35567,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        コンポーネント関係図
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -35636,7 +35647,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な読み進め方
@@ -35669,7 +35680,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連カテゴリ
@@ -35951,6 +35962,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        コンポーネント関係図
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -36020,7 +36042,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な読み進め方
@@ -36053,7 +36075,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連カテゴリ
@@ -36087,6 +36109,7 @@
               
               <article class="md-content__inner md-typeset">
                 
+  
                   
 
 
@@ -36105,7 +36128,31 @@
 <p>このカテゴリは Dual-ToR に関わるページを area 横断でまとめます。<strong>overlay</strong>（active-active / active-standby の <a href="../../reference/glossary/#term-hld">HLD</a>、トンネル <a href="../../reference/glossary/#term-dscp">DSCP</a> リマップ）・<strong>routing</strong>（mux 連動デフォルトルート、multi-nexthop ループ回避、prefix-based mux neighbor）・<strong>platform</strong>（ICMP HW offload による link prober <a href="../../reference/glossary/#term-npu">NPU</a> 化）・<strong>management</strong>（DualToR 用 gRPC client）・<strong>reference</strong>（<code>config muxcable</code> / <code>show muxcable</code> / <code>MUX_CABLE</code> テーブル）に分散しているのが特徴です。</p>
 <p>Dual-ToR は <strong>active-standby</strong> のほうがマスター実装としては成熟しており、<strong>active-active</strong> は比較的新しく gRPC ベースのケーブル制御に依存します。Y-cable と SoC（Service-on-Cable）が混在する用語空間なので、最初に <a href="../../overlay/active-standby-dual-tor/"><code>active-standby-dual-tor.md</code></a> を読むと state machine の語彙が整理されます。</p>
 <p>主要キーワード: <code>Dual-ToR</code>, <code>active-active</code>, <code>active-standby</code>, <code>MUX</code>, <code>linkmgrd</code>, <code>Y-cable</code>, <code>SoC</code>, <code>linkprober</code></p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">コンポーネント関係図<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>active-standby Dual-ToR における主要コンポーネントとデータフローを俯瞰する。サーバは Y-cable で ToR-A / ToR-B の両方に接続され、片側のみが Active としてトラフィックを受ける。<code>linkmgrd</code> が ICMP link prober と Y-cable driver の状態を入力に state machine（Active / Standby / Standalone）を回し、<code>STATE_DB:MUX_CABLE_TABLE</code> を更新する。<code>orchagent</code> の <code>MuxOrch</code> がこれを購読し、<code>TunnelDecapOrch</code> と連動して <a href="../../reference/glossary/#term-sai">SAI</a> に NHG / route を反映、Standby 側に届いたパケットは IPinIP tunnel で peer ToR にバウンスされる。</p>
+<pre class="mermaid"><code>flowchart LR
+    Server[Server NIC]
+    subgraph ToRA["ToR-A (Active)"]
+        ICMPA["ICMP link prober&lt;br/&gt;(+ HW offload)"]
+        YCBLA["ycabled&lt;br/&gt;(Y-cable driver)"]
+        LMA["linkmgrd&lt;br/&gt;(Active / Standby /&lt;br/&gt;Standalone SM)"]
+        STDBA[("STATE_DB&lt;br/&gt;MUX_CABLE_TABLE")]
+        MUXA["orchagent&lt;br/&gt;MuxOrch +&lt;br/&gt;TunnelDecapOrch"]
+        SAIA["SAI / ASIC&lt;br/&gt;(NHG / IPinIP decap)"]
+    end
+    ToRB["ToR-B (Standby)&lt;br/&gt;linkmgrd / MuxOrch /&lt;br/&gt;TunnelDecapOrch"]
+
+    Server -- "Y-cable&lt;br/&gt;(active link)" --&gt; ToRA
+    Server -- "Y-cable&lt;br/&gt;(standby link)" --&gt; ToRB
+    ICMPA -- "prober result" --&gt; LMA
+    YCBLA -- "cable state" --&gt; LMA
+    LMA -- "set MUX state" --&gt; STDBA
+    STDBA -- "notify" --&gt; MUXA
+    MUXA -- "program NHG /&lt;br/&gt;tunnel decap" --&gt; SAIA
+    ToRA &lt;-. "peer link&lt;br/&gt;(BGP + IPinIP&lt;br/&gt;bounce-back)" .-&gt; ToRB</code></pre>
+<p>凡例: 実線はデータ／制御フロー、点線は peer ToR 間の BGP セッションと Standby → Active 側への IPinIP バウンスバックを表す。active-active 構成では Y-cable driver 部分が gRPC ベースの SoC 制御に置き換わり、両 ToR が同時に Active になる（<a href="../../overlay/active-active-dual-tor/"><code>active-active-dual-tor.md</code></a> 参照）。</p>
+<p>参照ソース: <code>sonic-linkmgrd/src/link_manager/LinkManagerStateMachineActiveStandby.{h,cpp}</code>、<code>sonic-swss/orchagent/muxorch.{h,cpp}</code>、<code>sonic-swss/orchagent/tunneldecaporch.{h,cpp}</code>、<code>sonic-platform-daemons/sonic-ycabled/</code>。</p>
+<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="overlayhld">overlay（HLD 本体）<a class="headerlink" href="#overlayhld" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../overlay/active-standby-dual-tor/">Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）</a> (area: <code>overlay</code>, verification: <code>code-verified</code>) — まずこれ</li>
@@ -36133,7 +36180,7 @@
 <li><a href="../../reference/cli/show-muxcable/">show muxcable サブコマンド</a> (area: <code>reference</code>, verification: <code>code-verified</code>)</li>
 <li><a href="../../reference/config-db/mux-cable/">MUX_CABLE テーブル</a> (area: <code>reference</code>, verification: <code>code-verified</code>)</li>
 </ul>
-<h2 id="_3">典型的な読み進め方<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">典型的な読み進め方<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>active-standby 全体像</strong> → <code>active-standby-dual-tor.md</code> で linkmgrd state machine と y-cable・<a href="../../reference/glossary/#term-ipinip">IPinIP</a> tunnel を把握</li>
 <li><strong>CLI / DB</strong> → <code>config-muxcable.md</code> / <code>show-muxcable.md</code> / <code>mux-cable.md</code> で実機操作の語彙</li>
@@ -36152,7 +36199,7 @@
 <ul>
 <li><strong>discrepancy-found</strong>: <code>dscp-remapping-for-tunnel-traffic.md</code>（実装と HLD で挙動差異）</li>
 </ul>
-<h2 id="_4">関連カテゴリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連カテゴリ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../bgp-evpn/">BGP / EVPN 関連</a></li>
 <li><a href="../gnmi-openconfig/">gNMI / gNOI / OpenConfig 関連</a></li>
@@ -36164,7 +36211,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: f9445b5b4106 -->
 
 
 
@@ -36181,6 +36228,8 @@
 
 
                 
+  
+
               </article>
             </div>
           

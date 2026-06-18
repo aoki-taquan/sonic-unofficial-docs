@@ -35651,6 +35651,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        カテゴリ構成図
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -35731,7 +35742,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な読み進め方
@@ -35764,7 +35775,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連カテゴリ
@@ -35951,6 +35962,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        カテゴリ構成図
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -36031,7 +36053,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な読み進め方
@@ -36064,7 +36086,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連カテゴリ
@@ -36087,6 +36109,7 @@
               
               <article class="md-content__inner md-typeset">
                 
+  
                   
 
 
@@ -36105,7 +36128,49 @@
 <p>このカテゴリは BGP / EVPN に関わるページを area 横断でまとめます。<strong>routing</strong>（BGP loading 最適化、PIC、BMP、<a href="../../reference/glossary/#term-bfd">BFD</a> HW offload、EVPN-VXLAN、EVPN multihoming、Weighted <a href="../../reference/glossary/#term-ecmp">ECMP</a>、suppress-fib-pending、router-id、VoQ 向け BGP、Overlay ECMP）・<strong>overlay</strong>（VXLAN / VNet 全体設計、VNET local endpoint）・<strong>architecture</strong>（PBH = Policy Based Hashing）・<strong>reference</strong>（<code>config bgp</code> / <code>config vxlan</code> / <code>show bgp</code> / <code>show route-map</code> CLI、BGP_NEIGHBOR / BGP_PEER_GROUP / PREFIX_LIST / <a href="../../reference/glossary/#term-route_map">ROUTE_MAP</a> / VXLAN_TUNNEL などの CONFIG_DB テーブル、対応する YANG）に広く分散しています。</p>
 <p>EVPN-VXLAN は <a href="../../reference/glossary/#term-frr">FRR</a> の <code>bgpd</code> + <code>zebra</code> + EVPN AFI / SAFI を使い、<code>Type-2</code>（MAC/IP）と <code>Type-5</code>（IP prefix）を中心に運用します。SONiC 側では <strong>VNET</strong> という独自の <a href="../../reference/glossary/#term-vrf">VRF</a>-like 概念が存在し、<code>VNET</code> テーブル経由で VXLAN tunnel と紐づきます。マルチホーミング（ESI / DF election）は実装されているものの、現行マスターでは discrepancy が報告されているページがあります。</p>
 <p>主要キーワード: <code>BGP</code>, <code>EVPN</code>, <code>VXLAN</code>, <code>VNET</code>, <code>route-map</code>, <code>prefix-list</code>, <code>prefix-set</code>, <code>BMP</code>, <code>BFD</code>, <code>PIC</code>, <code>FRR</code>, <code>bgpcfgd</code></p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">カテゴリ構成図<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>下記は本カテゴリのページ群が SONiC の BGP / EVPN データパス上でどの位置に該当するかを俯瞰したものです。CONFIG_DB から FRR への翻訳層、FRR から ASIC への route program 経路、EVPN-VXLAN 周辺の orch を主軸に整理しています。</p>
+<pre class="mermaid"><code>flowchart TB
+  subgraph CFG["CONFIG layer (CONFIG_DB)"]
+    CDB["BGP_GLOBALS / BGP_NEIGHBOR / BGP_PEER_GROUP&lt;br/&gt;PREFIX_LIST / PREFIX_SET / ROUTE_MAP&lt;br/&gt;VXLAN_TUNNEL / VXLAN_TUNNEL_MAP / VNET"]
+  end
+
+  subgraph TR["Translation (docker-fpm-frr)"]
+    BGPCFGD["bgpcfgd / frrcfgd&lt;br/&gt;(jinja2 → frr.conf / vtysh)"]
+  end
+
+  subgraph FRR["FRR (docker-fpm-frr)"]
+    BGPD["bgpd&lt;br/&gt;(BGP / EVPN AFI-SAFI / Type-2,5)"]
+    ZEBRA["zebra"]
+    FPM["FPM (dplane_fpm_nl)"]
+  end
+
+  subgraph SWSS["swss (sonic-swss)"]
+    FPMSYNCD["fpmsyncd&lt;br/&gt;(Netlink → APPL_DB)"]
+    APPL["APPL_DB&lt;br/&gt;ROUTE_TABLE / NEXTHOP_GROUP_TABLE / VNET_ROUTE_TUNNEL_TABLE"]
+    ORCH["orchagent&lt;br/&gt;RouteOrch / NhgOrch / VnetOrch&lt;br/&gt;VxlanOrch / EvpnNvoOrch"]
+    BMPCFG["bmpcfgd / BMP_STATE_DB"]
+  end
+
+  subgraph ASIC["ASIC layer"]
+    ASICDB["ASIC_DB"]
+    SYNCD["syncd → SAI → ASIC"]
+  end
+
+  CDB --&gt; BGPCFGD --&gt; BGPD
+  BGPD &lt;--&gt; ZEBRA --&gt; FPM --&gt; FPMSYNCD --&gt; APPL --&gt; ORCH --&gt; ASICDB --&gt; SYNCD
+  BGPD -. "BMP export" .-&gt; BMPCFG</code></pre>
+<p>ページ群の位置づけ:</p>
+<ul>
+<li><strong>CONFIG_DB / YANG</strong> (<code>bgp-globals</code> / <code>bgp-neighbor</code> / <code>route-map</code> / <code>vxlan-tunnel</code> / <code>sonic-bgp-global</code> 等): 図中 <code>CDB</code> ノード</li>
+<li><strong>frrcfgd / <a href="../../reference/glossary/#term-bgpcfgd">bgpcfgd</a>-dynamic-peer-modification / bgp-router-id</strong>: 図中 <code>BGPCFGD</code> ノード</li>
+<li><strong>evpn-vxlan-hld / evpn-vxlan-multihoming / bgp-route-aggregation / VoQ 向け BGP</strong>: 図中 <code>BGPD</code> ノード</li>
+<li><strong>bgp-loading-optimization / bgp-suppress-fib-pending / bgp-pic / bgp-route-install-error-handling</strong>: 図中 <code>FPMSYNCD</code> ⇔ <code>APPL</code> ⇔ <code>ORCH</code> の経路</li>
+<li><strong>vxlan-sonic / vnet-local-endpoint-forwarding / overlay-ecmp-with-bfd / weighted-ecmp / PBH</strong>: 図中 <code>ORCH</code> ノード</li>
+<li><strong>bmp-for-monitoring-sonic-bgp-info</strong>: 図中 <code>BMPCFG</code> ノード</li>
+</ul>
+<p>実装の所在: 翻訳層は <a href="../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> <code>dockers/docker-fpm-frr/</code> 配下、orch 群は <a href="../../reference/glossary/#term-sonic-swss">sonic-swss</a> <code>orchagent/</code>（<code>routeorch.cpp</code> / <code>nhgorch.cpp</code> / <code>vnetorch.cpp</code> / <code>vxlanorch.cpp</code> 等）、<code>*cfgd</code> 系は <code>sonic-swss/cfgmgr/</code>。</p>
+<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="routingbgp-evpn-hld">routing（BGP / EVPN HLD 本体）<a class="headerlink" href="#routingbgp-evpn-hld" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）</a> (area: <code>routing</code>, verification: <code>code-verified</code>) — frrcfgd の前提</li>
@@ -36165,7 +36230,7 @@
 <li><a href="../../reference/yang/sonic-route-map/">sonic-route-map YANG</a> (area: <code>reference</code>, verification: <code>code-verified</code>)</li>
 <li><a href="../../reference/yang/sonic-vxlan/">sonic-vxlan YANG</a> (area: <code>reference</code>, verification: <code>code-verified</code>)</li>
 </ul>
-<h2 id="_3">典型的な読み進め方<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">典型的な読み進め方<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>BGP 設定経路</strong> → <code>sonic-frr-bgp-extended-unified-configuration-management-framework.md</code> → <code>bgpcfgd-dynamic-peer-modification-support.md</code> で CONFIG_DB → FRR の翻訳</li>
 <li><strong>CLI / CONFIG_DB / YANG</strong> → <code>config-bgp.md</code> / <code>show-bgp.md</code> / <code>bgp-neighbor.md</code> / <code>sonic-bgp-neighbor.md</code> のいずれかで実機操作の語彙</li>
@@ -36188,13 +36253,13 @@
 <li><a href="../../routing/evpn-vxlan-hld/"><code>evpn-vxlan-hld.md</code></a> (実装あり / 名称配置の乖離) — CONFIG_DB テーブルは HLD の <code>EVPN_NVO</code> ではなく <strong><code>VXLAN_EVPN_NVO</code></strong>。EVPN 中核 orch は <code>vxlanorch.{h,cpp}</code> 内 <code>EvpnNvoOrch</code> に集約され、HLD が示す複数 orch には分散していない。FRR BGP-EVPN 設定は <code>frr.conf</code> テンプレ / <code>vtysh</code> 直叩き経由（SONiC CLI だけでは完結しない）</li>
 <li><a href="../../routing/evpn-vxlan-multihoming/"><code>evpn-vxlan-multihoming.md</code></a> (<code>monitor: not_implemented</code>) — <code>EVPN_ETHERNET_SEGMENT</code> テーブル / <code>EvpnMhOrch</code> / <code>L2nhgOrch</code> / <code>ShlOrch</code> / <code>config interface evpn-esi</code> CLI / <code>sonic-evpn-mh.yang</code> のいずれも master に存在しない（関連 PR <a href="../../reference/glossary/#term-sonic-swss">sonic-swss</a> #4262 / #4206 / #4039 は open）。dual-attached host は MC-<a href="../../reference/glossary/#term-lag">LAG</a> で代替する</li>
 </ul>
-<h2 id="_4">関連カテゴリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連カテゴリ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../dual-tor/">Dual-ToR 関連</a></li>
 <li><a href="../multi-asic/">Multi-ASIC / VOQ chassis 関連</a></li>
 <li><a href="../gnmi-openconfig/">gNMI / gNOI / OpenConfig 関連</a></li>
 </ul>
-<!-- glossary-links-injected: 6fc493a71451 -->
+<!-- glossary-links-injected: 7d57ed947e8f -->
 
 
 
@@ -36211,6 +36276,8 @@
 
 
                 
+  
+
               </article>
             </div>
           

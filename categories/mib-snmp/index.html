@@ -35707,6 +35707,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        カテゴリ構成図
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -35765,7 +35776,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な読み進め方
@@ -35798,7 +35809,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連カテゴリ
@@ -35929,6 +35940,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        カテゴリ構成図
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -35987,7 +36009,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な読み進め方
@@ -36020,7 +36042,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連カテゴリ
@@ -36043,6 +36065,7 @@
               
               <article class="md-content__inner md-typeset">
                 
+  
                   
 
 
@@ -36062,7 +36085,30 @@
 <p>SNMP IPv6 では応答 SRC IP が listening address と一致しない問題があり、<code>SNMP_AGENT_ADDRESS_CONFIG</code> で送信元 IP を縛る運用回避が標準です。Entity MIB はシャーシ・ラインカード・PSU / Fan / Sensor を <code>entPhysicalEntry</code> の階層に並べる構造で、chassis 環境で重要です。</p>
 <p><a href="../../reference/glossary/#term-bgp">BGP</a> 監視では CiscoBgp4MIB（OID 1.3.6.1.4.1.9.9.187）が bgpd vty 直結から <code>bgpmon</code> daemon 経由で <a href="../../reference/glossary/#term-state_db">STATE_DB</a> <code>NEIGH_STATE_TABLE</code> を読む形に再設計され、multi-<a href="../../reference/glossary/#term-asic">ASIC</a> でも namespace を跨いで近隣状態を集約できるようになっています。</p>
 <p>主要キーワード: <code>MIB</code>, <code>SNMP</code>, <code>Entity MIB</code>, <code>Sensor MIB</code>, <code>CiscoBgp4MIB</code>, <code>trap</code>, <code>community</code>, <code>IPv6</code>, <code>AgentX</code></p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">カテゴリ構成図<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p><code>snmp</code> コンテナ内では Net-SNMP の <code>snmpd</code> (master agent) と sonic_ax_impl (AgentX subagent) が分離して動作し、SONiC 固有 MIB は subagent から <a href="../../reference/glossary/#term-redis">Redis</a> 各 DB を読んで応答する。設定は <code>snmpcfgd</code> が CONFIG_DB の SNMP 系テーブルを watch して <code>snmpd.conf</code> を生成する。</p>
+<pre class="mermaid"><code>flowchart LR
+    NMS["外部 NMS&lt;br/&gt;(SNMP get/walk/trap)"] -- "UDP 161/162" --&gt; SNMPD
+    subgraph SNMPC["snmp container"]
+        SNMPD["snmpd&lt;br/&gt;(Net-SNMP master agent)"]
+        AXIMPL["sonic_ax_impl&lt;br/&gt;(AgentX subagent)"]
+        SNMPCFGD["snmpcfgd"]
+        CONF["/etc/snmp/snmpd.conf"]
+        SNMPD &lt;-- "AgentX (Unix socket)" --&gt; AXIMPL
+        SNMPCFGD -- "render" --&gt; CONF
+        CONF -. "load" .-&gt; SNMPD
+    end
+    subgraph REDIS["Redis (各 DB)"]
+        CDB[(CONFIG_DB&lt;br/&gt;SNMP / SNMP_COMMUNITY /&lt;br/&gt;SNMP_USER / SNMP_AGENT_ADDRESS_CONFIG)]
+        SDB[(STATE_DB&lt;br/&gt;NEIGH_STATE_TABLE 等)]
+        CNT[(COUNTERS_DB&lt;br/&gt;port / queue カウンタ)]
+        APPL[(APPL_DB&lt;br/&gt;PORT_TABLE 等)]
+    end
+    CDB -- "subscribe" --&gt; SNMPCFGD
+    AXIMPL &lt;-- "read" --&gt; SDB
+    AXIMPL &lt;-- "read" --&gt; CNT
+    AXIMPL &lt;-- "read" --&gt; APPL</code></pre>
+<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="systemhld">system（HLD 本体）<a class="headerlink" href="#systemhld" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../system/sonic-snmp-table-schema-proposal/">SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）</a> (area: <code>system</code>, verification: <code>code-verified</code>) — CONFIG_DB スキーマの起点</li>
@@ -36084,7 +36130,7 @@
 <ul>
 <li><a href="../../reference/cli/config-snmp/">config snmp / snmpagentaddress / snmptrap サブコマンド</a> (area: <code>reference</code>, verification: <code>code-verified</code>)</li>
 </ul>
-<h2 id="_3">典型的な読み進め方<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">典型的な読み進め方<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>設定の基礎</strong> → <code>sonic-snmp-table-schema-proposal.md</code> で CONFIG_DB のテーブル構造を把握</li>
 <li><strong>移行</strong> → <code>snmp-migration-from-snmp-yml-to-configdb.md</code> で snmp.yml ベース運用からの変更点</li>
@@ -36105,12 +36151,12 @@
 <ul>
 <li><strong>hld-only</strong>: <code>port-illegal-packets-drop-design.md</code>（ポート不正パケットドロップ用 Interface MIB / L3 カウンタ拡張提案。master の <code>sonic-snmpagent</code> 側 OID 追加は未確認のため、運用前に該当 OID の実装有無を要確認）</li>
 </ul>
-<h2 id="_4">関連カテゴリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連カテゴリ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../multi-asic/">Multi-ASIC / VOQ chassis 関連</a></li>
 <li><a href="../gnmi-openconfig/">gNMI / gNOI / OpenConfig 関連</a></li>
 </ul>
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 0f594312e2b7 -->
 
 
 
@@ -36127,6 +36173,8 @@
 
 
                 
+  
+
               </article>
             </div>
           
