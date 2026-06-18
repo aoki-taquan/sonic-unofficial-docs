@@ -141,3 +141,35 @@
     background: #fff !important;
   }
 }
+
+/* ============================================================
+   出典ブロック（overrides/main.html で本文末尾に自動描画）
+   frontmatter `sources:` を上流 SONiC リポへのリンク一覧として出す。
+   ============================================================ */
+.md-typeset .md-source-refs {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  font-size: 0.85em;
+}
+
+.md-typeset .md-source-refs > p {
+  color: var(--md-default-fg-color--light);
+  margin: 0 0 0.4rem;
+}
+
+.md-typeset .md-source-refs ul {
+  margin: 0;
+}
+
+.md-source-refs__ref {
+  color: var(--md-default-fg-color--light);
+  font-family: var(--md-code-font-family);
+  font-size: 0.85em;
+}
+
+.md-typeset .md-source-refs__note {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.85em;
+  margin: 0.1rem 0 0.3rem;
+}

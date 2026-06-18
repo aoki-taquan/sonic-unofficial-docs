@@ -8,3 +8,44 @@
   {# Google Search Console のサイト所有権確認用メタタグ #}
   <meta name="google-site-verification" content="F3cPeDNtDZ0WkWwSRo-4zXq0sLR9M9v2z1nZU2fxA68" />
 {% endblock %}
+
+{#
+  本文末尾に frontmatter `sources:` を「出典」リンクとして自動描画する。
+  - `sources` は `{repo, path, ref}` のリスト（1 ページ複数出典が普通）。
+  - repo 名にゆれがあり org を欠いた素の `SONiC` 等が混在するため、`/` を
+    含まない場合は `sonic-net/` を補完する。
+  - path はスペースや `+` を含むことがある（例: SONiC HLD の
+    `doc/aaa/TACACS+ Authentication.md`）。Jinja の `urlencode` は
+    既定で `/` を safe 扱いするため、スラッシュを保ったまま
+    スペース→%20・`+`→%2B にエンコードできる。
+  - ref は commit SHA。`blob/<ref>/<path>` でピン留めリンクにする。
+#}
+{% block content %}
+  {{ super() }}
+  {% if page and page.meta and page.meta.sources %}
+    <section class="md-source-refs" markdown="0">
+      <h2 id="source-refs">出典</h2>
+      <p>このページの裏取り元となった上流 SONiC リポジトリのソースです。</p>
+      <ul>
+        {% for s in page.meta.sources %}
+          {% if s.repo and s.path %}
+            {% set repo = s.repo if '/' in s.repo else 'sonic-net/' ~ s.repo %}
+            {# YAML が全数字の SHA や行番号を int として読むことがあるため文字列化する #}
+            {% set ref = s.ref | string if s.ref is not none else '' %}
+            {# lines: "67-98" / "5" / "40-70,2204-2228" を GitHub 行アンカーに変換。
+               複数範囲は単一アンカーで表現できないため先頭範囲のみを採用する。 #}
+            {% set first_range = (s.lines | string).split(',')[0] if s.lines is not none else '' %}
+            {% set parts = first_range.split('-') if first_range else [] %}
+            {% set anchor = ('#L' ~ parts[0] ~ ('-L' ~ parts[1] if parts | length > 1 else '')) if parts else '' %}
+            <li>
+              <a href="https://github.com/{{ repo }}/blob/{{ ref if ref else 'HEAD' }}/{{ s.path | urlencode }}{{ anchor }}" rel="noopener" target="_blank"><code>{{ repo }}</code> — <code>{{ s.path }}{{ anchor }}</code></a>
+              {# ref が短縮/完全 SHA（7桁以上）のときだけ commit ピン留め表示。HEAD/master 等の branch では出さない #}
+              {% if ref | length >= 7 %}<span class="md-source-refs__ref">@ {{ ref[:7] }}</span>{% endif %}
+              {% if s.note %}<div class="md-source-refs__note">{{ s.note }}</div>{% endif %}
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+{% endblock %}
