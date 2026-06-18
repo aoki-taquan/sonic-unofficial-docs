@@ -35761,6 +35761,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        カテゴリ構成図
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -35808,7 +35819,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な読み進め方
@@ -35841,7 +35852,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連カテゴリ
@@ -35916,6 +35927,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        カテゴリ構成図
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -35963,7 +35985,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な読み進め方
@@ -35996,7 +36018,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連カテゴリ
@@ -36041,8 +36063,82 @@
 <li><strong>container hardening</strong>: docker 単位の capability / privileged の宣言枠は <code>sonic-buildimage</code> の <code>files/build_templates/default_manifest</code> と <code>manifest.json.j2</code> 側にあり、ランタイム有効/無効の制御は CONFIG_DB の <strong><code>FEATURE</code></strong> テーブル（および application extension manifest）の領域です<sup id="fnref:hardening-feature"><a class="footnote-ref" href="#fn:hardening-feature">3</a></sup>。</li>
 </ul>
 <p>docker warm restart は本カテゴリと <a href="../reboot/">Warm-Reboot 関連</a> の両方に出現します。</p>
+<h2 id="_2">カテゴリ構成図<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>ビルド時 (sonic-buildimage) → イメージ生成 → デバイス上での起動 / アップグレード までの主要コンポーネント関係を俯瞰します。境界をまたぐ要素 (secure upgrade, container hardening, warm restart) がどのレイヤに属するかに注目してください。</p>
+<pre class="mermaid"><code>flowchart TB
+    subgraph BUILD["ビルド環境 (host)"]
+        SLAVE["sonic-slave-{bookworm,bullseye,trixie}&lt;br/&gt;(Debian build container)"]
+        MAKE["slave.mk / Makefile.work&lt;br/&gt;rules/*.mk · rules/profiles/*.mk"]
+        DEBS["Debian .deb&lt;br/&gt;(swss / sairedis / syncd / sonic-utilities ...)"]
+        SLAVE --&gt; MAKE
+        MAKE --&gt; DEBS
+    end
+
+    subgraph DOCKERS["dockers/* イメージビルド (Dockerfile.j2)"]
+        D_BASE["docker-base-{bookworm,bullseye,trixie}"]
+        D_CFG["docker-config-engine-*"]
+        D_DB["docker-database"]
+        D_ORCH["docker-orchagent (swss)"]
+        D_SYNCD["docker-syncd-{vs,brcm,mlnx,...}"]
+        D_FRR["docker-fpm-frr / docker-fpm-gobgp"]
+        D_TEAM["docker-teamd"]
+        D_LLDP["docker-lldp"]
+        D_DHCP["docker-dhcp-relay / docker-dhcp-server"]
+        D_NAT["docker-nat / docker-macsec / docker-mux"]
+        D_TELE["docker-snmp / docker-telemetry / docker-eventd"]
+        D_BASE --&gt; D_CFG
+        D_CFG --&gt; D_DB
+        D_CFG --&gt; D_ORCH
+        D_CFG --&gt; D_SYNCD
+        D_CFG --&gt; D_FRR
+        D_CFG --&gt; D_TEAM
+        D_CFG --&gt; D_LLDP
+        D_CFG --&gt; D_DHCP
+        D_CFG --&gt; D_NAT
+        D_CFG --&gt; D_TELE
+    end
+
+    subgraph IMAGE["イメージアセンブリ"]
+        RFS["build_debian.sh&lt;br/&gt;(RFS: 2 段 squashfs 中間)"]
+        SQUASH["fs.squashfs&lt;br/&gt;+ docker tarballs"]
+        ONIE["onie-mk-demo.sh&lt;br/&gt;SECURE_UPGRADE_MODE=no_sign/dev/prod"]
+        BIN["sonic-{platform}.bin&lt;br/&gt;(ONIE installer / sharch)"]
+        RFS --&gt; SQUASH --&gt; ONIE --&gt; BIN
+    end
+
+    DEBS --&gt; RFS
+    DOCKERS --&gt;|docker save| SQUASH
+
+    subgraph DEVICE["デバイス側 runtime"]
+        INSTALLER["sonic-installer install&lt;br/&gt;(verify_secureboot_image)"]
+        HOST["host OS (Debian)&lt;br/&gt;systemd · containerd/docker"]
+        MANIFEST["default_manifest / manifest.json.j2&lt;br/&gt;capability · privileged · read-only"]
+        FEATURE["CONFIG_DB FEATURE テーブル&lt;br/&gt;(state / auto_restart / has_per_asic_scope)"]
+        CONTAINERS["docker containers&lt;br/&gt;(database / swss / syncd / bgp / lldp / teamd / pmon / snmp ...)"]
+        WARM["warm restart 境界&lt;br/&gt;(swss / bgp / teamd / syncd state restore)"]
+        INSTALLER --&gt; HOST
+        MANIFEST --&gt; CONTAINERS
+        FEATURE --&gt; CONTAINERS
+        HOST --&gt; CONTAINERS
+        CONTAINERS -.warm.-&gt; WARM
+    end
+
+    BIN --&gt;|ONIE 経由で書き込み| INSTALLER
+
+    classDef build fill:#eef,stroke:#558;
+    classDef image fill:#efe,stroke:#585;
+    classDef device fill:#fee,stroke:#855;
+    class SLAVE,MAKE,DEBS,D_BASE,D_CFG,D_DB,D_ORCH,D_SYNCD,D_FRR,D_TEAM,D_LLDP,D_DHCP,D_NAT,D_TELE build;
+    class RFS,SQUASH,ONIE,BIN image;
+    class INSTALLER,HOST,MANIFEST,FEATURE,CONTAINERS,WARM device;</code></pre>
+<ul>
+<li><strong>ビルド環境</strong>: <code>sonic-slave-*</code> Debian コンテナ内で <code>slave.mk</code> / <code>rules/*.mk</code> を駆動し、ソース .deb を生成 (<code>sonic-buildimage/slave.mk</code>, <code>rules/</code>, <code>sonic-slave-bookworm/</code>)。</li>
+<li><strong>dockers/* イメージ</strong>: <code>docker-base-*</code> を共通基盤として、機能ごとに <code>Dockerfile.j2</code> で .deb を取り込み image 化 (<code>sonic-buildimage/dockers/</code>)。</li>
+<li><strong>イメージアセンブリ</strong>: <code>build_debian.sh</code> (RFS Split build) → squashfs 化 → <code>onie-mk-demo.sh</code> で ONIE installer (<code>.bin</code>) に封入。<code>SECURE_UPGRADE_MODE</code> はこの段の make 変数 (<code>slave.mk</code>)。</li>
+<li><strong>デバイス側</strong>: <code>sonic-installer install</code> が署名検証 (secure upgrade) を行い、ホスト OS が <code>manifest.json.j2</code> / CONFIG_DB <code>FEATURE</code> に従って container を起動。warm restart は docker 単位の境界として横断的に作用。</li>
+</ul>
 <p>主要キーワード: <code>container</code>, <code>Docker</code>, <code>build</code>, <code>image</code>, <code>Debian</code>, <code>sonic-buildimage</code>, <code>secure upgrade</code>, <code>hardening</code>, <code>RFS</code></p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="architecture">architecture（ビルドシステム）<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../architecture/build-profiles/">ビルドプロファイル（rules/profiles/*.mk）</a> (area: <code>architecture</code>, verification: <code>discrepancy-found</code>)</li>
@@ -36066,7 +36162,7 @@
 <li><a href="../../system/sonic-swss-docker-warm-restart/">SWSS docker warm restart（state restore / consistency / sync up）</a> (area: <code>system</code>, verification: <code>code-verified</code>)</li>
 <li><a href="../../system/swss-docker-warm-restart-code-reference/">SWSS docker の Warm Restart 実装メモ（開発時リファレンス）</a> (area: <code>system</code>, verification: <code>discrepancy-found</code>)</li>
 </ul>
-<h2 id="_3">典型的な読み進め方<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">典型的な読み進め方<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>ビルド基礎</strong> → <code>build-system-improvements.md</code> で sonic-buildimage の全体構造と最適化ポイント</li>
 <li><strong>ビルドプロファイル</strong> → <code>build-profiles.md</code> で <code>rules/profiles/*.mk</code> の使い分け</li>
@@ -36087,7 +36183,7 @@
 <ul>
 <li><strong>discrepancy-found</strong>: <code>build-profiles.md</code>（profile の名前空間が変更されている）, <code>swss-docker-warm-restart-code-reference.md</code></li>
 </ul>
-<h2 id="_4">関連カテゴリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連カテゴリ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../reboot/">Warm-Reboot / Fast-Reboot 関連</a></li>
 <li><a href="../smartswitch/">SmartSwitch 関連</a></li>
