@@ -23,6 +23,37 @@ Dual-ToR は **active-standby** のほうがマスター実装としては成熟
 
 主要キーワード: `Dual-ToR`, `active-active`, `active-standby`, `MUX`, `linkmgrd`, `Y-cable`, `SoC`, `linkprober`
 
+## コンポーネント関係図
+
+active-standby Dual-ToR における主要コンポーネントとデータフローを俯瞰する。サーバは Y-cable で ToR-A / ToR-B の両方に接続され、片側のみが Active としてトラフィックを受ける。`linkmgrd` が ICMP link prober と Y-cable driver の状態を入力に state machine（Active / Standby / Standalone）を回し、`STATE_DB:MUX_CABLE_TABLE` を更新する。`orchagent` の `MuxOrch` がこれを購読し、`TunnelDecapOrch` と連動して [SAI](../reference/glossary.md#term-sai) に NHG / route を反映、Standby 側に届いたパケットは IPinIP tunnel で peer ToR にバウンスされる。
+
+```mermaid
+flowchart LR
+    Server[Server NIC]
+    subgraph ToRA["ToR-A (Active)"]
+        ICMPA["ICMP link prober<br/>(+ HW offload)"]
+        YCBLA["ycabled<br/>(Y-cable driver)"]
+        LMA["linkmgrd<br/>(Active / Standby /<br/>Standalone SM)"]
+        STDBA[("STATE_DB<br/>MUX_CABLE_TABLE")]
+        MUXA["orchagent<br/>MuxOrch +<br/>TunnelDecapOrch"]
+        SAIA["SAI / ASIC<br/>(NHG / IPinIP decap)"]
+    end
+    ToRB["ToR-B (Standby)<br/>linkmgrd / MuxOrch /<br/>TunnelDecapOrch"]
+
+    Server -- "Y-cable<br/>(active link)" --> ToRA
+    Server -- "Y-cable<br/>(standby link)" --> ToRB
+    ICMPA -- "prober result" --> LMA
+    YCBLA -- "cable state" --> LMA
+    LMA -- "set MUX state" --> STDBA
+    STDBA -- "notify" --> MUXA
+    MUXA -- "program NHG /<br/>tunnel decap" --> SAIA
+    ToRA <-. "peer link<br/>(BGP + IPinIP<br/>bounce-back)" .-> ToRB
+```
+
+凡例: 実線はデータ／制御フロー、点線は peer ToR 間の BGP セッションと Standby → Active 側への IPinIP バウンスバックを表す。active-active 構成では Y-cable driver 部分が gRPC ベースの SoC 制御に置き換わり、両 ToR が同時に Active になる（[`active-active-dual-tor.md`](../overlay/active-active-dual-tor.md) 参照）。
+
+参照ソース: `sonic-linkmgrd/src/link_manager/LinkManagerStateMachineActiveStandby.{h,cpp}`、`sonic-swss/orchagent/muxorch.{h,cpp}`、`sonic-swss/orchagent/tunneldecaporch.{h,cpp}`、`sonic-platform-daemons/sonic-ycabled/`。
+
 ## 関連ページ
 
 ### overlay（HLD 本体）
@@ -83,4 +114,4 @@ Dual-ToR は **active-standby** のほうがマスター実装としては成熟
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: f9445b5b4106 -->

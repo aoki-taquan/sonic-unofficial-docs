@@ -23,6 +23,52 @@ SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応す�
 
 主要キーワード: `SAI`, `attribute`, `capability`, `API`, `failure handling`, `POST`, `CRM`
 
+## component / 関係図
+
+[orchagent](../reference/glossary.md#term-orchagent) 内の各 sub-orch が起動時に SAI capability を問い合わせ、`libsairedis` 経由で syncd の `VendorSai` に到達し、ベンダー SAI ライブラリへ転送する経路を示す。capability 未対応・SAI 呼び出し失敗時の fallback / dump 経路も同じ図に重ねている。
+
+```mermaid
+flowchart TD
+    subgraph swss["swss container"]
+        ORCH["orchagent<br/>aclorch / portsorch / switchorch / copporch / bfdorch / srv6orch / macsecorch ..."]
+        CAPQ["sai_query_attribute_capability<br/>sai_query_attribute_enum_values_capability<br/>sai_query_stats_capability<br/>sai_query_api_version"]
+        BULK["bulkCreate / bulkSet<br/>(Port Profile Init / Auto FEC)"]
+        FALLBACK["capability missing fallback<br/>(NOT_SUPPORTED → software path / skip)"]
+        CRM["Generic SAI Extension CRM<br/>CRM_EXT_TABLE 監視"]
+    end
+
+    subgraph sairedis["libsairedis (client)"]
+        REDISIF["RedisRemoteSaiInterface<br/>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP"]
+    end
+
+    subgraph syncd["syncd container"]
+        VSAI["VendorSai<br/>queryAttributeCapability / queryStatsCapability / bulkCreate / bulkSet"]
+        POST["MACsec SAI POST<br/>FIPS_MACSEC_POST_TABLE"]
+        DUMP["sai_failure_dump.sh<br/>platform_syncd_dump.sh"]
+    end
+
+    VLIB["vendor SAI library<br/>(ASIC 固有 .so)"]
+    ERRDB[("ERROR_DB<br/>handleSai*Status")]
+
+    ORCH --> CAPQ
+    ORCH --> BULK
+    CAPQ --> REDISIF
+    BULK --> REDISIF
+    REDISIF --> VSAI
+    VSAI --> VLIB
+    VLIB -. SAI_STATUS_NOT_SUPPORTED .-> CAPQ
+    CAPQ --> FALLBACK
+    VSAI -.失敗.-> DUMP
+    REDISIF -.失敗.-> ERRDB
+    ORCH --> ERRDB
+    POST --> VLIB
+    CRM --> VSAI
+```
+
+- `orchagent` の各 sub-orch は起動時 / 設定適用時に `sai_query_attribute_capability` 系を呼び、`SAI_STATUS_NOT_SUPPORTED` であれば software path へ fallback するか、機能自体を skip する設計<!-- evidence: sonic-swss/orchagent/aclorch.cpp:4042-4160 / switchorch.cpp:480,1881-1990 / portsorch.cpp:900 -->
+- `libsairedis` の `RedisRemoteSaiInterface` は `SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP` を含む notify を syncd へ転送し、`VendorSai` が `queryAttributeCapability` / `bulkCreate` / `bulkSet` などをベンダー SAI lib に橋渡しする<!-- evidence: sonic-sairedis/syncd/VendorSai.h:65-203 / lib/RedisRemoteSaiInterface.cpp:2300,2342 -->
+- 失敗時は `sai_failure_dump.sh` → `platform_syncd_dump.sh` がベンダー固有 dump を取得し、`ERROR_DB` に handleSai*Status の判定結果が積まれる<!-- evidence: sonic-sairedis/syncd/Syncd.cpp:4493 / syncd/scripts/sai_failure_dump.sh:12-13 -->
+
 ## 関連ページ
 
 ### capability / API version
@@ -75,4 +121,4 @@ SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応す�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 21ed5be09831 -->
+<!-- glossary-links-injected: e2892b76fd9a -->
