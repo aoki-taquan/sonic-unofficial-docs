@@ -25,6 +25,34 @@ SNMP IPv6 では応答 SRC IP が listening address と一致しない問題が�
 
 主要キーワード: `MIB`, `SNMP`, `Entity MIB`, `Sensor MIB`, `CiscoBgp4MIB`, `trap`, `community`, `IPv6`, `AgentX`
 
+## カテゴリ構成図
+
+`snmp` コンテナ内では Net-SNMP の `snmpd` (master agent) と sonic_ax_impl (AgentX subagent) が分離して動作し、SONiC 固有 MIB は subagent から [Redis](../reference/glossary.md#term-redis) 各 DB を読んで応答する。設定は `snmpcfgd` が CONFIG_DB の SNMP 系テーブルを watch して `snmpd.conf` を生成する。
+
+```mermaid
+flowchart LR
+    NMS["外部 NMS<br/>(SNMP get/walk/trap)"] -- "UDP 161/162" --> SNMPD
+    subgraph SNMPC["snmp container"]
+        SNMPD["snmpd<br/>(Net-SNMP master agent)"]
+        AXIMPL["sonic_ax_impl<br/>(AgentX subagent)"]
+        SNMPCFGD["snmpcfgd"]
+        CONF["/etc/snmp/snmpd.conf"]
+        SNMPD <-- "AgentX (Unix socket)" --> AXIMPL
+        SNMPCFGD -- "render" --> CONF
+        CONF -. "load" .-> SNMPD
+    end
+    subgraph REDIS["Redis (各 DB)"]
+        CDB[(CONFIG_DB<br/>SNMP / SNMP_COMMUNITY /<br/>SNMP_USER / SNMP_AGENT_ADDRESS_CONFIG)]
+        SDB[(STATE_DB<br/>NEIGH_STATE_TABLE 等)]
+        CNT[(COUNTERS_DB<br/>port / queue カウンタ)]
+        APPL[(APPL_DB<br/>PORT_TABLE 等)]
+    end
+    CDB -- "subscribe" --> SNMPCFGD
+    AXIMPL <-- "read" --> SDB
+    AXIMPL <-- "read" --> CNT
+    AXIMPL <-- "read" --> APPL
+```
+
 ## 関連ページ
 
 ### system（HLD 本体）
@@ -75,4 +103,4 @@ SNMP IPv6 では応答 SRC IP が listening address と一致しない問題が�
 - [Multi-ASIC / VOQ chassis 関連](multi-asic.md)
 - [gNMI / gNOI / OpenConfig 関連](gnmi-openconfig.md)
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 0f594312e2b7 -->
