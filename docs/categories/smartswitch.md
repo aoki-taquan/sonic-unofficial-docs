@@ -24,6 +24,50 @@ SmartSwitch を学ぶ際は、まず NPU と DPU の境界（どこが [Redis](.
 
 主要キーワード: `SmartSwitch`, `DPU`, `NPU`, `HA`, `gNMI`, `gNOI`, `HAMgrD`, `midplane`
 
+## カテゴリ構成図
+
+SmartSwitch 1 台は 1 つの NPU (従来型 SONiC、L2/L3 switching) と複数の DPU (それぞれが独立した SONiC instance + DASH P4 pipeline) で構成される。NPU と DPU は PCIe ベースの midplane bridge で接続され、NPU 側の DHCP server が DPU に IP を払い出す。NPU 側 SONiC の `CONFIG_DB` に `DPU` / `DPU_PORT` テーブルとして DPU 構成が保持され、`hamgrd` (HA Manager Daemon) が各 DPU の HA actor 状態 (Active / Standby / Standalone / Dead) を遷移管理する。DPU 設定 / 状態取得は gNMI / gNOI 経由で forward される。
+
+```mermaid
+flowchart LR
+    subgraph SmartSwitch["SmartSwitch シャーシ"]
+        subgraph NPU["NPU (SONiC、L2/L3 switching)"]
+            CDB["CONFIG_DB<br/>DPU / DPU_PORT テーブル"]
+            HAM["hamgrd<br/>HA Manager Daemon"]
+            GNMI["gNMI / gNOI client<br/>(DPU 設定 forward)"]
+            DHCP["DHCP server<br/>(midplane IP 払い出し)"]
+        end
+        subgraph MID["midplane bridge (PCIe)"]
+            BR["bridge-midplane<br/>(IP/30 サブネット)"]
+        end
+        subgraph DPU0["DPU 0 (独立 SONiC instance)"]
+            P40["DASH P4 pipeline<br/>(ENI / NAT / ACL flow)"]
+            ST0["HA actor: Active"]
+        end
+        subgraph DPU1["DPU 1 (独立 SONiC instance)"]
+            P41["DASH P4 pipeline"]
+            ST1["HA actor: Standby"]
+        end
+        subgraph DPUN["DPU N"]
+            P4N["..."]
+            STN["Standalone / Dead"]
+        end
+    end
+
+    CDB -->|DPU 構成 read| HAM
+    HAM -->|actor 状態遷移| GNMI
+    GNMI -->|gNMI Set / Subscribe| BR
+    DHCP -->|IP 払い出し| BR
+    BR --> DPU0
+    BR --> DPU1
+    BR --> DPUN
+    HAM -.->|HA state sync| ST0
+    HAM -.-> ST1
+    HAM -.-> STN
+```
+
+各構成要素の詳細は下記のページ群へ。
+
 ## 関連ページ
 
 ### architecture（NPU 側設計 / HA）
