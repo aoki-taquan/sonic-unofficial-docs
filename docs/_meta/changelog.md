@@ -2,7 +2,7 @@
 title: 変更履歴
 description: "変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。"
 verification: meta
-last_verified: 2026-06-17
+last_verified: 2026-06-18
 tags:
   - changelog
   - meta
@@ -23,6 +23,13 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-06
 
+- 2026-06-18 #5486 feat(categories): container-build に component 関係図 mermaid 追加
+- 2026-06-18 #5485 feat(categories): smartswitch に component 関係図 mermaid 追加
+- 2026-06-18 #5484 docs(categories): add gNMI/gNOI/OpenConfig dataflow mermaid to category index
+- 2026-06-18 #5483 docs(categories): add Multi-ASIC/VOQ chassis component diagram
+- 2026-06-18 #5482 docs(categories/dash): DASH コンポーネント関係図 (mermaid) を追加
+- 2026-06-18 #5480 docs(categories/reboot): add warm/fast-reboot component flow mermaid
+- 2026-06-17 #5493 ci(lint): pass GH_TOKEN to gen_changelog drift check
 - 2026-06-17 #5491 chore(seo): Google Search Console 認証メタタグを追加
 - 2026-06-16 #5479 refactor: 全体俯瞰ページ群の再構成 + master component diagram 追加
 - 2026-06-06 #5478 fix(quality): iter15 integration (15 rewrites)
@@ -513,17 +520,10 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3988 docs(config-db): fix Phase E constants marker in stp-iccp
 - 2026-05-19 #3987 docs(config-db): add Phase H platform block to lossless-traffic-pattern
 - 2026-05-19 #3986 docs(config-db): add Phase E hardcoded-constants block to ssh-sftp
-- 2026-05-19 #3975 docs(config-db): add Phase F side-effects block to ip-mcast-route
 - 2026-05-19 #3981 docs(config-db): add Phase H platform block to gnmi-dialin
 - 2026-05-19 #3984 docs(config-db): add Phase G pubsub block to suppress-asic-sdk-health-event
 - 2026-05-19 #3983 docs(config-db): add Phase F side-effects block to RADIUS
 - 2026-05-19 #3980 docs(config-db): add Phase F side-effects block to kubernetes-master
 - 2026-05-19 #3982 docs(config-db): add Phase E hardcoded-constants block to zmq
 - 2026-05-19 #3979 docs(config-db): add Phase G pubsub block to suppress-asic-sdk-health-event
-- 2026-05-19 #3977 docs(config-db): add Phase F side-effects block to pki-trusted-certs
-- 2026-05-19 #3973 docs(config-db): add Phase D failure-behavior block to ssh-sftp
-- 2026-05-19 #3972 docs(config-db): add Phase G pubsub block to vnet-route
-- 2026-05-19 #3971 docs(config-db): add Phase G pubsub block to lossless-traffic-pattern page
-- 2026-05-19 #3969 docs(config-db): fix Phase H platform marker in tc-to-priority-group-map
-- 2026-05-19 #3966 docs(config-db): add Phase F side-effects block to ip-mcast-route
 
