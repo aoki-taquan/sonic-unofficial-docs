@@ -201,9 +201,9 @@ show dhcp_server ipv4 info
 対象テーブル: `DHCP_SERVER_IPV4`
 
 ### CLI
-- `config dhcp-server ipv4 add/del <gateway>`
-- `config dhcp-server ipv4 enable/disable <gateway>`
-  - ソース: `sonic-utilities/config/main.py (dhcp-server グループ)`
+- `config dhcp_server ipv4 add/del <name>`
+- `config dhcp_server ipv4 enable/disable <name>`
+  - ソース: `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py (dhcp_server グループ)`
 
 ### minigraph / sonic-cfggen
 - なし

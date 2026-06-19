@@ -41,8 +41,8 @@ last_verified: 2026-05-13
 - ベンダー版 SONiC の overlay 実装差分（コミュニティ版 `master` のみ扱う）
 
 ## 検証状況
-- ページ数: 12
-- 分布: code-verified: 11 / Discrepancy-found: 1
+- ページ数: 20
+- 分布: code-verified: 19 / Discrepancy-found: 1
 
 ## 実装差分があるページ
 - [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](dscp-remapping-for-tunnel-traffic.md)
@@ -53,6 +53,10 @@ last_verified: 2026-05-13
 |---|---|
 | [Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）](active-active-dual-tor.md) | code-verified |
 | [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](active-standby-dual-tor.md) | code-verified |
+| [Active-Standby Dual ToR 概念（構成と要件）](active-standby-dual-tor-concepts.md) | code-verified |
+| [Active-Standby Dual ToR 内部実装（state machine / MuxOrch / neighbor 取扱い）](active-standby-dual-tor-internals.md) | code-verified |
+| [Active-Standby Dual ToR 制限事項と既知の課題](active-standby-dual-tor-limitations.md) | code-verified |
+| [Active-Standby Dual ToR 設定と運用（CONFIG_DB / CLI / トラブルシューティング）](active-standby-dual-tor-operations.md) | code-verified |
 | [DASH SONiC KVM（BMv2 ベース仮想 DPU）](dash-sonic-kvm.md) | code-verified |
 | [NVGRE トンネル（nvgreorch / decap mapper）](nvgre-tunnel-in-sonic.md) | code-verified |
 | [SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観](sonic-dash-hld.md) | code-verified |
@@ -62,6 +66,10 @@ last_verified: 2026-05-13
 | [SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）](smartswitch-eni-based-forwarding.md) | code-verified |
 | [VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）](vnet-local-endpoint-forwarding.md) | code-verified |
 | [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](vxlan-sonic.md) | code-verified |
+| [VXLAN / VNet 概念（VTEP + VNet + L2/L3 トンネル）](vxlan-sonic-concepts.md) | code-verified |
+| [VXLAN / VNet 内部実装（VxlanTunnelOrch / VnetOrch / SAI 属性）](vxlan-sonic-internals.md) | code-verified |
+| [VXLAN / VNet 制限事項と既知の課題](vxlan-sonic-limitations.md) | code-verified |
+| [VXLAN / VNet 設定と運用（CONFIG_DB / APP_DB / CLI）](vxlan-sonic-operations.md) | code-verified |
 | [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](dscp-remapping-for-tunnel-traffic.md) | Discrepancy-found |
 
 <!-- glossary-links-injected: 585abfc893ca -->

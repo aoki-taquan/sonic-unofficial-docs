@@ -491,8 +491,8 @@ COUNTERS_DB COUNTERS_DHCPV4|<Vlan>|TX  {Discover: N, Offer: N, ..., Dropped: N}
 ### 確認コマンド
 
 ```bash
-sonic-db-cli CONFIG_DB keys 'DHCP_RELAY|*'
-show dhcprelay_helper ipv4
+sonic-db-cli CONFIG_DB keys 'DHCPV4_RELAY|*'
+sonic-db-cli CONFIG_DB hgetall 'DHCPV4_RELAY|<Vlan_name>'
 ```
 <!-- /ops-hint -->
 
@@ -540,8 +540,8 @@ show dhcprelay_helper ipv4
 対象テーブル: `DHCPV4_RELAY`
 
 ### CLI
-- `config dhcpv4-relay add/del <vlan> <server-ip>`
-  - ソース: `sonic-utilities/config/main.py (dhcpv4-relay グループ)`
+- `config dhcpv4_relay add --dhcpv4-servers <ips> <vlan_name>` / `config dhcpv4_relay del <vlan_name>`
+  - ソース: sonic-buildimage `dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py (dhcpv4_relay グループ)`
 
 ### minigraph / sonic-cfggen
 - なし

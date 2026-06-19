@@ -41,7 +41,6 @@ nav:
   - pcieinfo-design.md
   - platform-capability-file-enhancement.md
   - s3ip-sysfs-specification.md
-  - sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs.md
   - sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset.md
   - sonic-dynamic-gearbox-tuning-design-plan.md
   - sonic-fast-link-up.md

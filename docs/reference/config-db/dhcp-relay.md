@@ -270,8 +270,8 @@ show dhcp_relay destination ipv6
 対象テーブル: `DHCP_RELAY`
 
 ### CLI
-- `config interface dhcp-relay add/del <vlan> <server-ip>`
-  - ソース: `sonic-utilities/config/vlan.py`
+- `config dhcp_relay ipv6 destination add/del <vid> <server_ip>`
+  - ソース: sonic-buildimage `dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py`
 
 ### minigraph / sonic-cfggen
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる。`dhcpv6_servers` のみ書き込まれ、`rfc6939_support` / `interface_id` は省略される（minigraph.py:1071-1078）

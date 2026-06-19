@@ -78,7 +78,7 @@ YANG `default` 宣言なし。DB に設定しない場合は sshd の組み込�
 ## 購読者
 
 - `hostcfgd` `SshServer`（`sonic-host-services/scripts/hostcfgd` L1045-L1175）：`/etc/ssh/sshd_config` を更新し `systemctl restart ssh` を実行
-- `hostcfgd` `PamLimitsCfg`（同 L1418-L1441）：`max_sessions` を `/etc/security/limits.d/` に反映
+- `hostcfgd` `PamLimitsCfg`（同 L1418-L1441）：`max_sessions` を `/etc/security/limits.conf` に反映
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -234,7 +234,7 @@ if key == "inactivity_timeout":
 ### 注目 discrepancy: `max_sessions` の経路
 
 `max_sessions` は `SSH_CONFIG_NAMES` に含まれていないため `sshd_config` の `MaxSessions` には反映されない。  
-代わりに `PamLimitsCfg` が PAM limits（`/etc/security/limits.d/`）に書き込む。  
+代わりに `PamLimitsCfg` が PAM limits（`/etc/security/limits.conf`）に書き込む。  
 OpenSSH の `MaxSessions`（同時チャンネル数の上限）とは別の概念であることに注意。
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd L61-75 (SSH_CONFIG_NAMES dict) -->
@@ -264,7 +264,7 @@ hostcfgd は起動時に以下の順序で SSH_SERVER を処理する。
    `set_policies()` 経由で sshd_config 全フィールドを更新し、`systemctl restart ssh` を実行。
 
 5. **`pamLimitsCfg.update_config_file()`（2 回目）**（L2277）  
-   `max_sessions` を `/etc/security/limits.d/` に書き込む（確定値で上書き）。
+   `max_sessions` を `/etc/security/limits.conf` に書き込む（確定値で上書き）。
 
 ステップ 4 と 5 は **順序固定**。`max_sessions` が sshd_config 側でスキップされ PAM 経由で処理されるため、sshd 設定と PAM limits の更新は必ずこの順に完了する。  
 起動直後の短時間（ステップ 4 完了前）は PAM limits が古い値のままになる可能性がある。

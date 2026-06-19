@@ -81,7 +81,7 @@ if key == "inactivity_timeout":
 
 ### `max_sessions` — sshd_config 非反映 discrepancy
 
-`max_sessions` は `SSH_CONFIG_NAMES` に含まれていないため `sshd_config` の `MaxSessions` には反映されない。代わりに `PamLimitsCfg` が PAM limits（`/etc/security/limits.d/`）に書き込む。
+`max_sessions` は `SSH_CONFIG_NAMES` に含まれていないため `sshd_config` の `MaxSessions` には反映されない。代わりに `PamLimitsCfg` が PAM limits（`/etc/security/limits.conf`）に書き込む。
 
 ```python
 # hostcfgd L1440-1441

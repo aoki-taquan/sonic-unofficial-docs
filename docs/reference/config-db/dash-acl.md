@@ -287,9 +287,9 @@ auto any_ip = [](const auto& g) {
 
 ### warm-reboot 挙動
 
-`DashAclOrch` は `ZmqOrch` を継承し `gDirectory.set()` のみで登録される（`m_orchList` には非登録）。
+`DashAclOrch` は `ZmqOrch` を継承し（`dashaclorch.h:33`）`gDirectory.set()` で登録されるほか、`orchdaemon.cpp:1409` の `addOrchList(dash_acl_orch)` によって `DpuOrchDaemon` の `m_orchList` にも登録される。
 
-`warmRestoreAndSyncUp()` の 3 イテレーションループは `m_orchList` に対して実行されるため、**DASH ACL orch は warm-reboot の自動リプレイ対象外**となる。DASH ACL エントリのリストアは SDN コントローラ（[gNMI](../../reference/glossary.md#term-gnmi) 側）がエントリを再投入することで実現する設計であり、orchagent 自体による状態保存・リプレイ機構は実装されていない（ステートレス warm-reboot）。
+`DpuOrchDaemon` は `OrchDaemon::warmRestoreAndSyncUp()` を override せず継承しており、同メソッドの 3 イテレーションループは `m_orchList` の各 orch に対して実行される。したがって **DASH ACL orch も warm-reboot のリプレイ対象に含まれる**。ただし `DashAclOrch` は `bake()` を override しないため、リストアは基底 `Orch::bake()` の既定挙動（購読 DB の状態を再処理）に従う。加えて DASH ACL エントリは ZMQ チャネル経由で SDN コントローラ（[gNMI](../../reference/glossary.md#term-gnmi) 側）が再投入する設計でもある。
 
 <!-- /ordering -->
 
