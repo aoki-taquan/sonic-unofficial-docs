@@ -21,11 +21,11 @@ last_verified: 2026-05-11
 
 ## 全体合計
 
-全 **1104** ページ。
+全 **1103** ページ。
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 771 |
+| code-verified | 770 |
 | runbook-verified | 28 |
 | discrepancy-found | 116 |
 | issue-confirmed | 5 |
@@ -46,7 +46,7 @@ last_verified: 2026-05-11
 | `internals` | 13 | 0 | 5 | 0 | 0 | 1 | 0 | 19 |
 | `management` | 30 | 0 | 19 | 1 | 0 | 1 | 0 | 51 |
 | `overlay` | 19 | 0 | 1 | 0 | 0 | 1 | 0 | 21 |
-| `platform` | 35 | 0 | 13 | 3 | 0 | 1 | 0 | 52 |
+| `platform` | 34 | 0 | 13 | 3 | 0 | 1 | 0 | 51 |
 | `reference` | 465 | 28 | 9 | 0 | 0 | 13 | 1 | 516 |
 | `routing` | 45 | 0 | 12 | 0 | 0 | 1 | 0 | 58 |
 | `switching` | 18 | 0 | 8 | 0 | 0 | 1 | 0 | 27 |
